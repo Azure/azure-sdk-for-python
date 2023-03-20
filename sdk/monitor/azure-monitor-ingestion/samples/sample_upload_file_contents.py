@@ -34,19 +34,19 @@ from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.ingestion import LogsIngestionClient
 
-endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
+endpoint = os.environ["DATA_COLLECTION_ENDPOINT"]
 credential = DefaultAzureCredential()
 
 client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
 # Update this to point to a file containing a list of JSON objects.
-FILE_PATH ="../test-logs.json"
+FILE_PATH = "../test-logs.json"
 
 # Option 1: Upload the file contents by passing in the file stream. With this option, no chunking is done, and the
 # file contents are uploaded as is through one request. Subject to size service limits.
 with open(FILE_PATH, "r") as f:
     try:
-        client.upload(rule_id=os.environ['LOGS_DCR_RULE_ID'], stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=f)
+        client.upload(rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=f)
     except HttpResponseError as e:
         print(f"File stream upload failed: {e}")
 
@@ -56,6 +56,6 @@ with open(FILE_PATH, "r") as f:
 with open(FILE_PATH, "r") as f:
     logs = json.load(f)
     try:
-        client.upload(rule_id=os.environ['LOGS_DCR_RULE_ID'], stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=logs)
+        client.upload(rule_id=os.environ["LOGS_DCR_RULE_ID"], stream_name=os.environ["LOGS_DCR_STREAM_NAME"], logs=logs)
     except HttpResponseError as e:
         print(f"List upload failed: {e}")

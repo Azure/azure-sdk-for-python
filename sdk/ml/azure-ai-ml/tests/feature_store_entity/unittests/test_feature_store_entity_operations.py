@@ -75,25 +75,11 @@ class TestFeatureStoreEntityOperations:
         version = "1"
         mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
         mock_feature_store_entity_operations.archive(name=name, version=version)
-        mock_feature_store_entity_operations._operation.create_or_update.assert_called_once_with(
+        mock_feature_store_entity_operations._operation.begin_create_or_update.assert_called_once_with(
             name=name,
             version=version,
             workspace_name=mock_feature_store_entity_operations._workspace_name,
             body=featureStoreEntity_version,
-            resource_group_name=mock_feature_store_entity_operations._resource_group_name,
-        )
-
-    def test_archive_container(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
-        name = "random_name"
-        featureStoreEntity_container = Mock(
-            FeaturestoreEntityContainer(properties=Mock(FeaturestoreEntityContainerProperties(description="test")))
-        )
-        mock_feature_store_entity_operations._container_operation.get.return_value = featureStoreEntity_container
-        mock_feature_store_entity_operations.archive(name=name)
-        mock_feature_store_entity_operations._container_operation.create_or_update.assert_called_once_with(
-            name=name,
-            workspace_name=mock_feature_store_entity_operations._workspace_name,
-            body=featureStoreEntity_container,
             resource_group_name=mock_feature_store_entity_operations._resource_group_name,
         )
 
@@ -105,24 +91,10 @@ class TestFeatureStoreEntityOperations:
         version = "1"
         mock_feature_store_entity_operations._operation.get.return_value = featureStoreEntity_version
         mock_feature_store_entity_operations.restore(name=name, version=version)
-        mock_feature_store_entity_operations._operation.create_or_update.assert_called_once_with(
+        mock_feature_store_entity_operations._operation.begin_create_or_update.assert_called_once_with(
             name=name,
             version=version,
             workspace_name=mock_feature_store_entity_operations._workspace_name,
             body=featureStoreEntity_version,
-            resource_group_name=mock_feature_store_entity_operations._resource_group_name,
-        )
-
-    def test_restore_container(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
-        name = "random_name"
-        featureStoreEntity_container = Mock(
-            FeaturestoreEntityContainer(properties=Mock(FeaturestoreEntityContainerProperties()))
-        )
-        mock_feature_store_entity_operations._container_operation.get.return_value = featureStoreEntity_container
-        mock_feature_store_entity_operations.restore(name=name)
-        mock_feature_store_entity_operations._container_operation.create_or_update.assert_called_once_with(
-            name=name,
-            workspace_name=mock_feature_store_entity_operations._workspace_name,
-            body=featureStoreEntity_container,
             resource_group_name=mock_feature_store_entity_operations._resource_group_name,
         )

@@ -1,14 +1,10 @@
 # Release History
 
-## 5.11.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.11.2 (2023-03-20)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug that would prevent reconnect after a long idle period, network drop (issue #28996)
 
 ## 5.11.1 (2023-01-25)
 
