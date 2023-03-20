@@ -751,7 +751,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
-    async def upload_blob(self, repository: str, data: IO, **kwargs) -> Tuple[str, int]:
+    async def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
         """Upload an artifact blob.
 
         :param str repository: Name of the repository.
@@ -762,18 +762,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
-            start_upload_response_headers = await cast(
+            start_upload_response_headers = cast(
                 Dict[str, str],
-                self._client.container_registry_blob.start_upload(
+                await self._client.container_registry_blob.start_upload(
                     repository, cls=_return_response_headers, **kwargs
                 )
             )
             digest, location, blob_size = await self._upload_blob_chunk(
                 start_upload_response_headers['Location'], data, **kwargs
             )
-            complete_upload_response_headers = await cast(
+            complete_upload_response_headers = cast(
                 Dict[str, str],
-                self._client.container_registry_blob.complete_upload(
+                await self._client.container_registry_blob.complete_upload(
                     digest=digest,
                     next_link=location,
                     cls=_return_response_headers,
@@ -786,7 +786,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise
         return complete_upload_response_headers['Docker-Content-Digest'], blob_size
 
-    async def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str, int]:
+    async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
         buffer = data.read(DEFAULT_CHUNK_SIZE)
         blob_size = len(buffer)

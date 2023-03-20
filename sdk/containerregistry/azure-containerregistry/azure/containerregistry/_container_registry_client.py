@@ -808,7 +808,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return digest
 
     @distributed_trace
-    def upload_blob(self, repository: str, data: IO, **kwargs) -> Tuple[str, int]:
+    def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
         """Upload an artifact blob.
 
         :param str repository: Name of the repository.
@@ -840,7 +840,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise
         return complete_upload_response_headers['Docker-Content-Digest'], blob_size
 
-    def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str, int]:
+    def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
         buffer = data.read(DEFAULT_CHUNK_SIZE)
         blob_size = len(buffer)
