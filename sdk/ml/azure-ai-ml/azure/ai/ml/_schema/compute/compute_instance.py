@@ -7,7 +7,7 @@ from marshmallow.decorators import post_load
 
 # pylint: disable=unused-argument,no-self-use
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants._compute import ComputeType
+from azure.ai.ml.constants._compute import ComputeType, ComputeSizeTier
 
 from ..core.fields import ExperimentalField, NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema
@@ -53,7 +53,7 @@ class OsImageMetadataSchema(PathAwareSchema):
 
 class ComputeInstanceSchema(ComputeSchema):
     type = StringTransformedEnum(allowed_values=[ComputeType.COMPUTEINSTANCE], required=True)
-    size = fields.Str()
+    size = fields.Str(metadata={"arm_type": ComputeSizeTier.COMPUTE_INSTANCE})
     network_settings = NestedField(NetworkSettingsSchema)
     create_on_behalf_of = NestedField(CreateOnBehalfOfSchema)
     ssh_settings = NestedField(ComputeInstanceSshSettingsSchema)

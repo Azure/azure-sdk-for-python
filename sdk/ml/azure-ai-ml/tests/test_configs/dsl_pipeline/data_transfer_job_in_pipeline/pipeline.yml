@@ -3,11 +3,10 @@ type: pipeline
 
 description: 'submit a pipeline with data transfer job'
 settings:
-  default_compute: azureml:adftest
+  default_compute: azureml:serverless
 inputs:
   path_source_s3: test1/*
   query_source_sql: select top(10) Name from SalesLT.ProductCategory
-  connection_target_s3: azureml:my-s3-connection
 
 outputs:
   merged_blob:
@@ -24,7 +23,6 @@ jobs:
       outputs:
         sink:
           type: mltable
-      compute: azureml:adftest
 
     s3_blob:
       type: data_transfer
@@ -47,12 +45,14 @@ jobs:
       outputs:
         output_folder: ${{parent.outputs.merged_blob}}
 
-    blob_s3:
+    blob_azuresql:
       type: data_transfer
       task: export_data
       inputs:
-        source: ${{parent.jobs.merge_files.outputs.output_folder}}
+        source:
+          type: uri_file
+          path: ./export_database/data/testFile_ForSqlDB.parquet
       sink:
-        type: file_system
-        path: 'test1/'
-        connection: ${{parent.inputs.connection_target_s3}}
+        type: database
+        table_name: dbo.Persons
+        connection: azureml:my_export_azuresqldb_connection

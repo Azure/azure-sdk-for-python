@@ -20,7 +20,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 
 class Datastore(Resource, RestTranslatableMixin, ABC):
-
     """Datastore of an Azure ML workspace, abstract class.
 
     :param name: Name of the datastore.
@@ -143,7 +142,6 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
 
     @classmethod
     def _from_rest_object(cls, datastore_resource: DatastoreData) -> "Datastore":
-
         from azure.ai.ml.entities import (
             AzureBlobDatastore,
             AzureDataLakeGen1Datastore,

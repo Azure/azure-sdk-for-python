@@ -6,10 +6,15 @@
 
 import os
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Iterable
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
+from azure.ai.ml.data_transfer import import_data as import_data_func
+from azure.ai.ml.entities._inputs_outputs import Output
+from azure.ai.ml.entities._inputs_outputs.external_data import Database
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
@@ -25,7 +30,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -45,8 +50,14 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
 )
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
-from azure.ai.ml.entities._assets import Data
+from azure.ai.ml.constants._common import (
+    MLTABLE_METADATA_SCHEMA_URL_FALLBACK,
+    AssetTypes,
+    ASSET_ID_FORMAT,
+    AzureMLResourceType,
+)
+from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
+from azure.ai.ml.entities._data_import.data_import import DataImport
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -58,9 +69,10 @@ from azure.ai.ml.exceptions import (
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
@@ -74,7 +86,7 @@ class DataOperations(_ScopeDependentOperations):
     ):
 
         super(DataOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
@@ -85,7 +97,7 @@ class DataOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
 
-    # @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.List", ActivityType.PUBLICAPI)
     def list(
         self,
         name: Optional[str] = None,
@@ -171,7 +183,7 @@ class DataOperations(_ScopeDependentOperations):
             )
         )
 
-    # @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, version: Optional[str] = None, label: Optional[str] = None) -> Data:
         """Get the specified data asset.
 
@@ -214,7 +226,7 @@ class DataOperations(_ScopeDependentOperations):
         except (ValidationException, SchemaValidationError) as ex:
             log_and_raise_error(ex)
 
-    # @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
         """Returns created or updated data asset.
 
@@ -230,7 +242,6 @@ class DataOperations(_ScopeDependentOperations):
         :return: Data asset object.
         :rtype: ~azure.ai.ml.entities.Data
         """
-
         try:
             name = data.name
             if not data.version and self._registry_name:
@@ -246,6 +257,34 @@ class DataOperations(_ScopeDependentOperations):
 
             sas_uri = None
             if self._registry_name:
+                # If the data asset is a workspace asset, promote to registry
+                if isinstance(data, WorkspaceAssetReference):
+                    try:
+                        self._operation.get(
+                            name=data.name,
+                            version=data.version,
+                            resource_group_name=self._resource_group_name,
+                            registry_name=self._registry_name,
+                        )
+                    except Exception as err:  # pylint: disable=broad-except
+                        if isinstance(err, ResourceNotFoundError):
+                            pass
+                        else:
+                            raise err
+                    else:
+                        msg = "An data asset with this name and version already exists in registry"
+                        raise ValidationException(
+                            message=msg,
+                            no_personal_data_message=msg,
+                            target=ErrorTarget.DATA,
+                            error_category=ErrorCategory.USER_ERROR,
+                        )
+                    data = data._to_rest_object()
+                    result = self._service_client.resource_management_asset_reference.begin_import_method(
+                        resource_group_name=self._resource_group_name, registry_name=self._registry_name, body=data
+                    )
+                    return result
+
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
                     name=name,
@@ -262,7 +301,11 @@ class DataOperations(_ScopeDependentOperations):
                 data._referenced_uris = referenced_uris
 
             data, _ = _check_and_upload_path(
-                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA
+                artifact=data,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.DATA,
+                show_progress=self._show_progress,
             )
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
@@ -314,7 +357,67 @@ class DataOperations(_ScopeDependentOperations):
                     )
             raise ex
 
-    # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
+    @experimental
+    def import_data(self, data_import: DataImport, **kwargs) -> PipelineJob:
+        """Returns the data import job that is creating the data asset.
+
+        :param data_import: DataImport object.
+        :type data_import: azure.ai.ml.entities.DataImport
+        :return: data import job object.
+        :rtype: ~azure.ai.ml.entities.PipelineJob
+        """
+
+        experiment_name = "data_import_" + data_import.name
+        data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
+        if "{name}" not in data_import.path:
+            data_import.path = data_import.path.rstrip("/") + "/{name}"
+        import_job = import_data_func(
+            description=data_import.description or experiment_name,
+            display_name=experiment_name,
+            experiment_name=experiment_name,
+            compute="serverless",
+            source=data_import.source,
+            outputs={
+                "sink": Output(
+                    type=data_import.type, path=data_import.path, name=data_import.name, version=data_import.version
+                )
+            },
+        )
+        import_pipeline = PipelineJob(
+            description=data_import.description or experiment_name,
+            tags=data_import.tags,
+            display_name=experiment_name,
+            experiment_name=experiment_name,
+            properties=data_import.properties or {},
+            settings=PipelineJobSettings(force_rerun=True),
+            jobs={experiment_name: import_job},
+        )
+        import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
+        return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True, **kwargs)
+
+    @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
+    @experimental
+    def list_materialization_status(
+        self,
+        name: str,
+        *,
+        list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
+        **kwargs,
+    ) -> Iterable[PipelineJob]:
+        """List materialization jobs of the asset.
+
+        :param name: name of asset being created by the materialization jobs.
+        :type name: str
+        :param list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
+        :type list_view_type: Optional[ListViewType]
+        :return: An iterator like instance of Job objects.
+        :rtype: ~azure.core.paging.ItemPaged[PipelineJob]
+        """
+
+        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs)
+
+    @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
         if not data.path:
             msg = "Missing data path. Path is required for data."
@@ -376,7 +479,7 @@ class DataOperations(_ScopeDependentOperations):
             )
             return None
 
-    # @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
     def archive(
         self,
         name: str,
@@ -405,7 +508,7 @@ class DataOperations(_ScopeDependentOperations):
             label=label,
         )
 
-    # @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
     def restore(
         self,
         name: str,
@@ -437,13 +540,48 @@ class DataOperations(_ScopeDependentOperations):
     def _get_latest_version(self, name: str) -> Data:
         """Returns the latest version of the asset with the given name.
 
-        Latest is defined as the most recently created, not the most
-        recently updated.
+        Latest is defined as the most recently created, not the most recently updated.
         """
         latest_version = _get_latest_version_from_container(
             name, self._container_operation, self._resource_group_name, self._workspace_name, self._registry_name
         )
         return self.get(name, version=latest_version)
+
+    # pylint: disable=no-self-use
+    def _prepare_to_copy(
+        self, data: Data, name: Optional[str] = None, version: Optional[str] = None
+    ) -> WorkspaceAssetReference:
+
+        """Returns WorkspaceAssetReference to copy a registered data to registry given the asset id.
+
+        :param data: Registered data
+        :type data: Data
+        :param name: Destination name
+        :type name: str
+        :param version: Destination version
+        :type version: str
+        """
+        #  Get workspace info to get workspace GUID
+        workspace = self._service_client.workspaces.get(
+            resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
+        )
+        workspace_guid = workspace.workspace_id
+        workspace_location = workspace.location
+
+        # Get data asset ID
+        asset_id = ASSET_ID_FORMAT.format(
+            workspace_location,
+            workspace_guid,
+            AzureMLResourceType.DATA,
+            data.name,
+            data.version,
+        )
+
+        return WorkspaceAssetReference(
+            name=name if name else data.name,
+            version=version if version else data.version,
+            asset_id=asset_id,
+        )
 
 
 def _assert_local_path_matches_asset_type(
@@ -453,16 +591,16 @@ def _assert_local_path_matches_asset_type(
     # assert file system type matches asset type
     if asset_type == AssetTypes.URI_FOLDER and not os.path.isdir(local_path):
         raise ValidationException(
-            message="No such file or directory: {}".format(local_path),
-            no_personal_data_message="No such file or directory",
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
         )
     if asset_type == AssetTypes.URI_FILE and not os.path.isfile(local_path):
         raise ValidationException(
-            message="No such file or directory: {}".format(local_path),
-            no_personal_data_message="No such file or directory",
+            message="File path does not match asset type {}: {}".format(asset_type, local_path),
+            no_personal_data_message="File path does not match asset type {}".format(asset_type),
             target=ErrorTarget.DATA,
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
