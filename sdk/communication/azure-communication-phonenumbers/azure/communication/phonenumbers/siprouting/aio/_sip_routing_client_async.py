@@ -7,6 +7,9 @@
 from typing import TYPE_CHECKING  # pylint: disable=unused-import
 from urllib.parse import urlparse
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
+
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._models import SipTrunk, SipTrunkRoute
@@ -23,7 +26,7 @@ from ..._shared.utils import (
 from ..._version import SDK_MONIKER
 
 if TYPE_CHECKING:
-    from typing import Optional, Iterable, List, Any
+    from typing import List, Any
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -152,39 +155,57 @@ class SipRoutingClient(object):
             body=SipConfiguration(trunks={trunk_fqdn:None}),
             **kwargs)
 
-    @distributed_trace_async
-    async def list_trunks(
+    @distributed_trace
+    def list_trunks(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> Iterable[SipTrunk]
-        """Retrieves an iterable of currently configured SIP trunks.
+    ):  # type: (...) -> AsyncItemPaged[SipTrunk]
+        """Retrieves list of currently configured SIP trunks.
 
         :returns: Current SIP trunks configuration.
-        :rtype: Iterable[~azure.communication.siprouting.models.SipTrunk]
+        :rtype: AsyncItemPaged[~azure.communication.siprouting.models.SipTrunk]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        return await self._list_trunks_(**kwargs)
 
-    @distributed_trace_async
-    async def list_routes(
+        async def extract_data(config):
+            list_of_elem = [SipTrunk(
+                fqdn=k,
+                sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(nextLink=None):
+            return await self._rest_service.sip_routing.get(
+                **kwargs
+                )
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_routes(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> Iterable[SipTrunkRoute]
-        """Retrieves an iterable of currently configured SIP routes.
+    ):  # type: (...) -> AsyncItemPaged[SipTrunkRoute]
+        """Retrieves list of currently configured SIP routes.
 
         :returns: Current SIP routes configuration.
-        :rtype: Iterable[~azure.communication.siprouting.models.SipTrunkRoute]
+        :rtype: AsyncItemPaged[~azure.communication.siprouting.models.SipTrunkRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        config = await self._rest_service.sip_routing.get(
-            **kwargs
-        )
-        return [SipTrunkRoute(
-            description=x.description,
-            name=x.name,
-            number_pattern=x.number_pattern,
-            trunks=x.trunks
-            ) for x in config.routes]
+    
+        async def extract_data(config):
+            list_of_elem =  [SipTrunkRoute(
+                description=x.description,
+                name=x.name,
+                number_pattern=x.number_pattern,
+                trunks=x.trunks) for x in config.routes]
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(nextLink=None):
+            return await self._rest_service.sip_routing.get(
+                **kwargs
+                )
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def set_trunks(
