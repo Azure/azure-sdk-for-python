@@ -3257,6 +3257,83 @@ class DocumentModelSummary:
         )
 
 
+class DocumentClassifierDetails:
+    """Document classifier information. Includes the doc types that the model can classify."""
+
+    classifier_id: str
+    """Unique document classifier name."""
+    description: Optional[str]
+    """Document classifier description."""
+    created_date_time: datetime.datetime
+    """Date and time (UTC) when the document classifier was created."""
+    expiration_date_time: Optional[datetime.datetime]
+    """Date and time (UTC) when the document classifier will expire."""
+    api_version: str
+    """API version used to create this document classifier."""
+    doc_types: Dict[str, Any]
+    """List of document types to classify against."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.classifier_id = kwargs.get("classifier_id", None)
+        self.description = kwargs.get("description", None)
+        self.created_date_time = kwargs.get("created_date_time", None)
+        self.expiration_date_time = kwargs.get("expiration_date_time", None)
+        self.api_version = kwargs.get("api_version", None)
+        self.doc_types = kwargs.get("doc_types", None)
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentClassifierDetails(classifier_id={self.classifier_id}, description={self.description}, "
+            f"created_date_time={self.created_date_time}, expiration_date_time={self.expiration_date_time}, "
+            f"api_version={self.api_version}, doc_types={repr(self.doc_types)})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            classifier_id=model.classifier_id,
+            description=model.description,
+            created_date_time=model.created_date_time,
+            expiration_date_time=model.expiration_date_time,
+            api_version=model.api_version,
+            doc_types={k: v for k, v in model.doc_types.items()}
+            if model.doc_types else {}
+        )
+
+    def to_dict(self) -> Dict:
+        """Returns a dict representation of DocumentClassifierDetails."""
+        return {
+            "classifier_id": self.classifier_id,
+            "description": self.description,
+            "created_date_time": self.created_date_time,
+            "expiration_date_time": self.expiration_date_time,
+            "api_version": self.api_version,
+            "doc_types": {k: v for k, v in self.doc_types.items()} if self.doc_types else {}
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "DocumentClassifierDetails":
+        """Converts a dict in the shape of a DocumentClassifierDetails to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentClassifierDetails.
+        :return: DocumentClassifierDetails
+        :rtype: DocumentClassifierDetails
+        """
+        return cls(
+            classifier_id=data.get("classifier_id", None),
+            description=data.get("description", None),
+            created_date_time=data.get("created_date_time", None),
+            expiration_date_time=data.get("expiration_date_time", None),
+            api_version=data.get("api_version", None),
+            doc_types={k: v for k, v in data.get("doc_types").items()}  # type: ignore
+            if data.get("doc_types")
+            else {},
+        )
+
+
 class DocumentModelDetails(DocumentModelSummary):
     """Document model information. Includes the doc types that the model can analyze."""
 
