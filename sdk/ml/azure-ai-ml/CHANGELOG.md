@@ -21,7 +21,7 @@
 - Added support for registering named asset from job output or node output by specifying name and version settings.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline, command, automl and sweep job
-- Added support for `job_tier` and `priority` in standalone job 
+- Added support for `job_tier` and `priority` in standalone job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
 - Added support for modifying SSH key values after creation on Compute Resources.
 - Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`
