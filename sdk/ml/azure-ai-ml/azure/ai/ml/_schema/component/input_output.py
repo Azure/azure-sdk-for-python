@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument,no-self-use
 
-from marshmallow import fields, INCLUDE
+from marshmallow import fields, INCLUDE, pre_dump
 
 from azure.ai.ml._schema.core.fields import DumpableEnumField, ExperimentalField, UnionField, NestedField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
@@ -51,7 +51,20 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
     mode = DumpableEnumField(
         allowed_values=SUPPORTED_INPUT_OUTPUT_MODES,
     )
-    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
+    # hide in private preview
+    if is_private_preview_enabled():
+        intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
+
+    @pre_dump
+    def add_private_fields_to_dump(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
+        # The ipp field is set on the output object as "_intellectual_property".
+        # We need to set it as "intellectual_property" before dumping so that Marshmallow
+        # can pick up the field correctly on dump and show it back to the user.
+        if is_private_preview_enabled():
+            ipp_field = data._intellectual_property # pylint: disable=protected-access
+            if ipp_field:
+                setattr(data, "intellectual_property", ipp_field)
+        return data
 
 
 class PrimitiveOutputSchema(OutputPortSchema):

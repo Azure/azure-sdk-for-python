@@ -98,6 +98,7 @@ class Output(_InputOutputBase):
         self.is_control = kwargs.pop("is_control", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
+        self._intellectual_property = kwargs.pop("intellectual_property", None)
         self._assert_name_and_version()
         # normalize properties like ["is_control"]
         self._normalize_self_properties()
