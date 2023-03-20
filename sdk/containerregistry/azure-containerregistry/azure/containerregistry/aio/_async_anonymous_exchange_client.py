@@ -3,7 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Union, overload
+from typing import Any, Optional, Union
+from azure.core.credentials import AccessToken
 from azure.core.credentials_async import AsyncTokenCredential
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
@@ -13,10 +14,9 @@ from .._user_agent import USER_AGENT
 
 
 class AsyncAnonymousAccessCredential(AsyncTokenCredential):
-    @overload
     async def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
-    ) -> None:
+    ) -> AccessToken:
         raise ValueError("This credential cannot be used to obtain access tokens.")
 
 

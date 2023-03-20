@@ -3,8 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Union, overload
-from azure.core.credentials import TokenCredential
+from typing import Any, Optional, Union
+from azure.core.credentials import TokenCredential, AccessToken
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
 from ._generated.models import TokenGrantType
@@ -13,10 +13,9 @@ from ._user_agent import USER_AGENT
 
 
 class AnonymousAccessCredential(TokenCredential):
-    @overload
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
-    ) -> None:
+    ) -> AccessToken:
         raise ValueError("This credential cannot be used to obtain access tokens.")
 
 
