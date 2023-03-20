@@ -2696,7 +2696,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @ArgPasser()
     def test_queue_send_mapping_messages(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         class MappingMessage(DictMixin):
-            def __init__(self, uamqp_transport, *, content):
+            def __init__(self, content):
                 self.body = content
                 self.message_id = 'foo'
         
@@ -2969,7 +2969,11 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             dict_message = {"body": content}
             sb_message = ServiceBusMessage(body=content)
             message_with_ttl = AmqpAnnotatedMessage(data_body=data_body, header=AmqpMessageHeader(time_to_live=60000))
-            amqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
+            if uamqp_transport:
+                amqp_transport = UamqpTransport
+            else:
+                amqp_transport = PyamqpTransport
+            amqp_with_ttl = amqp_transport.to_outgoing_amqp_message(message_with_ttl)
             assert amqp_with_ttl.properties.absolute_expiry_time == amqp_with_ttl.properties.creation_time + amqp_with_ttl.header.ttl
 
             recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0

@@ -173,7 +173,7 @@ if uamqp_installed:
                     links = get_receive_links(message)
                     with receive_trace_context_manager(receiver, links=links):
                         yield message
-                except StopIteration:
+                except StopAsyncIteration:
                     break
                 finally:
                     if original_timeout:

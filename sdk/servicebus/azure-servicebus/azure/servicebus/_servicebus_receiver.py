@@ -250,6 +250,8 @@ class ServiceBusReceiver(
         finally:
             self._receive_context.clear()
 
+    next = __next__  # for python2.7
+
     @classmethod
     def _from_connection_string(
         cls, conn_str: str, **kwargs: Any
