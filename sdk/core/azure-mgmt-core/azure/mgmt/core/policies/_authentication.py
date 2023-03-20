@@ -72,10 +72,9 @@ class _AuxiliaryAuthenticationPolicyBase(object):
     :param str scopes: required authentication scopes
     """
 
-    def __init__(self,
-                 auxiliary_credentials,
-                 *scopes,
-                 **kwargs):  # pylint: disable=unused-argument
+    def __init__(
+        self, auxiliary_credentials, *scopes, **kwargs
+    ):  # pylint: disable=unused-argument
         super().__init__()
         self._auxiliary_credentials = auxiliary_credentials
         self._scopes = scopes
@@ -105,8 +104,9 @@ class _AuxiliaryAuthenticationPolicyBase(object):
         :param dict headers: The HTTP Request headers
         """
         if self._aux_tokens:
-            headers["x-ms-authorization-auxiliary"] = ', '.join(
-                "Bearer {}".format(token.token) for token in self._aux_tokens)
+            headers["x-ms-authorization-auxiliary"] = ", ".join(
+                "Bearer {}".format(token.token) for token in self._aux_tokens
+            )
 
     @property
     def _need_new_aux_tokens(self):
@@ -118,10 +118,15 @@ class _AuxiliaryAuthenticationPolicyBase(object):
         return False
 
 
-class AuxiliaryAuthenticationPolicy(_AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy):
+class AuxiliaryAuthenticationPolicy(
+    _AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy
+):
     def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
-            return [cred.get_token(*scopes, **kwargs) for cred in self._auxiliary_credentials]
+            return [
+                cred.get_token(*scopes, **kwargs)
+                for cred in self._auxiliary_credentials
+            ]
         return None
 
     def on_request(self, request):
@@ -164,7 +169,9 @@ def _parse_claims_challenge(challenge):
 
     padding_needed = -len(encoded_claims) % 4
     try:
-        decoded_claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
+        decoded_claims = base64.urlsafe_b64decode(
+            encoded_claims + "=" * padding_needed
+        ).decode()
         return decoded_claims
     except Exception:  # pylint:disable=broad-except
         return None

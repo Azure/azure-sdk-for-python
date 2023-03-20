@@ -25,7 +25,10 @@
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
 
-from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, AsyncHTTPPolicy
+from azure.core.pipeline.policies import (
+    AsyncBearerTokenCredentialPolicy,
+    AsyncHTTPPolicy,
+)
 
 from ._authentication import _parse_claims_challenge, _AuxiliaryAuthenticationPolicyBase
 
@@ -53,7 +56,9 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
     """
 
     # pylint:disable=unused-argument
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    async def on_challenge(
+        self, request: "PipelineRequest", response: "PipelineResponse"
+    ) -> bool:
         """Authorize request according to an ARM authentication challenge
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
@@ -70,10 +75,15 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
         return False
 
 
-class AsyncAuxiliaryAuthenticationPolicy(_AuxiliaryAuthenticationPolicyBase, AsyncHTTPPolicy):
+class AsyncAuxiliaryAuthenticationPolicy(
+    _AuxiliaryAuthenticationPolicyBase, AsyncHTTPPolicy
+):
     async def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
-            return [await cred.get_token(*scopes, **kwargs) for cred in self._auxiliary_credentials]
+            return [
+                await cred.get_token(*scopes, **kwargs)
+                for cred in self._auxiliary_credentials
+            ]
         return None
 
     async def on_request(self, request):
@@ -91,7 +101,9 @@ class AsyncAuxiliaryAuthenticationPolicy(_AuxiliaryAuthenticationPolicyBase, Asy
 
         self._update_headers(request.http_request.headers)
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> "Union[None, Awaitable[None]]":
+    def on_response(
+        self, request: "PipelineRequest", response: "PipelineResponse"
+    ) -> "Union[None, Awaitable[None]]":
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
