@@ -14,7 +14,7 @@ from azure.mgmt.desktopvirtualization import DesktopVirtualizationMgmtClient
     pip install azure-identity
     pip install azure-mgmt-desktopvirtualization
 # USAGE
-    python scaling_plan_pooled_schedules_create.py
+    python scaling_plan_pooled_schedule_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
