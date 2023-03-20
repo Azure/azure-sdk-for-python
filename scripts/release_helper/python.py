@@ -16,7 +16,6 @@ _PYTHON_ASSIGNEE = {'Wzb123456789'}
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
-_7_DAY_ATTENTION = '7days attention'
 _MultiAPI = 'MultiAPI'
 _ON_TIME = 'on time'
 _HOLD_ON = 'HoldOn'
@@ -122,26 +121,12 @@ class IssueProcessPython(IssueProcess):
         if _HOLD_ON in self.issue_package.labels_name:
             self.bot_advice.append('Hold on')
 
-    def remind_policy(self):
-        if self.delay_time >= 15 and _7_DAY_ATTENTION in self.issue_package.labels_name and self.date_from_target < 0:
-            self.comment(
-                f'hi @{self.owner}, the issue is closed since there is no reply for a long time. '
-                'Please reopen it if necessary or create new one.')
-            self.issue_package.issue.edit(state='close')
-        elif self.delay_time >= 7 and _7_DAY_ATTENTION not in self.issue_package.labels_name and self.date_from_target < 7:
-            self.comment(
-                f'hi @{self.owner}, this release-request has been delayed more than 7 days,'
-                ' please deal with it ASAP. We will close the issue if there is still no response after 7 days!')
-            self.add_label(_7_DAY_ATTENTION)
-
     def auto_bot_advice(self):
         super().auto_bot_advice()
         self.multi_api_policy()
         self.attention_policy()
         self.on_time_policy()
         self.hold_on_policy()
-        self.remind_policy()
-
 
     def auto_close(self) -> None:
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:

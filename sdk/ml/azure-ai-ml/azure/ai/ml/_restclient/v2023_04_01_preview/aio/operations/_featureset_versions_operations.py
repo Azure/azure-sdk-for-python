@@ -56,6 +56,12 @@ class FeaturesetVersionsOperations:
         skip: Optional[str] = None,
         tags: Optional[str] = None,
         list_view_type: Optional[Union[str, "_models.ListViewType"]] = None,
+        page_size: Optional[int] = 20,
+        version_name: Optional[str] = None,
+        version: Optional[str] = None,
+        description: Optional[str] = None,
+        created_by: Optional[str] = None,
+        stage: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FeaturesetVersionResourceArmPaginatedResult"]:
         """List versions.
@@ -76,6 +82,18 @@ class FeaturesetVersionsOperations:
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param version_name: name for the featureset version.
+        :type version_name: str
+        :param version: featureset version.
+        :type version: str
+        :param description: description for the feature set version.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
+        :param stage: stage.
+        :type stage: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeaturesetVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -102,6 +120,12 @@ class FeaturesetVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -118,6 +142,12 @@ class FeaturesetVersionsOperations:
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    version_name=version_name,
+                    version=version,
+                    description=description,
+                    created_by=created_by,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -481,7 +511,7 @@ class FeaturesetVersionsOperations:
             return deserialized
 
 
-        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        if polling is True: polling_method = AsyncARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
         elif polling is False: polling_method = AsyncNoPolling()
         else: polling_method = polling
         if cont_token:
@@ -503,8 +533,8 @@ class FeaturesetVersionsOperations:
         version: str,
         body: "_models.FeaturesetVersionBackfillRequest",
         **kwargs: Any
-    ) -> Optional["_models.FeaturesetVersionBackfillResponse"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetVersionBackfillResponse"]]
+    ) -> Optional["_models.FeaturesetJob"]:
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.FeaturesetJob"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -543,7 +573,7 @@ class FeaturesetVersionsOperations:
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
 
         if response.status_code == 202:
             response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
@@ -567,7 +597,7 @@ class FeaturesetVersionsOperations:
         version: str,
         body: "_models.FeaturesetVersionBackfillRequest",
         **kwargs: Any
-    ) -> AsyncLROPoller["_models.FeaturesetVersionBackfillResponse"]:
+    ) -> AsyncLROPoller["_models.FeaturesetJob"]:
         """Backfill.
 
         Backfill.
@@ -590,16 +620,16 @@ class FeaturesetVersionsOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either FeaturesetVersionBackfillResponse or
-         the result of cls(response)
+        :return: An instance of AsyncLROPoller that returns either FeaturesetJob or the result of
+         cls(response)
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetVersionBackfillResponse]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.machinelearningservices.models.FeaturesetJob]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = kwargs.pop('api_version', "2023-04-01-preview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetVersionBackfillResponse"]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.FeaturesetJob"]
         lro_delay = kwargs.pop(
             'polling_interval',
             self._config.polling_interval
@@ -621,7 +651,7 @@ class FeaturesetVersionsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('FeaturesetVersionBackfillResponse', pipeline_response)
+            deserialized = self._deserialize('FeaturesetJob', pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -726,6 +756,8 @@ class FeaturesetVersionsOperations:
         version: str,
         skip: Optional[str] = None,
         tags: Optional[str] = None,
+        feature_name: Optional[str] = None,
+        description: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.FeatureArmPaginatedResult"]:
         """List Features.
@@ -745,6 +777,10 @@ class FeaturesetVersionsOperations:
         :param tags: Comma-separated list of tag names (and optionally values). Example:
          tag1,tag2=value2.
         :type tags: str
+        :param feature_name: feature name.
+        :type feature_name: str
+        :param description: description.
+        :type description: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeatureArmPaginatedResult or the result of
          cls(response)
@@ -771,6 +807,8 @@ class FeaturesetVersionsOperations:
                     api_version=api_version,
                     skip=skip,
                     tags=tags,
+                    feature_name=feature_name,
+                    description=description,
                     template_url=self.list_features.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -787,6 +825,8 @@ class FeaturesetVersionsOperations:
                     api_version=api_version,
                     skip=skip,
                     tags=tags,
+                    feature_name=feature_name,
+                    description=description,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

@@ -49,16 +49,16 @@ jobs:
 
       - script: |
           cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
-          pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
-          pip install -r requirements.txt
+          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_core)
+          python -m pip install -r requirements.txt
           pip freeze
           pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/vanilla/legacy
         displayName: 'Install azure-core and Test Vanilla Legacy'
 
       - script: |
           cd $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
-          pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
-          pip install -r requirements.txt
+          python -m pip install $(Build.SourcesDirectory)/$(source_path_azure_mgmt_core)
+          python -m pip install -r requirements.txt
           pip freeze
           pytest $(Build.SourcesDirectory)/autorest.python/packages/autorest.python/test/azure/legacy
         displayName: 'Install azure-mgmt-core and Test Azure Legacy'
