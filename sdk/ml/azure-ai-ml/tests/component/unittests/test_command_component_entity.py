@@ -536,12 +536,30 @@ class TestCommandComponentEntity:
     @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_component_with_ipp_fields(self):
         # code is specified in yaml, value is respected
-        component_yaml = "./tests/test_configs/components/basic_component_with_ipp_fields.yml"
+        component_yaml = "./tests/test_configs/components/component_ipp.yml"
 
         command_component = load_component(
             source=component_yaml,
         )
 
+        expected_output_dict = {
+            "model_output_not_ipp": {
+                "type": "path",
+                "intellectual_property": {
+                    "publisher": "contoso",
+                    "protection_level": "none"
+                }
+            },
+            "model_output_ipp": {
+                "type": "path",
+                "intellectual_property": {
+                    "publisher": "contoso",
+                    "protection_level": "all"
+                }
+            }
+        }
+
+        # check top-level component
         assert command_component._intellectual_property
         assert command_component._intellectual_property.publisher == "contoso"
         assert command_component._intellectual_property.protection_level == "all"
@@ -553,6 +571,7 @@ class TestCommandComponentEntity:
             "publisher": "contoso",
             "protectionLevel": "all",
         }
+        assert rest_component.properties.component_spec["outputs"] == expected_output_dict
 
         # because there's a mismatch between what the service accepts for IPP fields and what it returns
         # (accepts camelCase for IPP, returns snake_case IPP), mock out the service response
@@ -567,3 +586,4 @@ class TestCommandComponentEntity:
         from_rest_dict = Component._from_rest_object(rest_component)._to_dict()
         assert from_rest_dict["intellectual_property"]
         assert from_rest_dict["intellectual_property"] == yaml_dict
+        assert from_rest_dict["outputs"] == expected_output_dict
