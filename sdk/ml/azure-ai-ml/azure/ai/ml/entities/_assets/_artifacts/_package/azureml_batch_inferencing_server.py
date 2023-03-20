@@ -9,10 +9,10 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import (
 
 
 class AzureMLBatchInferencingServer:
-    def __init__(self, code_configuration: str = None):
+    def __init__(self, type: str = None, code_configuration: str = None):
         """AzureMLBatchInferencingServer Variables are only populated by the server, and will be ignored when sending a
         request."""
-
+        self.type = type
         self.code_configuration = code_configuration
 
     @classmethod
@@ -20,4 +20,4 @@ class AzureMLBatchInferencingServer:
         return AzureMLBatchInferencingServer(code_configuration=rest_obj.code_configuration)
 
     def _to_rest_object(self) -> RestAzureMLBatchInferencingServer:
-        return RestAzureMLBatchInferencingServer(code_configuration=self.code_configuration)
+        return RestAzureMLBatchInferencingServer(server_type=self.type, code_configuration=self.code_configuration)

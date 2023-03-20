@@ -142,4 +142,7 @@ class ModelPackage(Resource, PackageRequest):
         if self.inferencing_server:
             self.inferencing_server = self.inferencing_server._to_rest_object()
 
+        if self.model_configuration:
+            self.model_configuration = self.model_configuration._to_rest_object()
+
         return self

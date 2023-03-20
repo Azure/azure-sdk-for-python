@@ -141,6 +141,7 @@ from ._assets._artifacts._package.azureml_online_inferencing_server import Azure
 from ._assets._artifacts._package.azureml_batch_inferencing_server import AzureMLBatchInferencingServer
 from ._assets._artifacts._package.triton_inferencing_server import TritonInferencingServer
 from ._assets._artifacts._package.custom_inferencing_server import CustomInferencingServer
+from ._assets._artifacts._package.model_configuration import ModelConfiguration
 from ._assets._artifacts._package.base_environment_source import BaseEnvironmentId
 
 
@@ -304,4 +305,6 @@ __all__ = [
     "AzureMLBatchInferencingServer",
     "TritonInferencingServer",
     "CustomInferencingServer",
+    "ModelConfiguration",
+    "BaseEnvironmentId",
 ]

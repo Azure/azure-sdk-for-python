@@ -3,18 +3,23 @@
 # ---
 
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomInferencingServer as RestCustomInferencingServer
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    OnlineInferenceConfiguration,
+    CustomInferencingServer as RestCustomInferencingServer,
+)
 
 
 class CustomInferencingServer:
-    def __init__(self, code_configuration: str = None):
+    def __init__(self, type: str = None, inference_configuration: OnlineInferenceConfiguration = None):
         """CustomInferencingServer Variables are only populated by the server, and will be ignored when sending a request."""
-
-        self.code_configuration = code_configuration
+        self.type = type
+        self.inference_configuration = inference_configuration
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestCustomInferencingServer) -> "RestCustomInferencingServer":
-        return CustomInferencingServer(code_configuration=rest_obj.code_configuration)
+        return CustomInferencingServer(
+            type=rest_obj.server_type, inference_configuration=rest_obj.inference_configuration
+        )
 
     def _to_rest_object(self) -> RestCustomInferencingServer:
-        return RestCustomInferencingServer(code_configuration=self.code_configuration)
+        return RestCustomInferencingServer(server_type=self.type, inference_configuration=self.inference_configuration)
