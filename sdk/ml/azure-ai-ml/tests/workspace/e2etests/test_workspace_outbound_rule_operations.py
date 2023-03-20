@@ -61,27 +61,28 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
 
         # test list outbound rules
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
-        assert "my-service" in rules.keys()
-        assert isinstance(rules["my-service"], ServiceTagDestination)
-        assert rules["my-service"].category == OutboundRuleCategory.USER_DEFINED
-        assert rules["my-service"].port_ranges == "80, 8080-8089"
-        assert rules["my-service"].protocol == "TCP"
-        assert rules["my-service"].service_tag == "DataFactory"
+        rules_dict = {}
+        for rule in rules:
+            rules_dict[rule.rule_name] = rule
 
-        assert "my-storage" in rules.keys()
-        assert isinstance(rules["my-storage"], PrivateEndpointDestination)
-        assert rules["my-storage"].category == OutboundRuleCategory.USER_DEFINED
-        assert (
-            rules["my-storage"].service_resource_id
-            == "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount"
-        )
-        assert rules["my-storage"].spark_enabled == False
-        assert rules["my-storage"].subresource_target == "blob"
+        assert "my-service" in rules_dict.keys()
+        assert isinstance(rules_dict["my-service"], ServiceTagDestination)
+        assert rules_dict["my-service"].category == OutboundRuleCategory.USER_DEFINED
+        assert rules_dict["my-service"].port_ranges == "80, 8080-8089"
+        assert rules_dict["my-service"].protocol == "TCP"
+        assert rules_dict["my-service"].service_tag == "DataFactory"
 
-        assert "pytorch" in rules.keys()
-        assert isinstance(rules["pytorch"], FqdnDestination)
-        assert rules["pytorch"].category == OutboundRuleCategory.USER_DEFINED
-        assert rules["pytorch"].destination == "*.pytorch.org"
+        assert "my-storage" in rules_dict.keys()
+        assert isinstance(rules_dict["my-storage"], PrivateEndpointDestination)
+        assert rules_dict["my-storage"].category == OutboundRuleCategory.USER_DEFINED
+        assert "storageAccounts/mvnetstorage1" in rules_dict["my-storage"].service_resource_id
+        assert rules_dict["my-storage"].spark_enabled == False
+        assert rules_dict["my-storage"].subresource_target == "blob"
+
+        assert "pytorch" in rules_dict.keys()
+        assert isinstance(rules_dict["pytorch"], FqdnDestination)
+        assert rules_dict["pytorch"].category == OutboundRuleCategory.USER_DEFINED
+        assert rules_dict["pytorch"].destination == "*.pytorch.org"
 
         # test adding outbound rules with workspace update
         params_override = [
@@ -99,52 +100,51 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
 
         # test show rules added
         # FQDN rule
-        rule = client._workspace_outbound_rules.show(client.resource_group_name, wps_name, "added-fqdnrule")
+        rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-fqdnrule")
         assert isinstance(rule, FqdnDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
         assert rule.destination == "test.com"
         # ServiceTag rule
-        rule = client._workspace_outbound_rules.show(client.resource_group_name, wps_name, "added-servicetagrule")
+        rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-servicetagrule")
         assert isinstance(rule, ServiceTagDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
         assert rule.service_tag == "DataFactory"
         assert rule.protocol == "TCP"
         assert rule.port_ranges == "80, 8080-8089"
         # PrivateEndpoint rule
-        rule = client._workspace_outbound_rules.show(client.resource_group_name, wps_name, "added-perule")
+        rule = client._workspace_outbound_rules.get(client.resource_group_name, wps_name, "added-perule")
         assert isinstance(rule, PrivateEndpointDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
-        assert (
-            rule.service_resource_id
-            == "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount"
-        )
+        assert "storageAccounts/mvnetstorage2" in rule.service_resource_id
         assert rule.subresource_target == "blob"
         assert rule.spark_enabled == True
 
         # assert update did not remove existing outbound rules
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
-        assert "pytorch" in rules.keys()
-        assert "my-service" in rules.keys()
-        assert "my-storage" in rules.keys()
+        rule_names = [rule.rule_name for rule in rules]
+        assert "pytorch" in rule_names
+        assert "my-service" in rule_names
+        assert "my-storage" in rule_names
 
         # test remove outbound rule
-        rule_poller = client._workspace_outbound_rules.remove(client.resource_group_name, wps_name, "pytorch")
+        rule_poller = client._workspace_outbound_rules.begin_remove(client.resource_group_name, wps_name, "pytorch")
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
-        rule_poller = client._workspace_outbound_rules.remove(client.resource_group_name, wps_name, "my-service")
+        rule_poller = client._workspace_outbound_rules.begin_remove(client.resource_group_name, wps_name, "my-service")
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
-        rule_poller = client._workspace_outbound_rules.remove(client.resource_group_name, wps_name, "my-storage")
+        rule_poller = client._workspace_outbound_rules.begin_remove(client.resource_group_name, wps_name, "my-storage")
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
         # assert remove worked removed the outbound rules
         rules = client._workspace_outbound_rules.list(client.resource_group_name, wps_name)
-        assert "pytorch" not in rules.keys()
-        assert "my-service" not in rules.keys()
-        assert "my-storage" not in rules.keys()
+        rule_names = [rule.rule_name for rule in rules]
+        assert "pytorch" not in rule_names
+        assert "my-service" not in rule_names
+        assert "my-storage" not in rule_names
 
         # test workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
