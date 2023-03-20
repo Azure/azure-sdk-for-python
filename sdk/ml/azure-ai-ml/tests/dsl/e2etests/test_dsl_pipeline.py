@@ -63,6 +63,7 @@ def check_name_and_version(output, output_name, output_version):
     assert output.name == output_name
     assert output.version == output_version
 
+
 def build_pipeline_with_parallel_run_function(data, literal_input=None):
     # command job with dict distribution
     environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
@@ -109,6 +110,7 @@ def build_pipeline_with_parallel_run_function(data, literal_input=None):
         input_data=input_data,
     )
     if literal_input is None:
+
         @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
         def parallel_in_pipeline(job_data_path):
             node1 = parallel_function(job_data_path=job_data_path)
@@ -120,6 +122,7 @@ def build_pipeline_with_parallel_run_function(data, literal_input=None):
 
         return parallel_in_pipeline(data)
     else:
+
         @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
         def parallel_in_pipeline(job_data_path, literal_input):
             node1 = parallel_function(job_data_path=job_data_path)
@@ -127,11 +130,12 @@ def build_pipeline_with_parallel_run_function(data, literal_input=None):
             node1.task = None
             node1.resources.instance_count = literal_input
             node1.max_concurrency_per_instance = literal_input
-            node1.error_threshold =literal_input
+            node1.error_threshold = literal_input
             node1.mini_batch_error_threshold = literal_input
             return {
                 "pipeline_output": node1.outputs.job_output_path,
             }
+
         return parallel_in_pipeline(data, literal_input)
 
 
@@ -1661,7 +1665,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             score_model=Input(
                 path="./tests/test_configs/model", type=AssetTypes.URI_FOLDER, mode=InputOutputModes.DOWNLOAD
             ),
-            literal_input=2
+            literal_input=2,
         )
         # submit pipeline job
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")

@@ -564,8 +564,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert on the number of converted jobs to make sure we didn't drop the parallel job
         assert len(created_job.jobs.items()) == 1
 
-    @pytest.mark.skip(reason="The task for fixing this is tracked by "
-                      "https://msdata.visualstudio.com/Vienna/_workitems/edit/2298433")
+    @pytest.mark.skip(
+        reason="The task for fixing this is tracked by "
+        "https://msdata.visualstudio.com/Vienna/_workitems/edit/2298433"
+    )
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
