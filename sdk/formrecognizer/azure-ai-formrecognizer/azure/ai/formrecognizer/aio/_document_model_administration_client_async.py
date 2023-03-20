@@ -26,6 +26,7 @@ from .._api_versions import DocumentAnalysisApiVersion
 from .._polling import DocumentModelAdministrationPolling
 from .._models import (
     ModelBuildMode,
+    DocumentClassifierDetails,
     DocumentModelDetails,
     DocumentModelSummary,
     OperationDetails,
@@ -510,6 +511,87 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             await _client_op_path(operation_id, **kwargs),
             api_version=self._api_version,
         )
+
+    @distributed_trace_async
+    async def get_document_classifier(self, classifier_id: str, **kwargs: Any) -> DocumentClassifierDetails:
+        """Get a document classifier by its ID.
+
+        :param str classifier_id: Classifier identifier.
+        :return: DocumentClassifierDetails
+        :rtype: ~azure.ai.formrecognizer.DocumentClassifierDetails
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+                :start-after: [START get_document_classifier]
+                :end-before: [END get_document_classifier]
+                :language: python
+                :dedent: 4
+                :caption: Get a classifier by its ID.
+        """
+
+        if not classifier_id:
+            raise ValueError("classifier_id cannot be None or empty.")
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'get_document_classifier()' is only available for API version V2023_02_28_PREVIEW and later")
+        response = await self._client.document_classifiers.get_classifier(classifier_id=classifier_id, **kwargs)
+        return DocumentClassifierDetails._from_generated(response)
+
+    @distributed_trace
+    def list_document_classifiers(self, **kwargs: Any) -> AsyncItemPaged[DocumentClassifierDetails]:
+        """List information for each document classifier, including its classifier ID,
+        description, and when it was created.
+
+        :return: Pageable of DocumentClassifierDetails.
+        :rtype: ~azure.core.paging.ItemPaged[DocumentClassifierDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+                :start-after: [START list_document_classifiers]
+                :end-before: [END list_document_classifiers]
+                :language: python
+                :dedent: 4
+                :caption: List all classifiers that were built successfully under the Form Recognizer resource.
+        """
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'list_document_classifiers()' is only available for API version V2023_02_28_PREVIEW and later")
+        return self._client.document_classifiers.list_classifiers(  # type: ignore
+            cls=kwargs.pop(
+                "cls",
+                lambda objs: [DocumentClassifierDetails._from_generated(x) for x in objs],
+            ),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def delete_document_classifier(self, classifier_id: str, **kwargs: Any) -> None:
+        """Delete a document classifier.
+
+        :param str classifier_id: Classifier identifier.
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+                :start-after: [START delete_document_classifier]
+                :end-before: [END delete_document_classifier]
+                :language: python
+                :dedent: 4
+                :caption: Delete a classifier.
+        """
+
+        if not classifier_id:
+            raise ValueError("classifier_id cannot be None or empty.")
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'delete_document_classifier()' is only available for API version V2023_02_28_PREVIEW and later")
+        return await self._client.document_classifiers.delete_classifier(classifier_id=classifier_id, **kwargs)
 
     def get_document_analysis_client(self, **kwargs: Any) -> DocumentAnalysisClient:
         """Get an instance of a DocumentAnalysisClient from DocumentModelAdministrationClient.
