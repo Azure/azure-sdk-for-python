@@ -3,13 +3,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, List, Any, Optional
-
+from typing import Any, Optional, Union
+from azure.core.credentials_async import AsyncTokenCredential
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
 from .._generated.models import TokenGrantType
 from .._helpers import _parse_challenge
 from .._user_agent import USER_AGENT
+
+
+class AsyncAnonymousAccessCredential(AsyncTokenCredential):
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+    ) -> None:
+        raise ValueError("This credential cannot be used to obtain access tokens.")
 
 
 class AnonymousACRExchangeClient(object):
@@ -29,7 +36,7 @@ class AnonymousACRExchangeClient(object):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._client = ContainerRegistry(
-            credential="", # type: ignore
+            credential=AsyncAnonymousAccessCredential(),
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
@@ -47,7 +54,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     async def exchange_refresh_token_for_access_token(
-        self, refresh_token: str, service: str, scope: str, grant_type: str, **kwargs: Any
+        self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs: Any
     ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token( # type: ignore
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs

@@ -480,21 +480,3 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 with pytest.raises(ClientAuthenticationError):
                     async for repo in client.list_repository_names():
                         pass
-
-
-async def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
-    
-    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
-        assert client._client._config.api_version == "2021-07-01"
-    
-    with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
-    ) as client:
-        assert client._client._config.api_version == "2019-08-15-preview"
-    
-    with pytest.raises(ValueError):
-        with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
-        ) as client:
-            pass

@@ -3,13 +3,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Union, Optional
-
+from typing import Any, Optional, Union
+from azure.core.credentials import TokenCredential
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
 from ._generated.models import TokenGrantType
 from ._helpers import _parse_challenge
 from ._user_agent import USER_AGENT
+
+
+class AnonymousAccessCredential(TokenCredential):
+    def get_token(
+        self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
+    ) -> None:
+        raise ValueError("This credential cannot be used to obtain access tokens.")
 
 
 class AnonymousACRExchangeClient(object):
@@ -28,7 +35,7 @@ class AnonymousACRExchangeClient(object):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._client = ContainerRegistry(
-            credential="", # type: ignore
+            credential=AnonymousAccessCredential(),
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),

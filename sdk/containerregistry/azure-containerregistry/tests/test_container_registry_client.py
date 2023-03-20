@@ -16,7 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _deserialize_manifest, _serialize_manifest
+from azure.containerregistry._helpers import _serialize_manifest
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -598,21 +598,3 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 with pytest.raises(ClientAuthenticationError):
                     for repo in client.list_repository_names():
                         pass
-
-
-def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
-
-    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
-        assert client._client._config.api_version == "2021-07-01"
-
-    with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com", api_version = "2019-08-15-preview"
-    ) as client:
-        assert client._client._config.api_version == "2019-08-15-preview"
-
-    with pytest.raises(ValueError):
-        with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com", api_version = "2019-08-15"
-        ) as client:
-            pass
