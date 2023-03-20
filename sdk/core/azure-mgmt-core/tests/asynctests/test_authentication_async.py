@@ -29,7 +29,10 @@ from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
-from azure.mgmt.core.policies import AsyncARMChallengeAuthenticationPolicy, AsyncAuxiliaryAuthenticationPolicy
+from azure.mgmt.core.policies import (
+    AsyncARMChallengeAuthenticationPolicy,
+    AsyncAuxiliaryAuthenticationPolicy,
+)
 from azure.core.pipeline.transport import HttpRequest
 
 import pytest
@@ -50,7 +53,13 @@ async def test_claims_challenge():
     challenge = 'Bearer authorization_uri="https://localhost", error=".", error_description=".", claims="{}"'.format(
         base64.b64encode(expected_claims.encode()).decode()
     )
-    responses = (r for r in (Mock(status_code=401, headers={"WWW-Authenticate": challenge}), Mock(status_code=200)))
+    responses = (
+        r
+        for r in (
+            Mock(status_code=401, headers={"WWW-Authenticate": challenge}),
+            Mock(status_code=200),
+        )
+    )
 
     async def send(request):
         res = next(responses)
@@ -120,8 +129,11 @@ async def test_auxiliary_authentication_policy():
     second_token = AccessToken("second", int(time.time()) + 3600)
 
     async def verify_authorization_header(request):
-        assert request.http_request.headers["x-ms-authorization-auxiliary"] ==\
-               ', '.join("Bearer {}".format(token.token) for token in [first_token, second_token])
+        assert request.http_request.headers[
+            "x-ms-authorization-auxiliary"
+        ] == ", ".join(
+            "Bearer {}".format(token.token) for token in [first_token, second_token]
+        )
         return Mock()
 
     get_token_calls1 = 0
@@ -139,8 +151,12 @@ async def test_auxiliary_authentication_policy():
 
     fake_credential1 = Mock(get_token=get_token1)
     fake_credential2 = Mock(get_token=get_token2)
-    policies = [AsyncAuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
-                Mock(send=verify_authorization_header)]
+    policies = [
+        AsyncAuxiliaryAuthenticationPolicy(
+            [fake_credential1, fake_credential2], "scope"
+        ),
+        Mock(send=verify_authorization_header),
+    ]
 
     pipeline = AsyncPipeline(transport=Mock(), policies=policies)
     await pipeline.run(HttpRequest("GET", "https://spam.eggs"))

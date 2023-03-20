@@ -54,7 +54,6 @@ def _build_response(json_body):
 
 
 def test_arm_exception():
-
     message = {
         "error": {
             "code": "BadArgument",
@@ -68,7 +67,9 @@ def test_arm_exception():
                 }
             ],
             "innererror": {"customKey": "customValue"},
-            "additionalInfo": [{"type": "SomeErrorType", "info": {"customKey": "customValue"}}],
+            "additionalInfo": [
+                {"type": "SomeErrorType", "info": {"customKey": "customValue"}}
+            ],
         }
     }
     cloud_exp = ARMError(response=_build_response(json.dumps(message).encode("utf-8")))
@@ -94,13 +95,17 @@ def test_arm_exception():
                             "type": "PolicyViolation",
                             "info": {
                                 "policyDefinitionDisplayName": "Allowed locations",
-                                "policyAssignmentParameters": {"listOfAllowedLocations": {"value": ["westus"]}},
+                                "policyAssignmentParameters": {
+                                    "listOfAllowedLocations": {"value": ["westus"]}
+                                },
                             },
                         }
                     ],
                 }
             ],
-            "additionalInfo": [{"type": "SomeErrorType", "info": {"customKey": "customValue"}}],
+            "additionalInfo": [
+                {"type": "SomeErrorType", "info": {"customKey": "customValue"}}
+            ],
         }
     }
     cloud_exp = ARMError(response=_build_response(json.dumps(message).encode("utf-8")))
@@ -109,7 +114,12 @@ def test_arm_exception():
     assert cloud_exp.error.additional_info[0].type == "SomeErrorType"
     assert cloud_exp.error.additional_info[0].info["customKey"] == "customValue"
     assert cloud_exp.error.details[0].additional_info[0].type == "PolicyViolation"
-    assert cloud_exp.error.details[0].additional_info[0].info["policyDefinitionDisplayName"] == "Allowed locations"
+    assert (
+        cloud_exp.error.details[0]
+        .additional_info[0]
+        .info["policyDefinitionDisplayName"]
+        == "Allowed locations"
+    )
     assert (
         cloud_exp.error.details[0]
         .additional_info[0]

@@ -68,7 +68,9 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
     """Implements a operation resource polling, typically from Azure-AsyncOperation."""
 
     def __init__(self, lro_options=None):
-        super(AzureAsyncOperationPolling, self).__init__(operation_location_header="azure-asyncoperation")
+        super(AzureAsyncOperationPolling, self).__init__(
+            operation_location_header="azure-asyncoperation"
+        )
 
         self._lro_options = lro_options or {}
 
@@ -79,11 +81,14 @@ class AzureAsyncOperationPolling(OperationResourcePolling):
         :rtype: str
         """
         if (
-            self._lro_options.get(_LroOption.FINAL_STATE_VIA) == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA)
+            == _FinalStateViaOption.AZURE_ASYNC_OPERATION_FINAL_STATE
             and self._request.method == "POST"
         ):
             return None
-        return super(AzureAsyncOperationPolling, self).get_final_get_url(pipeline_response)
+        return super(AzureAsyncOperationPolling, self).get_final_get_url(
+            pipeline_response
+        )
 
 
 class BodyContentPolling(LongRunningOperation):
@@ -159,7 +164,9 @@ class BodyContentPolling(LongRunningOperation):
         """
         response = pipeline_response.http_response
         if _is_empty(response):
-            raise BadResponse("The response from long running operation does not contain a body.")
+            raise BadResponse(
+                "The response from long running operation does not contain a body."
+            )
 
         status = self._get_provisioning_state(response)
         return status or "Succeeded"
@@ -167,7 +174,12 @@ class BodyContentPolling(LongRunningOperation):
 
 class ARMPolling(LROBasePolling):
     def __init__(
-        self, timeout=30, lro_algorithms=None, lro_options=None, path_format_arguments=None, **operation_config
+        self,
+        timeout=30,
+        lro_algorithms=None,
+        lro_options=None,
+        path_format_arguments=None,
+        **operation_config
     ):
         lro_algorithms = lro_algorithms or [
             AzureAsyncOperationPolling(lro_options=lro_options),

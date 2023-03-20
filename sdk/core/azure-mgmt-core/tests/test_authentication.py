@@ -76,14 +76,19 @@ def test_auxiliary_authentication_policy():
     second_token = AccessToken("second", int(time.time()) + 3600)
 
     def verify_authorization_header(request):
-        assert request.http_request.headers["x-ms-authorization-auxiliary"] ==\
-               ', '.join("Bearer {}".format(token.token) for token in [first_token, second_token])
+        assert request.http_request.headers[
+            "x-ms-authorization-auxiliary"
+        ] == ", ".join(
+            "Bearer {}".format(token.token) for token in [first_token, second_token]
+        )
         return Mock()
 
     fake_credential1 = Mock(get_token=Mock(return_value=first_token))
     fake_credential2 = Mock(get_token=Mock(return_value=second_token))
-    policies = [AuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
-                Mock(send=verify_authorization_header)]
+    policies = [
+        AuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
+        Mock(send=verify_authorization_header),
+    ]
 
     pipeline = Pipeline(transport=Mock(), policies=policies)
     pipeline.run(HttpRequest("GET", "https://spam.eggs"))
@@ -111,7 +116,13 @@ def test_claims_challenge():
     challenge = 'Bearer authorization_uri="https://localhost", error=".", error_description=".", claims="{}"'.format(
         base64.b64encode(expected_claims.encode()).decode()
     )
-    responses = (r for r in (Mock(status_code=401, headers={"WWW-Authenticate": challenge}), Mock(status_code=200)))
+    responses = (
+        r
+        for r in (
+            Mock(status_code=401, headers={"WWW-Authenticate": challenge}),
+            Mock(status_code=200),
+        )
+    )
 
     def send(request):
         res = next(responses)
