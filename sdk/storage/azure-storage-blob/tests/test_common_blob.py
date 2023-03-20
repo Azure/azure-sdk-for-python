@@ -150,7 +150,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # wait until the policy has gone into effect
         if self.is_live:
             self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
-            time.sleep(40)
+            time.sleep(60)
 
     def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)
@@ -1206,7 +1206,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         finally:
             self._disable_soft_delete()
-            time.sleep(40)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1257,7 +1256,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 self._assert_blob_not_soft_deleted(blob)
         finally:
             self._disable_soft_delete()
-            time.sleep(40)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1305,7 +1303,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         finally:
             self._disable_soft_delete()
-            time.sleep(40)
 
     @BlobPreparer()
     @recorded_by_proxy
