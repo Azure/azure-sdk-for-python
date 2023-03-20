@@ -122,6 +122,7 @@ def _validate_compute_or_resources(compute, resources):
 
 
 # Only "direct" mode is supported for spark job inputs and outputs
+# pylint: disable=no-else-raise, too-many-boolean-expressions
 def _validate_input_output_mode(inputs, outputs):
     for input_name, input_value in inputs.items():
         if isinstance(input_value, Input) and input_value.mode != InputOutputModes.DIRECT:
