@@ -2,8 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-
+import re
 from azure.ai.ml.constants import InputOutputModes
+from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import NodeInput, NodeOutput
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -136,7 +137,12 @@ def _validate_input_output_mode(inputs, outputs):
             )
         elif (
             isinstance(input_value, NodeInput)
-            and (isinstance(input_value._data, Input) and input_value._data.mode != InputOutputModes.DIRECT)
+            and (
+                    isinstance(input_value._data, Input) and
+                    not (isinstance(input_value._data.path, str) and bool(
+                        re.search(ComponentJobConstants.INPUT_PATTERN, input_value._data.path)))
+                    and input_value._data.mode != InputOutputModes.DIRECT
+            )
             and (isinstance(input_value._meta, Input) and input_value._meta.mode != InputOutputModes.DIRECT)
         ):
             # For node input in pipeline job, client side can only validate node input which isn't bound to pipeline
@@ -148,8 +154,7 @@ def _validate_input_output_mode(inputs, outputs):
             # 2. If node input is bound to last node output, input mode should be decoupled with output mode, so we
             # always get None mode in node level. In this case, if we define correct "Direct" mode in component yaml,
             # component level mode will take effect and run successfully. Otherwise, it need to set mode in node level
-            # like input1: path: ${{parent.jobs.sample_word.outputs.output1}} mode: direct. Then it become a NodeInput
-            # which can be validated, not literal input.
+            # like input1: path: ${{parent.jobs.sample_word.outputs.output1}} mode: direct.
             msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job"
             raise ValidationException(
                 message=msg.format(
@@ -177,7 +182,12 @@ def _validate_input_output_mode(inputs, outputs):
         elif (
             isinstance(output_value, NodeOutput)
             and output_name != "default"
-            and (isinstance(output_value._data, Output) and output_value._data.mode != InputOutputModes.DIRECT)
+            and (
+                    isinstance(output_value._data, Output) and
+                    not (isinstance(output_value._data.path, str) and bool(
+                        re.search(ComponentJobConstants.OUTPUT_PATTERN, output_value._data.path)))
+                    and output_value._data.mode != InputOutputModes.DIRECT
+            )
             and (isinstance(output_value._meta, Output) and output_value._meta.mode != InputOutputModes.DIRECT)
         ):
             # For node output in pipeline job, client side can only validate node output which isn't bound to pipeline

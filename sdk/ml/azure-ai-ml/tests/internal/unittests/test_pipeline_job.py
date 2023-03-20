@@ -32,7 +32,7 @@ from azure.ai.ml._internal import (
     TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
@@ -121,8 +121,11 @@ class TestPipelineJob:
         for input_name, input_obj in inputs.items():
             if isinstance(input_obj, Input):
                 data_name = input_obj.path.split("@")[0]
-                inputs[input_name] = Data(name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE)
-                input_data_names[input_name] = data_name
+                if "spark" in yaml_path:
+                    input_data_names[input_name] = input_obj
+                else:
+                    inputs[input_name] = Data(name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE)
+                    input_data_names[input_name] = data_name
         if len(input_data_names) == 0:
             return
 
@@ -138,10 +141,17 @@ class TestPipelineJob:
 
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         for input_name, dataset_name in input_data_names.items():
-            expected_rest_obj = {
-                "job_input_type": AssetTypes.MLTABLE,
-                "uri": dataset_name + ":" + DATA_VERSION,
-            }
+            if "spark" in yaml_path:
+                expected_rest_obj = {
+                    "job_input_type": AssetTypes.MLTABLE,
+                    "uri": dataset_name.path,
+                    "mode": "Direct"
+                }
+            else:
+                expected_rest_obj = {
+                    "job_input_type": AssetTypes.MLTABLE,
+                    "uri": dataset_name + ":" + DATA_VERSION,
+                }
             assert node_rest_dict["inputs"][input_name] == expected_rest_obj
 
     @pytest.mark.parametrize(
