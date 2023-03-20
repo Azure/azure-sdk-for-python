@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug that would prevent reconnect after a long idle period, network drop (issue #28996)
+
 ### Other Changes
 
 ## 5.11.1 (2023-01-25)
