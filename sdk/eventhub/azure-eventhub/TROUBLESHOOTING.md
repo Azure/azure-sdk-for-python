@@ -13,10 +13,7 @@ This troubleshooting guide covers failure investigation techniques, common error
   - [Connect using an IoT connection string](#connect-using-an-iot-connection-string)
   - [Cannot add components to the connection string](#cannot-add-components-to-the-connection-string)
 - [Enable and configure logging](#enable-and-configure-logging)
-  - [Configuring Log4J 2](#configuring-log4j-2)
-  - [Configuring logback](#configuring-logback)
   - [Enable AMQP transport logging](#enable-amqp-transport-logging)
-  - [Reduce logging](#reduce-logging)
 - [Troubleshoot EventProducerAsyncClient/EventProducerClient issues](#troubleshoot-eventproducerasyncclienteventproducerclient-issues)
   - [Cannot set multiple partition keys for events in EventDataBatch](#cannot-set-multiple-partition-keys-for-events-in-eventdatabatch)
   - [Setting partition key on EventData is not set in Kafka consumer](#setting-partition-key-on-eventdata-is-not-set-in-kafka-consumer)
@@ -114,27 +111,10 @@ The Azure SDK for Python offers a consistent logging story to help troubleshoot 
 This library uses the standard [Logging] library for logging
 
 - Enable `azure.eventhub` logger to collect traces from the library.
-- Enable `uamqp` logger to collect traces from the underlying uAMQP library.
 
 ### Enable AMQP transport logging
 
 If enabling client logging is not enough to diagnose your issues. You can enable AMQP frame level trace by setting `logging_enable=True` when creating the client.
-
-### Reduce logging
-
-There may be cases where you consider the `uamqp` logging to be too verbose. To suppress unnecessary logging, add the following snippet to the top of your code:
-
-```python
-import logging
-
-# The logging levels below may need to be adjusted based on the logging that you want to suppress.
-uamqp_logger = logging.getLogger('uamqp')
-uamqp_logger.setLevel(logging.ERROR)
-
-# or even further fine-grained control, suppressing the warnings in uamqp.connection module
-uamqp_connection_logger = logging.getLogger('uamqp.connection')
-uamqp_connection_logger.setLevel(logging.ERROR)
-```
 
 ## Troubleshoot EventHubProducerClient (Sync/Async) issues
 
@@ -205,6 +185,7 @@ When filing GitHub issues, the following details are requested:
 <!-- repo links -->
 [IoTConnectionString]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/samples/async_samples/iot_hub_connection_string_receive_async.py
 [MigrationGuide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub/migration_guide.md
+[SUPPORT]: https://github.com/Azure/azure-sdk-for-python/blob/main/SUPPORT.md
 
 <!-- docs.microsoft.com links -->
 [ExceptionModule]: https://docs.microsoft.com/python/api/azure-eventhub/azure.eventhub.exceptions
