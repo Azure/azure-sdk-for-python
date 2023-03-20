@@ -86,8 +86,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_block_size: The maximum chunk size for uploading a block blob in chunks.
-        Defaults to 4*1024*1024, or 4MB. Note that beginning with service version 2022-11-02, the maximum chunk size
-        is 100*1024*1024, or 100MB. For previous service versions, the maximum chunk size is 4MB.
+        Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
         the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
