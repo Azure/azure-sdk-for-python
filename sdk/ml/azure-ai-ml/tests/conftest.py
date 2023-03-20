@@ -100,22 +100,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         group_for_replace="1",
     )
 
-    identity_json_paths = [
-        ".systemData.createdBy",
-        ".systemData.lastModifiedBy",
-        ".createdBy.userName",
-        ".lastModifiedBy.userName",
-        ".runMetadata.createdBy.userName",
-        ".runMetadata.lastModifiedBy.userName",
-    ]
-    identity_replacements = [("Firstname Lastname", r".+\s.+"), ("alias@contoso.com", r".+@.+")]
-
-    for path in identity_json_paths:
-        for replacement, regexp in identity_replacements:
-            add_body_key_sanitizer(json_path=path, value=replacement, regex=regexp)
-            # Try to match in arrays too
-            add_body_key_sanitizer(json_path=f".value[*]{path}", value=replacement, regex=regexp)
-
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -148,6 +132,11 @@ def mock_registry_scope() -> OperationScope:
 @pytest.fixture
 def mock_operation_config() -> OperationConfig:
     yield OperationConfig(show_progress=True, enable_telemetry=True)
+
+
+@pytest.fixture
+def mock_operation_config_no_progress() -> OperationConfig:
+    yield OperationConfig(show_progress=False, enable_telemetry=True)
 
 
 @pytest.fixture
@@ -908,3 +897,9 @@ def disable_internal_components():
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
         yield
+
+
+@pytest.fixture()
+def mock_set_headers_with_user_aml_token(mocker: MockFixture):
+    if not is_live() or not is_live_and_not_recording():
+        mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")

@@ -917,6 +917,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(

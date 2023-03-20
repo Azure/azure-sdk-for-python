@@ -29,7 +29,6 @@ AZURE_MONITOR_STREAM_NAME=<The data collection stream name>
 
 These options are available for all perf tests:
 - `--duration=10` Number of seconds to run as many operations (the "run" function) as possible. Default is 10.
-- `--iterations=1` Number of test iterations to run. Default is 1.
 - `--parallel=1` Number of tests to run in parallel. Default is 1.
 - `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
@@ -40,6 +39,8 @@ These options are available for all perf tests:
 
 These options are available for all ingestion perf tests:
 - `-n`, `--num-logs` Number of logs to be uploaded. Defaults to 100.
+- `-l`, `--log-content-length` Length of the "AdditionalContext" value for each log entry. Use this to increase the size of each log entry. Defaults to 20.
+- `-r`, `--random-log-content` Whether to use a random alphanumeric string for each "AdditionalContext" entry as opposed to a string comprised of a single repeating character. Use this to decrease the compression ratio when the logs are gzipped. Defaults to False.
 
 ### Available tests
 

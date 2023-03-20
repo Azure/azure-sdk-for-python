@@ -47,6 +47,7 @@ def assert_job_input_output_types(job: PipelineJob):
     "enable_pipeline_private_preview_features",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "enable_environment_id_arm_expansion",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
