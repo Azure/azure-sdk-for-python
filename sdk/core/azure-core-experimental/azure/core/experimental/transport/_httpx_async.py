@@ -104,7 +104,6 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             if stream_response:
                 req = self.client.build_request(**parameters)
                 response = await self.client.send(req, stream=stream_response)
-                #stream_ctx = response.iter_bytes()
             else:
                 response = await self.client.request(**parameters)
         except (
