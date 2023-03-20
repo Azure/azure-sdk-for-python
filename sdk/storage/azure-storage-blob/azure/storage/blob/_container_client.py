@@ -870,7 +870,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :returns: An iterable (auto-paging) response of blob names as strings.
         :rtype: ~azure.core.paging.ItemPaged[str]
         """
-        name_starts_with = kwargs.pop('name_starts_with', None)
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
 

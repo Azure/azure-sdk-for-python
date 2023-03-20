@@ -356,7 +356,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _upload_blob_options(  # pylint:disable=too-many-statements
+    def _upload_blob_options(  # pylint:disable=too-many-statements,too-many-branches
             self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
             blob_type: Union[str, BlobType] = BlobType.BlockBlob,
             length: Optional[int] = None,
