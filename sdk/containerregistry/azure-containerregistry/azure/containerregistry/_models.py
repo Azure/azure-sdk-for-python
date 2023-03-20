@@ -373,7 +373,4 @@ class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ManifestMediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     OCI_IMAGE_MANIFEST = "application/vnd.oci.image.manifest.v1+json"
-    OCI_INDEX = "application/vnd.oci.image.index.v1+json"
     DOCKER_MANIFEST = "application/vnd.docker.distribution.manifest.v2+json"
-    DOCKER_MANIFEST_V1 = "application/vnd.docker.container.image.v1+json"
-    DOCKER_MANIFEST_LIST = "application/vnd.docker.distribution.manifest.list.v2+json"
