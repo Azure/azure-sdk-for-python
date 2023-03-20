@@ -3009,12 +3009,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
         check_name_and_version(pipeline_job.jobs["node_3"].outputs["component_out_path"], "n3_o_output", "4")
         check_name_and_version(pipeline_job.jobs["sub_node"].outputs["sub_pipeine_a_output"], "subgraph_o_output", "1")
 
-    def test_pipeline_input_binding_limits_timeout(self, client: MLClient) -> PipelineJob:
+    def test_pipeline_input_binding_limits_timeout(self, client: MLClient):
         component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
         component_func = load_component(source=component_yaml)
 
         @dsl.pipeline
-        def my_pipeline(timeout):
+        def my_pipeline(timeout) -> PipelineJob:
             node = component_func(component_in_number=1)
             node.set_limits(timeout=1)
             # bind PipelineInput to node's limits.timeout

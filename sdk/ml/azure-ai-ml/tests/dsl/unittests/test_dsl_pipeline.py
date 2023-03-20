@@ -3094,12 +3094,12 @@ class TestDSLPipeline:
         pipeline_job = my_pipeline()
         assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
 
-    def test_pipeline_input_binding_limits_timeout(self) -> PipelineJob:
+    def test_pipeline_input_binding_limits_timeout(self):
         component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
         component_func = load_component(source=component_yaml)
 
         @dsl.pipeline
-        def my_pipeline(timeout):
+        def my_pipeline(timeout) -> PipelineJob:
             node = component_func(component_in_number=1)
             node.set_limits(timeout=1)
             # bind PipelineInput to node's limits.timeout
