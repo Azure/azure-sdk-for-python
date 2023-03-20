@@ -897,3 +897,9 @@ def disable_internal_components():
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
         yield
+
+
+@pytest.fixture()
+def mock_set_headers_with_user_aml_token(mocker: MockFixture):
+    if not is_live() or not is_live_and_not_recording():
+        mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")
