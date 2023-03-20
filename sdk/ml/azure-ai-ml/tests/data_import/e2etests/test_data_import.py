@@ -26,6 +26,7 @@ class TestDataImport(AzureRecordedTestCase):
         assert isinstance(data_import, DataImport)
         assert data_import.name == job.outputs["sink"].name
         assert data_import.path == job.outputs["sink"].path
+        assert data_import.path == "azureml://datastores/workspaceblobstore/paths/${{name}}"
 
         assert isinstance(data_import.source, Database)
         assert isinstance(job.source, Database)
