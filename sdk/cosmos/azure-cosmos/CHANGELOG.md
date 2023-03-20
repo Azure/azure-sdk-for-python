@@ -8,7 +8,7 @@
 
 #### Bugs Fixed
 * Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally.
-* Fixed bug with client not properly surfacing errors for invalid credentials and identities with insufficient permissions.
+* Fixed bug with client not properly surfacing errors for invalid credentials and identities with insufficient permissions. Users running into 'NoneType has no attribute ConsistencyPolicy' errors when initializing their clients will now see proper authentication exceptions.
 
 #### Other Changes
 
