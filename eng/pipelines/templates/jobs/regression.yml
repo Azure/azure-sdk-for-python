@@ -84,7 +84,7 @@ jobs:
 
       - pwsh: |
           mkdir -p $(TEST_PROXY_FOLDER)
-          pip install -r eng/regression_tools.txt
+          python -m pip install -r eng/regression_tools.txt
         displayName: 'Prep Environment'
 
       - template: /eng/common/testproxy/test-proxy-tool.yml

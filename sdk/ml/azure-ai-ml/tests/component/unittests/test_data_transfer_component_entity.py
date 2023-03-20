@@ -9,7 +9,10 @@ from azure.ai.ml.entities._component.datatransfer_component import (
     DataTransferExportComponent,
 )
 from azure.ai.ml.constants._component import DataCopyMode, DataTransferTaskType
-from .test_component_schema import load_component_entity_from_rest_json, load_component_entity_from_yaml
+from .test_component_schema import (
+    load_component_entity_from_rest_json,
+    load_component_entity_from_yaml,
+)
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
 
@@ -27,7 +30,6 @@ class TestDataTransferComponentEntity:
         rest_path = "./tests/test_configs/components/data_transfer/copy_files.json"
         rest_entity = load_component_entity_from_rest_json(rest_path)
         data_transfer_copy_component = DataTransferCopyComponent(
-            task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_copy_files",
             display_name="Data Transfer Component copy-files",
             inputs={"folder1": {"type": "uri_folder"}},
@@ -38,7 +40,14 @@ class TestDataTransferComponentEntity:
 
         # data_copy_mode is a run time config, cannot be decided in registering progress. So won't be returned from
         # backend.
-        omit_fields = ["name", "id", "$schema", "data_copy_mode", "inputs.folder1.optional", "version"]
+        omit_fields = [
+            "name",
+            "id",
+            "$schema",
+            "data_copy_mode",
+            "inputs.folder1.optional",
+            "version",
+        ]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
         rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
         sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
@@ -54,10 +63,12 @@ class TestDataTransferComponentEntity:
         rest_path = "./tests/test_configs/components/data_transfer/merge_files.json"
         rest_entity = load_component_entity_from_rest_json(rest_path)
         data_transfer_copy_component = DataTransferCopyComponent(
-            task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_merge_files",
             display_name="Data Transfer Component merge-files",
-            inputs={"folder1": {"type": "uri_folder"}, "folder2": {"type": "uri_folder"}},
+            inputs={
+                "folder1": {"type": "uri_folder"},
+                "folder2": {"type": "uri_folder"},
+            },
             outputs={"output_folder": {"type": "uri_folder"}},
             data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
             base_path="./tests/test_configs/components/data_transfer",
@@ -89,7 +100,6 @@ class TestDataTransferComponentEntity:
         assert isinstance(component_entity, DataTransferImportComponent)
 
         data_transfer_copy_component = DataTransferImportComponent(
-            task=DataTransferTaskType.IMPORT_DATA,
             name="datatransfer_s3_blob",
             display_name="Data Transfer s3-blob",
             source={"type": "file_system"},
@@ -110,7 +120,6 @@ class TestDataTransferComponentEntity:
         assert isinstance(component_entity, DataTransferExportComponent)
 
         data_transfer_copy_component = DataTransferExportComponent(
-            task=DataTransferTaskType.EXPORT_DATA,
             name="datatransfer_blob_azuresql",
             display_name="Data Transfer blob-azuresql",
             inputs={"source": {"type": "uri_folder"}},
@@ -125,7 +134,6 @@ class TestDataTransferComponentEntity:
 
     def test_copy_task_component_entity(self):
         component = DataTransferCopyComponent(
-            task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_copy_files",
             display_name="Data Transfer Component copy-files",
             inputs={

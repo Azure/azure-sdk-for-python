@@ -56,6 +56,7 @@ class RegistryComponentVersionsOperations:
         order_by: Optional[str] = None,
         top: Optional[int] = None,
         skip: Optional[str] = None,
+        stage: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.ComponentVersionResourceArmPaginatedResult"]:
         """List versions.
@@ -74,6 +75,8 @@ class RegistryComponentVersionsOperations:
         :type top: int
         :param skip: Continuation token for pagination.
         :type skip: str
+        :param stage: Component stage.
+        :type stage: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ComponentVersionResourceArmPaginatedResult or the
          result of cls(response)
@@ -100,6 +103,7 @@ class RegistryComponentVersionsOperations:
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -116,6 +120,7 @@ class RegistryComponentVersionsOperations:
                     order_by=order_by,
                     top=top,
                     skip=skip,
+                    stage=stage,
                     template_url=next_link,
                 )
                 request = _convert_request(request)

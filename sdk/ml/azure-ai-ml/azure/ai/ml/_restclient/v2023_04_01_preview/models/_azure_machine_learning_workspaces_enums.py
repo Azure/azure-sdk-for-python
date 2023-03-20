@@ -42,6 +42,11 @@ class AssetProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     UPDATING = "Updating"
     DELETING = "Deleting"
 
+class AutoDeleteCondition(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    CREATED_GREATER_THAN = "CreatedGreaterThan"
+    LAST_ACCESSED_GREATER_THAN = "LastAccessedGreaterThan"
+
 class AutoRebuildSetting(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """AutoRebuild setting for the derived image
     """
@@ -130,6 +135,44 @@ class Caching(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
+class CategoricalDataDriftMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: The Jensen Shannon Distance (JSD) metric.
+    JENSEN_SHANNON_DISTANCE = "JensenShannonDistance"
+    #: The Population Stability Index (PSI) metric.
+    POPULATION_STABILITY_INDEX = "PopulationStabilityIndex"
+    #: The Pearsons Chi Squared Test metric.
+    PEARSONS_CHI_SQUARED_TEST = "PearsonsChiSquaredTest"
+
+class CategoricalDataQualityMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Calculates the rate of null values.
+    NULL_VALUE_RATE = "NullValueRate"
+    #: Calculates the rate of data type errors.
+    DATA_TYPE_ERROR_RATE = "DataTypeErrorRate"
+    #: Calculates the rate values are out of bounds.
+    OUT_OF_BOUNDS_RATE = "OutOfBoundsRate"
+
+class CategoricalPredictionDriftMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: The Jensen Shannon Distance (JSD) metric.
+    JENSEN_SHANNON_DISTANCE = "JensenShannonDistance"
+    #: The Population Stability Index (PSI) metric.
+    POPULATION_STABILITY_INDEX = "PopulationStabilityIndex"
+    #: The Pearsons Chi Squared Test metric.
+    PEARSONS_CHI_SQUARED_TEST = "PearsonsChiSquaredTest"
+
+class ClassificationModelPerformanceMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Calculates the accuracy of the model predictions.
+    ACCURACY = "Accuracy"
+    #: Calculates the precision of the model predictions.
+    PRECISION = "Precision"
+    #: Calculates the recall of the model predictions.
+    RECALL = "Recall"
+    #: Calculates the F1 score of the model predictions.
+    F1_SCORE = "F1Score"
+
 class ClassificationModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum for all classification models supported by AutoML.
     """
@@ -177,8 +220,8 @@ class ClassificationModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: decision rules inferred from the data features.
     DECISION_TREE = "DecisionTree"
     #: Random forest is a supervised learning algorithm.
-    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the 'bagging'
-    #: method.
+    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
+    #: â€œbaggingâ€ method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -353,6 +396,18 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KERBEROS_KEYTAB = "KerberosKeytab"
     KERBEROS_PASSWORD = "KerberosPassword"
 
+class DataCollectionMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+class DataImportSourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the type of data.
+    """
+
+    DATABASE = "database"
+    FILE_SYSTEM = "file_system"
+
 class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the datastore contents type.
     """
@@ -362,6 +417,7 @@ class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AZURE_DATA_LAKE_GEN2 = "AzureDataLakeGen2"
     AZURE_FILE = "AzureFile"
     HDFS = "Hdfs"
+    ONE_LAKE = "OneLake"
 
 class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the type of data.
@@ -398,6 +454,7 @@ class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PY_TORCH = "PyTorch"
     TENSOR_FLOW = "TensorFlow"
     MPI = "Mpi"
+    RAY = "Ray"
 
 class EarlyTerminationPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -475,6 +532,11 @@ class ExportFormatType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATASET = "Dataset"
     COCO = "Coco"
     CSV = "CSV"
+
+class FeatureAttributionMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: The Normalized Discounted Cumulative Gain metric.
+    NORMALIZED_DISCOUNTED_CUMULATIVE_GAIN = "NormalizedDiscountedCumulativeGain"
 
 class FeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -586,8 +648,8 @@ class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: It's an inexact but powerful technique.
     SGD = "SGD"
     #: Random forest is a supervised learning algorithm.
-    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the 'bagging'
-    #: method.
+    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
+    #: â€œbaggingâ€ method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -816,6 +878,20 @@ class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PUBLIC_IP = "PublicIp"
     INTERNAL_LOAD_BALANCER = "InternalLoadBalancer"
 
+class LogTrainingMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Enable compute and log training metrics.
+    ENABLE = "Enable"
+    #: Disable compute and log training metrics.
+    DISABLE = "Disable"
+
+class LogValidationLoss(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Enable compute and log validation metrics.
+    ENABLE = "Enable"
+    #: Disable compute and log validation metrics.
+    DISABLE = "Disable"
+
 class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum for setting log verbosity.
     """
@@ -890,6 +966,69 @@ class ModelSize(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LARGE = "Large"
     #: Extra large size.
     EXTRA_LARGE = "ExtraLarge"
+
+class MonitoringFeatureDataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Used for features of numerical data type.
+    NUMERICAL = "Numerical"
+    #: Used for features of categorical data type.
+    CATEGORICAL = "Categorical"
+
+class MonitoringFeatureFilterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Includes all features.
+    ALL_FEATURES = "AllFeatures"
+    #: Only includes the top contributing features, measured by feature attribution.
+    TOP_N_BY_ATTRIBUTION = "TopNByAttribution"
+    #: Includes a user-defined subset of features.
+    FEATURE_SUBSET = "FeatureSubset"
+
+class MonitoringInputDataContext(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: A dataset containing the feature input to the model.
+    MODEL_INPUTS = "ModelInputs"
+    #: A dataset containing the infered results of the model.
+    MODEL_OUTPUTS = "ModelOutputs"
+    #: A dataset containing the data used for training the model.
+    TRAINING = "Training"
+    #: A dataset leveraged to test the model.
+    TEST = "Test"
+    #: A dataset leveraged for model validation.
+    VALIDATION = "Validation"
+    #: A dataset containing the ground truth data.
+    GROUND_TRUTH = "GroundTruth"
+
+class MonitoringModelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: A model trained for classification tasks.
+    CLASSIFICATION = "Classification"
+    #: A model trained for regressions tasks.
+    REGRESSION = "Regression"
+
+class MonitoringNotificationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Disabled notifications will not produce emails/metrics leveraged for alerting.
+    DISABLED = "Disabled"
+    #: Enabled notification will produce emails/metrics leveraged for alerting.
+    ENABLED = "Enabled"
+
+class MonitoringSignalType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Tracks model input data distribution change, comparing against training data or past production
+    #: data.
+    DATA_DRIFT = "DataDrift"
+    #: Tracks prediction result data distribution change, comparing against validation/test label data
+    #: or past production data.
+    PREDICTION_DRIFT = "PredictionDrift"
+    #: Tracks model input data integrity.
+    DATA_QUALITY = "DataQuality"
+    #: Tracks feature importance change in production, comparing against feature importance at
+    #: training time.
+    FEATURE_ATTRIBUTION_DRIFT = "FeatureAttributionDrift"
+    #: Tracks a custom signal provided by users.
+    CUSTOM = "Custom"
+    #: Tracks model perforance based on ground truth data.
+    MODEL_PERFORMANCE = "ModelPerformance"
 
 class MountAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Mount Action.
@@ -971,6 +1110,37 @@ class NodesValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ALL = "All"
     CUSTOM = "Custom"
 
+class NumericalDataDriftMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: The Jensen Shannon Distance (JSD) metric.
+    JENSEN_SHANNON_DISTANCE = "JensenShannonDistance"
+    #: The Population Stability Index (PSI) metric.
+    POPULATION_STABILITY_INDEX = "PopulationStabilityIndex"
+    #: The Normalized Wasserstein Distance metric.
+    NORMALIZED_WASSERSTEIN_DISTANCE = "NormalizedWassersteinDistance"
+    #: The Two Sample Kolmogorov-Smirnov Test (two-sample K–S) metric.
+    TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST = "TwoSampleKolmogorovSmirnovTest"
+
+class NumericalDataQualityMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: Calculates the rate of null values.
+    NULL_VALUE_RATE = "NullValueRate"
+    #: Calculates the rate of data type errors.
+    DATA_TYPE_ERROR_RATE = "DataTypeErrorRate"
+    #: Calculates the rate values are out of bounds.
+    OUT_OF_BOUNDS_RATE = "OutOfBoundsRate"
+
+class NumericalPredictionDriftMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: The Jensen Shannon Distance (JSD) metric.
+    JENSEN_SHANNON_DISTANCE = "JensenShannonDistance"
+    #: The Population Stability Index (PSI) metric.
+    POPULATION_STABILITY_INDEX = "PopulationStabilityIndex"
+    #: The Normalized Wasserstein Distance metric.
+    NORMALIZED_WASSERSTEIN_DISTANCE = "NormalizedWassersteinDistance"
+    #: The Two Sample Kolmogorov-Smirnov Test (two-sample K–S) metric.
+    TWO_SAMPLE_KOLMOGOROV_SMIRNOV_TEST = "TwoSampleKolmogorovSmirnovTest"
+
 class ObjectDetectionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Primary metrics for Image ObjectDetection task.
     """
@@ -978,6 +1148,12 @@ class ObjectDetectionPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta, str,
     #: Mean Average Precision (MAP) is the average of AP (Average Precision).
     #: AP is calculated for each class and averaged to get the MAP.
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
+
+class OneLakeArtifactType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine OneLake artifact type.
+    """
+
+    LAKEHOUSE = "Lakehouse"
 
 class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of operating system.
@@ -1063,6 +1239,19 @@ class PackageInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
 
+class PendingUploadCredentialType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the PendingUpload credentials type.
+    """
+
+    SAS = "SAS"
+
+class PendingUploadType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of storage to use for the pending upload location
+    """
+
+    NONE = "None"
+    TEMPORARY_BLOB_REFERENCE = "TemporaryBlobReference"
+
 class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current provisioning state.
     """
@@ -1081,6 +1270,15 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
+
+class ProtectionLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Protection level associated with the Intellectual Property.
+    """
+
+    #: All means Intellectual Property is fully protected.
+    ALL = "All"
+    #: None means it is not an Intellectual Property.
+    NONE = "None"
 
 class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Protocol over which communication will happen over this endpoint
@@ -1162,6 +1360,15 @@ class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATA_PATH = "DataPath"
     OUTPUT_PATH = "OutputPath"
 
+class RegressionModelPerformanceMetric(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    #: The Mean Absolute Error (MAE) metric.
+    MEAN_ABSOLUTE_ERROR = "MeanAbsoluteError"
+    #: The Root Mean Squared Error (RMSE) metric.
+    ROOT_MEAN_SQUARED_ERROR = "RootMeanSquaredError"
+    #: The Mean Squared Error (MSE) metric.
+    MEAN_SQUARED_ERROR = "MeanSquaredError"
+
 class RegressionModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum for all Regression models supported by AutoML.
     """
@@ -1192,8 +1399,8 @@ class RegressionModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: It's an inexact but powerful technique.
     SGD = "SGD"
     #: Random forest is a supervised learning algorithm.
-    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the 'bagging'
-    #: method.
+    #: The "forest" it builds, is an ensemble of decision trees, usually trained with the
+    #: â€œbaggingâ€ method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -1235,6 +1442,14 @@ class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, E
     DISABLED = "Disabled"
     NOT_SPECIFIED = "NotSpecified"
 
+class RollingRateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+    YEAR = "Year"
+    MONTH = "Month"
+    DAY = "Day"
+    HOUR = "Hour"
+    MINUTE = "Minute"
+
 class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     GRID = "Grid"
@@ -1250,6 +1465,8 @@ class ScheduleActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
     CREATE_JOB = "CreateJob"
     INVOKE_BATCH_ENDPOINT = "InvokeBatchEndpoint"
+    IMPORT_DATA = "ImportData"
+    CREATE_MONITOR = "CreateMonitor"
 
 class ScheduleListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
@@ -1607,6 +1824,12 @@ class VolumeDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     VOLUME = "volume"
     TMPFS = "tmpfs"
     NPIPE = "npipe"
+
+class WebhookType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Enum to determine the webhook callback service type.
+    """
+
+    AZURE_DEV_OPS = "AzureDevOps"
 
 class WeekDay(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum of weekday

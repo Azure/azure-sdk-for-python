@@ -518,6 +518,32 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 with pytest.raises(ClientAuthenticationError):
                     async for repo in client.list_repository_names():
                         pass
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup tags in ALPINE repo
+            async for tag in client.list_tag_properties(ALPINE):
+                await client.delete_tag(ALPINE, tag.name)
+            
+            response = client.list_tag_properties(ALPINE)
+            if response is not None:
+                async for tag in response:
+                    pass
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup manifests in ALPINE repo
+            async for tag in client.list_tag_properties(ALPINE):
+                await client.delete_manifest(ALPINE, tag.name)
+
+            response = client.list_manifest_properties(ALPINE)
+            if response is not None:
+                async for manifest in response:
+                    pass
 
 
 async def test_set_api_version():
