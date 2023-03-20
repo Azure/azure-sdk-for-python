@@ -31,32 +31,44 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
     model_ops = all_ops["models"]
     target_environment_name = "packaged-env"
 
+    # import debugpy
+    # debugpy.connect(("localhost", 5678))
+    # debugpy.breakpoint()
+
+    if deployment.code_configuration:
+        code_configuration = CodeConfiguration(
+            code_id=deployment.code_configuration.code,
+            scoring_script=deployment.code_configuration.scoring_script,
+        )
+    else:
+        code_configuration = None
+
     if isinstance(deployment, OnlineDeployment):
-        inferencing_server = AzureMLOnlineInferencingServer(
-            code_configuration=CodeConfiguration(
-                code_id=deployment.code_configuration.code,
-                scoring_script=deployment.code_configuration.scoring_script,
-            )
-        )
+        inferencing_server = AzureMLOnlineInferencingServer(code_configuration=code_configuration)
     elif isinstance(deployment, BatchDeployment):
-        inferencing_server = AzureMLBatchInferencingServer(
-            code_configuration=CodeConfiguration(
-                code_id=deployment.code_configuration.code,
-                scoring_script=deployment.code_configuration.scoring_script,
-            )
+        inferencing_server = AzureMLBatchInferencingServer(code_configuration=code_configuration)
+    else:
+        inferencing_server = None
+
+    if deployment.environment:
+        base_environment_source = BaseEnvironmentId(
+            base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
         )
+    else:
+        base_environment_source = None
 
     package_request = PackageRequest(
         target_environment_name=target_environment_name,
-        base_environment_source=BaseEnvironmentId(
-            base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
-        ),
+        base_environment_source=base_environment_source,
         inferencing_server=inferencing_server,
-        model_configuration=ModelConfiguration(mode="Download", mount_path="."),
     )
     try:
-        package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
-        package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
+        if deployment.environment:
+            package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
+        if deployment.code_configuration:
+            package_request.inferencing_server.code_configuration.code_id = (
+                "azureml:/" + deployment.code_configuration.code
+            )
         packaged_env = model_ops.begin_package(
             model_name, model_version, package_request=package_request, skip_to_rest=True
         )
