@@ -138,10 +138,12 @@ def _validate_input_output_mode(inputs, outputs):
         elif (
             isinstance(input_value, NodeInput)
             and (
-                    isinstance(input_value._data, Input) and
-                    not (isinstance(input_value._data.path, str) and bool(
-                        re.search(ComponentJobConstants.INPUT_PATTERN, input_value._data.path)))
-                    and input_value._data.mode != InputOutputModes.DIRECT
+                isinstance(input_value._data, Input)
+                and not (
+                    isinstance(input_value._data.path, str)
+                    and bool(re.search(ComponentJobConstants.INPUT_PATTERN, input_value._data.path))
+                )
+                and input_value._data.mode != InputOutputModes.DIRECT
             )
             and (isinstance(input_value._meta, Input) and input_value._meta.mode != InputOutputModes.DIRECT)
         ):
@@ -183,10 +185,12 @@ def _validate_input_output_mode(inputs, outputs):
             isinstance(output_value, NodeOutput)
             and output_name != "default"
             and (
-                    isinstance(output_value._data, Output) and
-                    not (isinstance(output_value._data.path, str) and bool(
-                        re.search(ComponentJobConstants.OUTPUT_PATTERN, output_value._data.path)))
-                    and output_value._data.mode != InputOutputModes.DIRECT
+                isinstance(output_value._data, Output)
+                and not (
+                    isinstance(output_value._data.path, str)
+                    and bool(re.search(ComponentJobConstants.OUTPUT_PATTERN, output_value._data.path))
+                )
+                and output_value._data.mode != InputOutputModes.DIRECT
             )
             and (isinstance(output_value._meta, Output) and output_value._meta.mode != InputOutputModes.DIRECT)
         ):

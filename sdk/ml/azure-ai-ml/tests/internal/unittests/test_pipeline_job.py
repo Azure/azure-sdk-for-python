@@ -142,11 +142,7 @@ class TestPipelineJob:
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         for input_name, dataset_name in input_data_names.items():
             if "spark" in yaml_path:
-                expected_rest_obj = {
-                    "job_input_type": AssetTypes.MLTABLE,
-                    "uri": dataset_name.path,
-                    "mode": "Direct"
-                }
+                expected_rest_obj = {"job_input_type": AssetTypes.MLTABLE, "uri": dataset_name.path, "mode": "Direct"}
             else:
                 expected_rest_obj = {
                     "job_input_type": AssetTypes.MLTABLE,
