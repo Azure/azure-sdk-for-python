@@ -461,7 +461,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param obj content:
+        :param Any content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str. The encoded message can be up to
             64KB in size.
@@ -712,7 +712,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
-        :param obj content:
+        :param Any content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str.
         :keyword int visibility_timeout:
