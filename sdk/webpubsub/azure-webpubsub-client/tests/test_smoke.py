@@ -55,13 +55,16 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client = self.create_client(connection_string=webpubsubclient_connection_string)
         name = "test_auto_connect"
         with client:
+            conn_id0 = client._connection_id
             group_name = "test"
             client.on("group-message", on_group_message)
             client.join_group(group_name)
             client._ws.sock.close()
             time.sleep(0.001)
             client.send_to_group(group_name, name, "text")
+            conn_id1 = client._connection_id
         assert name in TEST_RESULT
+        assert conn_id0 != conn_id1
 
     # recovery will be triggered if connection is dropped by accident and disable auto reconnect
     @WebpubsubClientPowerShellPreparer()
@@ -70,6 +73,7 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client = self.create_client(connection_string=webpubsubclient_connection_string, reconnect_retry_total=0)
         name = "test_recovery"
         with client:
+            conn_id0 = client._connection_id
             group_name = "test"
             client.on("group-message", on_group_message)
             client.join_group(group_name)
@@ -77,7 +81,9 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             client._ws.sock.close(1001)
             time.sleep(0.001)
             client.send_to_group(group_name, name, "text")
+            conn_id1 = client._connection_id
         assert name in TEST_RESULT
+        assert conn_id0 == conn_id1
 
     # disable recovery and auto reconnect
     @WebpubsubClientPowerShellPreparer()

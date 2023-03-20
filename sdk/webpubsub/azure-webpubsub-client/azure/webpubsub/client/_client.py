@@ -13,7 +13,6 @@ import threading
 import urllib.parse
 import websocket  # type: ignore
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.pipeline.policies import RetryMode
 
 from .models._models import (
     OnConnectedArgs,
@@ -43,7 +42,7 @@ from .models._models import (
     AckMessageError,
 )
 from .models._enums import WebPubSubDataType, WebPubSubClientState, CallBackType, WebPubSubProtocolType
-from ._util import delay
+from ._util import delay, format_user_agent
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -72,11 +71,12 @@ class WebPubSubClientCredential:
         return self._client_access_url_provider()
 
 
-_RETRY_TOTAL = 3
+_RETRY_TOTAL = 30
 _RETRY_BACKOFF_FACTOR = 1.0
 _RETRY_BACKOFF_MAX = 120.0
 _RECOVERY_TIMEOUT = 30.0
 _RECOVERY_RETRY_INTERVAL = 1.0
+_USER_AGENT = "User-Agent"
 
 
 class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
@@ -104,6 +104,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :keyword float message_retry_backoff_max: The maximum back off time. Default value is 120.0 seconds
     :keyword RetryMode message_retry_mode: Fixed or exponential delay between attemps, default is exponential.
     :keyword bool auto_rejoin_groups: auto_rejoin_groups, default is True
+    :keyword str user_agent: The user agent to be used for the request. If specified, this will be added in front of
+     the defualt user agent string.
     """
 
     def __init__(
@@ -168,6 +170,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._thread: Optional[threading.Thread] = None
         self._ack_timeout: float = kwargs.pop("ack_timeout", 1.0)
         self._start_timeout: float = kwargs.pop("start_timeout", 60.0)
+        self._user_agent: Optional[str] = kwargs.pop("user_agent", None)
 
     def _next_ack_id(self) -> int:
         self._ack_id = self._ack_id + 1
@@ -564,6 +567,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             on_message=on_message,
             on_close=on_close,
             subprotocols=[self._protocol.name] if self._protocol else [],
+            header=[f"{_USER_AGENT}: {format_user_agent(self._user_agent)}"],
         )
 
         # set thread to start listen to server

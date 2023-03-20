@@ -6,7 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import time
-
+from azure.core.pipeline.policies import UserAgentPolicy
+from ._version import VERSION
 
 def delay(delay_seconds: float):
     time.sleep(delay_seconds)
+
+def format_user_agent(user_agent: str = None):
+    return UserAgentPolicy(user_agent=user_agent, sdk_moniker=f"webpubsub-client/{VERSION}").user_agent
