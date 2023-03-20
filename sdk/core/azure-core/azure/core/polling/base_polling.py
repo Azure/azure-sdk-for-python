@@ -365,7 +365,7 @@ class StatusCheckPolling(LongRunningOperation):
         return None
 
 
-class LROBasePolling(PollingMethod, Generic[PollingReturnType]):  # pylint: disable=too-many-instance-attributes
+class LROBasePolling(PollingMethod[PollingReturnType], Generic[PollingReturnType]):  # pylint: disable=too-many-instance-attributes
     """A base LRO poller.
 
     This assumes a basic flow:
@@ -427,7 +427,7 @@ class LROBasePolling(PollingMethod, Generic[PollingReturnType]):  # pylint: disa
         """
         return _finished(self.status())
 
-    def resource(self) -> Optional[PollingReturnType]:
+    def resource(self) -> PollingReturnType:
         """Return the built resource."""
         return self._parse_resource(self._pipeline_response)
 
@@ -539,7 +539,7 @@ class LROBasePolling(PollingMethod, Generic[PollingReturnType]):  # pylint: disa
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    def _parse_resource(self, pipeline_response: "PipelineResponseType") -> Optional[PollingReturnType]:
+    def _parse_resource(self, pipeline_response: "PipelineResponseType") -> PollingReturnType:
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
         """

@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Generic, TypeVar
 from ..exceptions import HttpResponseError
 from .base_polling import (
     _failed,
@@ -46,11 +46,12 @@ if TYPE_CHECKING:
 
     AsyncPipelineResponseType = PipelineResponse[HttpRequest, AsyncHttpResponse]
 
+PollingReturnType = TypeVar("PollingReturnType")
 
 __all__ = ["AsyncLROBasePolling"]
 
 
-class AsyncLROBasePolling(LROBasePolling):
+class AsyncLROBasePolling(LROBasePolling[PollingReturnType], Generic[PollingReturnType]):
     """A subclass or LROBasePolling that redefine "run" as async."""
 
     _initial_response: "AsyncPipelineResponseType"
