@@ -1193,8 +1193,8 @@ class QueueDescription(_serialization.Model):  # pylint: disable=too-many-instan
     :ivar forward_to: The name of the recipient entity to which all the messages sent to the queue
      are forwarded to.
     :vartype forward_to: str
-    :ivar user_metadata: Custom metdata that user can associate with the description. Max length is
-     1024 chars.
+    :ivar user_metadata: Custom metadata that user can associate with the description. Max length
+     is 1024 chars.
     :vartype user_metadata: str
     :ivar created_at: The exact time the queue was created.
     :vartype created_at: ~datetime.datetime
@@ -1507,8 +1507,8 @@ class QueueDescription(_serialization.Model):  # pylint: disable=too-many-instan
         :keyword forward_to: The name of the recipient entity to which all the messages sent to the
          queue are forwarded to.
         :paramtype forward_to: str
-        :keyword user_metadata: Custom metdata that user can associate with the description. Max length
-         is 1024 chars.
+        :keyword user_metadata: Custom metadata that user can associate with the description. Max
+         length is 1024 chars.
         :paramtype user_metadata: str
         :keyword created_at: The exact time the queue was created.
         :paramtype created_at: ~datetime.datetime
