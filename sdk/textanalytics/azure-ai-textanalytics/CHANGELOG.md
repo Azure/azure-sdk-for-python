@@ -57,7 +57,6 @@ This version of the client library defaults to the service API version `2022-10-
   `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`, `RecognizeCustomEntitiesResult`,
   `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult` to indicate the language detected by automatic language detection.
 - Added property `script` to `DetectedLanguage` to indicate the script of the input document.
-- Added the `dynamic_classification` client method to perform dynamic classification on documents without needing to train a model.
 
 ### Other Changes
 - Removed dependency on `msrest`.
