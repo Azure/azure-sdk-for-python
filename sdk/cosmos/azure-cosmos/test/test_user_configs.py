@@ -68,6 +68,13 @@ class TestUserConfigs(unittest.TestCase):
         self.assertTrue(client_default.client_connection.connection_policy.EnableEndpointDiscovery)
         self.assertTrue(client_true.client_connection.connection_policy.EnableEndpointDiscovery)
 
+    def test_authentication_error(self):
+        try:
+            cosmos_client.CosmosClient(url=_test_config.host, credential="wrong_key")
+        except exceptions.CosmosHttpResponseError as e:
+            assert e.status_code == 401
+            assert e.reason == "Unauthorized"
+
     def test_default_account_consistency(self):
         # These tests use the emulator, which has a default consistency of "Session".
         # If your account has a different level of consistency, make sure it's not the same as the custom_level below.
