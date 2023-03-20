@@ -789,12 +789,14 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
     from azure.ai.ml._schema.component import command_component as command_component_schema
+    from azure.ai.ml._schema.component import component as component_schema
     from azure.ai.ml._schema.component import input_output
     from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
     from azure.ai.ml.entities._component import command_component as command_component_entity
     from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
 
     def _reload_related_classes():
+        reload(component_schema)
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
@@ -906,17 +908,3 @@ def disable_internal_components():
 
     with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
         yield
-
-
-@pytest.fixture()
-def mock_ip_registry_check_false(mocker: MockFixture):
-    mocker.patch(
-        "azure.ai.ml.operations._component_operations.ComponentOperations._is_registry_ip_protected", return_value=False
-    )
-
-
-@pytest.fixture()
-def mock_ip_registry_check_true(mocker: MockFixture):
-    mocker.patch(
-        "azure.ai.ml.operations._component_operations.ComponentOperations._is_registry_ip_protected", return_value=True
-    )

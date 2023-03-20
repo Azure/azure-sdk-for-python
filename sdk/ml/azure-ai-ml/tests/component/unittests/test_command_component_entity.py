@@ -533,6 +533,7 @@ class TestCommandComponentEntity:
         }
         assert component_dict == expected_dict
 
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_component_with_ipp_fields(self):
         # code is specified in yaml, value is respected
         component_yaml = "./tests/test_configs/components/basic_component_with_ipp_fields.yml"

@@ -11,6 +11,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._component.command_component import CommandComponent
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.operations import ComponentOperations
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -35,7 +36,6 @@ def mock_component_operation(
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestComponentOperation:
-    @pytest.mark.usefixtures("mock_ip_registry_check_false")
     def test_create_in_non_ipp_registry(self, mock_component_operation: ComponentOperations) -> None:
         component = CommandComponent(
             name="random_name", version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
@@ -50,10 +50,17 @@ class TestComponentOperation:
 
         mock_component_operation._version_operation.begin_create_or_update.assert_called_once()
 
-    @pytest.mark.usefixtures("mock_ip_registry_check_true")
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_create_in_ipp_registry(self, mock_component_operation: ComponentOperations) -> None:
         component = CommandComponent(
-            name="random_name", version="1", environment="azureml:AzureML-Minimal:1", command="echo hello"
+            name="random_name",
+            version="1",
+            environment="azureml:AzureML-Minimal:1",
+            command="echo hello",
+            intellectual_property=IntellectualProperty(
+                publisher="contoso",
+                protection_level="all"
+            )
         )
 
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
@@ -61,8 +68,7 @@ class TestComponentOperation:
             return_value=CommandComponent(),
         ):
             mock_component_operation.create_or_update(component)
-            # for directly component publish to ipp registry, we need to make sure
-            # _resolve_arm_id_or_upload_dependencies is not called
+            # for IPP components, we need to make sure _resolve_arm_id_or_upload_dependencies is not called
             mock_thing.assert_not_called()
 
     def test_list(self, mock_component_operation: ComponentOperations) -> None:

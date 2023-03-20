@@ -71,10 +71,9 @@ class ComponentSchema(AssetSchema):
         # The ipp field is set on the component object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
-        if is_private_preview_enabled():
-            ipp_field = data._intellectual_property # pylint: disable=protected-access
-            if ipp_field:
-                setattr(data, "intellectual_property", ipp_field)
+        ipp_field = data._intellectual_property # pylint: disable=protected-access
+        if ipp_field:
+            setattr(data, "intellectual_property", ipp_field)
         return data
 
     @post_dump
