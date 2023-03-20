@@ -316,23 +316,17 @@ class DownloadBlobResult(object):
 class DownloadManifestResult(object):
     """The result from downloading a manifest from the registry.
 
+    :ivar manifest: The OCI manifest that was downloaded.
+    :vartype manifest: ~azure.containerregistry.models.OCIManifest
     :ivar data: The manifest stream that was downloaded.
     :vartype data: IO
     :ivar str digest: The manifest's digest, calculated by the registry.
-    :ivar media_type: The manifest's media type.
     """
 
     def __init__(self, **kwargs):
+        self.manifest = kwargs.get("manifest")
         self.data = kwargs.get("data")
         self.digest = kwargs.get("digest")
-        self.media_type = kwargs.get("media_type")
-    
-    def to_oci_manifest(self) -> OCIManifest:
-        """Serialize stream data to OCIManifest type.
-        """
-        if self.data is not None:
-            return _deserialize_manifest(self.data)
-        return OCIManifest()
 
 
 class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):

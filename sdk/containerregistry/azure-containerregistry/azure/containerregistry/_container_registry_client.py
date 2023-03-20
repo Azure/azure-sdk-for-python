@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast, Tuple, List
+from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -768,7 +768,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def upload_manifest(
         self,
         repository: str,
-        manifest: Union[OCIManifest, IO],
+        manifest: Union[OCIManifest, IO[bytes]],
         *,
         tag: Optional[str] = None,
         media_type: Union[str, ManifestMediaType] = ManifestMediaType.OCI_IMAGE_MANIFEST,
@@ -855,13 +855,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return complete_upload_response_headers['Docker-Content-Digest']
 
     @distributed_trace
-    def download_manifest(self,
-        repository: str,
-        tag_or_digest: str,
-        *,
-        media_types: Optional[Union[List[Union[str, ManifestMediaType]], str, ManifestMediaType]] = None,
-        **kwargs
-    ) -> DownloadManifestResult:
+    def download_manifest(self, repository, tag_or_digest, **kwargs):
+        # type: (str, str, **Any) -> DownloadManifestResult
         """Download the manifest for an artifact.
 
         :param str repository: Name of the repository
@@ -878,26 +873,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ~azure.core.exceptions.HttpResponseError:
             If the requested digest does not match the digest of the received manifest.
         """
-        if media_types is None:
-            accept = ", ".join(media_type for media_type in ManifestMediaType)
-        elif isinstance(media_types, list):
-            accept = ", ".join(media_type for media_type in media_types)
-        else:
-            accept = media_types
         try:
-            response = cast(
-                PipelineResponse,
+            response, manifest_wrapper = cast(
+                Tuple[PipelineResponse, ManifestWrapper],
                 self._client.container_registry.get_manifest(
                     name=repository,
                     reference=tag_or_digest,
-                    headers={"Accept": accept},
-                    cls=_return_response,
+                    headers={"Accept": ManifestMediaType.OCI_IMAGE_MANIFEST},
+                    cls=_return_response_and_deserialized,
                     **kwargs
                 )
             )
-            content_type = response.http_response.headers['Content-Type']
-            manifest_bytes = response.http_response.internal_response.content
-            manifest_stream = BytesIO(manifest_bytes)
+            manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
+            manifest_stream = _serialize_manifest(manifest)
             if tag_or_digest.startswith("sha256:"):
                 digest = tag_or_digest
             else:
@@ -909,7 +897,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 raise ValueError("The parameter repository and tag_or_digest cannot be None.")
             raise
 
-        return DownloadManifestResult(digest=digest, data=manifest_stream, media_type=content_type)
+        return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
     def download_blob(self, repository, digest, **kwargs):
