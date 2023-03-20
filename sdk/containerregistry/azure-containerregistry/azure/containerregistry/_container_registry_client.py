@@ -45,9 +45,6 @@ def _return_response_and_deserialized(pipeline_response, deserialized, _):
 def _return_response_headers(_, __, response_headers):
     return response_headers
 
-def _return_response(pipeline_response, _, __):
-    return pipeline_response
-
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
@@ -863,10 +860,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str tag_or_digest: The tag or digest of the manifest to download.
             When digest is provided, will use this digest to compare with the one calculated by the response payload.
             When tag is provided, will use the digest in response headers to compare.
-        :keyword media_types: A set of media types or a single media type to accept for the manifest being downloaded.
-            If not specified, all media types will be requested.
-        :paramtype media_types: list[Union[str, ~azure.containerregistry.models.ManifestMediaType]] or str \
-            or ~azure.containerregistry.models.ManifestMediaType
         :returns: DownloadManifestResult
         :rtype: ~azure.containerregistry.models.DownloadManifestResult
         :raises ValueError: If the parameter repository or tag_or_digest is None.
@@ -896,7 +889,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             if repository is None or tag_or_digest is None:
                 raise ValueError("The parameter repository and tag_or_digest cannot be None.")
             raise
-
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
