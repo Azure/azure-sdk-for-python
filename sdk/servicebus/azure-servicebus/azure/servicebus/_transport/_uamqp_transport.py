@@ -3,13 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+# pylint: disable=too-many-lines
 import time
-import logging
 import functools
 import datetime
+from datetime import timezone
 from typing import Optional, Tuple, Callable, TYPE_CHECKING
 
-from azure.core.serialization import TZ_UTC
 try:
     from uamqp import (
         c_uamqp,
@@ -104,8 +104,6 @@ from ..exceptions import (
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._common.message import ServiceBusReceivedMessage
-
-_LOGGER = logging.getLogger(__name__)
 
 if uamqp_installed:
     _NO_RETRY_CONDITION_ERROR_CODES = (
@@ -299,7 +297,7 @@ if uamqp_installed:
                 if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
                     ttl_set = True
                     creation_time_from_ttl = int(time.mktime(
-                        datetime.datetime.now(TZ_UTC).timetuple()) * UamqpTransport.TIMEOUT_FACTOR
+                        datetime.datetime.now(timezone.utc).timetuple()) * UamqpTransport.TIMEOUT_FACTOR
                     )
                     absolute_expiry_time_from_ttl = int(min(
                         MAX_ABSOLUTE_EXPIRY_TIME,
@@ -646,7 +644,7 @@ if uamqp_installed:
                 session_filter = source.get_filter(name=SESSION_FILTER)
                 receiver._session_id = session_filter.decode(receiver._config.encoding)
                 receiver._session._session_id = receiver._session_id
-        
+
         @staticmethod
         def iter_contextual_wrapper(receiver, max_wait_time=None):
             """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
@@ -672,10 +670,11 @@ if uamqp_installed:
                             receiver._handler._timeout = original_timeout
                         except AttributeError:  # Handler may be disposed already.
                             pass
-        
+
         # wait_time used by pyamqp
         @staticmethod
         def iter_next(receiver, wait_time=None):    # pylint: disable=unused-argument
+            # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
                 receiver._open()
@@ -757,7 +756,7 @@ if uamqp_installed:
             """
             handler.message_handler.reset_link_credit(link_credit)
 
-        # Executes message settlement, implementation is in _settle_message_via_receiver_link
+        # Executes message settlement, implementation is in settle_message_via_receiver_link_impl
         # May be able to remove and just call methods in private method.
         @staticmethod
         def settle_message_via_receiver_link(
@@ -1062,7 +1061,7 @@ if uamqp_installed:
             return error
 
         @staticmethod
-        def _handle_amqp_mgmt_error(
+        def handle_amqp_mgmt_error(
             logger, error_description, condition=None, description=None, status_code=None
         ):
             if description:

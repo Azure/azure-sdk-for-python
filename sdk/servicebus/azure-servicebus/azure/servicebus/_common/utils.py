@@ -200,7 +200,8 @@ def generate_dead_letter_entity_name(
         if queue_name
         else (topic_name + "/Subscriptions/" + subscription_name)
     )
-    entity_name = f"{entity_name}{TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX}"
+    entity_name = f"{entity_name}"
+    f"{TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX}"
 
     return entity_name
 
@@ -272,7 +273,7 @@ def strip_protocol_from_uri(uri: str) -> str:
 
 @contextmanager
 def send_trace_context_manager(span_name=SPAN_NAME_SEND):
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
 
     if span_impl_type is not None:
         with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
@@ -288,7 +289,7 @@ def receive_trace_context_manager(
     links: Optional[List[Link]] = None
 ) -> Iterator[None]:
     """Tracing"""
-    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
+    span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
     if span_impl_type is None:
         yield
     else:

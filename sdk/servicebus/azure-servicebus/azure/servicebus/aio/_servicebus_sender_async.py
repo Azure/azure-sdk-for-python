@@ -110,7 +110,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         topic_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        self._amqp_transport: AmqpTransportAsync
+        self._amqp_transport: "AmqpTransportAsync"
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -430,7 +430,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
-                f"Max message size: {max_size_in_bytes} is too large, acceptable max batch size is: {self._max_message_size_on_link} bytes."
+                f"Max message size: {max_size_in_bytes} is too large, "
+                "acceptable max batch size is: {self._max_message_size_on_link} bytes."
             )
 
         return ServiceBusMessageBatch(

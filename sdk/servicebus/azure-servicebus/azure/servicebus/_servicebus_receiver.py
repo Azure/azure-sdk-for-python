@@ -45,9 +45,6 @@ from ._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
-    DATETIMEOFFSET_EPOCH,
-    SESSION_LOCKED_UNTIL,
-    SESSION_FILTER,
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
@@ -156,7 +153,7 @@ class ServiceBusReceiver(
         **kwargs: Any,
     ) -> None:
         self._message_iter: Optional[Iterator[ServiceBusReceivedMessage]] = None
-        self._amqp_transport: AmqpTransport
+        self._amqp_transport: "AmqpTransport"
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,

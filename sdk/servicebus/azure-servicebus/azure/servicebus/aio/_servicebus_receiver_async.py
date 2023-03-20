@@ -150,7 +150,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._message_iter: Optional[AsyncIterator[ServiceBusReceivedMessage]] = (
             None
         )
-        self._amqp_transport: AmqpTransportAsync
+        self._amqp_transport: "AmqpTransportAsync"
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -461,47 +461,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             dead_letter_error_description=dead_letter_error_description,
         )
         message._settled = True
-
-    async def _settle_message_via_receiver_link(
-        self,
-        message,
-        settle_operation,
-        dead_letter_reason=None,
-        dead_letter_error_description=None,
-    ):
-        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
-        if settle_operation == MESSAGE_COMPLETE:
-            return await self._handler.settle_messages_async(message.delivery_id, 'accepted') # pylint:disable=line-too-long
-        if settle_operation == MESSAGE_ABANDON:
-            return await self._handler.settle_messages_async(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return await self._handler.settle_messages_async(
-                message.delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
-                )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return await self._handler.settle_messages_async(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
-        raise ValueError(
-            "Unsupported settle operation type: {}".format(settle_operation)
-        )
 
     async def _settle_message(  # type: ignore
         self,

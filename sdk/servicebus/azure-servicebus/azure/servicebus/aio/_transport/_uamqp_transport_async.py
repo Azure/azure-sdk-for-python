@@ -4,22 +4,16 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-import asyncio
 import functools
-import time
-import logging
-from typing import Union, cast, TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, Optional
 
 try:
     from uamqp import (
         constants,
-        types,
         SendClientAsync,
         ReceiveClientAsync,
-        utils,
         authentication,
         AMQPClientAsync,
-        errors,
     )
     from uamqp.async_ops import ConnectionAsync
     from ..._transport._uamqp_transport import UamqpTransport
@@ -28,9 +22,6 @@ except ImportError:
     uamqp_installed = False
 
 from ._base_async import AmqpTransportAsync
-from ...exceptions import (
-    OperationTimeoutError,
-)
 from ..._common.utils import (
     get_receive_links,
     receive_trace_context_manager
@@ -38,10 +29,7 @@ from ..._common.utils import (
 from ..._common.constants import ServiceBusReceiveMode
 
 if TYPE_CHECKING:
-    from .._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
     from ..._common.message import ServiceBusReceivedMessage
-
-_LOGGER = logging.getLogger(__name__)
 
 if uamqp_installed:
     class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
@@ -193,10 +181,11 @@ if uamqp_installed:
                             receiver._handler._timeout = original_timeout
                         except AttributeError:  # Handler may be disposed already.
                             pass
-        
+
         # wait_time used by pyamqp
         @staticmethod
         async def iter_next_async(receiver, wait_time=None):    # pylint: disable=unused-argument
+            # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
                 await receiver._open()

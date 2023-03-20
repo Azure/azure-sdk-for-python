@@ -4,25 +4,9 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import Any, cast, List
+from typing import Any
 
 from azure.core.exceptions import AzureError
-
-from ._common.constants import (
-    ERROR_CODE_SESSION_LOCK_LOST,
-    ERROR_CODE_MESSAGE_LOCK_LOST,
-    ERROR_CODE_MESSAGE_NOT_FOUND,
-    ERROR_CODE_TIMEOUT,
-    ERROR_CODE_AUTH_FAILED,
-    ERROR_CODE_SESSION_CANNOT_BE_LOCKED,
-    ERROR_CODE_SERVER_BUSY,
-    ERROR_CODE_ARGUMENT_ERROR,
-    ERROR_CODE_OUT_OF_RANGE,
-    ERROR_CODE_ENTITY_DISABLED,
-    ERROR_CODE_ENTITY_ALREADY_EXISTS,
-    ERROR_CODE_PRECONDITION_FAILED,
-)
-
 
 class ServiceBusError(AzureError):
     """Base exception for all Service Bus errors which can be used for default error handling.

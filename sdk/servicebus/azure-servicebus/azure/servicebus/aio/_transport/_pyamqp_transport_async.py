@@ -4,11 +4,8 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-import asyncio
-import time
-import logging
 import functools
-from typing import Union, cast, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
@@ -17,13 +14,7 @@ from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
-    ErrorCondition,
-    #AMQPException,
     AMQPError,
-    AMQPLinkError,
-    #RetryPolicy,
-    #AMQPConnectionError,
-    #AuthenticationException,
     MessageException,
 )
 
@@ -56,9 +47,6 @@ if TYPE_CHECKING:
     from ..._pyamqp.message import Message
     from .._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
     from ..._common.message import ServiceBusReceivedMessage
-
-_LOGGER = logging.getLogger(__name__)
-
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """

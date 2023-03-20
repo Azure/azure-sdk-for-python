@@ -3,13 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import logging
 import functools
 import time
 import datetime
+from datetime import timezone
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING
 
-from azure.core.serialization import TZ_UTC
 from .._pyamqp import (
     utils,
     SendClient,
@@ -42,8 +41,6 @@ from .._common.utils import (
     receive_trace_context_manager
 )
 from .._common.constants import (
-#    NO_RETRY_ERRORS,
-#    CUSTOM_CONDITION_BACKOFF,
     PYAMQP_LIBRARY,
     DATETIMEOFFSET_EPOCH,
     RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
@@ -97,8 +94,6 @@ from ..exceptions import (
 if TYPE_CHECKING:
     from .._servicebus_receiver import ServiceBusReceiver
     from .._common.message import ServiceBusReceivedMessage
-
-_LOGGER = logging.getLogger(__name__)
 
 class _ServiceBusErrorPolicy(RetryPolicy):
 
@@ -246,7 +241,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
                 creation_time_from_ttl = int(
-                    time.mktime(datetime.datetime.now(TZ_UTC).timetuple()) * 1000   # TODO: should this be * 1?
+                    time.mktime(datetime.datetime.now(timezone.utc).timetuple()) * 1000   # TODO: should this be * 1?
                 )
                 absolute_expiry_time_from_ttl = int(min(
                     MAX_ABSOLUTE_EXPIRY_TIME,
@@ -597,9 +592,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                     yield message
             except StopIteration:
                 break
-    
+
     @staticmethod
     def iter_next(receiver, wait_time=None):
+        # pylint: disable=protected-access
         try:
             receiver._receive_context.set()
             receiver._open()
@@ -635,6 +631,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         message_type: "ServiceBusReceivedMessage",
         received: "Message"
     ):
+        # pylint: disable=protected-access
         message = message_type(
             message=received[1], receive_mode=receiver._receive_mode, receiver=receiver, frame=received[0]
         )
@@ -963,7 +960,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return error
 
     @staticmethod
-    def _handle_amqp_mgmt_error(
+    def handle_amqp_mgmt_error(
         logger, error_description, condition=None, description=None, status_code=None
     ):
         if description:

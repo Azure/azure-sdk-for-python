@@ -6,7 +6,6 @@
 import uuid
 from typing import TYPE_CHECKING
 
-from .message import ServiceBusReceivedMessage
 from ..exceptions import MessageAlreadySettled
 from .constants import (
     NEXT_AVAILABLE_SESSION,
@@ -14,31 +13,12 @@ from .constants import (
     ServiceBusReceiveMode,
 )
 
-from .._common.utils import utc_from_timestamp, utc_now
-from .._common.constants import (
-#    NO_RETRY_ERRORS,
-#    CUSTOM_CONDITION_BACKOFF,
-    PYAMQP_LIBRARY,
-    DATETIMEOFFSET_EPOCH,
-    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
-    RECEIVER_LINK_DEAD_LETTER_REASON,
-    DEADLETTERNAME,
-    MAX_ABSOLUTE_EXPIRY_TIME,
-    MAX_DURATION_VALUE,
-    MAX_MESSAGE_LENGTH_BYTES,
-    MESSAGE_COMPLETE,
-    MESSAGE_ABANDON,
-    MESSAGE_DEFER,
-    MESSAGE_DEAD_LETTER,
-    SESSION_FILTER,
-    SESSION_LOCKED_UNTIL,
-)
 if TYPE_CHECKING:
     from .._transport._base import AmqpTransport
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):
-        self._amqp_transport: AmqpTransport
+        self._amqp_transport: "AmqpTransport"
         if kwargs.get("subscription_name"):
             self._subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True

@@ -138,7 +138,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def send_messages_async(producer, timeout_time, last_exception, logger):
+    async def send_messages_async(sender, message, logger, timeout, last_exception):
         """
         Handles sending of event data messages.
         :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.

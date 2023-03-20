@@ -48,7 +48,7 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 

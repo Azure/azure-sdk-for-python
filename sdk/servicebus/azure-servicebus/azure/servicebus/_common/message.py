@@ -685,8 +685,11 @@ class ServiceBusMessageBatch(object):
         parent_span: Optional["AbstractSpan"] = None
     ) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
-        outgoing_sb_message = transform_outbound_messages(add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message)
+        outgoing_sb_message = transform_outbound_messages(
+            add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
+        )
         outgoing_sb_message = cast(ServiceBusMessage, outgoing_sb_message)
+        # pylint: disable=protected-access
         outgoing_sb_message._message = trace_message(
             outgoing_sb_message._message,
             amqp_transport=self._amqp_transport,
@@ -778,7 +781,7 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
 
-class ServiceBusReceivedMessage(ServiceBusMessage):
+class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-instance-attributes
     """
     A Service Bus Message received from service side.
 
@@ -800,7 +803,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             self,
             message: Union["Message", "pyamqp_Message"],
             receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
-            frame: Optional["TransferFrame"] = None,    # TODO: are we okay with implementation specific types leaking out
+            frame: Optional["TransferFrame"] = None,
             **kwargs
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
