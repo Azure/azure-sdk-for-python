@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, overload
 from azure.core.credentials import TokenCredential
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
@@ -13,6 +13,7 @@ from ._user_agent import USER_AGENT
 
 
 class AnonymousAccessCredential(TokenCredential):
+    @overload
     def get_token(
         self, *scopes: str, claims: Optional[str] = None, tenant_id: Optional[str] = None, **kwargs
     ) -> None:
