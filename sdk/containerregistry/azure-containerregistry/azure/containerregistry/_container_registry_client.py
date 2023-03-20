@@ -45,6 +45,9 @@ def _return_response_and_deserialized(pipeline_response, deserialized, _):
 def _return_response_headers(_, __, response_headers):
     return response_headers
 
+def _return_response(pipeline_response, _, __):
+    return pipeline_response
+
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
@@ -882,19 +885,19 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         else:
             accept = media_types
         try:
-            response, manifest_wrapper = cast(
-                Tuple[PipelineResponse, ManifestWrapper],
+            response = cast(
+                PipelineResponse,
                 self._client.container_registry.get_manifest(
                     name=repository,
                     reference=tag_or_digest,
                     headers={"Accept": accept},
-                    cls=_return_response_and_deserialized,
+                    cls=_return_response,
                     **kwargs
                 )
             )
-            digest = response.http_response.headers['Docker-Content-Digest']
             content_type = response.http_response.headers['Content-Type']
-            manifest_stream = _serialize_manifest(manifest_wrapper)
+            manifest_bytes = response.http_response.internal_response.content
+            manifest_stream = BytesIO(manifest_bytes)
             if tag_or_digest.startswith("sha256:"):
                 digest = tag_or_digest
             else:
