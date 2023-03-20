@@ -12,14 +12,6 @@ package-name: azure-mgmt-machinelearningservices
 package-version: 1.0.0b1
 clear-output-folder: true
 no-namespace-folders: true
-```
-
-``` yaml $(python)
-no-namespace-folders: true
-output-folder: $(python-sdks-folder)/v2023_02_01_preview
-```
-
-``` yaml $(python)
 modelerfour:
   lenient-model-deduplication: true
 ```
