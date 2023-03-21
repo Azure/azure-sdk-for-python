@@ -201,7 +201,7 @@ class SipRoutingClient(object):
                 trunks=x.trunks) for x in config.routes]
             return None, AsyncList(list_of_elem)
 
-        # pylint: disable=unused-argument 
+        # pylint: disable=unused-argument
         async def get_next(nextLink=None):
             return await self._rest_service.sip_routing.get(
                 **kwargs
