@@ -60,7 +60,7 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
         # The ipp field is set on the output object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
-        if is_private_preview_enabled():
+        if hasattr(data, "_intellectual_property"):
             ipp_field = data._intellectual_property # pylint: disable=protected-access
             if ipp_field:
                 setattr(data, "intellectual_property", ipp_field)
