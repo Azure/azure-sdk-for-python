@@ -53,7 +53,7 @@ def select_language_issues(issues: List[IssuePackage], language: str) -> List[Is
 
 def output(result: Dict[str, Dict[str, IssueProcess]]):
     with open("release_issues_summary.md", 'w') as file_out:
-        file_out.write('| title | Python | Go | Java | Js | created date of issue | target date | status |\n')
+        file_out.write('| title | Python | Go | Java | Js | created date | target date | status |\n')
         file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
         for title, language_issue in result.items():
             created_date = ""
