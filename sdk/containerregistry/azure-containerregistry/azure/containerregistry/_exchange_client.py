@@ -37,7 +37,7 @@ class ACRExchangeClient(object):
         may result in unsupported behavior.
     :paramtype api_version: str
     :keyword credential_scopes: The scopes that access token can request.
-    :paramtype credential_scopes: str
+    :paramtype credential_scopes: List[str]
     """
 
     def __init__(self, endpoint: str, credential: TokenCredential, **kwargs) -> None:
