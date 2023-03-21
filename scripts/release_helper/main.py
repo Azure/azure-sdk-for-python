@@ -66,7 +66,7 @@ def output(result: Dict[str, Dict[str, IssueProcess]]):
                 if issue_processor:
                     created_date = issue_processor.created_date_format if not created_date else created_date
                     target_date = issue_processor.target_date_format if not target_date else target_date
-                    status = "Hold on" if (_HOLD_ON in issue_processor.issue_package.labels_name and not status) else status
+                    status = f"{language}/{status}" if _HOLD_ON in issue_processor.issue_package.labels_name else status
                     html_url = issue_processor.issue_package.issue.html_url
                     number = html_url.split("/")[-1]
                     line = f"{line} | [#{number}]({html_url}) "
@@ -74,6 +74,7 @@ def output(result: Dict[str, Dict[str, IssueProcess]]):
                 else:
                     line = f"{line} | "
             if enable_out:
+                status = f"Hold on by {status}" if status else status
                 line = f"{line} | {created_date} | {target_date} | {status} |\n"
                 file_out.write(line)
 
