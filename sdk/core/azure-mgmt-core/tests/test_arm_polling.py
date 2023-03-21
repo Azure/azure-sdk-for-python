@@ -366,6 +366,7 @@ class TestArmPolling(object):
             poll = LROPoller(CLIENT, response, TestArmPolling.mock_outputs, ARMPolling(0)).result()
 
     def test_long_running_patch(self):
+
         # Test polling from location header
         response = TestArmPolling.mock_send(
             "PATCH", 202, {"location": LOCATION_URL}, body={"properties": {"provisioningState": "Succeeded"}}
