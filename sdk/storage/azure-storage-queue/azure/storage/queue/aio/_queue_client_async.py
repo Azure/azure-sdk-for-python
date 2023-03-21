@@ -84,25 +84,28 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
     """
 
     def __init__(
-            self, account_url: str,
-            queue_name: str,
-            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
-            **kwargs: Any
-        ) -> None:
+        self, account_url: str,
+        queue_name: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(QueueClient, self).__init__(
             account_url, queue_name=queue_name, credential=credential, loop=loop, **kwargs
         )
         self._client = AzureQueueStorage(self.url, base_url=self.url,
-                                         pipeline=self._pipeline, loop=loop)  # type: ignore
+                                         pipeline=self._pipeline, loop=loop)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._loop = loop
         self._configure_encryption(kwargs)
 
     @distributed_trace_async
-    async def create_queue(self, **kwargs):
-        # type: (Optional[Any]) -> None
+    async def create_queue(
+        self, *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Creates a new queue in the storage account.
 
         If a queue with the same name already exists, the operation fails with
@@ -131,20 +134,18 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :dedent: 12
                 :caption: Create a queue.
         """
-        metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.queue.create(  # type: ignore
+            return await self._client.queue.create(
                 metadata=metadata, timeout=timeout, headers=headers, cls=deserialize_queue_creation, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_queue(self, **kwargs):
-        # type: (Optional[Any]) -> None
+    async def delete_queue(self, **kwargs: Any) -> None:
         """Deletes the specified queue and any messages it contains.
 
         When a queue is successfully deleted, it is immediately marked for deletion
@@ -179,8 +180,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_properties(self, **kwargs):
-        # type: (Optional[Any]) -> QueueProperties
+    async def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -207,11 +207,13 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         except HttpResponseError as error:
             process_storage_error(error)
         response.name = self.queue_name
-        return response  # type: ignore
+        return response
 
     @distributed_trace_async
-    async def set_queue_metadata(self, metadata=None, **kwargs):
-        # type: (Optional[Dict[str, Any]], Optional[Any]) -> None
+    async def set_queue_metadata(
+        self, metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """Sets user-defined metadata on the specified queue.
 
         Metadata is associated with the queue as name-value pairs.
@@ -238,17 +240,16 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         """
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop("headers", {})
-        headers.update(add_metadata_headers(metadata))  # type: ignore
+        headers.update(add_metadata_headers(metadata))
         try:
-            return await self._client.queue.set_metadata(  # type: ignore
+            return await self._client.queue.set_metadata(
                 timeout=timeout, headers=headers, cls=return_response_headers, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def get_queue_access_policy(self, **kwargs):
-        # type: (Optional[Any]) -> Dict[str, Any]
+    async def get_queue_access_policy(self, **kwargs: Any) -> Dict[str, AccessPolicy]:
         """Returns details about any stored access policies specified on the
         queue that may be used with Shared Access Signatures.
 
@@ -271,8 +272,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace_async
-    async def set_queue_access_policy(self, signed_identifiers, **kwargs):
-        # type: (Dict[str, AccessPolicy], Optional[Any]) -> None
+    async def set_queue_access_policy(
+        self, signed_identifiers: Dict[str, AccessPolicy],
+        **kwargs: Any
+    ) -> None:
         """Sets stored access policies for the queue that may be used with Shared
         Access Signatures.
 
@@ -320,19 +323,20 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value))
-        signed_identifiers = identifiers  # type: ignore
+        signed_identifiers = identifiers
         try:
             await self._client.queue.set_access_policy(queue_acl=signed_identifiers or None, timeout=timeout, **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def send_message(  # type: ignore
-        self,
-        content,  # type: Any
-        **kwargs  # type: Optional[Any]
-    ):
-        # type: (...) -> QueueMessage
+    async def send_message(
+        self, content: Any,
+        *,
+        visibility_timeout: Optional[int] = None,
+        time_to_live: Optional[int] = None,
+        **kwargs: Any
+    ) -> "QueueMessage":
         """Adds a new message to the back of the message queue.
 
         The visibility timeout specifies the time that the message will be
@@ -346,7 +350,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         If the key-encryption-key field is set on the local service object, this method will
         encrypt the content before uploading.
 
-        :param obj content:
+        :param Any content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str. The encoded message can be up to
             64KB in size.
@@ -382,8 +386,6 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :dedent: 16
                 :caption: Send messages.
         """
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
-        time_to_live = kwargs.pop('time_to_live', None)
         timeout = kwargs.pop('timeout', None)
         try:
             self._config.message_encode_policy.configure(
@@ -424,7 +426,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def receive_message(self, **kwargs: Any) -> Optional[QueueMessage]:
+    async def receive_message(
+        self, *,
+        visibility_timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> Optional[QueueMessage]:
         """Removes one message from the front of the queue.
 
         When the message is retrieved from the queue, the response includes the message
@@ -462,7 +468,6 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :dedent: 12
                 :caption: Receive one message from the queue.
         """
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
@@ -483,8 +488,13 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace
-    def receive_messages(self, **kwargs):
-        # type: (Optional[Any]) -> AsyncItemPaged[QueueMessage]
+    def receive_messages(
+        self, *,
+        messages_per_page: Optional[int] = None,
+        visibility_timeout: Optional[int] = None,
+        max_messages: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged[QueueMessage]:
         """Removes one or more messages from the front of the queue.
 
         When a message is retrieved from the queue, the response includes the message
@@ -512,14 +522,14 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             larger than 7 days. The visibility timeout of a message cannot be
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
+        :keyword int max_messages:
+            An integer that specifies the maximum number of messages to retrieve from the queue.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
             #other-client--per-operation-configuration>`_.
-        :keyword int max_messages:
-            An integer that specifies the maximum number of messages to retrieve from the queue.
         :return:
             Returns a message iterator of dict-like Message objects.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.queue.QueueMessage]
@@ -533,10 +543,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :dedent: 16
                 :caption: Receive messages from the queue.
         """
-        messages_per_page = kwargs.pop('messages_per_page', None)
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
-        max_messages = kwargs.pop('max_messages', None)
         self._config.message_decode_policy.configure(
             require_encryption=self.require_encryption,
             key_encryption_key=self.key_encryption_key,
@@ -560,13 +567,13 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
 
     @distributed_trace_async
     async def update_message(
-        self,
-        message,
-        pop_receipt=None,
-        content=None,
-        **kwargs
-    ):
-        # type: (Any, int, Optional[str], Optional[Any], Any) -> QueueMessage
+        self, message: Union[str, QueueMessage],
+        pop_receipt: Optional[str] = None,
+        content: Optional[Any] = None,
+        *,
+        visibility_timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> QueueMessage:
         """Updates the visibility timeout of a message. You can also use this
         operation to update the contents of a message.
 
@@ -587,7 +594,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
-        :param obj content:
+        :param Any content:
             Message content. Allowed type is determined by the encode_function
             set on the service. Default is str.
         :keyword int visibility_timeout:
@@ -617,7 +624,6 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
                 :dedent: 16
                 :caption: Update a message.
         """
-        visibility_timeout = kwargs.pop('visibility_timeout', None)
         timeout = kwargs.pop('timeout', None)
         try:
             message_id = message.id
@@ -659,7 +665,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             encoded_message_text = self._config.message_encode_policy(message_text)
             updated = GenQueueMessage(message_text=encoded_message_text)
         else:
-            updated = None  # type: ignore
+            updated = None
         try:
             response = await self._client.message_id.update(
                 queue_message=updated,
@@ -682,8 +688,10 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def peek_messages(self, max_messages=None, **kwargs):
-        # type: (Optional[int], Optional[Any]) -> List[QueueMessage]
+    async def peek_messages(
+        self, max_messages: Optional[int] = None,
+        **kwargs: Any
+    ) -> List[QueueMessage]:
         """Retrieves one or more messages from the front of the queue, but does
         not alter the visibility of the message.
 
@@ -743,8 +751,7 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_messages(self, **kwargs):
-        # type: (Optional[Any]) -> None
+    async def clear_messages(self, **kwargs: Any) -> None:
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
@@ -770,8 +777,11 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase, StorageEncrypt
             process_storage_error(error)
 
     @distributed_trace_async
-    async def delete_message(self, message, pop_receipt=None, **kwargs):
-        # type: (Any, Optional[str], Any) -> None
+    async def delete_message(
+        self, message: Union[str, QueueMessage],
+        pop_receipt: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """Deletes the specified message.
 
         Normally after a client retrieves a message with the receive messages operation,
