@@ -2262,9 +2262,6 @@
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/provisionManagedNetwork": {
       "post": {
-        "tags": [
-          "ManagedNetwork"
-        ],
         "operationId": "ManagedNetworkProvisions_Post",
         "x-ms-long-running-operation": true,
         "parameters": [
