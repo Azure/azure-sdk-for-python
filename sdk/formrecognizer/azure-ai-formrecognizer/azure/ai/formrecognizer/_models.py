@@ -2901,7 +2901,11 @@ class DocumentPage:
 
 
 class DocumentStyle:
-    """An object representing observed text styles."""
+    """An object representing observed text styles.
+
+    .. versionadded:: 2023-02-28-preview
+        The *similar_font_family*, *font_style*, *font_weight*, *color*, and *background_color* properties.
+    """
 
     is_handwritten: Optional[bool]
     """Indicates if the content is handwritten."""
@@ -2935,13 +2939,19 @@ class DocumentStyle:
 
     @classmethod
     def _from_generated(cls, style):
+        # multi-api compatibility
+        similar_font_family = style.similar_font_family if hasattr(style, "similar_font_family") else None
+        font_style = style.font_style if hasattr(style, "font_style") else None
+        font_weight = style.font_weight if hasattr(style, "font_weight") else None
+        color = style.color if hasattr(style, "color") else None
+        background_color = style.background_color if hasattr(style, "background_color") else None
         return cls(
             is_handwritten=style.is_handwritten,
-            similar_font_family=style.similar_font_family,
-            font_style=style.font_style,
-            font_weight=style.font_weight,
-            color=style.color,
-            background_color=style.background_color,
+            similar_font_family=similar_font_family,
+            font_style=font_style,
+            font_weight=font_weight,
+            color=color,
+            background_color=background_color,
             spans=[DocumentSpan._from_generated(span) for span in style.spans]
             if style.spans
             else [],
