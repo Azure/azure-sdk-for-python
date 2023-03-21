@@ -152,6 +152,7 @@ class ServiceBusReceiver(
         prefetch_count: int = 0,
         **kwargs: Any,
     ) -> None:
+        self._session_id = None
         self._message_iter: Optional[Iterator[ServiceBusReceivedMessage]] = None
         self._amqp_transport: "AmqpTransport"
         if kwargs.get("entity_name"):

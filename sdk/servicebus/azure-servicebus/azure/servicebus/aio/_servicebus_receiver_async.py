@@ -331,10 +331,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         if self._prefetch_count == 1:
             # pylint: disable=protected-access
-            self._handler._message_received = functools.partial(
-                self._amqp_transport.enhanced_message_received,
-                self
-            )
+            self._amqp_transport.set_handler_message_received_async(self)
 
     async def _open(self):
         # pylint: disable=protected-access

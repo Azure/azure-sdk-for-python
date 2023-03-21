@@ -347,7 +347,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 else:
                     def _hack_disable_receive_context_message_received(self, frame, message):
                         # pylint: disable=protected-access
-                        self._handler._was_message_received = True
+                        self._handler._last_activity_timestamp = time.time()
                         self._handler._received_messages.put((frame, message))
 
                 with sender, receiver:

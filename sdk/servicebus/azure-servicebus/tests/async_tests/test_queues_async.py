@@ -20,7 +20,10 @@ try:
 except ImportError:
     uamqp = None
 
-from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransportAsync
+try:
+    from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransportAsync
+except:
+    PyamqpTransportAsync = None
 from azure.servicebus.aio import (
     ServiceBusClient,
     AutoLockRenewer
@@ -251,7 +254,6 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 receiver = sb_client.get_queue_receiver(servicebus_queue.name)
                 sender = sb_client.get_queue_sender(servicebus_queue.name)
 
-                #def _hack_disable_receive_context_message_received(self, uamqp_transport, *, message):
                 if uamqp_transport:
                     def _hack_disable_receive_context_message_received(self, message):
                         # pylint: disable=protected-access
@@ -260,6 +262,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 else:
                     def _hack_disable_receive_context_message_received(self, frame, message):
                         # pylint: disable=protected-access
+                        self._handler._last_activity_timestamp = time.time()
                         self._handler._received_messages.put((frame, message))
 
                 async with sender, receiver:

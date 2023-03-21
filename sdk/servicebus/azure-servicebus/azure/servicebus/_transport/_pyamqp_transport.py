@@ -619,7 +619,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Receiver enhanced_message_received callback.
         """
         # pylint: disable=protected-access
-        receiver._handler._was_message_received = True
+        receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
             receiver._handler._received_messages.put((frame, message))
         else:

@@ -203,6 +203,16 @@ if uamqp_installed:
             finally:
                 receiver._receive_context.clear()
 
+        # called by async ServiceBusReceiver
+        enhanced_message_received_async = UamqpTransport.enhanced_message_received
+
+        @staticmethod
+        def set_handler_message_received_async(receiver):
+            receiver._handler._message_received = functools.partial(
+                UamqpTransportAsync.enhanced_message_received_async,
+                receiver
+            )
+
         @staticmethod
         async def reset_link_credit_async(handler, link_credit):
             """

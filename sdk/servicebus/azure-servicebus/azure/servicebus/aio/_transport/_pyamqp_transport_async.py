@@ -6,6 +6,7 @@
 from __future__ import annotations
 import functools
 from typing import TYPE_CHECKING, Optional
+import time
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
@@ -204,6 +205,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             receiver._receive_context.clear()
 
     @staticmethod
+    async def enhanced_message_received_async(receiver, frame, message):
+        # pylint: disable=protected-access
+        receiver._handler._last_activity_timestamp = time.time()
+        if receiver._receive_context.is_set():
+            receiver._handler._received_messages.put((frame, message))
+        else:
+            await receiver._handler.settle_messages_async(frame[1], 'released')
+
+    @staticmethod
+    def set_handler_message_received_async(receiver):
+        receiver._handler._message_received_async = functools.partial(
+            PyamqpTransportAsync.enhanced_message_received_async,
+            receiver
+        )
+
+    @staticmethod
     async def reset_link_credit_async(handler, link_credit):
         """
         Resets the link credit on the link.
@@ -292,7 +309,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         update_token = kwargs.pop("update_token")  # pylint: disable=unused-variable
         if update_token:
             # update_token not actually needed by pyamqp
-            # just using to detect wh
+            # just using to detect which args to pass
             return JWTTokenAuthAsync(auth_uri, auth_uri, get_token)
         return JWTTokenAuthAsync(
             auth_uri,
@@ -304,8 +321,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             port=config.connection_port,
             verify=config.connection_verify,
         )
-        # if update_token:
-        #    token_auth.update_token()  # TODO: why don't we need to update in pyamqp?
 
     @staticmethod
     def create_mgmt_client(address, mgmt_auth, config):  # pylint: disable=unused-argument
