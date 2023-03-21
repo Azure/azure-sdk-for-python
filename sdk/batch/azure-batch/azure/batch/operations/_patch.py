@@ -417,6 +417,207 @@ def build_new_get_properties_from_task(original_get):
     return new_get_properties_from_task
 
 
+
+def build_new_get_from_task(original_get):
+    def new_get_from_task( 
+        self,
+        job_id: str,
+        task_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: Optional[bool] = None,
+        ocp_date: Optional[str] = None,
+        if__modified__since: Optional[str] = None,
+        if__unmodified__since: Optional[str] = None,
+        ocp_range: Optional[str] = None,
+        **kwargs: Any
+    ) -> bytes:
+        """Returns the content of the specified Compute Node file.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
+        :type node_id: str
+        :param file_path: The path to the file or directory that you want to delete. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration
+         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response. Default value is None.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if__modified__since: str
+        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if__unmodified__since: str
+        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
+         The
+         format is bytes=startRange-endRange. Default value is None.
+        :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: bytes
+        :rtype: bytes
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+        kwargs["stream"] = True;
+
+        get_response = original_get(self=self, job_id=job_id, task_id=task_id, file_path=file_path, time_out=time_out,
+        client_request_id=client_request_id, return_client_request_id=return_client_request_id, ocp_date=ocp_date, 
+        if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, ocp_range=ocp_range, **kwargs)
+        return get_response
+
+    new_get_from_task.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
+    return new_get_from_task
+
+
+def build_new_get_from_compute_node(original_get):
+    def new_get_from_compute_node( 
+        self,
+        pool_id: str,
+        node_id: str,
+        file_path: str,
+        *,
+        time_out: Optional[int] = None,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: Optional[bool] = None,
+        ocp_date: Optional[str] = None,
+        if__modified__since: Optional[str] = None,
+        if__unmodified__since: Optional[str] = None,
+        ocp_range: Optional[str] = None,
+        **kwargs: Any
+    ) -> bytes:
+        """Returns the content of the specified Compute Node file.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node from which you want to delete the file. Required.
+        :type node_id: str
+        :param file_path: The path to the file or directory that you want to delete. Required.
+        :type file_path: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration
+         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response. Default value is None.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         been modified since the specified time. Default value is None.
+        :paramtype if__modified__since: str
+        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
+         known to the
+         client. The operation will be performed only if the resource on the service has
+         not been modified since the specified time. Default value is None.
+        :paramtype if__unmodified__since: str
+        :keyword ocp_range: The byte range to be retrieved. The default is to retrieve the entire file.
+         The
+         format is bytes=startRange-endRange. Default value is None.
+        :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: bytes
+        :rtype: bytes
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+        kwargs["stream"] = True;
+
+        get_response = original_get(self=self, pool_id=pool_id, node_id=node_id, file_path=file_path, time_out=time_out,
+        client_request_id=client_request_id, return_client_request_id=return_client_request_id, ocp_date=ocp_date, 
+        if__modified__since=if__modified__since, if__unmodified__since=if__unmodified__since, ocp_range=ocp_range, **kwargs)
+        return get_response
+
+    new_get_from_compute_node.metadata = {"url": "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"}  # type: ignore
+    return new_get_from_compute_node
+
+
+def build_new_get_remote_desktop(original_get):
+    def new_get_remote_desktop( 
+        self,
+        pool_id: str,
+        node_id: str,
+        *,
+        time_out: Optional[int] = None,
+        client_request_id: Optional[str] = None,
+        return_client_request_id: Optional[bool] = None,
+        ocp_date: Optional[str] = None,
+        **kwargs: Any
+    ) -> bytes:
+        """Gets the Remote Desktop Protocol file for the specified Compute Node.
+
+        Before you can access a Compute Node by using the RDP file, you must create a
+        user Account on the Compute Node. This API can only be invoked on Pools created
+        with a cloud service configuration. For Pools created with a virtual machine
+        configuration, see the GetRemoteLoginSettings API.
+
+        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
+        :type pool_id: str
+        :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
+         Protocol file. Required.
+        :type node_id: str
+        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
+         applications can be returned. Default value is None.
+        :paramtype time_out: int
+        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
+         no decoration
+         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
+        :paramtype client_request_id: str
+        :keyword return_client_request_id: Whether the server should return the client-request-id in
+         the response. Default value is None.
+        :paramtype return_client_request_id: bool
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
+         current system clock time; set it explicitly if you are calling the REST API
+         directly. Default value is None.
+        :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
+        :return: bytes
+        :rtype: bytes
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+
+        kwargs["stream"] = True;
+
+        get_response = original_get(self=self, pool_id=pool_id, node_id=node_id, time_out=time_out,
+        client_request_id=client_request_id, return_client_request_id=return_client_request_id, ocp_date=ocp_date, 
+        **kwargs)
+        return get_response
+
+    new_get_remote_desktop.metadata = {"url": "/pools/{poolId}/nodes/{nodeId}/rdp"}  # type: ignore
+    return new_get_remote_desktop
+
+
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -437,8 +638,11 @@ def patch_sdk():
         operations_modules.TaskOperations.add_collection
     )
 
-    
+    operations_modules.FileOperations.get_from_task = build_new_get_from_task(operations_modules.FileOperations.get_from_task)
+    operations_modules.FileOperations.get_from_compute_node = build_new_get_from_compute_node(operations_modules.FileOperations.get_from_compute_node)
     operations_modules.FileOperations.get_properties_from_compute_node = build_new_get_properties_from_compute_node(operations_modules.FileOperations.get_properties_from_compute_node)
     operations_modules.FileOperations.get_properties_from_task = build_new_get_properties_from_task(operations_modules.FileOperations.get_properties_from_task)
+
+    operations_modules.ComputeNodesOperations.get_remote_desktop = build_new_get_remote_desktop(operations_modules.ComputeNodesOperations.get_remote_desktop)
     models = importlib.import_module("azure.batch.models")
     # models.BatchErrorException.__str__ = batch_error_exception_string

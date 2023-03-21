@@ -806,23 +806,42 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert remote_login_settings.remote_login_ip_address is not None
         assert remote_login_settings.remote_login_port is not None
 
-        # Test Get remote desktop 
-        remote_desktop = client.compute_nodes.get_remote_desktop(batch_pool.name, nodes[0].id)
-        assert isinstance(remote_desktop, models.ComputeNodeGetRemoteLoginSettingsResult)
-        assert remote_login_settings.remote_login_ip_address is not None
-        assert remote_login_settings.remote_login_port is not None
-
         # Test Delete User
         response = client.compute_nodes.delete_user(batch_pool.name, nodes[0].id, user_name)
         assert response is None
 
+    @CachedResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
+    @PoolPreparer(location=AZURE_LOCATION, size=1, config="paas")
+    @recorded_by_proxy
+    def test_batch_compute_node_remote_desktop(self, **kwargs):
+        batch_pool = kwargs.pop("batch_pool")
+        client = self.create_sharedkey_client(**kwargs)
+        nodes = list(client.compute_nodes.list(batch_pool.name))
+        while self.is_live and any([n for n in nodes if n.state != models.ComputeNodeState.idle]):
+            time.sleep(10)
+            nodes = list(client.compute_nodes.list(batch_pool.name))
+        assert len(nodes) ==  1
+
+
+        # Test Get remote desktop 
+        file_length = 0
+        with io.BytesIO() as file_handle:
+            remote_desktop = client.compute_nodes.get_remote_desktop(batch_pool.name, nodes[0].id)
+            assert remote_desktop is not None
+            for data in remote_desktop:
+                file_length += len(data)
+        assert 'full address' in str(data)
+
+
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @StorageAccountPreparer(name_prefix='batch4', location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT, name_prefix='batch4')
-    @PoolPreparer(size=1)
+    @PoolPreparer(os="Windows",size=1)
     @JobPreparer()
     @recorded_by_proxy
     def test_batch_files(self, **kwargs):
+
         batch_pool = kwargs.pop("batch_pool")
         batch_job = kwargs.pop("batch_job")
         client = self.create_sharedkey_client(**kwargs)
@@ -853,12 +872,12 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert ('Content-Type' in props.headers)
 
         # Test Get File from Compute Node
-        #file_length = 0
-        #with io.BytesIO() as file_handle:
-        #    response = client.file.get_from_compute_node(batch_pool.name, node, only_files[0].name)
-        #    for data in response:
-        #        file_length += len(data)
-        #assert file_length ==  props.headers['Content-Length']
+        file_length = 0
+        with io.BytesIO() as file_handle:
+            response = client.file.get_from_compute_node(batch_pool.name, node, only_files[0].name)
+            for data in response:
+                file_length += len(data)
+        assert file_length ==  int(props.headers['Content-Length'])
 
         # Test Delete File from Compute Node
         response = client.file.delete_from_compute_node(batch_pool.name, node, only_files[0].name)
@@ -881,7 +900,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             response = client.file.get_from_task(batch_job.id, task_id, only_files[0].name)
             for data in response:
                 file_length += len(data)
-        assert file_length ==  props.headers['Content-Length']
+        assert file_length ==  int(props.headers['Content-Length'])
+        assert 'hello world' in str(data)
 
         # Test Delete File from Task
         response = client.file.delete_from_task(batch_job.id, task_id, only_files[0].name)

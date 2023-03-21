@@ -1,0 +1,324 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 20 Mar 2023 21:10:52 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 20 Mar 2023 21:10:52 GMT",
+        "request-id": "9a96497f-2666-49a7-b35b-82ed2a82b4e1",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batchf68621d9.eastus.batch.azure.com/$metadata#nodes",
+        "value": [
+          {
+            "id": "tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "url": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "state": "creating",
+            "schedulingState": "enabled",
+            "stateTransitionTime": "2023-03-20T21:10:46.6604847Z",
+            "allocationTime": "2023-03-20T21:10:46.6604847Z",
+            "ipAddress": "10.0.0.4",
+            "affinityId": "TVM:tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "vmSize": "standard_d2_v2",
+            "totalTasksRun": 0,
+            "totalTasksSucceeded": 0,
+            "runningTasksCount": 0,
+            "runningTaskSlotsCount": 0,
+            "isDedicated": true,
+            "endpointConfiguration": {
+              "inboundEndpoints": [
+                {
+                  "name": "SSHRule.0",
+                  "protocol": "tcp",
+                  "publicIPAddress": "20.85.195.198",
+                  "publicFQDN": "dns1ae80965-0c09-4630-9929-07ca93517cae-azurebatch-cloudservice.eastus.cloudapp.azure.com",
+                  "frontendPort": 50000,
+                  "backendPort": 22
+                }
+              ]
+            },
+            "virtualMachineInfo": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest",
+                "exactVersion": "18.04.202303080"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "request-id": "a86fbe87-2283-46f5-b406-ff38b25f33ad",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batchf68621d9.eastus.batch.azure.com/$metadata#nodes",
+        "value": [
+          {
+            "id": "tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "url": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "state": "idle",
+            "schedulingState": "enabled",
+            "stateTransitionTime": "2023-03-20T21:11:02.369439Z",
+            "lastBootTime": "2023-03-20T21:11:01.87726Z",
+            "allocationTime": "2023-03-20T21:10:46.6604847Z",
+            "ipAddress": "10.0.0.4",
+            "affinityId": "TVM:tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "vmSize": "standard_d2_v2",
+            "totalTasksRun": 0,
+            "totalTasksSucceeded": 0,
+            "runningTasksCount": 0,
+            "runningTaskSlotsCount": 0,
+            "certificateReferences": [],
+            "isDedicated": true,
+            "endpointConfiguration": {
+              "inboundEndpoints": [
+                {
+                  "name": "SSHRule.0",
+                  "protocol": "tcp",
+                  "publicIPAddress": "20.85.195.198",
+                  "publicFQDN": "dns1ae80965-0c09-4630-9929-07ca93517cae-azurebatch-cloudservice.eastus.cloudapp.azure.com",
+                  "frontendPort": 50000,
+                  "backendPort": 22
+                }
+              ]
+            },
+            "nodeAgentInfo": {
+              "lastUpdateTime": "2023-03-20T21:11:01.87726Z",
+              "version": "1.9.35"
+            },
+            "virtualMachineInfo": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest",
+                "exactVersion": "18.04.202303080"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "request-id": "a0f693ea-115a-4337-8f61-5125a937e907",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batchf68621d9.eastus.batch.azure.com/$metadata#nodes",
+        "value": [
+          {
+            "id": "tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "url": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "state": "idle",
+            "schedulingState": "enabled",
+            "stateTransitionTime": "2023-03-20T21:11:02.369439Z",
+            "lastBootTime": "2023-03-20T21:11:01.87726Z",
+            "allocationTime": "2023-03-20T21:10:46.6604847Z",
+            "ipAddress": "10.0.0.4",
+            "affinityId": "TVM:tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d",
+            "vmSize": "standard_d2_v2",
+            "totalTasksRun": 0,
+            "totalTasksSucceeded": 0,
+            "runningTasksCount": 0,
+            "runningTaskSlotsCount": 0,
+            "certificateReferences": [],
+            "isDedicated": true,
+            "endpointConfiguration": {
+              "inboundEndpoints": [
+                {
+                  "name": "SSHRule.0",
+                  "protocol": "tcp",
+                  "publicIPAddress": "20.85.195.198",
+                  "publicFQDN": "dns1ae80965-0c09-4630-9929-07ca93517cae-azurebatch-cloudservice.eastus.cloudapp.azure.com",
+                  "frontendPort": 50000,
+                  "backendPort": 22
+                }
+              ]
+            },
+            "nodeAgentInfo": {
+              "lastUpdateTime": "2023-03-20T21:11:01.87726Z",
+              "version": "1.9.35"
+            },
+            "virtualMachineInfo": {
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "18.04-LTS",
+                "version": "latest",
+                "exactVersion": "18.04.202303080"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/users?api-version=2022-10-01.16.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "81",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "name": "BatchPythonSDKUser",
+        "password": "kt#_gahr!@aGERDXA",
+        "isAdmin": false
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/users/BatchPythonSDKUser",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "Location": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/users/BatchPythonSDKUser",
+        "request-id": "00510b92-7f28-4a26-9e39-b6eaa33e9223",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/users/BatchPythonSDKUser?api-version=2022-10-01.16.0",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "36",
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "ocp-date": "Mon, 20 Mar 2023 21:11:03 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "password": "liilef#$DdRGSa_ewkjh"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "DataServiceId": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/users/BatchPythonSDKUser",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "request-id": "ebb363da-36e7-4696-8ee7-18173da39a98",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/remoteloginsettings?api-version=2022-10-01.16.0",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "ocp-date": "Mon, 20 Mar 2023 21:11:03 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; odata=minimalmetadata",
+        "DataServiceId": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/remoteloginsettings",
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 20 Mar 2023 21:11:02 GMT",
+        "request-id": "5cc78873-4bba-4841-bc74-ed0a457b4403",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "odata.metadata": "https://batchf68621d9.eastus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.RemoteLoginSettings",
+        "remoteLoginIPAddress": "20.85.195.198",
+        "remoteLoginPort": 50000
+      }
+    },
+    {
+      "RequestUri": "https://batchf68621d9.eastus.batch.azure.com/pools/f68621d9/nodes/tvmps_02d8140c716b566c76dd2d82433639ac3d2f391cfbebb4df01e59f21368d1f2b_d/users/BatchPythonSDKUser?api-version=2022-10-01.16.0",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "ocp-date": "Mon, 20 Mar 2023 21:11:03 GMT",
+        "User-Agent": "azsdk-python-batch/14.0.0b Python/3.8.6 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "DataServiceVersion": "3.0",
+        "Date": "Mon, 20 Mar 2023 21:11:03 GMT",
+        "request-id": "e0ad3f50-487e-47dc-81fb-ab46c175c9b7",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 import json
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Iterable, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -268,6 +268,8 @@ def build_pool_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -298,6 +300,7 @@ def build_pool_delete_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -319,6 +322,8 @@ def build_pool_exists_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -349,6 +354,7 @@ def build_pool_exists_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -432,6 +438,8 @@ def build_pool_patch_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}"
     path_format_arguments = {
@@ -463,6 +471,7 @@ def build_pool_patch_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -480,6 +489,8 @@ def build_pool_disable_auto_scale_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/disableautoscale"
     path_format_arguments = {
@@ -502,6 +513,7 @@ def build_pool_disable_auto_scale_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -525,6 +537,8 @@ def build_pool_enable_auto_scale_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/enableautoscale"
     path_format_arguments = {
@@ -556,6 +570,7 @@ def build_pool_enable_auto_scale_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -624,6 +639,8 @@ def build_pool_resize_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/resize"
     path_format_arguments = {
@@ -655,6 +672,7 @@ def build_pool_resize_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -676,6 +694,8 @@ def build_pool_stop_resize_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/stopresize"
     path_format_arguments = {
@@ -706,6 +726,7 @@ def build_pool_stop_resize_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -725,6 +746,8 @@ def build_pool_update_properties_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/updateproperties"
     path_format_arguments = {
@@ -748,6 +771,7 @@ def build_pool_update_properties_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -771,6 +795,8 @@ def build_pool_remove_nodes_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/removenodes"
     path_format_arguments = {
@@ -802,6 +828,7 @@ def build_pool_remove_nodes_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -943,6 +970,8 @@ def build_job_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -973,6 +1002,7 @@ def build_job_delete_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1056,6 +1086,8 @@ def build_job_patch_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -1087,6 +1119,7 @@ def build_job_patch_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -1110,6 +1143,8 @@ def build_job_update_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}"
     path_format_arguments = {
@@ -1141,6 +1176,7 @@ def build_job_update_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -1164,6 +1200,8 @@ def build_job_disable_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}/disable"
     path_format_arguments = {
@@ -1195,6 +1233,7 @@ def build_job_disable_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -1216,6 +1255,8 @@ def build_job_enable_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}/enable"
     path_format_arguments = {
@@ -1246,6 +1287,7 @@ def build_job_enable_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1268,6 +1310,8 @@ def build_job_terminate_request(
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}/terminate"
     path_format_arguments = {
@@ -1298,6 +1342,7 @@ def build_job_terminate_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -1318,6 +1363,8 @@ def build_job_add_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs"
 
@@ -1336,6 +1383,7 @@ def build_job_add_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -1677,6 +1725,8 @@ def build_certificates_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/certificates(thumbprintAlgorithm={thumbprintAlgorithm},thumbprint={thumbprint})"
     path_format_arguments = {
@@ -1700,6 +1750,7 @@ def build_certificates_delete_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1756,17 +1807,19 @@ def build_file_delete_from_task_request(
     task_id: str,
     file_path: str,
     *,
-    recursive: bool,
     time_out: Optional[int] = None,
     client_request_id: Optional[str] = None,
     return_client_request_id: Optional[bool] = None,
     ocp_date: Optional[str] = None,
+    recursive: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -1781,7 +1834,8 @@ def build_file_delete_from_task_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if time_out is not None:
         _params["timeOut"] = _SERIALIZER.query("time_out", time_out, "int")
-    _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
+    if recursive is not None:
+        _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
 
     # Construct headers
     if client_request_id is not None:
@@ -1792,6 +1846,7 @@ def build_file_delete_from_task_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1868,6 +1923,8 @@ def build_file_get_properties_from_task_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobs/{jobId}/tasks/{taskId}/files/{filePath}"
     path_format_arguments = {
@@ -1896,6 +1953,7 @@ def build_file_get_properties_from_task_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -1916,6 +1974,8 @@ def build_file_delete_from_compute_node_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -1942,6 +2002,7 @@ def build_file_delete_from_compute_node_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2018,6 +2079,8 @@ def build_file_get_properties_from_compute_node_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/files/{filePath}"
     path_format_arguments = {
@@ -2046,6 +2109,7 @@ def build_file_get_properties_from_compute_node_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2173,6 +2237,8 @@ def build_job_schedule_exists_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -2203,6 +2269,7 @@ def build_job_schedule_exists_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2224,6 +2291,8 @@ def build_job_schedule_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -2254,6 +2323,7 @@ def build_job_schedule_delete_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2337,6 +2407,8 @@ def build_job_schedule_patch_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -2368,6 +2440,7 @@ def build_job_schedule_patch_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -2391,6 +2464,8 @@ def build_job_schedule_update_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}"
     path_format_arguments = {
@@ -2422,6 +2497,7 @@ def build_job_schedule_update_request(
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -2443,6 +2519,8 @@ def build_job_schedule_disable_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/disable"
     path_format_arguments = {
@@ -2473,6 +2551,7 @@ def build_job_schedule_disable_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2494,6 +2573,8 @@ def build_job_schedule_enable_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/enable"
     path_format_arguments = {
@@ -2524,6 +2605,7 @@ def build_job_schedule_enable_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2545,6 +2627,8 @@ def build_job_schedule_terminate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules/{jobScheduleId}/terminate"
     path_format_arguments = {
@@ -2575,6 +2659,7 @@ def build_job_schedule_terminate_request(
         _headers["if-modified-since"] = _SERIALIZER.header("if__modified__since", if__modified__since, "str")
     if if__unmodified__since is not None:
         _headers["if-unmodified-since"] = _SERIALIZER.header("if__unmodified__since", if__unmodified__since, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -2593,6 +2678,8 @@ def build_job_schedule_add_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/jobschedules"
 
@@ -2611,6 +2698,7 @@ def build_job_schedule_add_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -3159,6 +3247,8 @@ def build_compute_nodes_add_user_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users"
     path_format_arguments = {
@@ -3183,6 +3273,7 @@ def build_compute_nodes_add_user_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -3202,6 +3293,8 @@ def build_compute_nodes_delete_user_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -3226,6 +3319,7 @@ def build_compute_nodes_delete_user_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3247,6 +3341,8 @@ def build_compute_nodes_update_user_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/users/{userName}"
     path_format_arguments = {
@@ -3272,6 +3368,7 @@ def build_compute_nodes_update_user_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -3339,6 +3436,8 @@ def build_compute_nodes_reboot_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reboot"
     path_format_arguments = {
@@ -3363,6 +3462,7 @@ def build_compute_nodes_reboot_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -3383,6 +3483,8 @@ def build_compute_nodes_reimage_request(
 
     content_type: str = kwargs.pop("content_type")
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/reimage"
     path_format_arguments = {
@@ -3407,6 +3509,7 @@ def build_compute_nodes_reimage_request(
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
     _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
@@ -3426,6 +3529,8 @@ def build_compute_nodes_disable_scheduling_request(
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/disablescheduling"
     path_format_arguments = {
@@ -3449,6 +3554,7 @@ def build_compute_nodes_disable_scheduling_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
@@ -3469,6 +3575,8 @@ def build_compute_nodes_enable_scheduling_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: Literal["2022-10-01.16.0"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01.16.0"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
     _url = "/pools/{poolId}/nodes/{nodeId}/enablescheduling"
     path_format_arguments = {
@@ -3492,6 +3600,7 @@ def build_compute_nodes_enable_scheduling_request(
         )
     if ocp_date is not None:
         _headers["ocp-date"] = _SERIALIZER.header("ocp_date", ocp_date, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -3842,9 +3951,7 @@ class ApplicationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ApplicationListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models.ApplicationListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -3876,19 +3983,18 @@ class ApplicationsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.ApplicationListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.ApplicationListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Application], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3914,6 +4020,8 @@ class ApplicationsOperations:
         :param application_id: A string that uniquely identifies the application within the Account.
          Required.
         :type application_id: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: Application. The Application is compatible with MutableMapping
         :rtype: ~azure.batch.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3939,8 +4047,9 @@ class ApplicationsOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3949,7 +4058,10 @@ class ApplicationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = _deserialize(_models.Application, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Application, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3986,17 +4098,14 @@ class PoolOperations:
         times of the last aggregation interval currently available; that is, only the
         last aggregation interval is returned.
 
-        :return: An iterator like instance of PoolUsageMetrics. The PoolUsageMetrics is compatible with
-         MutableMapping
+        :return: An iterator like instance of PoolUsageMetrics
         :rtype: ~azure.core.paging.ItemPaged[~azure.batch.models.PoolUsageMetrics]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.CustomPagePoolUsageMetrics] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[List[_models.PoolUsageMetrics]] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -4023,19 +4132,18 @@ class PoolOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.CustomPagePoolUsageMetrics = _deserialize(  # pylint: disable=protected-access
-                _models._models.CustomPagePoolUsageMetrics, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.PoolUsageMetrics], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, iter(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4078,6 +4186,8 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: PoolStatistics. The PoolStatistics is compatible with MutableMapping
         :rtype: ~azure.batch.models.PoolStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4106,8 +4216,9 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4123,7 +4234,10 @@ class PoolOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.PoolStatistics, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PoolStatistics, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4165,6 +4279,8 @@ class PoolOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4200,8 +4316,9 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4272,7 +4389,7 @@ class PoolOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchPoolListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.BatchPoolListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -4307,19 +4424,18 @@ class PoolOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.BatchPoolListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchPoolListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.BatchPool], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4398,6 +4514,8 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4431,15 +4549,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -4501,6 +4621,8 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4534,15 +4656,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 200:
@@ -4614,6 +4738,8 @@ class PoolOperations:
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchPool. The BatchPool is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchPool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4649,15 +4775,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -4665,7 +4793,10 @@ class PoolOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.BatchPool, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchPool, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4734,6 +4865,8 @@ class PoolOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4774,15 +4907,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -4825,6 +4960,8 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4854,15 +4991,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -4939,6 +5078,8 @@ class PoolOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4979,15 +5120,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -5038,6 +5181,8 @@ class PoolOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: AutoScaleRun. The AutoScaleRun is compatible with MutableMapping
         :rtype: ~azure.batch.models.AutoScaleRun
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5074,15 +5219,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -5091,7 +5238,10 @@ class PoolOperations:
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
-        deserialized = _deserialize(_models.AutoScaleRun, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AutoScaleRun, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5164,6 +5314,8 @@ class PoolOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5204,15 +5356,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -5285,6 +5439,8 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5318,15 +5474,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -5376,6 +5534,8 @@ class PoolOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5412,15 +5572,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -5494,6 +5656,8 @@ class PoolOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5534,15 +5698,17 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -5617,9 +5783,7 @@ class AccountOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.AccountListSupportedImagesResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models.AccountListSupportedImagesResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -5652,28 +5816,25 @@ class AccountOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.AccountListSupportedImagesResult = (  # pylint: disable=protected-access
-                _deserialize(
-                    _models._models.AccountListSupportedImagesResult,  # pylint: disable=protected-access
-                    pipeline_response,
-                )
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ImageInformation], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -5724,9 +5885,7 @@ class AccountOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PoolNodeCountsListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models.PoolNodeCountsListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -5759,25 +5918,25 @@ class AccountOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.PoolNodeCountsListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.PoolNodeCountsListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.PoolNodeCounts], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -5832,6 +5991,8 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: JobStatistics. The JobStatistics is compatible with MutableMapping
         :rtype: ~azure.batch.models.JobStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5860,15 +6021,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -5876,7 +6039,10 @@ class JobOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.JobStatistics, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.JobStatistics, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5945,6 +6111,8 @@ class JobOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5978,15 +6146,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -6056,6 +6226,8 @@ class JobOperations:
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchJob. The BatchJob is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchJob
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6091,15 +6263,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -6107,7 +6281,10 @@ class JobOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.BatchJob, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchJob, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6176,6 +6353,8 @@ class JobOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6216,15 +6395,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -6298,6 +6479,8 @@ class JobOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6338,15 +6521,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -6425,6 +6610,8 @@ class JobOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6465,15 +6652,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -6545,6 +6734,8 @@ class JobOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6578,15 +6769,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -6665,6 +6858,8 @@ class JobOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6737,6 +6932,8 @@ class JobOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6809,6 +7006,8 @@ class JobOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6881,6 +7080,8 @@ class JobOperations:
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6927,15 +7128,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -6988,6 +7191,8 @@ class JobOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7023,15 +7228,17 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -7093,7 +7300,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.BatchJobListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7128,25 +7335,25 @@ class JobOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.BatchJob], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -7206,7 +7413,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.BatchJobListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7242,25 +7449,25 @@ class JobOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.BatchJob], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -7324,9 +7531,7 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobListPreparationAndReleaseTaskStatusResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models.BatchJobListPreparationAndReleaseTaskStatusResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7361,26 +7566,27 @@ class JobOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobListPreparationAndReleaseTaskStatusResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobListPreparationAndReleaseTaskStatusResult,  # pylint: disable=protected-access
-                pipeline_response,
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.JobPreparationAndReleaseTaskExecutionInformation], deserialized["value"]
             )
-            list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -7420,6 +7626,8 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: TaskCountsResult. The TaskCountsResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.TaskCountsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7449,21 +7657,26 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
-        deserialized = _deserialize(_models.TaskCountsResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TaskCountsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7521,6 +7734,8 @@ class CertificatesOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7556,8 +7771,9 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7625,9 +7841,7 @@ class CertificatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.CertificateListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models.CertificateListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7661,19 +7875,18 @@ class CertificatesOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.CertificateListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.CertificateListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Certificate], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7727,6 +7940,8 @@ class CertificatesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7757,8 +7972,9 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7821,6 +8037,8 @@ class CertificatesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7851,15 +8069,17 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -7906,6 +8126,8 @@ class CertificatesOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.batch.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7937,8 +8159,9 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7954,7 +8177,10 @@ class CertificatesOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.Certificate, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Certificate, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7986,11 +8212,11 @@ class FileOperations:
         task_id: str,
         file_path: str,
         *,
-        recursive: bool,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
+        recursive: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """Deletes the specified Task file from the Compute Node where the Task ran.
@@ -8003,12 +8229,6 @@ class FileOperations:
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
-         represents
-         a directory instead of a file, you can set recursive to true to delete the
-         directory and all of the files and subdirectories in it. If recursive is false
-         then the directory must be empty or deletion will fail. Required.
-        :paramtype recursive: bool
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -8023,6 +8243,14 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword recursive: Whether to delete children of a directory. If the filePath parameter
+         represents
+         a directory instead of a file, you can set recursive to true to delete the
+         directory and all of the files and subdirectories in it. If recursive is false
+         then the directory must be empty or deletion will fail. Default value is None.
+        :paramtype recursive: bool
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8044,26 +8272,28 @@ class FileOperations:
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
-            recursive=recursive,
             time_out=time_out,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
             ocp_date=ocp_date,
+            recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -8124,6 +8354,8 @@ class FileOperations:
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8158,15 +8390,17 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -8181,7 +8415,10 @@ class FileOperations:
         response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
 
-        deserialized = _deserialize(bytes, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8235,6 +8472,8 @@ class FileOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8268,15 +8507,17 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -8339,6 +8580,8 @@ class FileOperations:
          directory and all of the files and subdirectories in it. If recursive is false
          then the directory must be empty or deletion will fail. Default value is None.
         :paramtype recursive: bool
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8371,15 +8614,17 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -8440,6 +8685,8 @@ class FileOperations:
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8474,15 +8721,17 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -8497,7 +8746,10 @@ class FileOperations:
         response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
         response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
 
-        deserialized = _deserialize(bytes, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8551,6 +8803,8 @@ class FileOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8584,15 +8838,17 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -8666,7 +8922,7 @@ class FileOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.NodeFileListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.NodeFileListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -8702,25 +8958,25 @@ class FileOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.NodeFileListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.NodeFileListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -8779,7 +9035,7 @@ class FileOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.NodeFileListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.NodeFileListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -8815,25 +9071,25 @@ class FileOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.NodeFileListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.NodeFileListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.NodeFile], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -8912,6 +9168,8 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8945,15 +9203,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 200:
@@ -9025,6 +9285,8 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9058,15 +9320,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9134,6 +9398,8 @@ class JobScheduleOperations:
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchJobSchedule. The BatchJobSchedule is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchJobSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9169,15 +9435,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9185,7 +9453,10 @@ class JobScheduleOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.BatchJobSchedule, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchJobSchedule, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -9256,6 +9527,8 @@ class JobScheduleOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9296,15 +9569,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9380,6 +9655,8 @@ class JobScheduleOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9420,15 +9697,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9495,6 +9774,8 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9528,15 +9809,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9603,6 +9886,8 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9636,15 +9921,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9711,6 +9998,8 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9744,15 +10033,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9797,6 +10088,8 @@ class JobScheduleOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9832,15 +10125,17 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -9903,9 +10198,7 @@ class JobScheduleOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobScheduleListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models.BatchJobScheduleListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -9940,25 +10233,25 @@ class JobScheduleOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobScheduleListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobScheduleListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.BatchJobSchedule], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -10020,6 +10313,8 @@ class TaskOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10056,8 +10351,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10133,7 +10429,7 @@ class TaskOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchTaskListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.BatchTaskListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -10169,19 +10465,18 @@ class TaskOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.BatchTaskListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchTaskListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.BatchTask], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -10243,6 +10538,8 @@ class TaskOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.TaskAddCollectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10279,8 +10576,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10294,7 +10592,10 @@ class TaskOperations:
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
-        deserialized = _deserialize(_models.TaskAddCollectionResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TaskAddCollectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10363,6 +10664,8 @@ class TaskOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10397,8 +10700,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10481,6 +10785,8 @@ class TaskOperations:
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchTask. The BatchTask is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTask
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10517,8 +10823,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10535,7 +10842,10 @@ class TaskOperations:
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
         response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
 
-        deserialized = _deserialize(_models.BatchTask, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchTask, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10603,6 +10913,8 @@ class TaskOperations:
         :paramtype if__unmodified__since: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10644,8 +10956,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10703,6 +11016,8 @@ class TaskOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchTaskListSubtasksResult. The BatchTaskListSubtasksResult is compatible with
          MutableMapping
         :rtype: ~azure.batch.models.BatchTaskListSubtasksResult
@@ -10735,8 +11050,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10752,7 +11068,10 @@ class TaskOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.BatchTaskListSubtasksResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchTaskListSubtasksResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10819,6 +11138,8 @@ class TaskOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10853,8 +11174,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10939,6 +11261,8 @@ class TaskOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10973,8 +11297,9 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11052,6 +11377,8 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11089,15 +11416,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11147,6 +11476,8 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11178,15 +11509,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11241,6 +11574,8 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11279,15 +11614,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11336,6 +11673,8 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: ComputeNode. The ComputeNode is compatible with MutableMapping
         :rtype: ~azure.batch.models.ComputeNode
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11367,15 +11706,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11383,7 +11724,10 @@ class ComputeNodesOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.ComputeNode, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ComputeNode, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -11429,6 +11773,8 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11469,15 +11815,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11530,6 +11878,8 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11570,15 +11920,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11633,6 +11985,8 @@ class ComputeNodesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11681,6 +12035,8 @@ class ComputeNodesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11729,6 +12085,8 @@ class ComputeNodesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11777,6 +12135,8 @@ class ComputeNodesOperations:
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11820,15 +12180,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11876,6 +12238,8 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11906,15 +12270,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -11965,6 +12331,8 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: ComputeNodeGetRemoteLoginSettingsResult. The ComputeNodeGetRemoteLoginSettingsResult
          is compatible with MutableMapping
         :rtype: ~azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult
@@ -11996,15 +12364,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -12012,7 +12382,10 @@ class ComputeNodesOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.ComputeNodeGetRemoteLoginSettingsResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ComputeNodeGetRemoteLoginSettingsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12057,6 +12430,8 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12087,15 +12462,17 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -12103,7 +12480,10 @@ class ComputeNodesOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(bytes, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12156,6 +12536,8 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: UploadBatchServiceLogsResult. The UploadBatchServiceLogsResult is compatible with
          MutableMapping
         :rtype: ~azure.batch.models.UploadBatchServiceLogsResult
@@ -12194,21 +12576,26 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
-        deserialized = _deserialize(_models.UploadBatchServiceLogsResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.UploadBatchServiceLogsResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12266,9 +12653,7 @@ class ComputeNodesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ComputeNodeListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models.ComputeNodeListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -12303,25 +12688,25 @@ class ComputeNodesOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.ComputeNodeListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.ComputeNodeListResult, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ComputeNode], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -12387,6 +12772,8 @@ class ComputeNodeExtensionsOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: NodeVMExtension. The NodeVMExtension is compatible with MutableMapping
         :rtype: ~azure.batch.models.NodeVMExtension
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12419,15 +12806,17 @@ class ComputeNodeExtensionsOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError, response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
@@ -12435,7 +12824,10 @@ class ComputeNodeExtensionsOperations:
         response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
         response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
 
-        deserialized = _deserialize(_models.NodeVMExtension, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.NodeVMExtension, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -12491,7 +12883,7 @@ class ComputeNodeExtensionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.NodeVMExtensionList] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models.NodeVMExtensionList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -12526,25 +12918,25 @@ class ComputeNodeExtensionsOperations:
             return request
 
         def extract_data(pipeline_response):
-            deserialized: _models._models.NodeVMExtensionList = _deserialize(  # pylint: disable=protected-access
-                _models._models.NodeVMExtensionList, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.value
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.NodeVMExtension], deserialized["value"])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.odata_next_link or None, iter(list_of_elem)
+            return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError, response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 

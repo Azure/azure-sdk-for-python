@@ -11,14 +11,7 @@ import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceNotModifiedError,
-    map_error,
-)
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, ResourceNotModifiedError, map_error
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -28,95 +21,15 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._model_base import AzureJSONEncoder, _deserialize
-from ...operations._operations import (
-    build_account_list_pool_node_counts_request,
-    build_account_list_supported_images_request,
-    build_applications_get_request,
-    build_applications_list_request,
-    build_certificates_add_request,
-    build_certificates_cancel_deletion_request,
-    build_certificates_delete_request,
-    build_certificates_get_request,
-    build_certificates_list_request,
-    build_compute_node_extensions_get_request,
-    build_compute_node_extensions_list_request,
-    build_compute_nodes_add_user_request,
-    build_compute_nodes_delete_user_request,
-    build_compute_nodes_disable_scheduling_request,
-    build_compute_nodes_enable_scheduling_request,
-    build_compute_nodes_get_remote_desktop_request,
-    build_compute_nodes_get_remote_login_settings_request,
-    build_compute_nodes_get_request,
-    build_compute_nodes_list_request,
-    build_compute_nodes_reboot_request,
-    build_compute_nodes_reimage_request,
-    build_compute_nodes_update_user_request,
-    build_compute_nodes_upload_batch_service_logs_request,
-    build_file_delete_from_compute_node_request,
-    build_file_delete_from_task_request,
-    build_file_get_from_compute_node_request,
-    build_file_get_from_task_request,
-    build_file_get_properties_from_compute_node_request,
-    build_file_get_properties_from_task_request,
-    build_file_list_from_compute_node_request,
-    build_file_list_from_task_request,
-    build_job_add_request,
-    build_job_delete_request,
-    build_job_disable_request,
-    build_job_enable_request,
-    build_job_get_all_lifetime_statistics_request,
-    build_job_get_request,
-    build_job_get_task_counts_request,
-    build_job_list_from_job_schedule_request,
-    build_job_list_preparation_and_release_task_status_request,
-    build_job_list_request,
-    build_job_patch_request,
-    build_job_schedule_add_request,
-    build_job_schedule_delete_request,
-    build_job_schedule_disable_request,
-    build_job_schedule_enable_request,
-    build_job_schedule_exists_request,
-    build_job_schedule_get_request,
-    build_job_schedule_list_request,
-    build_job_schedule_patch_request,
-    build_job_schedule_terminate_request,
-    build_job_schedule_update_request,
-    build_job_terminate_request,
-    build_job_update_request,
-    build_pool_add_request,
-    build_pool_delete_request,
-    build_pool_disable_auto_scale_request,
-    build_pool_enable_auto_scale_request,
-    build_pool_evaluate_auto_scale_request,
-    build_pool_exists_request,
-    build_pool_get_all_lifetime_statistics_request,
-    build_pool_get_request,
-    build_pool_list_request,
-    build_pool_list_usage_metrics_request,
-    build_pool_patch_request,
-    build_pool_remove_nodes_request,
-    build_pool_resize_request,
-    build_pool_stop_resize_request,
-    build_pool_update_properties_request,
-    build_task_add_collection_request,
-    build_task_add_request,
-    build_task_delete_request,
-    build_task_get_request,
-    build_task_list_request,
-    build_task_list_subtasks_request,
-    build_task_reactivate_request,
-    build_task_terminate_request,
-    build_task_update_request,
-)
+from ...operations._operations import build_account_list_pool_node_counts_request, build_account_list_supported_images_request, build_applications_get_request, build_applications_list_request, build_certificates_add_request, build_certificates_cancel_deletion_request, build_certificates_delete_request, build_certificates_get_request, build_certificates_list_request, build_compute_node_extensions_get_request, build_compute_node_extensions_list_request, build_compute_nodes_add_user_request, build_compute_nodes_delete_user_request, build_compute_nodes_disable_scheduling_request, build_compute_nodes_enable_scheduling_request, build_compute_nodes_get_remote_desktop_request, build_compute_nodes_get_remote_login_settings_request, build_compute_nodes_get_request, build_compute_nodes_list_request, build_compute_nodes_reboot_request, build_compute_nodes_reimage_request, build_compute_nodes_update_user_request, build_compute_nodes_upload_batch_service_logs_request, build_file_delete_from_compute_node_request, build_file_delete_from_task_request, build_file_get_from_compute_node_request, build_file_get_from_task_request, build_file_get_properties_from_compute_node_request, build_file_get_properties_from_task_request, build_file_list_from_compute_node_request, build_file_list_from_task_request, build_job_add_request, build_job_delete_request, build_job_disable_request, build_job_enable_request, build_job_get_all_lifetime_statistics_request, build_job_get_request, build_job_get_task_counts_request, build_job_list_from_job_schedule_request, build_job_list_preparation_and_release_task_status_request, build_job_list_request, build_job_patch_request, build_job_schedule_add_request, build_job_schedule_delete_request, build_job_schedule_disable_request, build_job_schedule_enable_request, build_job_schedule_exists_request, build_job_schedule_get_request, build_job_schedule_list_request, build_job_schedule_patch_request, build_job_schedule_terminate_request, build_job_schedule_update_request, build_job_terminate_request, build_job_update_request, build_pool_add_request, build_pool_delete_request, build_pool_disable_auto_scale_request, build_pool_enable_auto_scale_request, build_pool_evaluate_auto_scale_request, build_pool_exists_request, build_pool_get_all_lifetime_statistics_request, build_pool_get_request, build_pool_list_request, build_pool_list_usage_metrics_request, build_pool_patch_request, build_pool_remove_nodes_request, build_pool_resize_request, build_pool_stop_resize_request, build_pool_update_properties_request, build_task_add_collection_request, build_task_add_request, build_task_delete_request, build_task_get_request, build_task_list_request, build_task_list_subtasks_request, build_task_reactivate_request, build_task_terminate_request, build_task_update_request
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-T = TypeVar("T")
+T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
-
+JSON = MutableMapping[str, Any] # pylint: disable=unsubscriptable-object
 
 class ApplicationsOperations:
     """
@@ -134,6 +47,7 @@ class ApplicationsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list(
@@ -179,21 +93,15 @@ class ApplicationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ApplicationListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.ApplicationListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_applications_list_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
@@ -213,33 +121,45 @@ class ApplicationsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.ApplicationListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.ApplicationListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.ApplicationListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.ApplicationListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.BatchError, response.json())
+                error = _deserialize(_models.BatchError,  response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace_async
-    async def get(self, application_id: str, **kwargs: Any) -> _models.Application:
+    async def get(
+        self,
+        application_id: str,
+        **kwargs: Any
+    ) -> _models.Application:
         """Gets information about the specified Application.
 
         This operation returns only Applications and versions that are available for
@@ -251,23 +171,23 @@ class ApplicationsOperations:
         :param application_id: A string that uniquely identifies the application within the Account.
          Required.
         :type application_id: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: Application. The Application is compatible with MutableMapping
         :rtype: ~azure.batch.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Application] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Application] = kwargs.pop('cls', None)
 
+        
         request = build_applications_get_request(
             application_id=application_id,
             api_version=self._config.api_version,
@@ -276,8 +196,11 @@ class ApplicationsOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
@@ -286,12 +209,15 @@ class ApplicationsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = _deserialize(_models.Application, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Application, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {}) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
 
 class PoolOperations:
@@ -311,8 +237,12 @@ class PoolOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+
     @distributed_trace
-    def list_usage_metrics(self, **kwargs: Any) -> AsyncIterable["_models.PoolUsageMetrics"]:
+    def list_usage_metrics(
+        self,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PoolUsageMetrics"]:
         """Lists the usage metrics, aggregated by Pool across individual time intervals,
         for the specified Account.
 
@@ -331,21 +261,15 @@ class PoolOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.CustomPagePoolUsageMetrics] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.CustomPagePoolUsageMetrics] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_pool_list_usage_metrics_request(
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -360,19 +284,23 @@ class PoolOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.CustomPagePoolUsageMetrics = _deserialize(  # pylint: disable=protected-access
-                _models._models.CustomPagePoolUsageMetrics, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.CustomPagePoolUsageMetrics = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.CustomPagePoolUsageMetrics  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
@@ -382,7 +310,11 @@ class PoolOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace_async
     async def get_all_lifetime_statistics(
@@ -415,23 +347,23 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: PoolStatistics. The PoolStatistics is compatible with MutableMapping
         :rtype: ~azure.batch.models.PoolStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.PoolStatistics] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PoolStatistics] = kwargs.pop('cls', None)
 
+        
         request = build_pool_get_all_lifetime_statistics_request(
             time_out=time_out,
             client_request_id=client_request_id,
@@ -443,31 +375,39 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.PoolStatistics, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.PoolStatistics, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def add(  # pylint: disable=inconsistent-return-statements
         self,
         pool: _models.BatchPool,
@@ -476,7 +416,6 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Adds a Pool to the specified Account.
@@ -501,158 +440,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds a Pool to the specified Account.
-
-        When naming Pools, avoid including sensitive information such as user names or
-        secret project names. This information may appear in telemetry logs accessible
-        to Microsoft Support engineers.
-
-        :param pool: The Pool to be added. Required.
-        :type pool: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds a Pool to the specified Account.
-
-        When naming Pools, avoid including sensitive information such as user names or
-        secret project names. This information may appear in telemetry logs accessible
-        to Microsoft Support engineers.
-
-        :param pool: The Pool to be added. Required.
-        :type pool: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool: Union[_models.BatchPool, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Adds a Pool to the specified Account.
-
-        When naming Pools, avoid including sensitive information such as user names or
-        secret project names. This information may appear in telemetry logs accessible
-        to Microsoft Support engineers.
-
-        :param pool: The Pool to be added. Is one of the following types: BatchPool, JSON, IO Required.
-        :type pool: ~azure.batch.models.BatchPool or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(pool, (IO, bytes)):
-            _content = pool
-        else:
-            _content = json.dumps(pool, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(pool, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_add_request(
             time_out=time_out,
@@ -667,26 +474,35 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def list(
@@ -739,19 +555,15 @@ class PoolOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchPoolListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.BatchPoolListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_pool_list_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
@@ -774,30 +586,38 @@ class PoolOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.BatchPoolListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchPoolListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.BatchPoolListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.BatchPoolListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.BatchError, response.json())
+                error = _deserialize(_models.BatchError,  response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -865,23 +685,23 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_pool_delete_request(
             pool_id=pool_id,
             time_out=time_out,
@@ -898,22 +718,32 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def exists(
@@ -968,23 +798,23 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_pool_exists_request(
             pool_id=pool_id,
             time_out=time_out,
@@ -1001,34 +831,42 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-            response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-            response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-            response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+            response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+            response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+            response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+            response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+            
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
         return 200 <= response.status_code <= 299
+
+
 
     @distributed_trace_async
     async def get(
         self,
         pool_id: str,
         *,
-        select: str,
-        expand: str,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
@@ -1037,16 +875,14 @@ class PoolOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
+        select: Optional[str] = None,
+        expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.BatchPool:
         """Gets information about the specified Pool.
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword select: An OData $select clause. Required.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Required.
-        :paramtype expand: str
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1081,27 +917,29 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: str
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchPool. The BatchPool is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchPool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BatchPool] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchPool] = kwargs.pop('cls', None)
 
+        
         request = build_pool_get_request(
             pool_id=pool_id,
-            select=select,
-            expand=expand,
             time_out=time_out,
             client_request_id=client_request_id,
             return_client_request_id=return_client_request_id,
@@ -1110,36 +948,47 @@ class PoolOperations:
             if__none__match=if__none__match,
             if__modified__since=if__modified__since,
             if__unmodified__since=if__unmodified__since,
+            select=select,
+            expand=expand,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.BatchPool, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchPool, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -1153,7 +1002,6 @@ class PoolOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -1200,240 +1048,26 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_update: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Pool.
-
-        This only replaces the Pool properties specified in the request. For example,
-        if the Pool has a StartTask associated with it, and a request does not specify
-        a StartTask element, then the Pool keeps the existing StartTask.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param pool_update: The parameters for the request. Required.
-        :type pool_update: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_update: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Pool.
-
-        This only replaces the Pool properties specified in the request. For example,
-        if the Pool has a StartTask associated with it, and a request does not specify
-        a StartTask element, then the Pool keeps the existing StartTask.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param pool_update: The parameters for the request. Required.
-        :type pool_update: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_update: Union[_models.BatchPool, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Pool.
-
-        This only replaces the Pool properties specified in the request. For example,
-        if the Pool has a StartTask associated with it, and a request does not specify
-        a StartTask element, then the Pool keeps the existing StartTask.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param pool_update: The parameters for the request. Is one of the following types: BatchPool,
-         JSON, IO Required.
-        :type pool_update: ~azure.batch.models.BatchPool or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(pool_update, (IO, bytes)):
-            _content = pool_update
-        else:
-            _content = json.dumps(pool_update, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(pool_update, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_patch_request(
             pool_id=pool_id,
@@ -1453,25 +1087,35 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def disable_auto_scale(  # pylint: disable=inconsistent-return-statements
@@ -1504,23 +1148,23 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_pool_disable_auto_scale_request(
             pool_id=pool_id,
             time_out=time_out,
@@ -1533,247 +1177,41 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
-    async def enable_auto_scale(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: _models.BatchPoolEnableAutoScaleParameters,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Enables automatic scaling for a Pool.
 
-        You cannot enable automatic scaling on a Pool if a resize operation is in
-        progress on the Pool. If automatic scaling of the Pool is currently disabled,
-        you must specify a valid autoscale formula as part of the request. If automatic
-        scaling of the Pool is already enabled, you may specify a new autoscale formula
-        and/or a new evaluation interval. You cannot call this API for the same Pool
-        more than once every 30 seconds.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: ~azure.batch.models.BatchPoolEnableAutoScaleParameters
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def enable_auto_scale(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Enables automatic scaling for a Pool.
-
-        You cannot enable automatic scaling on a Pool if a resize operation is in
-        progress on the Pool. If automatic scaling of the Pool is currently disabled,
-        you must specify a valid autoscale formula as part of the request. If automatic
-        scaling of the Pool is already enabled, you may specify a new autoscale formula
-        and/or a new evaluation interval. You cannot call this API for the same Pool
-        more than once every 30 seconds.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def enable_auto_scale(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Enables automatic scaling for a Pool.
-
-        You cannot enable automatic scaling on a Pool if a resize operation is in
-        progress on the Pool. If automatic scaling of the Pool is currently disabled,
-        you must specify a valid autoscale formula as part of the request. If automatic
-        scaling of the Pool is already enabled, you may specify a new autoscale formula
-        and/or a new evaluation interval. You cannot call this API for the same Pool
-        more than once every 30 seconds.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     @distributed_trace_async
     async def enable_auto_scale(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
-        parameters: Union[_models.BatchPoolEnableAutoScaleParameters, JSON, IO],
+        pool_enable_auto_scale_parameter: _models.BatchPoolEnableAutoScaleParameters,
         *,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
@@ -1796,9 +1234,8 @@ class PoolOperations:
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         BatchPoolEnableAutoScaleParameters, JSON, IO Required.
-        :type parameters: ~azure.batch.models.BatchPoolEnableAutoScaleParameters or JSON or IO
+        :param pool_enable_auto_scale_parameter: The parameters for the request. Required.
+        :type pool_enable_auto_scale_parameter: ~azure.batch.models.BatchPoolEnableAutoScaleParameters
         :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype time_out: int
@@ -1833,33 +1270,26 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(pool_enable_auto_scale_parameter, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_enable_auto_scale_request(
             pool_id=pool_id,
@@ -1879,27 +1309,37 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def evaluate_auto_scale(
         self,
         pool_id: str,
@@ -1909,7 +1349,6 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.AutoScaleRun:
         """Gets the result of evaluating an automatic scaling formula on the Pool.
@@ -1937,171 +1376,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: AutoScaleRun. The AutoScaleRun is compatible with MutableMapping
-        :rtype: ~azure.batch.models.AutoScaleRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def evaluate_auto_scale(
-        self,
-        pool_id: str,
-        parameters: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.AutoScaleRun:
-        """Gets the result of evaluating an automatic scaling formula on the Pool.
-
-        This API is primarily for validating an autoscale formula, as it simply returns
-        the result without applying the formula to the Pool. The Pool must have auto
-        scaling enabled in order to evaluate a formula.
-
-        :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
-         Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AutoScaleRun. The AutoScaleRun is compatible with MutableMapping
-        :rtype: ~azure.batch.models.AutoScaleRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def evaluate_auto_scale(
-        self,
-        pool_id: str,
-        parameters: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.AutoScaleRun:
-        """Gets the result of evaluating an automatic scaling formula on the Pool.
-
-        This API is primarily for validating an autoscale formula, as it simply returns
-        the result without applying the formula to the Pool. The Pool must have auto
-        scaling enabled in order to evaluate a formula.
-
-        :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
-         Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AutoScaleRun. The AutoScaleRun is compatible with MutableMapping
-        :rtype: ~azure.batch.models.AutoScaleRun
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def evaluate_auto_scale(
-        self,
-        pool_id: str,
-        parameters: Union[_models.BatchPoolEvaluateAutoScaleParameters, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AutoScaleRun:
-        """Gets the result of evaluating an automatic scaling formula on the Pool.
-
-        This API is primarily for validating an autoscale formula, as it simply returns
-        the result without applying the formula to the Pool. The Pool must have auto
-        scaling enabled in order to evaluate a formula.
-
-        :param pool_id: The ID of the Pool on which to evaluate the automatic scaling formula.
-         Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         BatchPoolEvaluateAutoScaleParameters, JSON, IO Required.
-        :type parameters: ~azure.batch.models.BatchPoolEvaluateAutoScaleParameters or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: AutoScaleRun. The AutoScaleRun is compatible with MutableMapping
         :rtype: ~azure.batch.models.AutoScaleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AutoScaleRun] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[_models.AutoScaleRun] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_evaluate_auto_scale_request(
             pool_id=pool_id,
@@ -2117,31 +1411,40 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
 
-        deserialized = _deserialize(_models.AutoScaleRun, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.AutoScaleRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def resize(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -2155,7 +1458,6 @@ class PoolOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Changes the number of Compute Nodes that are assigned to a Pool.
@@ -2206,252 +1508,26 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def resize(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Changes the number of Compute Nodes that are assigned to a Pool.
-
-        You can only resize a Pool when its allocation state is steady. If the Pool is
-        already resizing, the request fails with status code 409. When you resize a
-        Pool, the Pool's allocation state changes from steady to resizing. You cannot
-        resize Pools which are configured for automatic scaling. If you try to do this,
-        the Batch service returns an error 409. If you resize a Pool downwards, the
-        Batch service chooses which Compute Nodes to remove. To remove specific Compute
-        Nodes, use the Pool remove Compute Nodes API instead.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def resize(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Changes the number of Compute Nodes that are assigned to a Pool.
-
-        You can only resize a Pool when its allocation state is steady. If the Pool is
-        already resizing, the request fails with status code 409. When you resize a
-        Pool, the Pool's allocation state changes from steady to resizing. You cannot
-        resize Pools which are configured for automatic scaling. If you try to do this,
-        the Batch service returns an error 409. If you resize a Pool downwards, the
-        Batch service chooses which Compute Nodes to remove. To remove specific Compute
-        Nodes, use the Pool remove Compute Nodes API instead.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def resize(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: Union[_models.BatchPoolResizeParameters, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Changes the number of Compute Nodes that are assigned to a Pool.
-
-        You can only resize a Pool when its allocation state is steady. If the Pool is
-        already resizing, the request fails with status code 409. When you resize a
-        Pool, the Pool's allocation state changes from steady to resizing. You cannot
-        resize Pools which are configured for automatic scaling. If you try to do this,
-        the Batch service returns an error 409. If you resize a Pool downwards, the
-        Batch service chooses which Compute Nodes to remove. To remove specific Compute
-        Nodes, use the Pool remove Compute Nodes API instead.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         BatchPoolResizeParameters, JSON, IO Required.
-        :type parameters: ~azure.batch.models.BatchPoolResizeParameters or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_resize_request(
             pool_id=pool_id,
@@ -2471,25 +1547,35 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def stop_resize(  # pylint: disable=inconsistent-return-statements
@@ -2552,23 +1638,23 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_pool_stop_resize_request(
             pool_id=pool_id,
             time_out=time_out,
@@ -2585,27 +1671,37 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def update_properties(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -2615,7 +1711,6 @@ class PoolOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Pool.
@@ -2642,168 +1737,26 @@ class PoolOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_properties(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_update_properties_parameter: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Pool.
-
-        This fully replaces all the updatable properties of the Pool. For example, if
-        the Pool has a StartTask associated with it and if StartTask is not specified
-        with this request, then the Batch service will remove the existing StartTask.
-
-        :param pool_id: The ID of the Pool to update. Required.
-        :type pool_id: str
-        :param pool_update_properties_parameter: The parameters for the request. Required.
-        :type pool_update_properties_parameter: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_properties(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_update_properties_parameter: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Pool.
-
-        This fully replaces all the updatable properties of the Pool. For example, if
-        the Pool has a StartTask associated with it and if StartTask is not specified
-        with this request, then the Batch service will remove the existing StartTask.
-
-        :param pool_id: The ID of the Pool to update. Required.
-        :type pool_id: str
-        :param pool_update_properties_parameter: The parameters for the request. Required.
-        :type pool_update_properties_parameter: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_properties(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        pool_update_properties_parameter: Union[_models.BatchPool, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Pool.
-
-        This fully replaces all the updatable properties of the Pool. For example, if
-        the Pool has a StartTask associated with it and if StartTask is not specified
-        with this request, then the Batch service will remove the existing StartTask.
-
-        :param pool_id: The ID of the Pool to update. Required.
-        :type pool_id: str
-        :param pool_update_properties_parameter: The parameters for the request. Is one of the
-         following types: BatchPool, JSON, IO Required.
-        :type pool_update_properties_parameter: ~azure.batch.models.BatchPool or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(pool_update_properties_parameter, (IO, bytes)):
-            _content = pool_update_properties_parameter
-        else:
-            _content = json.dumps(pool_update_properties_parameter, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(pool_update_properties_parameter, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_update_properties_request(
             pool_id=pool_id,
@@ -2819,27 +1772,37 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def remove_nodes(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -2853,7 +1816,6 @@ class PoolOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Removes Compute Nodes from the specified Pool.
@@ -2900,240 +1862,26 @@ class PoolOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def remove_nodes(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Removes Compute Nodes from the specified Pool.
-
-        This operation can only run when the allocation state of the Pool is steady.
-        When this operation runs, the allocation state changes from steady to resizing.
-        Each request may remove up to 100 nodes.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def remove_nodes(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Removes Compute Nodes from the specified Pool.
-
-        This operation can only run when the allocation state of the Pool is steady.
-        When this operation runs, the allocation state changes from steady to resizing.
-        Each request may remove up to 100 nodes.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def remove_nodes(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        parameters: Union[_models.NodeRemoveParameters, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Removes Compute Nodes from the specified Pool.
-
-        This operation can only run when the allocation state of the Pool is steady.
-        When this operation runs, the allocation state changes from steady to resizing.
-        Each request may remove up to 100 nodes.
-
-        :param pool_id: The ID of the Pool to get. Required.
-        :type pool_id: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         NodeRemoveParameters, JSON, IO Required.
-        :type parameters: ~azure.batch.models.NodeRemoveParameters or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_pool_remove_nodes_request(
             pool_id=pool_id,
@@ -3153,22 +1901,30 @@ class PoolOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -3190,6 +1946,7 @@ class AccountOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace
     def list_supported_images(
@@ -3236,21 +1993,15 @@ class AccountOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.AccountListSupportedImagesResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.AccountListSupportedImagesResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_account_list_supported_images_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
@@ -3272,31 +2023,37 @@ class AccountOperations:
 
         async def extract_data(pipeline_response):
             deserialized: _models._models.AccountListSupportedImagesResult = (  # pylint: disable=protected-access
-                _deserialize(
-                    _models._models.AccountListSupportedImagesResult,  # pylint: disable=protected-access
-                    pipeline_response,
-                )
-            )
+
+                _deserialize(_models._models.AccountListSupportedImagesResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def list_pool_node_counts(
@@ -3343,21 +2100,15 @@ class AccountOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.PoolNodeCountsListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.PoolNodeCountsListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_account_list_pool_node_counts_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
@@ -3378,30 +2129,37 @@ class AccountOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.PoolNodeCountsListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.PoolNodeCountsListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.PoolNodeCountsListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.PoolNodeCountsListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
 
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
 
 class JobOperations:
     """
@@ -3419,6 +2177,7 @@ class JobOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def get_all_lifetime_statistics(
@@ -3451,23 +2210,23 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: JobStatistics. The JobStatistics is compatible with MutableMapping
         :rtype: ~azure.batch.models.JobStatistics
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.JobStatistics] = kwargs.pop("cls", None)
+        cls: ClsType[_models.JobStatistics] = kwargs.pop('cls', None)
 
+        
         request = build_job_get_all_lifetime_statistics_request(
             time_out=time_out,
             client_request_id=client_request_id,
@@ -3479,28 +2238,37 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.JobStatistics, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.JobStatistics, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -3564,23 +2332,23 @@ class JobOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_job_delete_request(
             job_id=job_id,
             time_out=time_out,
@@ -3597,22 +2365,32 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get(
@@ -3675,23 +2453,23 @@ class JobOperations:
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchJob. The BatchJob is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchJob
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BatchJob] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchJob] = kwargs.pop('cls', None)
 
+        
         request = build_job_get_request(
             job_id=job_id,
             time_out=time_out,
@@ -3710,30 +2488,39 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.BatchJob, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchJob, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
@@ -3747,7 +2534,6 @@ class JobOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -3794,240 +2580,26 @@ class JobOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job_update: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job.
-
-        This replaces only the Job properties specified in the request. For example, if
-        the Job has constraints, and a request does not specify the constraints
-        element, then the Job keeps the existing constraints.
-
-        :param job_id: The ID of the Job whose properties you want to update. Required.
-        :type job_id: str
-        :param job_update: The parameters for the request. Required.
-        :type job_update: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job_update: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job.
-
-        This replaces only the Job properties specified in the request. For example, if
-        the Job has constraints, and a request does not specify the constraints
-        element, then the Job keeps the existing constraints.
-
-        :param job_id: The ID of the Job whose properties you want to update. Required.
-        :type job_id: str
-        :param job_update: The parameters for the request. Required.
-        :type job_update: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job_update: Union[_models.BatchJob, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job.
-
-        This replaces only the Job properties specified in the request. For example, if
-        the Job has constraints, and a request does not specify the constraints
-        element, then the Job keeps the existing constraints.
-
-        :param job_id: The ID of the Job whose properties you want to update. Required.
-        :type job_id: str
-        :param job_update: The parameters for the request. Is one of the following types: BatchJob,
-         JSON, IO Required.
-        :type job_update: ~azure.batch.models.BatchJob or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job_update, (IO, bytes)):
-            _content = job_update
-        else:
-            _content = json.dumps(job_update, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(job_update, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_patch_request(
             job_id=job_id,
@@ -4047,27 +2619,37 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
@@ -4081,7 +2663,6 @@ class JobOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job.
@@ -4128,240 +2709,26 @@ class JobOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job.
-
-        This fully replaces all the updatable properties of the Job. For example, if
-        the Job has constraints associated with it and if constraints is not specified
-        with this request, then the Batch service will remove the existing constraints.
-
-        :param job_id: The ID of the Job whose properties you want to update. Required.
-        :type job_id: str
-        :param job: The parameters for the request. Required.
-        :type job: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job.
-
-        This fully replaces all the updatable properties of the Job. For example, if
-        the Job has constraints associated with it and if constraints is not specified
-        with this request, then the Batch service will remove the existing constraints.
-
-        :param job_id: The ID of the Job whose properties you want to update. Required.
-        :type job_id: str
-        :param job: The parameters for the request. Required.
-        :type job: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        job: Union[_models.BatchJob, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job.
-
-        This fully replaces all the updatable properties of the Job. For example, if
-        the Job has constraints associated with it and if constraints is not specified
-        with this request, then the Batch service will remove the existing constraints.
-
-        :param job_id: The ID of the Job whose properties you want to update. Required.
-        :type job_id: str
-        :param job: The parameters for the request. Is one of the following types: BatchJob, JSON, IO
-         Required.
-        :type job: ~azure.batch.models.BatchJob or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job, (IO, bytes)):
-            _content = job
-        else:
-            _content = json.dumps(job, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(job, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_update_request(
             job_id=job_id,
@@ -4381,27 +2748,37 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def disable(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
@@ -4415,7 +2792,6 @@ class JobOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Disables the specified Job, preventing new Tasks from running.
@@ -4467,255 +2843,26 @@ class JobOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def disable(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        parameters: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Disables the specified Job, preventing new Tasks from running.
-
-        The Batch Service immediately moves the Job to the disabling state. Batch then
-        uses the disableTasks parameter to determine what to do with the currently
-        running Tasks of the Job. The Job remains in the disabling state until the
-        disable operation is completed and all Tasks have been dealt with according to
-        the disableTasks option; the Job then moves to the disabled state. No new Tasks
-        are started under the Job until it moves back to active state. If you try to
-        disable a Job that is in any state other than active, disabling, or disabled,
-        the request fails with status code 409.
-
-        :param job_id: The ID of the Job to disable. Required.
-        :type job_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def disable(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        parameters: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Disables the specified Job, preventing new Tasks from running.
-
-        The Batch Service immediately moves the Job to the disabling state. Batch then
-        uses the disableTasks parameter to determine what to do with the currently
-        running Tasks of the Job. The Job remains in the disabling state until the
-        disable operation is completed and all Tasks have been dealt with according to
-        the disableTasks option; the Job then moves to the disabled state. No new Tasks
-        are started under the Job until it moves back to active state. If you try to
-        disable a Job that is in any state other than active, disabling, or disabled,
-        the request fails with status code 409.
-
-        :param job_id: The ID of the Job to disable. Required.
-        :type job_id: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def disable(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        parameters: Union[_models.BatchJobDisableParameters, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Disables the specified Job, preventing new Tasks from running.
-
-        The Batch Service immediately moves the Job to the disabling state. Batch then
-        uses the disableTasks parameter to determine what to do with the currently
-        running Tasks of the Job. The Job remains in the disabling state until the
-        disable operation is completed and all Tasks have been dealt with according to
-        the disableTasks option; the Job then moves to the disabled state. No new Tasks
-        are started under the Job until it moves back to active state. If you try to
-        disable a Job that is in any state other than active, disabling, or disabled,
-        the request fails with status code 409.
-
-        :param job_id: The ID of the Job to disable. Required.
-        :type job_id: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         BatchJobDisableParameters, JSON, IO Required.
-        :type parameters: ~azure.batch.models.BatchJobDisableParameters or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_disable_request(
             job_id=job_id,
@@ -4735,25 +2882,35 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def enable(  # pylint: disable=inconsistent-return-statements
@@ -4815,23 +2972,23 @@ class JobOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_job_enable_request(
             job_id=job_id,
             time_out=time_out,
@@ -4848,25 +3005,35 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @overload
     async def terminate(  # pylint: disable=inconsistent-return-statements
@@ -4935,6 +3102,8 @@ class JobOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5007,6 +3176,8 @@ class JobOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5079,10 +3250,13 @@ class JobOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
 
     @distributed_trace_async
     async def terminate(  # pylint: disable=inconsistent-return-statements
@@ -5151,23 +3325,22 @@ class JobOperations:
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -5197,25 +3370,35 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def add(  # pylint: disable=inconsistent-return-statements
@@ -5258,25 +3441,22 @@ class JobOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
-            "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
         _content = json.dumps(job, cls=AzureJSONEncoder)  # type: ignore
 
@@ -5293,52 +3473,54 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def list(
         self,
         *,
-        filter: str,
-        select: str,
-        expand: str,
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
+        filter: Optional[str] = None,
+        select: Optional[str] = None,
+        expand: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJob"]:
         """Lists all of the Jobs in the specified Account.
 
         Lists all of the Jobs in the specified Account.
 
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs.
-         Required.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Required.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Required.
-        :paramtype expand: str
         :keyword maxresults: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype maxresults: int
@@ -5356,6 +3538,14 @@ class JobOperations:
         :keyword return_client_request_id: Whether the server should return the client-request-id in
          the response. Default value is None.
         :paramtype return_client_request_id: bool
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+         https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs.
+         Default value is None.
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: str
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: str
         :return: An iterator like instance of BatchJob. The BatchJob is compatible with MutableMapping
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5363,28 +3553,24 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.BatchJobListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_job_list_request(
-                    filter=filter,
-                    select=select,
-                    expand=expand,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5398,43 +3584,52 @@ class JobOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.BatchJobListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.BatchJobListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def list_from_job_schedule(
         self,
         job_schedule_id: str,
         *,
-        filter: str,
-        select: str,
-        expand: str,
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
+        filter: Optional[str] = None,
+        select: Optional[str] = None,
+        expand: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.BatchJob"]:
         """Lists the Jobs that have been created under the specified Job Schedule.
@@ -5444,14 +3639,6 @@ class JobOperations:
         :param job_schedule_id: The ID of the Job Schedule from which you want to get a list of Jobs.
          Required.
         :type job_schedule_id: str
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
-         Required.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Required.
-        :paramtype select: str
-        :keyword expand: An OData $expand clause. Required.
-        :paramtype expand: str
         :keyword maxresults: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype maxresults: int
@@ -5469,6 +3656,14 @@ class JobOperations:
         :keyword return_client_request_id: Whether the server should return the client-request-id in
          the response. Default value is None.
         :paramtype return_client_request_id: bool
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-jobs-in-a-job-schedule.
+         Default value is None.
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: str
+        :keyword expand: An OData $expand clause. Default value is None.
+        :paramtype expand: str
         :return: An iterator like instance of BatchJob. The BatchJob is compatible with MutableMapping
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.batch.models.BatchJob]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5476,29 +3671,25 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.BatchJobListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_job_list_from_job_schedule_request(
                     job_schedule_id=job_schedule_id,
-                    filter=filter,
-                    select=select,
-                    expand=expand,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
+                    filter=filter,
+                    select=select,
+                    expand=expand,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5512,42 +3703,51 @@ class JobOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.BatchJobListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.BatchJobListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def list_preparation_and_release_task_status(
         self,
         job_id: str,
         *,
-        filter: str,
-        select: str,
         maxresults: Optional[int] = None,
         ocp_date: Optional[str] = None,
         time_out: Optional[int] = None,
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
+        filter: Optional[str] = None,
+        select: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.JobPreparationAndReleaseTaskExecutionInformation"]:
         """Lists the execution status of the Job Preparation and Job Release Task for the
@@ -5562,12 +3762,6 @@ class JobOperations:
 
         :param job_id: The ID of the Job. Required.
         :type job_id: str
-        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
-        https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
-         Required.
-        :paramtype filter: str
-        :keyword select: An OData $select clause. Required.
-        :paramtype select: str
         :keyword maxresults: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype maxresults: int
@@ -5585,6 +3779,12 @@ class JobOperations:
         :keyword return_client_request_id: Whether the server should return the client-request-id in
          the response. Default value is None.
         :paramtype return_client_request_id: bool
+        :keyword filter: An OData $filter clause. For more information on constructing this filter, see
+        https://docs.microsoft.com/en-us/rest/api/batchservice/odata-filters-in-batch#list-job-preparation-and-release-status.
+         Default value is None.
+        :paramtype filter: str
+        :keyword select: An OData $select clause. Default value is None.
+        :paramtype select: str
         :return: An iterator like instance of JobPreparationAndReleaseTaskExecutionInformation. The
          JobPreparationAndReleaseTaskExecutionInformation is compatible with MutableMapping
         :rtype:
@@ -5594,30 +3794,24 @@ class JobOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobListPreparationAndReleaseTaskStatusResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.BatchJobListPreparationAndReleaseTaskStatusResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_job_list_preparation_and_release_task_status_request(
                     job_id=job_id,
-                    filter=filter,
-                    select=select,
                     maxresults=maxresults,
                     ocp_date=ocp_date,
                     time_out=time_out,
                     client_request_id=client_request_id,
                     return_client_request_id=return_client_request_id,
+                    filter=filter,
+                    select=select,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -5631,30 +3825,38 @@ class JobOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobListPreparationAndReleaseTaskStatusResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobListPreparationAndReleaseTaskStatusResult,  # pylint: disable=protected-access
-                pipeline_response,
-            )
+            deserialized: _models._models.BatchJobListPreparationAndReleaseTaskStatusResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.BatchJobListPreparationAndReleaseTaskStatusResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace_async
     async def get_task_counts(
@@ -5690,23 +3892,23 @@ class JobOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: TaskCountsResult. The TaskCountsResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.TaskCountsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.TaskCountsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TaskCountsResult] = kwargs.pop('cls', None)
 
+        
         request = build_job_get_task_counts_request(
             job_id=job_id,
             time_out=time_out,
@@ -5719,26 +3921,33 @@ class JobOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
 
-        deserialized = _deserialize(_models.TaskCountsResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TaskCountsResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
 
 class CertificatesOperations:
@@ -5757,6 +3966,7 @@ class CertificatesOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def add(  # pylint: disable=inconsistent-return-statements
@@ -5791,25 +4001,22 @@ class CertificatesOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
-            "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
         _content = json.dumps(certificate, cls=AzureJSONEncoder)  # type: ignore
 
@@ -5826,26 +4033,35 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def list(
@@ -5895,21 +4111,15 @@ class CertificatesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.CertificateListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.CertificateListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_certificates_list_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
@@ -5931,30 +4141,38 @@ class CertificatesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.CertificateListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.CertificateListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.CertificateListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.CertificateListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.BatchError, response.json())
+                error = _deserialize(_models.BatchError,  response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace_async
     async def cancel_deletion(  # pylint: disable=inconsistent-return-statements
@@ -5997,23 +4215,23 @@ class CertificatesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_certificates_cancel_deletion_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
@@ -6027,26 +4245,35 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -6091,23 +4318,23 @@ class CertificatesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_certificates_delete_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
@@ -6121,24 +4348,34 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get(
@@ -6176,23 +4413,23 @@ class CertificatesOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: Certificate. The Certificate is compatible with MutableMapping
         :rtype: ~azure.batch.models.Certificate
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Certificate] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Certificate] = kwargs.pop('cls', None)
 
+        
         request = build_certificates_get_request(
             thumbprint_algorithm=thumbprint_algorithm,
             thumbprint=thumbprint,
@@ -6207,29 +4444,35 @@ class CertificatesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.Certificate, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Certificate, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
 
 class FileOperations:
@@ -6248,6 +4491,7 @@ class FileOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def delete_from_task(  # pylint: disable=inconsistent-return-statements
@@ -6293,23 +4537,23 @@ class FileOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_file_delete_from_task_request(
             job_id=job_id,
             task_id=task_id,
@@ -6325,22 +4569,32 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get_from_task(
@@ -6394,23 +4648,23 @@ class FileOperations:
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
+        cls: ClsType[bytes] = kwargs.pop('cls', None)
 
+        
         request = build_file_get_from_task_request(
             job_id=job_id,
             task_id=task_id,
@@ -6428,35 +4682,42 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['ocp-creation-time']=self._deserialize('str', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['content-length']=self._deserialize('int', response.headers.get('content-length'))
 
-        deserialized = _deserialize(bytes, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace_async
     async def get_properties_from_task(
@@ -6505,23 +4766,23 @@ class FileOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_file_get_properties_from_task_request(
             job_id=job_id,
             task_id=task_id,
@@ -6538,32 +4799,40 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['ocp-creation-time']=self._deserialize('str', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['content-length']=self._deserialize('int', response.headers.get('content-length'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
         return 200 <= response.status_code <= 299
+
+
 
     @distributed_trace_async
     async def delete_from_compute_node(  # pylint: disable=inconsistent-return-statements
@@ -6609,23 +4878,23 @@ class FileOperations:
          directory and all of the files and subdirectories in it. If recursive is false
          then the directory must be empty or deletion will fail. Default value is None.
         :paramtype recursive: bool
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_file_delete_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -6641,22 +4910,32 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get_from_compute_node(
@@ -6710,23 +4989,23 @@ class FileOperations:
          The
          format is bytes=startRange-endRange. Default value is None.
         :paramtype ocp_range: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
+        cls: ClsType[bytes] = kwargs.pop('cls', None)
 
+        
         request = build_file_get_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -6744,35 +5023,42 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['ocp-creation-time']=self._deserialize('str', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['content-length']=self._deserialize('int', response.headers.get('content-length'))
 
-        deserialized = _deserialize(bytes, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace_async
     async def get_properties_from_compute_node(
@@ -6821,23 +5107,23 @@ class FileOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_file_get_properties_from_compute_node_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -6854,32 +5140,40 @@ class FileOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["ocp-creation-time"] = self._deserialize("str", response.headers.get("ocp-creation-time"))
-        response_headers["ocp-batch-file-isdirectory"] = self._deserialize(
-            "bool", response.headers.get("ocp-batch-file-isdirectory")
-        )
-        response_headers["ocp-batch-file-url"] = self._deserialize("str", response.headers.get("ocp-batch-file-url"))
-        response_headers["ocp-batch-file-mode"] = self._deserialize("str", response.headers.get("ocp-batch-file-mode"))
-        response_headers["content-length"] = self._deserialize("int", response.headers.get("content-length"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['ocp-creation-time']=self._deserialize('str', response.headers.get('ocp-creation-time'))
+        response_headers['ocp-batch-file-isdirectory']=self._deserialize('bool', response.headers.get('ocp-batch-file-isdirectory'))
+        response_headers['ocp-batch-file-url']=self._deserialize('str', response.headers.get('ocp-batch-file-url'))
+        response_headers['ocp-batch-file-mode']=self._deserialize('str', response.headers.get('ocp-batch-file-mode'))
+        response_headers['content-length']=self._deserialize('int', response.headers.get('content-length'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
         return 200 <= response.status_code <= 299
+
+
 
     @distributed_trace
     def list_from_task(
@@ -6936,19 +5230,15 @@ class FileOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.NodeFileListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.NodeFileListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_file_list_from_task_request(
                     job_id=job_id,
                     task_id=task_id,
@@ -6972,29 +5262,38 @@ class FileOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.NodeFileListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.NodeFileListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.NodeFileListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.NodeFileListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
 
     @distributed_trace
     def list_from_compute_node(
@@ -7049,19 +5348,15 @@ class FileOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.NodeFileListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.NodeFileListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_file_list_from_compute_node_request(
                     pool_id=pool_id,
                     node_id=node_id,
@@ -7085,30 +5380,37 @@ class FileOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.NodeFileListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.NodeFileListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.NodeFileListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.NodeFileListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
 
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
 
 class JobScheduleOperations:
     """
@@ -7126,6 +5428,7 @@ class JobScheduleOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def exists(
@@ -7182,23 +5485,23 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_job_schedule_exists_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
@@ -7215,26 +5518,36 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-            response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-            response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-            response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+            response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+            response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+            response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+            response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+            
+            if _stream:
+                deserialized = response.iter_bytes()
+            else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
         return 200 <= response.status_code <= 299
+
+
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -7295,23 +5608,23 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_job_schedule_delete_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
@@ -7328,22 +5641,32 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get(
@@ -7404,23 +5727,23 @@ class JobScheduleOperations:
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchJobSchedule. The BatchJobSchedule is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchJobSchedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BatchJobSchedule] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchJobSchedule] = kwargs.pop('cls', None)
 
+        
         request = build_job_schedule_get_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
@@ -7439,30 +5762,39 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.BatchJobSchedule, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchJobSchedule, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def patch(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
@@ -7476,7 +5808,6 @@ class JobScheduleOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -7525,246 +5856,26 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule_id: str,
-        job_schedule_update: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job Schedule.
-
-        This replaces only the Job Schedule properties specified in the request. For
-        example, if the schedule property is not specified with this request, then the
-        Batch service will keep the existing schedule. Changes to a Job Schedule only
-        impact Jobs created by the schedule after the update has taken place; currently
-        running Jobs are unaffected.
-
-        :param job_schedule_id: The ID of the Job Schedule to update. Required.
-        :type job_schedule_id: str
-        :param job_schedule_update: The parameters for the request. Required.
-        :type job_schedule_update: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule_id: str,
-        job_schedule_update: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job Schedule.
-
-        This replaces only the Job Schedule properties specified in the request. For
-        example, if the schedule property is not specified with this request, then the
-        Batch service will keep the existing schedule. Changes to a Job Schedule only
-        impact Jobs created by the schedule after the update has taken place; currently
-        running Jobs are unaffected.
-
-        :param job_schedule_id: The ID of the Job Schedule to update. Required.
-        :type job_schedule_id: str
-        :param job_schedule_update: The parameters for the request. Required.
-        :type job_schedule_update: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def patch(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule_id: str,
-        job_schedule_update: Union[_models.BatchJobSchedule, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job Schedule.
-
-        This replaces only the Job Schedule properties specified in the request. For
-        example, if the schedule property is not specified with this request, then the
-        Batch service will keep the existing schedule. Changes to a Job Schedule only
-        impact Jobs created by the schedule after the update has taken place; currently
-        running Jobs are unaffected.
-
-        :param job_schedule_id: The ID of the Job Schedule to update. Required.
-        :type job_schedule_id: str
-        :param job_schedule_update: The parameters for the request. Is one of the following types:
-         BatchJobSchedule, JSON, IO Required.
-        :type job_schedule_update: ~azure.batch.models.BatchJobSchedule or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job_schedule_update, (IO, bytes)):
-            _content = job_schedule_update
-        else:
-            _content = json.dumps(job_schedule_update, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(job_schedule_update, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_schedule_patch_request(
             job_schedule_id=job_schedule_id,
@@ -7784,27 +5895,37 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule_id: str,
@@ -7818,7 +5939,6 @@ class JobScheduleOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Job Schedule.
@@ -7867,246 +5987,26 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule_id: str,
-        job_schedule: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job Schedule.
-
-        This fully replaces all the updatable properties of the Job Schedule. For
-        example, if the schedule property is not specified with this request, then the
-        Batch service will remove the existing schedule. Changes to a Job Schedule only
-        impact Jobs created by the schedule after the update has taken place; currently
-        running Jobs are unaffected.
-
-        :param job_schedule_id: The ID of the Job Schedule to update. Required.
-        :type job_schedule_id: str
-        :param job_schedule: The parameters for the request. Required.
-        :type job_schedule: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule_id: str,
-        job_schedule: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job Schedule.
-
-        This fully replaces all the updatable properties of the Job Schedule. For
-        example, if the schedule property is not specified with this request, then the
-        Batch service will remove the existing schedule. Changes to a Job Schedule only
-        impact Jobs created by the schedule after the update has taken place; currently
-        running Jobs are unaffected.
-
-        :param job_schedule_id: The ID of the Job Schedule to update. Required.
-        :type job_schedule_id: str
-        :param job_schedule: The parameters for the request. Required.
-        :type job_schedule: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule_id: str,
-        job_schedule: Union[_models.BatchJobSchedule, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Job Schedule.
-
-        This fully replaces all the updatable properties of the Job Schedule. For
-        example, if the schedule property is not specified with this request, then the
-        Batch service will remove the existing schedule. Changes to a Job Schedule only
-        impact Jobs created by the schedule after the update has taken place; currently
-        running Jobs are unaffected.
-
-        :param job_schedule_id: The ID of the Job Schedule to update. Required.
-        :type job_schedule_id: str
-        :param job_schedule: The parameters for the request. Is one of the following types:
-         BatchJobSchedule, JSON, IO Required.
-        :type job_schedule: ~azure.batch.models.BatchJobSchedule or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job_schedule, (IO, bytes)):
-            _content = job_schedule
-        else:
-            _content = json.dumps(job_schedule, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(job_schedule, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_schedule_update_request(
             job_schedule_id=job_schedule_id,
@@ -8126,25 +6026,35 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def disable(  # pylint: disable=inconsistent-return-statements
@@ -8201,23 +6111,23 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_job_schedule_disable_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
@@ -8234,25 +6144,35 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def enable(  # pylint: disable=inconsistent-return-statements
@@ -8309,23 +6229,23 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_job_schedule_enable_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
@@ -8342,25 +6262,35 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def terminate(  # pylint: disable=inconsistent-return-statements
@@ -8417,23 +6347,23 @@ class JobScheduleOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_job_schedule_terminate_request(
             job_schedule_id=job_schedule_id,
             time_out=time_out,
@@ -8450,27 +6380,37 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def add(  # pylint: disable=inconsistent-return-statements
         self,
         job_schedule: _models.BatchJobSchedule,
@@ -8479,7 +6419,6 @@ class JobScheduleOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Adds a Job Schedule to the specified Account.
@@ -8502,153 +6441,26 @@ class JobScheduleOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds a Job Schedule to the specified Account.
-
-        Adds a Job Schedule to the specified Account.
-
-        :param job_schedule: The Job Schedule to be added. Required.
-        :type job_schedule: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds a Job Schedule to the specified Account.
-
-        Adds a Job Schedule to the specified Account.
-
-        :param job_schedule: The Job Schedule to be added. Required.
-        :type job_schedule: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def add(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_schedule: Union[_models.BatchJobSchedule, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Adds a Job Schedule to the specified Account.
-
-        Adds a Job Schedule to the specified Account.
-
-        :param job_schedule: The Job Schedule to be added. Is one of the following types:
-         BatchJobSchedule, JSON, IO Required.
-        :type job_schedule: ~azure.batch.models.BatchJobSchedule or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(job_schedule, (IO, bytes)):
-            _content = job_schedule
-        else:
-            _content = json.dumps(job_schedule, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(job_schedule, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_job_schedule_add_request(
             time_out=time_out,
@@ -8663,25 +6475,35 @@ class JobScheduleOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def list(
@@ -8734,21 +6556,15 @@ class JobScheduleOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchJobScheduleListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.BatchJobScheduleListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_job_schedule_list_request(
                     maxresults=maxresults,
                     ocp_date=ocp_date,
@@ -8771,30 +6587,37 @@ class JobScheduleOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.BatchJobScheduleListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchJobScheduleListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.BatchJobScheduleListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.BatchJobScheduleListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
 
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
 
 class TaskOperations:
     """
@@ -8812,6 +6635,7 @@ class TaskOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def add(  # pylint: disable=inconsistent-return-statements
@@ -8851,25 +6675,22 @@ class TaskOperations:
         :paramtype ocp_date: str
         :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop(
-            "content_type", _headers.pop("content-type", "application/json; odata=minimalmetadata")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
         _content = json.dumps(task, cls=AzureJSONEncoder)  # type: ignore
 
@@ -8887,26 +6708,35 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace
     def list(
@@ -8964,19 +6794,15 @@ class TaskOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.BatchTaskListResult] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.BatchTaskListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_task_list_request(
                     job_id=job_id,
                     maxresults=maxresults,
@@ -9000,32 +6826,40 @@ class TaskOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.BatchTaskListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.BatchTaskListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.BatchTaskListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.BatchTaskListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _deserialize(_models.BatchError, response.json())
+                error = _deserialize(_models.BatchError,  response.json())
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
 
-    @overload
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+
+
+    @distributed_trace_async
     async def add_collection(
         self,
         job_id: str,
@@ -9035,7 +6869,6 @@ class TaskOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.TaskAddCollectionResult:
         """Adds a collection of Tasks to the specified Job.
@@ -9073,201 +6906,26 @@ class TaskOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.TaskAddCollectionResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add_collection(
-        self,
-        job_id: str,
-        task_collection: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.TaskAddCollectionResult:
-        """Adds a collection of Tasks to the specified Job.
-
-        Note that each Task must have a unique ID. The Batch service may not return the
-        results for each Task in the same order the Tasks were submitted in this
-        request. If the server times out or the connection is closed during the
-        request, the request may have been partially or fully processed, or not at all.
-        In such cases, the user should re-issue the request. Note that it is up to the
-        user to correctly handle failures when re-issuing a request. For example, you
-        should use the same Task IDs during a retry so that if the prior operation
-        succeeded, the retry will not create extra Tasks unexpectedly. If the response
-        contains any Tasks which failed to add, a client can retry the request. In a
-        retry, it is most efficient to resubmit only Tasks that failed to add, and to
-        omit Tasks that were successfully added on the first attempt. The maximum
-        lifetime of a Task from addition to completion is 180 days. If a Task has not
-        completed within 180 days of being added it will be terminated by the Batch
-        service and left in whatever state it was in at that time.
-
-        :param job_id: The ID of the Job to which the Task collection is to be added. Required.
-        :type job_id: str
-        :param task_collection: The Tasks to be added. Required.
-        :type task_collection: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.TaskAddCollectionResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add_collection(
-        self,
-        job_id: str,
-        task_collection: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.TaskAddCollectionResult:
-        """Adds a collection of Tasks to the specified Job.
-
-        Note that each Task must have a unique ID. The Batch service may not return the
-        results for each Task in the same order the Tasks were submitted in this
-        request. If the server times out or the connection is closed during the
-        request, the request may have been partially or fully processed, or not at all.
-        In such cases, the user should re-issue the request. Note that it is up to the
-        user to correctly handle failures when re-issuing a request. For example, you
-        should use the same Task IDs during a retry so that if the prior operation
-        succeeded, the retry will not create extra Tasks unexpectedly. If the response
-        contains any Tasks which failed to add, a client can retry the request. In a
-        retry, it is most efficient to resubmit only Tasks that failed to add, and to
-        omit Tasks that were successfully added on the first attempt. The maximum
-        lifetime of a Task from addition to completion is 180 days. If a Task has not
-        completed within 180 days of being added it will be terminated by the Batch
-        service and left in whatever state it was in at that time.
-
-        :param job_id: The ID of the Job to which the Task collection is to be added. Required.
-        :type job_id: str
-        :param task_collection: The Tasks to be added. Required.
-        :type task_collection: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.TaskAddCollectionResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def add_collection(
-        self,
-        job_id: str,
-        task_collection: Union[_models.BatchTaskCollection, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.TaskAddCollectionResult:
-        """Adds a collection of Tasks to the specified Job.
-
-        Note that each Task must have a unique ID. The Batch service may not return the
-        results for each Task in the same order the Tasks were submitted in this
-        request. If the server times out or the connection is closed during the
-        request, the request may have been partially or fully processed, or not at all.
-        In such cases, the user should re-issue the request. Note that it is up to the
-        user to correctly handle failures when re-issuing a request. For example, you
-        should use the same Task IDs during a retry so that if the prior operation
-        succeeded, the retry will not create extra Tasks unexpectedly. If the response
-        contains any Tasks which failed to add, a client can retry the request. In a
-        retry, it is most efficient to resubmit only Tasks that failed to add, and to
-        omit Tasks that were successfully added on the first attempt. The maximum
-        lifetime of a Task from addition to completion is 180 days. If a Task has not
-        completed within 180 days of being added it will be terminated by the Batch
-        service and left in whatever state it was in at that time.
-
-        :param job_id: The ID of the Job to which the Task collection is to be added. Required.
-        :type job_id: str
-        :param task_collection: The Tasks to be added. Is one of the following types:
-         BatchTaskCollection, JSON, IO Required.
-        :type task_collection: ~azure.batch.models.BatchTaskCollection or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: TaskAddCollectionResult. The TaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.TaskAddCollectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.TaskAddCollectionResult] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[_models.TaskAddCollectionResult] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(task_collection, (IO, bytes)):
-            _content = task_collection
-        else:
-            _content = json.dumps(task_collection, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(task_collection, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_task_add_collection_request(
             job_id=job_id,
@@ -9283,27 +6941,35 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
 
-        deserialized = _deserialize(_models.TaskAddCollectionResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.TaskAddCollectionResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -9367,23 +7033,23 @@ class TaskOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_task_delete_request(
             job_id=job_id,
             task_id=task_id,
@@ -9401,23 +7067,32 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get(
@@ -9485,23 +7160,23 @@ class TaskOperations:
         :paramtype select: str
         :keyword expand: An OData $expand clause. Default value is None.
         :paramtype expand: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchTask. The BatchTask is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTask
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BatchTask] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchTask] = kwargs.pop('cls', None)
 
+        
         request = build_task_get_request(
             job_id=job_id,
             task_id=task_id,
@@ -9521,32 +7196,40 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
 
-        deserialized = _deserialize(_models.BatchTask, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchTask, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def update(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
@@ -9561,7 +7244,6 @@ class TaskOperations:
         if__none__match: Optional[str] = None,
         if__modified__since: Optional[str] = None,
         if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the properties of the specified Task.
@@ -9606,237 +7288,26 @@ class TaskOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        task_id: str,
-        task: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Task.
-
-        :param job_id: The ID of the Job containing the Task. Required.
-        :type job_id: str
-        :param task_id: The ID of the Task to update. Required.
-        :type task_id: str
-        :param task: The parameters for the request. Required.
-        :type task: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        task_id: str,
-        task: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Task.
-
-        :param job_id: The ID of the Job containing the Task. Required.
-        :type job_id: str
-        :param task_id: The ID of the Task to update. Required.
-        :type task_id: str
-        :param task: The parameters for the request. Required.
-        :type task: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        job_id: str,
-        task_id: str,
-        task: Union[_models.BatchTask, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        if__match: Optional[str] = None,
-        if__none__match: Optional[str] = None,
-        if__modified__since: Optional[str] = None,
-        if__unmodified__since: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the properties of the specified Task.
-
-        :param job_id: The ID of the Job containing the Task. Required.
-        :type job_id: str
-        :param task_id: The ID of the Task to update. Required.
-        :type task_id: str
-        :param task: The parameters for the request. Is one of the following types: BatchTask, JSON, IO
-         Required.
-        :type task: ~azure.batch.models.BatchTask or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword if__match: An ETag value associated with the version of the resource known to the
-         client.
-         The operation will be performed only if the resource's current ETag on the
-         service exactly matches the value specified by the client. Default value is None.
-        :paramtype if__match: str
-        :keyword if__none__match: An ETag value associated with the version of the resource known to
-         the client.
-         The operation will be performed only if the resource's current ETag on the
-         service does not match the value specified by the client. Default value is None.
-        :paramtype if__none__match: str
-        :keyword if__modified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         been modified since the specified time. Default value is None.
-        :paramtype if__modified__since: str
-        :keyword if__unmodified__since: A timestamp indicating the last modified time of the resource
-         known to the
-         client. The operation will be performed only if the resource on the service has
-         not been modified since the specified time. Default value is None.
-        :paramtype if__unmodified__since: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(task, (IO, bytes)):
-            _content = task
-        else:
-            _content = json.dumps(task, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(task, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_task_update_request(
             job_id=job_id,
@@ -9857,26 +7328,35 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def list_subtasks(
@@ -9916,24 +7396,24 @@ class TaskOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: BatchTaskListSubtasksResult. The BatchTaskListSubtasksResult is compatible with
          MutableMapping
         :rtype: ~azure.batch.models.BatchTaskListSubtasksResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.BatchTaskListSubtasksResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.BatchTaskListSubtasksResult] = kwargs.pop('cls', None)
 
+        
         request = build_task_list_subtasks_request(
             job_id=job_id,
             task_id=task_id,
@@ -9948,29 +7428,37 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.BatchTaskListSubtasksResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.BatchTaskListSubtasksResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace_async
     async def terminate(  # pylint: disable=inconsistent-return-statements
@@ -10032,23 +7520,23 @@ class TaskOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_task_terminate_request(
             job_id=job_id,
             task_id=task_id,
@@ -10066,26 +7554,35 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def reactivate(  # pylint: disable=inconsistent-return-statements
@@ -10152,23 +7649,23 @@ class TaskOperations:
          client. The operation will be performed only if the resource on the service has
          not been modified since the specified time. Default value is None.
         :paramtype if__unmodified__since: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_task_reactivate_request(
             job_id=job_id,
             task_id=task_id,
@@ -10186,23 +7683,30 @@ class TaskOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.BatchError, response.json())
+            error = _deserialize(_models.BatchError,  response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
@@ -10225,7 +7729,8 @@ class ComputeNodesOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
+
+    @distributed_trace_async
     async def add_user(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -10236,7 +7741,6 @@ class ComputeNodesOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Adds a user Account to the specified Compute Node.
@@ -10264,174 +7768,26 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add_user(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        user: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds a user Account to the specified Compute Node.
-
-        You can add a user Account to a Compute Node only when it is in the idle or
-        running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the machine on which you want to create a user Account. Required.
-        :type node_id: str
-        :param user: The user Account to be created. Required.
-        :type user: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def add_user(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        user: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Adds a user Account to the specified Compute Node.
-
-        You can add a user Account to a Compute Node only when it is in the idle or
-        running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the machine on which you want to create a user Account. Required.
-        :type node_id: str
-        :param user: The user Account to be created. Required.
-        :type user: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def add_user(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        user: Union[_models.ComputeNodeUser, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Adds a user Account to the specified Compute Node.
-
-        You can add a user Account to a Compute Node only when it is in the idle or
-        running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the machine on which you want to create a user Account. Required.
-        :type node_id: str
-        :param user: The user Account to be created. Is one of the following types: ComputeNodeUser,
-         JSON, IO Required.
-        :type user: ~azure.batch.models.ComputeNodeUser or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(user, (IO, bytes)):
-            _content = user
-        else:
-            _content = json.dumps(user, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(user, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_compute_nodes_add_user_request(
             pool_id=pool_id,
@@ -10448,25 +7804,35 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def delete_user(  # pylint: disable=inconsistent-return-statements
@@ -10506,23 +7872,23 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_compute_nodes_delete_user_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -10537,24 +7903,34 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def update_user(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -10566,7 +7942,6 @@ class ComputeNodesOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Updates the password and expiration time of a user Account on the specified
@@ -10599,192 +7974,26 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_user(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        user_name: str,
-        parameters: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the password and expiration time of a user Account on the specified
-        Compute Node.
-
-        This operation replaces of all the updatable properties of the Account. For
-        example, if the expiryTime element is not specified, the current value is
-        replaced with the default value, not left unmodified. You can update a user
-        Account on a Compute Node only when it is in the idle or running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the machine on which you want to update a user Account. Required.
-        :type node_id: str
-        :param user_name: The name of the user Account to update. Required.
-        :type user_name: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_user(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        user_name: str,
-        parameters: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Updates the password and expiration time of a user Account on the specified
-        Compute Node.
-
-        This operation replaces of all the updatable properties of the Account. For
-        example, if the expiryTime element is not specified, the current value is
-        replaced with the default value, not left unmodified. You can update a user
-        Account on a Compute Node only when it is in the idle or running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the machine on which you want to update a user Account. Required.
-        :type node_id: str
-        :param user_name: The name of the user Account to update. Required.
-        :type user_name: str
-        :param parameters: The parameters for the request. Required.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_user(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        user_name: str,
-        parameters: Union[_models.NodeUpdateUserParameters, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Updates the password and expiration time of a user Account on the specified
-        Compute Node.
-
-        This operation replaces of all the updatable properties of the Account. For
-        example, if the expiryTime element is not specified, the current value is
-        replaced with the default value, not left unmodified. You can update a user
-        Account on a Compute Node only when it is in the idle or running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the machine on which you want to update a user Account. Required.
-        :type node_id: str
-        :param user_name: The name of the user Account to update. Required.
-        :type user_name: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         NodeUpdateUserParameters, JSON, IO Required.
-        :type parameters: ~azure.batch.models.NodeUpdateUserParameters or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
-        else:
-            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_compute_nodes_update_user_request(
             pool_id=pool_id,
@@ -10802,25 +8011,35 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get(
@@ -10859,23 +8078,23 @@ class ComputeNodesOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: ComputeNode. The ComputeNode is compatible with MutableMapping
         :rtype: ~azure.batch.models.ComputeNode
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ComputeNode] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ComputeNode] = kwargs.pop('cls', None)
 
+        
         request = build_compute_nodes_get_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -10890,30 +8109,39 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.ComputeNode, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ComputeNode, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def reboot(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -10924,7 +8152,6 @@ class ComputeNodesOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Restarts the specified Compute Node.
@@ -10951,174 +8178,29 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def reboot(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        parameters: Optional[JSON] = None,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Restarts the specified Compute Node.
-
-        You can restart a Compute Node only if it is in an idle or running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
-        :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def reboot(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        parameters: Optional[IO] = None,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Restarts the specified Compute Node.
-
-        You can restart a Compute Node only if it is in an idle or running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
-        :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def reboot(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        parameters: Optional[Union[_models.NodeRebootParameters, JSON, IO]] = None,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Restarts the specified Compute Node.
-
-        You can restart a Compute Node only if it is in an idle or running state.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
-        :type node_id: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         NodeRebootParameters, JSON, IO Default value is None.
-        :type parameters: ~azure.batch.models.NodeRebootParameters or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
+        if parameters is not None:
+            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
         else:
-            if parameters is not None:
-                _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
-            else:
-                _content = None
+            _content = None
 
         request = build_compute_nodes_reboot_request(
             pool_id=pool_id,
@@ -11135,27 +8217,37 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    @overload
+
+
+    @distributed_trace_async
     async def reimage(  # pylint: disable=inconsistent-return-statements
         self,
         pool_id: str,
@@ -11166,7 +8258,6 @@ class ComputeNodesOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> None:
         """Reinstalls the operating system on the specified Compute Node.
@@ -11195,180 +8286,29 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def reimage(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        parameters: Optional[JSON] = None,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Reinstalls the operating system on the specified Compute Node.
-
-        You can reinstall the operating system on a Compute Node only if it is in an
-        idle or running state. This API can be invoked only on Pools created with the
-        cloud service configuration property.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
-        :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def reimage(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        parameters: Optional[IO] = None,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Reinstalls the operating system on the specified Compute Node.
-
-        You can reinstall the operating system on a Compute Node only if it is in an
-        idle or running state. This API can be invoked only on Pools created with the
-        cloud service configuration property.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
-        :type node_id: str
-        :param parameters: The parameters for the request. Default value is None.
-        :type parameters: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def reimage(  # pylint: disable=inconsistent-return-statements
-        self,
-        pool_id: str,
-        node_id: str,
-        parameters: Optional[Union[_models.NodeReimageParameters, JSON, IO]] = None,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Reinstalls the operating system on the specified Compute Node.
-
-        You can reinstall the operating system on a Compute Node only if it is in an
-        idle or running state. This API can be invoked only on Pools created with the
-        cloud service configuration property.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node that you want to restart. Required.
-        :type node_id: str
-        :param parameters: The parameters for the request. Is one of the following types:
-         NodeReimageParameters, JSON, IO Default value is None.
-        :type parameters: ~azure.batch.models.NodeReimageParameters or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
+        if parameters is not None:
+            _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
         else:
-            if parameters is not None:
-                _content = json.dumps(parameters, cls=AzureJSONEncoder)  # type: ignore
-            else:
-                _content = None
+            _content = None
 
         request = build_compute_nodes_reimage_request(
             pool_id=pool_id,
@@ -11385,25 +8325,35 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @overload
     async def disable_scheduling(  # pylint: disable=inconsistent-return-statements
@@ -11448,6 +8398,8 @@ class ComputeNodesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11496,6 +8448,8 @@ class ComputeNodesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11544,10 +8498,13 @@ class ComputeNodesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
 
     @distributed_trace_async
     async def disable_scheduling(  # pylint: disable=inconsistent-return-statements
@@ -11592,23 +8549,22 @@ class ComputeNodesOperations:
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop('content_type', _headers.pop('Content-Type', None))
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -11635,25 +8591,35 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def enable_scheduling(  # pylint: disable=inconsistent-return-statements
@@ -11691,23 +8657,23 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop('cls', None)
 
+        
         request = build_compute_nodes_enable_scheduling_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -11721,25 +8687,35 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
-        response_headers["DataServiceId"] = self._deserialize("str", response.headers.get("DataServiceId"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
+        response_headers['DataServiceId']=self._deserialize('str', response.headers.get('DataServiceId'))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
 
         if cls:
             return cls(pipeline_response, None, response_headers)
+
+
 
     @distributed_trace_async
     async def get_remote_login_settings(
@@ -11780,24 +8756,24 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: ComputeNodeGetRemoteLoginSettingsResult. The ComputeNodeGetRemoteLoginSettingsResult
          is compatible with MutableMapping
         :rtype: ~azure.batch.models.ComputeNodeGetRemoteLoginSettingsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ComputeNodeGetRemoteLoginSettingsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ComputeNodeGetRemoteLoginSettingsResult] = kwargs.pop('cls', None)
 
+        
         request = build_compute_nodes_get_remote_login_settings_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -11811,28 +8787,37 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.ComputeNodeGetRemoteLoginSettingsResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ComputeNodeGetRemoteLoginSettingsResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace_async
     async def get_remote_desktop(
@@ -11872,23 +8857,23 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: bytes
         :rtype: bytes
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[bytes] = kwargs.pop("cls", None)
+        cls: ClsType[bytes] = kwargs.pop('cls', None)
 
+        
         request = build_compute_nodes_get_remote_desktop_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -11902,30 +8887,39 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(bytes, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(bytes, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
 
-    @overload
+
+
+    @distributed_trace_async
     async def upload_batch_service_logs(
         self,
         pool_id: str,
@@ -11936,7 +8930,6 @@ class ComputeNodesOperations:
         client_request_id: Optional[str] = None,
         return_client_request_id: Optional[bool] = None,
         ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.UploadBatchServiceLogsResult:
         """Upload Azure Batch service log files from the specified Compute Node to Azure
@@ -11970,194 +8963,27 @@ class ComputeNodesOperations:
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+        :keyword content_type: Default value is "application/json; odata=minimalmetadata".
         :paramtype content_type: str
-        :return: UploadBatchServiceLogsResult. The UploadBatchServiceLogsResult is compatible with
-         MutableMapping
-        :rtype: ~azure.batch.models.UploadBatchServiceLogsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def upload_batch_service_logs(
-        self,
-        pool_id: str,
-        node_id: str,
-        upload_batch_service_logs_configuration: JSON,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.UploadBatchServiceLogsResult:
-        """Upload Azure Batch service log files from the specified Compute Node to Azure
-        Blob Storage.
-
-        This is for gathering Azure Batch service log files in an automated fashion
-        from Compute Nodes if you are experiencing an error and wish to escalate to
-        Azure support. The Azure Batch service log files should be shared with Azure
-        support to aid in debugging issues with the Batch service.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
-         Protocol file. Required.
-        :type node_id: str
-        :param upload_batch_service_logs_configuration: The Azure Batch service log files upload
-         configuration. Required.
-        :type upload_batch_service_logs_configuration: JSON
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: UploadBatchServiceLogsResult. The UploadBatchServiceLogsResult is compatible with
-         MutableMapping
-        :rtype: ~azure.batch.models.UploadBatchServiceLogsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def upload_batch_service_logs(
-        self,
-        pool_id: str,
-        node_id: str,
-        upload_batch_service_logs_configuration: IO,
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.UploadBatchServiceLogsResult:
-        """Upload Azure Batch service log files from the specified Compute Node to Azure
-        Blob Storage.
-
-        This is for gathering Azure Batch service log files in an automated fashion
-        from Compute Nodes if you are experiencing an error and wish to escalate to
-        Azure support. The Azure Batch service log files should be shared with Azure
-        support to aid in debugging issues with the Batch service.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
-         Protocol file. Required.
-        :type node_id: str
-        :param upload_batch_service_logs_configuration: The Azure Batch service log files upload
-         configuration. Required.
-        :type upload_batch_service_logs_configuration: IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: UploadBatchServiceLogsResult. The UploadBatchServiceLogsResult is compatible with
-         MutableMapping
-        :rtype: ~azure.batch.models.UploadBatchServiceLogsResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def upload_batch_service_logs(
-        self,
-        pool_id: str,
-        node_id: str,
-        upload_batch_service_logs_configuration: Union[_models.UploadBatchServiceLogsConfiguration, JSON, IO],
-        *,
-        time_out: Optional[int] = None,
-        client_request_id: Optional[str] = None,
-        return_client_request_id: Optional[bool] = None,
-        ocp_date: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.UploadBatchServiceLogsResult:
-        """Upload Azure Batch service log files from the specified Compute Node to Azure
-        Blob Storage.
-
-        This is for gathering Azure Batch service log files in an automated fashion
-        from Compute Nodes if you are experiencing an error and wish to escalate to
-        Azure support. The Azure Batch service log files should be shared with Azure
-        support to aid in debugging issues with the Batch service.
-
-        :param pool_id: The ID of the Pool that contains the Compute Node. Required.
-        :type pool_id: str
-        :param node_id: The ID of the Compute Node for which you want to get the Remote Desktop
-         Protocol file. Required.
-        :type node_id: str
-        :param upload_batch_service_logs_configuration: The Azure Batch service log files upload
-         configuration. Is one of the following types: UploadBatchServiceLogsConfiguration, JSON, IO
-         Required.
-        :type upload_batch_service_logs_configuration:
-         ~azure.batch.models.UploadBatchServiceLogsConfiguration or JSON or IO
-        :keyword time_out: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype time_out: int
-        :keyword client_request_id: The caller-generated request identity, in the form of a GUID with
-         no decoration
-         such as curly braces, e.g. 9C4D50EE-2D56-4CD3-8152-34347DC9F2B0. Default value is None.
-        :paramtype client_request_id: str
-        :keyword return_client_request_id: Whether the server should return the client-request-id in
-         the response. Default value is None.
-        :paramtype return_client_request_id: bool
-        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
-         current system clock time; set it explicitly if you are calling the REST API
-         directly. Default value is None.
-        :paramtype ocp_date: str
-        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
-         value is None.
-        :paramtype content_type: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: UploadBatchServiceLogsResult. The UploadBatchServiceLogsResult is compatible with
          MutableMapping
         :rtype: ~azure.batch.models.UploadBatchServiceLogsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.UploadBatchServiceLogsResult] = kwargs.pop("cls", None)
+        content_type: str = kwargs.pop('content_type', _headers.pop('content-type', "application/json; odata=minimalmetadata"))
+        cls: ClsType[_models.UploadBatchServiceLogsResult] = kwargs.pop('cls', None)
 
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(upload_batch_service_logs_configuration, (IO, bytes)):
-            _content = upload_batch_service_logs_configuration
-        else:
-            _content = json.dumps(upload_batch_service_logs_configuration, cls=AzureJSONEncoder)  # type: ignore
+        _content = json.dumps(upload_batch_service_logs_configuration, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_compute_nodes_upload_batch_service_logs_request(
             pool_id=pool_id,
@@ -12174,26 +9000,35 @@ class ComputeNodesOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
 
-        deserialized = _deserialize(_models.UploadBatchServiceLogsResult, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.UploadBatchServiceLogsResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace
     def list(
@@ -12246,21 +9081,15 @@ class ComputeNodesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ComputeNodeListResult] = kwargs.pop(
-            "cls", None
-        )  # pylint: disable=protected-access
+        cls: ClsType[_models._models.ComputeNodeListResult] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_compute_nodes_list_request(
                     pool_id=pool_id,
                     maxresults=maxresults,
@@ -12283,30 +9112,37 @@ class ComputeNodesOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.ComputeNodeListResult = _deserialize(  # pylint: disable=protected-access
-                _models._models.ComputeNodeListResult, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.ComputeNodeListResult = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.ComputeNodeListResult  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
 
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
 
 class ComputeNodeExtensionsOperations:
     """
@@ -12324,6 +9160,7 @@ class ComputeNodeExtensionsOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
 
     @distributed_trace_async
     async def get(
@@ -12367,23 +9204,23 @@ class ComputeNodeExtensionsOperations:
         :paramtype ocp_date: str
         :keyword select: An OData $select clause. Default value is None.
         :paramtype select: str
+        :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
+         will have to context manage the returned stream.
         :return: NodeVMExtension. The NodeVMExtension is compatible with MutableMapping
         :rtype: ~azure.batch.models.NodeVMExtension
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
+        error_map.update(kwargs.pop('error_map', {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.NodeVMExtension] = kwargs.pop("cls", None)
+        cls: ClsType[_models.NodeVMExtension] = kwargs.pop('cls', None)
 
+        
         request = build_compute_node_extensions_get_request(
             pool_id=pool_id,
             node_id=node_id,
@@ -12399,28 +9236,37 @@ class ComputeNodeExtensionsOperations:
         )
         request.url = self._client.format_url(request.url)
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+            request,
+            stream=_stream,
+            **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _deserialize(_models.BatchError,  response.json())
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["client-request-id"] = self._deserialize("str", response.headers.get("client-request-id"))
-        response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
-        response_headers["etag"] = self._deserialize("str", response.headers.get("etag"))
-        response_headers["last-modified"] = self._deserialize("str", response.headers.get("last-modified"))
+        response_headers['client-request-id']=self._deserialize('str', response.headers.get('client-request-id'))
+        response_headers['request-id']=self._deserialize('str', response.headers.get('request-id'))
+        response_headers['etag']=self._deserialize('str', response.headers.get('etag'))
+        response_headers['last-modified']=self._deserialize('str', response.headers.get('last-modified'))
 
-        deserialized = _deserialize(_models.NodeVMExtension, response.json())
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.NodeVMExtension, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers) # type: ignore
 
-        return deserialized  # type: ignore
+        return deserialized # type: ignore
+
+
 
     @distributed_trace
     def list(
@@ -12471,19 +9317,15 @@ class ComputeNodeExtensionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.NodeVMExtensionList] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+        cls: ClsType[_models._models.NodeVMExtensionList] = kwargs.pop('cls', None) # pylint: disable=protected-access
 
         error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
+            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError, 304: ResourceNotModifiedError
         }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
+        error_map.update(kwargs.pop('error_map', {}) or {})
         def prepare_request(next_link=None):
             if not next_link:
-
+                
                 request = build_compute_node_extensions_list_request(
                     pool_id=pool_id,
                     node_id=node_id,
@@ -12506,26 +9348,35 @@ class ComputeNodeExtensionsOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized: _models._models.NodeVMExtensionList = _deserialize(  # pylint: disable=protected-access
-                _models._models.NodeVMExtensionList, pipeline_response  # pylint: disable=protected-access
-            )
+            deserialized: _models._models.NodeVMExtensionList = (  # pylint: disable=protected-access
+
+                _deserialize(_models._models.NodeVMExtensionList  # pylint: disable=protected-access
+        , pipeline_response))
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
+                list_of_elem = cls(list_of_elem) # type: ignore
             return deserialized.odata_next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(   # pylint: disable=protected-access
+                request,
+                stream=_stream,
+                **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _deserialize(_models.BatchError,  response.json())
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+
+        return AsyncItemPaged(
+            get_next, extract_data
+        )
+

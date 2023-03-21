@@ -20,18 +20,17 @@ from ._operations import ComputeNodeExtensionsOperations
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
-
 __all__ = [
-    "ApplicationsOperations",
-    "PoolOperations",
-    "AccountOperations",
-    "JobOperations",
-    "CertificatesOperations",
-    "FileOperations",
-    "JobScheduleOperations",
-    "TaskOperations",
-    "ComputeNodesOperations",
-    "ComputeNodeExtensionsOperations",
+    'ApplicationsOperations',
+    'PoolOperations',
+    'AccountOperations',
+    'JobOperations',
+    'CertificatesOperations',
+    'FileOperations',
+    'JobScheduleOperations',
+    'TaskOperations',
+    'ComputeNodesOperations',
+    'ComputeNodeExtensionsOperations',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

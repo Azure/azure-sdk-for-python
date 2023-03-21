@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 class AccountListSupportedImagesResult(_model_base.Model):
-    """AccountListSupportedImagesResult.
+    """The result of listing the supported Virtual Machine Images.
 
     :ivar value: The list of supported Virtual Machine Images.
     :vartype value: list[~azure.batch.models.ImageInformation]
@@ -31,6 +31,25 @@ class AccountListSupportedImagesResult(_model_base.Model):
     """The list of supported Virtual Machine Images. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ImageInformation"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class AffinityInformation(_model_base.Model):
@@ -115,7 +134,7 @@ class Application(_model_base.Model):
 
 
 class ApplicationListResult(_model_base.Model):
-    """ApplicationListResult.
+    """The result of listing the applications available in an Account.
 
     :ivar value: The list of applications available in the Account.
     :vartype value: list[~azure.batch.models.Application]
@@ -127,6 +146,25 @@ class ApplicationListResult(_model_base.Model):
     """The list of applications available in the Account. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.Application"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class ApplicationPackageReference(_model_base.Model):
@@ -542,14 +580,14 @@ class BatchError(_model_base.Model):
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be
      consumed programmatically. Required.
-    :vartype code: int
+    :vartype code: str
     :ivar message: An error message received in an Azure Batch error response.
     :vartype message: ~azure.batch.models.ErrorMessage
     :ivar values: A collection of key-value pairs containing additional details about the error.
     :vartype values: list[~azure.batch.models.BatchErrorDetail]
     """
 
-    code: int = rest_field()
+    code: str = rest_field()
     """An identifier for the error. Codes are invariant and are intended to be
 consumed programmatically. Required. """
     message: Optional["_models.ErrorMessage"] = rest_field()
@@ -561,7 +599,7 @@ consumed programmatically. Required. """
     def __init__(
         self,
         *,
-        code: int,
+        code: str,
         message: Optional["_models.ErrorMessage"] = None,
         values: Optional[List["_models.BatchErrorDetail"]] = None,
     ):
@@ -613,7 +651,7 @@ class BatchErrorDetail(_model_base.Model):
 
 
 class BatchJob(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """BatchJob.
+    """An Azure Batch Job.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -907,7 +945,8 @@ class BatchJobDisableParameters(_model_base.Model):
 
 
 class BatchJobListPreparationAndReleaseTaskStatusResult(_model_base.Model):
-    """BatchJobListPreparationAndReleaseTaskStatusResult.
+    """The result of listing the status of the Job Preparation and Job Release Tasks
+    for a Job.
 
     :ivar value: A list of Job Preparation and Job Release Task execution information.
     :vartype value: list[~azure.batch.models.JobPreparationAndReleaseTaskExecutionInformation]
@@ -920,9 +959,28 @@ class BatchJobListPreparationAndReleaseTaskStatusResult(_model_base.Model):
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
 
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.JobPreparationAndReleaseTaskExecutionInformation"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class BatchJobListResult(_model_base.Model):
-    """BatchJobListResult.
+    """The result of listing the Jobs in an Account.
 
     :ivar value: The list of Jobs.
     :vartype value: list[~azure.batch.models.BatchJob]
@@ -935,9 +993,29 @@ class BatchJobListResult(_model_base.Model):
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
 
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.BatchJob"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class BatchJobSchedule(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """BatchJobSchedule.
+    """A Job Schedule that allows recurring Jobs by specifying when to run Jobs and a
+    specification used to create each Job.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1052,7 +1130,7 @@ use of user code. """
 
 
 class BatchJobScheduleListResult(_model_base.Model):
-    """BatchJobScheduleListResult.
+    """The result of listing the Job Schedules in an Account.
 
     :ivar value: The list of Job Schedules.
     :vartype value: list[~azure.batch.models.BatchJobSchedule]
@@ -1064,6 +1142,25 @@ class BatchJobScheduleListResult(_model_base.Model):
     """The list of Job Schedules. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.BatchJobSchedule"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class BatchJobTerminateParameters(_model_base.Model):
@@ -1582,7 +1679,7 @@ form:
 
 
 class BatchPoolListResult(_model_base.Model):
-    """BatchPoolListResult.
+    """The result of listing the Pools in an Account.
 
     :ivar value: The list of Pools.
     :vartype value: list[~azure.batch.models.BatchPool]
@@ -1594,6 +1691,25 @@ class BatchPoolListResult(_model_base.Model):
     """The list of Pools. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.BatchPool"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class BatchPoolResizeParameters(_model_base.Model):
@@ -1957,7 +2073,7 @@ and should be retried again with fewer Tasks. Required. """
 
 
 class BatchTaskListResult(_model_base.Model):
-    """BatchTaskListResult.
+    """The result of listing the Tasks in a Job.
 
     :ivar value: The list of Tasks.
     :vartype value: list[~azure.batch.models.BatchTask]
@@ -1970,9 +2086,28 @@ class BatchTaskListResult(_model_base.Model):
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
 
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.BatchTask"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
 
 class BatchTaskListSubtasksResult(_model_base.Model):
-    """BatchTaskListSubtasksResult.
+    """The result of listing the subtasks of a Task.
 
     :ivar value: The list of subtasks.
     :vartype value: list[~azure.batch.models.SubtaskInformation]
@@ -2092,7 +2227,7 @@ digits. """
 
 
 class CertificateListResult(_model_base.Model):
-    """CertificateListResult.
+    """The result of listing the Certificates in the Account.
 
     :ivar value: The list of Certificates.
     :vartype value: list[~azure.batch.models.Certificate]
@@ -2104,6 +2239,25 @@ class CertificateListResult(_model_base.Model):
     """The list of Certificates. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.Certificate"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class CertificateReference(_model_base.Model):
@@ -2304,7 +2458,7 @@ the specified OS family. """
 
 
 class ComputeNode(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """ComputeNode.
+    """A Compute Node in the Batch service.
 
     :ivar id: Every Compute Node that is added to a Pool is assigned a unique ID. Whenever a
      Compute Node is removed from a Pool, all of its local files are deleted, and
@@ -2617,7 +2771,7 @@ display in a user interface. """
 
 
 class ComputeNodeGetRemoteLoginSettingsResult(_model_base.Model):
-    """ComputeNodeGetRemoteLoginSettingsResult.
+    """The remote login settings for a Compute Node.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2741,7 +2895,7 @@ adding a Task to request that the Task be scheduled on this Compute Node. """
 
 
 class ComputeNodeListResult(_model_base.Model):
-    """ComputeNodeListResult.
+    """The result of listing the Compute Nodes in a Pool.
 
     :ivar value: The list of Compute Nodes.
     :vartype value: list[~azure.batch.models.ComputeNode]
@@ -2753,6 +2907,25 @@ class ComputeNodeListResult(_model_base.Model):
     """The list of Compute Nodes. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.ComputeNode"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class ComputeNodeUser(_model_base.Model):
@@ -2917,23 +3090,6 @@ a compute node will use. """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
         super().__init__(*args, **kwargs)
-
-
-class CustomPagePoolUsageMetrics(_model_base.Model):
-    """Paged collection of PoolUsageMetrics items.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar value: The PoolUsageMetrics items on this page. Required.
-    :vartype value: list[~azure.batch.models.PoolUsageMetrics]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: List["_models.PoolUsageMetrics"] = rest_field()
-    """The PoolUsageMetrics items on this page. Required. """
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to the next page of items. """
 
 
 class DataDisk(_model_base.Model):
@@ -5264,7 +5420,7 @@ use of user code. """
 
 
 class JobStatistics(_model_base.Model):  # pylint: disable=too-many-instance-attributes
-    """JobStatistics.
+    """Resource usage statistics for a Job.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -6073,7 +6229,8 @@ class NodeFile(_model_base.Model):
 
 
 class NodeFileListResult(_model_base.Model):
-    """NodeFileListResult.
+    """The result of listing the files on a Compute Node, or the files associated with
+    a Task on a Compute Node.
 
     :ivar value: The list of files.
     :vartype value: list[~azure.batch.models.NodeFile]
@@ -6085,6 +6242,25 @@ class NodeFileListResult(_model_base.Model):
     """The list of files. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.NodeFile"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class NodePlacementConfiguration(_model_base.Model):
@@ -6288,7 +6464,7 @@ request; if you are calling the REST API directly, the HTTP status code is 400
 
 
 class NodeVMExtension(_model_base.Model):
-    """NodeVMExtension.
+    """The configuration for virtual machine extension instance view.
 
     :ivar provisioning_state: The provisioning state of the virtual machine extension.
     :vartype provisioning_state: str
@@ -6327,7 +6503,7 @@ class NodeVMExtension(_model_base.Model):
 
 
 class NodeVMExtensionList(_model_base.Model):
-    """NodeVMExtensionList.
+    """The result of listing the Compute Node extensions in a Node.
 
     :ivar value: The list of Compute Node extensions.
     :vartype value: list[~azure.batch.models.NodeVMExtension]
@@ -6339,6 +6515,25 @@ class NodeVMExtensionList(_model_base.Model):
     """The list of Compute Node extensions. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.NodeVMExtension"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class object(_model_base.Model):
@@ -6723,7 +6918,7 @@ class PoolNodeCounts(_model_base.Model):
 
 
 class PoolNodeCountsListResult(_model_base.Model):
-    """PoolNodeCountsListResult.
+    """The result of listing the Compute Node counts in the Account.
 
     :ivar value: A list of Compute Node counts by Pool.
     :vartype value: list[~azure.batch.models.PoolNodeCounts]
@@ -6735,6 +6930,25 @@ class PoolNodeCountsListResult(_model_base.Model):
     """A list of Compute Node counts by Pool. """
     odata_next_link: Optional[str] = rest_field(name="odata.nextLink")
     """The URL to get the next set of results. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.PoolNodeCounts"]] = None,
+        odata_next_link: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class PoolSpecification(_model_base.Model):  # pylint: disable=too-many-instance-attributes
@@ -7016,7 +7230,7 @@ use of user code. """
 
 
 class PoolStatistics(_model_base.Model):
-    """PoolStatistics.
+    """Contains utilization and resource usage statistics for the lifetime of a Pool.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -7927,7 +8141,7 @@ failureInfo property. Known values are: \"success\" and \"failure\"."""
 
 
 class TaskAddCollectionResult(_model_base.Model):
-    """TaskAddCollectionResult.
+    """The result of adding a collection of Tasks to a Job.
 
     :ivar value: The results of the add Task collection operation.
     :vartype value: list[~azure.batch.models.TaskAddResult]
@@ -8229,7 +8443,7 @@ executionInfo property) is 'failure'. Required. """
 
 
 class TaskCountsResult(_model_base.Model):
-    """TaskCountsResult.
+    """The Task and TaskSlot counts for a Job.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
@@ -8830,7 +9044,7 @@ upload all logs available after the startTime. """
 
 
 class UploadBatchServiceLogsResult(_model_base.Model):
-    """UploadBatchServiceLogsResult.
+    """The result of uploading Batch service log files from a specific Compute Node.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
 
