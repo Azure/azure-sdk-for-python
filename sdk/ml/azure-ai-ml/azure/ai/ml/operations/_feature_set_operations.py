@@ -27,17 +27,18 @@ from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._asset_utils import (
+from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
     _get_latest_version_from_container,
     _resolve_label_to_asset,
+    read_feature_set_metadata_contents,
 )
-from azure.ai.ml._utils._feature_set_utils import read_feature_set_metadata_contents
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
 from azure.ai.ml.entities._feature_set.featureset_spec_metadata import FeaturesetSpecMetadata
 from azure.ai.ml.entities._feature_set.materialization_compute_resource import _MaterializationComputeResource
 from azure.ai.ml.entities._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
+from azure.ai.ml.entities._feature_set.feature_set_backfill_response import _FeatureSetBackfillResponse
 from azure.ai.ml.entities._feature_set.feature import _Feature
 from azure.core.polling import LROPoller
 from azure.core.paging import ItemPaged
@@ -170,8 +171,8 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         """
 
         featureset_spec = validate_and_get_feature_set_spec(featureset)
-        featureset.properties["featureset_properties_version"] = "1"
-        featureset.properties["featureset_properties"] = json.dumps(featureset_spec._to_dict())
+        featureset.properties["featuresetPropertiesVersion"] = "1"
+        featureset.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
 
         sas_uri = None
         featureset, _ = _check_and_upload_path(
@@ -221,10 +222,10 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :param tags: A set of tags. Specifies the tags.
         :type tags: dict[str, str]
         :param compute_resource: Specifies the compute resource settings.
-        :type compute_resource: ~azure.ai.ml.entities.MaterializationComputeResource
+        :type compute_resource: ~azure.ai.ml.entities._MaterializationComputeResource
         :param spark_configuration: Specifies the spark compute settings.
         :type spark_configuration: dict[str, str]
-        :return: An instance of LROPoller that returns _FeatureSetMaterializationResponse
+        :return: An instance of LROPoller that returns ~azure.ai.ml.entities._FeatureSetBackfillResponse
         """
 
         request_body: FeaturesetVersionBackfillRequest = FeaturesetVersionBackfillRequest(
@@ -243,9 +244,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             name=name,
             version=version,
             body=request_body,
-            cls=lambda response, deserialized, headers: _FeatureSetMaterializationResponse._from_rest_object(
-                deserialized
-            ),
+            cls=lambda response, deserialized, headers: _FeatureSetBackfillResponse._from_rest_object(deserialized),
         )
 
     # @monitor_with_activity(logger, "FeatureSet.ListMaterializationOperation", ActivityType.PUBLICAPI)
@@ -271,7 +270,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :type feature_window_end_time: datetime
         :param filters: Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2.
         :type filters: str
-        :return: An iterator like instance of _FeatureSetMaterializationResponse objects
+        :return: An iterator like instance of ~azure.ai.ml.entities._FeatureSetMaterializationResponse objects
         :rtype: ~azure.core.paging.ItemPaged[_FeatureSetMaterializationResponse]
         """
 
@@ -365,7 +364,6 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         _archive_or_restore(
             asset_operations=self,
             version_operation=self._operation,
-            container_operation=self._container_operation,
             is_archived=True,
             name=name,
             version=version,
@@ -395,7 +393,6 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         _archive_or_restore(
             asset_operations=self,
             version_operation=self._operation,
-            container_operation=self._container_operation,
             is_archived=False,
             name=name,
             version=version,
@@ -427,6 +424,8 @@ def validate_and_get_feature_set_spec(featureset: _FeatureSet) -> FeaturesetSpec
         )
 
     featureset_spec_path = str(featureset.specification.path)
+    if not os.path.isabs(featureset_spec_path):
+        featureset_spec_path = Path(featureset.base_path, featureset_spec_path).resolve()
 
     if not os.path.isdir(featureset_spec_path):
         raise ValidationException(

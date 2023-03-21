@@ -12,7 +12,6 @@ from .v2019_01_01_preview.models import *
 from .v2019_08_01.models import *
 from .v2020_01_01.models import *
 from .v2020_01_01_preview.models import *
-from .v2020_07_01_preview.models import *
 from .v2021_01_15_preview.models import *
 from .v2021_05_01_preview.models import *
 from .v2021_06_01.models import *
