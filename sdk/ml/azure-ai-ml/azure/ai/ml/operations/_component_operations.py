@@ -318,7 +318,7 @@ class ComponentOperations(_ScopeDependentOperations):
 
         # Create all dependent resources
         # Only upload dependencies if component is NOT IPP
-        if not (component._intellectual_property and component._intellectual_property.publisher):
+        if not component._intellectual_property:
             self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()

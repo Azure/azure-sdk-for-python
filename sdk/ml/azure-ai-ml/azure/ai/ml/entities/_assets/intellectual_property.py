@@ -30,4 +30,6 @@ class IntellectualProperty(RestTranslatableMixin):
         return cls(publisher=obj.publisher, protection_level=obj.protection_level)
 
     def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, IntellectualProperty):
+            return NotImplemented
         return self.publisher == other.publisher and self.protection_level == other.protection_level

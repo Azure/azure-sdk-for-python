@@ -29,7 +29,7 @@ outputs:
     intellectual_property:
       publisher: contoso
       protection_level: all
-environment: azureml://registries/azureml-dev/environments/AzureML-Minimal/versions/1
+environment: azureml://registries/azureml/environments/sklearn-1.1/versions/2
 resources:
   instance_count: 1
 command: ls
