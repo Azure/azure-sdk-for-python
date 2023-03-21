@@ -12,8 +12,6 @@ from enum import Enum
 from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
-
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
@@ -33,8 +31,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Parallel(BaseNode):
-    """Base class for parallel node, used for parallel component version
-    consumption.
+    """Base class for parallel node, used for parallel component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from builder function: parallel.
@@ -167,7 +164,7 @@ class Parallel(BaseNode):
         self.environment_variables = {} if environment_variables is None else environment_variables
 
         if isinstance(self.component, ParallelComponent):
-            self.resources = self.resources or self.component.resources
+            self.resources = self.resources or copy.deepcopy(self.component.resources)
             self.input_data = self.input_data or self.component.input_data
             self.max_concurrency_per_instance = (
                 self.max_concurrency_per_instance or self.component.max_concurrency_per_instance
@@ -176,7 +173,7 @@ class Parallel(BaseNode):
                 self.mini_batch_error_threshold or self.component.mini_batch_error_threshold
             )
             self.mini_batch_size = self.mini_batch_size or self.component.mini_batch_size
-            self.partition_keys = self.partition_keys or self.component.partition_keys
+            self.partition_keys = self.partition_keys or copy.deepcopy(self.component.partition_keys)
 
             if not self.task:
                 self.task = self.component.task
@@ -267,9 +264,9 @@ class Parallel(BaseNode):
             "resources": (dict, JobResourceConfiguration),
             "task": (dict, ParallelTask),
             "logging_level": str,
-            "max_concurrency_per_instance": int,
-            "error_threshold": int,
-            "mini_batch_error_threshold": int,
+            "max_concurrency_per_instance": (str, int),
+            "error_threshold": (str, int),
+            "mini_batch_error_threshold": (str, int),
             "environment_variables": dict,
         }
 
@@ -358,8 +355,7 @@ class Parallel(BaseNode):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_dict(obj["resources"])
 
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])

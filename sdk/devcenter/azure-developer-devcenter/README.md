@@ -99,7 +99,7 @@ Use the returned token credential to authenticate the client:
         target_environment_type_name = list(client.environments.list_environment_types(target_project_name, top=1))[0]['name']
         target_catalog_name = list(client.environments.list_catalog_items(target_project_name, top=1))[0]['catalogName']
 
-        # Stand up a new environment        
+        # Stand up a new environment
         create_response = client.environments.begin_create_or_update_environment(target_project_name,
                                                            "Dev_Environment",
                                                            {"catalogName": target_catalog_name,

@@ -96,10 +96,9 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         for service_type in SERVICES:
             # Act
-            # token credential is not available for FileService
-            with pytest.raises(ValueError):
-                service_type(self.account_url(storage_account_name, "file"), credential=self.token_credential,
-                             share_name='foo', directory_path='bar', file_path='baz')
+            # token credential is available for FileService
+            service_type(self.account_url(storage_account_name, "file"), credential=self.token_credential,
+                         share_name='foo', directory_path='bar', file_path='baz')
 
     @FileSharePreparer()
     async def test_create_service_china(self, **kwargs):

@@ -8,7 +8,14 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 - Conversational PII: Used to extract and redact personally-identifiable information (PII)
 - Conversational Sentiment Analysis: Used to analyze the sentiment of conversations
 
-[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API documentation][conversationanalysis_restdocs] | [Authoring REST API documentation][conversationanalysis_restdocs_authoring]
+[Source code][conversationallanguage_client_src]
+| [Package (PyPI)][conversationallanguage_pypi_package]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-language-conversations/)
+| [API reference documentation][api_reference_documentation]
+| [Samples][conversationallanguage_samples]
+| [Product documentation][conversationallanguage_docs]
+| [Analysis REST API documentation][conversationanalysis_restdocs]
+| [Authoring REST API documentation][conversationanalysis_restdocs_authoring]
 
 ## Getting started
 

@@ -163,18 +163,27 @@
 /sdk/machinelearningcompute/                                         @shutchings
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
+/sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
 
 # PRLabel: %ML-Data
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data/                       @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_datastore/                  @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/assets/data.py               @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/_artifacts/data.py  @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_data/                      @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_datastore/                 @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_data_operations.py       @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_datastore_operations.py  @sogansky @MayankKumar91 @code-vicar @pritamDas9191
-/sdk/ml/data-experiences.tests.yml                                   @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data/                                          @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_datastore/                                     @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_feature_store/                                 @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_feature_set/                                   @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_feature_store_entity/                          @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/assets/data.py                                  @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/_artifacts/data.py                     @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/_artifacts/feature_set.py              @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_data/                                         @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_feature_store/                                @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_feature_store_entity/                         @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_feature_set/                                  @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_data_operations.py                          @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_datastore_operations.py                     @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_feature_store_operations.py                 @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_feature_store_entity_operations.py          @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_feature_set_operations.py                   @sogansky @MayankKumar91 @code-vicar @pritamDas9191
+/sdk/ml/data-experiences.tests.yml                                                      @sogansky @MayankKumar91 @code-vicar @pritamDas9191
 
 # PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
@@ -236,8 +245,8 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py           @mingweihe @seanyao1
 
 # PRLabel: %ML-WorkspaceConnections
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections/                @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections/              @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nemanjarajic @nthandeMS
 
 # PRLabel: %ML-ImportJob
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi

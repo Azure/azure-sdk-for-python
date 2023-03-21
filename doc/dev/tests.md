@@ -264,12 +264,13 @@ ServicePreparer = functools.partial(
 ```
 
 The parameters for the `functools.partial` method are:
-* The EnvironmentVariableLoader class
-* The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
+
+- The EnvironmentVariableLoader class
+- The service folder that holds your code (in this example, `sdk/testservice`). This value is used to search your
   environment variables for the appropriate values.
-* The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
+- The remaining arguments are key-value kwargs, with the keys being the environment variables needed for the tests, and
   the value being a fake value to use in recordings.
-  * These values should have the same formatting as the real values because they are used in playback mode and will need
+  - These values should have the same formatting as the real values because they are used in playback mode and will need
   to pass any client side validation. The fake value should also be a unique value to the other key-value pairs.
 
 A method that's decorated by the ServicePreparer from the example would be called with `testservice_endpoint` and
@@ -733,7 +734,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 [podman]: https://podman.io/
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md
-[proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[proxy_general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [proxy_migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_invocation]: https://pytest.org/latest/how-to/usage.html

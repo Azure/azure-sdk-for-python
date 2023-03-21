@@ -13,8 +13,6 @@ from {{ ".." if async_mode else "." }}_validation import api_version_validation
 
 {{ getsource(generated_client._models_dict) }}
 
-{{ getsource(generated_client.models) }}
-
 {% for operation_group in operation_group_properties %}
 
     @property

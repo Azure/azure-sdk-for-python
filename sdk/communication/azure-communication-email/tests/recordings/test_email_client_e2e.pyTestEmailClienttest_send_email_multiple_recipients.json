@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://someEndpoint/emails:send?api-version=2023-01-15-preview",
+      "RequestUri": "https://someEndpoint/emails:send?api-version=2023-03-31",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -10,10 +10,10 @@
         "Connection": "keep-alive",
         "Content-Length": "295",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25300-SP0)",
-        "x-ms-client-request-id": "7e3cef95-b23d-11ed-afa1-ac74b1c5ffa4",
+        "User-Agent": "azsdk-python-communication-email/1.0.0 Python/3.10.4 (Windows-10-10.0.25309-SP0)",
+        "x-ms-client-request-id": "e4ea3456-c38a-11ed-97e7-ac74b1c5ffa4",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Tue, 21 Feb 2023 23:14:29 GMT",
+        "x-ms-date": "Wed, 15 Mar 2023 23:41:23 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -37,15 +37,14 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-10-01-preview, 2023-01-15-preview",
-        "Connection": "keep-alive",
+        "api-supported-versions": "2021-10-01-preview, 2023-01-15-preview, 2023-03-31",
         "Content-Length": "47",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 21 Feb 2023 23:14:30 GMT",
-        "mise-correlation-id": "19a45ab4-36a8-439e-905f-9e30ddffba30",
-        "Operation-Location": "https://someEndpoint/emails/operations/someId?api-version=2023-01-15-preview",
+        "Date": "Wed, 15 Mar 2023 23:41:24 GMT",
+        "mise-correlation-id": "a2ae4426-07d0-4cb0-9cc1-0ef19f75a800",
+        "Operation-Location": "https://someEndpoint/emails/operations/someId?api-version=2023-03-31",
         "Retry-After": "30",
-        "x-azure-ref": "20230221T231429Z-6w338xvd611b9f9rm4rttd4rv0000000013000000001uxfc",
+        "X-Azure-Ref": "0pFcSZAAAAACakoyE\u002Bh6\u002BQrRz1GCQpSAgWVZSMzExMDAwMTE1MDQ1AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {
@@ -55,30 +54,28 @@
       }
     },
     {
-      "RequestUri": "https://someEndpoint/emails/operations/someId?api-version=2023-01-15-preview",
+      "RequestUri": "https://someEndpoint/emails/operations/someId?api-version=2023-03-31",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25300-SP0)",
-        "x-ms-client-request-id": "7e3cef95-b23d-11ed-afa1-ac74b1c5ffa4",
+        "User-Agent": "azsdk-python-communication-email/1.0.0 Python/3.10.4 (Windows-10-10.0.25309-SP0)",
+        "x-ms-client-request-id": "e4ea3456-c38a-11ed-97e7-ac74b1c5ffa4",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Tue, 21 Feb 2023 23:15:00 GMT",
+        "x-ms-date": "Wed, 15 Mar 2023 23:41:53 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Accept-Ranges": "bytes",
-        "api-supported-versions": "2021-10-01-preview, 2023-01-15-preview",
-        "Connection": "keep-alive",
+        "api-supported-versions": "2021-10-01-preview, 2023-01-15-preview, 2023-03-31",
         "Content-Length": "49",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 21 Feb 2023 23:15:00 GMT",
-        "mise-correlation-id": "52416776-30d1-47c1-ae2e-5e5a609f63cc",
-        "x-azure-ref": "20230221T231500Z-6w338xvd611b9f9rm4rttd4rv0000000013000000001v3t9",
+        "Date": "Wed, 15 Mar 2023 23:42:01 GMT",
+        "mise-correlation-id": "b15957cf-3884-4bfd-a1b0-11452a104941",
+        "X-Azure-Ref": "0wlcSZAAAAADztyAXjzCRQ7vTJ9V3W/tVWVZSMzExMDAwMTE1MDQ1AGNjOTI3NThkLTA1ZjctNGFkNi1hYTVlLTBmYTk3MThkODk4NQ==",
         "X-Cache": "CONFIG_NOCACHE"
       },
       "ResponseBody": {

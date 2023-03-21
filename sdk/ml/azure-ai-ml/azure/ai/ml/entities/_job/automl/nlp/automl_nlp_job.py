@@ -4,7 +4,7 @@
 from abc import ABC
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     LogVerbosity,
     NlpLearningRateScheduler,
     SamplingAlgorithmType,
@@ -207,8 +207,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         sampling_algorithm: Union[str, SamplingAlgorithmType],
         early_termination: Optional[EarlyTerminationPolicy] = None,
     ):
-        """
-        Sweep settings for all AutoML NLP tasks.
+        """Sweep settings for all AutoML NLP tasks.
 
         :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
         Possible values include: "Grid", "Random", and "Bayesian".
@@ -235,8 +234,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         warmup_ratio: Optional[float] = None,
         weight_decay: Optional[float] = None,
     ) -> None:
-        """
-        Fix certain training parameters throughout the training procedure for all candidates.
+        """Fix certain training parameters throughout the training procedure for all candidates.
 
         :param gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
         pass. This must be a positive integer.
@@ -306,8 +304,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def extend_search_space(self, value: Union[SearchSpace, List[SearchSpace]]) -> None:
-        """
-        Add (a) search space(s) for this AutoML NLP job.
+        """Add (a) search space(s) for this AutoML NLP job.
 
         :param value: either a SearchSpace object or a list of SearchSpace objects with nlp-specific parameters.
         :return: None.
@@ -329,10 +326,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def _restore_data_inputs(self):
         """Restore MLTableJobInputs to Inputs within data_settings.
 
-        self.training_data and self.validation_data should reflect what
-        user passed in (Input) Once we get response back from service
-        (as MLTableJobInput), we should set responsible ones back to
-        Input
+        self.training_data and self.validation_data should reflect what user passed in (Input) Once we get response back
+        from service (as MLTableJobInput), we should set responsible ones back to Input
         """
         super()._restore_data_inputs()
         self.training_data = self.training_data if self.training_data else None
