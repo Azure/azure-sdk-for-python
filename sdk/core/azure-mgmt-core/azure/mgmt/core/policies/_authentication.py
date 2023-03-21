@@ -75,7 +75,7 @@ class _AuxiliaryAuthenticationPolicyBase:
     """
 
     def __init__(
-            self, auxiliary_credentials, *scopes, **kwargs
+            self, auxiliary_credentials, *scopes, **kwargs  # pylint: disable=unused-argument
     ):
         self._auxiliary_credentials = auxiliary_credentials
         self._scopes = scopes
