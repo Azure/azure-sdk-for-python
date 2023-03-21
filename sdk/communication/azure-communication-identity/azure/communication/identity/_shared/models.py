@@ -220,7 +220,7 @@ def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> st
 MicrosoftBotProperties = TypedDict(
     'MicrosoftBotProperties',
     bot_id=str,
-    is_global=bool,
+    is_resource_account_configured=bool,
     cloud=Union[CommunicationCloudEnvironment, str]
 )
 
@@ -234,11 +234,13 @@ class MicrosoftBotIdentifier(object):
     :ivar MicrosoftBotProperties: The properties of the identifier.
      The keys in this mapping include:
         - `bot_id`(str): The id of the Microsoft bot.
-        - `is_global` (bool): Set this to true if the bot is global.
+        - `is_resource_account_configured` (bool): Set this to false if the bot is global.
+        The default is `true` for tennantized bots.
         - `cloud` (str): Cloud environment that this identifier belongs to.
 
     :param str bot_id: Microsoft bot id.
-    :keyword bool is_global: `True` if the identifier is global. Default value is `False`.
+    :keyword bool is_resource_account_configured: `False` if the identifier is global.
+    Default value is `True` for tennantzed bots.
     :keyword cloud: Cloud environment that the bot belongs to. Default value is `PUBLIC`.
     :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
     """
@@ -249,7 +251,7 @@ class MicrosoftBotIdentifier(object):
         self.raw_id = kwargs.get('raw_id')
         self.properties = MicrosoftBotProperties(
             bot_id=bot_id,
-            is_global=kwargs.get('is_global', False),
+            is_resource_account_configured=kwargs.get('is_resource_account_configured', True),
             cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
         )  # type: MicrosoftBotProperties
         if self.raw_id is None:
@@ -262,7 +264,7 @@ class MicrosoftBotIdentifier(object):
 def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
     bot_id = identifier.properties['bot_id']
     cloud = identifier.properties['cloud']
-    if identifier.properties['is_global']:
+    if identifier.properties['is_resource_account_configured'] is False:
         if cloud == CommunicationCloudEnvironment.DOD:
             return f'{BOT_DOD_CLOUD_GLOBAL_PREFIX}{bot_id}'
         elif cloud == CommunicationCloudEnvironment.GCCH:
@@ -294,7 +296,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
         if len(segments) == 2 and raw_id.startswith(BOT_PREFIX):
             return MicrosoftBotIdentifier(
                 bot_id=segments[1],
-                is_global=True,
+                is_resource_account_configured=False,
                 cloud=CommunicationCloudEnvironment.PUBLIC
             )
         return UnknownIdentifier(identifier=raw_id)
@@ -331,31 +333,31 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     elif prefix == BOT_GCCH_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
-            is_global=True,
+            is_resource_account_configured=False,
             cloud=CommunicationCloudEnvironment.GCCH
         )
     elif prefix == BOT_PUBLIC_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
-            is_global=False,
+            is_resource_account_configured=True,
             cloud=CommunicationCloudEnvironment.PUBLIC
         )
     elif prefix == BOT_DOD_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
-            is_global=True,
+            is_resource_account_configured=False,
             cloud=CommunicationCloudEnvironment.DOD
         )
     elif prefix == BOT_GCCH_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
-            is_global=False,
+            is_resource_account_configured=True,
             cloud=CommunicationCloudEnvironment.GCCH
         )
     elif prefix == BOT_DOD_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
-            is_global=False,
+            is_resource_account_configured=True,
             cloud=CommunicationCloudEnvironment.DOD
         )
     return UnknownIdentifier(
