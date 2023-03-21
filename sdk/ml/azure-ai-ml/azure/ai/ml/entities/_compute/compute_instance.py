@@ -22,7 +22,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
@@ -224,7 +223,6 @@ class ComputeInstance(Compute):
         """
         return self._state
 
-    @experimental
     @property
     def os_image_metadata(self) -> ImageMetadata:
         """Metadata about the operating system image for this compute instance.
