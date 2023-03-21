@@ -1397,33 +1397,28 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
-    async def test_path_properties_owner_group_permissions(self, **kwargs):
+    async def test_dir_and_file_properties_owner_group_permissions(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
-        # Arrange
         await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        url = self.account_url(datalake_storage_account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
-        self.file_system_name = self.get_resource_name('filesystem')
-        file_name = 'testfile'
-        file_system = self.dsc.get_file_system_client(self.file_system_name)
-        try:
-            await file_system.create_file_system()
-        except:
-            pass
-        file_client = file_system.get_file_client(file_name)
+        # Arrange
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+        file_client1 = directory_client.get_file_client('filename')
+        await file_client1.create_file()
 
-        # Act
-        await file_client.create_file()
+        directory_properties = await directory_client.get_directory_properties()
+        file_properties = await file_client1.get_file_properties()
 
-        path_response = []
-        async for path in file_system.get_paths():
-            path_response.append(path)
-
-        assert path_response[0]['owner'] is not None
-        assert path_response[0]['group'] is not None
-        assert path_response[0]['permissions'] is not None
+        # Assert
+        assert directory_properties['owner'] is not None
+        assert directory_properties['group'] is not None
+        assert directory_properties['permissions'] is not None
+        assert file_properties['owner'] is not None
+        assert file_properties['group'] is not None
+        assert file_properties['permissions'] is not None
 
 
 # ------------------------------------------------------------------------------
