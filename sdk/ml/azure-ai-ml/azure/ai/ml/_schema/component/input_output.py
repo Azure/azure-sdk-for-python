@@ -11,7 +11,7 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentParameterTypes
-from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
+from azure.ai.ml._schema.core.intellectual_property import ProtectionLevelSchema
 
 # Here we use an adhoc way to collect all class constant attributes by checking if it's upper letter
 # because making those constants enum will fail in string serialization in marshmallow
@@ -53,7 +53,8 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
     )
     # hide in private preview
     if is_private_preview_enabled():
-        intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
+        # only protection_level is allowed for outputs
+        intellectual_property = ExperimentalField(NestedField(ProtectionLevelSchema))
 
     @pre_dump
     def add_private_fields_to_dump(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use

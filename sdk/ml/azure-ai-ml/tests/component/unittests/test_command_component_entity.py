@@ -545,11 +545,11 @@ class TestCommandComponentEntity:
         expected_output_dict = {
             "model_output_not_ipp": {
                 "type": "path",
-                "intellectual_property": {"publisher": "contoso", "protection_level": "none"},
+                "intellectual_property": {"protection_level": "none"},
             },
             "model_output_ipp": {
                 "type": "path",
-                "intellectual_property": {"publisher": "contoso", "protection_level": "all"},
+                "intellectual_property": {"protection_level": "all"},
             },
         }
 

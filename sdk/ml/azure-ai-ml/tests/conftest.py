@@ -395,6 +395,14 @@ def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCr
 
 
 @pytest.fixture
+def ipp_registry_client(auth: ClientSecretCredential) -> MLClient:
+    "return a machine learning client to use for IPP asset registration"
+    return MLClient(
+        credential=auth, logging_enable=getenv(E2E_TEST_LOGGING_ENABLED), registry_name="UnsecureTest-hello-world"
+    )
+
+
+@pytest.fixture
 def resource_group_name(location: str) -> str:
     return f"test-rg-{location}-v2-{_get_week_format()}"
 

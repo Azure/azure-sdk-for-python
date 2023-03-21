@@ -14,15 +14,26 @@ from azure.ai.ml.entities._assets.intellectual_property import IntellectualPrope
 
 
 @experimental
-class IntellectualPropertySchema(metaclass=PatchedSchemaMeta):
+class BaseIntellectualPropertySchema(metaclass=PatchedSchemaMeta):
+    @post_load
+    def make(self, data, **kwargs) -> "IntellectualProperty":
 
-    publisher = fields.String()
+        return IntellectualProperty(**data)
+
+
+@experimental
+class ProtectionLevelSchema(BaseIntellectualPropertySchema):
     protection_level = StringTransformedEnum(
         allowed_values=[level.name for level in IPProtectionLevel],
         casing_transform=camel_to_snake,
     )
 
-    @post_load
-    def make(self, data, **kwargs) -> "IntellectualProperty":
 
-        return IntellectualProperty(**data)
+@experimental
+class PublisherSchema(BaseIntellectualPropertySchema):
+    publisher = fields.Str()
+
+
+@experimental
+class IntellectualPropertySchema(ProtectionLevelSchema, PublisherSchema):
+    pass
