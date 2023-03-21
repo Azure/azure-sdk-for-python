@@ -4,13 +4,14 @@
 
 import logging
 from abc import ABC
-from typing import Optional
+from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_12_01_preview.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
 module_logger = logging.getLogger(__name__)
 
@@ -37,12 +38,14 @@ class CommandJobLimits(JobLimits):
     :type timeout: int
     """
 
-    def __init__(self, *, timeout: Optional[int] = None):
+    def __init__(self, *, timeout: Union[int, str, None] = None):
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
 
     def _to_rest_object(self) -> RestCommandJobLimits:
+        if isinstance(self.timeout, PipelineInput):
+            return RestCommandJobLimits(timeout=self.timeout)
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
     @classmethod

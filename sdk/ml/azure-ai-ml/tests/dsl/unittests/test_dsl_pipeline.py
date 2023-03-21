@@ -3100,13 +3100,16 @@ class TestDSLPipeline:
 
         @dsl.pipeline
         def my_pipeline(timeout) -> PipelineJob:
-            node = component_func(component_in_number=1)
-            node.set_limits(timeout=1)
-            # bind PipelineInput to node's limits.timeout
-            assert isinstance(timeout, PipelineInput)
-            node.limits.timeout = timeout
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=1)
+            # case 1: if timeout is PipelineInput
+            node_0.limits.timeout = timeout
+            # case 2: if timeout is not PipelineInput
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
 
         pipeline = my_pipeline(2)
         pipeline.settings.default_compute = "cpu-cluster"
         pipeline_dict = pipeline._to_rest_object().as_dict()
-        assert pipeline_dict["properties"]["jobs"]["node"]["limits"]["timeout"] == "PT2S"
+        assert pipeline_dict["properties"]["jobs"]["node_0"]["limits"]["timeout"] == "${{parent.inputs.timeout}}"
+        assert pipeline_dict["properties"]["jobs"]["node_1"]["limits"]["timeout"] == "PT1S"

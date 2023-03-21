@@ -3015,12 +3015,16 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         @dsl.pipeline
         def my_pipeline(timeout) -> PipelineJob:
-            node = component_func(component_in_number=1)
-            node.set_limits(timeout=1)
-            # bind PipelineInput to node's limits.timeout
-            node.limits.timeout = timeout
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=1)
+            # case 1: if timeout is PipelineInput, get binding from response
+            node_0.limits.timeout = timeout
+            # case 2: if timeout is not PipelineInput, response timeout will be parsed to int
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
 
         pipeline = my_pipeline(2)
         pipeline.settings.default_compute = "cpu-cluster"
         pipeline_job = assert_job_cancel(pipeline, client)
-        assert pipeline_job.jobs["node"].limits.timeout == 2
+        assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
+        assert pipeline_job.jobs["node_1"].limits.timeout == 1
