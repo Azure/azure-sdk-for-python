@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 from typing import TYPE_CHECKING, Any, Optional, overload, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -16,10 +17,18 @@ from azure.core.exceptions import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
+from ._download_stream_async import AsyncDownloadBlobStream
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+from .._helpers import (
+    _is_tag,
+    _parse_next_link,
+    SUPPORTED_API_VERSIONS,
+    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    DEFAULT_CHUNK_SIZE
+)
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
+from .._container_registry_client import _return_deserialized_and_headers
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -741,6 +750,38 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
             repository=repository
+        )
+
+    @distributed_trace_async
+    async def download_blob(self, repository: str, digest: str, **kwargs) -> AsyncDownloadBlobStream:
+        """Download a blob that is part of an artifact to a stream.
+
+        :param str repository: Name of the repository.
+        :param str digest: The digest of the blob to download.
+        :returns: An iterable stream of bytes
+        :rtype: ~azure.containerregistry.DownloadBlobStream
+        :raises ValueError: If the parameter repository or digest is None.
+        """
+        chunk_size = DEFAULT_CHUNK_SIZE  # TODO: We should support client and operation-level overrides
+        first_chunk, headers = await self._client.container_registry_blob.get_chunk(
+            repository,
+            digest,
+            f"bytes=0-{chunk_size}",
+            cls=_return_deserialized_and_headers,
+            **kwargs
+        )
+        return AsyncDownloadBlobStream(
+            response=first_chunk,
+            digest=digest,
+            next=functools.partial(
+                self._client.container_registry_blob.get_chunk,
+                name=repository,
+                digest=digest,
+                cls=_return_deserialized_and_headers,
+                **kwargs),
+            blob_size=int(headers["Content-Range"].split("/")[1]),
+            downloaded=headers["Content-Length"],
+            chunk_size=chunk_size
         )
 
     @distributed_trace_async

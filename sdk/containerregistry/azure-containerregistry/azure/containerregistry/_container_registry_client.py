@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 import hashlib
 from io import BytesIO
 from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast, Tuple
@@ -19,6 +20,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
 from ._generated.models import AcrErrors, OCIManifest, ManifestWrapper
+from ._download_stream import DownloadBlobStream
 from ._helpers import (
     _compute_digest,
     _is_tag,
@@ -898,43 +900,36 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs) -> IO:
+    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobStream:
         """Download a blob that is part of an artifact to a stream.
 
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
-        :returns: IO
-        :rtype: IO
+        :returns: An iterable stream of bytes
+        :rtype: ~azure.containerregistry.DownloadBlobStream
         :raises ValueError: If the parameter repository or digest is None.
         """
-        hasher = hashlib.sha256()
-        downloaded = 0
-        blob_size = None
-        data = BytesIO()
-        try:
-            while True:
-                end_range = downloaded + DEFAULT_CHUNK_SIZE
-                range_header = f"bytes={downloaded}-{end_range}"
-                deserialized, headers = self._client.container_registry_blob.get_chunk(
-                    repository, digest, range_header, cls=_return_deserialized_and_headers, **kwargs
-                )
-                if blob_size is None:
-                    blob_size = headers["Content-Range"].split("/")[1]
-                downloaded += headers["Content-Length"]
-                for chunk in deserialized:
-                    data.write(chunk)
-                    hasher.update(chunk)
-                if str(downloaded) == blob_size:
-                    break
-            data.seek(0)
-            computed_digest = "sha256:" + hasher.hexdigest()
-            if computed_digest != digest:
-                raise ValueError("The requested digest does not match the digest of the received blob.")
-        except ValueError:
-            if repository is None or digest is None:
-                raise ValueError("The parameter repository, digest and destination cannot be None.")
-            raise
-        return data
+        chunk_size = DEFAULT_CHUNK_SIZE  # TODO: We should support client and operation-level overrides
+        first_chunk, headers = self._client.container_registry_blob.get_chunk(
+            repository,
+            digest,
+            f"bytes=0-{chunk_size}",
+            cls=_return_deserialized_and_headers,
+            **kwargs
+        )
+        return DownloadBlobStream(
+            response=first_chunk,
+            digest=digest,
+            next=functools.partial(
+                self._client.container_registry_blob.get_chunk,
+                name=repository,
+                digest=digest,
+                cls=_return_deserialized_and_headers,
+                **kwargs),
+            blob_size=int(headers["Content-Range"].split("/")[1]),
+            downloaded=headers["Content-Length"],
+            chunk_size=chunk_size
+        )
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
