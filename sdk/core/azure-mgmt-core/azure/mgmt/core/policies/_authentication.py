@@ -159,7 +159,7 @@ def _parse_claims_challenge(challenge):
             if encoded_claims:
                 # multiple claims challenges, e.g. for cross-tenant auth, would require special handling
                 return None
-            encoded_claims = parameter[parameter.index("=") + 1:].strip(" \"'")
+            encoded_claims = parameter[parameter.index("=") + 1 :].strip(" \"'")
 
     if not encoded_claims:
         return None
