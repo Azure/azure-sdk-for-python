@@ -18,76 +18,37 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
-from .._serialization import Serializer
-from .._vendor import _convert_request, _format_url_section
+from ... import models as _models
+from ..._vendor import _convert_request
+from ...operations._organizations_operations import build_get_api_key_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-def build_update_request(
-    resource_group_name: str, monitor_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2023-02-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-02-01-preview")
-    )
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = kwargs.pop(
-        "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/vmCollectionUpdate",
-    )  # pylint: disable=line-too-long
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
-        "monitorName": _SERIALIZER.url("monitor_name", monitor_name, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class VMCollectionOperations:
+class OrganizationsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.elastic.MicrosoftElastic`'s
-        :attr:`vm_collection` attribute.
+        :class:`~azure.mgmt.elastic.aio.MicrosoftElastic`'s
+        :attr:`organizations` attribute.
     """
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -95,91 +56,87 @@ class VMCollectionOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    async def get_api_key(
         self,
         resource_group_name: str,
-        monitor_name: str,
-        body: Optional[_models.VMCollectionUpdate] = None,
+        body: Optional[_models.UserEmailId] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Update the vm details that will be monitored by the Elastic monitor resource.
+    ) -> _models.UserApiKeyResponse:
+        """Fetch User API Key from internal database, if it was generated and stored while creating the
+        Elasticsearch Organization.
 
-        Update the vm details that will be monitored by the Elastic monitor resource.
+        Fetch User API Key from internal database, if it was generated and stored while creating the
+        Elasticsearch Organization.
 
         :param resource_group_name: The name of the resource group to which the Elastic resource
          belongs. Required.
         :type resource_group_name: str
-        :param monitor_name: Monitor resource name. Required.
-        :type monitor_name: str
-        :param body: VM resource Id. Default value is None.
-        :type body: ~azure.mgmt.elastic.models.VMCollectionUpdate
+        :param body: Email Id parameter of the User Organization, of which the API Key must be
+         returned. Default value is None.
+        :type body: ~azure.mgmt.elastic.models.UserEmailId
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: UserApiKeyResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.elastic.models.UserApiKeyResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def update(  # pylint: disable=inconsistent-return-statements
+    async def get_api_key(
         self,
         resource_group_name: str,
-        monitor_name: str,
         body: Optional[IO] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
-        """Update the vm details that will be monitored by the Elastic monitor resource.
+    ) -> _models.UserApiKeyResponse:
+        """Fetch User API Key from internal database, if it was generated and stored while creating the
+        Elasticsearch Organization.
 
-        Update the vm details that will be monitored by the Elastic monitor resource.
+        Fetch User API Key from internal database, if it was generated and stored while creating the
+        Elasticsearch Organization.
 
         :param resource_group_name: The name of the resource group to which the Elastic resource
          belongs. Required.
         :type resource_group_name: str
-        :param monitor_name: Monitor resource name. Required.
-        :type monitor_name: str
-        :param body: VM resource Id. Default value is None.
+        :param body: Email Id parameter of the User Organization, of which the API Key must be
+         returned. Default value is None.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: UserApiKeyResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.elastic.models.UserApiKeyResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def update(  # pylint: disable=inconsistent-return-statements
-        self,
-        resource_group_name: str,
-        monitor_name: str,
-        body: Optional[Union[_models.VMCollectionUpdate, IO]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Update the vm details that will be monitored by the Elastic monitor resource.
+    @distributed_trace_async
+    async def get_api_key(
+        self, resource_group_name: str, body: Optional[Union[_models.UserEmailId, IO]] = None, **kwargs: Any
+    ) -> _models.UserApiKeyResponse:
+        """Fetch User API Key from internal database, if it was generated and stored while creating the
+        Elasticsearch Organization.
 
-        Update the vm details that will be monitored by the Elastic monitor resource.
+        Fetch User API Key from internal database, if it was generated and stored while creating the
+        Elasticsearch Organization.
 
         :param resource_group_name: The name of the resource group to which the Elastic resource
          belongs. Required.
         :type resource_group_name: str
-        :param monitor_name: Monitor resource name. Required.
-        :type monitor_name: str
-        :param body: VM resource Id. Is either a VMCollectionUpdate type or a IO type. Default value is
-         None.
-        :type body: ~azure.mgmt.elastic.models.VMCollectionUpdate or IO
+        :param body: Email Id parameter of the User Organization, of which the API Key must be
+         returned. Is either a UserEmailId type or a IO type. Default value is None.
+        :type body: ~azure.mgmt.elastic.models.UserEmailId or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: UserApiKeyResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.elastic.models.UserApiKeyResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -197,7 +154,7 @@ class VMCollectionOperations:
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UserApiKeyResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -206,19 +163,18 @@ class VMCollectionOperations:
             _content = body
         else:
             if body is not None:
-                _json = self._serialize.body(body, "VMCollectionUpdate")
+                _json = self._serialize.body(body, "UserEmailId")
             else:
                 _json = None
 
-        request = build_update_request(
+        request = build_get_api_key_request(
             resource_group_name=resource_group_name,
-            monitor_name=monitor_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.update.metadata["url"],
+            template_url=self.get_api_key.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -226,7 +182,7 @@ class VMCollectionOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -239,9 +195,13 @@ class VMCollectionOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = self._deserialize("UserApiKeyResponse", pipeline_response)
 
-    update.metadata = {
-        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/monitors/{monitorName}/vmCollectionUpdate"
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_api_key.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Elastic/getOrganizationApiKey"
     }
