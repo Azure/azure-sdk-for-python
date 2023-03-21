@@ -57,10 +57,7 @@ class TestComponentOperation:
             version="1",
             environment="azureml:AzureML-Minimal:1",
             command="echo hello",
-            intellectual_property=IntellectualProperty(
-                publisher="contoso",
-                protection_level="all"
-            )
+            intellectual_property=IntellectualProperty(publisher="contoso", protection_level="all"),
         )
 
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(

@@ -61,7 +61,7 @@ class OutputPortSchema(metaclass=PatchedSchemaMeta):
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
         if hasattr(data, "_intellectual_property"):
-            ipp_field = data._intellectual_property # pylint: disable=protected-access
+            ipp_field = data._intellectual_property  # pylint: disable=protected-access
             if ipp_field:
                 setattr(data, "intellectual_property", ipp_field)
         return data
