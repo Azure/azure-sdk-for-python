@@ -1395,6 +1395,36 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         assert path_response[0]['encryption_context'] is not None
         assert path_response[0]['encryption_context'] == 'encryptionContext'
 
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_path_properties_owner_group_permissions(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.file_system_name = self.get_resource_name('filesystem')
+        file_name = 'testfile'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            await file_system.create_file_system()
+        except:
+            pass
+        file_client = file_system.get_file_client(file_name)
+
+        # Act
+        await file_client.create_file()
+
+        path_response = []
+        async for path in file_system.get_paths():
+            path_response.append(path)
+
+        assert path_response[0]['owner'] is not None
+        assert path_response[0]['group'] is not None
+        assert path_response[0]['permissions'] is not None
+
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
