@@ -461,6 +461,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
+            assert client._client._config.api_version == "2021-07-01"
             async for repo in client.list_repository_names():
                 pass
         
@@ -507,20 +508,21 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 async for manifest in response:
                     pass
 
-
+@pytest.mark.asyncio
 async def test_set_api_version():
     containerregistry_endpoint="https://fake_url.azurecr.io"
     
-    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
+    async with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
         assert client._client._config.api_version == "2021-07-01"
     
-    with ContainerRegistryClient(
+    async with ContainerRegistryClient(
         endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
     ) as client:
         assert client._client._config.api_version == "2019-08-15-preview"
     
-    with pytest.raises(ValueError):
-        with ContainerRegistryClient(
+    with pytest.raises(ValueError) as error:
+        async with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
         ) as client:
             pass
+    assert "Unsupported API version '2019-08-15'." in str(error.value)
