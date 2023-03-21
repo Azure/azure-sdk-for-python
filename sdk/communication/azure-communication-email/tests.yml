@@ -8,7 +8,6 @@ trigger: none
 
 variables:
 - name: stagesToRun
-  value: 'Int,PPE'
 
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
