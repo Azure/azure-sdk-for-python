@@ -44,7 +44,7 @@ def build_post_request_initial(
 
     accept = "application/json"
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions")  # pylint: disable=line-too-long
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/provisionManagedNetwork")  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str', min_length=1),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1),
@@ -139,7 +139,7 @@ class ManagedNetworkProvisionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    _post_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions"}  # type: ignore
+    _post_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/provisionManagedNetwork"}  # type: ignore
 
 
     @distributed_trace
@@ -209,4 +209,4 @@ class ManagedNetworkProvisionsOperations(object):
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions"}  # type: ignore
+    begin_post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/provisionManagedNetwork"}  # type: ignore

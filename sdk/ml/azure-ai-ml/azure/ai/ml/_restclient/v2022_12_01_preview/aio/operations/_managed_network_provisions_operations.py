@@ -89,7 +89,7 @@ class ManagedNetworkProvisionsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _post_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions"}  # type: ignore
+    _post_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/provisionManagedNetwork"}  # type: ignore
 
 
     @distributed_trace_async
@@ -158,4 +158,4 @@ class ManagedNetworkProvisionsOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/managedNetwork/provisions"}  # type: ignore
+    begin_post.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/provisionManagedNetwork"}  # type: ignore
