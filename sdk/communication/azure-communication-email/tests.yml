@@ -32,7 +32,7 @@ stages:
           SubscriptionConfigurations:
             - $(sub-config-communication-int-test-resources-common)
             - $(sub-config-communication-int-test-resources-python)
-      Clouds: ${{ variables.stagesToRun }}
+      Clouds: $(stagesToRun)
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
