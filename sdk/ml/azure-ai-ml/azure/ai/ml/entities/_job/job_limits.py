@@ -4,7 +4,7 @@
 
 import logging
 from abc import ABC
-from typing import Optional, Union
+from typing import Optional
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_12_01_preview.models import SweepJobLimits as RestSweepJobLimits
@@ -38,7 +38,7 @@ class CommandJobLimits(JobLimits):
     :type timeout: int
     """
 
-    def __init__(self, *, timeout: Union[int, str, None] = None):
+    def __init__(self, *, timeout: Optional[int] = None):
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
