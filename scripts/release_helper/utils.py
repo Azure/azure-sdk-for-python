@@ -1,9 +1,9 @@
-import datetime
 import logging
 import os
 import re
 import json
 from typing import List, Any
+from datetime import datetime
 
 from github.Issue import Issue
 from github.Repository import Repository
@@ -40,14 +40,17 @@ def get_origin_link_and_tag(issue_body_list: List[str]) -> (str, str):
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
     return link, readme_tag
 
-def get_last_released_date(package_name: str) -> (str, str):
+def to_datetime(data: str) -> datetime:
+    return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S')
+
+def get_last_released_date(package_name: str) -> (str, datetime):
     pypi = PyPIClient()
     latest_release, latest_stable = pypi.get_relevant_versions(package_name)
     latest_release_date = pypi.project_release(package_name, latest_release)["urls"][0]["upload_time"]
     latest_stable_date = pypi.project_release(package_name, latest_stable)["urls"][0]["upload_time"]
     if latest_release_date > latest_stable_date:
-        return str(latest_release), latest_release_date
-    return str(latest_stable), latest_stable_date
+        return str(latest_release), to_datetime(latest_release_date)
+    return str(latest_stable), to_datetime(latest_stable_date)
 
 # get python release pipeline link from web
 def get_python_release_pipeline(output_folder):
