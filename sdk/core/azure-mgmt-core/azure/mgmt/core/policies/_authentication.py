@@ -45,7 +45,8 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
     :param str scopes: required authentication scopes
     """
 
-    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    def on_challenge(self, request, response):  # pylint:disable=unused-argument
+        # type: (PipelineRequest, PipelineResponse) -> bool
         """Authorize request according to an ARM authentication challenge
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
@@ -141,7 +142,8 @@ class AuxiliaryAuthenticationPolicy(
         self._update_headers(request.http_request.headers)
 
 
-def _parse_claims_challenge(challenge: str) -> "Optional[str]":
+def _parse_claims_challenge(challenge):
+    # type: (str) -> Optional[str]
     """Parse the "claims" parameter from an authentication challenge
 
     Example challenge with claims:
