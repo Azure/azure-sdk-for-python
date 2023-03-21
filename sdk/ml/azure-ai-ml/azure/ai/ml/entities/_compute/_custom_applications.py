@@ -153,7 +153,7 @@ class CustomApplications:
         self.endpoints = endpoints
         self.environment_variables = environment_variables
         self.bind_mounts = bind_mounts
-        self.additional_properties = kwargs
+        self.additional_properties = {**{'type': self.type}, **kwargs}
 
     def _to_rest_object(self):
         endpoints = None
@@ -170,7 +170,6 @@ class CustomApplications:
         volumes = None
         if self.bind_mounts:
             volumes = [volume._to_rest_object() for volume in self.bind_mounts]
-
         return CustomService(
             name=self.name,
             image=self.image._to_rest_object(),
