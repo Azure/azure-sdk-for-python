@@ -2036,8 +2036,20 @@ class TestPipelineJobEntity:
         assert rest_obj.properties.jobs["component"]["resources"] == expect_resource
 
     def test_pipeline_job_serverless_compute_with_job_tier(self) -> None:
-        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_job_tier.yml"
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/pipeline_with_job_tier.yml"
         pipeline_job = load_job(yaml_path)
         rest_obj = pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
         assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
+
+    def test_pipeline_job_sweep_with_job_tier_in_pipeline(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/sweep_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
+
+    def test_pipeline_job_automl_with_job_tier_in_pipeline(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "standard"}

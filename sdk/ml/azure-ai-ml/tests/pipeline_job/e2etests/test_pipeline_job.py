@@ -1824,7 +1824,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert_job_cancel(pipeline_job, client)
 
     def test_pipeline_job_serverless_compute_with_job_tier(self, client: MLClient) -> None:
-        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_job_tier.yml"
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/pipeline_with_job_tier.yml"
         pipeline_job = load_job(yaml_path)
         created_pipeline_job = assert_job_cancel(pipeline_job, client)
         rest_obj = created_pipeline_job._to_rest_object()
