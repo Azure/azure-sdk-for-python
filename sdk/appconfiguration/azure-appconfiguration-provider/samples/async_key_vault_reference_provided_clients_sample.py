@@ -16,8 +16,6 @@ async def main():
     authority = get_authority(endpoint)
     credential = get_credential(authority, is_async=True)
 
-    breakpoint()
-
     # Connection to Azure App Configuration using AAD with Provided Client
     client_configs = {key_vault_uri: {'credential': credential}}
     selects = {SettingSelector(key_filter="*", label_filter="prod")}
