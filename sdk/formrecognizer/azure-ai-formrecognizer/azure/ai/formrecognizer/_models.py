@@ -2960,10 +2960,10 @@ class DocumentStyle:
 
     def __repr__(self) -> str:
         return (
-            f"DocumentStyle(is_handwritten={self.is_handwritten}, similar_font_family={self.similar_font_family}, "
+            f"DocumentStyle(is_handwritten={self.is_handwritten}, spans={repr(self.spans)}, "
+            f"confidence={self.confidence}, similar_font_family={self.similar_font_family}, "
             f"font_style={self.font_style}, font_weight={self.font_weight}, color={self.color}, "
-            f"background_color={self.background_color}, spans={repr(self.spans)}, "
-            f"confidence={self.confidence})"
+            f"background_color={self.background_color})"
         )
 
     def to_dict(self) -> Dict:

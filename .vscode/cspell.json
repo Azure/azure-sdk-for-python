@@ -603,7 +603,8 @@
         "ierr",
         "mymodel",
         "heif",
-        "racwd"
+        "racwd",
+        "rrggbb"
       ]
     },
     {
