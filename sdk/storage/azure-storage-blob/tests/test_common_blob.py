@@ -1176,7 +1176,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
+            before_props = self.bsc.get_service_properties()
+            assert before_props['delete_retention_policy'].days is None
+            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
 
             container = self.bsc.get_container_client(self.container_name)
@@ -1215,7 +1221,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
+            before_props = self.bsc.get_service_properties()
+            assert before_props['delete_retention_policy'].days is None
+            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             blob_snapshot_1 = blob.create_snapshot()
@@ -1265,7 +1277,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
+            before_props = self.bsc.get_service_properties()
+            assert before_props['delete_retention_policy'].days is None
+            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             blob_snapshot_1 = blob.create_snapshot()
@@ -1312,7 +1330,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
+            before_props = self.bsc.get_service_properties()
+            assert before_props['delete_retention_policy'].days is None
+            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             blob_snapshot_1 = blob.create_snapshot()
