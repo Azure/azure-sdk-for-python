@@ -65,7 +65,7 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
 
 
 # pylint:disable=too-few-public-methods
-class _AuxiliaryAuthenticationPolicyBase(object):
+class _AuxiliaryAuthenticationPolicyBase:
     """Adds auxiliary authorization token header to requests.
 
     :param ~azure.core.credentials.TokenCredential auxiliary_credentials: auxiliary credential for authorizing requests
