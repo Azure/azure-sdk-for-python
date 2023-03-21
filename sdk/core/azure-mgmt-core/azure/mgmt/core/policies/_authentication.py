@@ -77,7 +77,6 @@ class _AuxiliaryAuthenticationPolicyBase:
     def __init__(
             self, auxiliary_credentials, *scopes, **kwargs
     ):
-        super().__init__()
         self._auxiliary_credentials = auxiliary_credentials
         self._scopes = scopes
         self._aux_tokens = None
