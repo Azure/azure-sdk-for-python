@@ -70,6 +70,7 @@ class TestSchedule(AzureRecordedTestCase):
         assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -95,6 +96,7 @@ class TestSchedule(AzureRecordedTestCase):
             == CronTrigger(time_zone="UTC", expression="15 10 * * 1")._to_rest_object().as_dict()
         )
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_load_cron_schedule_with_arm_id_and_updates(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
         test_job_path = "./tests/test_configs/pipeline_jobs/hello-pipeline-abc.yml"
