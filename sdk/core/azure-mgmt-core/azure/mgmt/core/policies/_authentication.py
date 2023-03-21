@@ -119,7 +119,7 @@ class _AuxiliaryAuthenticationPolicyBase:
 
 
 class AuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy
+    _AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]
 ):
     def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
