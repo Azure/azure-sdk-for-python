@@ -2,9 +2,12 @@
 
 ## 23.0.0 (2023-03-21)
 
+### Other Changes
+
 - Initial release with our new combined multiapi package. Package size is now 5% of what it used to be.  #17801
 
 ### Breaking Changes
+
   - All query and header parameters are now keyword-only
   - Removed api version subfolders. This means you can no longer access any `azure.mgmt.network.v20xx_xx_xx` modules.
   - Removed `.models` method from `NetworkManagementClient`. Instead, import models from `azure.mgmt.network.models`.
