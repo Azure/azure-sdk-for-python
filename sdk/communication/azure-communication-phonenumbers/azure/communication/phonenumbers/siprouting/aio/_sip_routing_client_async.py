@@ -173,6 +173,7 @@ class SipRoutingClient(object):
                 sip_signaling_port=v.sip_signaling_port) for k,v in config.trunks.items()]
             return None, AsyncList(list_of_elem)
 
+        # pylint: disable=unused-argument
         async def get_next(nextLink=None):
             return await self._rest_service.sip_routing.get(
                 **kwargs
@@ -191,7 +192,7 @@ class SipRoutingClient(object):
         :rtype: AsyncItemPaged[~azure.communication.siprouting.models.SipTrunkRoute]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-    
+
         async def extract_data(config):
             list_of_elem =  [SipTrunkRoute(
                 description=x.description,
@@ -200,6 +201,7 @@ class SipRoutingClient(object):
                 trunks=x.trunks) for x in config.routes]
             return None, AsyncList(list_of_elem)
 
+        # pylint: disable=unused-argument 
         async def get_next(nextLink=None):
             return await self._rest_service.sip_routing.get(
                 **kwargs
