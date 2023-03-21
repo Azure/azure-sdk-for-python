@@ -132,7 +132,7 @@ class IssueProcessPython(IssueProcess):
         if AUTO_CLOSE_LABEL in self.issue_package.labels_name:
             return
         last_version, last_time = get_last_released_date(self.package_name)
-        if last_time and last_time > self.created_time:
+        if last_version and last_time > self.created_time:
             comment = f'Hi @{self.owner}, pypi link: https://pypi.org/project/{self.package_name}/{last_version}/'
             self.issue_package.issue.create_comment(body=comment)
             self.issue_package.issue.edit(state='closed')

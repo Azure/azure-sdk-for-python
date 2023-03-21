@@ -44,13 +44,16 @@ def to_datetime(data: str) -> datetime:
     return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S')
 
 def get_last_released_date(package_name: str) -> (str, datetime):
-    pypi = PyPIClient()
-    latest_release, latest_stable = pypi.get_relevant_versions(package_name)
-    latest_release_date = pypi.project_release(package_name, latest_release)["urls"][0]["upload_time"]
-    latest_stable_date = pypi.project_release(package_name, latest_stable)["urls"][0]["upload_time"]
-    if latest_release_date > latest_stable_date:
-        return str(latest_release), to_datetime(latest_release_date)
-    return str(latest_stable), to_datetime(latest_stable_date)
+    try:
+        pypi = PyPIClient()
+        latest_release, latest_stable = pypi.get_relevant_versions(package_name)
+        latest_release_date = pypi.project_release(package_name, latest_release)["urls"][0]["upload_time"]
+        latest_stable_date = pypi.project_release(package_name, latest_stable)["urls"][0]["upload_time"]
+        if latest_release_date > latest_stable_date:
+            return str(latest_release), to_datetime(latest_release_date)
+        return str(latest_stable), to_datetime(latest_stable_date)
+    except:
+        return '', to_datetime('1970-01-01T00:00:00')
 
 # get python release pipeline link from web
 def get_python_release_pipeline(output_folder):
