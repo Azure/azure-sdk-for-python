@@ -66,21 +66,21 @@ def add_sanitizers(test_proxy):
 def skip_flaky_test(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        try:
-            return f(*args, **kwargs)
-        except HttpResponseError as error:
-            logger = logging.getLogger("azure")
-            if "Invalid request".casefold() in error.message.casefold():
-                pytest.mark.skip("flaky service response: {}".format(error))
-                logger.debug("flaky service response: {}".format(error))
-            elif "Generic error".casefold() in error.message.casefold():
-                pytest.mark.skip("flaky service response: {}".format(error))
-                logger.debug("flaky service response: {}".format(error))
-            elif "Timeout" in error.message.casefold():
-                pytest.mark.skip("flaky service response: {}".format(error))
-                logger.debug("flaky service response: {}".format(error))
-            elif "InvalidImage" in error.message.casefold():
-                pytest.mark.skip("flaky service response: {}".format(error))
-                logger.debug("flaky service response: {}".format(error))
+        # try:
+        return f(*args, **kwargs)
+        # except HttpResponseError as error:
+        #     logger = logging.getLogger("azure")
+        #     if "Invalid request".casefold() in error.message.casefold():
+        #         pytest.mark.skip("flaky service response: {}".format(error))
+        #         logger.debug("flaky service response: {}".format(error))
+        #     elif "Generic error".casefold() in error.message.casefold():
+        #         pytest.mark.skip("flaky service response: {}".format(error))
+        #         logger.debug("flaky service response: {}".format(error))
+        #     elif "Timeout" in error.message.casefold():
+        #         pytest.mark.skip("flaky service response: {}".format(error))
+        #         logger.debug("flaky service response: {}".format(error))
+        #     elif "InvalidImage" in error.message.casefold():
+        #         pytest.mark.skip("flaky service response: {}".format(error))
+        #         logger.debug("flaky service response: {}".format(error))
 
     return wrapper
