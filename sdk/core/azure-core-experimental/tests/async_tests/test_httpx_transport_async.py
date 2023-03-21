@@ -1,14 +1,13 @@
 from typing import Optional
-import pytest
-import asyncio
+
 import httpx
+import pytest
+
 from azure.core.exceptions import ServiceRequestError
+from azure.core.experimental.transport import AsyncHttpXTransport
 from azure.core.pipeline._base_async import AsyncPipeline
 from azure.core.pipeline.policies._retry_async import AsyncRetryPolicy
-from azure.core.experimental.transport import AsyncHttpXTransport
-
 from azure.core.rest import HttpRequest
-
 
 PLACEHOLDER_ENDPOINT = "https://my-resource-group.cognitiveservices.azure.com/"
 

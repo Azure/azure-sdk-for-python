@@ -23,11 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import httpx
 from typing import ContextManager, Iterator, Optional
+
+import httpx
+
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpRequest, HttpTransport
 from azure.core.rest._http_response_impl import HttpResponseImpl
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 
 class HttpXTransportResponse(HttpResponseImpl):
@@ -35,13 +37,13 @@ class HttpXTransportResponse(HttpResponseImpl):
         self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
         super().__init__(
-            request = request,
-            internal_response = httpx_response,
-            status_code = httpx_response.status_code,
-            headers = httpx_response.headers,
-            reason = httpx_response.reason_phrase,
-            content_type = httpx_response.headers.get("content-type"),
-            stream_download_generator = stream_contextmanager,
+            request=request,
+            internal_response=httpx_response,
+            status_code=httpx_response.status_code,
+            headers=httpx_response.headers,
+            reason=httpx_response.reason_phrase,
+            content_type=httpx_response.headers.get("content-type"),
+            stream_download_generator=stream_contextmanager,
         )
 
     def body(self) -> bytes:
@@ -72,6 +74,7 @@ class HttpXTransport(HttpTransport):
 
     :keyword httpx.Client client: HTTPX client to use instead of the default one
     """
+
     def __init__(self, **kwargs) -> None:
         self.client: Optional[httpx.Client] = kwargs.get("client", None)
 
@@ -114,10 +117,9 @@ class HttpXTransport(HttpTransport):
         except (
             httpx.ReadTimeout,
             httpx.ProtocolError,
-         ) as err:
+        ) as err:
             raise ServiceResponseError(err, error=err)
         except httpx.RequestError as err:
             raise ServiceRequestError(err, error=err)
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
-    

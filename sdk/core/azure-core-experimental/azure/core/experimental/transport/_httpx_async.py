@@ -24,16 +24,18 @@
 #
 # --------------------------------------------------------------------------
 from collections.abc import AsyncIterator
-import httpx
 from typing import ContextManager, Optional
+
+import httpx
+
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.transport import HttpRequest, AsyncHttpTransport
+from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
+
 from ._httpx import HttpXTransportResponse
 
 
 class AsyncHttpXTransportResponse(HttpXTransportResponse, AsyncHttpResponseImpl):
-    
     def stream_download(self, _) -> AsyncIterator[bytes]:
         return AsyncHttpXStreamDownloadGenerator(_, self)
 
@@ -47,9 +49,9 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         self.iter_bytes_func = self.response.internal_response.aiter_bytes()
 
     async def __len__(self) -> int:
-        return self.response.internal_response.headers['content-length']
+        return self.response.internal_response.headers["content-length"]
 
-    def __aiter__(self) -> 'AsyncHttpXStreamDownloadGenerator':
+    def __aiter__(self) -> "AsyncHttpXStreamDownloadGenerator":
         return self
 
     async def __anext__(self):
@@ -59,11 +61,13 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
             self.response.internal_response.close()
             raise
 
+
 class AsyncHttpXTransport(AsyncHttpTransport):
     """Implements a basic async httpx HTTP sender
 
     :keyword httpx.AsyncClient client: HTTPX client to use instead of the default one
     """
+
     def __init__(self, **kwargs) -> None:
         self.client: Optional[httpx.AsyncClient] = kwargs.get("client", None)
 
@@ -75,11 +79,11 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         if self.client:
             await self.client.aclose()
             self.client = None
-    
+
     async def __aenter__(self) -> "AsyncHttpXTransport":
         await self.open()
         return self
-    
+
     async def __aexit__(self, *args) -> None:
         await self.close()
 
@@ -106,7 +110,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         except (
             httpx.ReadTimeout,
             httpx.ProtocolError,
-            ) as err:
+        ) as err:
             raise ServiceResponseError(err, error=err)
         except httpx.RequestError as err:
             raise ServiceRequestError(err, error=err)
