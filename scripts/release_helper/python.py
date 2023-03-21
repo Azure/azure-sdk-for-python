@@ -188,6 +188,5 @@ class Python(Common):
         self.output()
 
 
-def python_process(issues: List[Any]):
-    instance = Python(issues, _PYTHON_OWNER, _PYTHON_ASSIGNEE)
-    instance.run()
+def python_process(issues: List[Any]) -> Python:
+    return Python(issues, _PYTHON_OWNER, _PYTHON_ASSIGNEE)
