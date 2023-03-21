@@ -220,6 +220,14 @@
     "AZURE_TABLES_CONN_STR": {
       "type": "string",
       "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageAccount'), ';AccountKey=', listKeys(variables('storageAccountId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=', parameters('storageEndpointSuffix'))]"
+    },
+    "RESOURCE_REGION": {
+      "type": "string",
+      "value": "[parameters('location')]"
+    },
+    "EVENT_HUB_ENDPOINT_SUFFIX": {
+      "type": "string",
+      "value": "[parameters('serviceBusEndpointSuffix')]"
     }
   }
 }

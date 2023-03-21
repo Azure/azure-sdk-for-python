@@ -4,11 +4,10 @@
 
 from marshmallow import INCLUDE, fields, post_load, pre_dump
 
-from azure.ai.ml._schema import ArmVersionedStr, NestedField, RegistryStr, UnionField
-from azure.ai.ml._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
-from azure.ai.ml.constants._common import AzureMLResourceType
-
+from ..._schema import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from ..._schema.core.fields import DumpableEnumField
+from ..._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
+from ...constants._common import AzureMLResourceType
 from .component import InternalComponentSchema, NodeType
 
 
@@ -33,13 +32,13 @@ class InternalBaseNodeSchema(BaseNodeSchema):
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
-        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from ...entities._builders import parse_inputs_outputs
 
         # parse inputs/outputs
         data = parse_inputs_outputs(data)
 
         # dict to node object
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        from ...entities._job.pipeline._load_component import pipeline_node_factory
 
         return pipeline_node_factory.load_from_dict(data=data)
 

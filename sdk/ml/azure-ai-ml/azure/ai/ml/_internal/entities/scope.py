@@ -8,9 +8,9 @@ from typing import List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._schema import PathAwareSchema
+from ..._schema import PathAwareSchema
+from .._schema.component import NodeType
+from ..entities.node import InternalBaseNode
 
 
 class Scope(InternalBaseNode):
@@ -28,7 +28,7 @@ class Scope(InternalBaseNode):
 
     @property
     def adla_account_name(self) -> str:
-        """the ADLA account name to use for the scope job"""
+        """The ADLA account name to use for the scope job."""
         return self._adla_account_name
 
     @adla_account_name.setter
@@ -46,7 +46,7 @@ class Scope(InternalBaseNode):
 
     @property
     def custom_job_name_suffix(self) -> str:
-        """optional string to append to scope job name"""
+        """Optional string to append to scope job name."""
         return self._custom_job_name_suffix
 
     @custom_job_name_suffix.setter
@@ -55,7 +55,10 @@ class Scope(InternalBaseNode):
 
     @property
     def priority(self) -> int:
-        """scope job priority. If set priority in scope_param, will override this setting."""
+        """scope job priority.
+
+        If set priority in scope_param, will override this setting.
+        """
         return self._priority
 
     @priority.setter

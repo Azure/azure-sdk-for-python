@@ -127,7 +127,10 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry.instrumentation.flask",
     "opentelemetry.instrumentation.pyramid",
     "opentelemetry.instrumentation.requests",
+    "opentelemetry-instrumentation-sqlalchemy",
     "opentelemetry.instrumentation.starlette",
+    "opentelemetry-instrumentation-tornado",
+    "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
     "opentelemetry.instrumentation.wsgi",
 )

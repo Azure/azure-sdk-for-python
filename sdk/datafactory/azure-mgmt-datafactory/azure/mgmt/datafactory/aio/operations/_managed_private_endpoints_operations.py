@@ -257,7 +257,7 @@ class ManagedPrivateEndpointsOperations:
         :param managed_private_endpoint_name: Managed private endpoint name. Required.
         :type managed_private_endpoint_name: str
         :param managed_private_endpoint: Managed private endpoint resource definition. Is either a
-         model type or a IO type. Required.
+         ManagedPrivateEndpointResource type or a IO type. Required.
         :type managed_private_endpoint: ~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource
          or IO
         :param if_match: ETag of the managed private endpoint entity. Should only be specified for

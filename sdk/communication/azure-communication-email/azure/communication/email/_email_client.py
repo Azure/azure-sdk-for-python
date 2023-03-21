@@ -32,7 +32,7 @@ class EmailClient(object):
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Email API version.
-        Default value is "2021-10-01-preview".
+        Default value is "2023-03-31".
         Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
@@ -139,7 +139,7 @@ class EmailClient(object):
                             "name": "str"  # Name of the attachment. Required.
                         }
                     ],
-                    "disableUserEngagementTracking": bool,  # Optional. Indicates whether user
+                    "userEngagementTrackingDisabled": bool,  # Optional. Indicates whether user
                       engagement tracking should be disabled for this request if the resource-level
                       user engagement tracking setting was already enabled in the control plane.
                     "headers": {

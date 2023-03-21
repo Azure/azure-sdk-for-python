@@ -692,7 +692,7 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the connectedEnvironment. Required.
         :type connected_environment_name: str
         :param environment_envelope: Configuration details of the connectedEnvironment. Is either a
-         model type or a IO type. Required.
+         ConnectedEnvironment type or a IO type. Required.
         :type environment_envelope: ~azure.mgmt.appcontainers.models.ConnectedEnvironment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1026,7 +1026,7 @@ class ConnectedEnvironmentsOperations:
         :param connected_environment_name: Name of the Managed Environment. Required.
         :type connected_environment_name: str
         :param check_name_availability_request: The check connectedEnvironmentName availability
-         request. Is either a model type or a IO type. Required.
+         request. Is either a CheckNameAvailabilityRequest type or a IO type. Required.
         :type check_name_availability_request:
          ~azure.mgmt.appcontainers.models.CheckNameAvailabilityRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

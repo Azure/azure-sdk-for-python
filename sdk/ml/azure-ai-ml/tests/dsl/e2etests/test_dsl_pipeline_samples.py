@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import MLClient, load_job
@@ -46,20 +46,15 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "recorded_test",
-    "mock_snapshot_hash",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestDSLPipelineSamples(AzureRecordedTestCase):
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_e2e_local_components(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.e2e_local_components.pipeline import (
             generate_dsl_pipeline as e2e_local_components,
         )
@@ -105,25 +100,15 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_basic_component(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.basic_component.pipeline import generate_dsl_pipeline as basic_component
 
         pipeline = basic_component()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_component_with_input_output(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.component_with_input_output.pipeline import (
             generate_dsl_pipeline as component_with_input_output,
         )
@@ -131,49 +116,29 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = component_with_input_output()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_basic_pipeline(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.basic_pipeline.pipeline import generate_dsl_pipeline as basic_pipeline
 
         pipeline = basic_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_pipeline_with_data(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.pipline_with_data.pipeline import generate_dsl_pipeline as pipline_with_data
 
         pipeline = pipline_with_data()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_local_data_input(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.local_data_input.pipeline import generate_dsl_pipeline as local_data_input
 
         pipeline = local_data_input()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_folder(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.datastore_datapath_uri_folder.pipeline import (
             generate_dsl_pipeline as datastore_datapath_uri_folder,
         )
@@ -181,13 +146,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = datastore_datapath_uri_folder()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_datastore_datapath_uri_file(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.datastore_datapath_uri_file.pipeline import (
             generate_dsl_pipeline as datastore_datapath_uri_file,
         )
@@ -195,33 +155,20 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = datastore_datapath_uri_file()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_dataset_input(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.dataset_input.pipeline import generate_dsl_pipeline as dataset_input
 
         pipeline = dataset_input(client)
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_web_url_input(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.web_url_input.pipeline import generate_dsl_pipeline as web_url_input
 
         pipeline = web_url_input()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_env_public_docker_image(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.env_public_docker_image.pipeline import (
@@ -231,25 +178,15 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = env_public_docker_image()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_env_registered(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.env_registered.pipeline import generate_dsl_pipeline as env_registered
 
         pipeline = env_registered()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_env_conda_file(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.env_conda_file.pipeline import generate_dsl_pipeline as env_conda_file
 
         pipeline = env_conda_file()
@@ -276,13 +213,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pytorch_hello_world()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_nyc_taxi_data_regression(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.nyc_taxi_data_regression.pipeline import (
             generate_dsl_pipeline as nyc_taxi_data_regression,
         )
@@ -290,25 +222,15 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = nyc_taxi_data_regression()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_tf_mnist(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.tf_mnist.pipeline import generate_dsl_pipeline as tf_mnist
 
         pipeline = tf_mnist()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_e2e_inline_components(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.e2e_inline_components.pipeline import (
             generate_dsl_pipeline as e2e_inline_components,
         )
@@ -316,7 +238,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = e2e_inline_components()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.usefixtures("mock_asset_name", "mock_anon_component_version")
+    @pytest.mark.usefixtures("mock_asset_name")
     @pytest.mark.e2etest
     def test_command_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import (
@@ -326,16 +248,11 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = command_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_multi_parallel_components_with_file_input_pipeline_output(
         self,
         client: MLClient,
     ) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.parallel_component_with_file_input.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
         )
@@ -343,13 +260,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_parallel_components()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_parallel_components_with_tabular_input_pipeline_output(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.parallel_component_with_tabular_input.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
         )
@@ -357,13 +269,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_parallel_components()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_parallel_components(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.parallel_component.pipeline import (
             generate_dsl_pipeline as pipeline_with_parallel_components,
         )
@@ -398,13 +305,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_pipeline_component(client)
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_spark_job_in_pipeline(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
         )
@@ -412,13 +314,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = spark_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_spark_job_with_builder_in_pipeline(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
             generate_dsl_pipeline_from_builder as spark_job_in_pipeline,
         )
@@ -426,13 +323,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = spark_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="TODO (2258630): getByHash request not matched in Windows infra test playback"
-    )
     @pytest.mark.e2etest
     def test_spark_job_with_multiple_node_in_pipeline(self, client: MLClient) -> None:
-        set_bodiless_matcher()
-
         from test_configs.dsl_pipeline.spark_job_in_pipeline.kmeans_sample.pipeline import (
             generate_dsl_pipeline_from_yaml as spark_job_in_pipeline,
         )
@@ -466,13 +358,37 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         }
 
     @pytest.mark.e2etest
+    def test_spark_job_with_builder_in_pipeline_with_dynamic_allocation_disabled(
+        self,
+        client: MLClient,
+    ) -> None:
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.invalid_pipeline import (
+            generate_dsl_pipeline_from_builder_with_dynamic_allocation_disabled as spark_job_in_pipeline,
+        )
+
+        pipeline = spark_job_in_pipeline()
+        with pytest.raises(Exception) as ex:
+            created_job = client.jobs.create_or_update(pipeline)
+
+        assert (
+            '{\n  "result": "Failed",\n  "errors": [\n    {\n      "message": "Should not specify min or max '
+            'executors when dynamic allocation is disabled.",\n' in str(ex.value)
+        )
+
+        validation_result = client.jobs.validate(pipeline)
+        assert validation_result.passed is False
+        assert validation_result.error_messages == {
+            "jobs.add_greeting_column": "Should not specify min or max executors when dynamic allocation is disabled.",
+        }
+
+    @pytest.mark.e2etest
     def test_data_transfer_copy_2urifolder_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
             generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_2urifolder_job_with_builder_in_pipeline(self, client: MLClient) -> None:
@@ -481,7 +397,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_mixtype_job_in_pipeline(self, client: MLClient) -> None:
@@ -490,7 +406,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_urifile_job_in_pipeline(self, client: MLClient) -> None:
@@ -499,7 +415,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_urifolder_job_in_pipeline(self, client: MLClient) -> None:
@@ -508,7 +424,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_import_filesystem_job_in_pipeline(self, client: MLClient) -> None:
@@ -517,7 +433,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_import_sql_database_job_in_pipeline(self, client: MLClient) -> None:
@@ -526,7 +442,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_import_snowflake_database_job_in_pipeline(self, client: MLClient) -> None:
@@ -535,7 +451,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_export_sql_database_job_in_pipeline(self, client: MLClient) -> None:
@@ -544,7 +460,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_multi_job_in_pipeline(self, client: MLClient) -> None:
@@ -553,4 +469,4 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
