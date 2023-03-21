@@ -76,7 +76,7 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
 
 
 class AsyncAuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase, AsyncHTTPPolicy
+    _AuxiliaryAuthenticationPolicyBase, AsyncHTTPPolicy[HTTPRequestType, HTTPResponseType]
 ):
     async def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
