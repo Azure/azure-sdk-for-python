@@ -91,11 +91,11 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    WorkspaceOutboundRuleOperations,
 )
+from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
+from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
