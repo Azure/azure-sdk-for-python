@@ -197,6 +197,7 @@ class CustomApplications:
         if obj.volumes:
             for volume in obj.volumes:
                 bind_mounts.append(VolumeSettings._from_rest_object(volume))
+        
 
         return CustomApplications(
             name=obj.name,
@@ -204,6 +205,7 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
+            type = obj.additional_properties.pop('type',CustomApplicationDefaults.DOCKER),
             additional_properties=obj.additional_properties,
         )
 
