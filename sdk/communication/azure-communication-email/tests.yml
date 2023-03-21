@@ -18,7 +18,6 @@ stages:
             - $(sub-config-communication-ppe-test-resources-python)
           MatrixReplace:
             - TestSamples=.*/true
-      ${{ if eq(parameters.runOnlyPPEStage, false) }}:
         Public:
           SubscriptionConfigurations:
             - $(sub-config-azure-cloud-test-resources)
@@ -28,10 +27,10 @@ stages:
           SubscriptionConfigurations:
             - $(sub-config-communication-int-test-resources-common)
             - $(sub-config-communication-int-test-resources-python)
-    ${{ if eq(parameters.runOnlyPPEStage, true) }}:
-      Clouds: 'PPE'
-    ${{ if eq(parameters.runOnlyPPEStage, false) }}:
-      Clouds: 'Public,PPE,Int'
+      ${{ if eq(parameters.runOnlyPPEStage, true) }}:
+        Clouds: 'PPE'
+      ${{ if eq(parameters.runOnlyPPEStage, false) }}:
+        Clouds: 'Public,PPE,Int'
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
