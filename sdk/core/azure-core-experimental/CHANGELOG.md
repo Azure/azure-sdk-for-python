@@ -3,6 +3,7 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+
 - httpx implementation of azure-core transport protocol
 
 ### Breaking Changes
