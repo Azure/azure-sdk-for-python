@@ -4,7 +4,7 @@
 
 ### Features Added
 - Added support to make JobService and ServiceInstance objects serializable when printed
-- Removed Experimental Tag from Idle Shutdown, Custom Applications, and Setup Scripts on Compute Instances.
+- Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
 
 ### Bugs Fixed
 
@@ -20,7 +20,6 @@
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
 - Added support for registering named asset from job output or node output by specifying name and version settings.
-- Removed Experimental Tag from Image Metadata on Compute Instances.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline, command, automl and sweep job
 - Added support for `job_tier` and `priority` in standalone job
