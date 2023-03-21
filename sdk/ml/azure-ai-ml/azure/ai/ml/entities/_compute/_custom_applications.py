@@ -197,7 +197,6 @@ class CustomApplications:
         if obj.volumes:
             for volume in obj.volumes:
                 bind_mounts.append(VolumeSettings._from_rest_object(volume))
-        
 
         return CustomApplications(
             name=obj.name,
