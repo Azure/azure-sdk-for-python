@@ -5,7 +5,6 @@
 # ------------------------------------
 import pytest
 import six
-
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,

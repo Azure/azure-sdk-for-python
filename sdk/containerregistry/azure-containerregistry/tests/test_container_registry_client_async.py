@@ -461,6 +461,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
+            assert client._client._config.api_version == "2021-07-01"
             async for repo in client.list_repository_names():
                 pass
         
