@@ -57,7 +57,7 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
 
     # pylint:disable=unused-argument
     async def on_challenge(
-        self, request: "PipelineRequest", response: "PipelineResponse"
+        self, request: "PipelineRequest[HTTPRequestType]", response: "PipelineResponse[HTTPRequestType, HTTPResponseType]"
     ) -> bool:
         """Authorize request according to an ARM authentication challenge
 
@@ -76,7 +76,7 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
 
 
 class AsyncAuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase, AsyncHTTPPolicy
+    _AuxiliaryAuthenticationPolicyBase, AsyncHTTPPolicy[HTTPRequestType, HTTPResponseType]
 ):
     async def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
