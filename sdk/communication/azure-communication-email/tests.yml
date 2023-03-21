@@ -1,9 +1,14 @@
 trigger: none
 
-parameters:
+# parameters:
+# - name: stagesToRun
+#   displayName: "Stages To Run"
+#   type: string
+#   default: 'Int,PPE,Public'
+
+variables:
 - name: stagesToRun
-  type: string
-  default: 'Int,PPE,Public'
+  value: 'Int,PPE,Public'
 
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
@@ -27,7 +32,7 @@ stages:
           SubscriptionConfigurations:
             - $(sub-config-communication-int-test-resources-common)
             - $(sub-config-communication-int-test-resources-python)
-      Clouds: ${{ parameters.stagesToRun }}
+      Clouds: ${{ variables.stagesToRun }}
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
