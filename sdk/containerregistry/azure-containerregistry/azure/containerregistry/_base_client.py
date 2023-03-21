@@ -4,18 +4,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Optional
 
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.credentials import TokenCredential
 from azure.core.pipeline.transport import HttpTransport
 
 from ._authentication_policy import ContainerRegistryChallengePolicy
 from ._generated import ContainerRegistry
 from ._user_agent import USER_AGENT
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
 
 
 class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -33,12 +30,11 @@ class ContainerRegistryBaseClient(object):
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
     :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
-     may result in unsupported behavior.
+        may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, Optional[TokenCredential], Any) -> None
+    def __init__(self, endpoint: str, credential: Optional[TokenCredential], **kwargs) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,
@@ -57,8 +53,7 @@ class ContainerRegistryBaseClient(object):
         self._auth_policy.__exit__(*args)
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close sockets opened by the client.
         Calling this method is unnecessary when using the client as a context manager.
         """
