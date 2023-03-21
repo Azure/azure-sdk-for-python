@@ -183,8 +183,8 @@ PARAMETERS_TO_TEST = [
     (
         "tests/test_configs/internal/spark-component/spec.yaml",
         {
-            "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
-            "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+            "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+            "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
         },
         {
             "driver_cores": 1,
