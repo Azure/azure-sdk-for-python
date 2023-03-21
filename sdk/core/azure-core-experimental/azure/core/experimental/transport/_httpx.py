@@ -64,8 +64,12 @@ class HttpXStreamDownloadGenerator:
 
 
 class HttpXTransport(HttpTransport):
-    def __init__(self) -> None:
-        self.client: Optional[httpx.Client] = None
+    """Implements a basic httpx HTTP sender
+
+    :keyword httpx.Client client: HTTPX client to use instead of the default one
+    """
+    def __init__(self, **kwargs) -> None:
+        self.client: Optional[httpx.Client] = kwargs.get("client", None)
 
     def open(self) -> None:
         self.client = httpx.Client()
@@ -89,6 +93,7 @@ class HttpXTransport(HttpTransport):
             "url": request.url,
             "headers": request.headers.items(),
             "data": request.data,
+            "content": request.content,
             "files": request.files,
             **kwargs,
         }

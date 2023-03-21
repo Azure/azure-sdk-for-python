@@ -69,8 +69,12 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
             raise
 
 class AsyncHttpXTransport(AsyncHttpTransport):
-    def __init__(self) -> None:
-        self.client: Optional[httpx.AsyncClient] = None
+    """Implements a basic async httpx HTTP sender
+
+    :keyword httpx.AsyncClient client: HTTPX client to use instead of the default one
+    """
+    def __init__(self, **kwargs) -> None:
+        self.client: Optional[httpx.AsyncClient] = kwargs.get("client", None)
 
     async def open(self) -> None:
         self.client = httpx.AsyncClient()
@@ -94,6 +98,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
             "url": request.url,
             "headers": request.headers.items(),
             "data": request.data,
+            "content": request.content,
             "files": request.files,
             **kwargs,
         }
