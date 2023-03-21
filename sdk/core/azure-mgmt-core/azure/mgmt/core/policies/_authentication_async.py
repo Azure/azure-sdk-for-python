@@ -101,9 +101,7 @@ class AsyncAuxiliaryAuthenticationPolicy(
 
         self._update_headers(request.http_request.headers)
 
-    def on_response(
-        self, request: "PipelineRequest", response: "PipelineResponse"
-    ) -> "Union[None, Awaitable[None]]":
+    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.

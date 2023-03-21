@@ -34,10 +34,7 @@ _ARMID_RE = re.compile(
     "(/providers/(?P<namespace>[^/]+)/(?P<type>[^/]*)/(?P<name>[^/]+)(?P<children>.*))?"
 )
 
-_CHILDREN_RE = re.compile(
-    "(?i)(/providers/(?P<child_namespace>[^/]+))?/"
-    "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)"
-)
+_CHILDREN_RE = re.compile("(?i)(/providers/(?P<child_namespace>[^/]+))?/" "(?P<child_type>[^/]*)/(?P<child_name>[^/]+)")
 
 _ARMNAME_RE = re.compile("^[^<>%&:\\?/]{1,260}$")
 
@@ -85,12 +82,7 @@ def parse_resource_id(rid):
         children = _CHILDREN_RE.finditer(result["children"] or "")
         count = None
         for count, child in enumerate(children):
-            result.update(
-                {
-                    key + "_%d" % (count + 1): group
-                    for key, group in child.groupdict().items()
-                }
-            )
+            result.update({key + "_%d" % (count + 1): group for key, group in child.groupdict().items()})
         result["last_child_num"] = count + 1 if isinstance(count, int) else None
         result = _populate_alternate_kwargs(result)
     else:
@@ -104,12 +96,8 @@ def _populate_alternate_kwargs(kwargs):
     """
 
     resource_namespace = kwargs["namespace"]
-    resource_type = (
-        kwargs.get("child_type_{}".format(kwargs["last_child_num"])) or kwargs["type"]
-    )
-    resource_name = (
-        kwargs.get("child_name_{}".format(kwargs["last_child_num"])) or kwargs["name"]
-    )
+    resource_type = kwargs.get("child_type_{}".format(kwargs["last_child_num"])) or kwargs["type"]
+    resource_name = kwargs.get("child_name_{}".format(kwargs["last_child_num"])) or kwargs["name"]
 
     _get_parents_from_parts(kwargs)
     kwargs["resource_namespace"] = resource_namespace
@@ -128,17 +116,11 @@ def _get_parents_from_parts(kwargs):
             if child_namespace is not None:
                 parent_builder.append("providers/{}/".format(child_namespace))
             kwargs["child_parent_{}".format(index)] = "".join(parent_builder)
-            parent_builder.append(
-                "{{child_type_{0}}}/{{child_name_{0}}}/".format(index).format(**kwargs)
-            )
-        child_namespace = kwargs.get(
-            "child_namespace_{}".format(kwargs["last_child_num"])
-        )
+            parent_builder.append("{{child_type_{0}}}/{{child_name_{0}}}/".format(index).format(**kwargs))
+        parent_builder.append("{{child_type_{0}}}/{{child_name_{0}}}/".format(index).format(**kwargs))
         if child_namespace is not None:
             parent_builder.append("providers/{}/".format(child_namespace))
-        kwargs["child_parent_{}".format(kwargs["last_child_num"])] = "".join(
-            parent_builder
-        )
+        parent_builder.append("{{child_type_{0}}}/{{child_name_{0}}}/".format(index).format(**kwargs))
     kwargs["resource_parent"] = "".join(parent_builder) if kwargs["name"] else None
     return kwargs
 
@@ -177,14 +159,10 @@ def resource_id(**kwargs):
         count = 1
         while True:
             try:
-                rid_builder.append(
-                    "providers/{{child_namespace_{}}}".format(count).format(**kwargs)
-                )
+                rid_builder.append("providers/{{child_namespace_{}}}".format(count).format(**kwargs))
             except KeyError:
                 pass
-            rid_builder.append(
-                "{{child_type_{0}}}/{{child_name_{0}}}".format(count).format(**kwargs)
-            )
+            rid_builder.append("{{child_type_{0}}}/{{child_name_{0}}}".format(count).format(**kwargs))
             count += 1
     except KeyError:
         pass

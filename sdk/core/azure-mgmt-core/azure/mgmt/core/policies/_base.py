@@ -81,9 +81,7 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):
     @staticmethod
     def _build_next_request(initial_request, method, url):
         request = HttpRequest(method, url)
-        context = PipelineContext(
-            initial_request.context.transport, **initial_request.context.options
-        )
+        def _build_next_request(initial_request, method,
         return PipelineRequest(request, context)
 
     def _register_rp(self, initial_request, url_prefix, rp_name):
@@ -91,27 +89,20 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):
 
         Return False if we have a reason to believe this didn't work
         """
-        post_url = "{}providers/{}/register?api-version=2016-02-01".format(
-            url_prefix, rp_name
-        )
+        post_url = "{}providers/{}/register?api-version=2016-02-01".format(url_prefix, rp_name)
         get_url = "{}providers/{}?api-version=2016-02-01".format(url_prefix, rp_name)
         _LOGGER.warning(
-            "Resource provider '%s' used by this operation is not "
-            "registered. We are registering for you.",
+            "Resource provider '%s' used by this operation is not " "registered. We are registering for you.",
             rp_name,
         )
-        post_response = self.next.send(
-            self._build_next_request(initial_request, "POST", post_url)
-        )
+        post_response = self.next.send(self._build_next_request(initial_request, "POST", post_url))
         if post_response.http_response.status_code != 200:
             _LOGGER.warning("Registration failed. Please register manually.")
             return False
 
         while True:
             time.sleep(10)
-            get_response = self.next.send(
-                self._build_next_request(initial_request, "GET", get_url)
-            )
+            get_response = self.next.send(self._build_next_request(initial_request, "GET", get_url))
             rp_info = json.loads(get_response.http_response.text())
             if rp_info["registrationState"] == "Registered":
                 _LOGGER.warning("Registration succeeded.")

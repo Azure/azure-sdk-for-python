@@ -25,10 +25,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import Iterable
 from azure.core import AsyncPipelineClient
-from .policies import (
-    AsyncARMAutoResourceProviderRegistrationPolicy,
-    ARMHttpLoggingPolicy,
-)
+from .policies import AsyncARMAutoResourceProviderRegistrationPolicy, ARMHttpLoggingPolicy
 
 
 class AsyncARMPipelineClient(AsyncPipelineClient):
@@ -49,24 +46,15 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
     def __init__(self, base_url, **kwargs):
         if "policies" not in kwargs:
             if "config" not in kwargs:
-                raise ValueError(
-                    "Current implementation requires to pass 'config' if you don't pass 'policies'"
-                )
+                raise ValueError("Current implementation requires to pass 'config' if you don't pass 'policies'")
             per_call_policies = kwargs.get("per_call_policies", [])
             if isinstance(per_call_policies, Iterable):
-                per_call_policies.append(
-                    AsyncARMAutoResourceProviderRegistrationPolicy()
-                )
+                per_call_policies.append(AsyncARMAutoResourceProviderRegistrationPolicy())
             else:
-                per_call_policies = [
-                    per_call_policies,
-                    AsyncARMAutoResourceProviderRegistrationPolicy(),
-                ]
+                per_call_policies = [per_call_policies, AsyncARMAutoResourceProviderRegistrationPolicy()]
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get("config")
             if not config.http_logging_policy:
-                config.http_logging_policy = kwargs.get(
-                    "http_logging_policy", ARMHttpLoggingPolicy(**kwargs)
-                )
+                per_call_policies = [per_call_policies, AsyncARMAutoResourceProviderRegistrationPolicy()]
             kwargs["config"] = config
         super(AsyncARMPipelineClient, self).__init__(base_url, **kwargs)

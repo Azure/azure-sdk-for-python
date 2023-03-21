@@ -33,9 +33,7 @@ CWD = os.path.dirname(__file__)
 
 
 def pytest_addoption(parser):
-    parser.addoption(
-        "--runslow", action="store_true", default=False, help="run slow tests"
-    )
+    parser.addoption("--runslow", action="store_true", default=False, help="run slow tests")
 
 
 def pytest_collection_modifyitems(config, items):
@@ -55,8 +53,4 @@ def user_password():
         with open(filepath, "r") as fd:
             userpass = json.load(fd)["userpass"]
             return userpass["user"], userpass["password"]
-    raise ValueError(
-        "Create a {} file with a 'userpass' key and two keys 'user' and 'password'".format(
-            filepath
-        )
-    )
+    raise ValueError("Create a {} file with a 'userpass' key and two keys 'user' and 'password'".format(filepath))
