@@ -27,22 +27,13 @@ from collections.abc import AsyncIterator
 import httpx
 from typing import ContextManager, Optional
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest, AsyncHttpTransport
+from azure.core.pipeline.transport import HttpRequest, AsyncHttpTransport
+from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
+from ._httpx import HttpXTransportResponse
 
 
-class AsyncHttpXTransportResponse(AsyncHttpResponse):
-    def __init__(self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]) -> None:
-        super().__init__(request, httpx_response)
-        self.status_code = httpx_response.status_code
-        self.headers = httpx_response.headers
-        self.reason = httpx_response.reason_phrase
-        self._content = None
-        self.content_type = httpx_response.headers.get('content-type')
-        self.stream_contextmanager = stream_contextmanager
+class AsyncHttpXTransportResponse(HttpXTransportResponse, AsyncHttpResponseImpl):
     
-    def body(self) -> bytes:
-        return self.internal_response.content
-
     def stream_download(self, _) -> AsyncIterator[bytes]:
         return AsyncHttpXStreamDownloadGenerator(_, self)
 

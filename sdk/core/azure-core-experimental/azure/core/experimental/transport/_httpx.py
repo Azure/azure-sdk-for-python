@@ -25,20 +25,24 @@
 # --------------------------------------------------------------------------
 import httpx
 from typing import ContextManager, Iterator, Optional
-from azure.core.pipeline.transport import HttpResponse, HttpRequest, HttpTransport
+from azure.core.pipeline.transport import HttpRequest, HttpTransport
+from azure.core.rest._http_response_impl import HttpResponseImpl
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 
-class HttpXTransportResponse(HttpResponse):
+class HttpXTransportResponse(HttpResponseImpl):
     def __init__(
         self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
-        super().__init__(request, httpx_response)
-        self.status_code = httpx_response.status_code
-        self.headers = httpx_response.headers
-        self.reason = httpx_response.reason_phrase
-        self.content_type = httpx_response.headers.get("content-type")
-        self.stream_contextmanager = stream_contextmanager
+        super().__init__(
+            request = request,
+            internal_response = httpx_response,
+            status_code = httpx_response.status_code,
+            headers = httpx_response.headers,
+            reason = httpx_response.reason_phrase,
+            content_type = httpx_response.headers.get("content-type"),
+            stream_download_generator = stream_contextmanager,
+        )
 
     def body(self) -> bytes:
         return self.internal_response.content
