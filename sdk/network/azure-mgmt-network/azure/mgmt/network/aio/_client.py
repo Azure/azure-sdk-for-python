@@ -182,6 +182,7 @@ from .operations import (
     NetworkManagementClientOperationsMixin,
 )
 from .._validation import api_version_validation
+from .. import models
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
@@ -264,9 +265,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
 
 
     @classmethod
-    def _models_dict(cls, api_version):
-        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
-
+    def _models_dict(cls):
+        return {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
 
 
     @property
@@ -278,8 +278,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ApplicationGatewaysOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -292,8 +292,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteCircuitAuthorizationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -306,8 +306,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteCircuitPeeringsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -320,8 +320,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteCircuitsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -334,8 +334,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteServiceProvidersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -348,8 +348,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LoadBalancersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -362,8 +362,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LocalNetworkGatewaysOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -376,8 +376,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkInterfacesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -390,8 +390,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkSecurityGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -404,8 +404,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PublicIPAddressesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -418,8 +418,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return RouteTablesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -432,8 +432,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return RoutesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -446,8 +446,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return SecurityRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -460,8 +460,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return SubnetsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -474,8 +474,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return UsagesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -488,8 +488,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualNetworkGatewayConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -502,8 +502,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualNetworkGatewaysOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -516,8 +516,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualNetworksOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -530,8 +530,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ApplicationSecurityGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -544,8 +544,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AvailableEndpointServicesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -558,8 +558,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return BgpServiceCommunitiesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -572,8 +572,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ConnectionMonitorsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -586,8 +586,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return DefaultSecurityRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -600,8 +600,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return InboundNatRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -614,8 +614,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LoadBalancerBackendAddressPoolsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -628,8 +628,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LoadBalancerFrontendIPConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -642,8 +642,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LoadBalancerLoadBalancingRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -656,8 +656,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LoadBalancerNetworkInterfacesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -670,8 +670,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LoadBalancerProbesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -684,8 +684,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkInterfaceIPConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -698,8 +698,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkInterfaceLoadBalancersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -712,8 +712,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkWatchersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -726,8 +726,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return Operations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -740,8 +740,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PacketCapturesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -754,8 +754,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return RouteFilterRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -768,8 +768,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return RouteFiltersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -782,8 +782,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualNetworkPeeringsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -796,8 +796,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AzureFirewallsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -810,8 +810,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return DdosProtectionPlansOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -824,8 +824,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteCircuitConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -838,8 +838,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteCrossConnectionPeeringsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -852,8 +852,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteCrossConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -866,8 +866,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return HubVirtualNetworkConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -880,8 +880,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualHubsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -894,8 +894,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualWansOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -908,8 +908,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -922,8 +922,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnGatewaysOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -936,8 +936,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnSitesConfigurationOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -950,8 +950,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnSitesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -964,8 +964,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AvailableDelegationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -978,8 +978,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AvailableResourceGroupDelegationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -992,8 +992,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AzureFirewallFqdnTagsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1006,8 +1006,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return DdosCustomPoliciesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1020,8 +1020,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1034,8 +1034,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteGatewaysOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1048,8 +1048,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteLinksOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1062,8 +1062,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRoutePortsLocationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1076,8 +1076,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRoutePortsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1090,8 +1090,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return InterfaceEndpointsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1104,8 +1104,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return LoadBalancerOutboundRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1118,8 +1118,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkInterfaceTapConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1132,8 +1132,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkProfilesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1146,8 +1146,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return P2SVpnGatewaysOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1160,8 +1160,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return P2SVpnServerConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1174,8 +1174,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PublicIPPrefixesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1188,8 +1188,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ServiceEndpointPoliciesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1202,8 +1202,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ServiceEndpointPolicyDefinitionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1216,8 +1216,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualNetworkTapsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1230,8 +1230,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PeerExpressRouteCircuitConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1244,8 +1244,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return WebApplicationFirewallPoliciesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1258,8 +1258,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NatGatewaysOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1272,8 +1272,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ResourceNavigationLinksOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1286,8 +1286,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ServiceAssociationLinksOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1300,8 +1300,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AvailablePrivateEndpointTypesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1314,8 +1314,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return BastionHostsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1328,8 +1328,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PrivateEndpointsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1342,8 +1342,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PrivateLinkServicesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1356,8 +1356,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ServiceTagsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1370,8 +1370,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return FirewallPoliciesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1384,8 +1384,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return FirewallPolicyRuleGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1398,8 +1398,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnLinkConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1412,8 +1412,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnSiteLinkConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1426,8 +1426,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnSiteLinksOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1440,8 +1440,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualRouterPeeringsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1454,8 +1454,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualRoutersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1468,8 +1468,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AvailableServiceAliasesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1482,8 +1482,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnServerConfigurationsAssociatedWithVirtualWanOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1496,8 +1496,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VpnServerConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1510,8 +1510,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return IpGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1524,8 +1524,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualHubRouteTableV2SOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1538,8 +1538,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return FlowLogsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1552,8 +1552,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkVirtualAppliancesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1566,8 +1566,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return IpAllocationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1580,8 +1580,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PrivateDnsZoneGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1594,8 +1594,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return SecurityPartnerProvidersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1608,8 +1608,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return HubRouteTablesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1622,8 +1622,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ApplicationGatewayPrivateEndpointConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1636,8 +1636,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ApplicationGatewayPrivateLinkResourcesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1650,8 +1650,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return FirewallPolicyRuleCollectionGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1664,8 +1664,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualApplianceSitesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1678,8 +1678,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualApplianceSkusOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1692,8 +1692,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualHubBgpConnectionOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1706,8 +1706,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualHubBgpConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1720,8 +1720,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualHubIpConfigurationOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1734,8 +1734,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return CustomIPPrefixesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1748,8 +1748,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return DscpConfigurationOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1762,8 +1762,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return InboundSecurityRuleOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1776,8 +1776,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return WebCategoriesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1790,8 +1790,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NatRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1804,8 +1804,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VirtualNetworkGatewayNatRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1818,8 +1818,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ActiveConnectivityConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1832,8 +1832,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ActiveSecurityAdminRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1846,8 +1846,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ActiveSecurityUserRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1860,8 +1860,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AdminRuleCollectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1874,8 +1874,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return AdminRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1888,8 +1888,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ConnectivityConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1902,8 +1902,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return EffectiveConnectivityConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1916,8 +1916,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return EffectiveVirtualNetworksOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1930,8 +1930,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1944,8 +1944,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkManagerCommitsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1958,8 +1958,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkManagerDeploymentStatusOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1972,8 +1972,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkManagerEffectiveSecurityAdminRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -1986,8 +1986,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkManagersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2000,8 +2000,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NetworkSecurityPerimetersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2014,8 +2014,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspAccessRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2028,8 +2028,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspAccessRulesReconcileOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2042,8 +2042,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspAssociationReconcileOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2056,8 +2056,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspAssociationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2070,8 +2070,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspLinkReconcileOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2084,8 +2084,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspLinkReferenceReconcileOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2098,8 +2098,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspLinkReferencesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2112,8 +2112,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspLinksOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2126,8 +2126,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return NspProfilesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2140,8 +2140,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return PerimeterAssociableResourceTypesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2154,8 +2154,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return SecurityAdminConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2168,8 +2168,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return SecurityUserConfigurationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2182,8 +2182,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return UserRuleCollectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2196,8 +2196,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return UserRulesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2210,8 +2210,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ApplicationGatewayWafDynamicManifestsDefaultOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2224,8 +2224,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ApplicationGatewayWafDynamicManifestsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2238,8 +2238,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ConfigurationPolicyGroupsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2252,8 +2252,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRoutePortAuthorizationsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2266,8 +2266,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ExpressRouteProviderPortsLocationOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2280,8 +2280,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return FirewallPolicyIdpsSignaturesFilterValuesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2294,8 +2294,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return FirewallPolicyIdpsSignaturesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2308,8 +2308,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return FirewallPolicyIdpsSignaturesOverridesOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2322,8 +2322,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ManagementGroupNetworkManagerConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2336,8 +2336,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return RouteMapsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2350,8 +2350,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return RoutingIntentOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2364,8 +2364,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ScopeConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2378,8 +2378,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return ServiceTagInformationOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2392,8 +2392,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return StaticMembersOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2406,8 +2406,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return SubscriptionNetworkManagerConnectionsOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
@@ -2420,8 +2420,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return VipSwapOperations(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
 
