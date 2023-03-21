@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import base64
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
 from azure.core.exceptions import ServiceRequestError
@@ -34,6 +34,8 @@ if TYPE_CHECKING:
     from typing import Optional
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
+HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 
 class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests.
@@ -117,7 +119,7 @@ class _AuxiliaryAuthenticationPolicyBase:
 
 
 class AuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]
+    _AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]
 ):
     def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:

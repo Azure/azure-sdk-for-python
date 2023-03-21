@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar, Awaitable, Optional
 
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
@@ -35,13 +35,14 @@ from ._authentication import _parse_claims_challenge, _AuxiliaryAuthenticationPo
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
+HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
     result = func(*args, **kwargs)
     if hasattr(result, "__await__"):
-        # type ignore on await: https://github.com/python/mypy/issues/7587
-        return await result  # type: ignore
+        return await result
     return result
 
 
@@ -84,8 +85,7 @@ class AsyncAuxiliaryAuthenticationPolicy(
             ]
         return None
 
-    async def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    async def on_request(self, request: "PipelineRequest") -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with an auxiliary authorization token.
@@ -99,7 +99,7 @@ class AsyncAuxiliaryAuthenticationPolicy(
 
         self._update_headers(request.http_request.headers)
 
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> Optional[Awaitable[None]]:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.
