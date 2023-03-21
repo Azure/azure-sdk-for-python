@@ -1,9 +1,9 @@
 trigger: none
 
 parameters:
-- name: runOnlyPPEStage
-  type: boolean
-  default: false
+- name: stagesToRun
+  type: string
+  default: 'Int,PPE,Public'
 
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
@@ -27,10 +27,7 @@ stages:
           SubscriptionConfigurations:
             - $(sub-config-communication-int-test-resources-common)
             - $(sub-config-communication-int-test-resources-python)
-      ${{ if eq(parameters.runOnlyPPEStage, true) }}:
-        Clouds: 'PPE'
-      ${{ if eq(parameters.runOnlyPPEStage, false) }}:
-        Clouds: 'Public,PPE,Int'
+      Clouds: ${{ parameters.stagesToRun }}
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
