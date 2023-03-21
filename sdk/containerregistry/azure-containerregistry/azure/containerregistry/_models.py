@@ -11,12 +11,12 @@ from typing import List
 from azure.core import CaseInsensitiveEnumMeta
 
 from ._generated.models import (
-    ArtifactTagProperties as GeneratedArtifactTagProperties,
-    ArtifactManifestProperties as GeneratedArtifactManifestProperties,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
+    TagAttributesBase,
     ManifestWriteableProperties,
+    ManifestAttributesBase,
 )
 from ._helpers import _host_only, _is_tag, _strip_alg
 
@@ -95,7 +95,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedArtifactManifestProperties, **kwargs) -> "ArtifactManifestProperties":
+    def _from_generated(cls, generated: ManifestAttributesBase, **kwargs) -> "ArtifactManifestProperties":
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -263,7 +263,7 @@ class ArtifactTagProperties(object):
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(cls, generated: GeneratedArtifactTagProperties, **kwargs) -> "ArtifactTagProperties":
+    def _from_generated(cls, generated: TagAttributesBase, **kwargs) -> "ArtifactTagProperties":
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
