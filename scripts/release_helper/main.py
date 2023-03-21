@@ -61,7 +61,7 @@ def output(result: Dict[str, Dict[str, IssueProcess]]):
             line = f"| {title} "
             status = ""
             enable_out = False
-            for language in ["Python", "Go", "Java", "Js"]:
+            for language in ["Python", "Go", "Java", "JS"]:
                 issue_processor = language_issue.get(language)
                 if issue_processor:
                     created_date = issue_processor.created_date_format if not created_date else created_date
