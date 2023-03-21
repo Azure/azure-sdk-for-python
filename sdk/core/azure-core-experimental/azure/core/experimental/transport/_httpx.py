@@ -72,7 +72,8 @@ class HttpXTransport(HttpTransport):
         self.client: Optional[httpx.Client] = kwargs.get("client", None)
 
     def open(self) -> None:
-        self.client = httpx.Client()
+        if self.client is None:
+            self.client = httpx.Client()
 
     def close(self) -> None:
         if self.client:

@@ -77,7 +77,8 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         self.client: Optional[httpx.AsyncClient] = kwargs.get("client", None)
 
     async def open(self) -> None:
-        self.client = httpx.AsyncClient()
+        if self.client is None:
+            self.client = httpx.AsyncClient()
 
     async def close(self) -> None:
         if self.client:
