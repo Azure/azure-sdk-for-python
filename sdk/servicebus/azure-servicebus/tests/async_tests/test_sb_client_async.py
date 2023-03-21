@@ -454,7 +454,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
                 await sender.send_messages(ServiceBusMessage("foo"))
 
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    async def test_backoff_fixed_retry(self, uamqp_transport):
+    def test_backoff_fixed_retry(self, uamqp_transport):
         client = ServiceBusClient(
             'fake.host.com',
             'fake_eh',
@@ -462,7 +462,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             uamqp_transport=uamqp_transport
         )
         # queue sender
-        sender = await client.get_queue_sender('fake_name')
+        sender = client.get_queue_sender('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
@@ -473,7 +473,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         assert sleep_time_fixed < backoff * (2 ** 1)
 
         # topic sender
-        sender = await client.get_topic_sender('fake_name')
+        sender = client.get_topic_sender('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         sender._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
@@ -481,7 +481,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         assert sleep_time_fixed < backoff * (2 ** 1)
 
         # queue receiver 
-        receiver = await client.get_queue_receiver('fake_name')
+        receiver = client.get_queue_receiver('fake_name')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
@@ -489,13 +489,14 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         assert sleep_time_fixed < backoff * (2 ** 1)
 
         # subscription receiver 
-        receiver = await client.get_subscription_receiver('fake_topic', 'fake_sub')
+        receiver = client.get_subscription_receiver('fake_topic', 'fake_sub')
         backoff = client._config.retry_backoff_factor
         start_time = time.time()
         receiver._backoff(retried_times=1, last_exception=Exception('fake'), abs_timeout_time=None)
         sleep_time_fixed = time.time() - start_time
         assert sleep_time_fixed < backoff * (2 ** 1)
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_custom_client_id_queue_sender_async(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
@@ -507,6 +508,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             assert queue_sender.client_identifier is not None
             assert queue_sender.client_identifier == custom_id
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_default_client_id_queue_sender(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
@@ -517,6 +519,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             assert queue_sender.client_identifier is not None
             assert "SBSender" in queue_sender.client_identifier
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_custom_client_id_queue_receiver(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
@@ -528,6 +531,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             assert queue_receiver.client_identifier is not None
             assert queue_receiver.client_identifier == custom_id
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_default_client_id_queue_receiver(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
@@ -538,6 +542,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             assert queue_receiver.client_identifier is not None
             assert "SBReceiver" in queue_receiver.client_identifier
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_custom_client_id_topic_sender(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
@@ -549,6 +554,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             assert topic_sender.client_identifier is not None
             assert topic_sender.client_identifier == custom_id
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_default_client_id_topic_sender(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
@@ -559,6 +565,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             assert topic_sender.client_identifier is not None
             assert "SBSender" in topic_sender.client_identifier
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_default_client_id_subscription_receiver(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
@@ -570,6 +577,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
             assert subscription_receiver.client_identifier is not None
             assert "SBReceiver" in subscription_receiver.client_identifier
 
+    @pytest.mark.asyncio
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     async def test_custom_client_id_subscription_receiver(self, uamqp_transport, **kwargs):
         servicebus_connection_str = 'Endpoint=sb://resourcename.servicebus.windows.net/;SharedAccessSignature=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX=;'
