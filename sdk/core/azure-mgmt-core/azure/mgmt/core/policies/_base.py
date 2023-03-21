@@ -81,7 +81,7 @@ class ARMAutoResourceProviderRegistrationPolicy(HTTPPolicy):
     @staticmethod
     def _build_next_request(initial_request, method, url):
         request = HttpRequest(method, url)
-        def _build_next_request(initial_request, method,
+        context = PipelineContext(initial_request.context.transport, **initial_request.context.options)
         return PipelineRequest(request, context)
 
     def _register_rp(self, initial_request, url_prefix, rp_name):

@@ -180,9 +180,7 @@ async def test_post(async_pipeline_client_builder, deserialization_cb):
         if request.url == "http://example.org/location":
             return TestArmPolling.mock_send("GET", 200, body=None).http_response
         elif request.url == "http://example.org/async_monitor":
-            return TestArmPolling.mock_send(
-                "GET", 200, body={"status": "Succeeded"}
-            ).http_response
+            return TestArmPolling.mock_send("GET", 200, body={"status": "Succeeded"}).http_response
         else:
             pytest.fail("No other query allowed")
 
@@ -294,9 +292,7 @@ class TestArmPolling(object):
         except ValueError:
             raise DecodeError("Impossible to deserialize")
 
-        body = {
-            TestArmPolling.convert.sub(r"\1_\2", k).lower(): v for k, v in body.items()
-        }
+        body = {TestArmPolling.convert.sub(r"\1_\2", k).lower(): v for k, v in body.items()}
         properties = body.setdefault("properties", {})
         if "name" in body:
             properties["name"] = body["name"]
@@ -349,13 +345,11 @@ async def test_long_running_put():
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)
     assert poll.name == TEST_NAME
-    assert not hasattr(polling_method._pipeline_response, "randomFieldFromPollAsyncOpHeader")
+    assert polling_method._pipeline_response.http_response.internal_response.randomFieldFromPollLocationHeader is None
 
     # Test polling initial payload invalid (SQLDb)
     response_body = {}  # Empty will raise
-    response = TestArmPolling.mock_send(
-        "PUT", 201, {"location": LOCATION_URL}, response_body
-    )
+    response = TestArmPolling.mock_send("PUT", 201, {"location": LOCATION_URL}, response_body)
     polling_method = AsyncARMPolling(0)
     poll = await async_poller(CLIENT, response, TestArmPolling.mock_outputs, polling_method)
     assert poll.name == TEST_NAME
@@ -434,6 +428,7 @@ async def test_long_running_delete():
 
 @pytest.mark.asyncio
 async def test_long_running_post():
+
     # Test polling from azure-asyncoperation header
     response = TestArmPolling.mock_send(
         "POST", 201, {"azure-asyncoperation": ASYNC_URL}, body={"properties": {"provisioningState": "Succeeded"}}
@@ -491,25 +486,17 @@ async def test_long_running_negative():
     LOCATION_BODY = "{"
     POLLING_STATUS = 203
     response = TestArmPolling.mock_send("POST", 202, {"location": LOCATION_URL})
-    poll = async_poller(
-        CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0)
-    )
-    with pytest.raises(
-        HttpResponseError
-    ) as error:  # TODO: Node.js raises on deserialization
+    poll = async_poller(CLIENT, response, TestArmPolling.mock_outputs, AsyncARMPolling(0))
+    with pytest.raises(HttpResponseError) as error:  # TODO: Node.js raises on deserialization
         await poll
-    assert error.value.continuation_token == base64.b64encode(
-        pickle.dumps(response)
-    ).decode("ascii")
+    assert error.value.continuation_token == base64.b64encode(pickle.dumps(response)).decode("ascii")
 
     LOCATION_BODY = json.dumps({"name": TEST_NAME})
     POLLING_STATUS = 200
 
 
 def test_polling_with_path_format_arguments():
-    method = AsyncARMPolling(
-        timeout=0, path_format_arguments={"host": "host:3000", "accountName": "local"}
-    )
+    method = AsyncARMPolling(timeout=0, path_format_arguments={"host": "host:3000", "accountName": "local"})
     client = AsyncPipelineClient(base_url="http://{accountName}{host}")
 
     method._operation = LocationPolling()

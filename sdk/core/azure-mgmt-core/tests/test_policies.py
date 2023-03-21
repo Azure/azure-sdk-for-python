@@ -105,10 +105,7 @@ def test_register_rp_policy():
     )
 
     httpretty.register_uri(
-        httpretty.GET,
-        register_get_url,
-        body=json.dumps(register_get_result),
-        content_type="application/json",
+        httpretty.GET, register_get_url, body=json.dumps(register_get_result), content_type="application/json"
     )
 
     request = HttpRequest("PUT", provider_url)

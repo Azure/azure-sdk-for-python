@@ -53,13 +53,7 @@ async def test_claims_challenge():
     challenge = 'Bearer authorization_uri="https://localhost", error=".", error_description=".", claims="{}"'.format(
         base64.b64encode(expected_claims.encode()).decode()
     )
-    responses = (
-        r
-        for r in (
-            Mock(status_code=401, headers={"WWW-Authenticate": challenge}),
-            Mock(status_code=200),
-        )
-    )
+    responses = (r for r in (Mock(status_code=401, headers={"WWW-Authenticate": challenge}), Mock(status_code=200)))
 
     async def send(request):
         res = next(responses)

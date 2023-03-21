@@ -117,10 +117,10 @@ def _get_parents_from_parts(kwargs):
                 parent_builder.append("providers/{}/".format(child_namespace))
             kwargs["child_parent_{}".format(index)] = "".join(parent_builder)
             parent_builder.append("{{child_type_{0}}}/{{child_name_{0}}}/".format(index).format(**kwargs))
-        parent_builder.append("{{child_type_{0}}}/{{child_name_{0}}}/".format(index).format(**kwargs))
+        child_namespace = kwargs.get("child_namespace_{}".format(kwargs["last_child_num"]))
         if child_namespace is not None:
             parent_builder.append("providers/{}/".format(child_namespace))
-        parent_builder.append("{{child_type_{0}}}/{{child_name_{0}}}/".format(index).format(**kwargs))
+        kwargs["child_parent_{}".format(kwargs["last_child_num"])] = "".join(parent_builder)
     kwargs["resource_parent"] = "".join(parent_builder) if kwargs["name"] else None
     return kwargs
 

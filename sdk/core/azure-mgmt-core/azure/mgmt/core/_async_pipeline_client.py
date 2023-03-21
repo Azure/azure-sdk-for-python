@@ -55,6 +55,6 @@ class AsyncARMPipelineClient(AsyncPipelineClient):
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get("config")
             if not config.http_logging_policy:
-                per_call_policies = [per_call_policies, AsyncARMAutoResourceProviderRegistrationPolicy()]
+                config.http_logging_policy = kwargs.get("http_logging_policy", ARMHttpLoggingPolicy(**kwargs))
             kwargs["config"] = config
         super(AsyncARMPipelineClient, self).__init__(base_url, **kwargs)

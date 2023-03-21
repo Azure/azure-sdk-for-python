@@ -54,6 +54,7 @@ def _build_response(json_body):
 
 
 def test_arm_exception():
+
     message = {
         "error": {
             "code": "BadArgument",
