@@ -153,7 +153,7 @@ class CustomApplications:
         self.endpoints = endpoints
         self.environment_variables = environment_variables
         self.bind_mounts = bind_mounts
-        self.additional_properties = {**{'type': self.type}, **kwargs}
+        self.additional_properties = kwargs
 
     def _to_rest_object(self):
         endpoints = None
@@ -170,15 +170,15 @@ class CustomApplications:
         volumes = None
         if self.bind_mounts:
             volumes = [volume._to_rest_object() for volume in self.bind_mounts]
-
+        
         return CustomService(
             name=self.name,
             image=self.image._to_rest_object(),
             endpoints=endpoints,
             environment_variables=environment_variables,
             volumes=volumes,
-            docker=(Docker(privileged=True) if self.type == CustomApplicationDefaults.DOCKER else None),
-            additional_properties=self.additional_properties,
+            docker=Docker(privileged=True),
+            additional_properties={**{'type': self.type}, **self.additional_properties},
         )
 
     @classmethod
@@ -197,7 +197,7 @@ class CustomApplications:
         if obj.volumes:
             for volume in obj.volumes:
                 bind_mounts.append(VolumeSettings._from_rest_object(volume))
-
+        
         return CustomApplications(
             name=obj.name,
             image=ImageSettings._from_rest_object(obj.image),
@@ -205,7 +205,7 @@ class CustomApplications:
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
             type = obj.additional_properties.pop('type',CustomApplicationDefaults.DOCKER),
-            additional_properties=obj.additional_properties,
+            **obj.additional_properties,
         )
 
 
