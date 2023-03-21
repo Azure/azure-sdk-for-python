@@ -3,7 +3,7 @@ trigger: none
 parameters:
 - name: runOnlyPPE
   displayName: "Run only the PPE stage"
-  type: boolean,
+  type: boolean
   default: false
 
 stages:
