@@ -128,7 +128,7 @@ class AuxiliaryAuthenticationPolicy(
             ]
         return None
 
-    def on_request(self, request: "PipelineRequest") -> None:
+    def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with an auxiliary authorization token.
