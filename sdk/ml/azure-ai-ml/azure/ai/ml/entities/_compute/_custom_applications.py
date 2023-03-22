@@ -170,7 +170,7 @@ class CustomApplications:
         volumes = None
         if self.bind_mounts:
             volumes = [volume._to_rest_object() for volume in self.bind_mounts]
-        
+
         return CustomService(
             name=self.name,
             image=self.image._to_rest_object(),
@@ -197,7 +197,7 @@ class CustomApplications:
         if obj.volumes:
             for volume in obj.volumes:
                 bind_mounts.append(VolumeSettings._from_rest_object(volume))
-        
+
         return CustomApplications(
             name=obj.name,
             image=ImageSettings._from_rest_object(obj.image),
