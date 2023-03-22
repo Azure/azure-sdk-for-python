@@ -128,6 +128,8 @@ class MLClient:
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
     :type show_progress: typing.Optional[bool]
+    :param enable_telemetry: Whether to enable telemetry. Will be overriden to False if not in a Jupyter Notebook.
+    :type enable_telemetry: typing.Optional[bool]
     :keyword cloud: The cloud name to use, defaults to AzureCloud.
     :paramtype cloud: str
 
