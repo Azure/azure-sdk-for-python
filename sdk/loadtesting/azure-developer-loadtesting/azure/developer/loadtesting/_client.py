@@ -75,7 +75,7 @@ class LoadTestAdministrationClient(_BaseClient, AdministrationOperations):  # py
     :paramtype api_version: str
     """
 
-    def __enter__(self) -> "AdministrationClient":
+    def __enter__(self) -> "LoadTestAdministrationClient":
         self._client.__enter__()
         return self
 
@@ -91,7 +91,7 @@ class LoadTestRunClient(_BaseClient, TestRunOperations):  # pylint: disable=clie
     :paramtype api_version: str
     """
 
-    def __enter__(self) -> "TestRunClient":
+    def __enter__(self) -> "LoadTestRunClient":
         self._client.__enter__()
         return self
 

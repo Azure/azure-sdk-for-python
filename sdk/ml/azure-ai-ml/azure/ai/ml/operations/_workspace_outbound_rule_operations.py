@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Iterable
 from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._workspace.networking import OutboundRule
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -14,7 +14,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class WorkspaceOutboundRuleOperations:
@@ -26,6 +26,7 @@ class WorkspaceOutboundRuleOperations:
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
+        ops_logger.update_info(kwargs)
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
@@ -35,26 +36,31 @@ class WorkspaceOutboundRuleOperations:
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    def show(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.Get", ActivityType.PUBLICAPI)
+    def get(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
         workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
-        return OutboundRule._from_rest_object(obj)  # pylint: disable=protected-access
+        return OutboundRule._from_rest_object(obj, rule_name=outbound_rule_name)  # pylint: disable=protected-access
 
-    def list(self, resource_group: str, ws_name: str, **kwargs) -> Dict[str, OutboundRule]:
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
+    def list(self, resource_group: str, ws_name: str, **kwargs) -> Iterable[OutboundRule]:
         workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         rest_rules = self._rule_operation.list(resource_group, workspace_name)
 
-        result = {
-            rule_name: OutboundRule._from_rest_object(rest_rules[rule_name])  # pylint: disable=protected-access
+        result = [
+            OutboundRule._from_rest_object(  # pylint: disable=protected-access
+                rest_obj=rest_rules[rule_name], rule_name=rule_name
+            )
             for rule_name in rest_rules.keys()
-        }
+        ]
         return result
 
-    def remove(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller:
+    @monitor_with_activity(logger, "WorkspaceOutboundRule.Remove", ActivityType.PUBLICAPI)
+    def begin_remove(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller[None]:
         workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 

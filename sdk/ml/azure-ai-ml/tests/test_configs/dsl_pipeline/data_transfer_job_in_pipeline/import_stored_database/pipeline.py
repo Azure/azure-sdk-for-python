@@ -18,7 +18,6 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     ]
     outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
     source = {
-        "type": "database",
         "connection": "azureml:my_sql_connection",
         "stored_procedure": stored_procedure,
         "stored_procedure_params": stored_procedure_params,
@@ -34,5 +33,5 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         )
 
     pipeline = data_transfer_import_database_pipeline_from_builder()
-    pipeline.settings.default_compute = "adf_compute"
+    pipeline.settings.default_compute = "serverless"
     return pipeline

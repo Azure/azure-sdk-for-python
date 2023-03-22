@@ -18,8 +18,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class AzureDataLakeGen1Datastore(Datastore):
-    """Azure Data Lake aka Gen 1 datastore that is linked to an Azure ML
-    workspace.
+    """Azure Data Lake aka Gen 1 datastore that is linked to an Azure ML workspace.
 
     :param name: Name of the datastore.
     :type name: str

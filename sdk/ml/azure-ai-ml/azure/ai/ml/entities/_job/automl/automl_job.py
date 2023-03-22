@@ -8,7 +8,13 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
+    JobBase,
+    MLTableJobInput,
+    QueueSettings,
+    ResourceConfiguration,
+    TaskType,
+)
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import TYPE, AssetTypes
@@ -28,7 +34,28 @@ module_logger = logging.getLogger(__name__)
 
 
 class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
-    """AutoML job entity."""
+    """Initialize an AutoML job entity.
+
+    Constructor for an AutoMLJob.
+
+    :keyword resources: Resource configuration for the AutoML job, defaults to None
+    :paramtype resources: typing.Optional[ResourceConfiguration]
+    :keyword identity: Identity that training job will use while running on compute, defaults to None
+    :paramtype identity: typing.Optional[ typing.Union[ManagedIdentityConfiguration, AmlTokenConfiguration
+        , UserIdentityConfiguration] ]
+    :keyword environment_id: The environment id for the AutoML job, defaults to None
+    :paramtype environment_id: typing.Optional[str]
+    :keyword environment_variables: The environment variables for the AutoML job, defaults to None
+    :paramtype environment_variables: typing.Optional[Dict[str, str]]
+    :keyword outputs: The outputs for the AutoML job, defaults to None
+    :paramtype outputs: typing.Optional[Dict[str, str]]
+    :keyword queue_settings: The queue settings for the AutoML job, defaults to None
+    :paramtype queue_settings: typing.Optional[QueueSettings]
+    :raises ValidationException: task type validation error
+    :raises NotImplementedError: Raises NotImplementedError
+    :return: An AutoML Job
+    :rtype: AutoMLJob
+    """
 
     def __init__(
         self,
@@ -37,15 +64,28 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity.
 
-        :param task_details: The task configuration of the job. This can be Classification, Regression, etc.
-        :param resources: Resource configuration for the job.
-        :param identity: Identity that training job will use while running on compute.
-        :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
-        :param kwargs:
+        Constructor for an AutoMLJob.
+
+        :keyword resources: Resource configuration for the AutoML job, defaults to None
+        :paramtype resources: typing.Optional[ResourceConfiguration]
+        :keyword identity: Identity that training job will use while running on compute, defaults to None
+        :paramtype identity: typing.Optional[ typing.Union[ManagedIdentityConfiguration, AmlTokenConfiguration
+            , UserIdentityConfiguration] ]
+        :keyword environment_id: The environment id for the AutoML job, defaults to None
+        :paramtype environment_id: typing.Optional[str]
+        :keyword environment_variables: The environment variables for the AutoML job, defaults to None
+        :paramtype environment_variables: typing.Optional[Dict[str, str]]
+        :keyword outputs: The outputs for the AutoML job, defaults to None
+        :paramtype outputs: typing.Optional[Dict[str, str]]
+        :keyword queue_settings: The queue settings for the AutoML job, defaults to None
+        :paramtype queue_settings: typing.Optional[QueueSettings]
+        :raises ValidationException: task type validation error
+        :raises NotImplementedError: Raises NotImplementedError
         """
         kwargs[TYPE] = JobType.AUTOML
         self.environment_id = kwargs.pop("environment_id", None)
@@ -56,24 +96,51 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
 
         self.resources = resources
         self.identity = identity
+        self.queue_settings = queue_settings
 
     @property
     @abstractmethod
     def training_data(self) -> Input:
+        """The training data for the AutoML job.
+
+        :raises NotImplementedError: Raises NotImplementedError
+        :return: Returns the training data for the AutoML job.
+        :rtype: Input
+        """
         raise NotImplementedError()
 
     @property
     @abstractmethod
     def validation_data(self) -> Input:
+        """The validation data for the AutoML job.
+
+        :raises NotImplementedError: Raises NotImplementedError
+        :return: Returns the validation data for the AutoML job.
+        :rtype: Input
+        """
         raise NotImplementedError()
 
     @property
     @abstractmethod
     def test_data(self) -> Input:
+        """The test data for the AutoML job.
+
+        :raises NotImplementedError: Raises NotImplementedError
+        :return: Returns the test data for the AutoML job.
+        :rtype: Input
+        """
         raise NotImplementedError()
 
     @classmethod
     def _load_from_rest(cls, obj: JobBase) -> "AutoMLJob":
+        """Loads the rest object to a dict containing items to init the AutoMLJob objects.
+
+        :param obj: Azure Resource Manager resource envelope.
+        :type obj: JobBase
+        :raises ValidationException: task type validation error
+        :return: An AutoML Job
+        :rtype: AutoMLJob
+        """
         task_type = (
             camel_to_snake(obj.properties.task_details.task_type) if obj.properties.task_details.task_type else None
         )
@@ -97,6 +164,19 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         additional_message: str,
         **kwargs,
     ) -> "AutoMLJob":
+        """Loads the dictionary objects to an AutoMLJob object.
+
+        :param data: A data dictionary.
+        :type data: typing.Dict
+        :param context: A context dictionary.
+        :type context: typing.Dict
+        :param additional_message: An additional message to be logged in the ValidationException.
+        :type additional_message: str
+
+        :raises ValidationException: task type validation error
+        :return: An AutoML Job
+        :rtype: AutoMLJob
+        """
         task_type = data.get(AutoMLConstants.TASK_TYPE_YAML)
         class_type = cls._get_task_mapping().get(task_type, None)
         if class_type:
@@ -116,7 +196,14 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
 
     @classmethod
     def _create_instance_from_schema_dict(cls, loaded_data: Dict) -> "AutoMLJob":
-        """Create an automl job instance from schema parsed dict."""
+        """Create an automl job instance from schema parsed dict.
+
+        :param loaded_data:  A loaded_data dictionary.
+        :type loaded_data: typing.Dict
+        :raises ValidationException: task type validation error
+        :return: An AutoML Job
+        :rtype: AutoMLJob
+        """
         task_type = loaded_data.pop(AutoMLConstants.TASK_TYPE_YAML)
         class_type = cls._get_task_mapping().get(task_type, None)
         if class_type:
@@ -131,6 +218,11 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
 
     @classmethod
     def _get_task_mapping(cls):
+        """Create a mapping of task type to job class.
+
+        :return: An AutoMLVertical object containing the task type to job class mapping.
+        :rtype: AutoMLVertical
+        """
         from .image import (
             ImageClassificationJob,
             ImageClassificationMultilabelJob,
@@ -155,7 +247,11 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         }
 
     def _resolve_data_inputs(self, rest_job):  # pylint: disable=no-self-use
-        """Resolve JobInputs to MLTableJobInputs within data_settings."""
+        """Resolve JobInputs to MLTableJobInputs within data_settings.
+
+        :param rest_job: The rest job object.
+        :type rest_job: AutoMLJob
+        """
         if isinstance(rest_job.training_data, Input):
             rest_job.training_data = MLTableJobInput(uri=rest_job.training_data.path)
         if isinstance(rest_job.validation_data, Input):

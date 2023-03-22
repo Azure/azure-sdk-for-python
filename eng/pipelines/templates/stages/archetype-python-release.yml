@@ -85,8 +85,8 @@ stages:
 
                       - script: |
                           set -e
-                          pip install -r eng/release_requirements.txt
-                          pip install tools/azure-sdk-tools
+                          python -m pip install -r eng/release_requirements.txt
+                          python -m pip install tools/azure-sdk-tools
                         displayName: Install Release Dependencies
 
                       - task: PythonScript@0
@@ -217,7 +217,7 @@ stages:
                       - checkout: self
                       - task: UsePythonVersion@0
                       - script: |
-                          pip install "./tools/azure-sdk-tools[build]"
+                          python -m pip install "./tools/azure-sdk-tools[build]"
                         displayName: Install versioning tool dependencies
                       - pwsh: |
                           sdk_increment_version --package-name ${{ artifact.name }} --service ${{ parameters.ServiceDirectory }}
@@ -256,7 +256,7 @@ stages:
       - task: UsePythonVersion@0
       - script: |
           set -e
-          pip install twine
+          python -m pip install twine
         displayName: Install Twine
 
       - template: ../steps/auth-dev-feed.yml

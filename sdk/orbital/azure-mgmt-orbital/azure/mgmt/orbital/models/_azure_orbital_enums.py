@@ -16,14 +16,6 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
-class ApiVersionParameter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ApiVersionParameter."""
-
-    TWO_THOUSAND_TWENTY09_01_PREVIEW = "2020-09-01-preview"
-    TWO_THOUSAND_TWENTY_ONE04_04_PREVIEW = "2021-04-04-preview"
-    TWO_THOUSAND_TWENTY_TWO03_01 = "2022-03-01"
-
-
 class AutoTrackingConfiguration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Auto-tracking configuration."""
 
@@ -49,23 +41,23 @@ class CapabilityParameter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ContactProfilesPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the resource's creation, deletion, or modification."""
 
-    CREATING = "Creating"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
+    CREATING = "creating"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELED = "canceled"
+    UPDATING = "updating"
+    DELETING = "deleting"
 
 
 class ContactsPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the resource's creation, deletion, or modification."""
 
-    CREATING = "Creating"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
+    CREATING = "creating"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELED = "canceled"
+    UPDATING = "updating"
+    DELETING = "deleting"
 
 
 class ContactsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -88,10 +80,10 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Direction (uplink or downlink)."""
+    """Direction (Uplink or Downlink)."""
 
-    UPLINK = "uplink"
-    DOWNLINK = "downlink"
+    UPLINK = "Uplink"
+    DOWNLINK = "Downlink"
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -123,12 +115,12 @@ class Protocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the resource's creation, deletion, or modification."""
 
-    CREATING = "Creating"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
+    CREATING = "creating"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELED = "canceled"
+    UPDATING = "updating"
+    DELETING = "deleting"
 
 
 class ReleaseMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -141,12 +133,12 @@ class ReleaseMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SpacecraftsPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of the resource's creation, deletion, or modification."""
 
-    CREATING = "Creating"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
+    CREATING = "creating"
+    SUCCEEDED = "succeeded"
+    FAILED = "failed"
+    CANCELED = "canceled"
+    UPDATING = "updating"
+    DELETING = "deleting"
 
 
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):

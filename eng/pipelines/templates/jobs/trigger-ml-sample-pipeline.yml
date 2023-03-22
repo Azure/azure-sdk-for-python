@@ -39,8 +39,8 @@ jobs:
         versionSpec: $(PythonVersion)
 
     - script: |
-        pip install -r eng/ci_tools.txt
-        pip install -r eng/ml_sample_tools.txt
+        python -m pip install -r eng/ci_tools.txt
+        python -m pip install -r eng/ml_sample_tools.txt
       displayName: 'Prep Environment'
 
     - pwsh: |

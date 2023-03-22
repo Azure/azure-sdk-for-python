@@ -311,9 +311,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 if not self._decompressor:
                     import zlib
 
-                    zlib_mode = (
-                        (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
-                    )
+                    zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
                     self._decompressor = zlib.decompressobj(wbits=zlib_mode)
                 chunk = self._decompressor.decompress(chunk)
             return chunk
