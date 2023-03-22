@@ -52,16 +52,14 @@ class CommandJobLimits(JobLimits):
     def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> "CommandJobLimits":
         if not obj:
             return None
-        if isinstance(obj, RestCommandJobLimits):
-            return cls(timeout=from_iso_duration_format(obj.timeout))
         if isinstance(obj, dict):
             timeout_value = obj["timeout"]
             # if timeout value is a binding string
             if is_data_binding_expression(timeout_value):
                 return cls(timeout=timeout_value)
             # if response timeout is a normal iso date string
-            rest_obj = RestCommandJobLimits.from_dict(obj)
-            return cls(timeout=from_iso_duration_format(rest_obj.timeout))
+            obj = RestCommandJobLimits.from_dict(obj)
+        return cls(timeout=from_iso_duration_format(obj.timeout))
 
 
 class SweepJobLimits(JobLimits):
