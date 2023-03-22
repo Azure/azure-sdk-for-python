@@ -11,7 +11,7 @@
 
 ### Bugs Fixed
 - Adds missing API version `2022-12-01` to the list of supported API versions.
-- Fixed list_routes and list_trunks functions on asynchronous client to return AsyncItemPaged object.
+- Fixed list_routes and list_trunks functions on SIP routing client to return (Async)ItemPaged object.
 
 ### Other Changes
 
