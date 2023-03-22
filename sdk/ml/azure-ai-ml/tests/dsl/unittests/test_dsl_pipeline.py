@@ -3100,10 +3100,9 @@ class TestDSLPipeline:
 
         @dsl.pipeline
         def my_pipeline(timeout) -> PipelineJob:
-            node_0 = component_func(component_in_number=1)
-            node_0.set_limits(timeout=1)
             # case 1: if timeout is PipelineInput
-            node_0.limits.timeout = timeout
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=timeout)
             # case 2: if timeout is not PipelineInput
             node_1 = component_func(component_in_number=1)
             node_1.set_limits(timeout=1)
