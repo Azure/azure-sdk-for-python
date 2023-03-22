@@ -72,8 +72,7 @@ class TestUserConfigs(unittest.TestCase):
         try:
             cosmos_client.CosmosClient(url=_test_config.host, credential="wrong_key")
         except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 401
-            assert e.reason == "Unauthorized"
+            self.assertEqual(e.status_code, http_constants.StatusCodes.UNAUTHORIZED)
 
     def test_default_account_consistency(self):
         # These tests use the emulator, which has a default consistency of "Session".

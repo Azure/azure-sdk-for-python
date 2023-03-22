@@ -1351,7 +1351,7 @@ class CRUDTests(unittest.TestCase):
             cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
             raise Exception("Test did not fail as expected.")
         except exceptions.CosmosHttpResponseError as error:
-            assert error.status_code == StatusCodes.UNAUTHORIZED
+            self.assertEqual(error.status_code, StatusCodes.UNAUTHORIZED)
 
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
