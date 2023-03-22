@@ -187,7 +187,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             raise ValidationError("materialization_identity is required to setup offline store")
 
         if feature_store.online_store and feature_store.online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
-            raise ValidationError("online store type should be azure_redis")
+            raise ValidationError("online store type should be redis")
         if feature_store.online_store and not feature_store.materialization_identity:
             raise ValidationError("materialization_identity is required to setup online store")
 
@@ -263,7 +263,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     raise ValidationError("Materialization identity is required to setup offline store connection")
 
         if online_store and online_store.type != ONLINE_MATERIALIZATION_STORE_TYPE:
-            raise ValidationError("online store type should be azure_redis")
+            raise ValidationError("online store type should be redis")
 
         if online_store and rest_workspace_obj.feature_store_settings.online_store_connection_name:
             existing_online_Store_connection = self._workspace_connection_operation.get(
