@@ -14,7 +14,7 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python get_operations.py
+    python put_network_one_sku_quota_request_standard_sku_public_ip_addresses.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,11 +28,20 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.quota_operation.list()
-    for item in response:
-        print(item)
+    response = client.quota.begin_create_or_update(
+        resource_name="StandardSkuPublicIpAddresses",
+        scope="subscriptions/D7EC67B3-7657-4966-BFFC-41EFD36BAAB3/providers/Microsoft.Network/locations/eastus",
+        create_quota_request={
+            "properties": {
+                "limit": {"limitObjectType": "LimitValue", "value": 10},
+                "name": {"value": "StandardSkuPublicIpAddresses"},
+                "resourceType": "PublicIpAddresses",
+            }
+        },
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/GetOperations.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/putNetworkOneSkuQuotaRequestStandardSkuPublicIpAddresses.json
 if __name__ == "__main__":
     main()

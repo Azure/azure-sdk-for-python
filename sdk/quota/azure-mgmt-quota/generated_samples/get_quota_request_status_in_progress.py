@@ -14,7 +14,7 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python quota_request_failed.py
+    python get_quota_request_status_in_progress.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,6 +35,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/getQuotaRequestStatusFailed.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/getQuotaRequestStatusInProgress.json
 if __name__ == "__main__":
     main()

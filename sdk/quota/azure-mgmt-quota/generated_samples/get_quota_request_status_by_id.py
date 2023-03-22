@@ -14,7 +14,7 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python quotas_put_request_for_network.py
+    python get_quota_request_status_by_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,20 +28,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.quota.begin_create_or_update(
-        resource_name="MinPublicIpInterNetworkPrefixLength",
-        scope="subscriptions/D7EC67B3-7657-4966-BFFC-41EFD36BAAB3/providers/Microsoft.Network/locations/eastus",
-        create_quota_request={
-            "properties": {
-                "limit": {"limitObjectType": "LimitValue", "value": 10},
-                "name": {"value": "MinPublicIpInterNetworkPrefixLength"},
-                "resourceType": "MinPublicIpInterNetworkPrefixLength",
-            }
-        },
-    ).result()
+    response = client.quota_request_status.get(
+        id="2B5C8515-37D8-4B6A-879B-CD641A2CF605",
+        scope="subscriptions/D7EC67B3-7657-4966-BFFC-41EFD36BAAB3/providers/Microsoft.Compute/locations/eastus",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/putNetworkOneSkuQuotaRequest.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/getQuotaRequestStatusById.json
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python quotas_list_quota_limits_machine_learning_services.py
+    python get_network_one_sku_usages.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,13 +28,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.quota.list(
-        scope="subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.MachineLearningServices/locations/eastus",
+    response = client.usages.get(
+        resource_name="MinPublicIpInterNetworkPrefixLength",
+        scope="subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/getMachineLearningServicesQuotaLimits.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/getNetworkOneSkuUsages.json
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python quotas_usages_request_for_network.py
+    python put_machine_learning_services_quota_request_low_priority.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,13 +28,20 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.usages.get(
-        resource_name="MinPublicIpInterNetworkPrefixLength",
-        scope="subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Network/locations/eastus",
-    )
+    response = client.quota.begin_create_or_update(
+        resource_name="TotalLowPriorityCores",
+        scope="subscriptions/D7EC67B3-7657-4966-BFFC-41EFD36BAAB3/providers/Microsoft.MachineLearningServices/locations/eastus",
+        create_quota_request={
+            "properties": {
+                "limit": {"limitObjectType": "LimitValue", "value": 10},
+                "name": {"value": "TotalLowPriorityCores"},
+                "resourceType": "lowPriority",
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/getNetworkOneSkuUsages.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/putMachineLearningServicesQuotaRequestLowPriority.json
 if __name__ == "__main__":
     main()
