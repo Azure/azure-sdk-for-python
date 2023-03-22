@@ -29,9 +29,9 @@ from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
     AsyncHTTPPolicy,
 )
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 from ._authentication import _parse_claims_challenge, _AuxiliaryAuthenticationPolicyBase
-from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 HTTPRequestType = TypeVar("HTTPRequestType")
