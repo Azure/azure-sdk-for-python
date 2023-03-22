@@ -14,6 +14,7 @@ from azure.ai.ml._schema.core.fields import (
 )
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
 from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 
 from ..assets.asset import AssetSchema
 from ..core.fields import RegistryStr
@@ -50,7 +51,9 @@ class ComponentSchema(AssetSchema):
         keys=fields.Str(),
         values=NestedField(OutputPortSchema),
     )
-    intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
+    # hide in private preview
+    if is_private_preview_enabled():
+        intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema))
 
     def __init__(self, *args, **kwargs):
         # Remove schema_ignored to enable serialize and deserialize schema.
@@ -68,7 +71,7 @@ class ComponentSchema(AssetSchema):
         # The ipp field is set on the component object as "_intellectual_property".
         # We need to set it as "intellectual_property" before dumping so that Marshmallow
         # can pick up the field correctly on dump and show it back to the user.
-        ipp_field = getattr(data, "_intellectual_property")
+        ipp_field = data._intellectual_property  # pylint: disable=protected-access
         if ipp_field:
             setattr(data, "intellectual_property", ipp_field)
         return data

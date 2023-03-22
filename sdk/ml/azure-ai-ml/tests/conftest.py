@@ -100,22 +100,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         group_for_replace="1",
     )
 
-    identity_json_paths = [
-        ".systemData.createdBy",
-        ".systemData.lastModifiedBy",
-        ".createdBy.userName",
-        ".lastModifiedBy.userName",
-        ".runMetadata.createdBy.userName",
-        ".runMetadata.lastModifiedBy.userName",
-    ]
-    identity_replacements = [("Firstname Lastname", r".+\s.+"), ("alias@contoso.com", r".+@.+")]
-
-    for path in identity_json_paths:
-        for replacement, regexp in identity_replacements:
-            add_body_key_sanitizer(json_path=path, value=replacement, regex=regexp)
-            # Try to match in arrays too
-            add_body_key_sanitizer(json_path=f".value[*]{path}", value=replacement, regex=regexp)
-
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -407,6 +391,14 @@ def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCr
         credential=auth,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="sdk-test",
+    )
+
+
+@pytest.fixture
+def ipp_registry_client(auth: ClientSecretCredential) -> MLClient:
+    "return a machine learning client to use for IPP asset registration"
+    return MLClient(
+        credential=auth, logging_enable=getenv(E2E_TEST_LOGGING_ENABLED), registry_name="UnsecureTest-hello-world"
     )
 
 
@@ -789,12 +781,14 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
     from azure.ai.ml._schema.component import command_component as command_component_schema
+    from azure.ai.ml._schema.component import component as component_schema
     from azure.ai.ml._schema.component import input_output
     from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
     from azure.ai.ml.entities._component import command_component as command_component_entity
     from azure.ai.ml.entities._component import pipeline_component as pipeline_component_entity
 
     def _reload_related_classes():
+        reload(component_schema)
         reload(input_output)
         reload(command_component_schema)
         reload(pipeline_component_schema)
@@ -909,14 +903,6 @@ def disable_internal_components():
 
 
 @pytest.fixture()
-def mock_ip_registry_check_false(mocker: MockFixture):
-    mocker.patch(
-        "azure.ai.ml.operations._component_operations.ComponentOperations._is_registry_ip_protected", return_value=False
-    )
-
-
-@pytest.fixture()
-def mock_ip_registry_check_true(mocker: MockFixture):
-    mocker.patch(
-        "azure.ai.ml.operations._component_operations.ComponentOperations._is_registry_ip_protected", return_value=True
-    )
+def mock_set_headers_with_user_aml_token(mocker: MockFixture):
+    if not is_live() or not is_live_and_not_recording():
+        mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")

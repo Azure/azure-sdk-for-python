@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ComponentVersion
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion
 from azure.ai.ml._schema.component.parallel_component import ParallelComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType

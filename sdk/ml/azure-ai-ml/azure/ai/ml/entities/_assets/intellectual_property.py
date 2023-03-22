@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
-
-from typing import Any, Dict
+from typing import Any
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import IPProtectionLevel
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -32,4 +30,6 @@ class IntellectualProperty(RestTranslatableMixin):
         return cls(publisher=obj.publisher, protection_level=obj.protection_level)
 
     def __eq__(self, other: Any) -> bool:
+        if not isinstance(other, IntellectualProperty):
+            return NotImplemented
         return self.publisher == other.publisher and self.protection_level == other.protection_level

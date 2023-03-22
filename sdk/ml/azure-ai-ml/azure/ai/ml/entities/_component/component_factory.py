@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, Optional, Tuple
 
 from marshmallow import Schema
 
-from ..._restclient.v2023_04_01_preview.models import ComponentVersion
+from ..._restclient.v2022_10_01.models import ComponentVersion
 from ..._utils.utils import is_internal_components_enabled
 from ...constants._common import AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
 from ...constants._component import DataTransferTaskType, NodeType

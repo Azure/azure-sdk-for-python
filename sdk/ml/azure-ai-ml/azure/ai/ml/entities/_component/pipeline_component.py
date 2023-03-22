@@ -13,7 +13,7 @@ from typing import Dict, Optional, Tuple, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ComponentVersion, ComponentVersionProperties
+from azure.ai.ml._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict
@@ -451,7 +451,9 @@ class PipelineComponent(Component):
         component["jobs"] = self._build_rest_component_jobs()
         component["sourceJobId"] = self._source_job_id
         if self._intellectual_property:
-            component["intellectualProperty"] = component.pop("intellectual_property")
+            # hack while full pass through supported is worked on for IPP fields
+            component.pop("intellectual_property")
+            component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,

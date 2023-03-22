@@ -10,7 +10,7 @@ from typing import IO, AnyStr, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from ..._restclient.v2023_04_01_preview.models import (
+from ..._restclient.v2022_10_01.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
@@ -490,7 +490,7 @@ class Component(
         # add source type to component rest object
         component["_source"] = self._source
         if self._intellectual_property:
-            # hack while pass through is completely supported for IPP
+            # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
             component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
         properties = ComponentVersionProperties(
