@@ -29,7 +29,7 @@ from azure.core.exceptions import AzureError, ClientAuthenticationError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from .. import exceptions
-from ..http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from .._http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from .._retry_utility import _configure_timeout
 from .. import _endpoint_discovery_retry_policy
 from .. import _resource_throttle_retry_policy

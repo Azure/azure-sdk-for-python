@@ -33,12 +33,12 @@ from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options, _deserialize_throughput, \
     _replace_throughput
 from ._container import ContainerProxy
-from ..offer import ThroughputProperties
-from ..http_constants import StatusCodes
+from .._offer import ThroughputProperties
+from .._http_constants import StatusCodes
 from ..exceptions import CosmosResourceNotFoundError
 from ._user import UserProxy
-from ..documents import IndexingMode
-from ..partition_key import PartitionKey
+from .._documents import IndexingMode
+from .._partition_key import PartitionKey
 
 __all__ = ("DatabaseProxy",)
 

@@ -27,7 +27,7 @@ from azure.core.exceptions import (  # type: ignore  # pylint: disable=unused-im
     ResourceExistsError,
     ResourceNotFoundError
 )
-from . import http_constants
+from . import _http_constants
 
 
 class CosmosHttpResponseError(HttpResponseError):
@@ -43,8 +43,8 @@ class CosmosHttpResponseError(HttpResponseError):
         self.http_error_message = message
         status = status_code or (int(response.status_code) if response else 0)
 
-        if http_constants.HttpHeaders.SubStatus in self.headers:
-            self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
+        if _http_constants.HttpHeaders.SubStatus in self.headers:
+            self.sub_status = int(self.headers[_http_constants.HttpHeaders.SubStatus])
             formatted_message = "Status code: %d Sub-status: %d\n%s" % (status, self.sub_status, str(message))
         else:
             formatted_message = "Status code: %d\n%s" % (status, str(message))
@@ -76,7 +76,7 @@ class CosmosClientTimeoutError(AzureError):
 
 
 def _partition_range_is_gone(e):
-    if (e.status_code == http_constants.StatusCodes.GONE
-            and e.sub_status == http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
+    if (e.status_code == _http_constants.StatusCodes.GONE
+            and e.sub_status == _http_constants.SubStatusCodes.PARTITION_KEY_RANGE_GONE):
         return True
     return False

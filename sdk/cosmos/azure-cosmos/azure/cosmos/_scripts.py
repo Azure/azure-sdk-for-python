@@ -26,7 +26,7 @@ from typing import Any, List, Dict, Union, Iterable, Optional
 
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
-from .partition_key import NonePartitionKeyValue
+from ._partition_key import NonePartitionKeyValue
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs

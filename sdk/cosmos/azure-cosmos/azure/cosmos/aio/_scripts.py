@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection as _CosmosClientConnection
 from .._base import build_options as _build_options
-from ..partition_key import NonePartitionKeyValue
+from .._partition_key import NonePartitionKeyValue
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs

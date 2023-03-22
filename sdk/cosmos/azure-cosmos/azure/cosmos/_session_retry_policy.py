@@ -24,7 +24,7 @@ in the Azure Cosmos database service.
 """
 
 import logging
-from azure.cosmos.documents import _OperationType
+from azure.cosmos._documents import _OperationType
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

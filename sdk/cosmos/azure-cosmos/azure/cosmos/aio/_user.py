@@ -32,7 +32,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options
-from ..permission import Permission
+from .._permission import Permission
 
 
 class UserProxy(object):

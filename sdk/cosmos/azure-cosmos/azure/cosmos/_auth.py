@@ -27,7 +27,7 @@ from hashlib import sha256
 import hmac
 import warnings
 import urllib.parse
-from . import http_constants
+from . import _http_constants
 
 
 def GetAuthorizationHeader(
@@ -94,8 +94,8 @@ def __get_authorization_token_using_master_key(verb, resource_id_or_fullname, re
         verb=(verb.lower() or ""),
         resource_type=(resource_type.lower() or ""),
         resource_id_or_fullname=(resource_id_or_fullname or ""),
-        x_date=headers.get(http_constants.HttpHeaders.XDate, "").lower(),
-        http_date=headers.get(http_constants.HttpHeaders.HttpDate, "").lower(),
+        x_date=headers.get(_http_constants.HttpHeaders.XDate, "").lower(),
+        http_date=headers.get(_http_constants.HttpHeaders.HttpDate, "").lower(),
     )
 
     body = text.encode("utf-8")

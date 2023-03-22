@@ -19,16 +19,20 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import warnings
+from importlib.abc import MetaPathFinder
+from importlib.util import find_spec
+import sys
+
 from ._version import VERSION
 from ._retry_utility import ConnectionRetryPolicy
-from .container import ContainerProxy
-from .cosmos_client import CosmosClient
-from .database import DatabaseProxy
-from .user import UserProxy
-from .scripts import ScriptsProxy
-from .offer import Offer
-from .offer import ThroughputProperties
-from .documents import (
+from ._container import ContainerProxy
+from ._cosmos_client import CosmosClient
+from ._database import DatabaseProxy
+from ._user import UserProxy
+from ._scripts import ScriptsProxy
+from ._offer import Offer, ThroughputProperties
+from ._documents import (
     ConsistencyLevel,
     DataType,
     IndexKind,
@@ -40,8 +44,8 @@ from .documents import (
     TriggerType,
     DatabaseAccount,
 )
-from .partition_key import PartitionKey
-from .permission import Permission
+from ._partition_key import PartitionKey
+from ._permission import Permission
 
 __all__ = (
     "CosmosClient",
@@ -63,6 +67,39 @@ __all__ = (
     "TriggerOperation",
     "TriggerType",
     "ConnectionRetryPolicy",
-    "ThroughputProperties",
+    "ThroughputProperties"
 )
 __version__ = VERSION
+
+
+class _DeprecatedModuleBackCompat(MetaPathFinder):
+    deprecated_modules = [
+        'auth',
+        'container',
+        'cosmos_client',
+        'database',
+        'diagnostics',
+        'documents',
+        'errors',
+        'http_constants',
+        'offer',
+        'partition_key',
+        'permission',
+        'scripts',
+        'user'
+    ]
+
+    def find_spec(fullname, path, target=None):
+        separated_name = fullname.split('.')
+        name = separated_name[-1]
+        if name in _DeprecatedModuleBackCompat.deprecated_modules:
+            warnings.warn(
+                f"The path 'azure.cosmos.{name} is deprecated and should not be used. "
+                "Please import from 'azure.cosmos' instead.",
+                DeprecationWarning
+            )
+            internal_name = ".".join(separated_name[:-1]) + f"._{name}"
+            return find_spec(internal_name)
+        return None
+
+sys.meta_path.append(_DeprecatedModuleBackCompat)

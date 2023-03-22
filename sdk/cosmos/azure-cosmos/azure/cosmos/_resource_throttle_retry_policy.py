@@ -23,7 +23,7 @@
 Cosmos database service.
 """
 
-from . import http_constants
+from . import _http_constants
 
 
 class ResourceThrottleRetryPolicy(object):
@@ -48,9 +48,9 @@ class ResourceThrottleRetryPolicy(object):
                 self.retry_after_in_milliseconds = (  # pylint: disable=attribute-defined-outside-init
                     self._fixed_retry_interval_in_milliseconds
                 )
-            elif http_constants.HttpHeaders.RetryAfterInMilliseconds in exception.headers:
+            elif _http_constants.HttpHeaders.RetryAfterInMilliseconds in exception.headers:
                 self.retry_after_in_milliseconds = int(  # pylint: disable = attribute-defined-outside-init
-                    exception.headers[http_constants.HttpHeaders.RetryAfterInMilliseconds]
+                    exception.headers[_http_constants.HttpHeaders.RetryAfterInMilliseconds]
                 )
 
             if self.cumulative_wait_time_in_milliseconds < self._max_wait_time_in_milliseconds:

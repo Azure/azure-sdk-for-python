@@ -29,9 +29,9 @@ from azure.cosmos._execution_context.aio.base_execution_context import _QueryExe
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
-from azure.cosmos.documents import _DistinctType
+from azure.cosmos._documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos._http_constants import StatusCodes
 
 # pylint: disable=protected-access
 

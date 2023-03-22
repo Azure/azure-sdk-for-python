@@ -30,7 +30,7 @@ from typing import Optional
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, HTTPRequestType, HTTPResponseType
 from azure.core.pipeline.policies import HttpLoggingPolicy
-from .http_constants import HttpHeaders
+from ._http_constants import HttpHeaders
 
 def _format_error(payload: str) -> str:
     output = json.loads(payload)

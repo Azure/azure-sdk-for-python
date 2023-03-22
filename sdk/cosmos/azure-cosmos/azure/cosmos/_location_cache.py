@@ -25,8 +25,8 @@ DatabaseAccount with multiple writable and readable locations.
 import collections
 import time
 
-from . import documents
-from . import http_constants
+from . import _documents
+from . import _http_constants
 
 # pylint: disable=protected-access
 
@@ -132,7 +132,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
 
         if not use_preferred_locations or (
-            documents._OperationType.IsWriteOperation(request.operation_type)
+            _documents._OperationType.IsWriteOperation(request.operation_type)
             and not self.can_use_multiple_write_locations_for_request(request)
         ):
             # For non-document resource types in case of client can use multiple write locations
@@ -146,7 +146,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         endpoints = (
             self.get_write_endpoints()
-            if documents._OperationType.IsWriteOperation(request.operation_type)
+            if _documents._OperationType.IsWriteOperation(request.operation_type)
             else self.get_read_endpoints()
         )
         return endpoints[location_index % len(endpoints)]
@@ -321,9 +321,9 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
     def can_use_multiple_write_locations_for_request(self, request):
         return self.can_use_multiple_write_locations() and (
-            request.resource_type == http_constants.ResourceType.Document
+            request.resource_type == _http_constants.ResourceType.Document
             or (
-                request.resource_type == http_constants.ResourceType.StoredProcedure
-                and request.operation_type == documents._OperationType.ExecuteJavaScript
+                request.resource_type == _http_constants.ResourceType.StoredProcedure
+                and request.operation_type == _documents._OperationType.ExecuteJavaScript
             )
         )

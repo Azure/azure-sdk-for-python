@@ -22,8 +22,8 @@
 """Internal class for timeout failover retry policy implementation in the Azure
 Cosmos database service.
 """
-from . import http_constants
-from ..cosmos.documents import _OperationType
+from . import _http_constants
+from ._documents import _OperationType
 
 
 class _TimeoutFailoverRetryPolicy(object):
@@ -50,7 +50,7 @@ class _TimeoutFailoverRetryPolicy(object):
     def needsRetry(self):
         if self.args:
             if (self.args[3].method == "GET") \
-                    or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
+                    or (_http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
                 return True
         return False
 
@@ -67,7 +67,7 @@ class _TimeoutFailoverRetryPolicy(object):
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
-        if _exception.status_code == http_constants.StatusCodes.SERVICE_UNAVAILABLE and \
+        if _exception.status_code == _http_constants.StatusCodes.SERVICE_UNAVAILABLE and \
                 self.failover_retry_count >= self._max_service_unavailable_retry_count:
             return False
         if self.failover_retry_count >= self._max_retry_attempt_count:

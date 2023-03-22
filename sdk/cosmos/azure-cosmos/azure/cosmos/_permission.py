@@ -23,7 +23,7 @@
 """
 from typing import Dict, Any, Union
 
-from .documents import PermissionMode
+from ._documents import PermissionMode
 
 
 class Permission(object):

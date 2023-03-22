@@ -22,7 +22,7 @@
 """Internal class for partitioned query execution info implementation in the Azure Cosmos database service.
 """
 
-from azure.cosmos.documents import _DistinctType
+from azure.cosmos._documents import _DistinctType
 
 
 class _PartitionedQueryExecutionInfo(object):

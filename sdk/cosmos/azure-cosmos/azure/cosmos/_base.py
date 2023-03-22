@@ -32,12 +32,12 @@ from typing import Dict, Any, Union
 from urllib.parse import quote as urllib_quote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
-from . import auth
-from . import documents
-from . import partition_key
-from . import http_constants
+from . import _auth
+from . import _documents
+from . import _partition_key
+from . import _http_constants
 from . import _runtime_constants
-from .offer import ThroughputProperties
+from ._offer import ThroughputProperties
 
 # pylint: disable=protected-access
 
@@ -139,137 +139,137 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     options = options or {}
 
     if cosmos_client_connection._useMultipleWriteLocations:
-        headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
+        headers[_http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
     pre_trigger_include = options.get("preTriggerInclude")
     if pre_trigger_include:
-        headers[http_constants.HttpHeaders.PreTriggerInclude] = (
+        headers[_http_constants.HttpHeaders.PreTriggerInclude] = (
             pre_trigger_include if isinstance(pre_trigger_include, str) else (",").join(pre_trigger_include)
         )
 
     post_trigger_include = options.get("postTriggerInclude")
     if post_trigger_include:
-        headers[http_constants.HttpHeaders.PostTriggerInclude] = (
+        headers[_http_constants.HttpHeaders.PostTriggerInclude] = (
             post_trigger_include if isinstance(post_trigger_include, str) else (",").join(post_trigger_include)
         )
 
     if options.get("maxItemCount"):
-        headers[http_constants.HttpHeaders.PageSize] = options["maxItemCount"]
+        headers[_http_constants.HttpHeaders.PageSize] = options["maxItemCount"]
 
     access_condition = options.get("accessCondition")
     if access_condition:
         if access_condition["type"] == "IfMatch":
-            headers[http_constants.HttpHeaders.IfMatch] = access_condition["condition"]
+            headers[_http_constants.HttpHeaders.IfMatch] = access_condition["condition"]
         else:
-            headers[http_constants.HttpHeaders.IfNoneMatch] = access_condition["condition"]
+            headers[_http_constants.HttpHeaders.IfNoneMatch] = access_condition["condition"]
 
     if options.get("indexingDirective"):
-        headers[http_constants.HttpHeaders.IndexingDirective] = options["indexingDirective"]
+        headers[_http_constants.HttpHeaders.IndexingDirective] = options["indexingDirective"]
 
     consistency_level = None
 
     # get default client consistency level
-    default_client_consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
+    default_client_consistency_level = headers.get(_http_constants.HttpHeaders.ConsistencyLevel)
 
     # set consistency level. check if set via options, this will override the default
     if options.get("consistencyLevel"):
         consistency_level = options["consistencyLevel"]
-        headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+        headers[_http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
     elif default_client_consistency_level is not None:
         consistency_level = default_client_consistency_level
-        headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+        headers[_http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
     # figure out if consistency level for this request is session
-    is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
+    is_session_consistency = consistency_level == _documents.ConsistencyLevel.Session
 
     # set session token if required
     if is_session_consistency is True and not IsMasterResource(resource_type):
         # if there is a token set via option, then use it to override default
         if options.get("sessionToken"):
-            headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
+            headers[_http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
         else:
             # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
-            if default_client_consistency_level == documents.ConsistencyLevel.Session:
+            if default_client_consistency_level == _documents.ConsistencyLevel.Session:
                 # populate session token from the client's session container
-                headers[http_constants.HttpHeaders.SessionToken] = cosmos_client_connection.session.get_session_token(
+                headers[_http_constants.HttpHeaders.SessionToken] = cosmos_client_connection.session.get_session_token(
                     path
                 )
 
     if options.get("enableScanInQuery"):
-        headers[http_constants.HttpHeaders.EnableScanInQuery] = options["enableScanInQuery"]
+        headers[_http_constants.HttpHeaders.EnableScanInQuery] = options["enableScanInQuery"]
 
     if options.get("resourceTokenExpirySeconds"):
-        headers[http_constants.HttpHeaders.ResourceTokenExpiry] = options["resourceTokenExpirySeconds"]
+        headers[_http_constants.HttpHeaders.ResourceTokenExpiry] = options["resourceTokenExpirySeconds"]
 
     if options.get("offerType"):
-        headers[http_constants.HttpHeaders.OfferType] = options["offerType"]
+        headers[_http_constants.HttpHeaders.OfferType] = options["offerType"]
 
     if options.get("offerThroughput"):
-        headers[http_constants.HttpHeaders.OfferThroughput] = options["offerThroughput"]
+        headers[_http_constants.HttpHeaders.OfferThroughput] = options["offerThroughput"]
 
     if options.get("contentType"):
-        headers[http_constants.HttpHeaders.ContentType] = options['contentType']
+        headers[_http_constants.HttpHeaders.ContentType] = options['contentType']
 
     if options.get("isQueryPlanRequest"):
-        headers[http_constants.HttpHeaders.IsQueryPlanRequest] = options['isQueryPlanRequest']
+        headers[_http_constants.HttpHeaders.IsQueryPlanRequest] = options['isQueryPlanRequest']
 
     if options.get("supportedQueryFeatures"):
-        headers[http_constants.HttpHeaders.SupportedQueryFeatures] = options['supportedQueryFeatures']
+        headers[_http_constants.HttpHeaders.SupportedQueryFeatures] = options['supportedQueryFeatures']
 
     if options.get("queryVersion"):
-        headers[http_constants.HttpHeaders.QueryVersion] = options['queryVersion']
+        headers[_http_constants.HttpHeaders.QueryVersion] = options['queryVersion']
 
     if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-        if options.get("partitionKey") is partition_key._Undefined:
-            headers[http_constants.HttpHeaders.PartitionKey] = [{}]
+        if options.get("partitionKey") is _partition_key._Undefined:
+            headers[_http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent sent for migrated collections
-        elif options.get("partitionKey") is partition_key._Empty:
-            headers[http_constants.HttpHeaders.PartitionKey] = []
+        elif options.get("partitionKey") is _partition_key._Empty:
+            headers[_http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
-            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options["partitionKey"]])
+            headers[_http_constants.HttpHeaders.PartitionKey] = json.dumps([options["partitionKey"]])
 
     if options.get("enableCrossPartitionQuery"):
-        headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options["enableCrossPartitionQuery"]
+        headers[_http_constants.HttpHeaders.EnableCrossPartitionQuery] = options["enableCrossPartitionQuery"]
 
     if options.get("populateQueryMetrics"):
-        headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
+        headers[_http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if cosmos_client_connection.master_key:
-        headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
+        headers[_http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
-        authorization = auth._get_authorization_header(
+        authorization = _auth._get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
         # urllib.quote throws when the input parameter is None
         if authorization:
             # -_.!~*'() are valid characters in url, and shouldn't be quoted.
             authorization = urllib_quote(authorization, "-_.!~*'()")
-        headers[http_constants.HttpHeaders.Authorization] = authorization
+        headers[_http_constants.HttpHeaders.Authorization] = authorization
 
     if verb in ("post", "put"):
-        if not headers.get(http_constants.HttpHeaders.ContentType):
-            headers[http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
+        if not headers.get(_http_constants.HttpHeaders.ContentType):
+            headers[_http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
 
-    if not headers.get(http_constants.HttpHeaders.Accept):
-        headers[http_constants.HttpHeaders.Accept] = _runtime_constants.MediaTypes.Json
+    if not headers.get(_http_constants.HttpHeaders.Accept):
+        headers[_http_constants.HttpHeaders.Accept] = _runtime_constants.MediaTypes.Json
 
     if partition_key_range_id is not None:
-        headers[http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
+        headers[_http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
 
     if options.get("enableScriptLogging"):
-        headers[http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]
+        headers[_http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]
 
     if options.get("offerEnableRUPerMinuteThroughput"):
-        headers[http_constants.HttpHeaders.OfferIsRUPerMinuteThroughputEnabled] = options[
+        headers[_http_constants.HttpHeaders.OfferIsRUPerMinuteThroughputEnabled] = options[
             "offerEnableRUPerMinuteThroughput"
         ]
 
     if options.get("disableRUPerMinuteUsage"):
-        headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options["disableRUPerMinuteUsage"]
+        headers[_http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options["disableRUPerMinuteUsage"]
 
     if options.get("changeFeed") is True:
         # On REST level, change feed is using IfNoneMatch/ETag instead of continuation.
@@ -279,28 +279,28 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
             if_none_match_value = "*"
         if if_none_match_value:
-            headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
-        headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
+            headers[_http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
+        headers[_http_constants.HttpHeaders.AIM] = _http_constants.HttpHeaders.IncrementalFeedHeaderValue
     else:
         if options.get("continuation"):
-            headers[http_constants.HttpHeaders.Continuation] = options["continuation"]
+            headers[_http_constants.HttpHeaders.Continuation] = options["continuation"]
 
     if options.get("populatePartitionKeyRangeStatistics"):
-        headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options[
+        headers[_http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options[
             "populatePartitionKeyRangeStatistics"
         ]
 
     if options.get("populateQuotaInfo"):
-        headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
+        headers[_http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
 
     if options.get("maxIntegratedCacheStaleness"):
-        headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
+        headers[_http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
 
     if options.get("autoUpgradePolicy"):
-        headers[http_constants.HttpHeaders.AutoscaleSettings] = options["autoUpgradePolicy"]
+        headers[_http_constants.HttpHeaders.AutoscaleSettings] = options["autoUpgradePolicy"]
 
     if options.get("correlatedActivityId"):
-        headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+        headers[_http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
 
     return headers
 
@@ -416,14 +416,14 @@ def IsNameBased(link):
 
 def IsMasterResource(resourceType):
     return resourceType in (
-        http_constants.ResourceType.Offer,
-        http_constants.ResourceType.Database,
-        http_constants.ResourceType.User,
-        http_constants.ResourceType.Permission,
-        http_constants.ResourceType.Topology,
-        http_constants.ResourceType.DatabaseAccount,
-        http_constants.ResourceType.PartitionKeyRange,
-        http_constants.ResourceType.Collection,
+        _http_constants.ResourceType.Offer,
+        _http_constants.ResourceType.Database,
+        _http_constants.ResourceType.User,
+        _http_constants.ResourceType.Permission,
+        _http_constants.ResourceType.Topology,
+        _http_constants.ResourceType.DatabaseAccount,
+        _http_constants.ResourceType.PartitionKeyRange,
+        _http_constants.ResourceType.Collection,
     )
 
 

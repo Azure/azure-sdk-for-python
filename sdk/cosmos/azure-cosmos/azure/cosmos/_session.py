@@ -27,7 +27,7 @@ import traceback
 import threading
 
 from . import _base
-from . import http_constants
+from . import _http_constants
 from ._vector_session_token import VectorSessionToken
 from .exceptions import CosmosHttpResponseError
 
@@ -97,11 +97,11 @@ class SessionContainer(object):
                 # and if not present, then we can assume that we don't have to update
                 # session token for this request
                 alt_content_path = ""
-                alt_content_path_key = http_constants.HttpHeaders.AlternateContentPath
+                alt_content_path_key = _http_constants.HttpHeaders.AlternateContentPath
                 response_result_id_key = u"id"
                 response_result_id = None
                 if alt_content_path_key in response_headers:
-                    alt_content_path = response_headers[http_constants.HttpHeaders.AlternateContentPath]
+                    alt_content_path = response_headers[_http_constants.HttpHeaders.AlternateContentPath]
                     response_result_id = response_result[response_result_id_key]
                 else:
                     return
@@ -152,9 +152,9 @@ class SessionContainer(object):
         with self.session_lock:
             collection_rid = ""
             alt_content_path = ""
-            alt_content_path_key = http_constants.HttpHeaders.AlternateContentPath
+            alt_content_path_key = _http_constants.HttpHeaders.AlternateContentPath
             if alt_content_path_key in response_headers:
-                alt_content_path = response_headers[http_constants.HttpHeaders.AlternateContentPath]
+                alt_content_path = response_headers[_http_constants.HttpHeaders.AlternateContentPath]
                 if alt_content_path in self.collection_name_to_rid:
                     collection_rid = self.collection_name_to_rid[alt_content_path]
                     del self.collection_name_to_rid[alt_content_path]
@@ -171,8 +171,8 @@ class SessionContainer(object):
 
         # extract session token from response header
         session_token = ""
-        if http_constants.HttpHeaders.SessionToken in response_headers:
-            session_token = response_headers[http_constants.HttpHeaders.SessionToken]
+        if _http_constants.HttpHeaders.SessionToken in response_headers:
+            session_token = response_headers[_http_constants.HttpHeaders.SessionToken]
 
         id_to_sessionlsn = {}
         if session_token:
@@ -186,7 +186,7 @@ class SessionContainer(object):
                     sessionToken = VectorSessionToken.create(tokens[1])
                     if sessionToken is None:
                         raise CosmosHttpResponseError(
-                            status_code=http_constants.StatusCodes.INTERNAL_SERVER_ERROR,
+                            status_code=_http_constants.StatusCodes.INTERNAL_SERVER_ERROR,
                             message="Could not parse the received session token: %s" % tokens[1],
                         )
                     id_to_sessionlsn[id_] = sessionToken

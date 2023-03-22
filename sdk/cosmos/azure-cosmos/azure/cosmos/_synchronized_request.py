@@ -29,7 +29,7 @@ from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import exceptions
-from . import http_constants
+from . import _http_constants
 from . import _retry_utility
 
 
@@ -198,9 +198,9 @@ def SynchronizedRequest(
     """
     request.data = _request_body_from_data(request_data)
     if request.data and isinstance(request.data, str):
-        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+        request.headers[_http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
-        request.headers[http_constants.HttpHeaders.ContentLength] = 0
+        request.headers[_http_constants.HttpHeaders.ContentLength] = 0
 
     # Pass _Request function with it's parameters to retry_utility's Execute method that wraps the call with retries
     return _retry_utility.Execute(

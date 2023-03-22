@@ -34,7 +34,7 @@ from . import _default_retry_policy
 from . import _session_retry_policy
 from . import _gone_retry_policy
 from . import _timeout_failover_retry_policy
-from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
+from ._http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
 
 # pylint: disable=protected-access

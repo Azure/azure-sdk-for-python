@@ -43,10 +43,10 @@ from azure.core.pipeline.policies import (  # type: ignore
     ProxyPolicy)
 
 from . import _base as base
-from . import documents
-from .documents import ConnectionPolicy
+from . import _documents
+from ._documents import ConnectionPolicy
 from . import _constants as constants
-from . import http_constants
+from . import _http_constants
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
 from . import _request_object
@@ -56,7 +56,7 @@ from ._routing import routing_map_provider
 from ._retry_utility import ConnectionRetryPolicy
 from . import _session
 from . import _utils
-from .partition_key import _Undefined, _Empty
+from ._partition_key import _Undefined, _Empty
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
@@ -135,11 +135,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self.partition_key_definition_cache = {}  # type: Dict[str, Any]
 
         self.default_headers = {
-            http_constants.HttpHeaders.CacheControl: "no-cache",
-            http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
+            _http_constants.HttpHeaders.CacheControl: "no-cache",
+            _http_constants.HttpHeaders.Version: _http_constants.Versions.CurrentVersion,
             # For single partition query with aggregate functions we would try to accumulate the results on the SDK.
             # We need to set continuation as not expected.
-            http_constants.HttpHeaders.IsContinuationExpected: False,
+            _http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
         # Keeps the latest response headers from the server.
@@ -232,13 +232,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             consistency_level = user_consistency_policy.get(constants._Constants.DefaultConsistencyLevel)
         else:
             # Set consistency level header to be used for the client
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+            self.default_headers[_http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
-        if consistency_level == documents.ConsistencyLevel.Session:
+        if consistency_level == _documents.ConsistencyLevel.Session:
             # create a session - this is maintained only if the default consistency level
             # on the client is set to session, or if the user explicitly sets it as a property
             # via setter
-            self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
+            self.default_headers[_http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
             self.session = _session.Session(self.url_connection)
         else:
             self.session = None  # type: ignore
@@ -1872,7 +1872,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         initial_headers = dict(self.default_headers)
-        initial_headers.update({http_constants.HttpHeaders.Accept: (runtime_constants.MediaTypes.Json)})
+        initial_headers.update({_http_constants.HttpHeaders.Accept: (runtime_constants.MediaTypes.Json)})
 
         if params and not isinstance(params, list):
             params = [params]
@@ -1882,7 +1882,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "post", path, sproc_id, "sprocs", options)
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
-        request_params = _request_object.RequestObject("sprocs", documents._OperationType.ExecuteJavaScript)
+        request_params = _request_object.RequestObject("sprocs", _documents._OperationType.ExecuteJavaScript)
         result, self.last_response_headers = self.__Post(path, request_params, params, headers, **kwargs)
         return result
 
@@ -2051,18 +2051,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "", {})  # path  # id  # type
 
-        request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        request_params = _request_object.RequestObject("databaseaccount", _documents._OperationType.Read, url_connection)
         result, self.last_response_headers = self.__Get("", request_params, headers, **kwargs)
-        database_account = documents.DatabaseAccount()
+        database_account = _documents.DatabaseAccount()
         database_account.DatabasesLink = "/dbs/"
         database_account.MediaLink = "/media/"
-        if http_constants.HttpHeaders.MaxMediaStorageUsageInMB in self.last_response_headers:
+        if _http_constants.HttpHeaders.MaxMediaStorageUsageInMB in self.last_response_headers:
             database_account.MaxMediaStorageUsageInMB = self.last_response_headers[
-                http_constants.HttpHeaders.MaxMediaStorageUsageInMB
+                _http_constants.HttpHeaders.MaxMediaStorageUsageInMB
             ]
-        if http_constants.HttpHeaders.CurrentMediaStorageUsageInMB in self.last_response_headers:
+        if _http_constants.HttpHeaders.CurrentMediaStorageUsageInMB in self.last_response_headers:
             database_account.CurrentMediaStorageUsageInMB = self.last_response_headers[
-                http_constants.HttpHeaders.CurrentMediaStorageUsageInMB
+                _http_constants.HttpHeaders.CurrentMediaStorageUsageInMB
             ]
         database_account.ConsistencyPolicy = result.get(constants._Constants.UserConsistencyPolicy)
 
@@ -2105,7 +2105,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
         # Create will use WriteEndpoint since it uses POST operation
 
-        request_params = _request_object.RequestObject(typ, documents._OperationType.Create)
+        request_params = _request_object.RequestObject(typ, _documents._OperationType.Create)
         result, self.last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
 
         # update session for write request
@@ -2135,10 +2135,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
 
-        headers[http_constants.HttpHeaders.IsUpsert] = True
+        headers[_http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
-        request_params = _request_object.RequestObject(typ, documents._OperationType.Upsert)
+        request_params = _request_object.RequestObject(typ, _documents._OperationType.Upsert)
         result, self.last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
@@ -2168,7 +2168,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request_params = _request_object.RequestObject(typ, documents._OperationType.Replace)
+        request_params = _request_object.RequestObject(typ, _documents._OperationType.Replace)
         result, self.last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
 
         # update session for request mutates data on server side
@@ -2197,7 +2197,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
         # Read will use ReadEndpoint since it uses GET operation
-        request_params = _request_object.RequestObject(typ, documents._OperationType.Read)
+        request_params = _request_object.RequestObject(typ, _documents._OperationType.Read)
         result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         return result
 
@@ -2224,7 +2224,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
-        request_params = _request_object.RequestObject(typ, documents._OperationType.Delete)
+        request_params = _request_object.RequestObject(typ, _documents._OperationType.Delete)
         result, self.last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
 
         # update session for request mutates data on server side
@@ -2420,7 +2420,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
             request_params = _request_object.RequestObject(
-                typ, documents._OperationType.QueryPlan if is_query_plan else documents._OperationType.ReadFeed)
+                typ, _documents._OperationType.QueryPlan if is_query_plan else _documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
@@ -2429,22 +2429,22 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         query = self.__CheckAndUnifyQueryFormat(query)
 
-        initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+        initial_headers[_http_constants.HttpHeaders.IsQuery] = "true"
         if not is_query_plan:
-            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+            initial_headers[_http_constants.HttpHeaders.IsQuery] = "true"
 
         if (
                 self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
                 or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
         ):
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
+            initial_headers[_http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
         elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
-            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
+            initial_headers[_http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
         else:
             raise SystemError("Unexpected query compatibility mode.")
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-        request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
+        request_params = _request_object.RequestObject(typ, _documents._OperationType.SqlQuery)
         req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
         result, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
 
@@ -2454,19 +2454,19 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         return __GetBodiesFromQueryResult(result)
 
     def _GetQueryPlanThroughGateway(self, query, resource_link, **kwargs):
-        supported_query_features = (documents._QueryFeature.Aggregate + "," +
-                                    documents._QueryFeature.CompositeAggregate + "," +
-                                    documents._QueryFeature.Distinct + "," +
-                                    documents._QueryFeature.MultipleOrderBy + "," +
-                                    documents._QueryFeature.OffsetAndLimit + "," +
-                                    documents._QueryFeature.OrderBy + "," +
-                                    documents._QueryFeature.Top)
+        supported_query_features = (_documents._QueryFeature.Aggregate + "," +
+                                    _documents._QueryFeature.CompositeAggregate + "," +
+                                    _documents._QueryFeature.Distinct + "," +
+                                    _documents._QueryFeature.MultipleOrderBy + "," +
+                                    _documents._QueryFeature.OffsetAndLimit + "," +
+                                    _documents._QueryFeature.OrderBy + "," +
+                                    _documents._QueryFeature.Top)
 
         options = {
             "contentType": runtime_constants.MediaTypes.Json,
             "isQueryPlanRequest": True,
             "supportedQueryFeatures": supported_query_features,
-            "queryVersion": http_constants.Versions.QueryVersion
+            "queryVersion": _http_constants.Versions.QueryVersion
         }
 
         resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
@@ -2611,8 +2611,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             return
 
         is_session_consistency = False
-        if http_constants.HttpHeaders.ConsistencyLevel in request_headers:
-            if documents.ConsistencyLevel.Session == request_headers[http_constants.HttpHeaders.ConsistencyLevel]:
+        if _http_constants.HttpHeaders.ConsistencyLevel in request_headers:
+            if _documents.ConsistencyLevel.Session == request_headers[_http_constants.HttpHeaders.ConsistencyLevel]:
                 is_session_consistency = True
 
         if is_session_consistency:

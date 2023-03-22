@@ -29,12 +29,12 @@ from azure.core.credentials import TokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.decorator import distributed_trace
 
-from ..cosmos_client import _parse_connection_str, _build_auth
+from .._cosmos_client import _parse_connection_str, _build_auth
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options
 from ._retry_utility_async import _ConnectionRetryPolicy
 from ._database import DatabaseProxy
-from ..documents import ConnectionPolicy, DatabaseAccount
+from .._documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
 
 __all__ = ("CosmosClient",)

@@ -29,12 +29,12 @@ from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options, _deserialize_throughput, _replace_throughput
-from .container import ContainerProxy
-from .offer import ThroughputProperties
-from .http_constants import StatusCodes
+from ._container import ContainerProxy
+from ._offer import ThroughputProperties
+from ._http_constants import StatusCodes
 from .exceptions import CosmosResourceNotFoundError
-from .user import UserProxy
-from .documents import IndexingMode
+from ._user import UserProxy
+from ._documents import IndexingMode
 
 __all__ = ("DatabaseProxy",)
 
@@ -126,7 +126,7 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         """
         # TODO this helper function should be extracted from CosmosClient
-        from .cosmos_client import CosmosClient
+        from ._cosmos_client import CosmosClient
 
         database_link = CosmosClient._get_database_link(self)
         request_options = build_options(kwargs)

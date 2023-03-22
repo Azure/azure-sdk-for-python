@@ -27,7 +27,7 @@ from collections import deque
 import copy
 
 from ...aio import _retry_utility_async
-from ... import http_constants
+from ... import _http_constants
 
 # pylint: disable=protected-access
 
@@ -123,10 +123,10 @@ class _QueryExecutionContextBase(object):
             new_options["continuation"] = self._continuation
 
             (fetched_items, response_headers) = await fetch_function(new_options)
-            continuation_key = http_constants.HttpHeaders.Continuation
+            continuation_key = _http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
-                continuation_key = http_constants.HttpHeaders.ETag
+                continuation_key = _http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             if not self._is_change_feed or fetched_items:

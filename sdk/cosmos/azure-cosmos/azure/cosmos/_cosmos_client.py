@@ -28,10 +28,10 @@ from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options, _set_throughput_options
-from .offer import ThroughputProperties
+from ._offer import ThroughputProperties
 from ._retry_utility import ConnectionRetryPolicy
-from .database import DatabaseProxy
-from .documents import ConnectionPolicy, DatabaseAccount
+from ._database import DatabaseProxy
+from ._documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
 
 __all__ = ("CosmosClient",)
