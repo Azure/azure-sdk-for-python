@@ -31,7 +31,7 @@ class GetTokenMixin(abc.ABC):
     async def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token from the STS"""
 
-    def _should_refresh(self, token: AccessToken, refresh_on: int) -> bool:
+    def _should_refresh(self, token: AccessToken, refresh_on: Optional[int] = None) -> bool:
         now = int(time.time())
         if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
             return False
