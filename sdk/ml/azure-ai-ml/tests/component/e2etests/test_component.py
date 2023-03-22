@@ -1015,7 +1015,6 @@ class TestComponent(AzureRecordedTestCase):
         assert from_rest_component._intellectual_property == command_component._intellectual_property
 
         assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
-        print(type(from_rest_component.outputs["model_output_not_ipp"]._intellectual_property))
         assert (
             from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
             == command_component.outputs["model_output_not_ipp"]._intellectual_property
