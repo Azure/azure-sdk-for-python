@@ -9,9 +9,12 @@ from .operations import (
     {% endfor %}
 )
 from {{ ".." if async_mode else "." }}_validation import api_version_validation
+from {{ ".." if async_mode else "." }} import models
 {{ client_initialization }}
 
-{{ getsource(generated_client._models_dict) }}
+    @classmethod
+    def _models_dict(cls):
+        return {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
 
 {% for operation_group in operation_group_properties %}
 
@@ -24,8 +27,8 @@ from {{ ".." if async_mode else "." }}_validation import api_version_validation
         return {{ operation_group.name }}(
             self._client,
             self._config,
-            Serializer(self._models_dict(api_version)),
-            Deserializer(self._models_dict(api_version)),
+            Serializer(self._models_dict()),
+            Deserializer(self._models_dict()),
             api_version=api_version,
         )
     {% endfor %}
