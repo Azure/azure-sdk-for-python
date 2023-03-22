@@ -4,11 +4,11 @@
 
 import logging
 from abc import ABC
-from typing import Optional
+from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_12_01_preview.models import SweepJobLimits as RestSweepJobLimits
-from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format
+from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format, is_data_binding_expression
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -38,7 +38,7 @@ class CommandJobLimits(JobLimits):
     :type timeout: int
     """
 
-    def __init__(self, *, timeout: Optional[int] = None):
+    def __init__(self, *, timeout: Union[int, str, None] = None):
         super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
@@ -49,12 +49,19 @@ class CommandJobLimits(JobLimits):
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
     @classmethod
-    def _from_rest_object(cls, obj: RestCommandJobLimits) -> "CommandJobLimits":
+    def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> "CommandJobLimits":
         if not obj:
             return None
-
-        result = cls(timeout=from_iso_duration_format(obj.timeout))
-        return result
+        if isinstance(obj, RestCommandJobLimits):
+            return cls(timeout=from_iso_duration_format(obj.timeout))
+        if isinstance(obj, dict):
+            timeout_value = obj["timeout"]
+            # if timeout value is a binding string
+            if is_data_binding_expression(timeout_value):
+                return cls(timeout=timeout_value)
+            # if response timeout is a normal iso date string
+            rest_obj = RestCommandJobLimits.from_dict(obj)
+            return cls(timeout=from_iso_duration_format(rest_obj.timeout))
 
 
 class SweepJobLimits(JobLimits):

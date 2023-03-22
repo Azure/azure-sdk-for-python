@@ -14,7 +14,6 @@ from typing import Dict, List, Optional, Union
 from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
@@ -70,7 +69,6 @@ from azure.ai.ml.entities._job.sweep.search_space import (
 )
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._utils.utils import is_data_binding_expression
 
 from ..._schema import PathAwareSchema
 from ..._schema.job.distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
@@ -610,14 +608,7 @@ class Command(BaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            timeout_response = obj["limits"]["timeout"]
-            # if response timeout is a binding string
-            if is_data_binding_expression(timeout_response):
-                obj["limits"] = CommandJobLimits(timeout=timeout_response)
-            # if response timeout is a normal iso date string
-            else:
-                rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-                obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
 
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
