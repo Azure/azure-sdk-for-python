@@ -201,9 +201,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
-    def test_automl_component(
-        self, client: MLClient, data_asset_registry_client: MLClient, randstr: Callable[[str], str]
-    ) -> None:
+    def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_component_dict = {
             "description": "Component that executes an AutoML Classification task model training in a pipeline.",
             "version": "1.0",
@@ -231,7 +229,7 @@ class TestComponent(AzureRecordedTestCase):
         )
 
         assert_component_basic_workflow(
-            client=data_asset_registry_client,
+            client=registry_client,
             randstr=randstr,
             path="./tests/test_configs/components/automl/classification.yaml",
             expected_dict=expected_component_dict,
