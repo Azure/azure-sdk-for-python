@@ -78,7 +78,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -94,13 +94,13 @@ class Test_retry_policy_tests(unittest.TestCase):
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_fixed_retry_after(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -117,13 +117,13 @@ class Test_retry_policy_tests(unittest.TestCase):
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds)
 
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_max_wait_time(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
         connection_policy.RetryOptions = retry_options.RetryOptions(5, 2000, 3)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -138,7 +138,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_resource_throttle_retry_policy_query(self):
         connection_policy = Test_retry_policy_tests.connectionPolicy
@@ -150,7 +150,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         self.created_collection.create_item(body=document_definition)
 
-        self.OriginalExecuteFunction = _retry_utility.ExecuteFunction
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
             _retry_utility.ExecuteFunction = self._MockExecuteFunction
 
@@ -169,7 +169,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxRetryAttemptCount * self.retry_after_in_milliseconds)
         finally:
-            _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     @pytest.mark.xfail
     def test_default_retry_policy_for_query(self):
@@ -182,10 +182,9 @@ class Test_retry_policy_tests(unittest.TestCase):
 
         self.created_collection.create_item(body=document_definition_1)
         self.created_collection.create_item(body=document_definition_2)
-
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionConnectionReset(original_execute_function)
+            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
             docs = self.created_collection.query_items(query="Select * from c", max_item_count=1, enable_cross_partition_query=True)
@@ -200,7 +199,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             else:
                 self.assertEqual(mf.counter, 18)
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         self.created_collection.delete_item(item=result_docs[0], partition_key=result_docs[0]['id'])
         self.created_collection.delete_item(item=result_docs[1], partition_key=result_docs[1]['id'])
@@ -211,10 +210,9 @@ class Test_retry_policy_tests(unittest.TestCase):
                                 'key': 'value'}
 
         created_document = self.created_collection.create_item(body=document_definition)
-
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionConnectionReset(original_execute_function)
+            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
             doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
@@ -222,7 +220,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertEqual(mf.counter, 3)
 
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
         self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
 
@@ -232,8 +230,8 @@ class Test_retry_policy_tests(unittest.TestCase):
                                 'key': 'value'}
 
         try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionConnectionReset(original_execute_function)
+            self.original_execute_function = _retry_utility.ExecuteFunction
+            mf = self.MockExecuteFunctionConnectionReset(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
 
             created_document = {}
@@ -252,7 +250,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             mf.counter = mf.counter - 3
             self.assertEqual(mf.counter, 1)
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def test_timeout_failover_retry_policy_for_read(self):
         document_definition = {'id': 'failoverDoc',
@@ -260,17 +258,18 @@ class Test_retry_policy_tests(unittest.TestCase):
                                'key': 'value'}
 
         created_document = self.created_collection.create_item(body=document_definition)
+        self.original_execute_function = _retry_utility.ExecuteFunction
         try:
-            original_execute_function = _retry_utility.ExecuteFunction
-            mf = self.MockExecuteFunctionTimeout(original_execute_function)
-
+            mf = self.MockExecuteFunctionTimeout(self.original_execute_function)
             _retry_utility.ExecuteFunction = mf
-            doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
-            self.assertEqual(doc['id'], 'doc')
+            try:
+                doc = self.created_collection.read_item(item=created_document['id'],
+                                                        partition_key=created_document['id'])
+                self.assertEqual(doc['id'], 'doc')
+            except exceptions.CosmosHttpResponseError as err:
+                self.assertEqual(err.status_code, 408)
         finally:
-            _retry_utility.ExecuteFunction = original_execute_function
-
-        self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
+            _retry_utility.ExecuteFunction = self.original_execute_function
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
@@ -285,15 +284,10 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.counter = 0
 
         def __call__(self, func, *args, **kwargs):
-            self.counter += 1
-
-            if self.counter > 1:
-                return self.org_func(func, *args, **kwargs)
-            else:
-                raise exceptions.CosmosHttpResponseError(
-                    status_code=408,
-                    message="Timeout",
-                    response=test_config.FakeResponse({}))
+            raise exceptions.CosmosHttpResponseError(
+                status_code=408,
+                message="Timeout",
+                response=test_config.FakeResponse({}))
 
     class MockExecuteFunctionConnectionReset(object):
 

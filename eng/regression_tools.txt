@@ -1,7 +1,7 @@
 # requirements leveraged by ci tools
 cryptography==3.3.2
 setuptools==44.1.0; python_version == '2.7'
-setuptools==46.4.0; python_version >= '3.5'
+setuptools==67.6.0; python_version >= '3.5'
 virtualenv==20.0.23
 wheel==0.34.2
 Jinja2==2.11.2

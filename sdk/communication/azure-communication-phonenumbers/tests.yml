@@ -29,3 +29,5 @@ stages:
           Path: sdk/communication/azure-communication-phonenumbers/phonenumbers-livetest-matrix.json
           Selection: sparse
           GenerateVMJobs: true
+      TestResourceDirectories:
+        - communication/test-resources/

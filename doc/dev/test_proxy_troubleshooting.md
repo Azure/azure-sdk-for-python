@@ -8,14 +8,16 @@ Documentation of the motivations and goals of the test proxy can be found [here]
 GitHub repository, and documentation of how to set up and use the proxy can be found [here][detailed_docs].
 
 ## Table of contents
-- [Test collection failure](#test-collection-failure)
-- [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
-- [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
-- [Recordings not being produced](#recordings-not-being-produced)
-- [ConnectionError during tests](#connectionerror-during-tests)
-- [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
-- [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
-- [Fixture not found error](#fixture-not-found-error)
+- [Guide for test proxy troubleshooting](#guide-for-test-proxy-troubleshooting)
+    - [Table of contents](#table-of-contents)
+    - [Test collection failure](#test-collection-failure)
+    - [Errors in tests using resource preparers](#errors-in-tests-using-resource-preparers)
+    - [Playback failures from body matching errors](#playback-failures-from-body-matching-errors)
+    - [Recordings not being produced](#recordings-not-being-produced)
+    - [ConnectionError during tests](#connectionerror-during-tests)
+    - [Different error than expected when using proxy](#different-error-than-expected-when-using-proxy)
+    - [Test setup failure in test pipeline](#test-setup-failure-in-test-pipeline)
+    - [Fixture not found error](#fixture-not-found-error)
 
 ## Test collection failure
 
@@ -91,6 +93,7 @@ Tests that aren't recorded should omit the `recorded_by_proxy` decorator. Howeve
 parameters that are provided by a preparer like the `devtools_testutils` [EnvironmentVariableLoader][env_var_loader],
 you may see a new test setup error after migrating to the test proxy. For example, imagine a test is decorated with a
 preparer that provides a Key Vault URL as a `azure_keyvault_url` parameter:
+
 ```python
 class TestExample(AzureRecordedTestCase):
 
@@ -99,6 +102,7 @@ class TestExample(AzureRecordedTestCase):
 ```
 
 The above would work in the old test setup, but with the test proxy, running the test will yield
+
 ```text
 _______ ERROR at setup of TestExample.test_example _______
 ...
@@ -118,7 +122,7 @@ expected in either case.
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 [env_var_section]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#fetch-environment-variables
-[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
+[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/initial-investigation.md
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 [migration_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md
 [proxy_pipelines]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_migration_guide.md#enable-the-test-proxy-in-pipelines

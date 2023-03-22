@@ -6,12 +6,12 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ClassificationMultilabelPrimaryMetrics
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ClassificationMultilabelPrimaryMetrics
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ImageClassificationMultilabel as RestImageClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
@@ -106,6 +106,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             resources=self.resources,
             task_details=image_classification_multilabel_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -134,6 +135,7 @@ class ImageClassificationMultilabelJob(AutoMLImageClassificationBase):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         image_classification_multilabel_job = cls(

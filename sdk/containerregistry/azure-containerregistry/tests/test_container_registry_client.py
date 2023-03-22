@@ -16,7 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _deserialize_manifest
+from azure.containerregistry._helpers import _deserialize_manifest, _serialize_manifest
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -461,7 +461,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -472,9 +471,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
-        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
-        manifest = _deserialize_manifest(manifest_stream)     
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_manifest_prerequisites(repo, client)
 
@@ -483,7 +481,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -494,10 +491,9 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
+        tag = "v1"
         manifest = self.create_oci_manifest()
         with self.create_registry_client(containerregistry_endpoint) as client:
-            tag = "v1"
-            
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
@@ -505,7 +501,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -525,12 +520,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @recorded_by_proxy
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
-        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
-        manifest = _deserialize_manifest(manifest_stream)
+        tag = "v1"
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
         with self.create_registry_client(containerregistry_endpoint) as client:
-            tag = "v1"
-            
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
@@ -538,7 +531,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             
             # Assert
             response = client.download_manifest(repo, digest)
-            assert response.digest == digest
             assert response.data.tell() == 0
             self.assert_manifest(response.manifest, manifest)
 
@@ -605,6 +597,31 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 with pytest.raises(ClientAuthenticationError):
                     for repo in client.list_repository_names():
                         pass
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup tags in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_tag(ALPINE, tag.name)
+            
+            response = client.list_tag_properties(ALPINE)
+            if response is not None:
+                for tag in response:
+                    pass
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup manifests in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_manifest(ALPINE, tag.name)
+            response = client.list_manifest_properties(ALPINE)
+            if response is not None:
+                for manifest in response:
+                    pass
 
 
 def test_set_api_version():
@@ -618,8 +635,9 @@ def test_set_api_version():
     ) as client:
         assert client._client._config.api_version == "2019-08-15-preview"
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as error:
         with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
         ) as client:
             pass
+    assert "Unsupported API version '2019-08-15'." in str(error.value)

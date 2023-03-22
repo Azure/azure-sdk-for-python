@@ -48,7 +48,7 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
             self,
             tenant_id: str,
             client_id: str,
-            certificate_path: str = None,
+            certificate_path: Optional[str] = None,
             **kwargs: Any
     ) -> None:
         validate_tenant_id(tenant_id)

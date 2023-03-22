@@ -59,7 +59,7 @@ class BaseJobSchema(ResourceSchema):
             )
         },
     )
-    compute = ComputeField(required=True)
+    compute = ComputeField(required=False)
     identity = UnionField(
         [
             NestedField(ManagedIdentitySchema),
