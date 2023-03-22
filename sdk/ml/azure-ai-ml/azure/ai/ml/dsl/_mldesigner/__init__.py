@@ -19,6 +19,7 @@ from azure.ai.ml._utils.utils import try_enable_internal_components
 from azure.ai.ml._internal.entities import InternalComponent  # pylint: disable=unused-import
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._parallel_for import parallel_for, ParallelFor
 from azure.ai.ml.dsl._group_decorator import group
 
 from ._constants import V1_COMPONENT_TO_NODE
@@ -31,6 +32,8 @@ __all__ = [
     "condition",
     "do_while",
     "group",
+    "parallel_for",
+    "ParallelFor",
     # must keep
     "get_ignore_file",
     "_get_param_with_standard_annotation",
