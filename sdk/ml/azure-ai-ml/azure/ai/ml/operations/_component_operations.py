@@ -58,7 +58,6 @@ from ..entities._job.pipeline._attr_dict import has_attr_safe
 from ._code_operations import CodeOperations
 from ._environment_operations import EnvironmentOperations
 from ._operation_orchestrator import OperationOrchestrator
-from ._registry_operations import RegistryOperations
 
 ops_logger = OpsLogger(__name__)
 logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
@@ -90,12 +89,6 @@ class ComponentOperations(_ScopeDependentOperations):
         # returns the asset associated with the label
         self._managed_label_resolver = {"latest": self._get_latest_version}
         self._orchestrators = OperationOrchestrator(self._all_operations, self._operation_scope, self._operation_config)
-
-    @property
-    def _registry_operations(self) -> RegistryOperations:
-        return self._all_operations.get_operation(
-            AzureMLResourceType.REGISTRY, lambda x: isinstance(x, RegistryOperations)
-        )
 
     @property
     def _code_operations(self) -> CodeOperations:
@@ -759,12 +752,6 @@ class ComponentOperations(_ScopeDependentOperations):
                     )
 
             component_cache.resolve_nodes()
-
-    def _is_registry_ip_protected(self) -> bool:
-        registry = self._registry_operations.get(self._registry_name)
-        return (
-            registry.intellectual_property is not None and registry.intellectual_property.protection_level is not None
-        )
 
 
 def _refine_component(component_func: types.FunctionType) -> Component:
