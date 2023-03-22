@@ -27,10 +27,9 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import PackageRequest, PackageResponse
+from azure.ai.ml._restclient.v2023_04_01_preview.models import PackageResponse
 from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import PackageRequest, PackageResponse
 from azure.ai.ml._restclient.v2022_05_01.models import ModelVersionData, ListViewType
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import (
@@ -572,19 +571,23 @@ class ModelOperations(_ScopeDependentOperations):
                         azureml_type=AzureMLResourceType.CODE,
                     )
 
-            package_request.base_environment_source.resource_id = (
-                orchestrators.get_asset_arm_id(
+            # import debugpy
+            # debugpy.connect(("localhost", 5678))
+            # debugpy.breakpoint()
+            if package_request.base_environment_source and hasattr(
+                package_request.base_environment_source, "resource_id"
+            ):
+                package_request.base_environment_source.resource_id = orchestrators.get_asset_arm_id(
                     package_request.base_environment_source.resource_id, azureml_type=AzureMLResourceType.ENVIRONMENT
                 )
-                if package_request.base_environment_source.resource_id
-                else None
-            )
-            if package_request.base_environment_source.resource_id:
+
                 package_request.base_environment_source.resource_id = (
                     "azureml:/" + package_request.base_environment_source.resource_id
                 )
 
-            if package_request.inferencing_server.code_configuration.code:
+            if package_request.inferencing_server.code_configuration and hasattr(
+                package_request.inferencing_server.code_configuration, "code"
+            ):
                 package_request.inferencing_server.code_configuration.code = (
                     "azureml:/" + package_request.inferencing_server.code_configuration.code
                 )

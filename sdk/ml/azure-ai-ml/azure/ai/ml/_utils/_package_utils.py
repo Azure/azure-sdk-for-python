@@ -14,7 +14,6 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     PackageRequest,
     CodeConfiguration,
     BaseEnvironmentId,
-    ModelConfiguration,
     AzureMLOnlineInferencingServer,
     AzureMLBatchInferencingServer,
 )
@@ -31,9 +30,8 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
     model_ops = all_ops["models"]
     target_environment_name = "packaged-env"
 
-    # import debugpy
-    # debugpy.connect(("localhost", 5678))
-    # debugpy.breakpoint()
+    if not deployment.code_configuration and not deployment.environment:
+        module_logger.info("Code and environment not found, following No code deployment path")
 
     if deployment.code_configuration:
         code_configuration = CodeConfiguration(
