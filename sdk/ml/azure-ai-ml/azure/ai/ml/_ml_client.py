@@ -483,9 +483,8 @@ class MLClient:
         try:
             from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
             self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
-        except Ex:
-            module_logger.debug("Virtual Cluster operations could not be initialized")
-            pass
+        except Exception as ex:
+            module_logger.debug("Virtual Cluster operations could not be initialized due to {} ".format(str(ex)))
 
         self._featurestores = _FeatureStoreOperations(
             self._operation_scope,
