@@ -178,7 +178,7 @@ class CustomApplications:
             environment_variables=environment_variables,
             volumes=volumes,
             docker=Docker(privileged=True),
-            additional_properties={**{'type': self.type}, **self.additional_properties},
+            additional_properties={**{"type": self.type}, **self.additional_properties},
         )
 
     @classmethod
@@ -204,7 +204,7 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
-            type = obj.additional_properties.pop('type',CustomApplicationDefaults.DOCKER),
+            type=obj.additional_properties.pop("type", CustomApplicationDefaults.DOCKER),
             **obj.additional_properties,
         )
 
