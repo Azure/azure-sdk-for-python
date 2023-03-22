@@ -903,6 +903,16 @@ def disable_internal_components():
 
 
 @pytest.fixture()
+def federated_learning_components_folder() -> Path:
+    return Path("./tests/test_configs/components/fl_test_components")
+
+
+@pytest.fixture()
+def federated_learning_local_data_folder() -> Path:
+    return Path("./tests/test_configs/fl-e2e-test-data")
+
+
+@pytest.fixture()
 def mock_set_headers_with_user_aml_token(mocker: MockFixture):
     if not is_live() or not is_live_and_not_recording():
         mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")
