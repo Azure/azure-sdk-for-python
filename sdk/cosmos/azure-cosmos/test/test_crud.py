@@ -2596,28 +2596,28 @@ class CRUDTests(unittest.TestCase):
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, 400)
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         #Negative test - attempt to remove non-existent field
         operations = [{"op": "remove", "path": "/wrong_field"}]
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, 400)
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         #Negative test - attempt to increment non-number field
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, 400)
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
         #Negative test - attempt to move from non-existent field
         operations = [{"op": "move", "from": "/wrong_field", "path": "/other_field"}]
         try:
             created_container.patch_item(item="patch_item", partition_key="patch_item_pk", patch_operations=operations)
         except exceptions.CosmosHttpResponseError as e:
-            self.assertEqual(e.status_code, 400)
+            self.assertEqual(e.status_code, StatusCodes.BAD_REQUEST)
 
     # Temporarily commenting analytical storage tests until emulator support comes.
     # def test_create_container_with_analytical_store_off(self):
