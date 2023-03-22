@@ -3,20 +3,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, cast
-
-
-def _format_url_section(template, **kwargs):
-    components = template.split("/")
-    while components:
-        try:
-            return template.format(**kwargs)
-        except KeyError as key:
-            # Need the cast, as for some reasons "split" is typed as list[str | Any]
-            formatted_components = cast(List[str], template.split("/"))
-            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
-            template = "/".join(components)
-
 
 def raise_if_not_implemented(cls, abstract_methods):
     not_implemented = [f for f in abstract_methods if not callable(getattr(cls, f, None))]
