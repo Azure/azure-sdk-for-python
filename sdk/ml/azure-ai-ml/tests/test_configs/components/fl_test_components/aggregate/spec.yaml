@@ -1,0 +1,27 @@
+
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+name: helloworld_aggregate_model_weights
+version: 0.3.0
+display_name: Aggregate Model Weights (from all silos)
+type: command
+description: Component for aggreating model weights.
+is_deterministic: true
+
+inputs:
+  silo_inputs:
+    type: mltable
+    description: aggregated inputs from all silos
+    optional: false
+
+outputs:
+  aggregated_output:
+    type: uri_folder
+    description: the aggregated model or gradiants, residing in the orchestrator compute.
+
+code: .
+
+command: >-
+  python run.py --aggregated_output ${{outputs.aggregated_output}}
+  --silo_inputs ${{inputs.silo_inputs}}
+
+environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:30

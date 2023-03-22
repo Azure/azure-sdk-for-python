@@ -425,6 +425,11 @@ class NestedField(Nested):
         super().__init__(*args, **kwargs)
 
 
+# Note: Currently contains a bug where the order in which fields are inputted can potentially cause a bug
+# Example, the first line below works, but the second one fails upon calling load_from_dict
+# with the error " AttributeError: 'list' object has no attribute 'get'"
+# inputs = UnionField([fields.List(NestedField(DataSchema)), NestedField(DataSchema)])
+# inputs = UnionField([NestedField(DataSchema), fields.List(NestedField(DataSchema))])
 class UnionField(fields.Field):
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
         super().__init__(**kwargs)

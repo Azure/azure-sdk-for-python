@@ -426,6 +426,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_construct_container_registry_client(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         authority = get_authority(containerregistry_endpoint)
@@ -643,22 +644,3 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             if response is not None:
                 for manifest in response:
                     pass
-
-
-def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
-
-    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
-        assert client._client._config.api_version == "2021-07-01"
-
-    with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
-    ) as client:
-        assert client._client._config.api_version == "2019-08-15-preview"
-
-    with pytest.raises(ValueError) as error:
-        with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
-        ) as client:
-            pass
-    assert "Unsupported API version '2019-08-15'." in str(error.value)

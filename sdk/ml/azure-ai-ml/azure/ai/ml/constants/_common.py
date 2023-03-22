@@ -833,3 +833,8 @@ class Boolean:
     """True boolean type."""
     FALSE = "false"
     """False boolean type."""
+
+
+class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ALL = "all"
+    NONE = "none"
