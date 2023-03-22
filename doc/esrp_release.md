@@ -8,4 +8,4 @@ The primary visible effect of these release changes is that these packages will 
 
 ## Break Glass - Yanking/Deleting
 
-Contact the `python` team via email, teams, or ICM: `python@microsoft.com`.
+Contact the `python` team via email, teams, or ICM: `python@microsoft.com`. Additionally [this document](https://docs.opensource.microsoft.com/releasing/publish-binaries/python/) is the official writeup on break glass scenarios.
