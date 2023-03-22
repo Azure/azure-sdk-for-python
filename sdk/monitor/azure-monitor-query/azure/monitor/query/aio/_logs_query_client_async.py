@@ -78,9 +78,9 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_visualization: In the query language, it is possible to specify different
          visualization options. By default, the API does not return information regarding the type of
-         visualization to show. If your client requires this information, specify the preference
+         visualization to show. If your client requires this information, specify the preference.
         :keyword additional_workspaces: A list of workspaces that are included in the query.
-         These can be qualified workspace names, workspace Ids, or Azure resource Ids.
+         These can be qualified workspace names, workspace IDs, or Azure resource IDs.
         :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
@@ -191,7 +191,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         :keyword bool include_statistics: To get information about query statistics.
         :keyword bool include_visualization: In the query language, it is possible to specify different
          visualization options. By default, the API does not return information regarding the type of
-         visualization to show. If your client requires this information, specify the preference
+         visualization to show. If your client requires this information, specify the preference.
+        :keyword additional_workspaces: A list of workspaces that are included in the query.
+         These can be qualified workspace names, workspace IDs, or Azure resource IDs.
+        :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: Union[~azure.monitor.query.LogsQueryResult, ~azure.monitor.query.LogsQueryPartialResult]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -209,6 +212,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
+        additional_workspaces = kwargs.pop("additional_workspaces", None)
 
         prefer = process_prefer(
             server_timeout, include_statistics, include_visualization
@@ -217,6 +221,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         body = {
             "query": query,
             "timespan": timespan_iso,
+            "additional_workspaces": additional_workspaces,
         }
 
         try:
