@@ -24,10 +24,10 @@
 #
 # --------------------------------------------------------------------------
 from collections.abc import AsyncIterator
-from typing import ContextManager, Optional
+from typing import ContextManager, Optional, Any
 
 import httpx
-from azure.core import pipeline
+from azure.core.pipeline import Pipeline
 
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
@@ -37,7 +37,7 @@ from ._httpx import HttpXTransportResponse
 
 
 class AsyncHttpXTransportResponse(HttpXTransportResponse, AsyncHttpResponseImpl):
-    def stream_download(self, pipeline, **kwargs) -> AsyncIterator[bytes]:
+    def stream_download(self, pipeline: Pipeline, **kwargs: Any) -> AsyncIterator[bytes]:
         return AsyncHttpXStreamDownloadGenerator(_, self)
 
     async def load_body(self) -> None:
@@ -45,7 +45,7 @@ class AsyncHttpXTransportResponse(HttpXTransportResponse, AsyncHttpResponseImpl)
 
 # pylint: disable=unused-argument
 class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
-    def __init__(self, pipeline: pipeline, response: AsyncHttpXTransportResponse, *_, **kwargs) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpXTransportResponse, *_, **kwargs) -> None:
         self.response = response
         self.iter_bytes_func = self.response.internal_response.aiter_bytes()
 
@@ -69,7 +69,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
     :keyword httpx.AsyncClient client: HTTPX client to use instead of the default one
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.client: Optional[httpx.AsyncClient] = kwargs.get("client", None)
 
     async def open(self) -> None:
