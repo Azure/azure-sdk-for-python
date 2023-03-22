@@ -127,7 +127,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
     def begin_provision_network(
         self,
         workspace_name: Optional[str] = None,
-        spark_enabled: Optional[bool] = False,
+        include_spark: Optional[bool] = False,
     ) -> LROPoller:
         """Triggers the workspace to provision the managed network. Specifying spark enabled
         as true prepares the workspace managed network for supporting Spark.
@@ -139,7 +139,7 @@ class WorkspaceOperations(WorkspaceOperationsBase):
         """
         workspace_name = self._check_workspace_name(workspace_name)
         return self._provision_network_operation.begin_post(
-            self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=spark_enabled)
+            self._resource_group_name, workspace_name, ManagedNetworkProvisionOptions(include_spark=include_spark)
         )
 
     @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
