@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TYPE_CHECKING, TypeVar, Awaitable, Optional
+from typing import TypeVar, Awaitable, Optional
 
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
@@ -31,12 +31,12 @@ from azure.core.pipeline.policies import (
 )
 
 from ._authentication import _parse_claims_challenge, _AuxiliaryAuthenticationPolicyBase
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 
-if TYPE_CHECKING:
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
+
 
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
