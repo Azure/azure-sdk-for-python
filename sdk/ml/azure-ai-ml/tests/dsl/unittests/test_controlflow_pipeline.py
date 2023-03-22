@@ -6,7 +6,8 @@ from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+from azure.ai.ml.entities._job.pipeline._io import InputOutputBase, PipelineInput
 from azure.ai.ml.exceptions import ValidationException
 from test_utilities.utils import omit_with_wildcard
 
@@ -499,3 +500,87 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
 
         my_job = my_pipeline()
         assert my_job.jobs["foreach_node"]._source == ComponentSource.DSL
+
+    @pytest.mark.parametrize(
+        "items, rest_input_str",
+        [
+            (
+                # asset input with path on datastore
+                {
+                    "silo1": {"uri_file_input": Input(path="path/on/datastore")},
+                },
+                '{"silo1": {"uri_file_input": {"uri": "path/on/datastore", "job_input_type": "uri_folder"}}}',
+            ),
+            (
+                # asset input with name + version
+                {
+                    "silo1": {"name_version": Input(path="test-data:1")},
+                },
+                '{"silo1": {"name_version": {"uri": "test-data:1", "job_input_type": "uri_folder"}}}',
+            ),
+            (
+                # asset input with uri
+                {
+                    "silo1": {"uri": Input(path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")},
+                },
+                '{"silo1": {"uri": {"uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                '"job_input_type": "uri_folder"}}}',
+            ),
+            (
+                # asset input binding
+                {
+                    "silo1": {"binding": PipelineInput(name="input1", owner="pipeline", meta=None)},
+                },
+                '{"silo1": {"binding": "${{parent.inputs.input1}}"}}',
+            ),
+            (
+                # primitive type input
+                {
+                    "silo1": dict(
+                        component_in_string="component_in_string",
+                        component_in_ranged_integer=10,
+                        component_in_enum="world",
+                        component_in_boolean=True,
+                        component_in_ranged_number=5.5,
+                    ),
+                },
+                '{"silo1": {"component_in_string": "component_in_string", '
+                '"component_in_ranged_integer": 10, "component_in_enum": "world", '
+                '"component_in_boolean": true, "component_in_ranged_number": 5.5}}',
+            ),
+        ],
+    )
+    def test_to_rest_items(self, items, rest_input_str):
+        assert ParallelFor._to_rest_items(items) == rest_input_str
+
+    @pytest.mark.parametrize(
+        "items, error_message",
+        [
+            (
+                # unsupported item value type
+                [
+                    {"component_in_number": CustomizedObject()},
+                ],
+                "Unsupported type",
+            ),
+            (
+                # local file input
+                [{"component_in_path": Input(path="./tests/test_configs/components/helloworld_component.yml")}],
+                "Local file input",
+            ),
+            (
+                # empty path
+                [{"component_in_path": Input(path=None)}],
+                "Input path not provided",
+            ),
+            (
+                # dict Input
+                [{"component_in_path": {"job_input_path": "azureml://path/to/file"}}],
+                "Unsupported type",
+            ),
+        ],
+    )
+    def test_to_rest_items_unsupported(self, items, error_message):
+        with pytest.raises(ValidationException) as e:
+            ParallelFor._to_rest_items(items)
+        assert error_message in str(e.value)

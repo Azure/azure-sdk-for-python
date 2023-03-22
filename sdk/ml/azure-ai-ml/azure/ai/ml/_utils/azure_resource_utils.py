@@ -59,7 +59,7 @@ def get_generic_resource_by_id(
     return generic_resource.as_dict()
 
 
-def get_virtual_cluster_by_id(
+def get_virtual_cluster_by_name(
     name: str, resource_group: str, subscription_id: str, credential: TokenCredential
 ) -> Dict:
 
