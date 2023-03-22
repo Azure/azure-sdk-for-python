@@ -36,7 +36,7 @@ def test_caching():
         request_factory=lambda _, __: HttpRequest("GET", "http://localhost"), transport=transport
     )
 
-    token = client.get_cached_token(scope)
+    token, refresh_on = client.get_cached_token(scope)
     assert not token
 
     with mock.patch(ManagedIdentityClient.__module__ + ".time.time", lambda: now):
@@ -44,7 +44,7 @@ def test_caching():
     assert token.expires_on == expected_expires_on
     assert token.token == expected_token
 
-    token = client.get_cached_token(scope)
+    token, refresh_on = client.get_cached_token(scope)
     assert token.expires_on == expected_expires_on
     assert token.token == expected_token
 

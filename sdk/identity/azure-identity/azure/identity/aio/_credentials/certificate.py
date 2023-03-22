@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TypeVar, Optional, Any
+from typing import TypeVar, Optional, Any, Tuple
 
 import msal
 
@@ -78,8 +78,10 @@ class CertificateCredential(AsyncContextManager, GetTokenMixin):
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         return await self._client.obtain_token_by_client_certificate(scopes, self._certificate, **kwargs)
