@@ -1,8 +1,10 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ImageMetadata:
     """Metadata about the operating system image for this compute instance."""
 

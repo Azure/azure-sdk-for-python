@@ -25,13 +25,18 @@ class UnsupportedCompute(Compute):
     @classmethod
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "UnsupportedCompute":
         prop = rest_obj.properties
+        if hasattr(rest_obj, "tags"):
+            # TODO(2294131): remove this when DataFactory object has no tags got fixed
+            tags = rest_obj.tags
+        else:
+            tags = None
         response = UnsupportedCompute(
             name=rest_obj.name,
             id=rest_obj.id,
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
-            tags=prop.tags,
+            tags=tags,
             provisioning_state=prop.provisioning_state,
             created_on=prop.additional_properties.get("createdOn", None),
         )
