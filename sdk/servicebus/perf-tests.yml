@@ -1,0 +1,44 @@
+Service: servicebus
+
+Project: sdk/servicebus/azure-servicebus
+
+PrimaryPackage: azure-eventhub
+
+PackageVersions:
+- azure-core: 1.26.1
+  azure-eventhub: 7.8.3
+- azure-core: source
+  azure-eventhub: source
+
+Tests:
+- Test: send-queue-message-batch
+  Class: SendQueueMessageBatchTest
+  Arguments:
+  - --event-size 1024 --batch-size 100 --parallel 64
+  - --event-size 1024 --batch-size 100 --parallel 64 --uamqp-transport
+  - --event-size 1024 --batch-size 100 --parallel 64 --transport-type 1
+  - --event-size 1024 --batch-size 100 --parallel 64 --transport-type 1 --uamqp-transport
+
+- Test: receive-queue-message-batch
+  Class: ReceiveQueueMessageBatchTest
+  Arguments:
+  - --event-size 1024 --max-batch-size 100 --preload 20000
+  - --event-size 1024 --max-batch-size 100 --preload 20000 --uamqp-transport
+  - --event-size 1024 --max-batch-size 100 --preload 20000 --transport-type 1
+  - --event-size 1024 --max-batch-size 100 --preload 20000 --transport-type 1 --uamqp-transport
+
+- Test: send-subscription-message-batch
+  Class: SendTopicMessageBatchTest
+  Arguments:
+  - --event-size 1024 --batch-size 100 --parallel 64
+  - --event-size 1024 --batch-size 100 --parallel 64 --uamqp-transport
+  - --event-size 1024 --batch-size 100 --parallel 64 --transport-type 1
+  - --event-size 1024 --batch-size 100 --parallel 64 --transport-type 1 --uamqp-transport
+
+- Test: receive-subscription-message-batch
+  Class: ReceiveSubscriptionMessageBatchTest
+  Arguments:
+  - --event-size 1024 --max-batch-size 100 --preload 20000
+  - --event-size 1024 --max-batch-size 100 --preload 20000 --uamqp-transport
+  - --event-size 1024 --max-batch-size 100 --preload 20000 --transport-type 1
+  - --event-size 1024 --max-batch-size 100 --preload 20000 --transport-type 1 --uamqp-transport
