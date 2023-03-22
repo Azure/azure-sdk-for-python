@@ -86,6 +86,8 @@ class ErrorTarget:
     SCHEDULE = "Schedule"
     REGISTRY = "Registry"
     UNKNOWN = "Unknown"
+    FEATURE_SET = "FeatureSet"
+    FEATURE_STORE_ENTITY = "FeatureStoreEntity"
 
 
 class MlException(AzureError):

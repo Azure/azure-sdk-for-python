@@ -37,7 +37,7 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 
-# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -50,7 +50,6 @@ from azure.ai.ml._utils.utils import (
 from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_RESOURCE_PROVIDER,
-    BATCH_JOB_CHILD_RUN_NAME,
     BATCH_JOB_CHILD_RUN_OUTPUT_NAME,
     COMMON_RUNTIME_ENV_VAR,
     DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
@@ -124,7 +123,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class JobOperations(_ScopeDependentOperations):
@@ -145,7 +144,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._operation_2023_02_preview = service_client_02_2023_preview.jobs
         self._service_client = service_client_02_2023_preview
         self._all_operations = all_operations
@@ -225,7 +224,7 @@ class JobOperations(_ScopeDependentOperations):
         return self._api_base_url
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -269,7 +268,7 @@ class JobOperations(_ScopeDependentOperations):
             pass
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Get a job resource.
 
@@ -295,7 +294,7 @@ class JobOperations(_ScopeDependentOperations):
         return job
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
     def show_services(self, name: str, node_index: int = 0) -> Dict[str, ServiceInstance]:
         """Get services associated with a job's node.
 
@@ -316,7 +315,7 @@ class JobOperations(_ScopeDependentOperations):
         }
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
     def begin_cancel(self, name: str, **kwargs) -> LROPoller[None]:
         """Cancel job resource.
 
@@ -394,7 +393,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @experimental
-    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
         """Validate a job. Anonymous assets may be created if there are inline
         defined entities, e.g. Component, Environment & Code. Only pipeline job
@@ -409,7 +408,7 @@ class JobOperations(_ScopeDependentOperations):
         """
         return self._validate(job, raise_on_failure=raise_on_failure, **kwargs)
 
-    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self, job: Job, *, raise_on_failure: bool = False, **kwargs  # pylint:disable=unused-argument
     ) -> ValidationResult:
@@ -461,7 +460,7 @@ class JobOperations(_ScopeDependentOperations):
         return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
         job: Job,
@@ -540,8 +539,10 @@ class JobOperations(_ScopeDependentOperations):
 
             # Make a copy of self._kwargs instead of contaminate the original one
             kwargs = dict(**self._kwargs)
-            if hasattr(rest_job_resource.properties, "identity") and (
-                isinstance(rest_job_resource.properties.identity, UserIdentity)
+            # set headers with user aml token if job is a pipeline or has a user identity setting
+            if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
+                hasattr(rest_job_resource.properties, "identity")
+                and (isinstance(rest_job_resource.properties.identity, UserIdentity))
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
@@ -607,7 +608,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -619,7 +620,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=True)
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -631,7 +632,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=False)
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
     def stream(self, name: str) -> None:
         """Stream logs of a job.
 
@@ -648,7 +649,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
     def download(
         self,
         name: str,
@@ -831,12 +832,13 @@ class JobOperations(_ScopeDependentOperations):
     def _get_batch_job_scoring_output_uri(self, job_name: str) -> Optional[str]:
         uri = None
         # Download scoring output, which is the "score" output of the child job named "batchscoring"
+        # Batch Jobs are pipeline jobs with only one child, so this should terminate after an iteration
         for child in self._runs_operations.get_run_children(job_name):
-            if child.properties.get("azureml.moduleName", None) == BATCH_JOB_CHILD_RUN_NAME:
-                uri = self._get_named_output_uri(child.name, BATCH_JOB_CHILD_RUN_OUTPUT_NAME).get(
-                    BATCH_JOB_CHILD_RUN_OUTPUT_NAME, None
-                )
-                # After the correct child is found, break to prevent unnecessary looping
+            uri = self._get_named_output_uri(child.name, BATCH_JOB_CHILD_RUN_OUTPUT_NAME).get(
+                BATCH_JOB_CHILD_RUN_OUTPUT_NAME, None
+            )
+            # After the correct child is found, break to prevent unnecessary looping
+            if uri is not None:
                 break
         return uri
 

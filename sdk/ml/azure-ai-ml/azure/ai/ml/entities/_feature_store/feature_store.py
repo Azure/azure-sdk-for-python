@@ -2,29 +2,37 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,protected-access
 
-from typing import Dict, Optional
 
+from os import PathLike
+from pathlib import Path
+from typing import Dict, Optional, Union
 from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime
+
+from azure.ai.ml._schema._feature_store.feature_store_schema import FeatureStoreSchema
+from azure.ai.ml.entities._workspace.feature_store_settings import _FeatureStoreSettings
+from azure.ai.ml.entities._workspace.compute_runtime import _ComputeRuntime
+from azure.ai.ml.entities import Workspace, CustomerManagedKey
+from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 
-from .materialization_store import MaterializationStore
+from .materialization_store import _MaterializationStore
 from ._constants import OFFLINE_STORE_CONNECTION_NAME, DEFAULT_SPARK_RUNTIME_VERSION, FEATURE_STORE_KIND
 
 
 @experimental
-class FeatureStore(Workspace):
+class _FeatureStore(Workspace):
     def __init__(
         self,
         *,
         name: str,
-        compute_runtime: Optional[ComputeRuntime] = None,
-        offline_store: Optional[MaterializationStore] = None,
+        compute_runtime: Optional[_ComputeRuntime] = None,
+        offline_store: Optional[_MaterializationStore] = None,
         materialization_identity: Optional[ManagedIdentityConfiguration] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
@@ -49,10 +57,10 @@ class FeatureStore(Workspace):
         :param name: Name of the feature store.
         :type name: str
         :param compute_runtime: Compute runtime of the feature store.
-        :type compute_runtime: ~azure.ai.ml.entities.ComputeRuntime
+        :type compute_runtime: ~azure.ai.ml.entities._ComputeRuntime
         :param offline_store: Offline store for feature store.
         materialization_identity is required when offline_store is passed.
-        :type offline_store: ~azure.ai.ml.entities.MaterializationStore
+        :type offline_store: ~azure.ai.ml.entities._MaterializationStore
         :param materialization_identity: Identity used for materialization.
         :type materialization_identity: ~azure.ai.ml.entities.ManagedIdentityConfiguration
         :param description: Description of the feature store.
@@ -101,14 +109,15 @@ class FeatureStore(Workspace):
         if offline_store and not materialization_identity:
             raise ValidationError("materialization_identity is required to setup offline store")
 
-        feature_store_settings = FeatureStoreSettings(
+        feature_store_settings = _FeatureStoreSettings(
             compute_runtime=compute_runtime
             if compute_runtime
-            else ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
+            else _ComputeRuntime(spark_runtime_version=DEFAULT_SPARK_RUNTIME_VERSION),
             offline_store_connection_name=(
                 OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
             ),
         )
+        self._workspace_id = kwargs.pop("workspace_id", "")
         super().__init__(
             name=name,
             description=description,
@@ -135,19 +144,19 @@ class FeatureStore(Workspace):
         self.identity = identity
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "FeatureStore":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "_FeatureStore":
         if not rest_obj:
             return None
 
-        workspace_object = Workspace._from_rest_object(rest_obj)  # pylint: disable=protected-access
+        workspace_object = Workspace._from_rest_object(rest_obj)
 
-        return FeatureStore(
+        return _FeatureStore(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
-            compute_runtime=ComputeRuntime._from_rest_object(  # pylint: disable=protected-access
-                workspace_object.feature_store_settings.compute_runtime
-                if workspace_object.feature_store_settings
+            compute_runtime=_ComputeRuntime._from_rest_object(
+                workspace_object._feature_store_settings.compute_runtime
+                if workspace_object._feature_store_settings
                 else None
             ),
             display_name=workspace_object.display_name,
@@ -163,4 +172,26 @@ class FeatureStore(Workspace):
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+            workspace_id=rest_obj.workspace_id,
         )
+
+    @classmethod
+    def _load(
+        cls,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
+        **kwargs,
+    ) -> "_FeatureStore":
+        data = data or {}
+        params_override = params_override or []
+        context = {
+            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            PARAMS_OVERRIDE_KEY: params_override,
+        }
+        loaded_schema = load_from_dict(FeatureStoreSchema, data, context, **kwargs)
+        return _FeatureStore(**loaded_schema)
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return FeatureStoreSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

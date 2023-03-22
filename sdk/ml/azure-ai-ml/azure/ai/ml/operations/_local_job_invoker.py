@@ -146,7 +146,7 @@ def get_execution_service_response(
         (url, encodedBody) = local.endpoint.split(EXECUTION_SERVICE_URL_KEY)
         body = urllib.parse.unquote_plus(encodedBody)
         body = json.loads(body)
-        response = requests_pipeline.post(url=url, json=body, headers={"Authorization": "Bearer " + token})
+        response = requests_pipeline.post(url, json=body, headers={"Authorization": "Bearer " + token})
         response.raise_for_status()
         return (response.content, body.get("SnapshotId", None))
     except AzureError as err:

@@ -45,7 +45,7 @@ def test_client_secret_credential(live_eventhub, uamqp_transport):
                                       "starting_position": '-1'
                                   })
         worker.start()
-        time.sleep(13)
+        time.sleep(15)
 
     worker.join()
     assert on_event.called is True
@@ -112,7 +112,7 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
     producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=AzureSasCredential(token),
-                                             auth_timeout=3,
+                                             auth_timeout=30,
                                              uamqp_transport=uamqp_transport)
 
     with producer_client:
@@ -131,7 +131,7 @@ def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
                                              consumer_group='$default',
                                              credential=credential,
                                              user_agent='customized information',
-                                             auth_timeout=3,
+                                             auth_timeout=30,
                                              uamqp_transport=uamqp_transport)
 
     assert consumer_client.get_eventhub_properties() is not None

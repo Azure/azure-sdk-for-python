@@ -37,18 +37,21 @@ def main():
             "properties": {
                 "adxDatabaseName": "myDatabase",
                 "adxEndpointUri": "https://mycluster.kusto.windows.net",
+                "adxRelationshipLifecycleEventsTableName": "myRelationshipLifecycleEventsTable",
                 "adxResourceId": "/subscriptions/c493073e-2460-45ba-a403-f3e0df1e9feg/resourceGroups/testrg/providers/Microsoft.Kusto/clusters/mycluster",
-                "adxTableName": "myTable",
+                "adxTableName": "myPropertyUpdatesTable",
+                "adxTwinLifecycleEventsTableName": "myTwinLifecycleEventsTable",
                 "connectionType": "AzureDataExplorer",
                 "eventHubEndpointUri": "sb://myeh.servicebus.windows.net/",
                 "eventHubEntityPath": "myeh",
                 "eventHubNamespaceResourceId": "/subscriptions/c493073e-2460-45ba-a403-f3e0df1e9feg/resourceGroups/testrg/providers/Microsoft.EventHub/namespaces/myeh",
+                "recordPropertyAndItemRemovals": "true",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/digitaltwins/resource-manager/Microsoft.DigitalTwins/stable/2022-10-31/examples/TimeSeriesDatabaseConnectionsPut_example.json
+# x-ms-original-file: specification/digitaltwins/resource-manager/Microsoft.DigitalTwins/stable/2023-01-31/examples/TimeSeriesDatabaseConnectionsPut_example.json
 if __name__ == "__main__":
     main()
