@@ -51,7 +51,7 @@ def test_local_endpoint_mir_e2e(
 ) -> None:
     endpoint = load_online_endpoint(endpoint_mir_yaml)
     endpoint.name = mir_endpoint_name
-    client.online_endpoints.begin_create_or_update(endpoint=endpoint, no_wait=False, local=True)
+    client.online_endpoints.begin_create_or_update(endpoint=endpoint, local=True)
 
     get_obj = client.online_endpoints.get(name=mir_endpoint_name, local=True)
     assert get_obj is not None
@@ -281,7 +281,7 @@ def run_local_endpoint_tests_e2e_create(
         deployment = load_online_deployment(deployment_yaml)
         deployment.endpoint_name = endpoint_name
         deployment.name = deployment_name
-        client.online_deployments.begin_create_or_update(deployment=deployment, no_wait=False, local=True)
+        client.online_deployments.begin_create_or_update(deployment=deployment, local=True)
 
         get_obj = client.online_deployments.get(endpoint_name=endpoint_name, name=deployment_name, local=True)
         assert get_obj.name == deployment_name
@@ -313,9 +313,9 @@ def run_local_endpoint_tests_e2e_create(
             deployment = load_online_deployment(update_file)
             deployment.endpoint_name = endpoint_name
             deployment.name = deployment_name
-            client.online_deployments.begin_create_or_update(deployment=deployment, no_wait=False, local=True)
+            client.online_deployments.begin_create_or_update(deployment=deployment, local=True)
 
-        client.online_deployments.delete(name=deployment_name, endpoint_name=endpoint_name, local=True)
+        client.online_deployments.begin_delete(name=deployment_name, endpoint_name=endpoint_name, local=True)
         deployments = client.online_deployments.list(endpoint_name=endpoint_name, local=True)
         assert deployments is not None
         assert endpoint_name not in [dep.endpoint_name for dep in deployments]
