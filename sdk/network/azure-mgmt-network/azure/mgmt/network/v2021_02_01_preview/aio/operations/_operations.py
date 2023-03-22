@@ -183,8 +183,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -323,8 +324,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -391,8 +393,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -527,8 +530,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -550,18 +554,18 @@ class NetworkManagersOperations:
 
     @distributed_trace
     def list_by_subscription(
-        self, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkManager"]:
         """List all network managers in a subscription.
 
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManager or the result of cls(response)
         :rtype:
@@ -627,8 +631,9 @@ class NetworkManagersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -646,20 +651,20 @@ class NetworkManagersOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkManager"]:
         """List network managers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManager or the result of cls(response)
         :rtype:
@@ -726,8 +731,9 @@ class NetworkManagersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -882,8 +888,9 @@ class NetworkManagerCommitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1046,8 +1053,9 @@ class NetworkManagerDeploymentStatusOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1093,9 +1101,9 @@ class EffectiveVirtualNetworksOperations:
         resource_group_name: str,
         network_manager_name: str,
         parameters: _models.EffectiveVirtualNetworksParameter,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
-        *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EffectiveVirtualNetworksListResult:
@@ -1108,14 +1116,14 @@ class EffectiveVirtualNetworksOperations:
         :param parameters: Effective Virtual Networks Parameter. Required.
         :type parameters:
          ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetworksParameter
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1131,9 +1139,9 @@ class EffectiveVirtualNetworksOperations:
         resource_group_name: str,
         network_manager_name: str,
         parameters: IO,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
-        *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EffectiveVirtualNetworksListResult:
@@ -1145,14 +1153,14 @@ class EffectiveVirtualNetworksOperations:
         :type network_manager_name: str
         :param parameters: Effective Virtual Networks Parameter. Required.
         :type parameters: IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1168,6 +1176,7 @@ class EffectiveVirtualNetworksOperations:
         resource_group_name: str,
         network_manager_name: str,
         parameters: Union[_models.EffectiveVirtualNetworksParameter, IO],
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -1182,14 +1191,14 @@ class EffectiveVirtualNetworksOperations:
          EffectiveVirtualNetworksParameter type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetworksParameter or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1240,8 +1249,9 @@ class EffectiveVirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1390,8 +1400,9 @@ class EffectiveVirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1554,8 +1565,9 @@ class ActiveConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1715,8 +1727,9 @@ class ActiveSecurityAdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1876,8 +1889,9 @@ class ActiveSecurityUserRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1965,8 +1979,9 @@ class ConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2122,8 +2137,9 @@ class ConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2195,8 +2211,9 @@ class ConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2217,6 +2234,7 @@ class ConnectivityConfigurationsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -2227,14 +2245,14 @@ class ConnectivityConfigurationsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ConnectivityConfiguration or the result of
          cls(response)
@@ -2303,8 +2321,9 @@ class ConnectivityConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2465,8 +2484,9 @@ class EffectiveConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2630,8 +2650,9 @@ class NetworkManagerEffectiveSecurityAdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2717,8 +2738,9 @@ class NetworkGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2745,8 +2767,8 @@ class NetworkGroupsOperations:
         network_manager_name: str,
         network_group_name: str,
         parameters: _models.NetworkGroup,
-        if_match: Optional[str] = None,
         *,
+        if_match: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkGroup:
@@ -2761,10 +2783,10 @@ class NetworkGroupsOperations:
         :param parameters: Parameters supplied to the specify which network group need to create.
          Required.
         :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkGroup
-        :param if_match: The ETag of the transformation. Omit this value to always overwrite the
+        :keyword if_match: The ETag of the transformation. Omit this value to always overwrite the
          current resource. Specify the last-seen ETag value to prevent accidentally overwriting
          concurrent changes. Default value is None.
-        :type if_match: str
+        :paramtype if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2781,8 +2803,8 @@ class NetworkGroupsOperations:
         network_manager_name: str,
         network_group_name: str,
         parameters: IO,
-        if_match: Optional[str] = None,
         *,
+        if_match: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkGroup:
@@ -2797,10 +2819,10 @@ class NetworkGroupsOperations:
         :param parameters: Parameters supplied to the specify which network group need to create.
          Required.
         :type parameters: IO
-        :param if_match: The ETag of the transformation. Omit this value to always overwrite the
+        :keyword if_match: The ETag of the transformation. Omit this value to always overwrite the
          current resource. Specify the last-seen ETag value to prevent accidentally overwriting
          concurrent changes. Default value is None.
-        :type if_match: str
+        :paramtype if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2817,6 +2839,7 @@ class NetworkGroupsOperations:
         network_manager_name: str,
         network_group_name: str,
         parameters: Union[_models.NetworkGroup, IO],
+        *,
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> _models.NetworkGroup:
@@ -2831,10 +2854,10 @@ class NetworkGroupsOperations:
         :param parameters: Parameters supplied to the specify which network group need to create. Is
          either a NetworkGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2021_02_01_preview.models.NetworkGroup or IO
-        :param if_match: The ETag of the transformation. Omit this value to always overwrite the
+        :keyword if_match: The ETag of the transformation. Omit this value to always overwrite the
          current resource. Specify the last-seen ETag value to prevent accidentally overwriting
          concurrent changes. Default value is None.
-        :type if_match: str
+        :paramtype if_match: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -2885,8 +2908,9 @@ class NetworkGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2961,8 +2985,9 @@ class NetworkGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2983,6 +3008,7 @@ class NetworkGroupsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -2993,14 +3019,14 @@ class NetworkGroupsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkGroup or the result of cls(response)
         :rtype:
@@ -3068,8 +3094,9 @@ class NetworkGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3110,6 +3137,7 @@ class SecurityUserConfigurationsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -3121,14 +3149,14 @@ class SecurityUserConfigurationsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityConfiguration or the result of
          cls(response)
@@ -3197,8 +3225,9 @@ class SecurityUserConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3260,8 +3289,9 @@ class SecurityUserConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3414,8 +3444,9 @@ class SecurityUserConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3485,8 +3516,9 @@ class SecurityUserConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3528,6 +3560,7 @@ class UserRuleCollectionsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -3540,14 +3573,14 @@ class UserRuleCollectionsOperations:
         :type network_manager_name: str
         :param configuration_name: The name of the network manager security Configuration. Required.
         :type configuration_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RuleCollection or the result of cls(response)
         :rtype:
@@ -3616,8 +3649,9 @@ class UserRuleCollectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3688,8 +3722,9 @@ class UserRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3851,8 +3886,9 @@ class UserRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3931,8 +3967,9 @@ class UserRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3975,6 +4012,7 @@ class UserRulesOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -3990,14 +4028,14 @@ class UserRulesOperations:
         :param rule_collection_name: The name of the network manager security Configuration rule
          collection. Required.
         :type rule_collection_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BaseUserRule or the result of cls(response)
         :rtype:
@@ -4067,8 +4105,9 @@ class UserRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4143,8 +4182,9 @@ class UserRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4316,8 +4356,9 @@ class UserRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4400,8 +4441,9 @@ class UserRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4442,6 +4484,7 @@ class SecurityAdminConfigurationsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -4453,14 +4496,14 @@ class SecurityAdminConfigurationsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityConfiguration or the result of
          cls(response)
@@ -4529,8 +4572,9 @@ class SecurityAdminConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4592,8 +4636,9 @@ class SecurityAdminConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4746,8 +4791,9 @@ class SecurityAdminConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4817,8 +4863,9 @@ class SecurityAdminConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4860,6 +4907,7 @@ class AdminRuleCollectionsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -4872,14 +4920,14 @@ class AdminRuleCollectionsOperations:
         :type network_manager_name: str
         :param configuration_name: The name of the network manager security Configuration. Required.
         :type configuration_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RuleCollection or the result of cls(response)
         :rtype:
@@ -4948,8 +4996,9 @@ class AdminRuleCollectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5020,8 +5069,9 @@ class AdminRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5183,8 +5233,9 @@ class AdminRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5263,8 +5314,9 @@ class AdminRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5307,6 +5359,7 @@ class AdminRulesOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -5322,14 +5375,14 @@ class AdminRulesOperations:
         :param rule_collection_name: The name of the network manager security Configuration rule
          collection. Required.
         :type rule_collection_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BaseAdminRule or the result of cls(response)
         :rtype:
@@ -5399,8 +5452,9 @@ class AdminRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5475,8 +5529,9 @@ class AdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5648,8 +5703,9 @@ class AdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5732,8 +5788,9 @@ class AdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5812,8 +5869,9 @@ class NetworkSecurityPerimetersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5954,8 +6012,9 @@ class NetworkSecurityPerimetersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6022,8 +6081,9 @@ class NetworkSecurityPerimetersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6041,18 +6101,18 @@ class NetworkSecurityPerimetersOperations:
 
     @distributed_trace
     def list_by_subscription(
-        self, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkSecurityPerimeter"]:
         """List all network security perimeters in a subscription.
 
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkSecurityPerimeter or the result of
          cls(response)
@@ -6119,8 +6179,9 @@ class NetworkSecurityPerimetersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6138,20 +6199,20 @@ class NetworkSecurityPerimetersOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkSecurityPerimeter"]:
         """List network security perimeters in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkSecurityPerimeter or the result of
          cls(response)
@@ -6219,8 +6280,9 @@ class NetworkSecurityPerimetersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6302,8 +6364,9 @@ class NspProfilesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6454,8 +6517,9 @@ class NspProfilesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6525,8 +6589,9 @@ class NspProfilesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6547,6 +6612,7 @@ class NspProfilesOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -6557,14 +6623,14 @@ class NspProfilesOperations:
         :type resource_group_name: str
         :param network_security_perimeter_name: The name of the network security perimeter. Required.
         :type network_security_perimeter_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspProfile or the result of cls(response)
         :rtype:
@@ -6632,8 +6698,9 @@ class NspProfilesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6723,8 +6790,9 @@ class NspAccessRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6885,8 +6953,9 @@ class NspAccessRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6964,8 +7033,9 @@ class NspAccessRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6987,6 +7057,7 @@ class NspAccessRulesOperations:
         resource_group_name: str,
         network_security_perimeter_name: str,
         profile_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -6999,14 +7070,14 @@ class NspAccessRulesOperations:
         :type network_security_perimeter_name: str
         :param profile_name: The name of the NSP profile. Required.
         :type profile_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspAccessRule or the result of cls(response)
         :rtype:
@@ -7075,8 +7146,9 @@ class NspAccessRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7158,8 +7230,9 @@ class NspAssociationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7310,8 +7383,9 @@ class NspAssociationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7367,8 +7441,9 @@ class NspAssociationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7463,6 +7538,7 @@ class NspAssociationsOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -7473,14 +7549,14 @@ class NspAssociationsOperations:
         :type resource_group_name: str
         :param network_security_perimeter_name: The name of the network security perimeter. Required.
         :type network_security_perimeter_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspAssociation or the result of cls(response)
         :rtype:
@@ -7548,8 +7624,9 @@ class NspAssociationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7643,8 +7720,9 @@ class NspAssociationReconcileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7756,8 +7834,9 @@ class PerimeterAssociableResourceTypesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7855,8 +7934,9 @@ class NspAccessRulesReconcileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7942,8 +8022,9 @@ class NspLinksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8092,8 +8173,9 @@ class NspLinksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8149,8 +8231,9 @@ class NspLinksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8247,6 +8330,7 @@ class NspLinksOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -8257,14 +8341,14 @@ class NspLinksOperations:
         :type resource_group_name: str
         :param network_security_perimeter_name: The name of the network security perimeter. Required.
         :type network_security_perimeter_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspLink or the result of cls(response)
         :rtype:
@@ -8332,8 +8416,9 @@ class NspLinksOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8415,8 +8500,9 @@ class NspLinkReconcileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8498,8 +8584,9 @@ class NspLinkReferencesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8551,8 +8638,9 @@ class NspLinkReferencesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8649,6 +8737,7 @@ class NspLinkReferencesOperations:
         self,
         resource_group_name: str,
         network_security_perimeter_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -8659,14 +8748,14 @@ class NspLinkReferencesOperations:
         :type resource_group_name: str
         :param network_security_perimeter_name: The name of the network security perimeter. Required.
         :type network_security_perimeter_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NspLinkReference or the result of cls(response)
         :rtype:
@@ -8734,8 +8823,9 @@ class NspLinkReferencesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8817,8 +8907,9 @@ class NspLinkReferenceReconcileOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

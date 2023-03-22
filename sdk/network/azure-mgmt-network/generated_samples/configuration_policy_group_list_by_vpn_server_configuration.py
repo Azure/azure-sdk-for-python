@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.configuration_policy_groups.list_by_vpn_server_configuration(

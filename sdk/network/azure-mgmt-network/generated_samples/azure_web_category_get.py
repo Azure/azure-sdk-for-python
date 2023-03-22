@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="4de8428a-4a92-4cea-90ff-b47128b8cab8",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.web_categories.get(

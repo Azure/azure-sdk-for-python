@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.vpn_gateways.begin_stop_packet_capture(

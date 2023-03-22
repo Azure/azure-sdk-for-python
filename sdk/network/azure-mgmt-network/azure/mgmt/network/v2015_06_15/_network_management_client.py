@@ -96,13 +96,13 @@ class NetworkManagementClient(
     :ivar local_network_gateways: LocalNetworkGatewaysOperations operations
     :vartype local_network_gateways:
      azure.mgmt.network.v2015_06_15.operations.LocalNetworkGatewaysOperations
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft
      Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
-    :type base_url: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :param endpoint: Service URL. Default value is "https://management.azure.com".
+    :type endpoint: str
     :keyword api_version: Api Version. Default value is "2015-06-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -112,15 +112,15 @@ class NetworkManagementClient(
 
     def __init__(
         self,
-        credential: "TokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        credential: "TokenCredential",
+        endpoint: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
         self._config = NetworkManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            subscription_id=subscription_id, credential=credential, **kwargs
         )
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

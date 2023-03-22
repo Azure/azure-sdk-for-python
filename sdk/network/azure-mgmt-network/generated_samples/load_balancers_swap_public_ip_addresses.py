@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.load_balancers.begin_swap_public_ip_addresses(

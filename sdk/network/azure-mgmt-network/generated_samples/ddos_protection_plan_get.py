@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.ddos_protection_plans.get(

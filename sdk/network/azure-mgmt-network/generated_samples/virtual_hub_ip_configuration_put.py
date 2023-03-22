@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.virtual_hub_ip_configuration.begin_create_or_update(

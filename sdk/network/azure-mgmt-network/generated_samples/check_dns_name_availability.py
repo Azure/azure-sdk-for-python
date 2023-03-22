@@ -25,13 +25,12 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.check_dns_name_availability(
         location="westus",
-        domain_name_label="testdns",
     )
     print(response)
 

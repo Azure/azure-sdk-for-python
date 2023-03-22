@@ -26,26 +26,26 @@ class NetworkManagementClientConfiguration(Configuration):
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     """
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         subscription_id: str,
+        credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
         super(NetworkManagementClientConfiguration, self).__init__(**kwargs)
 
-        self.credential = credential
         self.subscription_id = subscription_id
+        self.credential = credential
         self.credential_scopes = kwargs.pop('credential_scopes', ['https://management.azure.com/.default'])
         kwargs.setdefault('sdk_moniker', 'azure-mgmt-network/{}'.format(VERSION))
         self._configure(**kwargs)

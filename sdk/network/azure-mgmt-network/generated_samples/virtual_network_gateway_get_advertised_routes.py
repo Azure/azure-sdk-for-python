@@ -25,14 +25,13 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.virtual_network_gateways.begin_get_advertised_routes(
         resource_group_name="rg1",
         virtual_network_gateway_name="vpngw",
-        peer="test",
     ).result()
     print(response)
 

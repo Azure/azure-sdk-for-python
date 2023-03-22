@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.management_group_network_manager_connections.create_or_update(

@@ -41,14 +41,14 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
-    :param base_url: Service URL
-    :type base_url: str
+    :param endpoint: Service URL
+    :type endpoint: str
     :param profile: A profile definition, from KnownProfiles to dict.
     :type profile: azure.profiles.KnownProfiles
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
@@ -88,14 +88,15 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         subscription_id: str,
+        credential: "AsyncTokenCredential",
+        *,
         api_version: Optional[str] = None,
-        base_url: str = "https://management.azure.com",
+        endpoint: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs: Any
     ) -> None:
-        self._config = NetworkManagementClientConfiguration(credential, subscription_id, **kwargs)
+        self._config = NetworkManagementClientConfiguration(subscription_id, credential, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(NetworkManagementClient, self).__init__(
             api_version=api_version,

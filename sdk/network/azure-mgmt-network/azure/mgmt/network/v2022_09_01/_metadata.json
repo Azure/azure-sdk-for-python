@@ -15,38 +15,38 @@
     },
     "global_parameters": {
         "sync": {
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
+                "docstring_type": "str",
+                "required": true,
+                "method_location": "positional"
+            },
             "credential": {
                 "signature": "credential: \"TokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true,
                 "method_location": "positional"
-            },
+            }
+        },
+        "async": {
             "subscription_id": {
                 "signature": "subscription_id: str,",
                 "description": "The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
                 "docstring_type": "str",
-                "required": true,
-                "method_location": "positional"
-            }
-        },
-        "async": {
+                "required": true
+            },
             "credential": {
                 "signature": "credential: \"AsyncTokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
-            },
-            "subscription_id": {
-                "signature": "subscription_id: str,",
-                "description": "The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
-                "docstring_type": "str",
-                "required": true
             }
         },
         "constant": {
         },
-        "call": "credential, subscription_id",
+        "call": "subscription_id, credential",
         "service_client_specific": {
             "sync": {
                 "api_version": {
@@ -54,21 +54,21 @@
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
-                "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                "endpoint": {
+                    "signature": "endpoint: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 }
             },
             "async": {
@@ -77,21 +77,21 @@
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
-                "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                "endpoint": {
+                    "signature": "endpoint: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles = KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 }
             }
         }
@@ -240,6 +240,8 @@
     "operation_mixins": {
         "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"], \"azure.core.polling\": [\"LROPoller\"]}}}",
         "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"stdlib\": {\"typing\": [\"IO\", \"Optional\", \"Union\"]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"], \"azure.core.polling\": [\"AsyncLROPoller\"]}}}",
+        "sync_mixin_typing_definitions": "",
+        "async_mixin_typing_definitions": "",
         "operations": {
             "_put_bastion_shareable_link_initial" : {
                 "sync": {
@@ -347,15 +349,15 @@
             },
             "check_dns_name_availability" : {
                 "sync": {
-                    "signature": "def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "location, domain_name_label, **kwargs"
+                    "signature": "def check_dns_name_availability(\n    self,\n    location: str,\n    *,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:keyword domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:paramtype domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "location, domain_name_label=domain_name_label, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "location, domain_name_label, **kwargs"
+                    "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    *,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:keyword domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:paramtype domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "location, domain_name_label=domain_name_label, **kwargs"
                 }
             },
             "express_route_provider_port" : {
@@ -373,54 +375,54 @@
             },
             "list_active_connectivity_configurations" : {
                 "sync": {
-                    "signature": "def list_active_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveConnectivityConfigurationsListResult:\n",
-                    "doc": "\"\"\"Lists active connectivity configurations in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveConnectivityConfigurationsListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveConnectivityConfigurationsListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, network_manager_name, parameters, top, **kwargs"
+                    "signature": "def list_active_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveConnectivityConfigurationsListResult:\n",
+                    "doc": "\"\"\"Lists active connectivity configurations in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveConnectivityConfigurationsListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveConnectivityConfigurationsListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, network_manager_name, parameters, top=top, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def list_active_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveConnectivityConfigurationsListResult:\n",
-                    "doc": "\"\"\"Lists active connectivity configurations in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveConnectivityConfigurationsListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveConnectivityConfigurationsListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, network_manager_name, parameters, top, **kwargs"
+                    "signature": "async def list_active_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveConnectivityConfigurationsListResult:\n",
+                    "doc": "\"\"\"Lists active connectivity configurations in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveConnectivityConfigurationsListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveConnectivityConfigurationsListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, network_manager_name, parameters, top=top, **kwargs"
                 }
             },
             "list_active_security_admin_rules" : {
                 "sync": {
-                    "signature": "def list_active_security_admin_rules(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveSecurityAdminRulesListResult:\n",
-                    "doc": "\"\"\"Lists active security admin rules in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, network_manager_name, parameters, top, **kwargs"
+                    "signature": "def list_active_security_admin_rules(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveSecurityAdminRulesListResult:\n",
+                    "doc": "\"\"\"Lists active security admin rules in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, network_manager_name, parameters, top=top, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def list_active_security_admin_rules(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveSecurityAdminRulesListResult:\n",
-                    "doc": "\"\"\"Lists active security admin rules in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, network_manager_name, parameters, top, **kwargs"
+                    "signature": "async def list_active_security_admin_rules(\n    self,\n    resource_group_name: str,\n    network_manager_name: str,\n    parameters: Union[_models.ActiveConfigurationParameter, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.ActiveSecurityAdminRulesListResult:\n",
+                    "doc": "\"\"\"Lists active security admin rules in a network manager.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param network_manager_name: The name of the network manager. Required.\n:type network_manager_name: str\n:param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: ActiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2022_09_01.models.ActiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, network_manager_name, parameters, top=top, **kwargs"
                 }
             },
             "list_network_manager_effective_connectivity_configurations" : {
                 "sync": {
-                    "signature": "def list_network_manager_effective_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveConnectivityConfigurationListResult:\n",
-                    "doc": "\"\"\"List all effective connectivity configurations applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveConnectivityConfigurationListResult or the result of\n cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveConnectivityConfigurationListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, virtual_network_name, parameters, top, **kwargs"
+                    "signature": "def list_network_manager_effective_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveConnectivityConfigurationListResult:\n",
+                    "doc": "\"\"\"List all effective connectivity configurations applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveConnectivityConfigurationListResult or the result of\n cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveConnectivityConfigurationListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, virtual_network_name, parameters, top=top, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def list_network_manager_effective_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveConnectivityConfigurationListResult:\n",
-                    "doc": "\"\"\"List all effective connectivity configurations applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveConnectivityConfigurationListResult or the result of\n cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveConnectivityConfigurationListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, virtual_network_name, parameters, top, **kwargs"
+                    "signature": "async def list_network_manager_effective_connectivity_configurations(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveConnectivityConfigurationListResult:\n",
+                    "doc": "\"\"\"List all effective connectivity configurations applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveConnectivityConfigurationListResult or the result of\n cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveConnectivityConfigurationListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, virtual_network_name, parameters, top=top, **kwargs"
                 }
             },
             "list_network_manager_effective_security_admin_rules" : {
                 "sync": {
-                    "signature": "def list_network_manager_effective_security_admin_rules(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveSecurityAdminRulesListResult:\n",
-                    "doc": "\"\"\"List all effective security admin rules applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, virtual_network_name, parameters, top, **kwargs"
+                    "signature": "def list_network_manager_effective_security_admin_rules(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveSecurityAdminRulesListResult:\n",
+                    "doc": "\"\"\"List all effective security admin rules applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, virtual_network_name, parameters, top=top, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def list_network_manager_effective_security_admin_rules(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveSecurityAdminRulesListResult:\n",
-                    "doc": "\"\"\"List all effective security admin rules applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:param top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:type top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "resource_group_name, virtual_network_name, parameters, top, **kwargs"
+                    "signature": "async def list_network_manager_effective_security_admin_rules(\n    self,\n    resource_group_name: str,\n    virtual_network_name: str,\n    parameters: Union[_models.QueryRequestOptions, IO],\n    *,\n    top: Optional[int] = None,\n    **kwargs: Any\n) -\u003e _models.NetworkManagerEffectiveSecurityAdminRulesListResult:\n",
+                    "doc": "\"\"\"List all effective security admin rules applied on a virtual network.\n\n:param resource_group_name: The name of the resource group. Required.\n:type resource_group_name: str\n:param virtual_network_name: The name of the virtual network. Required.\n:type virtual_network_name: str\n:param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions\n type or a IO type. Required.\n:type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO\n:keyword top: An optional query parameter which specifies the maximum number of records to be\n returned by the server. Default value is None.\n:paramtype top: int\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: NetworkManagerEffectiveSecurityAdminRulesListResult or the result of cls(response)\n:rtype:\n ~azure.mgmt.network.v2022_09_01.models.NetworkManagerEffectiveSecurityAdminRulesListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "resource_group_name, virtual_network_name, parameters, top=top, **kwargs"
                 }
             },
             "supported_security_providers" : {

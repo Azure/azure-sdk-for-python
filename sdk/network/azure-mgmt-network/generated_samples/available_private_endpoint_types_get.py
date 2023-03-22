@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subId",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.available_private_endpoint_types.list(

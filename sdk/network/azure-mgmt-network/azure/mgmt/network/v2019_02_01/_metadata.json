@@ -15,38 +15,38 @@
     },
     "global_parameters": {
         "sync": {
+            "subscription_id": {
+                "signature": "subscription_id: str,",
+                "description": "The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
+                "docstring_type": "str",
+                "required": true,
+                "method_location": "positional"
+            },
             "credential": {
                 "signature": "credential: \"TokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true,
                 "method_location": "positional"
-            },
+            }
+        },
+        "async": {
             "subscription_id": {
                 "signature": "subscription_id: str,",
                 "description": "The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
                 "docstring_type": "str",
-                "required": true,
-                "method_location": "positional"
-            }
-        },
-        "async": {
+                "required": true
+            },
             "credential": {
                 "signature": "credential: \"AsyncTokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
-            },
-            "subscription_id": {
-                "signature": "subscription_id: str,",
-                "description": "The subscription credentials which uniquely identify the Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.",
-                "docstring_type": "str",
-                "required": true
             }
         },
         "constant": {
         },
-        "call": "credential, subscription_id",
+        "call": "subscription_id, credential",
         "service_client_specific": {
             "sync": {
                 "api_version": {
@@ -54,21 +54,21 @@
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
-                "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                "endpoint": {
+                    "signature": "endpoint: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 }
             },
             "async": {
@@ -77,21 +77,21 @@
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
-                "base_url": {
-                    "signature": "base_url: str = \"https://management.azure.com\",",
+                "endpoint": {
+                    "signature": "endpoint: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles = KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
                     "required": false,
-                    "method_location": "positional"
+                    "method_location": "keywordOnly"
                 }
             }
         }
@@ -182,18 +182,20 @@
     "operation_mixins": {
         "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}}}",
         "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}}}",
+        "sync_mixin_typing_definitions": "",
+        "async_mixin_typing_definitions": "",
         "operations": {
             "check_dns_name_availability" : {
                 "sync": {
-                    "signature": "def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2019_02_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "location, domain_name_label, **kwargs"
+                    "signature": "def check_dns_name_availability(\n    self,\n    location: str,\n    *,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:keyword domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:paramtype domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2019_02_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "location, domain_name_label=domain_name_label, **kwargs"
                 },
                 "async": {
                     "coroutine": true,
-                    "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
-                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:param domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:type domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2019_02_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
-                    "call": "location, domain_name_label, **kwargs"
+                    "signature": "async def check_dns_name_availability(\n    self,\n    location: str,\n    *,\n    domain_name_label: str,\n    **kwargs: Any\n) -\u003e _models.DnsNameAvailabilityResult:\n",
+                    "doc": "\"\"\"Checks whether a domain name in the cloudapp.azure.com zone is available for use.\n\n:param location: The location of the domain name. Required.\n:type location: str\n:keyword domain_name_label: The domain name to be verified. It must conform to the following\n regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.\n:paramtype domain_name_label: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: DnsNameAvailabilityResult or the result of cls(response)\n:rtype: ~azure.mgmt.network.v2019_02_01.models.DnsNameAvailabilityResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "location, domain_name_label=domain_name_label, **kwargs"
                 }
             },
             "supported_security_providers" : {

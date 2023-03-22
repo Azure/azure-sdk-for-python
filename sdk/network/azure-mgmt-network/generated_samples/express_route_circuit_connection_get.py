@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid1",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.express_route_circuit_connections.get(

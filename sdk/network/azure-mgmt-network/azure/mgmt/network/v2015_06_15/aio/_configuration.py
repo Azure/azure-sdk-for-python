@@ -31,27 +31,27 @@ class NetworkManagementClientConfiguration(Configuration):  # pylint: disable=to
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft
      Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. Default value is "2015-06-15". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
+    def __init__(self, subscription_id: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(NetworkManagementClientConfiguration, self).__init__(**kwargs)
         api_version: Literal["2015-06-15"] = kwargs.pop("api_version", "2015-06-15")
 
-        if credential is None:
-            raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
-        self.credential = credential
         self.subscription_id = subscription_id
+        self.credential = credential
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-network/{}".format(VERSION))

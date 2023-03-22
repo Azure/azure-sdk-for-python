@@ -294,6 +294,7 @@ class NetworkManagementClientOperationsMixin(object):
     def check_dns_name_availability(
         self,
         location: str,
+        *,
         domain_name_label: str,
         **kwargs: Any
     ) -> _models.DnsNameAvailabilityResult:
@@ -301,9 +302,9 @@ class NetworkManagementClientOperationsMixin(object):
 
         :param location: The location of the domain name. Required.
         :type location: str
-        :param domain_name_label: The domain name to be verified. It must conform to the following
+        :keyword domain_name_label: The domain name to be verified. It must conform to the following
          regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.
-        :type domain_name_label: str
+        :paramtype domain_name_label: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DnsNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.DnsNameAvailabilityResult
@@ -363,7 +364,7 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.check_dns_name_availability(location, domain_name_label, **kwargs)
+        return mixin_instance.check_dns_name_availability(location, domain_name_label=domain_name_label, **kwargs)
 
     def disconnect_active_sessions(
         self,
@@ -521,6 +522,7 @@ class NetworkManagementClientOperationsMixin(object):
         resource_group_name: str,
         network_manager_name: str,
         parameters: Union[_models.ActiveConfigurationParameter, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ActiveConnectivityConfigurationsListResult:
@@ -533,9 +535,9 @@ class NetworkManagementClientOperationsMixin(object):
         :param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -556,13 +558,14 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_active_connectivity_configurations(resource_group_name, network_manager_name, parameters, top, **kwargs)
+        return mixin_instance.list_active_connectivity_configurations(resource_group_name, network_manager_name, parameters, top=top, **kwargs)
 
     def list_active_security_admin_rules(
         self,
         resource_group_name: str,
         network_manager_name: str,
         parameters: Union[_models.ActiveConfigurationParameter, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ActiveSecurityAdminRulesListResult:
@@ -575,9 +578,9 @@ class NetworkManagementClientOperationsMixin(object):
         :param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -598,13 +601,14 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_active_security_admin_rules(resource_group_name, network_manager_name, parameters, top, **kwargs)
+        return mixin_instance.list_active_security_admin_rules(resource_group_name, network_manager_name, parameters, top=top, **kwargs)
 
     def list_network_manager_effective_connectivity_configurations(
         self,
         resource_group_name: str,
         virtual_network_name: str,
         parameters: Union[_models.QueryRequestOptions, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveConnectivityConfigurationListResult:
@@ -617,9 +621,9 @@ class NetworkManagementClientOperationsMixin(object):
         :param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -642,13 +646,14 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_network_manager_effective_connectivity_configurations(resource_group_name, virtual_network_name, parameters, top, **kwargs)
+        return mixin_instance.list_network_manager_effective_connectivity_configurations(resource_group_name, virtual_network_name, parameters, top=top, **kwargs)
 
     def list_network_manager_effective_security_admin_rules(
         self,
         resource_group_name: str,
         virtual_network_name: str,
         parameters: Union[_models.QueryRequestOptions, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveSecurityAdminRulesListResult:
@@ -661,9 +666,9 @@ class NetworkManagementClientOperationsMixin(object):
         :param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -685,7 +690,7 @@ class NetworkManagementClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_network_manager_effective_security_admin_rules(resource_group_name, virtual_network_name, parameters, top, **kwargs)
+        return mixin_instance.list_network_manager_effective_security_admin_rules(resource_group_name, virtual_network_name, parameters, top=top, **kwargs)
 
     def supported_security_providers(
         self,

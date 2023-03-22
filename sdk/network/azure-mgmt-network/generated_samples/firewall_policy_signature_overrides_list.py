@@ -25,8 +25,8 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="e747cc13-97d4-4a79-b463-42d7f4e558f2",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.firewall_policy_idps_signatures_overrides.list(

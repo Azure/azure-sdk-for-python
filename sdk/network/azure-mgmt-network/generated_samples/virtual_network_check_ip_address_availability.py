@@ -25,14 +25,13 @@ from azure.mgmt.network import NetworkManagementClient
 
 def main():
     client = NetworkManagementClient(
-        credential=DefaultAzureCredential(),
         subscription_id="subid",
+        credential=DefaultAzureCredential(),
     )
 
     response = client.virtual_networks.check_ip_address_availability(
         resource_group_name="rg1",
         virtual_network_name="test-vnet",
-        ip_address="10.0.1.4",
     )
     print(response)
 
