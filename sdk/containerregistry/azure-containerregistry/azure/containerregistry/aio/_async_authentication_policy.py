@@ -65,11 +65,11 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
                             return response
 
                     response = await self.next.send(request)
+            return response
         finally:
             # set stream's original behavior back
             if original is not None:
                 request.http_request.body.close = original
-            return response
 
     async def on_challenge(self, request: PipelineRequest, response: PipelineResponse, challenge: str) -> bool:
         """Authorize request according to an authentication challenge
