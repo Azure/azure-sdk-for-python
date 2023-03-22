@@ -117,6 +117,7 @@ class _FeatureStore(Workspace):
                 OFFLINE_STORE_CONNECTION_NAME if materialization_identity and offline_store else None
             ),
         )
+        self._workspace_id = kwargs.pop("workspace_id", "")
         super().__init__(
             name=name,
             description=description,
@@ -171,6 +172,7 @@ class _FeatureStore(Workspace):
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
+            workspace_id=rest_obj.workspace_id,
         )
 
     @classmethod

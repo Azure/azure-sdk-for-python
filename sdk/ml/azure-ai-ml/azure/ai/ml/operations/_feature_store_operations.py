@@ -15,6 +15,7 @@ from azure.ai.ml._scope_dependent_operations import OperationsContainer, Operati
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._feature_store.feature_store import _FeatureStore
 from azure.ai.ml.entities._workspace.feature_store_settings import _FeatureStoreSettings
@@ -115,9 +116,12 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                 rest_workspace_obj.feature_store_settings
                 and rest_workspace_obj.feature_store_settings.offline_store_connection_name
             ):
-                offline_Store_connection = self._workspace_connection_operation.get(
-                    resource_group, name, rest_workspace_obj.feature_store_settings.offline_store_connection_name
-                )
+                try:
+                    offline_Store_connection = self._workspace_connection_operation.get(
+                        resource_group, name, rest_workspace_obj.feature_store_settings.offline_store_connection_name
+                    )
+                except ResourceNotFoundError:
+                    pass
 
             if offline_Store_connection:
                 if (
