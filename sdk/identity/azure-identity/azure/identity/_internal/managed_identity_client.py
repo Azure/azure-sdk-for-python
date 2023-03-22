@@ -66,7 +66,7 @@ class ManagedIdentityClientBase(abc.ABC):
         content["expires_on"] = expires_on
         if "refresh_in" not in content:
             refresh_in = expires_on - request_time
-            if refresh_in > 60 * 60 * 2:  # 2 hours
+            if refresh_in >= 60 * 60 * 2:  # 2 hours
                 refresh_in = int(refresh_in / 2)
             content["refresh_in"] = refresh_in
 
