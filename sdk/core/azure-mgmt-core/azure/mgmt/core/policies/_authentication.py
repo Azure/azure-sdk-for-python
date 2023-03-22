@@ -25,14 +25,12 @@
 # --------------------------------------------------------------------------
 import base64
 import time
-from typing import TYPE_CHECKING, TypeVar
+from typing import Optional, TypeVar
 
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy, SansIOHTTPPolicy
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.exceptions import ServiceRequestError
 
-if TYPE_CHECKING:
-    from typing import Optional
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -47,8 +45,11 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
     :param str scopes: required authentication scopes
     """
 
-    def on_challenge(self, request, response):  # pylint:disable=unused-argument
-        # type: (PipelineRequest, PipelineResponse) -> bool
+    def on_challenge(
+            self,
+            request: PipelineRequest[HTTPRequestType],
+            response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+    ) -> bool:
         """Authorize request according to an ARM authentication challenge
 
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
@@ -82,7 +83,7 @@ class _AuxiliaryAuthenticationPolicyBase:
         self._aux_tokens = None
 
     @staticmethod
-    def _enforce_https(request: "PipelineRequest") -> None:
+    def _enforce_https(request: PipelineRequest[HTTPRequestType]) -> None:
         # move 'enforce_https' from options to context, so it persists
         # across retries but isn't passed to transport implementation
         option = request.context.options.pop("enforce_https", None)
@@ -128,7 +129,7 @@ class AuxiliaryAuthenticationPolicy(
             ]
         return None
 
-    def on_request(self, request: "PipelineRequest[HTTPRequestType]") -> None:
+    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
         """Called before the policy sends a request.
 
         The base implementation authorizes the request with an auxiliary authorization token.
@@ -143,8 +144,7 @@ class AuxiliaryAuthenticationPolicy(
         self._update_headers(request.http_request.headers)
 
 
-def _parse_claims_challenge(challenge):
-    # type: (str) -> Optional[str]
+def _parse_claims_challenge(challenge: str) -> Optional[str]:
     """Parse the "claims" parameter from an authentication challenge
 
     Example challenge with claims:
