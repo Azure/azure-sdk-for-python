@@ -457,7 +457,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         return result
 
     def update_queue(
-        self, queue: Union[QueueProperties, Mapping], **kwargs: Any
+        self, queue: Union[QueueProperties, Mapping[str, Any]], **kwargs: Any
     ) -> None:
         """Update a queue.
 
