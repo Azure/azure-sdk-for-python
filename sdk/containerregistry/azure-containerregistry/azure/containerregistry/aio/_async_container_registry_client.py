@@ -869,7 +869,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     **kwargs
                 )
             )
-        except ValueError:
+        except Exception:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
             raise
