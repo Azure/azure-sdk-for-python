@@ -27,6 +27,7 @@ from collections.abc import AsyncIterator
 from typing import ContextManager, Optional
 
 import httpx
+from azure.core import pipeline
 
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
@@ -36,15 +37,15 @@ from ._httpx import HttpXTransportResponse
 
 
 class AsyncHttpXTransportResponse(HttpXTransportResponse, AsyncHttpResponseImpl):
-    def stream_download(self, _) -> AsyncIterator[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> AsyncIterator[bytes]:
         return AsyncHttpXStreamDownloadGenerator(_, self)
 
     async def load_body(self) -> None:
         self._content = self.internal_response.content
 
-
+# pylint: disable=unused-argument
 class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
-    def __init__(self, _, response) -> None:
+    def __init__(self, pipeline: pipeline, response: AsyncHttpXTransportResponse, *_, **kwargs) -> None:
         self.response = response
         self.iter_bytes_func = self.response.internal_response.aiter_bytes()
 

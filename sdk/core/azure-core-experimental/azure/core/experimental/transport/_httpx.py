@@ -26,6 +26,7 @@
 from typing import ContextManager, Iterator, Optional
 
 import httpx
+from azure.core import pipeline
 
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpRequest, HttpTransport
@@ -49,12 +50,12 @@ class HttpXTransportResponse(HttpResponseImpl):
     def body(self) -> bytes:
         return self.internal_response.content
 
-    def stream_download(self, _) -> Iterator[bytes]:
+    def stream_download(self, pipeline, **kwargs) -> Iterator[bytes]:
         return HttpXStreamDownloadGenerator(_, self)
 
-
+# pylint: disable=unused-argument
 class HttpXStreamDownloadGenerator:
-    def __init__(self, _, response) -> None:
+    def __init__(self, pipeline: pipeline, response: HttpXTransportResponse, *_, **kwargs) -> None:
         self.response = response
         self.iter_bytes_func = self.response.internal_response.iter_bytes()
 
