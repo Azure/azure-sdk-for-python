@@ -1326,7 +1326,7 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        async with CosmosClient(url=CRUDTests.host, credential="wrong_key", consistency_level="Session", connection_policy=CRUDTests.connectionPolicy) as client:
+        async with CosmosClient(CRUDTests.host, {}, consistency_level="Session", connection_policy=CRUDTests.connectionPolicy) as client:
             try:
                 [db async for db in client.list_databases()]
             except exceptions.CosmosHttpResponseError as e:
