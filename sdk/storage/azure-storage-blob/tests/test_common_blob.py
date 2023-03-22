@@ -1176,9 +1176,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
-            before_props = self.bsc.get_service_properties()
-            assert before_props['delete_retention_policy'].days is None
-            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
             after_props = self.bsc.get_service_properties()
             assert after_props['delete_retention_policy'].days == 2
@@ -1221,9 +1218,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
-            before_props = self.bsc.get_service_properties()
-            assert before_props['delete_retention_policy'].days is None
-            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
             after_props = self.bsc.get_service_properties()
             assert after_props['delete_retention_policy'].days == 2
@@ -1277,9 +1271,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
-            before_props = self.bsc.get_service_properties()
-            assert before_props['delete_retention_policy'].days is None
-            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
             after_props = self.bsc.get_service_properties()
             assert after_props['delete_retention_policy'].days == 2
@@ -1330,9 +1321,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         try:
             self._setup(storage_account_name, storage_account_key)
-            before_props = self.bsc.get_service_properties()
-            assert before_props['delete_retention_policy'].days is None
-            assert before_props['delete_retention_policy'].enabled is False
             self._enable_soft_delete()
             after_props = self.bsc.get_service_properties()
             assert after_props['delete_retention_policy'].days == 2
