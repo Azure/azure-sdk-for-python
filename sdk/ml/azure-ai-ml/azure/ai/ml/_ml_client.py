@@ -107,6 +107,7 @@ from azure.ai.ml.operations._feature_store_entity_operations import _FeatureStor
 module_logger = logging.getLogger(__name__)
 
 
+# cspell:ignore overriden
 # pylint: disable=too-many-public-methods
 class MLClient:
     """A client class to interact with Azure ML services.
