@@ -123,8 +123,8 @@ def get_cpk_scope_info(kwargs):
 
 
 def get_container_cpk_scope_info(
-        encryption_scope: Optional[Union[Dict[str, Any], "ContainerEncryptionScope"]]
-    ) -> ContainerCpkScopeInfo:
+    encryption_scope: Optional[Union[Dict[str, Any], "ContainerEncryptionScope"]]
+) -> ContainerCpkScopeInfo:
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
             return ContainerCpkScopeInfo(
