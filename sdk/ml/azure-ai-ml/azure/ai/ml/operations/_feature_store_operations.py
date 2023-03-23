@@ -114,48 +114,48 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             feature_store = _FeatureStore._from_rest_object(rest_workspace_obj)
 
         if feature_store:
-            offline_Store_connection = None
+            offline_store_connection = None
             if (
                 rest_workspace_obj.feature_store_settings
                 and rest_workspace_obj.feature_store_settings.offline_store_connection_name
             ):
                 try:
-                    offline_Store_connection = self._workspace_connection_operation.get(
+                    offline_store_connection = self._workspace_connection_operation.get(
                         resource_group, name, rest_workspace_obj.feature_store_settings.offline_store_connection_name
                     )
                 except ResourceNotFoundError:
                     pass
 
-            if offline_Store_connection:
+            if offline_store_connection:
                 if (
-                    offline_Store_connection.properties
-                    and offline_Store_connection.properties.category == OFFLINE_STORE_CONNECTION_CATEGORY
+                    offline_store_connection.properties
+                    and offline_store_connection.properties.category == OFFLINE_STORE_CONNECTION_CATEGORY
                 ):
                     feature_store.offline_store = _MaterializationStore(
-                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=offline_Store_connection.properties.target
+                        type=OFFLINE_MATERIALIZATION_STORE_TYPE, target=offline_store_connection.properties.target
                     )
 
-            online_Store_connection = None
+            online_store_connection = None
             if (
                 rest_workspace_obj.feature_store_settings
                 and rest_workspace_obj.feature_store_settings.online_store_connection_name
             ):
-                online_Store_connection = self._workspace_connection_operation.get(
+                online_store_connection = self._workspace_connection_operation.get(
                     resource_group, name, rest_workspace_obj.feature_store_settings.online_store_connection_name
                 )
 
-            if online_Store_connection:
+            if online_store_connection:
                 if (
-                    online_Store_connection.properties
-                    and online_Store_connection.properties.category == ONLINE_STORE_CONNECTION_CATEGORY
+                    online_store_connection.properties
+                    and online_store_connection.properties.category == ONLINE_STORE_CONNECTION_CATEGORY
                 ):
                     feature_store.online_store = _MaterializationStore(
-                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=online_Store_connection.properties.target
+                        type=ONLINE_MATERIALIZATION_STORE_TYPE, target=online_store_connection.properties.target
                     )
 
             # materialization identity = identity when created through feature store operations
-            if (offline_Store_connection and offline_Store_connection.name == OFFLINE_STORE_CONNECTION_NAME) or (
-                online_Store_connection and online_Store_connection.name == ONLINE_STORE_CONNECTION_NAME
+            if (offline_store_connection and offline_store_connection.name == OFFLINE_STORE_CONNECTION_NAME) or (
+                online_store_connection and online_store_connection.name == ONLINE_STORE_CONNECTION_NAME
             ):
                 if (
                     feature_store.identity
@@ -250,16 +250,16 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             raise ValidationError("offline store type should be azure_data_lake_gen2")
 
         if offline_store and rest_workspace_obj.feature_store_settings.offline_store_connection_name:
-            existing_offline_Store_connection = self._workspace_connection_operation.get(
+            existing_offline_store_connection = self._workspace_connection_operation.get(
                 resource_group,
                 feature_store.name,
                 rest_workspace_obj.feature_store_settings.offline_store_connection_name,
             )
 
-            if existing_offline_Store_connection:
+            if existing_offline_store_connection:
                 if (
-                    not existing_offline_Store_connection.properties
-                    or existing_offline_Store_connection.properties.target != offline_store.target
+                    not existing_offline_store_connection.properties
+                    or existing_offline_store_connection.properties.target != offline_store.target
                 ):
                     raise ValidationError("Cannot update the offline store target")
             else:
@@ -270,16 +270,16 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             raise ValidationError("online store type should be redis")
 
         if online_store and rest_workspace_obj.feature_store_settings.online_store_connection_name:
-            existing_online_Store_connection = self._workspace_connection_operation.get(
+            existing_online_store_connection = self._workspace_connection_operation.get(
                 resource_group,
                 feature_store.name,
                 rest_workspace_obj.feature_store_settings.online_store_connection_name,
             )
 
-            if existing_online_Store_connection:
+            if existing_online_store_connection:
                 if (
-                    not existing_online_Store_connection.properties
-                    or existing_online_Store_connection.properties.target != online_store.target
+                    not existing_online_store_connection.properties
+                    or existing_online_store_connection.properties.target != online_store.target
                 ):
                     raise ValidationError("Cannot update the online store target")
             else:
