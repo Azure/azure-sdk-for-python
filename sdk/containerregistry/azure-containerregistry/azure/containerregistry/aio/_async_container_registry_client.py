@@ -3,8 +3,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
 import functools
-from typing import Any, Dict, Optional, overload, Union, cast
+from io import BytesIO
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
@@ -20,6 +22,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._download_stream_async import AsyncDownloadBlobStream
 from ._async_base_client import ContainerRegistryBaseClient
+from .._container_registry_client import _return_response_headers, _return_deserialized_and_headers
 from .._generated.models import AcrErrors
 from .._helpers import (
     _is_tag,
@@ -29,7 +32,6 @@ from .._helpers import (
     DEFAULT_CHUNK_SIZE
 )
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
-from .._container_registry_client import _return_deserialized_and_headers
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -849,6 +851,61 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace_async
+    async def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
+        """Upload an artifact blob.
+        :param str repository: Name of the repository.
+        :param data: The blob to upload. Note: This must be a seekable stream.
+        :type data: IO
+        :returns: The digest and size of the uploaded blob.
+        :rtype: Tuple[str, int]
+        :raises ValueError: If the parameter repository or data is None.
+        """
+        try:
+            start_upload_response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.start_upload(
+                    repository, cls=_return_response_headers, **kwargs
+                )
+            )
+            digest, location, blob_size = await self._upload_blob_chunk(
+                start_upload_response_headers['Location'], data, **kwargs
+            )
+            complete_upload_response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.complete_upload(
+                    digest=digest,
+                    next_link=location,
+                    cls=_return_response_headers,
+                    **kwargs
+                )
+            )
+        except Exception:
+            if repository is None or data is None:
+                raise ValueError("The parameter repository and data cannot be None.")
+            raise
+        return complete_upload_response_headers['Docker-Content-Digest'], blob_size
+
+    async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
+        hasher = hashlib.sha256()
+        buffer = data.read(DEFAULT_CHUNK_SIZE)
+        blob_size = len(buffer)
+        while len(buffer) > 0:
+            response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.upload_chunk(
+                    location,
+                    BytesIO(buffer),
+                    cls=_return_response_headers,
+                    **kwargs
+                )
+            )
+            location = response_headers['Location']
+            hasher.update(buffer)
+            buffer = data.read(DEFAULT_CHUNK_SIZE)
+            blob_size += len(buffer)
+        return "sha256:" + hasher.hexdigest(), location, blob_size
+
+    @distributed_trace_async
     async def download_blob(self, repository: str, digest: str, **kwargs) -> AsyncDownloadBlobStream:
         """Download a blob that is part of an artifact to a stream.
 
@@ -862,7 +919,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         first_chunk, headers = await self._client.container_registry_blob.get_chunk(
             repository,
             digest,
-            f"bytes=0-{chunk_size}",
+            range=f"bytes=0-{chunk_size}",
             cls=_return_deserialized_and_headers,
             **kwargs
         )
