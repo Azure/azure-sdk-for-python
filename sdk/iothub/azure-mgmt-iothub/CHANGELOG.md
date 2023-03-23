@@ -1,5 +1,11 @@
 # Release History
 
+## 2.4.0 (2023-03-23)
+
+### Features Added
+
+  - Model IotHubProperties has a new parameter ip_version
+
 ## 2.4.0b1 (2023-02-15)
 
 ### Other Changes
