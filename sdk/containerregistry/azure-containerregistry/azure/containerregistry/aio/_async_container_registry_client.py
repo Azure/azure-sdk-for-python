@@ -37,7 +37,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str endpoint: An ACR endpoint.
         :param credential: The credential with which to authenticate.
-        :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+        :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
             may result in unsupported behavior.
         :paramtype api_version: str
@@ -384,8 +384,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
+        manifest_properties = await self._client.container_registry.get_manifest_properties(
+            repository, tag_or_digest, **kwargs
+        )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
+            manifest_properties.manifest, # type: ignore
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -411,8 +414,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             async for tag in client.list_tag_properties("my_repository"):
                 tag_properties = await client.get_tag_properties("my_repository", tag.name)
         """
+        tag_properties = await self._client.container_registry.get_tag_properties(
+            repository, tag, **kwargs
+        )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
+            tag_properties.tag, # type: ignore
             repository=repository,
         )
 
@@ -715,13 +721,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if _is_tag(tag_or_digest):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
+        manifest_properties = await self._client.container_registry.update_manifest_properties(
+            repository,
+            tag_or_digest,
+            value=properties._to_generated(),  # pylint: disable=protected-access
+            **kwargs
+        )
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.update_manifest_properties(
-                repository,
-                tag_or_digest,
-                value=properties._to_generated(),  # pylint: disable=protected-access
-                **kwargs
-            ),
+            manifest_properties.manifest, # type: ignore
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -824,10 +831,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_read = kwargs.pop("can_read", properties.can_read)
         properties.can_write = kwargs.pop("can_write", properties.can_write)
 
+        tag_attributes = await self._client.container_registry.update_tag_attributes(
+            repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
+        )
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            await self._client.container_registry.update_tag_attributes(
-                repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
-            ),
+            tag_attributes.tag, # type: ignore
             repository=repository
         )
 
