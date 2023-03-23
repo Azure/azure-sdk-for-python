@@ -65,7 +65,7 @@ class TestFeatureStoreEntityOperations:
         name = "random_name"
         with pytest.raises(Exception) as ex:
             mock_feature_store_entity_operations.get(name=name)
-        assert "At least one required parameter is missing" in str(ex.value)
+        assert "The yaml file provided is missing one or more required parameters" in str(ex.value)
 
     def test_archive_version(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
         name = "random_name"

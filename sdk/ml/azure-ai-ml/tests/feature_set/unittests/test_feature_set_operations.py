@@ -99,7 +99,7 @@ class TestFeatureSetOperations:
         name = "random_name"
         with pytest.raises(Exception) as ex:
             mock_feature_set_operations.get(name=name)
-        assert "At least one required parameter is missing" in str(ex.value)
+        assert "The yaml file provided is missing one or more required parameters" in str(ex.value)
 
     def test_begin_backfill(self, mock_feature_set_operations: _FeatureSetOperations) -> None:
         mock_feature_set_operations._operation.begin_backfill.return_value = LROPoller
