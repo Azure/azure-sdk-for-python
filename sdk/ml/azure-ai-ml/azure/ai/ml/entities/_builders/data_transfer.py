@@ -15,7 +15,11 @@ from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferImportJobSchema,
     DataTransferExportJobSchema,
 )
-from azure.ai.ml.constants._component import NodeType, ExternalDataType, DataTransferTaskType
+from azure.ai.ml.constants._component import (
+    NodeType,
+    ExternalDataType,
+    DataTransferTaskType,
+)
 from azure.ai.ml.entities._component.datatransfer_component import (
     DataTransferCopyComponent,
     DataTransferImportComponent,
@@ -30,7 +34,12 @@ from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
     DataTransferExportJob,
 )
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 
 
@@ -53,7 +62,7 @@ def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
         component_io = io_dict
     else:
         if isinstance(io_dict, dict):
-            data_type = io_dict.get("type", None)
+            data_type = io_dict.pop("type", None)
             if data_type == ExternalDataType.DATABASE:
                 component_io = Database(**io_dict)
             elif data_type == ExternalDataType.FILE_SYSTEM:
@@ -61,9 +70,15 @@ def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
             else:
                 msg = "Type in source or sink only support {} and {}, currently got {}."
                 raise ValidationException(
-                    message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                    message=msg.format(
+                        ExternalDataType.DATABASE,
+                        ExternalDataType.FILE_SYSTEM,
+                        data_type,
+                    ),
                     no_personal_data_message=msg.format(
-                        ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                        ExternalDataType.DATABASE,
+                        ExternalDataType.FILE_SYSTEM,
+                        "data_type",
                     ),
                     target=ErrorTarget.DATA_TRANSFER_JOB,
                     error_category=ErrorCategory.USER_ERROR,
@@ -157,8 +172,6 @@ class DataTransferCopy(DataTransfer):
     :type experiment_name: str
     :param compute: The compute target the job runs on.
     :type compute: str
-    :param task: task type in data transfer component, possible value is "copy_data".
-    :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferCopy cannot be successfully validated.
@@ -173,7 +186,6 @@ class DataTransferCopy(DataTransfer):
         compute: Optional[str] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        task: Optional[str] = DataTransferTaskType.COPY_DATA,
         data_copy_mode: Optional[str] = None,
         **kwargs,
     ):
@@ -188,7 +200,7 @@ class DataTransferCopy(DataTransfer):
         )
         # init mark for _AttrDict
         self._init = True
-        self.task = task
+        self.task = DataTransferTaskType.COPY_DATA
         self.data_copy_mode = data_copy_mode
         is_component = isinstance(component, DataTransferCopyComponent)
         if is_component:
@@ -214,7 +226,10 @@ class DataTransferCopy(DataTransfer):
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
-        for key, value in {"componentId": self._get_component_id(), "data_copy_mode": self.data_copy_mode}.items():
+        for key, value in {
+            "componentId": self._get_component_id(),
+            "data_copy_mode": self.data_copy_mode,
+        }.items():
             if value is not None:
                 rest_obj[key] = value
         return convert_ordered_dict_to_dict(rest_obj)
@@ -240,7 +255,6 @@ class DataTransferCopy(DataTransfer):
             outputs=self._job_outputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
             data_copy_mode=self.data_copy_mode,
         )
 
@@ -301,8 +315,6 @@ class DataTransferImport(DataTransfer):
     :type experiment_name: str
     :param compute: The compute target the job runs on.
     :type compute: str
-    :param task: task type in data transfer component, possible value is "import_data".
-    :type task: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferImport cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -315,7 +327,6 @@ class DataTransferImport(DataTransfer):
         compute: Optional[str] = None,
         source: Optional[Union[Dict, Database, FileSystem]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
         **kwargs,
     ):
         # validate init params are valid type
@@ -328,7 +339,7 @@ class DataTransferImport(DataTransfer):
         )
         # init mark for _AttrDict
         self._init = True
-        self.task = task
+        self.task = DataTransferTaskType.IMPORT_DATA
         is_component = isinstance(component, DataTransferImportComponent)
         if is_component:
             self.task = component.task or self.task
@@ -409,7 +420,6 @@ class DataTransferImport(DataTransfer):
             outputs=self._job_outputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
         )
 
 
@@ -438,8 +448,6 @@ class DataTransferExport(DataTransfer):
     :type experiment_name: str
     :param compute: The compute target the job runs on.
     :type compute: str
-    :param task: task type in data transfer component, possible value is "export_data".
-    :type task: str
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferExport cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -452,7 +460,6 @@ class DataTransferExport(DataTransfer):
         compute: Optional[str] = None,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
         inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
-        task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
         **kwargs,
     ):
         # validate init params are valid type
@@ -465,7 +472,7 @@ class DataTransferExport(DataTransfer):
         )
         # init mark for _AttrDict
         self._init = True
-        self.task = task
+        self.task = DataTransferTaskType.EXPORT_DATA
         is_component = isinstance(component, DataTransferExportComponent)
         if is_component:
             self.task = component.task or self.task
@@ -560,5 +567,4 @@ class DataTransferExport(DataTransfer):
             inputs=self._job_inputs,
             services=self.services,
             compute=self.compute,
-            task=self.task,
         )

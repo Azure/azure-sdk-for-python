@@ -21,7 +21,7 @@ jobs:
           versionSpec: '3.9.13'
 
       # Docs CI upgrades pip, wheel, and setuptools
-      - pwsh: pip install --upgrade pip wheel setuptools
+      - pwsh: python -m pip install --upgrade pip wheel setuptools
         displayName: Update python tools for package verification
 
       # Pull and build the docker image.

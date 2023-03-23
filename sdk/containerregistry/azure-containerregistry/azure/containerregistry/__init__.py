@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_client import ContainerRegistryClient
-from ._generated.models._container_registry_enums import (
+from ._generated.models import (
     ArtifactManifestOrder,
     ArtifactTagOrder,
 )

@@ -8,16 +8,13 @@ import hashlib
 import re
 import time
 import json
-from typing import TYPE_CHECKING, Dict
+from typing import List, Dict, IO, Optional
 from io import BytesIO
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
+from azure.core.pipeline import PipelineRequest
 from ._generated.models import OCIManifest
-
-if TYPE_CHECKING:
-    from typing import List, IO, Optional
-    from azure.core.pipeline import PipelineRequest
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
@@ -26,17 +23,15 @@ SUPPORTED_API_VERSIONS = [
     "2021-07-01"
 ]
 
-# Supported audiences
+# Public cloud audience
 AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
 
 
-def _is_tag(tag_or_digest):
-    # type: (str) -> bool
+def _is_tag(tag_or_digest: str) -> bool:
     tag = tag_or_digest.split(":")
     return not (len(tag) == 2 and tag[0].startswith("sha"))
 
-def _clean(matches):
-    # type: (List[str]) -> None
+def _clean(matches: List[str]) -> None:
     """This method removes empty strings and commas from the regex matching of the Challenge header"""
     while True:
         try:
@@ -50,8 +45,7 @@ def _clean(matches):
         except ValueError:
             return
 
-def _parse_challenge(header):
-    # type: (str) -> Dict[str, str]
+def _parse_challenge(header: str) -> Dict[str, str]:
     """Parse challenge header into service and scope"""
     ret: Dict[str, str] = {}
     if header.startswith(BEARER):
@@ -64,8 +58,7 @@ def _parse_challenge(header):
 
     return ret
 
-def _parse_next_link(link_string):
-    # type: (str) -> Optional[str]
+def _parse_next_link(link_string: str) -> Optional[str]:
     """Parses the next link in the list operations response URL
 
     Per the Docker v2 HTTP API spec, the Link header is an RFC5988
@@ -81,8 +74,7 @@ def _parse_next_link(link_string):
         return None
     return link_string[1 : link_string.find(">")]
 
-def _enforce_https(request):
-    # type: (PipelineRequest) -> None
+def _enforce_https(request: PipelineRequest) -> None:
     """Raise ServiceRequestError if the request URL is non-HTTPS and the sender did not specify enforce_https=False"""
 
     # move 'enforce_https' from options to context so it persists
@@ -99,8 +91,7 @@ def _enforce_https(request):
             "Bearer token authentication is not permitted for non-TLS protected (non-https) URLs."
         )
 
-def _host_only(url):
-    # type: (str) -> str
+def _host_only(url: str) -> str:
     return urlparse(url).netloc
 
 def _strip_alg(digest):
@@ -122,26 +113,22 @@ def _parse_exp_time(raw_token):
 
     return time.time()
 
-def _serialize_manifest(manifest):
-    # type: (OCIManifest) -> IO
+def _serialize_manifest(manifest: OCIManifest) -> IO:
     data = json.dumps(manifest.serialize()).encode('utf-8')
     return BytesIO(data)
 
-def _deserialize_manifest(data):
-    # type: (IO) -> OCIManifest
+def _deserialize_manifest(data: IO) -> OCIManifest:
     data.seek(0)
     value = data.read()
     data.seek(0)
     return OCIManifest.deserialize(json.loads(value.decode()))
 
-def _compute_digest(data):
-    # type: (IO) -> str
+def _compute_digest(data: IO) -> str:
     data.seek(0)
     value = data.read()
     data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
-def _validate_digest(data, digest):
-    # type: (IO, str) -> bool
+def _validate_digest(data: IO, digest: str) -> bool:
     data_digest = _compute_digest(data)
     return data_digest == digest

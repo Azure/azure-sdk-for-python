@@ -917,6 +917,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(
@@ -999,3 +1000,29 @@ class TestComponent(AzureRecordedTestCase):
         current_dict = pydash.omit(from_rest_component._to_dict(), omit_fields)
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
+        component_path = "./tests/test_configs/components/component_ipp.yml"
+        command_component = load_component(source=component_path)
+        from_rest_component = create_component(
+            ipp_registry_client,
+            component_name=randstr("component_name"),
+            path=component_path,
+        )
+
+        assert from_rest_component._intellectual_property
+        assert from_rest_component._intellectual_property == command_component._intellectual_property
+
+        assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+        print(type(from_rest_component.outputs["model_output_not_ipp"]._intellectual_property))
+        assert (
+            from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+            == command_component.outputs["model_output_not_ipp"]._intellectual_property
+        )
+
+        assert from_rest_component.outputs["model_output_ipp"]._intellectual_property
+        assert (
+            from_rest_component.outputs["model_output_ipp"]._intellectual_property
+            == command_component.outputs["model_output_ipp"]._intellectual_property
+        )

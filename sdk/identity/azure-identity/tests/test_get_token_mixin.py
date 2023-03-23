@@ -25,7 +25,7 @@ class MockCredential(GetTokenMixin):
         self.acquire_token_silently = mock.Mock(return_value=cached_token)
 
     def _acquire_token_silently(self, *scopes, **kwargs):
-        return self.acquire_token_silently(*scopes, **kwargs)
+        return self.acquire_token_silently(*scopes, **kwargs), None
 
     def _request_token(self, *scopes, **kwargs):
         return self.request_token(*scopes, **kwargs)
@@ -49,7 +49,7 @@ def test_no_cached_token():
     assert token.token == MockCredential.NEW_TOKEN.token
 
 
-def test_tenant_id():    
+def test_tenant_id():
     credential = MockCredential()
     token = credential.get_token(SCOPE, tenant_id="tenant_id")
 
