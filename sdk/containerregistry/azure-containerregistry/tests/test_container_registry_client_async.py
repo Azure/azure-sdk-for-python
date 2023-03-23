@@ -4,9 +4,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+import os
 import pytest
 import six
-
+from io import BytesIO
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -15,6 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
+from azure.containerregistry._helpers import DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -450,6 +452,66 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 last_udpated_on = properties.last_udpated_on
             last_updated_on = properties.last_updated_on
             assert last_udpated_on == last_updated_on
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_blob(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
+
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            # Act
+            with open(path, "rb") as data:
+                digest, blob_size = await client.upload_blob(repo, data)
+
+            # Assert
+            breakpoint()
+            blob_content = b""
+            stream = await client.download_blob(repo, digest)
+            async for chunk in stream:
+                blob_content += chunk
+            assert len(blob_content) == blob_size
+
+            # await client.delete_blob(repo, digest)
+            await client.delete_repository(repo)
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            # Test blob upload and download in equal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+            data = b'\x00' * int(blob_size)
+            digest, size = await client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            stream = await client.download_blob(repo, digest)
+            size = 0
+            async with open("text1.txt", "wb") as file:
+                async for chunk in stream:
+                    size += file.write(chunk)
+            assert size == blob_size
+            
+            # client.delete_blob(repo, digest)
+
+            # Test blob upload and download in unequal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+            data = b'\x00' * int(blob_size)
+            digest, size = await client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            stream = await client.download_blob(repo, digest)
+            size = 0
+            async with open("text2.txt", "wb") as file:
+                async for chunk in stream:
+                    size += file.write(chunk)
+            assert size == blob_size
+            
+            # client.delete_blob(repo, digest)
+            await client.delete_repository(repo)
     
     @acr_preparer()
     @recorded_by_proxy_async
