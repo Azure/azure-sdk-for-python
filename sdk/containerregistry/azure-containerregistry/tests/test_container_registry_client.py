@@ -16,8 +16,8 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _serialize_manifest
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
+from azure.containerregistry._helpers import _serialize_manifest, DOCKER_MANIFEST
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
 from testcase import ContainerRegistryTestClass, get_authority, get_audience
@@ -458,6 +458,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_manifest_prerequisites(repo, client)
 
             # Act
+            with pytest.raises(HttpResponseError):
+                client.upload_manifest(repo, manifest, media_type=DOCKER_MANIFEST)
             digest = client.upload_manifest(repo, manifest)
 
             # Assert
@@ -478,6 +480,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_manifest_prerequisites(repo, client)
 
             # Act
+            with pytest.raises(HttpResponseError):
+                client.upload_manifest(repo, manifest, media_type=DOCKER_MANIFEST)
             digest = client.upload_manifest(repo, manifest_stream)
 
             # Assert
@@ -498,6 +502,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
+            with pytest.raises(HttpResponseError):
+                client.upload_manifest(repo, manifest, tag=tag, media_type=DOCKER_MANIFEST)
             digest = client.upload_manifest(repo, manifest, tag=tag)
             
             # Assert
@@ -528,6 +534,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             self.upload_manifest_prerequisites(repo, client)
             
             # Act
+            with pytest.raises(HttpResponseError):
+                client.upload_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
             digest = client.upload_manifest(repo, manifest_stream, tag=tag)
             
             # Assert
@@ -546,6 +554,19 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Cleanup
             client.delete_repository(repo)
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_upload_docker_manifest_stream(self, containerregistry_endpoint):
+        repo = "library/hello-world"
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            with open(path, "rb") as docker_manifest_stream:
+                with pytest.raises(HttpResponseError):
+                    # It fails as the default media type is oci image manifest media type
+                    client.upload_manifest(repo, docker_manifest_stream)
+                digest = client.upload_manifest(repo, docker_manifest_stream, media_type=DOCKER_MANIFEST)
+
 
     @acr_preparer()
     @recorded_by_proxy
