@@ -14,7 +14,6 @@ from typing import Dict, List, Optional, Union
 from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
@@ -609,8 +608,7 @@ class Command(BaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
 
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
