@@ -28,7 +28,7 @@ import json
 
 from helpers import base64url_decode
 
-''' cSpell:disable '''
+''' cspell:disable '''
 _open_enclave_report = (
     "AQAAAAIAAADkEQAAAAAAAAMAAg"
     + "AAAAAABQAKAJOacjP3nEyplAoNs5V_Bgc42MPzGo7hPWS_h-3tExJrAAAAABERAwX_g"
@@ -124,7 +124,6 @@ _open_enclave_report = (
     + "RHZvOGgyazVkdTFpV0RkQmtBbiswaWlBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0"
     + "tLQoA"
 )
-''' cSpell:enable '''
 
 _runtime_data = (
     "CiAgICAgICAgewogI"
@@ -135,7 +134,7 @@ _runtime_data = (
     + "zRVYUxNZ1BfNGZZNGo4aXI3Y2wxVFhsRmRBZ2N4NTVvN1RrY1NBIgogICAgICAgICAg"
     + "ICB9CiAgICAgICAgfQogICAgICAgIA"
 )
-
+''' cspell:enable '''
 
 class TestAsyncAzureAttestation(AzureRecordedTestCase):
     @AttestationPreparer()
