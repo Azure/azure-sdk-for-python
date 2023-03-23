@@ -948,3 +948,16 @@ class AttestationTokenValidationException(ValueError):
         super(  # pylint: disable=super-with-arguments
             AttestationTokenValidationException, self
         ).__init__(self.message)
+
+class TpmAttestationResult(object):
+    """Represents the claims returned from the attestation service as a result
+    of a call to :meth:`azure.security.attestation.AttestationClient.attest_tpm`.
+
+    :keyword bytes result: The result of the operation.
+
+    """
+    def __init__(self, result: bytes):
+        self._result = result
+
+    def getTpmResult(self) -> bytes:
+        return self._result

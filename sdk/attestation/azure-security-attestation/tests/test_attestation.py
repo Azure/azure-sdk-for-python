@@ -289,10 +289,10 @@ class TestAttestation(AzureRecordedTestCase):
         basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
         admin_client.set_policy(AttestationType.TPM, basic_policy)
 
-        encoded_payload = json.dumps({"payload": {"type": "aikcert"}})
+        encoded_payload = bytes(json.dumps({"payload": {"type": "aikcert"}}), 'ascii')
         tpm_response = client.attest_tpm(encoded_payload)
 
-        decoded_response = json.loads(tpm_response)
+        decoded_response = json.loads(tpm_response.getTpmResult())
         assert decoded_response["payload"] is not None
         payload = decoded_response["payload"]
         assert payload["challenge"] is not None

@@ -5,12 +5,15 @@
 ### Features Added
 
 ### Breaking Changes
+* Added `TpmAttestationResult` model
+* Changed `attestTpm` parameter from str to bytes to match `attestOpenEnclave` and `attestSgxEnclave`
 
 ### Bugs Fixed
 
 ### Other Changes
 
-- Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+* Python 2.7 is no longer supported. Please use Python version 3.6 or later.
+* Update attestTpm tests to pass in bytes and handle returned TpmAttestationResult.
 
 ## 1.0.0 (2021-07-06)
 

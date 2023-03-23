@@ -20,7 +20,7 @@ from .._generated.models import (
     AttestOpenEnclaveRequest,
 )
 from .._configuration import AttestationClientConfiguration
-from .._models import AttestationSigner, AttestationToken, AttestationResult
+from .._models import AttestationSigner, AttestationToken, AttestationResult, TpmAttestationResult
 from .._common import merge_validation_args
 
 if TYPE_CHECKING:
@@ -357,21 +357,22 @@ class AttestationClient(object):
         )
 
     @distributed_trace_async
-    async def attest_tpm(self, content: str, **kwargs: Any) -> str:
+    async def attest_tpm(self, content: bytes, **kwargs: Any) -> TpmAttestationResult:
         """Attest a TPM based enclave.
 
         See the `TPM Attestation Protocol Reference
         <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_
         for more information.
 
-        :param str content: Data to send to the TPM attestation service.
+        :param bytes content: Data to send to the TPM attestation service.
         :returns: A structure containing the response from the TPM attestation.
-        :rtype: str
+        :rtype: TpmAttestationResult
         """
         response = await self._client.attestation.attest_tpm(
-            content.encode("ascii"), **kwargs
+            content, **kwargs
         )
-        return response.data.decode("ascii")
+        result = TpmAttestationResult(response.data)
+        return result 
 
     async def _get_signers(
         self, **kwargs: Any
