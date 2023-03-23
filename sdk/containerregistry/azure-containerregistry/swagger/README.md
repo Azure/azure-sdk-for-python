@@ -125,8 +125,8 @@ directive:
   from: swagger-document
   where: $.definitions.OCIManifest
   transform: >
-    $["x-csharp-usage"] = "model,input,output,converter";
-    $["x-csharp-formats"] = "json";
+    $["x-ms-client-name"] = "OciImageManifest";
+    $["required"] = ["schemaVersion"];
     delete $["x-accessibility"];
     delete $["allOf"];
     $.properties["schemaVersion"] = {
@@ -147,21 +147,24 @@ directive:
       }
 ```
 
-# Make ArtifactBlobDescriptor a public type
+# Updates to Descriptor
 ``` yaml
 directive:
   from: swagger-document
   where: $.definitions.Descriptor
   transform: >
+    $["x-ms-client-name"] = "OciDescriptor";
+    $.properties.size["x-ms-client-name"] = "sizeInBytes";
     delete $["x-accessibility"]
 ```
 
-# Make OciAnnotations a public type
+# Updates to Annotations
 ``` yaml
 directive:
   from: swagger-document
   where: $.definitions.Annotations
   transform: >
+    $["x-ms-client-name"] = "OciAnnotations";
     delete $["x-accessibility"]
 ```
 
