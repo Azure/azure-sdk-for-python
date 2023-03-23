@@ -1,5 +1,11 @@
 # Release History
 
+## 3.0.0 (2023-03-23)
+
+### Breaking Changes
+
+  - Removed operation KeyValuesOperations.list_by_configuration_store
+
 ## 3.0.0b1 (2023-02-15)
 
 ### Breaking Changes
