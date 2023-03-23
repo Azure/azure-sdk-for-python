@@ -8,10 +8,10 @@ from typing import Optional, Union
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2022_12_01_preview.models import SweepJobLimits as RestSweepJobLimits
-from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format, is_data_binding_expression
+from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
 
@@ -49,11 +49,11 @@ class CommandJobLimits(JobLimits):
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 
     @classmethod
-    def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> "CommandJobLimits":
+    def _from_rest_object(cls, obj: Union[RestCommandJobLimits, dict]) -> Optional["CommandJobLimits"]:
         if not obj:
             return None
         if isinstance(obj, dict):
-            timeout_value = obj["timeout"]
+            timeout_value = obj.get("timeout", None)
             # if timeout value is a binding string
             if is_data_binding_expression(timeout_value):
                 return cls(timeout=timeout_value)
