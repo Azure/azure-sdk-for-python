@@ -26,6 +26,10 @@ SUPPORTED_API_VERSIONS = [
 # Public cloud audience
 AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
 
+# Known media types
+OCI_IMAGE_MANIFEST = "application/vnd.oci.image.manifest.v1+json"
+DOCKER_MANIFEST = "application/vnd.docker.distribution.manifest.v2+json"
+
 
 def _is_tag(tag_or_digest: str) -> bool:
     tag = tag_or_digest.split(":")

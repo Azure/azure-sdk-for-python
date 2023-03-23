@@ -28,6 +28,7 @@ from ._helpers import (
     _validate_digest,
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    OCI_IMAGE_MANIFEST,
 )
 from ._models import (
     RepositoryProperties,
@@ -35,7 +36,6 @@ from ._models import (
     ArtifactManifestProperties,
     DownloadBlobResult,
     DownloadManifestResult,
-    ManifestMediaType,
 )
 
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
@@ -858,7 +858,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         manifest: Union[OCIManifest, IO[bytes]],
         *,
         tag: Optional[str] = None,
-        media_type: Union[str, ManifestMediaType] = ManifestMediaType.OCI_IMAGE_MANIFEST,
+        media_type: str = OCI_IMAGE_MANIFEST,
         **kwargs
     ) -> str:
         """Upload a manifest for an artifact.
@@ -870,7 +870,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype tag: str or None
         :keyword media_type: The media type of the manifest. If not specified, this value will be set to
             a default value of "application/vnd.oci.image.manifest.v1+json".
-        :paramtype media_type: str or ~azure.containerregistry.models.ManifestMediaType
+        :paramtype media_type: str
         :returns: The digest of the uploaded manifest, calculated by the registry.
         :rtype: str
         :raises ValueError: If the parameter repository or manifest is None.
@@ -960,7 +960,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 self._client.container_registry.get_manifest(
                     name=repository,
                     reference=tag_or_digest,
-                    headers={"Accept": ManifestMediaType.OCI_IMAGE_MANIFEST},
+                    headers={"Accept": OCI_IMAGE_MANIFEST},
                     cls=_return_response_and_deserialized,
                     **kwargs
                 )

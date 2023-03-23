@@ -18,7 +18,6 @@ from ._models import (
     ArtifactManifestProperties,
     RepositoryProperties,
     ArtifactTagProperties,
-    ManifestMediaType,
 )
 from ._version import VERSION
 
@@ -33,6 +32,5 @@ __all__ = [
     "RepositoryProperties",
     "ArtifactTagOrder",
     "ArtifactTagProperties",
-    "ManifestMediaType",
     "OCIManifest",
 ]
