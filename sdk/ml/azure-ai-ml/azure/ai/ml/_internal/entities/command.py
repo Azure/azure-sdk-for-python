@@ -7,7 +7,6 @@ from typing import Dict, List, Union
 from marshmallow import INCLUDE, Schema
 
 from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from ..._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
 from ...entities import CommandJobLimits, JobResourceConfiguration
@@ -106,8 +105,7 @@ class Command(InternalBaseNode):
         obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # handle limits
         if "limits" in obj and obj["limits"]:

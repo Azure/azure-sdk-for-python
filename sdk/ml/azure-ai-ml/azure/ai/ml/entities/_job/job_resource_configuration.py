@@ -4,12 +4,13 @@
 
 import json
 import logging
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, Optional, List, Union
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
+from azure.ai.ml._utils.utils import is_data_binding_expression
 
 module_logger = logging.getLogger(__name__)
 
@@ -108,7 +109,7 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         self,
         *,
         locations: Optional[List[str]] = None,
-        instance_count: Optional[int] = None,
+        instance_count: Union[int, str, None] = None,
         instance_type: Optional[str] = None,
         properties: Optional[Dict[str, Any]] = None,
         docker_args: Optional[str] = None,
@@ -153,9 +154,19 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         return obj
 
     @classmethod
-    def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
+    def _from_rest_object(cls, obj: Union[RestJobResourceConfiguration, dict]) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
+        if isinstance(obj, dict):
+            return JobResourceConfiguration(
+                locations=obj.get("locations", None),
+                instance_count=obj.get("instance_count", None),
+                instance_type=obj.get("instance_type", None),
+                properties=obj.get("properties", None),
+                docker_args=obj.get("docker_args", None),
+                shm_size=obj.get("shm_size", None),
+                deserialize_properties=True,
+            )
         return JobResourceConfiguration(
             locations=obj.locations,
             instance_count=obj.instance_count,
