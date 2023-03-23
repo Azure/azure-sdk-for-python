@@ -5,7 +5,7 @@
 import abc
 import os
 import sys
-from typing import cast, Any, Dict, Optional
+from typing import cast, Any, Dict, Optional, Tuple
 
 from azure.core.credentials import AccessToken
 from .._exceptions import CredentialUnavailableError
@@ -151,9 +151,11 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
             raise CredentialUnavailableError(message=error_message)
         return super(VisualStudioCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes, **kwargs)
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         refresh_token = self._get_refresh_token()
