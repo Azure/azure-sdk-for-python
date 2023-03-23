@@ -9,6 +9,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.dsl._mldesigner import (
     _AdditionalIncludes,
     InternalComponent,
+    ParallelFor,
 )
 from azure.ai.ml.entities._builders.base_node import BaseNode
 from azure.ai.ml.entities._inputs_outputs import GroupInput
@@ -41,6 +42,7 @@ class TestMldesignerImports:
         assert hasattr(_AdditionalIncludes, "_includes")
         assert hasattr(ValidationResult, "passed")
         assert hasattr(ValidationResult, "error_messages")
+        assert hasattr(ParallelFor, "_to_rest_items")
 
     def test_necessary_attributes_for_input(self):
         input_obj = Input()

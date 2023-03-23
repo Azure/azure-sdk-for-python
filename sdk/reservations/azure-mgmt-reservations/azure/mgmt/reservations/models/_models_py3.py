@@ -850,19 +850,38 @@ class CatalogMsrp(_serialization.Model):
 
     :ivar p1_y: Amount in pricing currency. Tax not included.
     :vartype p1_y: ~azure.mgmt.reservations.models.Price
+    :ivar p3_y: Amount in pricing currency. Tax not included.
+    :vartype p3_y: ~azure.mgmt.reservations.models.Price
+    :ivar p5_y: Amount in pricing currency. Tax not included.
+    :vartype p5_y: ~azure.mgmt.reservations.models.Price
     """
 
     _attribute_map = {
         "p1_y": {"key": "p1Y", "type": "Price"},
+        "p3_y": {"key": "p3Y", "type": "Price"},
+        "p5_y": {"key": "p5Y", "type": "Price"},
     }
 
-    def __init__(self, *, p1_y: Optional["_models.Price"] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        p1_y: Optional["_models.Price"] = None,
+        p3_y: Optional["_models.Price"] = None,
+        p5_y: Optional["_models.Price"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword p1_y: Amount in pricing currency. Tax not included.
         :paramtype p1_y: ~azure.mgmt.reservations.models.Price
+        :keyword p3_y: Amount in pricing currency. Tax not included.
+        :paramtype p3_y: ~azure.mgmt.reservations.models.Price
+        :keyword p5_y: Amount in pricing currency. Tax not included.
+        :paramtype p5_y: ~azure.mgmt.reservations.models.Price
         """
         super().__init__(**kwargs)
         self.p1_y = p1_y
+        self.p3_y = p3_y
+        self.p5_y = p5_y
 
 
 class CatalogsResult(_serialization.Model):
@@ -1793,7 +1812,8 @@ class Patch(_serialization.Model):
      "ManagementGroup".
     :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
     :ivar applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-     specify if AppliedScopeType is Shared.
+     specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+     appliedScopeProperties instead for Single AppliedScopeType.
     :vartype applied_scopes: list[str]
     :ivar applied_scope_properties: Properties specific to applied scope type. Not required if not
      applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType is
@@ -1844,7 +1864,8 @@ class Patch(_serialization.Model):
          and "ManagementGroup".
         :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
         :keyword applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-         specify if AppliedScopeType is Shared.
+         specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+         appliedScopeProperties instead for Single AppliedScopeType.
         :paramtype applied_scopes: list[str]
         :keyword applied_scope_properties: Properties specific to applied scope type. Not required if
          not applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType
@@ -2075,7 +2096,8 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
      "ManagementGroup".
     :vartype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
     :ivar applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-     specify if AppliedScopeType is Shared.
+     specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+     appliedScopeProperties instead for Single AppliedScopeType.
     :vartype applied_scopes: list[str]
     :ivar applied_scope_properties: Properties specific to applied scope type. Not required if not
      applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType is
@@ -2159,7 +2181,8 @@ class PurchaseRequest(_serialization.Model):  # pylint: disable=too-many-instanc
          and "ManagementGroup".
         :paramtype applied_scope_type: str or ~azure.mgmt.reservations.models.AppliedScopeType
         :keyword applied_scopes: List of the subscriptions that the benefit will be applied. Do not
-         specify if AppliedScopeType is Shared.
+         specify if AppliedScopeType is Shared. This property will be deprecated and replaced by
+         appliedScopeProperties instead for Single AppliedScopeType.
         :paramtype applied_scopes: list[str]
         :keyword applied_scope_properties: Properties specific to applied scope type. Not required if
          not applicable. Required and need to provide tenantId and managementGroupId if AppliedScopeType

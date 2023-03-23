@@ -44,7 +44,7 @@ def analyze_read():
     )
 
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer import DocumentAnalysisClient
+    from azure.ai.formrecognizer import DocumentAnalysisClient, AnalysisFeature
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -54,13 +54,22 @@ def analyze_read():
     )
     with open(path_to_sample_documents, "rb") as f:
         poller = document_analysis_client.begin_analyze_document(
-            "prebuilt-read", document=f
+            "prebuilt-read", document=f, features=[AnalysisFeature.OCR_FONT]
         )
     result = poller.result()
 
     print("----Languages detected in the document----")
     for language in result.languages:
         print("Language code: '{}' with confidence {}".format(language.locale, language.confidence))
+
+    print("----Styles detected in the document----")
+    for style in result.styles:
+        if style.is_handwritten:
+            print("Found the following handwritten content: ")
+            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
+        if style.font_style:
+            print(f"The document contains '{style.font_style}' font style, applied to the following text: ")
+            print(",".join([result.content[span.offset:span.offset + span.length] for span in style.spans]))
 
     for page in result.pages:
         print("----Analyzing document from page #{}----".format(page.page_number))

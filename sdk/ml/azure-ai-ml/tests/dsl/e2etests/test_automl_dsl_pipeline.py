@@ -34,6 +34,7 @@ GPU_CLUSTER = "gpu-cluster"
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "recorded_test",
 )
 @pytest.mark.automle2etest
