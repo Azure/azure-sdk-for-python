@@ -14,7 +14,7 @@ from azure.mgmt.quota import AzureQuotaExtensionAPI
     pip install azure-identity
     pip install azure-mgmt-quota
 # USAGE
-    python quotas_put_request_for_compute.py
+    python get_compute_one_sku_quota_limit.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,19 +28,13 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.quota.begin_create_or_update(
-        resource_name="standardFSv2Family",
-        scope="subscriptions/D7EC67B3-7657-4966-BFFC-41EFD36BAAB3/providers/Microsoft.Compute/locations/eastus",
-        create_quota_request={
-            "properties": {
-                "limit": {"limitObjectType": "LimitValue", "value": 10},
-                "name": {"value": "standardFSv2Family"},
-            }
-        },
-    ).result()
+    response = client.quota.get(
+        resource_name="standardNDSFamily",
+        scope="subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/preview/2021-03-15-preview/examples/putComputeOneSkuQuotaRequest.json
+# x-ms-original-file: specification/quota/resource-manager/Microsoft.Quota/stable/2023-02-01/examples/getComputeOneSkuQuotaLimit.json
 if __name__ == "__main__":
     main()
