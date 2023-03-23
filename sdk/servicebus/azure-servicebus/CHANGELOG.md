@@ -4,11 +4,15 @@
 
 ### Features Added
 
+- The following methods have been added to `azure.servicebus.management.MessageCountDetails`: `deserialize`, `enable_additional_properties_sending`, `from_dict`, `is_xml_model`, `as_dict`, `serialize`.
+
 ### Breaking Changes
 
-- Client side validation of input is now disabled by default. This means there will be no `msrest.exceptions.ValidationError` raised by the client SDK in the case of malformed input. An `azure.core.exceptions.HttpResponseError` may now be raised if the server refuses the request.
+- Client side validation of input is now disabled by default for the sync and async `ServiceBusAdministrationClient`. This means there will be no `msrest.exceptions.ValidationError` raised by the `ServiceBusAdministrationClient` in the case of malformed input. An `azure.core.exceptions.HttpResponseError` may now be raised if the server refuses the request.
 
 ### Bugs Fixed
+
+- Fixed a bug where enum members in `azure.servicebus.management` were not following uppercase convention.
 
 ### Other Changes
 

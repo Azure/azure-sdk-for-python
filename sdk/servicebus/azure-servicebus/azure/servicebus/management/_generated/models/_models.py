@@ -1050,10 +1050,12 @@ class NamespaceProperties(_serialization.Model):
 class NamespacePropertiesEntry(_serialization.Model):
     """Represents an entry in the feed when querying namespace info.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The URL of the GET request.
     :vartype id: str
-    :ivar title: The name of the namespace.
-    :vartype title: JSON
+    :ivar title: The name of the namespace. Required.
+    :vartype title: str
     :ivar updated: The timestamp for when this namespace was last updated.
     :vartype updated: ~datetime.datetime
     :ivar author: The author that created this resource.
@@ -1065,9 +1067,13 @@ class NamespacePropertiesEntry(_serialization.Model):
      ~azure.servicebus.management._generated.models.NamespacePropertiesEntryContent
     """
 
+    _validation = {
+        "title": {"required": True},
+    }
+
     _attribute_map = {
         "id": {"key": "id", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
-        "title": {"key": "title", "type": "object"},
+        "title": {"key": "title", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "updated": {"key": "updated", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "author": {"key": "author", "type": "ResponseAuthor"},
         "link": {"key": "link", "type": "ResponseLink"},
@@ -1078,8 +1084,8 @@ class NamespacePropertiesEntry(_serialization.Model):
     def __init__(
         self,
         *,
+        title: str,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        title: Optional[JSON] = None,
         updated: Optional[datetime.datetime] = None,
         author: Optional["_models.ResponseAuthor"] = None,
         link: Optional["_models.ResponseLink"] = None,
@@ -1089,8 +1095,8 @@ class NamespacePropertiesEntry(_serialization.Model):
         """
         :keyword id: The URL of the GET request.
         :paramtype id: str
-        :keyword title: The name of the namespace.
-        :paramtype title: JSON
+        :keyword title: The name of the namespace. Required.
+        :paramtype title: str
         :keyword updated: The timestamp for when this namespace was last updated.
         :paramtype updated: ~datetime.datetime
         :keyword author: The author that created this resource.
@@ -1113,12 +1119,19 @@ class NamespacePropertiesEntry(_serialization.Model):
 class NamespacePropertiesEntryContent(_serialization.Model):
     """Information about the namespace.
 
-    :ivar type: Type of content in namespace info response.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Type of content in namespace info response. Required.
     :vartype type: str
-    :ivar namespace_properties: The metadata related to a Service Bus namespace.
+    :ivar namespace_properties: The metadata related to a Service Bus namespace. Required.
     :vartype namespace_properties:
      ~azure.servicebus.management._generated.models.NamespaceProperties
     """
+
+    _validation = {
+        "type": {"required": True},
+        "namespace_properties": {"required": True},
+    }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str", "xml": {"attr": True}},
@@ -1126,17 +1139,11 @@ class NamespacePropertiesEntryContent(_serialization.Model):
     }
     _xml_map = {"ns": "http://www.w3.org/2005/Atom"}
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        namespace_properties: Optional["_models.NamespaceProperties"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, type: str, namespace_properties: "_models.NamespaceProperties", **kwargs: Any) -> None:
         """
-        :keyword type: Type of content in namespace info response.
+        :keyword type: Type of content in namespace info response. Required.
         :paramtype type: str
-        :keyword namespace_properties: The metadata related to a Service Bus namespace.
+        :keyword namespace_properties: The metadata related to a Service Bus namespace. Required.
         :paramtype namespace_properties:
          ~azure.servicebus.management._generated.models.NamespaceProperties
         """
@@ -1581,7 +1588,7 @@ class QueueDescriptionEntry(_serialization.Model):
     :ivar id: The URL of the GET request.
     :vartype id: str
     :ivar title: The name of the queue.
-    :vartype title: JSON
+    :vartype title: str
     :ivar published: The timestamp for when this queue was published.
     :vartype published: ~datetime.datetime
     :ivar updated: The timestamp for when this queue was last updated.
@@ -1597,7 +1604,7 @@ class QueueDescriptionEntry(_serialization.Model):
     _attribute_map = {
         "base": {"key": "base", "type": "str", "xml": {"name": "base", "attr": True, "prefix": "xml"}},
         "id": {"key": "id", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
-        "title": {"key": "title", "type": "object"},
+        "title": {"key": "title", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "published": {"key": "published", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "updated": {"key": "updated", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "author": {"key": "author", "type": "ResponseAuthor"},
@@ -1611,7 +1618,7 @@ class QueueDescriptionEntry(_serialization.Model):
         *,
         base: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        title: Optional[JSON] = None,
+        title: Optional[str] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         author: Optional["_models.ResponseAuthor"] = None,
@@ -1625,7 +1632,7 @@ class QueueDescriptionEntry(_serialization.Model):
         :keyword id: The URL of the GET request.
         :paramtype id: str
         :keyword title: The name of the queue.
-        :paramtype title: JSON
+        :paramtype title: str
         :keyword published: The timestamp for when this queue was published.
         :paramtype published: ~datetime.datetime
         :keyword updated: The timestamp for when this queue was last updated.
@@ -1651,11 +1658,18 @@ class QueueDescriptionEntry(_serialization.Model):
 class QueueDescriptionEntryContent(_serialization.Model):
     """The QueueDescription.
 
-    :ivar type: Type of content in queue response.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Type of content in queue response. Required.
     :vartype type: str
-    :ivar queue_description: Description of a Service Bus queue resource.
+    :ivar queue_description: Description of a Service Bus queue resource. Required.
     :vartype queue_description: ~azure.servicebus.management._generated.models.QueueDescription
     """
+
+    _validation = {
+        "type": {"required": True},
+        "queue_description": {"required": True},
+    }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str", "xml": {"attr": True}},
@@ -1663,17 +1677,11 @@ class QueueDescriptionEntryContent(_serialization.Model):
     }
     _xml_map = {"ns": "http://www.w3.org/2005/Atom"}
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        queue_description: Optional["_models.QueueDescription"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, type: str, queue_description: "_models.QueueDescription", **kwargs: Any) -> None:
         """
-        :keyword type: Type of content in queue response.
+        :keyword type: Type of content in queue response. Required.
         :paramtype type: str
-        :keyword queue_description: Description of a Service Bus queue resource.
+        :keyword queue_description: Description of a Service Bus queue resource. Required.
         :paramtype queue_description: ~azure.servicebus.management._generated.models.QueueDescription
         """
         super().__init__(**kwargs)
@@ -1852,7 +1860,7 @@ class RuleDescriptionEntry(_serialization.Model):
     :ivar id: The URL of the GET request.
     :vartype id: str
     :ivar title: The name of the rule.
-    :vartype title: JSON
+    :vartype title: str
     :ivar published: The timestamp for when this rule was published.
     :vartype published: ~datetime.datetime
     :ivar updated: The timestamp for when this rule was last updated.
@@ -1865,7 +1873,7 @@ class RuleDescriptionEntry(_serialization.Model):
 
     _attribute_map = {
         "id": {"key": "id", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
-        "title": {"key": "title", "type": "object"},
+        "title": {"key": "title", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "published": {"key": "published", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "updated": {"key": "updated", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "link": {"key": "link", "type": "ResponseLink"},
@@ -1877,7 +1885,7 @@ class RuleDescriptionEntry(_serialization.Model):
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        title: Optional[JSON] = None,
+        title: Optional[str] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional["_models.ResponseLink"] = None,
@@ -1888,7 +1896,7 @@ class RuleDescriptionEntry(_serialization.Model):
         :keyword id: The URL of the GET request.
         :paramtype id: str
         :keyword title: The name of the rule.
-        :paramtype title: JSON
+        :paramtype title: str
         :keyword published: The timestamp for when this rule was published.
         :paramtype published: ~datetime.datetime
         :keyword updated: The timestamp for when this rule was last updated.
@@ -1910,11 +1918,18 @@ class RuleDescriptionEntry(_serialization.Model):
 class RuleDescriptionEntryContent(_serialization.Model):
     """The RuleDescription.
 
-    :ivar type: Type of content in rule response.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Type of content in rule response. Required.
     :vartype type: str
-    :ivar rule_description:
+    :ivar rule_description: Required.
     :vartype rule_description: ~azure.servicebus.management._generated.models.RuleDescription
     """
+
+    _validation = {
+        "type": {"required": True},
+        "rule_description": {"required": True},
+    }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str", "xml": {"attr": True}},
@@ -1922,13 +1937,11 @@ class RuleDescriptionEntryContent(_serialization.Model):
     }
     _xml_map = {"ns": "http://www.w3.org/2005/Atom"}
 
-    def __init__(
-        self, *, type: Optional[str] = None, rule_description: Optional["_models.RuleDescription"] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, type: str, rule_description: "_models.RuleDescription", **kwargs: Any) -> None:
         """
-        :keyword type: Type of content in rule response.
+        :keyword type: Type of content in rule response. Required.
         :paramtype type: str
-        :keyword rule_description:
+        :keyword rule_description: Required.
         :paramtype rule_description: ~azure.servicebus.management._generated.models.RuleDescription
         """
         super().__init__(**kwargs)
@@ -2411,7 +2424,7 @@ class SubscriptionDescriptionEntry(_serialization.Model):
     :ivar id: The URL of the GET request.
     :vartype id: str
     :ivar title: The name of the subscription.
-    :vartype title: JSON
+    :vartype title: str
     :ivar published: The timestamp for when this subscription was published.
     :vartype published: ~datetime.datetime
     :ivar updated: The timestamp for when this subscription was last updated.
@@ -2425,7 +2438,7 @@ class SubscriptionDescriptionEntry(_serialization.Model):
 
     _attribute_map = {
         "id": {"key": "id", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
-        "title": {"key": "title", "type": "object"},
+        "title": {"key": "title", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "published": {"key": "published", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "updated": {"key": "updated", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "link": {"key": "link", "type": "ResponseLink"},
@@ -2437,7 +2450,7 @@ class SubscriptionDescriptionEntry(_serialization.Model):
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        title: Optional[JSON] = None,
+        title: Optional[str] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         link: Optional["_models.ResponseLink"] = None,
@@ -2448,7 +2461,7 @@ class SubscriptionDescriptionEntry(_serialization.Model):
         :keyword id: The URL of the GET request.
         :paramtype id: str
         :keyword title: The name of the subscription.
-        :paramtype title: JSON
+        :paramtype title: str
         :keyword published: The timestamp for when this subscription was published.
         :paramtype published: ~datetime.datetime
         :keyword updated: The timestamp for when this subscription was last updated.
@@ -2471,12 +2484,19 @@ class SubscriptionDescriptionEntry(_serialization.Model):
 class SubscriptionDescriptionEntryContent(_serialization.Model):
     """The SubscriptionDescription.
 
-    :ivar type: Type of content in subscription response.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Type of content in subscription response. Required.
     :vartype type: str
-    :ivar subscription_description: Description of a Service Bus subscription resource.
+    :ivar subscription_description: Description of a Service Bus subscription resource. Required.
     :vartype subscription_description:
      ~azure.servicebus.management._generated.models.SubscriptionDescription
     """
+
+    _validation = {
+        "type": {"required": True},
+        "subscription_description": {"required": True},
+    }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str", "xml": {"attr": True}},
@@ -2485,16 +2505,13 @@ class SubscriptionDescriptionEntryContent(_serialization.Model):
     _xml_map = {"ns": "http://www.w3.org/2005/Atom"}
 
     def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        subscription_description: Optional["_models.SubscriptionDescription"] = None,
-        **kwargs: Any
+        self, *, type: str, subscription_description: "_models.SubscriptionDescription", **kwargs: Any
     ) -> None:
         """
-        :keyword type: Type of content in subscription response.
+        :keyword type: Type of content in subscription response. Required.
         :paramtype type: str
         :keyword subscription_description: Description of a Service Bus subscription resource.
+         Required.
         :paramtype subscription_description:
          ~azure.servicebus.management._generated.models.SubscriptionDescription
         """
@@ -2938,7 +2955,7 @@ class TopicDescriptionEntry(_serialization.Model):
     :ivar id: The URL of the GET request.
     :vartype id: str
     :ivar title: The name of the topic.
-    :vartype title: JSON
+    :vartype title: str
     :ivar published: The timestamp for when this topic was published.
     :vartype published: ~datetime.datetime
     :ivar updated: The timestamp for when this topic was last updated.
@@ -2954,7 +2971,7 @@ class TopicDescriptionEntry(_serialization.Model):
     _attribute_map = {
         "base": {"key": "base", "type": "str", "xml": {"name": "base", "attr": True, "prefix": "xml"}},
         "id": {"key": "id", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
-        "title": {"key": "title", "type": "object"},
+        "title": {"key": "title", "type": "str", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "published": {"key": "published", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "updated": {"key": "updated", "type": "iso-8601", "xml": {"ns": "http://www.w3.org/2005/Atom"}},
         "author": {"key": "author", "type": "ResponseAuthor"},
@@ -2968,7 +2985,7 @@ class TopicDescriptionEntry(_serialization.Model):
         *,
         base: Optional[str] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        title: Optional[JSON] = None,
+        title: Optional[str] = None,
         published: Optional[datetime.datetime] = None,
         updated: Optional[datetime.datetime] = None,
         author: Optional["_models.ResponseAuthor"] = None,
@@ -2982,7 +2999,7 @@ class TopicDescriptionEntry(_serialization.Model):
         :keyword id: The URL of the GET request.
         :paramtype id: str
         :keyword title: The name of the topic.
-        :paramtype title: JSON
+        :paramtype title: str
         :keyword published: The timestamp for when this topic was published.
         :paramtype published: ~datetime.datetime
         :keyword updated: The timestamp for when this topic was last updated.
@@ -3008,11 +3025,18 @@ class TopicDescriptionEntry(_serialization.Model):
 class TopicDescriptionEntryContent(_serialization.Model):
     """The TopicDescription.
 
-    :ivar type: Type of content in topic response.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Type of content in topic response. Required.
     :vartype type: str
-    :ivar topic_description: Description of a Service Bus topic resource.
+    :ivar topic_description: Description of a Service Bus topic resource. Required.
     :vartype topic_description: ~azure.servicebus.management._generated.models.TopicDescription
     """
+
+    _validation = {
+        "type": {"required": True},
+        "topic_description": {"required": True},
+    }
 
     _attribute_map = {
         "type": {"key": "type", "type": "str", "xml": {"attr": True}},
@@ -3020,17 +3044,11 @@ class TopicDescriptionEntryContent(_serialization.Model):
     }
     _xml_map = {"ns": "http://www.w3.org/2005/Atom"}
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        topic_description: Optional["_models.TopicDescription"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, type: str, topic_description: "_models.TopicDescription", **kwargs: Any) -> None:
         """
-        :keyword type: Type of content in topic response.
+        :keyword type: Type of content in topic response. Required.
         :paramtype type: str
-        :keyword topic_description: Description of a Service Bus topic resource.
+        :keyword topic_description: Description of a Service Bus topic resource. Required.
         :paramtype topic_description: ~azure.servicebus.management._generated.models.TopicDescription
         """
         super().__init__(**kwargs)
