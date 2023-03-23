@@ -2342,8 +2342,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     def __Patch(self, path, request_params, operations, req_headers, **kwargs):
         """Azure Cosmos 'PATCH' http request.
 
-        :params str url:
         :params str path:
+        :params ~azure.cosmos.RequestObject request_params:
         :params list operations:
         :params dict req_headers:
 

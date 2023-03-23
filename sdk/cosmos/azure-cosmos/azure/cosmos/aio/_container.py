@@ -531,7 +531,8 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
-        """ **Provisional method** Patches the specified item with the provided operations if it exists in the container.
+        """ **Provisional method** Patches the specified item with the provided operations if it
+         exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
 

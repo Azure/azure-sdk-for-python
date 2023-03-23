@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.3.2 (Unreleased)
+### 4.4.0b1 (Unreleased)
 
 #### Features Added
 - Added **preview** partial document update (Patch API) functionality and container methods for patching items with operations. For more information on Patch, please see [Azure Cosmos DB Partial Document Update](https://learn.microsoft.com/azure/cosmos-db/partial-document-update).
