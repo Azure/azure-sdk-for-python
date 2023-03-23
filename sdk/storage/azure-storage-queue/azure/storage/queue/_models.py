@@ -7,7 +7,7 @@
 # pylint: disable=super-init-not-called
 
 import sys
-from typing import Any, Callable, Dict, List, Tuple, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
@@ -281,7 +281,7 @@ class QueueMessage(DictMixin):
     dequeue_count: int
     """Begins with a value of 1 the first time the message is received. This
         value is incremented each time the message is subsequently received."""
-    content: object = None
+    content: Any = None
     """The message content. Type is determined by the decode_function set on
         the service. Default is str."""
     pop_receipt: str
@@ -293,7 +293,7 @@ class QueueMessage(DictMixin):
     """A UTC date value representing the time the message will next be visible.
         Only returned by receive messages operations. Set to None for peek messages."""
 
-    def __init__(self, content: object = None) -> None:
+    def __init__(self, content: Any = None) -> None:
         self.id = None
         self.inserted_on = None
         self.expires_on = None
@@ -361,7 +361,7 @@ class MessagesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]: # pylint: disable=no-self-use
+    def _extract_data_cb(self, messages: Any) -> Tuple[str, List[QueueMessage]]:
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopIteration("End of paging")
@@ -443,7 +443,7 @@ class QueuePropertiesPaged(PageIterator):
         self.results_per_page = results_per_page
         self.location_mode = None
 
-    def _get_next_cb(self, continuation_token: str) -> Self:
+    def _get_next_cb(self, continuation_token: str) -> Any:
         try:
             return self._command(
                 marker=continuation_token or None,
@@ -453,7 +453,7 @@ class QueuePropertiesPaged(PageIterator):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, get_next_return: str) -> Self:
+    def _extract_data_cb(self, get_next_return: str) -> Tuple[Optional[str], List[QueueProperties]]:
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix

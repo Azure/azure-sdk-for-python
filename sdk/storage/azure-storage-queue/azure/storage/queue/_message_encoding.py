@@ -69,7 +69,7 @@ class MessageDecodePolicy(object):
             message.message_text = self.decode(content, response)
         return obj
 
-    def configure(self, require_encryption: bool, key_encryption_key: object, resolver: callable) -> None:
+    def configure(self, require_encryption: bool, key_encryption_key: object, resolver: Callable[[str], bytes]) -> None:
         self.require_encryption = require_encryption
         self.key_encryption_key = key_encryption_key
         self.resolver = resolver
@@ -130,7 +130,7 @@ class BinaryBase64DecodePolicy(MessageDecodePolicy):
     is not valid base 64, a DecodeError will be raised.
     """
 
-    def decode(self, content: Any, response: "PipelineResponse") -> bytes:
+    def decode(self, content: str, response: "PipelineResponse") -> bytes:
         response = response.http_response
         try:
             return b64decode(content.encode('utf-8'))
