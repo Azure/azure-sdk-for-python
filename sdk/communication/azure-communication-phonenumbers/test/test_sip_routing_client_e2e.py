@@ -30,45 +30,45 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
     @recorded_by_proxy
     def test_get_trunks(self, **kwargs):
         trunks = self._sip_routing_client.list_trunks()
-        assert trunks is not None, "No trunks were returned."
-        assert_trunks_are_equal(trunks,[self.first_trunk,self.second_trunk])
+        trunks_list = self._get_as_list(trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk,self.second_trunk])
 
     @recorded_by_proxy
     def test_get_trunks_from_managed_identity(self, **kwargs):
         client = self._get_sip_client_managed_identity()
         trunks = client.list_trunks()
-        assert trunks is not None, "No trunks were returned."
-        assert_trunks_are_equal(trunks,[self.first_trunk,self.second_trunk])
+        trunks_list = self._get_as_list(trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk,self.second_trunk])
 
     @recorded_by_proxy
     def test_get_routes(self, **kwargs):
         self._sip_routing_client.set_routes([self.first_route])
         routes = self._sip_routing_client.list_routes()
-        assert routes is not None, "No routes were returned."
-        assert_routes_are_equal(routes,[self.first_route])
+        routes_list = self._get_as_list(routes)
+        assert_routes_are_equal(routes_list,[self.first_route])
 
     @recorded_by_proxy
     def test_get_routes_from_managed_identity(self, **kwargs):
         client = self._get_sip_client_managed_identity()
         client.set_routes([self.first_route])
         routes = client.list_routes()
-        assert routes is not None, "No routes were returned."
-        assert_routes_are_equal(routes,[self.first_route])
+        routes_list = self._get_as_list(routes)
+        assert_routes_are_equal(routes_list,[self.first_route])
 
     @recorded_by_proxy
     def test_set_trunks(self, **kwargs):
         self._sip_routing_client.set_trunks([self.additional_trunk])
         result_trunks = self._sip_routing_client.list_trunks()
-        assert result_trunks is not None, "No trunks were returned."
-        assert_trunks_are_equal(result_trunks,[self.additional_trunk])
+        trunks_list = self._get_as_list(result_trunks)
+        assert_trunks_are_equal(trunks_list,[self.additional_trunk])
 
     @recorded_by_proxy
     def test_set_trunks_from_managed_identity(self, **kwargs):
         client = self._get_sip_client_managed_identity()
         client.set_trunks([self.additional_trunk])
         result_trunks = client.list_trunks()
-        assert result_trunks is not None, "No trunks were returned."
-        assert_trunks_are_equal(result_trunks,[self.additional_trunk])
+        trunks_list = self._get_as_list(result_trunks)
+        assert_trunks_are_equal(trunks_list,[self.additional_trunk])
 
     @recorded_by_proxy
     def test_set_trunks_empty_list(self, **kwargs):
@@ -86,8 +86,8 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         self._sip_routing_client.set_routes([self.first_route])
         self._sip_routing_client.set_routes(new_routes)
         result_routes = self._sip_routing_client.list_routes()
-        assert result_routes is not None, "No routes were returned."
-        assert_routes_are_equal(result_routes,new_routes)
+        routes_list = self._get_as_list(result_routes)
+        assert_routes_are_equal(routes_list,new_routes)
 
     @recorded_by_proxy
     def test_set_routes_from_managed_identity(self, **kwargs):
@@ -96,15 +96,16 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         client.set_routes([self.first_route])
         client.set_routes(new_routes)
         result_routes = client.list_routes()
-        assert result_routes is not None, "No routes were returned."
-        assert_routes_are_equal(result_routes,new_routes)
+        routes_list = self._get_as_list(result_routes)
+        assert_routes_are_equal(routes_list,new_routes)
 
     @recorded_by_proxy
     def test_delete_trunk(self, **kwargs):
         trunk_to_delete = self.second_trunk.fqdn
         self._sip_routing_client.delete_trunk(trunk_to_delete)
         new_trunks = self._sip_routing_client.list_trunks()
-        assert_trunks_are_equal(new_trunks,[self.first_trunk])
+        trunks_list = self._get_as_list(new_trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk])
 
     @recorded_by_proxy
     def test_delete_trunk_from_managed_identity(self, **kwargs):
@@ -112,20 +113,23 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         client = self._get_sip_client_managed_identity()
         client.delete_trunk(trunk_to_delete)
         new_trunks = client.list_trunks()
-        assert_trunks_are_equal(new_trunks,[self.first_trunk])
+        trunks_list = self._get_as_list(new_trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk])
 
     @recorded_by_proxy
     def test_add_trunk(self, **kwargs):
         self._sip_routing_client.set_trunk(self.additional_trunk)
         new_trunks = self._sip_routing_client.list_trunks()
-        assert_trunks_are_equal(new_trunks,[self.first_trunk,self.second_trunk,self.additional_trunk])
+        trunks_list = self._get_as_list(new_trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk,self.second_trunk,self.additional_trunk])
 
     @recorded_by_proxy
     def test_add_trunk_from_managed_identity(self, **kwargs):
         client = self._get_sip_client_managed_identity()
         client.set_trunk(self.additional_trunk)
         new_trunks = client.list_trunks()
-        assert_trunks_are_equal(new_trunks,[self.first_trunk,self.second_trunk,self.additional_trunk])
+        trunks_list = self._get_as_list(new_trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk,self.second_trunk,self.additional_trunk])
 
     @recorded_by_proxy
     def test_get_trunk(self, **kwargs):
@@ -150,7 +154,8 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         modified_trunk = SipTrunk(fqdn=self.second_trunk.fqdn,sip_signaling_port=7777)
         self._sip_routing_client.set_trunk(modified_trunk)
         new_trunks = self._sip_routing_client.list_trunks()
-        assert_trunks_are_equal(new_trunks,[self.first_trunk,modified_trunk])
+        trunks_list = self._get_as_list(new_trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk,modified_trunk])
     
     @recorded_by_proxy
     def test_set_trunk_from_managed_identity(self, **kwargs):
@@ -158,9 +163,17 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         client = self._get_sip_client_managed_identity()
         client.set_trunk(modified_trunk)
         new_trunks = client.list_trunks()
-        assert_trunks_are_equal(new_trunks,[self.first_trunk,modified_trunk])
+        trunks_list = self._get_as_list(new_trunks)
+        assert_trunks_are_equal(trunks_list,[self.first_trunk,modified_trunk])
 
     def _get_sip_client_managed_identity(self):
         endpoint, *_ = parse_connection_str(self.connection_str)
         credential = create_token_credential()
         return SipRoutingClient(endpoint, credential)
+    
+    def _get_as_list(self,iter):
+        assert iter is not None, "No iterable was returned."
+        items = []
+        for item in iter:
+            items.append(item)
+        return items
