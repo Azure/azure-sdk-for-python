@@ -6,20 +6,20 @@ from typing import Dict, List, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DistributionField
-from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
+from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from ..._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from ..._schema import PathAwareSchema
+from ..._schema.core.fields import DistributionField
+from ...entities import CommandJobLimits, JobResourceConfiguration
+from ...entities._util import get_rest_dict_for_node_attrs
+from .._schema.component import NodeType
+from ..entities.component import InternalComponent
+from ..entities.node import InternalBaseNode
 
 
 class Command(InternalBaseNode):
     """Node of internal command components in pipeline with specific run settings.
+
     Different from azure.ai.ml.entities.Command, type of this class is CommandComponent.
     """
 
@@ -111,8 +111,7 @@ class Command(InternalBaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits()._from_rest_object(obj["limits"])
         return obj
 
 

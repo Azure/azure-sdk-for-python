@@ -151,7 +151,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # wait until the policy has gone into effect
         if self.is_live:
-            time.sleep(40)
+            time.sleep(60)
 
     async def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)

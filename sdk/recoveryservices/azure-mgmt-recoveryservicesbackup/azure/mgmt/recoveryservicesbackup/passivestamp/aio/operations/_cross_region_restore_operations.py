@@ -99,8 +99,9 @@ class CrossRegionRestoreOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -195,8 +196,8 @@ class CrossRegionRestoreOperations:
 
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
-        :param parameters: resource cross region restore request. Is either a model type or a IO type.
-         Required.
+        :param parameters: resource cross region restore request. Is either a CrossRegionRestoreRequest
+         type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrossRegionRestoreRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.

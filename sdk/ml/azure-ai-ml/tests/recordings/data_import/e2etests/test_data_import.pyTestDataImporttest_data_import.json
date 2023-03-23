@@ -1,15 +1,15 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2022-12-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1079",
+        "Content-Length": "1086",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.6.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.6 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -36,13 +36,13 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/{name}",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/${{name}}",
                   "job_output_type": "mltable",
                   "name": "my_azuresqldb_asset"
                 }
               },
               "_source": "BUILTIN",
-              "componentId": "azureml://registries/azureml-dev/components/import_data_database/versions/0.0.1"
+              "componentId": "azureml://registries/azureml-preview/components/import_data_database/versions/0.0.1"
             }
           },
           "outputs": {},
@@ -55,22 +55,22 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2431",
+        "Content-Length": "3118",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 03 Mar 2023 00:02:58 GMT",
+        "Date": "Mon, 20 Mar 2023 19:53:43 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2022-12-01-preview",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2023-02-01-preview",
         "Pragma": "no-cache",
         "request-context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-28e082e30a9316b00c3313740706bec6-7d8ef3f3b1d0e411-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-09a8879e50d292259d838f37d0c859f8-14d9f799337e7818-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "34732156-6bf6-4c79-bc18-5e6aca254a7f",
+        "x-ms-correlation-request-id": "19c0de80-d5dd-47f1-9671-6633d58b53f4",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS:20230303T000259Z:34732156-6bf6-4c79-bc18-5e6aca254a7f",
-        "x-request-time": "4.607"
+        "x-ms-routing-request-id": "WESTCENTRALUS:20230320T195343Z:19c0de80-d5dd-47f1-9671-6633d58b53f4",
+        "x-request-time": "3.803"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
@@ -86,7 +86,7 @@
             "runSource": "MFE",
             "runType": "HTTP",
             "azureml.parameters": "{}",
-            "azureml.continue_on_step_failure": "False",
+            "azureml.continue_on_step_failure": "True",
             "azureml.continue_on_failed_optional_input": "True",
             "azureml.enforceRerun": "True",
             "azureml.defaultDataStoreName": "workspaceblobstore",
@@ -119,6 +119,7 @@
           "isArchived": false,
           "identity": null,
           "componentId": null,
+          "notificationSetting": null,
           "jobType": "Pipeline",
           "settings": {
             "force_rerun": true,
@@ -137,13 +138,13 @@
               "computeId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/serverless",
               "outputs": {
                 "sink": {
-                  "uri": "azureml://datastores/workspaceblobstore/paths/{name}",
+                  "uri": "azureml://datastores/workspaceblobstore/paths/${{name}}",
                   "job_output_type": "mltable",
                   "name": "my_azuresqldb_asset"
                 }
               },
               "_source": "BUILTIN",
-              "componentId": "azureml://registries/azureml-dev/components/import_data_database/versions/0.0.1"
+              "componentId": "azureml://registries/azureml-preview/components/import_data_database/versions/0.0.1"
             }
           },
           "inputs": {},
@@ -151,8 +152,8 @@
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-03-03T00:02:58.7419134\u002B00:00",
-          "createdBy": "Firstname Lastname",
+          "createdAt": "2023-03-20T19:53:42.9619681\u002B00:00",
+          "createdBy": "Renyi Xiong",
           "createdByType": "User"
         }
       }

@@ -25,7 +25,7 @@ database service.
 
 import threading
 
-from six.moves.urllib.parse import urlparse
+from urllib.parse import urlparse
 
 from . import _constants as constants
 from . import exceptions

@@ -5,6 +5,7 @@
 import abc
 import base64
 import json
+import os
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
@@ -17,8 +18,10 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
+from .._constants import EnvironmentVariables
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
+
 
 if TYPE_CHECKING:
     from azure.core.pipeline import AsyncPipeline, Pipeline
@@ -51,6 +54,8 @@ class AadClientBase(abc.ABC):
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
+        # CP1 = can handle claims challenges (CAE)
+        self._capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
@@ -171,6 +176,10 @@ class AadClientBase(abc.ABC):
             "redirect_uri": redirect_uri,
             "scope": " ".join(scopes),
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
         if client_secret:
             data["client_secret"] = client_secret
 
@@ -190,6 +199,10 @@ class AadClientBase(abc.ABC):
             "grant_type": "client_credentials",
             "scope": " ".join(scopes),
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
 
         request = self._post(data, **kwargs)
         return request
@@ -233,6 +246,11 @@ class AadClientBase(abc.ABC):
             "grant_type": "client_credentials",
             "scope": " ".join(scopes),
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         request = self._post(data, **kwargs)
         return request
 
@@ -250,6 +268,11 @@ class AadClientBase(abc.ABC):
             "requested_token_use": "on_behalf_of",
             "scope": " ".join(scopes),
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
@@ -272,6 +295,11 @@ class AadClientBase(abc.ABC):
             "client_id": self._client_id,
             "client_info": 1,  # request AAD include home_account_id in its response
         }
+
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         request = self._post(data, **kwargs)
         return request
 
@@ -289,6 +317,10 @@ class AadClientBase(abc.ABC):
             "client_id": self._client_id,
             "client_info": 1,  # request AAD include home_account_id in its response
         }
+        claims = _merge_claims_challenge_and_capabilities(self._capabilities, kwargs.get("claims"))
+        if claims:
+            data["claims"] = claims
+
         if isinstance(client_credential, AadClientCertificate):
             data["client_assertion"] = self._get_client_certificate_assertion(client_credential)
             data["client_assertion_type"] = JWT_BEARER_ASSERTION
@@ -308,6 +340,17 @@ class AadClientBase(abc.ABC):
     def _post(self, data: Dict, **kwargs: Any) -> HttpRequest:
         url = self._get_token_url(**kwargs)
         return HttpRequest("POST", url, data=data, headers={"Content-Type": "application/x-www-form-urlencoded"})
+
+
+def _merge_claims_challenge_and_capabilities(capabilities, claims_challenge):
+    # Represent capabilities as {"access_token": {"xms_cc": {"values": capabilities}}}
+    # and then merge/add it into incoming claims
+    if not capabilities:
+        return claims_challenge
+    claims_dict = json.loads(claims_challenge) if claims_challenge else {}
+    for key in ["access_token"]:
+        claims_dict.setdefault(key, {}).update(xms_cc={"values": capabilities})
+    return json.dumps(claims_dict)
 
 
 def _scrub_secrets(response: Dict) -> None:

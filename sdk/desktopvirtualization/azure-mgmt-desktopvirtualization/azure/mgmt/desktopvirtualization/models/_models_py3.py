@@ -9,7 +9,7 @@
 
 import datetime
 import sys
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -54,8 +54,8 @@ class AgentUpdatePatchProperties(_serialization.Model):
         use_session_host_local_time: Optional[bool] = None,
         maintenance_window_time_zone: Optional[str] = None,
         maintenance_windows: Optional[List["_models.MaintenanceWindowPatchProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of maintenance for session host components. Known values are: "Default"
          and "Scheduled".
@@ -109,8 +109,8 @@ class AgentUpdateProperties(_serialization.Model):
         use_session_host_local_time: Optional[bool] = None,
         maintenance_window_time_zone: Optional[str] = None,
         maintenance_windows: Optional[List["_models.MaintenanceWindowProperties"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of maintenance for session host components. Known values are: "Default"
          and "Scheduled".
@@ -160,7 +160,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -268,8 +268,8 @@ class Application(Resource):  # pylint: disable=too-many-instance-attributes
         show_in_portal: Optional[bool] = None,
         icon_path: Optional[str] = None,
         icon_index: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of Application.
         :paramtype description: str
@@ -321,7 +321,8 @@ class Application(Resource):  # pylint: disable=too-many-instance-attributes
 
 
 class ResourceModelWithAllowedPropertySet(_serialization.Model):  # pylint: disable=too-many-instance-attributes
-    """The resource model definition containing the full set of allowed properties for a resource. Except properties bag, there cannot be a top level property outside of this set.
+    """The resource model definition containing the full set of allowed properties for a resource.
+    Except properties bag, there cannot be a top level property outside of this set.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -393,8 +394,8 @@ class ResourceModelWithAllowedPropertySet(_serialization.Model):  # pylint: disa
         identity: Optional["_models.ResourceModelWithAllowedPropertySetIdentity"] = None,
         sku: Optional["_models.ResourceModelWithAllowedPropertySetSku"] = None,
         plan: Optional["_models.ResourceModelWithAllowedPropertySetPlan"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -543,8 +544,8 @@ class ApplicationGroup(ResourceModelWithAllowedPropertySet):  # pylint: disable=
         plan: Optional["_models.ResourceModelWithAllowedPropertySetPlan"] = None,
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -618,7 +619,7 @@ class ApplicationGroupList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ApplicationGroup"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ApplicationGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of ApplicationGroup definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.ApplicationGroup]
@@ -670,8 +671,8 @@ class ApplicationGroupPatch(Resource):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: tags to be updated.
         :paramtype tags: dict[str, str]
@@ -706,7 +707,7 @@ class ApplicationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Application"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Application"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Application definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.Application]
@@ -782,8 +783,8 @@ class ApplicationPatch(_serialization.Model):  # pylint: disable=too-many-instan
         msix_package_family_name: Optional[str] = None,
         msix_package_application_id: Optional[str] = None,
         application_type: Optional[Union[str, "_models.RemoteApplicationType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: tags to be updated.
         :paramtype tags: dict[str, str]
@@ -847,7 +848,7 @@ class CloudErrorProperties(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -908,7 +909,9 @@ class Desktop(Resource):
         "icon_content": {"key": "properties.iconContent", "type": "bytearray"},
     }
 
-    def __init__(self, *, description: Optional[str] = None, friendly_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, description: Optional[str] = None, friendly_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword description: Description of Desktop.
         :paramtype description: str
@@ -944,7 +947,7 @@ class DesktopList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Desktop"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Desktop"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Desktop definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.Desktop]
@@ -977,8 +980,8 @@ class DesktopPatch(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: tags to be updated.
         :paramtype tags: dict[str, str]
@@ -1078,8 +1081,8 @@ class ExpandMsixImage(Resource):  # pylint: disable=too-many-instance-attributes
         version: Optional[str] = None,
         last_updated: Optional[datetime.datetime] = None,
         package_applications: Optional[List["_models.MsixPackageApplications"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword package_alias: Alias of MSIX Package.
         :paramtype package_alias: str
@@ -1147,7 +1150,7 @@ class ExpandMsixImageList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ExpandMsixImage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ExpandMsixImage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of MSIX package properties from give MSIX Image.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.ExpandMsixImage]
@@ -1334,8 +1337,8 @@ class HostPool(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-many
         sso_secret_type: Optional[Union[str, "_models.SSOSecretType"]] = None,
         start_vm_on_connect: Optional[bool] = None,
         agent_update: Optional["_models.AgentUpdateProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -1460,7 +1463,7 @@ class HostPoolList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.HostPool"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.HostPool"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of HostPool definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.HostPool]
@@ -1581,8 +1584,8 @@ class HostPoolPatch(Resource):  # pylint: disable=too-many-instance-attributes
         preferred_app_group_type: Optional[Union[str, "_models.PreferredAppGroupType"]] = None,
         start_vm_on_connect: Optional[bool] = None,
         agent_update: Optional["_models.AgentUpdatePatchProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: tags to be updated.
         :paramtype tags: dict[str, str]
@@ -1675,7 +1678,7 @@ class Identity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
@@ -1709,8 +1712,8 @@ class LogSpecification(_serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         blob_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the log.
         :paramtype name: str
@@ -1741,8 +1744,12 @@ class MaintenanceWindowPatchProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, hour: Optional[int] = None, day_of_week: Optional[Union[str, "_models.DayOfWeek"]] = None, **kwargs
-    ):
+        self,
+        *,
+        hour: Optional[int] = None,
+        day_of_week: Optional[Union[str, "_models.DayOfWeek"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hour: The update start hour of the day. (0 - 23).
         :paramtype hour: int
@@ -1771,8 +1778,12 @@ class MaintenanceWindowProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, hour: Optional[int] = None, day_of_week: Optional[Union[str, "_models.DayOfWeek"]] = None, **kwargs
-    ):
+        self,
+        *,
+        hour: Optional[int] = None,
+        day_of_week: Optional[Union[str, "_models.DayOfWeek"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword hour: The update start hour of the day. (0 - 23).
         :paramtype hour: int
@@ -1796,7 +1807,7 @@ class MSIXImageURI(_serialization.Model):
         "uri": {"key": "uri", "type": "str"},
     }
 
-    def __init__(self, *, uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, uri: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword uri: URI to Image.
         :paramtype uri: str
@@ -1886,8 +1897,8 @@ class MSIXPackage(Resource):  # pylint: disable=too-many-instance-attributes
         version: Optional[str] = None,
         last_updated: Optional[datetime.datetime] = None,
         package_applications: Optional[List["_models.MsixPackageApplications"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_path: VHD/CIM image path on Network Share.
         :paramtype image_path: str
@@ -1970,8 +1981,8 @@ class MsixPackageApplications(_serialization.Model):
         icon_image_name: Optional[str] = None,
         raw_icon: Optional[bytes] = None,
         raw_png: Optional[bytes] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword app_id: Package Application Id, found in appxmanifest.xml.
         :paramtype app_id: str
@@ -2022,8 +2033,8 @@ class MsixPackageDependencies(_serialization.Model):
         dependency_name: Optional[str] = None,
         publisher: Optional[str] = None,
         min_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dependency_name: Name of package dependency.
         :paramtype dependency_name: str
@@ -2058,7 +2069,7 @@ class MSIXPackageList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MSIXPackage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.MSIXPackage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of MSIX Package definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.MSIXPackage]
@@ -2110,8 +2121,8 @@ class MSIXPackagePatch(Resource):
         is_active: Optional[bool] = None,
         is_regular_registration: Optional[bool] = None,
         display_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_active: Set a version of the package to be active across hostpool.
         :paramtype is_active: bool
@@ -2137,7 +2148,9 @@ class OperationProperties(_serialization.Model):
         "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
-    def __init__(self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs):
+    def __init__(
+        self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_specification: Service specification payload.
         :paramtype service_specification: ~azure.mgmt.desktopvirtualization.models.ServiceSpecification
@@ -2188,8 +2201,8 @@ class Plan(_serialization.Model):
         product: str,
         promotion_code: Optional[str] = None,
         version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: A user defined name of the 3rd Party Artifact that is being procured. Required.
         :paramtype name: str
@@ -2238,8 +2251,8 @@ class RegistrationInfo(_serialization.Model):
         expiration_time: Optional[datetime.datetime] = None,
         token: Optional[str] = None,
         registration_token_operation: Optional[Union[str, "_models.RegistrationTokenOperation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiration_time: Expiration time of registration token.
         :paramtype expiration_time: ~datetime.datetime
@@ -2277,8 +2290,8 @@ class RegistrationInfoPatch(_serialization.Model):
         *,
         expiration_time: Optional[datetime.datetime] = None,
         registration_token_operation: Optional[Union[str, "_models.RegistrationTokenOperation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword expiration_time: Expiration time of registration token.
         :paramtype expiration_time: ~datetime.datetime
@@ -2316,7 +2329,7 @@ class ResourceModelWithAllowedPropertySetIdentity(Identity):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
@@ -2366,8 +2379,8 @@ class ResourceModelWithAllowedPropertySetPlan(Plan):
         product: str,
         promotion_code: Optional[str] = None,
         version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: A user defined name of the 3rd Party Artifact that is being procured. Required.
         :paramtype name: str
@@ -2430,8 +2443,8 @@ class Sku(_serialization.Model):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
@@ -2499,8 +2512,8 @@ class ResourceModelWithAllowedPropertySetSku(Sku):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
@@ -2548,8 +2561,8 @@ class ResourceProviderOperation(_serialization.Model):
         display: Optional["_models.ResourceProviderOperationDisplay"] = None,
         is_data_action: Optional[bool] = None,
         properties: Optional["_models.OperationProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name, in format of {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -2594,8 +2607,8 @@ class ResourceProviderOperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Resource provider: Microsoft Desktop Virtualization.
         :paramtype provider: str
@@ -2633,7 +2646,7 @@ class ResourceProviderOperationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ResourceProviderOperation"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ResourceProviderOperation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of operations supported by this resource provider.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.ResourceProviderOperation]
@@ -2658,8 +2671,8 @@ class ScalingHostPoolReference(_serialization.Model):
     }
 
     def __init__(
-        self, *, host_pool_arm_path: Optional[str] = None, scaling_plan_enabled: Optional[bool] = None, **kwargs
-    ):
+        self, *, host_pool_arm_path: Optional[str] = None, scaling_plan_enabled: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword host_pool_arm_path: Arm path of referenced hostpool.
         :paramtype host_pool_arm_path: str
@@ -2784,8 +2797,8 @@ class ScalingPlan(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-m
         exclusion_tag: Optional[str] = None,
         schedules: Optional[List["_models.ScalingSchedule"]] = None,
         host_pool_references: Optional[List["_models.ScalingHostPoolReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -2865,7 +2878,7 @@ class ScalingPlanList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ScalingPlan"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ScalingPlan"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of scaling plan definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.ScalingPlan]
@@ -2915,8 +2928,8 @@ class ScalingPlanPatch(_serialization.Model):
         exclusion_tag: Optional[str] = None,
         schedules: Optional[List["_models.ScalingSchedule"]] = None,
         host_pool_references: Optional[List["_models.ScalingHostPoolReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: tags to be updated.
         :paramtype tags: dict[str, str]
@@ -3061,8 +3074,8 @@ class ScalingPlanPooledSchedule(Resource):  # pylint: disable=too-many-instance-
         ramp_down_notification_message: Optional[str] = None,
         off_peak_start_time: Optional["_models.Time"] = None,
         off_peak_load_balancing_algorithm: Optional[Union[str, "_models.SessionHostLoadBalancingAlgorithm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword days_of_week: Set of days of the week on which this schedule is active.
         :paramtype days_of_week: list[str or ~azure.mgmt.desktopvirtualization.models.DayOfWeek]
@@ -3152,7 +3165,7 @@ class ScalingPlanPooledScheduleList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ScalingPlanPooledSchedule"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ScalingPlanPooledSchedule"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of ScalingPlanPooledSchedule definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.ScalingPlanPooledSchedule]
@@ -3275,8 +3288,8 @@ class ScalingPlanPooledSchedulePatch(Resource):  # pylint: disable=too-many-inst
         ramp_down_notification_message: Optional[str] = None,
         off_peak_start_time: Optional["_models.Time"] = None,
         off_peak_load_balancing_algorithm: Optional[Union[str, "_models.SessionHostLoadBalancingAlgorithm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword days_of_week: Set of days of the week on which this schedule is active.
         :paramtype days_of_week: list[str or ~azure.mgmt.desktopvirtualization.models.DayOfWeek]
@@ -3447,8 +3460,8 @@ class ScalingSchedule(_serialization.Model):  # pylint: disable=too-many-instanc
         ramp_down_notification_message: Optional[str] = None,
         off_peak_start_time: Optional["_models.Time"] = None,
         off_peak_load_balancing_algorithm: Optional[Union[str, "_models.SessionHostLoadBalancingAlgorithm"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the ScalingPlanPooledSchedule.
         :paramtype name: str
@@ -3535,7 +3548,9 @@ class SendMessage(_serialization.Model):
         "message_body": {"key": "messageBody", "type": "str"},
     }
 
-    def __init__(self, *, message_title: Optional[str] = None, message_body: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, message_title: Optional[str] = None, message_body: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword message_title: Title of message.
         :paramtype message_title: str
@@ -3558,7 +3573,7 @@ class ServiceSpecification(_serialization.Model):
         "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
     }
 
-    def __init__(self, *, log_specifications: Optional[List["_models.LogSpecification"]] = None, **kwargs):
+    def __init__(self, *, log_specifications: Optional[List["_models.LogSpecification"]] = None, **kwargs: Any) -> None:
         """
         :keyword log_specifications: Specifications of the Log for Azure Monitoring.
         :paramtype log_specifications: list[~azure.mgmt.desktopvirtualization.models.LogSpecification]
@@ -3677,8 +3692,8 @@ class SessionHost(Resource):  # pylint: disable=too-many-instance-attributes
         sx_s_stack_version: Optional[str] = None,
         update_state: Optional[Union[str, "_models.UpdateState"]] = None,
         update_error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword last_heart_beat: Last heart beat from SessionHost.
         :paramtype last_heart_beat: ~datetime.datetime
@@ -3753,7 +3768,7 @@ class SessionHostHealthCheckFailureDetails(_serialization.Model):
         "last_health_check_date_time": {"key": "lastHealthCheckDateTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.message = None
@@ -3795,7 +3810,7 @@ class SessionHostHealthCheckReport(_serialization.Model):
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.health_check_name = None
@@ -3823,7 +3838,7 @@ class SessionHostList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SessionHost"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.SessionHost"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of SessionHost definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.SessionHost]
@@ -3875,8 +3890,8 @@ class SessionHostPatch(Resource):
         allow_new_session: Optional[bool] = None,
         assigned_user: Optional[str] = None,
         friendly_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow_new_session: Allow a new session.
         :paramtype allow_new_session: bool
@@ -3941,8 +3956,8 @@ class StartMenuItem(Resource):
         command_line_arguments: Optional[str] = None,
         icon_path: Optional[str] = None,
         icon_index: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword app_alias: Alias of StartMenuItem.
         :paramtype app_alias: str
@@ -3983,7 +3998,7 @@ class StartMenuItemList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.StartMenuItem"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.StartMenuItem"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of StartMenuItem definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.StartMenuItem]
@@ -4030,8 +4045,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -4078,7 +4093,7 @@ class Time(_serialization.Model):
         "minute": {"key": "minute", "type": "int"},
     }
 
-    def __init__(self, *, hour: int, minute: int, **kwargs):
+    def __init__(self, *, hour: int, minute: int, **kwargs: Any) -> None:
         """
         :keyword hour: The hour. Required.
         :paramtype hour: int
@@ -4150,8 +4165,8 @@ class UserSession(Resource):
         session_state: Optional[Union[str, "_models.SessionState"]] = None,
         active_directory_user_name: Optional[str] = None,
         create_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_principal_name: The user principal name.
         :paramtype user_principal_name: str
@@ -4196,7 +4211,7 @@ class UserSessionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.UserSession"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.UserSession"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of UserSession definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.UserSession]
@@ -4303,8 +4318,8 @@ class Workspace(ResourceModelWithAllowedPropertySet):  # pylint: disable=too-man
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
         application_group_references: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -4372,7 +4387,7 @@ class WorkspaceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Workspace"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Workspace"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Workspace definitions.
         :paramtype value: list[~azure.mgmt.desktopvirtualization.models.Workspace]
@@ -4409,8 +4424,8 @@ class WorkspacePatch(_serialization.Model):
         description: Optional[str] = None,
         friendly_name: Optional[str] = None,
         application_group_references: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: tags to be updated.
         :paramtype tags: dict[str, str]

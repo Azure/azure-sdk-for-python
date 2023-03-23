@@ -58,7 +58,6 @@ class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LANGUAGE_DETECTION = "LanguageDetection"
     EXTRACTIVE_SUMMARIZATION = "ExtractiveSummarization"
     ABSTRACTIVE_SUMMARIZATION = "AbstractiveSummarization"
-    DYNAMIC_CLASSIFICATION = "DynamicClassification"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1255,7 +1254,6 @@ class DocumentError(DictMixin):
             + ClassifyDocumentResult().keys()
             + ExtractSummaryResult().keys()
             + AbstractiveSummaryResult().keys()
-            + DynamicClassificationResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -2994,10 +2992,10 @@ class SummaryContext(DictMixin):
     """
 
     offset: int
-    """Start position for the context. Use of different 'stringIndexType' values can
+    """Start position for the context. Use of different 'string_index_type' values can
      affect the offset returned. Required."""
     length: int
-    """The length of the context. Use of different 'stringIndexType' values can affect
+    """The length of the context. Use of different 'string_index_type' values can affect
      the length returned. Required."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -3097,62 +3095,4 @@ class AbstractiveSummaryAction(DictMixin):
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.sentence_count,
             )
-        )
-
-
-class DynamicClassificationResult(DictMixin):
-    """DynamicClassificationResult is a result object which contains
-    the classifications for a particular document.
-
-    .. versionadded:: 2022-10-01-preview
-        The *DynamicClassificationResult* model.
-    """
-
-    id: str  # pylint: disable=redefined-builtin
-    """Unique, non-empty document identifier."""
-    classifications: List[ClassificationCategory]
-    """Recognized classification results in the document."""
-    warnings: List[TextAnalyticsWarning]
-    """Warnings encountered while processing document."""
-    statistics: Optional[TextDocumentStatistics] = None
-    """If `show_stats=True` was specified in the request this
-        field will contain information about the document payload."""
-    is_error: Literal[False] = False
-    """Boolean check for error item when iterating over list of
-        results. Always False for an instance of a DynamicClassificationResult."""
-    kind: Literal["DynamicClassification"] = "DynamicClassification"
-    """The text analysis kind - "DynamicClassification"."""
-
-    def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.get('id', None)
-        self.classifications = kwargs.get('classifications', None)
-        self.warnings = kwargs.get('warnings', [])
-        self.statistics = kwargs.get('statistics', None)
-        self.is_error: Literal[False] = False
-        self.kind: Literal["DynamicClassification"] = "DynamicClassification"
-
-    def __repr__(self) -> str:
-        return (
-            f"DynamicClassificationResult(id={self.id}, classifications={repr(self.classifications)}, "
-            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
-            f"is_error={self.is_error}, kind={self.kind})"[:1024]
-        )
-
-    @classmethod
-    def _from_generated(cls, result):
-        return cls(
-            id=result.id,
-            classifications=[
-                ClassificationCategory._from_generated(c)  # pylint: disable=protected-access
-                for c in result.classifications
-            ],
-            warnings=[
-                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
-                    w
-                )
-                for w in result.warnings
-            ],
-            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
-                result.statistics
-            ),
         )
