@@ -1,5 +1,4 @@
 import random
-
 import pytest
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
@@ -32,19 +31,16 @@ def deployment_update_file() -> str:
 
 @pytest.fixture
 def mir_update_file() -> str:
-    return (
-        "./tests/test_configs/online/managed/canary-declarative-flow/6-delete-blue.yaml"
-    )
+    return "./tests/test_configs/online/managed/canary-declarative-flow/6-delete-blue.yaml"
 
 
 @pytest.fixture
 def request_file() -> str:
-    return "./tests/test_configs/deployments/model-1/sample-request.json"
+    return "./tests/test_configs/deployments/model-a/sample-request.json"
 
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
-@pytest.mark.skip()
 def test_local_endpoint_mir_e2e(
     endpoint_mir_yaml: str,
     mir_endpoint_name: str,
@@ -62,9 +58,7 @@ def test_local_endpoint_mir_e2e(
     assert list_obj is not None
     assert len(list(list_obj)) > 0
 
-    response = client.online_endpoints.invoke(
-        endpoint_name=mir_endpoint_name, request_file=request_file, local=True
-    )
+    response = client.online_endpoints.invoke(endpoint_name=mir_endpoint_name, request_file=request_file, local=True)
     assert "az ml online-deployment" in response
 
     client.online_endpoints.begin_delete(name=mir_endpoint_name, local=True)
@@ -72,7 +66,6 @@ def test_local_endpoint_mir_e2e(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
-@pytest.mark.skip()
 def test_local_deployment_mir_e2e(
     deployment_create_yaml: str,
     deployment_update_file: str,
@@ -129,9 +122,7 @@ def test_local_deployment_mir_e2e_byoc(
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_byoc
-@pytest.mark.skip(
-    "Requires building docker image and specific ACR info we don't have from pipelines."
-)
+@pytest.mark.skip("Requires building docker image and specific ACR info we don't have from pipelines.")
 def test_local_deployment_mir_e2e_byoc_sklearn(
     mir_endpoint_name: str,
     request_file: str,
@@ -172,33 +163,27 @@ def test_local_deployment_mir_e2e_byoc_sklearn(
             "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
             None,
             None,
-            marks=pytest.mark.skip(
-                reason="Registered model covered in full registered assets test."
-            ),
+            marks=pytest.mark.skip(reason="Registered model covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_code.yaml",
             None,
             "tests/test_configs/deployments/model-1/onlinescoring/",
             None,
-            marks=pytest.mark.skip(
-                reason="Registered code covered in full registered assets test."
-            ),
+            marks=pytest.mark.skip(reason="Registered code covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_env.yaml",
             None,
             None,
             "tests/test_configs/deployments/model-1/environment/conda.yml",
-            marks=pytest.mark.skip(
-                reason="Registered env covered in full registered assets test."
-            ),
+            marks=pytest.mark.skip(reason="Registered env covered in full registered assets test."),
         ),
         pytest.param(
             "tests/test_configs/deployments/online/online_deployment_registered_artifacts.yaml",
-            "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
-            "tests/test_configs/deployments/model-1/onlinescoring/",
-            "tests/test_configs/deployments/model-1/environment/conda.yml",
+            "tests/test_configs/deployments/model-a/model/",
+            "tests/test_configs/deployments/model-a/onlinescoring/",
+            "tests/test_configs/deployments/model-a/environment/conda.yml",
         ),
     ],
 )
@@ -230,7 +215,7 @@ def test_local_deployment_mir_e2e_registered_artifacts(
         register_env(
             name="sklearn-env",
             version="1",
-            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04",
+            image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04",
             conda_file=conda_env_to_register,
             client=client,
         )
@@ -274,9 +259,7 @@ def register_env(
     try:
         env = client.environments.get(name=name, version=version)
     except ResourceNotFoundError:
-        env = Environment(
-            name=name, image=image, conda_file=conda_file, version=version
-        )
+        env = Environment(name=name, image=image, conda_file=conda_file, version=version)
         env = client.environments.create_or_update(env)
     return env
 
@@ -295,13 +278,9 @@ def run_local_endpoint_tests_e2e_create(
         deployment = load_online_deployment(deployment_yaml)
         deployment.endpoint_name = endpoint_name
         deployment.name = deployment_name
-        client.online_deployments.begin_create_or_update(
-            deployment=deployment, local=True
-        )
+        client.online_deployments.begin_create_or_update(deployment=deployment, local=True)
 
-        get_obj = client.online_deployments.get(
-            endpoint_name=endpoint_name, name=deployment_name, local=True
-        )
+        get_obj = client.online_deployments.get(endpoint_name=endpoint_name, name=deployment_name, local=True)
         assert get_obj.name == deployment_name
         assert get_obj.endpoint_name == endpoint_name
 
@@ -310,13 +289,11 @@ def run_local_endpoint_tests_e2e_create(
         assert get_obj.scoring_uri is not None
         assert get_obj.scoring_uri != ""
 
-        data = client.online_endpoints.invoke(
-            endpoint_name=endpoint_name, request_file=request_file, local=True
-        )
+        data = client.online_endpoints.invoke(endpoint_name=endpoint_name, request_file=request_file, local=True)
         assert type(data) is str
         if is_sklearn:
-            assert "5215" in data
-            assert "3726" in data
+            assert "11055" in data
+            assert "4503" in data
 
         logs = client.online_deployments.get_logs(
             endpoint_name=endpoint_name, name=deployment_name, lines=10, local=True
@@ -325,9 +302,7 @@ def run_local_endpoint_tests_e2e_create(
         if is_sklearn:
             assert logs.count("\n") == 10
 
-        deployments = client.online_deployments.list(
-            endpoint_name=endpoint_name, local=True
-        )
+        deployments = client.online_deployments.list(endpoint_name=endpoint_name, local=True)
         assert deployments is not None
         assert len(list(deployments)) > 0
 
@@ -335,16 +310,10 @@ def run_local_endpoint_tests_e2e_create(
             deployment = load_online_deployment(update_file)
             deployment.endpoint_name = endpoint_name
             deployment.name = deployment_name
-            client.online_deployments.begin_create_or_update(
-                deployment=deployment, local=True
-            )
+            client.online_deployments.begin_create_or_update(deployment=deployment, local=True)
 
-        client.online_deployments.begin_delete(
-            name=deployment_name, endpoint_name=endpoint_name, local=True
-        )
-        deployments = client.online_deployments.list(
-            endpoint_name=endpoint_name, local=True
-        )
+        client.online_deployments.begin_delete(name=deployment_name, endpoint_name=endpoint_name, local=True)
+        deployments = client.online_deployments.list(endpoint_name=endpoint_name, local=True)
         assert deployments is not None
         assert endpoint_name not in [dep.endpoint_name for dep in deployments]
     except Exception as e:
