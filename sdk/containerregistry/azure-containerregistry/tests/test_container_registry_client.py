@@ -556,14 +556,18 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
         with self.create_registry_client(containerregistry_endpoint) as client:
             # Act
-            data = open(path, "rb")
-            digest, size = client.upload_blob(repo, data)
+            with open(path, "rb") as data:
+                digest, blob_size = client.upload_blob(repo, data)
 
             # Assert
-            res = client.download_blob(repo, digest)
-            assert len(res.read()) == size
+            blob_content = b""
+            stream = client.download_blob(repo, digest)
+            for chunk in stream:
+                blob_content += chunk
+            assert len(blob_content) == blob_size
 
             client.delete_blob(repo, digest)
+            client.delete_repository(repo)
 
     @pytest.mark.live_test_only
     @acr_preparer()
@@ -578,9 +582,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert size == blob_size
 
             stream = client.download_blob(repo, digest)
+            size = 0
             with open("text1.txt", "wb") as file:
-                size = file.write(stream.read())
+                for chunk in stream:
+                    size += file.write(chunk)
             assert size == blob_size
+            
+            client.delete_blob(repo, digest)
 
             # Test blob upload and download in unequal size chunks
             blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
@@ -589,9 +597,14 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert size == blob_size
 
             stream = client.download_blob(repo, digest)
+            size = 0
             with open("text2.txt", "wb") as file:
-                size = file.write(stream.read())
+                for chunk in stream:
+                    size += file.write(chunk)
             assert size == blob_size
+            
+            client.delete_blob(repo, digest)
+            client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy
