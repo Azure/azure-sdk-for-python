@@ -15,11 +15,6 @@ from .._shared.response_handlers import (
     return_context_and_deserialized)
 from .._models import QueueMessage, QueueProperties
 
-if sys.version_info >= (3, 11):
-    from typing import Self # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Self # pylint: disable=ungrouped-imports
-
 
 class MessagesPaged(AsyncPageIterator):
     """An iterable of Queue Messages.

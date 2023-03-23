@@ -15,7 +15,7 @@ from json import (
     dumps,
     loads,
 )
-from typing import Any, BinaryIO, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Any, BinaryIO, Callable, Dict, Optional, Tuple, TYPE_CHECKING
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import Cipher
