@@ -398,7 +398,7 @@ def gen_typespec(typespec_relative_path: str, spec_folder: str) -> Dict[str, Any
 
     # generate code
     typespec_file = "client.tsp" if Path("client.tsp").exists() else "."
-    check_call(f"npx typespec compile {typespec_file} --emit {typespec_python} --arg \"python-sdk-folder={origin_path}\" ", shell=True)
+    check_call(f"npx tsp compile {typespec_file} --emit {typespec_python} --arg \"python-sdk-folder={origin_path}\" ", shell=True)
 
     # get version of codegen used in generation
     npm_package_verstion = get_npm_package_version(autorest_python)
