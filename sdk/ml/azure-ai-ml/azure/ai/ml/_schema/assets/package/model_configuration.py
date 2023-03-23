@@ -27,5 +27,4 @@ class ModelConfigurationSchema(PathAwareSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import ModelConfiguration
 
-        # from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelConfiguration
         return ModelConfiguration(**data)

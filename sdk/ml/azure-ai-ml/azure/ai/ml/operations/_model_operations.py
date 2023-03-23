@@ -571,9 +571,6 @@ class ModelOperations(_ScopeDependentOperations):
                         azureml_type=AzureMLResourceType.CODE,
                     )
 
-            # import debugpy
-            # debugpy.connect(("localhost", 5678))
-            # debugpy.breakpoint()
             if package_request.base_environment_source and hasattr(
                 package_request.base_environment_source, "resource_id"
             ):
@@ -602,5 +599,12 @@ class ModelOperations(_ScopeDependentOperations):
             body=package_request,
             **self._scope_kwargs,
         ).result()
-        module_logger.info("\nPackage Created")
+
+        if package_out is not None and package_out.__class__.__name__ == "PackageResponse":
+            environment_operation = self._all_operations.all_operations[AzureMLResourceType.ENVIRONMENT]
+            module_logger.info("\nPackage Created")
+            package_out = environment_operation.get(
+                name=package_out.target_environment_name, version=package_out.target_environment_version
+            )
+
         return package_out

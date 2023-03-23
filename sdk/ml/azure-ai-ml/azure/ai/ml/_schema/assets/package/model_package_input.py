@@ -9,16 +9,13 @@ import logging
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.job import CreationContextSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, AzureMLResourceType
-
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, VersionField, NestedField
+from azure.ai.ml._schema.core.fields import StringTransformedEnum
 
 module_logger = logging.getLogger(__name__)
 
 
 class ModelPackageInputSchema(PathAwareSchema):
-    input_type = StringTransformedEnum(allowed_values=["UriFile", "UriFolder"])
+    type = StringTransformedEnum(allowed_values=["uri_file", "uri_folder"])
     mode = StringTransformedEnum(
         allowed_values=[
             "readonly_mount",
@@ -27,3 +24,9 @@ class ModelPackageInputSchema(PathAwareSchema):
     )
     path = fields.Str()
     mount_path = fields.Str()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._assets._artifacts.model_package import ModelPackageInput
+
+        return ModelPackageInput(**data)

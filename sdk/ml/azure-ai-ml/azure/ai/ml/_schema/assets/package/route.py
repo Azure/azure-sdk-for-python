@@ -5,7 +5,7 @@
 # pylint: disable=unused-argument,no-self-use
 
 import logging
-from marshmallow import fields
+from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 
 module_logger = logging.getLogger(__name__)
@@ -14,3 +14,9 @@ module_logger = logging.getLogger(__name__)
 class RouteSchema(PatchedSchemaMeta):
     port = fields.Str()
     path = fields.Str()
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._assets._artifacts._package.azureml_online_inferencing_server import Route
+
+        return Route(**data)

@@ -5,15 +5,10 @@
 # pylint: disable=unused-argument,no-self-use
 
 import logging
-from typing import Any
-
 from marshmallow import fields, post_load
-
-from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
-from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import NestedField
 from .route import RouteSchema
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._restclient.v2023_04_01_preview.models import OnlineInferenceConfiguration
 
 
 module_logger = logging.getLogger(__name__)
@@ -28,4 +23,8 @@ class OnlineInferenceConfigurationSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
+        from azure.ai.ml.entities._assets._artifacts._package.azureml_online_inferencing_server import (
+            OnlineInferenceConfiguration,
+        )
+
         return OnlineInferenceConfiguration(**data)

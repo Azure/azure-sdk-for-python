@@ -10,7 +10,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     PackageRequest,
     PackageResponse,
     InferencingServer,
-    ModelPackageInput,
+    ModelPackageInput as RestModelPackageInput,
     BaseEnvironmentSource,
     ModelConfiguration,
     CodeConfiguration,
@@ -20,11 +20,52 @@ from azure.ai.ml._schema.assets.package.model_package import ModelPackageSchema
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
-    LONG_URI_FORMAT,
     PARAMS_OVERRIDE_KEY,
-    ArmConstants,
-    AssetTypes,
 )
+
+
+class ModelPackageInput:
+    """Model package input.
+
+    :param type: The storage format for this entity. Used for NCD. Possible values include:
+     "custom_model", "mlflow_model", "triton_model".
+    :type type: str
+    :param path: A remote uri or a local path pointing at a model.
+        Example: "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
+    :type path: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param properties: The asset property dictionary.
+    :type properties: dict[str, str]
+    :param kwargs: A dictionary of additional configuration parameters.
+    :type kwargs: dict
+    """
+
+    def __init__(
+        self,
+        type: Optional[str] = None,
+        path: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs,
+    ):
+        self.type = type
+        self.path = path
+        self.tags = tags
+
+    def _to_rest_object(self) -> RestModelPackageInput:
+        return ModelPackageInput(
+            type=self.type,
+            path=self.path,
+            tags=self.tags,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, model_package_input_rest_object: RestModelPackageInput) -> "ModelPackageInput":
+        return ModelPackageInput(
+            type=model_package_input_rest_object.type,
+            path=model_package_input_rest_object.path,
+            tags=model_package_input_rest_object.tags,
+        )
 
 
 class ModelPackage(Resource, PackageRequest):
