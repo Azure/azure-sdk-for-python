@@ -179,8 +179,8 @@ class ActivityRunsOperations:
         :type factory_name: str
         :param run_id: The pipeline run identifier. Required.
         :type run_id: str
-        :param filter_parameters: Parameters to filter the activity runs. Is either a model type or a
-         IO type. Required.
+        :param filter_parameters: Parameters to filter the activity runs. Is either a
+         RunFilterParameters type or a IO type. Required.
         :type filter_parameters: ~azure.mgmt.datafactory.models.RunFilterParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

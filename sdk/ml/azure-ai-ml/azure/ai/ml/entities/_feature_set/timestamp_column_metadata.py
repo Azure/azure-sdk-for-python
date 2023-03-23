@@ -6,6 +6,6 @@
 
 
 class TimestampColumnMetadata(object):
-    def __init__(self, *, name: str, format: str, **kwargs):
+    def __init__(self, *, name: str, format: str = None, **kwargs):
         self.name = name
         self.format = format

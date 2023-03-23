@@ -15,9 +15,9 @@ autorest SWAGGER.md
 
 ### Settings
 ``` yaml
-package-version: 1.0.0b2
-tag: package-2023-01-15-preview
-require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/ac7f9d6f1003acf6e54682534f30a9f5ec7fc5d2/specification/communication/data-plane/Email/readme.md
+package-version: 1.0.0
+tag: package-2023-03-31
+require: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/ac29c822ecd5f6054cd17c46839e7c04a1114c6d/specification/communication/data-plane/Email/readme.md
 output-folder: ../azure/communication/email/_generated
 namespace: azure.communication.email
 no-namespace-folders: true

@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Union, Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.entities import Job, PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities import PipelineJob, PipelineJobSettings
 from azure.ai.ml.data_transfer import import_data as import_data_func
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._inputs_outputs.external_data import Database
@@ -301,7 +301,11 @@ class DataOperations(_ScopeDependentOperations):
                 data._referenced_uris = referenced_uris
 
             data, _ = _check_and_upload_path(
-                artifact=data, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.DATA
+                artifact=data,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.DATA,
+                show_progress=self._show_progress,
             )
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
@@ -355,19 +359,19 @@ class DataOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Data.ImportData", ActivityType.PUBLICAPI)
     @experimental
-    def import_data(self, data_import: DataImport) -> Job:
+    def import_data(self, data_import: DataImport, **kwargs) -> PipelineJob:
         """Returns the data import job that is creating the data asset.
 
         :param data_import: DataImport object.
         :type data_import: azure.ai.ml.entities.DataImport
         :return: data import job object.
-        :rtype: ~azure.ai.ml.entities.Job
+        :rtype: ~azure.ai.ml.entities.PipelineJob
         """
 
         experiment_name = "data_import_" + data_import.name
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
-        if "{name}" not in data_import.path:
-            data_import.path = data_import.path.rstrip("/") + "/{name}"
+        if "${{name}}" not in data_import.path:
+            data_import.path = data_import.path.rstrip("/") + "/${{name}}"
         import_job = import_data_func(
             description=data_import.description or experiment_name,
             display_name=experiment_name,
@@ -390,16 +394,17 @@ class DataOperations(_ScopeDependentOperations):
             jobs={experiment_name: import_job},
         )
         import_pipeline.properties["azureml.materializationAssetName"] = data_import.name
-        return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True)
+        return self._job_operation.create_or_update(job=import_pipeline, skip_validation=True, **kwargs)
 
-    @monitor_with_activity(logger, "Data.ShowMaterializationStatus", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Data.ListMaterializationStatus", ActivityType.PUBLICAPI)
     @experimental
-    def show_materialization_status(
+    def list_materialization_status(
         self,
         name: str,
         *,
         list_view_type: ListViewType = ListViewType.ACTIVE_ONLY,
-    ) -> Iterable[Job]:
+        **kwargs,
+    ) -> Iterable[PipelineJob]:
         """List materialization jobs of the asset.
 
         :param name: name of asset being created by the materialization jobs.
@@ -407,11 +412,10 @@ class DataOperations(_ScopeDependentOperations):
         :param list_view_type: View type for including/excluding (for example) archived jobs. Default: ACTIVE_ONLY.
         :type list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Job objects.
-        :rtype: ~azure.core.paging.ItemPaged[Job]
+        :rtype: ~azure.core.paging.ItemPaged[PipelineJob]
         """
 
-        # TODO: Add back 'asset_name=name' filter once client switches to mfe 2023-02-01-preview and above
-        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type)
+        return self._job_operation.list(job_type="Pipeline", asset_name=name, list_view_type=list_view_type, **kwargs)
 
     @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:

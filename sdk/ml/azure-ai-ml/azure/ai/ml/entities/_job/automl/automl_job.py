@@ -86,8 +86,6 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         :paramtype queue_settings: typing.Optional[QueueSettings]
         :raises ValidationException: task type validation error
         :raises NotImplementedError: Raises NotImplementedError
-        :return: An AutoML Job
-        :rtype: AutoMLJob
         """
         kwargs[TYPE] = JobType.AUTOML
         self.environment_id = kwargs.pop("environment_id", None)

@@ -1383,9 +1383,9 @@ class TestPipelineJobEntity:
         job = load_job(test_path)
         result = job._validate()
         assert (
-            "jobs.hello_world.conf" in result.error_messages
+            "jobs.hello_world" in result.error_messages
             and "Should not specify min or max executors when dynamic allocation is disabled."
-            == result.error_messages["jobs.hello_world.conf"]
+            == result.error_messages["jobs.hello_world"]
         )
 
     def test_spark_node_in_pipeline_with_invalid_code(
@@ -1435,6 +1435,42 @@ class TestPipelineJobEntity:
             "type": "spark",
         }
         assert actual_dict == expected_dict
+
+    @pytest.mark.parametrize(
+        "test_path, error_messages",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
+                "Input 'file_input1' is using 'None' mode, only 'direct' is supported for Spark job",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
+                "Input 'input1' is using 'mount' mode, only 'direct' is supported for Spark job",
+            ),
+        ],
+    )
+    def test_spark_node_in_pipeline_with_invalid_input_mode(self, test_path, error_messages):
+        job = load_job(test_path)
+        result = job._validate()
+        assert error_messages == result.error_messages["jobs.hello_world"]
+
+    @pytest.mark.parametrize(
+        "test_path, error_messages",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_output_mode.yml",
+                "Output 'output' is using 'None' mode, only 'direct' is supported for Spark job",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_output_mode.yml",
+                "Output 'output1' is using 'upload' mode, only 'direct' is supported for Spark job",
+            ),
+        ],
+    )
+    def test_spark_node_in_pipeline_with_invalid_output_mode(self, test_path, error_messages):
+        job = load_job(test_path)
+        result = job._validate()
+        assert error_messages == result.error_messages["jobs.hello_world"]
 
     def test_infer_pipeline_output_type_as_node_type(
         self,
