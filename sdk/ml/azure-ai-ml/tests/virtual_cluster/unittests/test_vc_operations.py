@@ -3,7 +3,7 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.operations import VirtualClusterOperations
+from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
 
 
 @pytest.fixture

@@ -464,9 +464,9 @@ class Command(BaseNode):
             UserIdentityConfiguration]
         :param queue_settings: Queue settings for the job.
         :type queue_settings: QueueSettings
-        :param job_tier: determines the job tier.
+        :param job_tier: **Experimental** determines the job tier.
         :type job_tier: str
-        :param priority: controls the priority on the compute.
+        :param priority: **Experimental** controls the priority on the compute.
         :type priority: str
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep

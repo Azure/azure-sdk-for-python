@@ -201,6 +201,10 @@ def command(
     :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
         Please see https://aka.ms/azuremlexperimental for more information.
     :type services: Dict[str, JobService]
+    :param job_tier: **Experimental** determines the job tier.
+    :type job_tier: str
+    :param priority: **Experimental** controls the priority on the compute.
+    :type priority: str
     """
     # pylint: disable=too-many-locals
     inputs = inputs or {}
