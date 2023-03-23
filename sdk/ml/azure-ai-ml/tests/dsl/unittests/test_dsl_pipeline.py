@@ -3093,3 +3093,22 @@ class TestDSLPipeline:
 
         pipeline_job = my_pipeline()
         assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
+
+    def test_pipeline_input_binding_limits_timeout(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline(timeout) -> PipelineJob:
+            # case 1: if timeout is PipelineInput
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=timeout)
+            # case 2: if timeout is not PipelineInput
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
+
+        pipeline = my_pipeline(2)
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_dict = pipeline._to_rest_object().as_dict()
+        assert pipeline_dict["properties"]["jobs"]["node_0"]["limits"]["timeout"] == "${{parent.inputs.timeout}}"
+        assert pipeline_dict["properties"]["jobs"]["node_1"]["limits"]["timeout"] == "PT1S"

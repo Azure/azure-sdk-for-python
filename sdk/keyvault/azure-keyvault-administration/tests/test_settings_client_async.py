@@ -19,7 +19,10 @@ class TestSettings(KeyVaultTestCase):
     @KeyVaultSettingsClientPreparer()
     @recorded_by_proxy_async
     async def test_list_settings(self, client: KeyVaultSettingsClient, **kwargs):
-        default_settings = [setting async for setting in await client.list_settings()]
+        result = client.list_settings()
+        default_settings = []
+        async for setting in result:
+            default_settings.append(setting)
         assert len(default_settings)
         for setting in default_settings:
             assert setting.name and setting.setting_type and setting.value is not None
