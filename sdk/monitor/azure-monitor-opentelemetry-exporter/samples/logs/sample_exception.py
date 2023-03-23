@@ -28,6 +28,7 @@ get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter)
 handler = LoggingHandler()
 logger = logging.getLogger(__name__)
 logger.addHandler(handler)
+logger.setLevel(logging.ERROR)
 
 # The following code will generate two pieces of exception telemetry
 # that are identical in nature
