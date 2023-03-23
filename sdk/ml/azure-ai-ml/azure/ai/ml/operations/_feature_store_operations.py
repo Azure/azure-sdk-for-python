@@ -372,3 +372,4 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
             raise ValidationError("{0} is not a feature store".format(name))
 
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)
+        
