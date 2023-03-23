@@ -1,5 +1,11 @@
 # Release History
 
+## 9.1.0b2 (2023-03-23)
+
+### Features Added
+
+  - Added operation group MongoClustersOperations
+
 ## 9.1.0b1 (2023-03-20)
 
 ### Features Added
