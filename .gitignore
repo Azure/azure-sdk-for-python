@@ -53,6 +53,7 @@ _azci_*.log
 .artifacts
 .tmp_whl_dir
 .logs
+.proxy
 
 # tox environment folders
 .tox/

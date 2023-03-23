@@ -204,7 +204,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         compute_resource: Optional[_MaterializationComputeResource] = None,
         spark_configuration: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
-    ) -> LROPoller[_FeatureSetMaterializationResponse]:
+    ) -> LROPoller[_FeatureSetBackfillResponse]:
         """Backfill.
 
         :param name: Feature set name. This is case-sensitive.
