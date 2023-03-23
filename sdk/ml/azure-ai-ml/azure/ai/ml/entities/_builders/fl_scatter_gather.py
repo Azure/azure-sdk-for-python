@@ -16,13 +16,16 @@ from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._validation import MutableValidationResult
-from .subcomponents import aggregate_output
+from .subcomponents import create_scatter_output_table
+from azure.ai.ml.dsl import pipeline
+from mldesigner.dsl import do_while
+from azure.ai.ml import Input
 
-# TODO 2293610: add support for more types of outputs besides uri_folder and mltable
+# TODO 2293610: add support for more types of outputs besides uri_folder and mltable 
 # Likely types that ought to be mergeable: string, int, uri_file
 MERGE_COMPONENT_MAPPING = {
-    "mltable": aggregate_output,
-    "uri_folder": aggregate_output,
+    "mltable": create_scatter_output_table,
+    "uri_folder": create_scatter_output_table,
 }
 
 
@@ -34,7 +37,7 @@ ANCHORING_PATH_ROOT = "root"
 # big TODO: For some reason, surfacing this file in  __init__.py causes
 #  a circular import exception on the first attempted import
 # In notebooks, the second import succeeds, but then causes a silent failure where the
-# MLDesigner component created by the subcomponents.aggregate_output function
+# MLDesigner component created by the subcomponents.create_scatter_output_table function
 # will produce a ComponentExecutor object instead of the actual component.
 # TODO 2293541: Add telemetry of some sort
 # pylint: disable=too-many-instance-attributes
@@ -105,25 +108,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         self.subgraph = []
         self._init = True  # Needed by parent class to work properly
 
-        executed_aggregation_step = None
-        # TODO 2293573: replace this for-loop with a do-while node.
-        for _ in range(self.max_iterations):
-            # Create inputs for silo components
-            silo_inputs = {}
-            # Start with static inputs
-            silo_inputs.update(self.shared_silo_kwargs)
-            # merge in inputs passed in from previous iteration's aggregate step if they exist
-            if executed_aggregation_step is not None and self.aggregation_to_silo_argument_map is not None:
-                silo_inputs.update(
-                    FLScatterGather._extract_outputs(
-                        executed_aggregation_step.outputs, self.aggregation_to_silo_argument_map
-                    )
-                )
-            # per-silo inputs added in during scatter_gather
-            # Run scatter-gather iteration.
-            self.subgraph.append(self.scatter_gather(silo_inputs))
-            # re-assign previous agg step to extract outputs for next iter's inputs
-            executed_aggregation_step = self.subgraph[-1]["aggregation"]
+        self.scatter_gather()
 
         # set output to final aggregation step's output
         self._outputs = self.subgraph[-1]["aggregation"].outputs
@@ -142,6 +127,102 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             experiment_name=None,
         )
 
+    def scatter_gather(self):
+        
+        @pipeline(
+            name="Scatter gather",
+            description="It includes all steps that needs to be executing in silo+aggregation",
+        )
+        def scatter_gather_iteration_body(checkpoint: Input(optional=True)=None, **silo_inputs):
+            '''
+                Performs a scatter-gather iteration by running copies of the silo step on different
+            computes/datstores according to this node's silo configs. The outputs of these
+            silo components are then merged by an internal helper component. The merged values
+            are then inputted into the user-provided aggregation component. Returns the executed aggregation component.
+            Args:
+                silo_inputs (dict): A dictionary of names and Inputs to be injected into each executed silo step.
+                    This dictionary is merged with silo-specific inputs before each executed.
+            '''
+
+            sg_graph = {"silo_steps" : []}
+            siloed_outputs = {}
+            # TODO 2293586 replace this for-loop with a parallel-for node
+            for i in range(len(self.silo_configs)):
+                silo_config = self.silo_configs[i]
+                silo_inputs.update(silo_config.inputs)
+                executed_silo_component = self.silo_component(**silo_inputs)
+                for v, k in executed_silo_component.inputs.items():
+                    if v in silo_config.inputs and k.type == "uri_folder":
+                        k.mode = "ro_mount"
+                FLScatterGather._anchor_step(
+                    pipeline_step=executed_silo_component,
+                    compute=silo_config.compute,
+                    internal_datastore=silo_config.datastore,
+                    orchestrator_datastore=self.aggregation_datastore
+                )
+                # include executed silo steps in recorded subgraph
+                sg_graph["silo_steps"].append(executed_silo_component)
+
+                # Extract user-specified outputs from the silo component, rename them as needed,
+                # annotate them with the silo's index, then jam them all into the
+                # variable-length internal component's input list. 
+                siloed_outputs.update({"{}_{}".format(k, i): v for k, v in
+                                    FLScatterGather._extract_outputs(executed_silo_component.outputs,
+                                                                        self.silo_to_aggregation_argument_map).items()})
+
+            # produce internal argument-merging components and record them in local subgraph
+            merge_comp_mapping = self._inject_merge_components(sg_graph["silo_steps"])
+            sg_graph["mergers"] = [merge_comp for merge_comp in merge_comp_mapping.values()]
+
+            # produce aggregate step inputs by merging static kwargs and mapped arguments from
+            # internal merge components
+            agg_inputs = {}
+            agg_inputs.update(self.aggregation_kwargs)
+            internal_merge_outputs = {self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()}
+            agg_inputs.update(internal_merge_outputs)
+
+            # run the user aggregation step
+            executed_aggregation_component = self.aggregation_component(**agg_inputs)
+            # Set mode of aggregated mltable inputs as eval mount to allow files referenced within the table
+            # to be accessible by the component
+            for name, agg_input in executed_aggregation_component.inputs.items():
+                if name in self.silo_to_aggregation_argument_map.keys() and agg_input.type == "mltable":
+                    agg_input.mode = "eval_download"
+            # record aggregation step in subgraph
+            sg_graph["aggregation"] = executed_aggregation_component
+
+            # Anchor both the internal merge components and the user-supplied aggregation step 
+            # to the aggregation compute and datastore
+            if self.aggregation_compute is not None and self.aggregation_datastore is not None:
+                # internal merge component is also siloed to wherever the aggregation component lives.
+                for executed_merge_component in merge_comp_mapping.values():
+                    FLScatterGather._anchor_step(
+                        pipeline_step=executed_merge_component,
+                        compute=self.aggregation_compute,
+                        internal_datastore=self.aggregation_datastore,
+                        orchestrator_datastore=self.aggregation_datastore
+                    )     
+                FLScatterGather._anchor_step(
+                    pipeline_step=executed_aggregation_component,
+                    compute=self.aggregation_compute,
+                    internal_datastore=self.aggregation_datastore,
+                    orchestrator_datastore=self.aggregation_datastore
+                )
+            
+            self.subgraph.append(sg_graph)
+            return executed_aggregation_component.outputs
+        
+        # Constant scatter inputs 
+        loop_body = scatter_gather_iteration_body(**self.shared_silo_kwargs)
+
+        # map aggregation outputs to scatter inputs
+        do_while_mapping = {k: getattr(loop_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
+        federated_learning_dowhile_node = do_while(
+            body=loop_body,
+            mapping=do_while_mapping,
+            max_iteration_count=self.max_iterations,
+        )
+
     # TODO potential set default fail_on_missing value to false
     @classmethod
     def _extract_outputs(cls, component_output: Output, argument_map: Dict, fail_on_missing=False):
@@ -149,7 +230,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             Pulls values from a component_output, as specified by the keys of the
         inputted argument_map, and groups in a new dictionary. The keys of the new dictionary
         are specified by the items of the argument_map dictionary.
-
         Example
             component_output = {"one" : 1, "two": 2, "three" : 3}
             argument_map = {"one" : "red", "two" : "two"}
@@ -171,96 +251,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             else:
                 result[v] = component_output[k]
         return result
-
-    def scatter_gather(self, silo_inputs: Dict):
-        """
-            Performs a scatter-gather iteration by running copies of the silo step on different
-        computes/datstores according to this node's silo configs. The outputs of these
-        silo components are then merged by an internal helper component. The merged values
-        are then inputted into the user-provided aggregation component. Returns the executed aggregation component.
-
-        Args:
-            silo_inputs (dict): A dictionary of names and Inputs to be injected into each executed silo step.
-                This dictionary is merged with silo-specific inputs before each executed.
-        Returns:
-            sg_graph (dict): A dictionary containing the subgraph of this scatter-gather iteration.
-                Contains three indexes which contain a list of executed silo steps, a list of internally
-                created and executed merge components, and the executed aggregation step.
-        """
-
-        sg_graph = {"silo_steps": []}
-        siloed_outputs = {}
-        # TODO 2293586 replace this for-loop with a parallel-for node
-        # pylint: disable=consider-using-enumerate
-        for i in range(len(self.silo_configs)):
-            silo_config = self.silo_configs[i]
-            silo_inputs.update(silo_config.inputs)
-            executed_silo_component = self.silo_component(**silo_inputs)
-            for v, k in executed_silo_component.inputs.items():
-                if v in silo_config.inputs and k.type == "uri_folder":
-                    k.mode = "ro_mount"
-            FLScatterGather._anchor_step(
-                pipeline_step=executed_silo_component,
-                compute=silo_config.compute,
-                internal_datastore=silo_config.datastore,
-                orchestrator_datastore=self.aggregation_datastore,
-            )
-            # include executed silo steps in recorded subgraph
-            sg_graph["silo_steps"].append(executed_silo_component)
-
-            # Extract user-specified outputs from the silo component, rename them as needed,
-            # annotate them with the silo's index, then jam them all into the
-            # variable-length internal component's input list.
-            siloed_outputs.update(
-                {
-                    "{}_{}".format(k, i): v
-                    for k, v in FLScatterGather._extract_outputs(
-                        executed_silo_component.outputs, self.silo_to_aggregation_argument_map
-                    ).items()
-                }
-            )
-
-        # produce internal argument-merging components and record them in local subgraph
-        merge_comp_mapping = self._inject_merge_components(sg_graph["silo_steps"])
-        sg_graph["mergers"] = list(merge_comp_mapping.values())
-
-        # produce aggregate step inputs by merging static kwargs and mapped arguments from
-        # internal merge components
-        agg_inputs = {}
-        agg_inputs.update(self.aggregation_kwargs)
-        internal_merge_outputs = {
-            self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()
-        }
-        agg_inputs.update(internal_merge_outputs)
-
-        # run the user aggregation step
-        executed_aggregation_component = self.aggregation_component(**agg_inputs)
-        # Set mode of aggregated mltable inputs as eval mount to allow files referenced within the table
-        # to be accessible by the component
-        for name, agg_input in executed_aggregation_component.inputs.items():
-            if name in self.silo_to_aggregation_argument_map.keys() and agg_input.type == "mltable":
-                agg_input.mode = "eval_download"
-        # record aggregation step in subgraph
-        sg_graph["aggregation"] = executed_aggregation_component
-
-        # Anchor both the internal merge components and the user-supplied aggregation step
-        # to the aggregation compute and datastore
-        if self.aggregation_compute is not None and self.aggregation_datastore is not None:
-            # internal merge component is also siloed to wherever the aggregation component lives.
-            for executed_merge_component in merge_comp_mapping.values():
-                FLScatterGather._anchor_step(
-                    pipeline_step=executed_merge_component,
-                    compute=self.aggregation_compute,
-                    internal_datastore=self.aggregation_datastore,
-                    orchestrator_datastore=self.aggregation_datastore,
-                )
-            FLScatterGather._anchor_step(
-                pipeline_step=executed_aggregation_component,
-                compute=self.aggregation_compute,
-                internal_datastore=self.aggregation_datastore,
-                orchestrator_datastore=self.aggregation_datastore,
-            )
-        return sg_graph
 
     @classmethod
     def _get_fl_datastore_path(

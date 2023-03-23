@@ -19,6 +19,10 @@ class TestDSLPipeline:
     def test_fl_node_creation(
         self, federated_learning_components_folder: Path, federated_learning_local_data_folder: Path
     ) -> None:
+        
+        # To support dsl pipeline kwargs
+        os.environ["AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"] = "True"
+        
         preprocessing_component = load_component(
             source=os.path.join(federated_learning_components_folder, "preprocessing", "spec.yaml")
         )
@@ -155,7 +159,7 @@ class TestDSLPipeline:
             aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
             max_iterations=iterations,
         )
-
+        print(len(fl_node.subgraph))
         for iteration_subgraph in fl_node.subgraph:
             for index in range(len(silo_configs)):
                 silo_step = iteration_subgraph["silo_steps"][index]
