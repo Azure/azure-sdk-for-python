@@ -7,7 +7,6 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Ocp-Apim-Subscription-Region": "fakeregion",
         "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.11.2 (Windows-10-10.0.19042-SP0)"
       },
       "RequestBody": null,
@@ -17,11 +16,11 @@
         "Content-Encoding": "gzip",
         "Content-Length": "33050",
         "Content-Type": "application/json",
-        "Date": "Thu, 23 Mar 2023 23:38:47 GMT",
+        "Date": "Fri, 24 Mar 2023 19:35:35 GMT",
         "ETag": "\u0022E9kr19NI7myV5cMR0slywl7KhNj9otulW0prhqt43w8=\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "X-RequestId": "LANG.MW1P.99BD.0323T2338.CD1C896"
+        "X-RequestId": "LANG.MW1P.9A67.0324T1935.1876CF"
       },
       "ResponseBody": {
         "translation": {

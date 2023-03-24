@@ -1,32 +1,24 @@
-import functools
-import pytest
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, PowerShellPreparer
 from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
 from azure.ai.translation.text.models import InputTextItem
-
-TextTranslationPreparer = functools.partial(
-    PowerShellPreparer, 'texttranslation',
-    texttranslation_endpoint="https://fakeEndpoint.cognitive.microsofttranslator.com",
-    texttranslation_apiKey="fakeapikey",
-    texttranslation_region="fakeregion",
-)
-
-class TextTranslationTest(AzureRecordedTestCase):    
-    def create_client(self, endpoint, apiKey, region):        
-        credential = TranslatorCredential(apiKey, region) 
-        client = self.create_client_from_credential(TextTranslationClient, credential=credential, endpoint=endpoint)
-        return client   
+from tests.preparer import TextTranslationPreparer
+from tests.testcase import TextTranslationTest
     
 # Write your tests
-class TestTranslation(TextTranslationTest): 
+class TestTranslation(TextTranslationTest):
+
     @TextTranslationPreparer()
     @recorded_by_proxy
-    def test_translator_translate(self,  **kwargs):
+    def test_translator_translate(self, **kwargs):      
         endpoint = kwargs.get("texttranslation_endpoint")
-        apiKey = kwargs.get("texttranslation_apiKey")
+        apikey = kwargs.get("texttranslation_apikey")
         region = kwargs.get("texttranslation_region")
-        client = self.create_client(endpoint, apiKey, region)
+        client = self.create_client(endpoint, apikey, region)
 
         source_language = "en"
         target_languages = ["cs"]
