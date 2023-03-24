@@ -260,7 +260,7 @@ class LogAnalyticsOperations:
         :param location: The location upon which virtual-machine-sizes is queried. Required.
         :type location: str
         :param parameters: Parameters supplied to the LogAnalytics getRequestRateByInterval Api. Is
-         either a model type or a IO type. Required.
+         either a RequestRateByIntervalInput type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2022_08_01.models.RequestRateByIntervalInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -464,7 +464,7 @@ class LogAnalyticsOperations:
         :param location: The location upon which virtual-machine-sizes is queried. Required.
         :type location: str
         :param parameters: Parameters supplied to the LogAnalytics getThrottledRequests Api. Is either
-         a model type or a IO type. Required.
+         a ThrottledRequestsInput type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2022_08_01.models.ThrottledRequestsInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

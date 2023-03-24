@@ -3,6 +3,8 @@ from typing import List, Union
 import pytest
 import yaml
 from msrest import Serializer
+
+from azure.ai.ml._restclient.v2023_04_01_preview.models import DataFactory
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
@@ -16,6 +18,7 @@ from azure.ai.ml.entities import (
     ManagedIdentityConfiguration,
     SynapseSparkCompute,
     VirtualMachineCompute,
+    UnsupportedCompute,
 )
 
 
@@ -125,13 +128,16 @@ class TestComputeEntity:
             source="tests/test_configs/compute/compute-ci-unit.yaml",
             params_override=[{"tags.test1": "test"}, {"tags.test2": "true"}, {"tags.test3": "0"}],
         )
-
         compute_instance._set_full_subnet_name("subscription_id", "resource_group_name")
+        assert compute_instance.ssh_settings is not None
+        assert compute_instance.ssh_settings.ssh_key_value.startswith("ssh-rsa")
         compute_resource = compute_instance._to_rest_object()
 
         compute_instance2: ComputeInstance = ComputeInstance._load_from_rest(compute_resource)
         assert compute_instance2.last_operation == compute_instance.last_operation
         assert compute_instance2.services == compute_instance.services
+        assert compute_instance2.ssh_settings is not None
+        assert compute_instance2.ssh_settings.ssh_key_value.startswith("ssh-rsa")
         assert compute_instance2.tags is not None
         assert compute_instance2.tags["test1"] == "test"
         assert compute_instance2.tags["test2"] == "true"
@@ -214,6 +220,7 @@ class TestComputeEntity:
             == "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W35"
             "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/x"
         )
+        assert compute.ssh_public_access_enabled == False
 
         compute_resource = compute._to_rest_object()
         assert compute_resource.identity.type == "UserAssigned"
@@ -224,6 +231,8 @@ class TestComputeEntity:
                 "-centraluseuap-v2-t-2021W35/providers/Microsoft.ManagedIdentity"
                 "/userAssignedIdentities/x"
             )
+        assert compute_resource.properties.properties.ssh_settings.ssh_public_access == "Disabled"
+        assert compute_resource.properties.properties.ssh_settings.admin_public_key is None
 
         compute_from_rest = Compute._from_rest_object(compute_resource)
         assert compute_from_rest.type == "computeinstance"
@@ -235,6 +244,7 @@ class TestComputeEntity:
             == "/subscriptions/4faaaf21-663f-4391-96fd-47197c630979/resourceGroups/test-rg-centraluseuap-v2-t-2021W35"
             "/providers/Microsoft.ManagedIdentity/userAssignedIdentities/x"
         )
+        assert compute_from_rest.ssh_public_access_enabled == False
 
     def test_compute_instance_sai_from_yaml(self):
         compute: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci.yaml")
@@ -335,3 +345,8 @@ class TestComputeEntity:
         assert body["identity"]["userAssignedIdentities"] == self._uai_list_to_dict(
             compute.identity.user_assigned_identities
         )
+
+    def test_deserialize_data_factory_compute(self):
+        rest_compute = ComputeResource(properties=DataFactory())
+        # DataFactory compute can load from rest object
+        UnsupportedCompute._load_from_rest(rest_compute)

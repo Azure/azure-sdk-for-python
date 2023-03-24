@@ -412,8 +412,8 @@ class ExtendedDatabaseBlobAuditingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The extended database blob auditing policy. Is either a model type or a IO
-         type. Required.
+        :param parameters: The extended database blob auditing policy. Is either a
+         ExtendedDatabaseBlobAuditingPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ExtendedDatabaseBlobAuditingPolicy or IO
         :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
          "default". Note that overriding this default value may result in unsupported behavior.

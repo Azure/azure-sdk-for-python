@@ -64,6 +64,18 @@ class IssueProcess:
         self.target_date = ''
         self.date_from_target = 0
         self.is_open = True
+        self.issue_title = issue_package.issue.title.split(": ", 1)[-1]
+
+    @property
+    def created_date_format(self) -> str:
+        return str(date.fromtimestamp(self.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
+
+    @property
+    def target_date_format(self) -> str:
+        try:
+            return str(datetime.strptime(self.target_date, "%Y-%m-%d").strftime('%m-%d'))
+        except:
+            return str(self.target_date)
 
     def get_issue_body(self) -> List[str]:
         return [i for i in self.issue_package.issue.body.split("\n") if i]
@@ -337,12 +349,6 @@ class Common:
 
     @staticmethod
     def output_md(item: IssueProcess):
-        create_date = str(date.fromtimestamp(item.issue_package.issue.created_at.timestamp()).strftime('%m-%d'))
-        try:
-            target_date = str(datetime.strptime(item.target_date, "%Y-%m-%d").strftime('%m-%d'))
-        except:
-            target_date = str(item.target_date)
-
         return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
@@ -350,8 +356,8 @@ class Common:
             item.package_name,
             item.assignee,
             ' '.join(item.bot_advice),
-            create_date,
-            target_date,
+            item.created_date_format,
+            item.target_date_format,
             item.print_date_from_target_date()
         )
 
@@ -371,6 +377,5 @@ class Common:
         self.output()
 
 
-def common_process(issues: List[IssuePackage]):
-    instance = Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)
-    instance.run()
+def common_process(issues: List[IssuePackage]) -> Common:
+    return Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)

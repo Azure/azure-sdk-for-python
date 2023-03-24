@@ -2,8 +2,7 @@ from pathlib import Path
 
 from azure.ai.ml import Input, dsl
 from azure.ai.ml.data_transfer import export_data
-from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.constants._component import DataTransferTaskType
+from azure.ai.ml.constants._common import AssetTypes, SERVERLESS_COMPUTE
 from azure.ai.ml.entities import PipelineJob
 
 
@@ -29,5 +28,5 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     pipeline = data_transfer_export_database_pipeline_from_builder(
         table_name, connection_target_azuresql, my_cosmos_folder
     )
-    pipeline.settings.default_compute = "adftest"
+    pipeline.settings.default_compute = SERVERLESS_COMPUTE
     return pipeline

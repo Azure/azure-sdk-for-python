@@ -121,6 +121,18 @@ class MembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNAMIC = "Dynamic"
 
 
+class NspLinkProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of NSP Link/LinkReference."""
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    FAILED = "Failed"
+    WAIT_FOR_REMOTE_COMPLETION = "WaitForRemoteCompletion"
+
+
 class NspLinkStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The NSP link state."""
 

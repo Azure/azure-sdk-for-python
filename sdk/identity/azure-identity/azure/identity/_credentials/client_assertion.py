@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Callable, Optional, Any
+from typing import Callable, Optional, Any, Tuple
 
 from azure.core.credentials import AccessToken
 from .._internal import AadClient
@@ -50,8 +50,10 @@ class ClientAssertionCredential(GetTokenMixin):
     def close(self) -> None:
         self.__exit__()
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         assertion = self._func()

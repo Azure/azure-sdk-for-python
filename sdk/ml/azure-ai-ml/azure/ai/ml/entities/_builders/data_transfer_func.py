@@ -5,25 +5,30 @@
 
 from typing import Optional, Dict, Union, Callable, Tuple
 
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._component.datatransfer_component import (
     DataTransferCopyComponent,
-    DataTransferImportComponent,
-    DataTransferExportComponent,
 )
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import (
     ComponentSource,
     ExternalDataType,
     DataTransferBuiltinComponentUri,
-    DataTransferTaskType,
 )
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs import Output, Input
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, NodeOutput
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._component_translatable import (
+    ComponentTranslatableMixin,
+)
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
-from .data_transfer import DataTransferCopy, DataTransferImport, DataTransferExport, _build_source_sink
+from .data_transfer import (
+    DataTransferCopy,
+    DataTransferImport,
+    DataTransferExport,
+    _build_source_sink,
+)
 
 
 SUPPORTED_INPUTS = [
@@ -113,6 +118,7 @@ def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Di
     return component_io_dict, job_io_dict
 
 
+@experimental
 def copy_data(
     *,
     name: Optional[str] = None,
@@ -124,7 +130,6 @@ def copy_data(
     inputs: Optional[Dict] = None,
     outputs: Optional[Dict] = None,
     is_deterministic: bool = True,
-    task: Optional[str] = DataTransferTaskType.COPY_DATA,
     data_copy_mode: Optional[str] = None,
     **kwargs,
 ) -> DataTransferCopy:
@@ -152,8 +157,6 @@ def copy_data(
         In this case, this step will not use any compute resource.
         Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
     :type is_deterministic: bool
-    :param task: task type in data transfer component, possible value is "copy_data".
-    :type task: str
     :param data_copy_mode: data copy mode in copy task, possible value is "merge_with_overwrite", "fail_if_conflict".
     :type data_copy_mode: str
     """
@@ -172,7 +175,6 @@ def copy_data(
             description=description,
             inputs=component_inputs,
             outputs=component_outputs,
-            task=task,
             data_copy_mode=data_copy_mode,
             _source=ComponentSource.BUILDER,
             is_deterministic=is_deterministic,
@@ -188,12 +190,13 @@ def copy_data(
         compute=compute,
         inputs=job_inputs,
         outputs=job_outputs,
-        task=task,
+        data_copy_mode=data_copy_mode,
         **kwargs,
     )
     return data_transfer_copy_obj
 
 
+@experimental
 @pipeline_node_decorator
 def import_data(
     *,
@@ -205,8 +208,6 @@ def import_data(
     compute: Optional[str] = None,
     source: Optional[Union[Dict, Database, FileSystem]] = None,
     outputs: Optional[Dict] = None,
-    is_deterministic: bool = True,
-    task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
     **kwargs,
 ) -> DataTransferImport:
     """Create a DataTransferImport object which can be used inside dsl.pipeline.
@@ -228,40 +229,21 @@ def import_data(
     :param outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
     and type "mltable".
     :type outputs: dict
-    :param is_deterministic: Specify whether the command will return same output given same input.
-        If a command (component) is deterministic, when use it as a node/step in a pipeline,
-        it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
-        In this case, this step will not use any compute resource.
-        Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
-    :type is_deterministic: bool
-    :param task: task type in data transfer component, possible value is "copy_data".
-    :type task: str
     """
     source = _build_source_sink(source)
     outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
     # # job inputs can not be None
     # job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
-    component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
+    _, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
     component = kwargs.pop("component", None)
+    update_source = False
     if component is None:
-        if source.type == ExternalDataType.DATABASE:
-            component_id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
+        if source and source.type == ExternalDataType.DATABASE:
+            component = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
-            component_id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
-        component = DataTransferImportComponent(
-            name=name,
-            tags=tags,
-            display_name=display_name,
-            description=description,
-            source=source,
-            outputs=component_outputs,
-            task=task,
-            _source=ComponentSource.BUILDER,
-            is_deterministic=is_deterministic,
-            id=component_id,
-            **kwargs,
-        )
-        component._source = ComponentSource.BUILTIN
+            component = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
+        update_source = True
+
     data_transfer_import_obj = DataTransferImport(
         component=component,
         name=name,
@@ -272,12 +254,15 @@ def import_data(
         compute=compute,
         source=source,
         outputs=job_outputs,
-        task=task,
         **kwargs,
     )
+    if update_source:
+        data_transfer_import_obj._source = ComponentSource.BUILTIN
+
     return data_transfer_import_obj
 
 
+@experimental
 @pipeline_node_decorator
 def export_data(
     *,
@@ -289,8 +274,6 @@ def export_data(
     compute: Optional[str] = None,
     sink: Optional[Union[Dict, Database, FileSystem]] = None,
     inputs: Optional[Dict] = None,
-    is_deterministic: bool = True,
-    task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
     **kwargs,
 ) -> DataTransferExport:
     """Create a DataTransferExport object which can be used inside dsl.pipeline.
@@ -311,40 +294,26 @@ def export_data(
     :type sink: Union[Dict, Database, FileSystem]
     :param inputs: Mapping of inputs data bindings used in the job.
     :type inputs: dict
-    :param is_deterministic: Specify whether the command will return same output given same input.
-        If a command (component) is deterministic, when use it as a node/step in a pipeline,
-        it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
-        In this case, this step will not use any compute resource.
-        Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
-    :type is_deterministic: bool
-    :param task: task type in data transfer component, possible value is "copy_data".
-    :type task: str
     """
     sink = _build_source_sink(sink)
-    component_inputs, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
+    _, job_inputs = _parse_inputs_outputs(inputs, parse_func=_parse_input)
     # job inputs can not be None
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     component = kwargs.pop("component", None)
-
+    update_source = False
     if component is None:
-        if sink.type == ExternalDataType.DATABASE:
-            component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
+        if sink and sink.type == ExternalDataType.DATABASE:
+            component = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
-            component_id = DataTransferBuiltinComponentUri.EXPORT_FILE_SYSTEM
-        component = DataTransferExportComponent(
-            name=name,
-            tags=tags,
-            display_name=display_name,
-            description=description,
-            sink=sink,
-            inputs=component_inputs,
-            task=task,
-            _source=ComponentSource.BUILDER,
-            is_deterministic=is_deterministic,
-            id=component_id,
-            **kwargs,
-        )
-        component._source = ComponentSource.BUILTIN
+            msg = "Sink is a required field for export data task and we don't support exporting file system for now."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.JOB,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        update_source = True
+
     data_transfer_export_obj = DataTransferExport(
         component=component,
         name=name,
@@ -355,7 +324,9 @@ def export_data(
         compute=compute,
         sink=sink,
         inputs=job_inputs,
-        task=task,
         **kwargs,
     )
+    if update_source:
+        data_transfer_export_obj._source = ComponentSource.BUILTIN
+
     return data_transfer_export_obj

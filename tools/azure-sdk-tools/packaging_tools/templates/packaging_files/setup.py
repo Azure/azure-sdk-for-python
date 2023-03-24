@@ -71,7 +71,7 @@ setup(
         'pytyped': ['py.typed'],
     },
     install_requires=[
-        "msrest>=0.7.1",
+        "isodate<1.0.0,>=0.6.1",
         {%- if need_msrestazure %}
         "msrestazure>=0.4.32,<2.0.0",
         {%- endif %}

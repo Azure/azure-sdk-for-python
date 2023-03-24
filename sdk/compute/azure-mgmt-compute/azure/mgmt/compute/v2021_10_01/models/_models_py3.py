@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -48,8 +48,8 @@ class ApiError(_serialization.Model):
         code: Optional[str] = None,
         target: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword details: The Api error details.
         :paramtype details: list[~azure.mgmt.compute.v2021_10_01.models.ApiErrorBase]
@@ -88,8 +88,8 @@ class ApiErrorBase(_serialization.Model):
     }
 
     def __init__(
-        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
-    ):
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
@@ -145,8 +145,8 @@ class CommunityGalleryInfo(_serialization.Model):
         publisher_contact: Optional[str] = None,
         eula: Optional[str] = None,
         public_name_prefix: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword publisher_uri: Community gallery publisher uri.
         :paramtype publisher_uri: str
@@ -178,7 +178,7 @@ class DiskImageEncryption(_serialization.Model):
         "disk_encryption_set_id": {"key": "diskEncryptionSetId", "type": "str"},
     }
 
-    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, disk_encryption_set_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
@@ -211,7 +211,7 @@ class DataDiskImageEncryption(DiskImageEncryption):
         "lun": {"key": "lun", "type": "int"},
     }
 
-    def __init__(self, *, lun: int, disk_encryption_set_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, lun: int, disk_encryption_set_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
@@ -236,7 +236,7 @@ class Disallowed(_serialization.Model):
         "disk_types": {"key": "diskTypes", "type": "[str]"},
     }
 
-    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, disk_types: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword disk_types: A list of disk types.
         :paramtype disk_types: list[str]
@@ -246,7 +246,8 @@ class Disallowed(_serialization.Model):
 
 
 class EncryptionImages(_serialization.Model):
-    """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in the gallery artifact.
+    """Optional. Allows users to provide customer managed keys for encrypting the OS and data disks in
+    the gallery artifact.
 
     :ivar os_disk_image: Contains encryption settings for an OS disk image.
     :vartype os_disk_image: ~azure.mgmt.compute.v2021_10_01.models.OSDiskImageEncryption
@@ -264,8 +265,8 @@ class EncryptionImages(_serialization.Model):
         *,
         os_disk_image: Optional["_models.OSDiskImageEncryption"] = None,
         data_disk_images: Optional[List["_models.DataDiskImageEncryption"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword os_disk_image: Contains encryption settings for an OS disk image.
         :paramtype os_disk_image: ~azure.mgmt.compute.v2021_10_01.models.OSDiskImageEncryption
@@ -312,7 +313,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -393,8 +394,8 @@ class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
         identifier: Optional["_models.GalleryIdentifier"] = None,
         sharing_profile: Optional["_models.SharingProfile"] = None,
         soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -421,7 +422,8 @@ class Gallery(Resource):  # pylint: disable=too-many-instance-attributes
 
 
 class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attributes
-    """Specifies information about the gallery Application Definition that you want to create or update.
+    """Specifies information about the gallery Application Definition that you want to create or
+    update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -488,8 +490,8 @@ class GalleryApplication(Resource):  # pylint: disable=too-many-instance-attribu
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -544,7 +546,9 @@ class GalleryApplicationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryApplication"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of Gallery Applications. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_10_01.models.GalleryApplication]
@@ -586,7 +590,7 @@ class UpdateResourceDefinition(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -659,8 +663,8 @@ class GalleryApplicationUpdate(UpdateResourceDefinition):
         release_note_uri: Optional[str] = None,
         end_of_life_date: Optional[datetime.datetime] = None,
         supported_os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -749,8 +753,8 @@ class GalleryApplicationVersion(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -787,7 +791,9 @@ class GalleryApplicationVersionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryApplicationVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of gallery Application Versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_10_01.models.GalleryApplicationVersion]
@@ -821,8 +827,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-     "Premium_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     "Premium_LRS", and "StandardSSD_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -858,8 +864,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -875,8 +881,8 @@ class GalleryArtifactPublishingProfileBase(_serialization.Model):
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-         "Premium_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         "Premium_LRS", and "StandardSSD_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
@@ -923,8 +929,8 @@ class GalleryApplicationVersionPublishingProfile(
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-     "Premium_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     "Premium_LRS", and "StandardSSD_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -973,8 +979,8 @@ class GalleryApplicationVersionPublishingProfile(
         target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
         manage_actions: Optional["_models.UserArtifactManage"] = None,
         enable_health_check: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -990,8 +996,8 @@ class GalleryApplicationVersionPublishingProfile(
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-         "Premium_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         "Premium_LRS", and "StandardSSD_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
@@ -1074,8 +1080,8 @@ class GalleryApplicationVersionUpdate(UpdateResourceDefinition):
         *,
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryApplicationVersionPublishingProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1106,7 +1112,7 @@ class GalleryArtifactSource(_serialization.Model):
         "managed_image": {"key": "managedImage", "type": "ManagedArtifact"},
     }
 
-    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs):
+    def __init__(self, *, managed_image: "_models.ManagedArtifact", **kwargs: Any) -> None:
         """
         :keyword managed_image: The managed artifact. Required.
         :paramtype managed_image: ~azure.mgmt.compute.v2021_10_01.models.ManagedArtifact
@@ -1132,8 +1138,8 @@ class GalleryArtifactVersionSource(_serialization.Model):
     }
 
     def __init__(
-        self, *, id: Optional[str] = None, uri: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
-    ):
+        self, *, id: Optional[str] = None, uri: Optional[str] = None, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: The id of the gallery artifact version source. Can specify a disk uri, snapshot
          uri, user image or storage account resource.
@@ -1176,8 +1182,8 @@ class GalleryDiskImage(_serialization.Model):
         *,
         host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
          'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
@@ -1229,8 +1235,8 @@ class GalleryDataDiskImage(GalleryDiskImage):
         lun: int,
         host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
          'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
@@ -1265,8 +1271,8 @@ class GalleryExtendedLocation(_serialization.Model):
         *,
         name: Optional[str] = None,
         type: Optional[Union[str, "_models.GalleryExtendedLocationType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
@@ -1296,7 +1302,7 @@ class GalleryIdentifier(_serialization.Model):
         "unique_name": {"key": "uniqueName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.unique_name = None
@@ -1414,8 +1420,8 @@ class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
         purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
         features: Optional[List["_models.GalleryImageFeature"]] = None,
         architecture: Optional[Union[str, "_models.Architecture"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1493,7 +1499,7 @@ class GalleryImageFeature(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the gallery image feature.
         :paramtype name: str
@@ -1530,7 +1536,7 @@ class GalleryImageIdentifier(_serialization.Model):
         "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs):
+    def __init__(self, *, publisher: str, offer: str, sku: str, **kwargs: Any) -> None:
         """
         :keyword publisher: The name of the gallery image definition publisher. Required.
         :paramtype publisher: str
@@ -1566,7 +1572,7 @@ class GalleryImageList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.GalleryImage"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of Shared Image Gallery images. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_10_01.models.GalleryImage]
@@ -1684,8 +1690,8 @@ class GalleryImageUpdate(UpdateResourceDefinition):  # pylint: disable=too-many-
         purchase_plan: Optional["_models.ImagePurchasePlan"] = None,
         features: Optional[List["_models.GalleryImageFeature"]] = None,
         architecture: Optional[Union[str, "_models.Architecture"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -1806,8 +1812,8 @@ class GalleryImageVersion(Resource):
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
         storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1848,7 +1854,9 @@ class GalleryImageVersionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GalleryImageVersion"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of gallery image versions. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_10_01.models.GalleryImageVersion]
@@ -1882,8 +1890,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
      used for decommissioning purposes. This property is updatable.
     :vartype end_of_life_date: ~datetime.datetime
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-     "Premium_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     "Premium_LRS", and "StandardSSD_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
     :ivar replication_mode: Optional parameter which specifies the mode to be used for replication.
      This property is not updatable. Known values are: "Full" and "Shallow".
@@ -1919,8 +1927,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         target_extended_locations: Optional[List["_models.GalleryTargetExtendedLocation"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_regions: The target regions where the Image Version is going to be replicated
          to. This property is updatable.
@@ -1936,8 +1944,8 @@ class GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase)
          be used for decommissioning purposes. This property is updatable.
         :paramtype end_of_life_date: ~datetime.datetime
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-         "Premium_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         "Premium_LRS", and "StandardSSD_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
         :keyword replication_mode: Optional parameter which specifies the mode to be used for
@@ -1983,8 +1991,8 @@ class GalleryImageVersionStorageProfile(_serialization.Model):
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
         os_disk_image: Optional["_models.GalleryOSDiskImage"] = None,
         data_disk_images: Optional[List["_models.GalleryDataDiskImage"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source: The gallery artifact version source.
         :paramtype source: ~azure.mgmt.compute.v2021_10_01.models.GalleryArtifactVersionSource
@@ -2051,8 +2059,8 @@ class GalleryImageVersionUpdate(UpdateResourceDefinition):
         tags: Optional[Dict[str, str]] = None,
         publishing_profile: Optional["_models.GalleryImageVersionPublishingProfile"] = None,
         storage_profile: Optional["_models.GalleryImageVersionStorageProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2091,7 +2099,7 @@ class GalleryList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Gallery"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: A list of galleries. Required.
         :paramtype value: list[~azure.mgmt.compute.v2021_10_01.models.Gallery]
@@ -2133,8 +2141,8 @@ class GalleryOSDiskImage(GalleryDiskImage):
         *,
         host_caching: Optional[Union[str, "_models.HostCaching"]] = None,
         source: Optional["_models.GalleryArtifactVersionSource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword host_caching: The host caching of the disk. Valid values are 'None', 'ReadOnly', and
          'ReadWrite'. Known values are: "None", "ReadOnly", and "ReadWrite".
@@ -2156,8 +2164,8 @@ class GalleryTargetExtendedLocation(_serialization.Model):
      created per extended location. This property is updatable.
     :vartype extended_location_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-     "Premium_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     "Premium_LRS", and "StandardSSD_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
      and data disks in the gallery artifact.
@@ -2180,8 +2188,8 @@ class GalleryTargetExtendedLocation(_serialization.Model):
         extended_location_replica_count: Optional[int] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         encryption: Optional["_models.EncryptionImages"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the region.
         :paramtype name: str
@@ -2191,8 +2199,8 @@ class GalleryTargetExtendedLocation(_serialization.Model):
          created per extended location. This property is updatable.
         :paramtype extended_location_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-         "Premium_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         "Premium_LRS", and "StandardSSD_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
         :keyword encryption: Optional. Allows users to provide customer managed keys for encrypting the
@@ -2266,8 +2274,8 @@ class GalleryUpdate(UpdateResourceDefinition):
         identifier: Optional["_models.GalleryIdentifier"] = None,
         sharing_profile: Optional["_models.SharingProfile"] = None,
         soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2309,8 +2317,13 @@ class ImagePurchasePlan(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: Optional[str] = None, publisher: Optional[str] = None, product: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        name: Optional[str] = None,
+        publisher: Optional[str] = None,
+        product: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan ID.
         :paramtype name: str
@@ -2339,7 +2352,9 @@ class InnerError(_serialization.Model):
         "errordetail": {"key": "errordetail", "type": "str"},
     }
 
-    def __init__(self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, exceptiontype: Optional[str] = None, errordetail: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword exceptiontype: The exception type.
         :paramtype exceptiontype: str
@@ -2368,7 +2383,7 @@ class ManagedArtifact(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The managed artifact id. Required.
         :paramtype id: str
@@ -2397,8 +2412,8 @@ class OSDiskImageEncryption(DiskImageEncryption):
         *,
         disk_encryption_set_id: Optional[str] = None,
         security_profile: Optional["_models.OSDiskImageSecurityProfile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword disk_encryption_set_id: A relative URI containing the resource ID of the disk
          encryption set.
@@ -2431,8 +2446,8 @@ class OSDiskImageSecurityProfile(_serialization.Model):
         *,
         confidential_vm_encryption_type: Optional[Union[str, "_models.ConfidentialVMEncryptionType"]] = None,
         secure_vm_disk_encryption_set_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword confidential_vm_encryption_type: confidential VM encryption types. Known values are:
          "EncryptedVMGuestStateOnlyWithPmk", "EncryptedWithPmk", and "EncryptedWithCmk".
@@ -2447,7 +2462,8 @@ class OSDiskImageSecurityProfile(_serialization.Model):
 
 
 class RecommendedMachineConfiguration(_serialization.Model):
-    """The properties describe the recommended machine configuration for this Image Definition. These properties are updatable.
+    """The properties describe the recommended machine configuration for this Image Definition. These
+    properties are updatable.
 
     :ivar v_cp_us: Describes the resource range.
     :vartype v_cp_us: ~azure.mgmt.compute.v2021_10_01.models.ResourceRange
@@ -2465,8 +2481,8 @@ class RecommendedMachineConfiguration(_serialization.Model):
         *,
         v_cp_us: Optional["_models.ResourceRange"] = None,
         memory: Optional["_models.ResourceRange"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword v_cp_us: Describes the resource range.
         :paramtype v_cp_us: ~azure.mgmt.compute.v2021_10_01.models.ResourceRange
@@ -2508,7 +2524,7 @@ class RegionalReplicationStatus(_serialization.Model):
         "progress": {"key": "progress", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.region = None
@@ -2541,7 +2557,7 @@ class RegionalSharingStatus(_serialization.Model):
         "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(self, *, region: Optional[str] = None, details: Optional[str] = None, **kwargs):
+    def __init__(self, *, region: Optional[str] = None, details: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword region: Region name.
         :paramtype region: str
@@ -2577,7 +2593,7 @@ class ReplicationStatus(_serialization.Model):
         "summary": {"key": "summary", "type": "[RegionalReplicationStatus]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.aggregated_state = None
@@ -2603,8 +2619,8 @@ class ResourceRange(_serialization.Model):
         *,
         min: Optional[int] = None,  # pylint: disable=redefined-builtin
         max: Optional[int] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min: The minimum number of the resource.
         :paramtype min: int
@@ -2648,8 +2664,8 @@ class SharingProfile(_serialization.Model):
         *,
         permissions: Optional[Union[str, "_models.GallerySharingPermissionTypes"]] = None,
         community_gallery_info: Optional["_models.CommunityGalleryInfo"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword permissions: This property allows you to specify the permission of sharing gallery.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Private**
@@ -2688,8 +2704,8 @@ class SharingProfileGroup(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.SharingProfileGroupTypes"]] = None,
         ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: This property allows you to specify the type of sharing group.
          :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Subscriptions**
@@ -2725,7 +2741,7 @@ class SharingStatus(_serialization.Model):
         "summary": {"key": "summary", "type": "[RegionalSharingStatus]"},
     }
 
-    def __init__(self, *, summary: Optional[List["_models.RegionalSharingStatus"]] = None, **kwargs):
+    def __init__(self, *, summary: Optional[List["_models.RegionalSharingStatus"]] = None, **kwargs: Any) -> None:
         """
         :keyword summary: Summary of all regional sharing status.
         :paramtype summary: list[~azure.mgmt.compute.v2021_10_01.models.RegionalSharingStatus]
@@ -2764,8 +2780,8 @@ class SharingUpdate(_serialization.Model):
         *,
         operation_type: Union[str, "_models.SharingUpdateOperationTypes"],
         groups: Optional[List["_models.SharingProfileGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword operation_type: This property allows you to specify the operation type of gallery
          sharing update. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
@@ -2793,7 +2809,7 @@ class SoftDeletePolicy(_serialization.Model):
         "is_soft_delete_enabled": {"key": "isSoftDeleteEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, is_soft_delete_enabled: Optional[bool] = None, **kwargs):
+    def __init__(self, *, is_soft_delete_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_soft_delete_enabled: Enables soft-deletion for resources in this gallery, allowing
          them to be recovered within retention time.
@@ -2814,8 +2830,8 @@ class TargetRegion(_serialization.Model):
      region. This property is updatable.
     :vartype regional_replica_count: int
     :ivar storage_account_type: Specifies the storage account type to be used to store the image.
-     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-     "Premium_LRS".
+     This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+     "Premium_LRS", and "StandardSSD_LRS".
     :vartype storage_account_type: str or ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
     :ivar encryption: Optional. Allows users to provide customer managed keys for encrypting the OS
      and data disks in the gallery artifact.
@@ -2840,8 +2856,8 @@ class TargetRegion(_serialization.Model):
         regional_replica_count: Optional[int] = None,
         storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
         encryption: Optional["_models.EncryptionImages"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the region. Required.
         :paramtype name: str
@@ -2849,8 +2865,8 @@ class TargetRegion(_serialization.Model):
          region. This property is updatable.
         :paramtype regional_replica_count: int
         :keyword storage_account_type: Specifies the storage account type to be used to store the
-         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS", and
-         "Premium_LRS".
+         image. This property is not updatable. Known values are: "Standard_LRS", "Standard_ZRS",
+         "Premium_LRS", and "StandardSSD_LRS".
         :paramtype storage_account_type: str or
          ~azure.mgmt.compute.v2021_10_01.models.StorageAccountType
         :keyword encryption: Optional. Allows users to provide customer managed keys for encrypting the
@@ -2892,7 +2908,7 @@ class UserArtifactManage(_serialization.Model):
         "update": {"key": "update", "type": "str"},
     }
 
-    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs):
+    def __init__(self, *, install: str, remove: str, update: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword install: Required. The path and arguments to install the gallery application. This is
          limited to 4096 characters. Required.
@@ -2933,7 +2949,7 @@ class UserArtifactSource(_serialization.Model):
         "default_configuration_link": {"key": "defaultConfigurationLink", "type": "str"},
     }
 
-    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, media_link: str, default_configuration_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword media_link: Required. The mediaLink of the artifact, must be a readable storage page
          blob. Required.

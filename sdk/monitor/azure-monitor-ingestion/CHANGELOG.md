@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0 (Unreleased)
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2023-02-16)
 
 ### Features Added
   - Added new `on_error` parameter to the `upload` method to allow users to handle errors in their own way.
@@ -9,8 +19,6 @@
 
 ### Breaking Changes
   - Removed support for max_concurrency
-
-### Bugs Fixed
 
 ### Other Changes
   - Removed `msrest` dependency.
