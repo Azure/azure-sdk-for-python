@@ -478,8 +478,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             queue_description.lock_duration = datetime.timedelta(seconds=13)
             queue_description.max_delivery_count = 14
             queue_description.max_size_in_megabytes = 3072
-            queue_description.forward_to = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
-            queue_description.forward_dead_lettered_messages_to = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
+            queue_description.forward_to = f"sb://{servicebus_fully_qualified_namespace}/{queue_name}"
+            queue_description.forward_dead_lettered_messages_to = f"sb://{servicebus_fully_qualified_namespace}/{queue_name}"
             #queue_description.requires_duplicate_detection = True # Read only
             #queue_description.requires_session = True # Cannot be changed after creation
 
@@ -712,8 +712,8 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
             queue_description_dict["lock_duration"] = datetime.timedelta(seconds=13)
             queue_description_dict["max_delivery_count"] = 14
             queue_description_dict["max_size_in_megabytes"] = 3072
-            queue_description_dict["forward_to"] = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
-            queue_description_dict["forward_dead_lettered_messages_to"] = f"sb://{servicebus_fully_qualified_namespace}{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}"
+            queue_description_dict["forward_to"] = f"sb://{servicebus_fully_qualified_namespace}/{queue_name}"
+            queue_description_dict["forward_dead_lettered_messages_to"] = f"sb://{servicebus_fully_qualified_namespace}/{queue_name}"
             #queue_description_dict["requires_duplicate_detection"] = True # Read only
             #queue_description_dict["requires_session"] = True # Cannot be changed after creation
 
