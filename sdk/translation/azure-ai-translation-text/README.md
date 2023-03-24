@@ -1,4 +1,4 @@
-# Microsoft Azure SDK for Python
+# Azure Text Translation client library for Python
 
 Text translation is a cloud-based REST API feature of the Translator service that uses neural machine translation technology to enable quick and accurate source-to-target text translation in real time across all supported languages.
 
@@ -265,6 +265,19 @@ If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
 section of the project. 
 
+## Next steps
+
+The following section provides several code snippets illustrating common patterns used in the Document Translation Python client library.
+More samples can be found under the [samples][samples] directory.
+
+## Contributing
+
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
+
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information see the [Code of Conduct FAQ][coc_faq] or contact [opencode@microsoft.com][coc_contact] with any additional questions or comments.
+
 <!-- LINKS -->
 
 [python-dt-src]: https://aka.ms/https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/azure/ai/translation/text
@@ -300,3 +313,10 @@ section of the project.
 [breaksentence_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample4_BreakSentence.md
 [dictionarylookup_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample5_DictionaryLookup.md
 [dictionaryexamples_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples/Sample6_DictionaryExamples.md
+
+[samples]: https://aka.ms/https://github.com/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples
+
+[cla]: https://cla.microsoft.com
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
+[coc_contact]: mailto:opencode@microsoft.com
