@@ -63,6 +63,6 @@ __all__ = (
     "TriggerOperation",
     "TriggerType",
     "ConnectionRetryPolicy",
-    "ThroughputProperties"
+    "ThroughputProperties",
 )
 __version__ = VERSION
