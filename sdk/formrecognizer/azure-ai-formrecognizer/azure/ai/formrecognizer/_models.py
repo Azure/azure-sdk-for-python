@@ -3362,7 +3362,7 @@ class DocumentClassifierDetails:
             if model.doc_types else {}
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of DocumentClassifierDetails."""
         return {
             "classifier_id": self.classifier_id,
@@ -3374,7 +3374,7 @@ class DocumentClassifierDetails:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "DocumentClassifierDetails":
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentClassifierDetails":
         """Converts a dict in the shape of a DocumentClassifierDetails to the model itself.
 
         :param Dict data: A dictionary in the shape of DocumentClassifierDetails.
@@ -3387,8 +3387,8 @@ class DocumentClassifierDetails:
             created_date_time=data.get("created_date_time", None),
             expiration_date_time=data.get("expiration_date_time", None),
             api_version=data.get("api_version", None),
-            doc_types={k: ClassifierDocumentTypeDetails.from_dict(v)  # type: ignore
-                       for k, v in data.get("doc_types").items()}
+            doc_types={k: ClassifierDocumentTypeDetails.from_dict(v)
+                       for k, v in data.get("doc_types").items()}  # type: ignore
             if data.get("doc_types")
             else {},
         )
