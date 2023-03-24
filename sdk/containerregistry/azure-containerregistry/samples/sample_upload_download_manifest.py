@@ -58,14 +58,14 @@ class UploadDownloadManifest(object):
                 config = OciDescriptor(
                     media_type="application/vnd.oci.image.config.v1+json",
                     digest=config_digest,
-                    size=len(config.getbuffer())
+                    size_in_bytes=len(config.getbuffer())
                 ),
                 schema_version=2,
                 layers=[
                     OciDescriptor(
                         media_type="application/vnd.oci.image.layer.v1.tar",
                         digest=layer_digest,
-                        size=len(layer.getbuffer()),
+                        size_in_bytes=len(layer.getbuffer()),
                         annotations=OciAnnotations(name="artifact.txt")
                     )
                 ]

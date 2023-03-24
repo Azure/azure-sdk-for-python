@@ -90,12 +90,12 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         config1 = OciDescriptor(
             media_type="application/vnd.acme.rocket.config",
             digest="sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
-            size=171
+            size_in_bytes=171
         )
         config2 = OciDescriptor(
             media_type="application/vnd.oci.image.layer.v1.tar",
             digest="sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
-            size=28,
+            size_in_bytes=28,
             annotations=OciAnnotations(name="artifact.txt")
         )
         return OciImageManifest(config=config1, schema_version=2, layers=[config2])
@@ -202,4 +202,4 @@ def load_registry():
 def assert_manifest_config_or_layer_properties(value, expected):
     assert value.media_type == expected.media_type
     assert value.digest == expected.digest
-    assert value.size == expected.size
+    assert value.size_in_bytes == expected.size_in_bytes
