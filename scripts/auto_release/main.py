@@ -454,17 +454,9 @@ class CodegenTestPR:
             log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
 
-    @staticmethod
-    def clean_test_env():
-        for item in ("SSL_CERT_DIR", "REQUESTS_CA_BUNDLE"):
-            if os.getenv(item):
-                os.environ.pop(item)
-
     def run_test(self):
         self.prepare_test_env()
         self.run_test_proc()
-        self.clean_test_env()
-        
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
