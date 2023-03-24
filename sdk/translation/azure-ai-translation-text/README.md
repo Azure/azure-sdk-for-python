@@ -196,7 +196,7 @@ except HttpResponseError as exception:
     print(f"Message: {exception.message}")
 ```
 
-For samples on using the `break sentece` endpoint refer to more samples [here][breaksentence_sample].
+For samples on using the `break sentence` endpoint refer to more samples [here][breaksentence_sample].
 
 Please refer to the service documentation for a conceptual discussion of [break sentence][breaksentence_doc].
 
