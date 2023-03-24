@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Tuple
 
 from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
@@ -42,8 +42,10 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         """Close the credential's transport session."""
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         assertion = self._func()

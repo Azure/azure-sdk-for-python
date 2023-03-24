@@ -6,7 +6,6 @@
 import pytest
 import datetime
 
-import msrest
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.servicebus.management import ApiVersion
@@ -214,10 +213,10 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
     async def test_async_mgmt_queue_create_with_invalid_name(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
 
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(HttpResponseError):
             await mgmt_service.create_queue(Exception())
 
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(HttpResponseError):
             await mgmt_service.create_queue('')
 
     @ServiceBusPreparer()
@@ -566,7 +565,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
 
             #change the name to a queue with an invalid name exist; should fail.
             queue_description.name = ''
-            with pytest.raises(msrest.exceptions.ValidationError):
+            with pytest.raises(HttpResponseError):
                 await mgmt_service.update_queue(queue_description)
             queue_description.name = queue_name
 
@@ -657,7 +656,7 @@ class TestServiceBusAdministrationClientQueueAsync(AzureMgmtRecordedTestCase):
         with pytest.raises(TypeError):
             await mgmt_service.get_queue_runtime_properties(None)
 
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(HttpResponseError):
             await mgmt_service.get_queue_runtime_properties("")
 
         with pytest.raises(ResourceNotFoundError):

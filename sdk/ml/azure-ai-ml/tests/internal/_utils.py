@@ -180,6 +180,25 @@ PARAMETERS_TO_TEST = [
             "default_datastore": ADLS_DATA_STORE_NAME,
         },
     ),  # Ae365exepool
+    (
+        "tests/test_configs/internal/spark-component/spec.yaml",
+        {
+            "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+            "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+        },
+        {
+            "driver_cores": 1,
+            "driver_memory": "1g",
+            "executor_cores": 1,
+            "executor_memory": "1g",
+            "executor_instances": 1,
+            "compute": "cpu-cluster",
+        },  # no specific run settings
+        {
+            "default_compute": "cpu-cluster",
+            "default_datastore": ADLS_DATA_STORE_NAME,
+        },
+    ),  # SparkComponent
     # Pipeline  we can't test this because we can't create a v1.5 pipeline component in v2, instead we test v2 pipeline
     # component containing v1.5 nodes
 ]
@@ -202,6 +221,20 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
     for dot_key in dot_key_map:
         if dot_key in expected_values:
             expected_values[dot_key_map[dot_key]] = expected_values.pop(dot_key)
+
+    conf = {}
+    conf_key_map = {
+        "driver_memory": "spark.driver.memory",
+        "driver_cores": "spark.driver.cores",
+        "executor_memory": "spark.executor.memory",
+        "executor_cores": "spark.executor.cores",
+        "executor_instances": "spark.executor.instances",
+    }
+    # hack: spark component settings will be set to conf
+    if all(key in expected_values for key in conf_key_map):
+        for dot_key in conf_key_map:
+            conf[conf_key_map[dot_key]] = expected_values.pop(dot_key)
+        expected_values["conf"] = conf
 
     for dot_key in expected_values:
         # hack: mini_batch_size will be transformed into str

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added proactive refreshing feature for managed iedentity
+
 ### Breaking Changes
 
 ### Bugs Fixed

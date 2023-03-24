@@ -1,5 +1,18 @@
 # Release History
 
+## 3.3.0b1 (Unreleased)
+
+### Features Added
+- Added `features` keyword argument on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Added `AnalysisFeature` enum with optional document analysis feature to enable.
+- Added the following optional properties on `DocumentStyle` class: `similar_font_family`, `font_style`, `font_weight`, `color`, `background_color`.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 3.2.1 (2023-03-07)
 
 ### Bugs Fixed

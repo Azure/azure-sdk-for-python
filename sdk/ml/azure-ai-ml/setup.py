@@ -84,9 +84,7 @@ setup(
         "isodate",
         "azure-common<2.0.0,>=1.1",
         "typing-extensions<5.0.0",
-        # "opencensus-ext-azure<2.0.0", disabled until SDK logging re-activated
-        "azure-mgmt-resourcegraph<9.0.0,>=2.0.0",
-        "azure-mgmt-resource<23.0.0,>=3.0.0",
+        "opencensus-ext-azure<2.0.0",
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package

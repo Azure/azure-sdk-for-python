@@ -107,9 +107,9 @@ class CertificateOperationError(object):
     @classmethod
     def _from_error_bundle(cls, error_bundle: models.Error) -> "CertificateOperationError":
         return cls(
-            code=error_bundle.code,
-            message=error_bundle.message,
-            inner_error=cls._from_error_bundle(error_bundle.inner_error)
+            code=error_bundle.code,  # type: ignore
+            message=error_bundle.message,  # type: ignore
+            inner_error=cls._from_error_bundle(error_bundle.inner_error)  # type: ignore
         )
 
     @property

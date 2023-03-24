@@ -7,7 +7,6 @@ import logging
 import pytest
 import datetime
 
-import msrest
 from azure.servicebus.management import ServiceBusAdministrationClient, SubscriptionProperties
 from utilities import get_logger
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
@@ -277,7 +276,7 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
 
             # change the name to a topic with an invalid name exist; should fail.
             subscription_description.name = ''
-            with pytest.raises(msrest.exceptions.ValidationError):
+            with pytest.raises(HttpResponseError):
                 mgmt_service.update_subscription(topic_name, subscription_description)
             subscription_description.name = topic_name
 
