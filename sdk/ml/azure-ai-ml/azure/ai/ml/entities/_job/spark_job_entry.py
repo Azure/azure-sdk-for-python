@@ -33,8 +33,7 @@ class SparkJobEntry(RestTranslatableMixin):
         if obj is None:
             return
         if isinstance(obj, dict):
-            # TODO: support data binding expression
-            obj = RestSparkJobEntry.from_dict(obj["entry"])
+            obj = RestSparkJobEntry.from_dict(obj)
         if obj.spark_job_entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
             return SparkJobEntry(
                 entry=obj.__dict__.get("file", None),

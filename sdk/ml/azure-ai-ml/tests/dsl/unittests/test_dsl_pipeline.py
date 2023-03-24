@@ -3147,7 +3147,9 @@ class TestDSLPipeline:
                     "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
                     # seems that `type` is the only field for `identity` and hasn't been exposed to user
                     # "identity.type": AmlTokenConfiguration(),
-                    "entry.entry": SparkJobEntry(entry="main.py"),
+                    # spark.entry doesn't support overwrite from node level for now, more details in
+                    # entities._builders.spark.Spark.__init__, around line 211
+                    # "entry.entry": SparkJobEntry(entry="main.py"),
                 },
                 {
                     "file_input": Input(path="./tests/test_configs/data"),
@@ -3164,10 +3166,17 @@ class TestDSLPipeline:
             attr, sub_attr = field.split(".")
 
             @dsl.pipeline()
-            def pipeline_func(param: int = 2):
+            def pipeline_func(param: str = "2"):
                 node = component(**fake_inputs)
                 setattr(node, attr, value)
                 setattr(getattr(node, attr), sub_attr, param)
 
             pipeline_job = pipeline_func()
-            pipeline_job._to_rest_object()
+            rest_object = pipeline_job._to_rest_object()
+            regenerated_job = PipelineJob._from_rest_object(rest_object)
+            expected_dict, actual_dict = pipeline_job._to_dict(), regenerated_job._to_dict()
+            # TODO: node level task is not necessary and with issue in serialization/de-serialization
+            for skip_dot_key in ["jobs.node.task.code"]:
+                pydash.set_(expected_dict, skip_dot_key, "placeholder")
+                pydash.set_(actual_dict, skip_dot_key, "placeholder")
+            assert actual_dict == expected_dict, f"failed on field {field}"
