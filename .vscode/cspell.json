@@ -245,7 +245,6 @@
     "mhsm",
     "mipsle",
     "mktime",
-    "mosca",
     "msal",
     "msrest",
     "msrestazure",
@@ -258,7 +257,6 @@
     "nazsdk",
     "nbytes",
     "nbsp",
-    "NOACTION",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -392,8 +390,7 @@
     "yarl",
     "SDDL",
     "dacl",
-    "whls",
-    "wordomatic"
+    "whls"
   ],
   "overrides": [
     {
@@ -475,6 +472,20 @@
       "words": [
         "essai",
         "myfoldername"
+      ]
+    },
+    {
+      "filename": "sdk/translation/azure-ai-translation-text/**",
+      "words": [
+        "akhtabar",
+        "deserializers",
+        "Esto",
+        "hudha",
+        "mosca",
+        "mros",
+        "NOACTION",
+        "prueba",
+        "wordomatic"
       ]
     },
     {
