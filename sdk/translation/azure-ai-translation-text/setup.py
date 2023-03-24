@@ -18,7 +18,12 @@ setup(
     author_email="",
     url="",
     keywords="azure, azure sdk",
-    packages=find_packages(),
+    packages=find_packages(exclude=[
+        # Exclude packages that will be covered by PEP420 or nspkg
+        'azure',
+        'azure.ai',
+        'azure.ai.translation'
+    ]),
     include_package_data=True,
     package_data={
         'pytyped': ['py.typed'],
