@@ -9,6 +9,7 @@ title: MonitorQueryClient
 description: Azure Monitor Query Python Client
 generated-metadata: false
 license-header: MICROSOFT_MIT_NO_VERSION
+package-name: azure-monitor-query
 no-namespace-folders: true
 python: true
 version-tolerant: true

@@ -10,7 +10,7 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ProfanityActions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ProfanityAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translator profanity actions."""
 
     NO_ACTION = "NoAction"
@@ -18,14 +18,14 @@ class ProfanityActions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETED = "Deleted"
 
 
-class ProfanityMarkers(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ProfanityMarker(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translator profanity markers."""
 
     ASTERISK = "Asterisk"
     TAG = "Tag"
 
 
-class TextTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class TextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translation text type."""
 
     PLAIN = "plain"

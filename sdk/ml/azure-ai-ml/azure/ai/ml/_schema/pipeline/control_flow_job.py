@@ -29,7 +29,6 @@ class BaseLoopSchema(ControlFlowSchema):
 
     @pre_dump
     def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
-
         result = copy.copy(data)
         # Update body object to data_binding_str
         result._body = data._get_body_binding_str()
@@ -76,7 +75,6 @@ class DoWhileSchema(BaseLoopSchema):
 
     @pre_dump
     def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
-
         return super(DoWhileSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
 
@@ -112,12 +110,10 @@ class ParallelForSchema(BaseLoopSchema):
 
     @pre_dump
     def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
-
         return super(ParallelForSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
 
     @pre_dump
     def resolve_outputs(self, job, **kwargs):  # pylint: disable=unused-argument
-
         result = copy.copy(job)
         _resolve_outputs(result, job)
         return result
@@ -137,3 +133,15 @@ class ParallelForSchema(BaseLoopSchema):
             # use str to serialize input/output builder
             result._items = json.dumps(result.items, default=_binding_handler)
         return result
+
+
+class FLScatterGatherSchema(ControlFlowSchema):
+    # TODO determine serialization, or if this is actually needed
+
+    # @pre_dump
+    def serialize_items(self, data, **kwargs):
+        pass
+
+    # @pre_dump
+    def resolve_outputs(self, job, **kwargs):
+        pass

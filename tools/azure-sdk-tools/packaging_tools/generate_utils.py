@@ -34,8 +34,8 @@ def get_package_names(sdk_folder):
     return package_names
 
 
-def init_new_service(package_name, folder_name, is_cadl = False):
-    if not is_cadl:
+def init_new_service(package_name, folder_name, is_typespec = False):
+    if not is_typespec:
         setup = Path(folder_name, package_name, "setup.py")
         if not setup.exists():
             check_call(
@@ -90,7 +90,7 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
             "readme": input_readme,
         })
     else:
-        metadata["cadl_src"] = input_readme
+        metadata["typespec_src"] = input_readme
         metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
@@ -125,6 +125,30 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
         if write_flag:
             with open(manifest_file, "w") as f:
                 f.write("".join(includes))
+
+
+def update_typespec_location(sdk_folder, data, config, folder_name, package_name, input_readme):
+    if "meta" in config:
+        return
+
+    metadata = {
+        "directory": input_readme,
+        "commit": data["headSha"],
+        "repo": data["repoHttpsUrl"].split("github.com/")[-1],
+        "cleanup": False,
+    }
+
+    _LOGGER.info("tsp-location:\n {}".format(json.dumps(metadata, indent=2)))
+
+    package_folder = Path(sdk_folder) / folder_name / package_name
+    if not package_folder.exists():
+        _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
+        return
+
+    metadata_file_path = package_folder / "tsp-location.yaml"
+    with open(metadata_file_path, "w") as writer:
+        yaml.safe_dump(metadata, writer)
+    _LOGGER.info(f"Saved metadata to {metadata_file_path}")
 
 
 def judge_tag_preview(path: str) -> bool:
@@ -337,7 +361,7 @@ def get_npm_package_version(package: str) -> Dict[any, any]:
     if "dependencies" not in data:
         _LOGGER.info(f"can not find {package}: {data}")
         return {}
-    
+
     return data["dependencies"]
 
 def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
@@ -359,28 +383,22 @@ def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> No
     with open(ci, "w") as file_out:
         file_out.writelines(content)
 
-def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
-    cadl_python = "@azure-tools/cadl-python"
+def gen_typespec(typespec_relative_path: str, spec_folder: str) -> Dict[str, Any]:
+    typespec_python = "@azure-tools/typespec-python"
     autorest_python = "@autorest/python"
 
     # npm install tool
     origin_path = os.getcwd()
-    with open("cadl_to_sdk_config.json", "r") as file_in:
-        cadl_python_dep = json.load(file_in)
-    os.chdir(Path(spec_folder) / cadl_relative_path)
-    if Path("package.json").exists():
-        with open("package.json", "r") as file_in:
-            cadl_tools = json.load(file_in)
-    else:
-        cadl_tools = {"dependencies": dict()}
-    cadl_tools["dependencies"].update(cadl_python_dep["dependencies"])
+    with open(Path("eng/emitter-package.json"), "r") as file_in:
+        typespec_python_dep = json.load(file_in)
+    os.chdir(Path(spec_folder) / typespec_relative_path)
     with open("package.json", "w") as file_out:
-        json.dump(cadl_tools, file_out)
+        json.dump(typespec_python_dep, file_out)
     check_call("npm install", shell=True)
 
     # generate code
-    cadl_file = "client.cadl" if Path("client.cadl").exists() else "."
-    check_call(f"npx cadl compile {cadl_file} --emit {cadl_python} --arg \"python-sdk-folder={origin_path}\" ", shell=True)
+    typespec_file = "client.tsp" if Path("client.tsp").exists() else "."
+    check_call(f"npx tsp compile {typespec_file} --emit {typespec_python} --arg \"python-sdk-folder={origin_path}\" ", shell=True)
 
     # get version of codegen used in generation
     npm_package_verstion = get_npm_package_version(autorest_python)

@@ -249,7 +249,7 @@ class GallerySharingProfileOperations:
         :param gallery_name: The name of the Shared Image Gallery. Required.
         :type gallery_name: str
         :param sharing_update: Parameters supplied to the update gallery sharing profile. Is either a
-         model type or a IO type. Required.
+         SharingUpdate type or a IO type. Required.
         :type sharing_update: ~azure.mgmt.compute.v2022_01_03.models.SharingUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

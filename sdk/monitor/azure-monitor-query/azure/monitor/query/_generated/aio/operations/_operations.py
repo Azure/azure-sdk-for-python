@@ -153,8 +153,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -368,7 +369,7 @@ class QueryOperations:
         :type workspace_id: str
         :param body: The Analytics query. Learn more about the `Analytics query syntax
          <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_. Is
-         either a model type or a IO type. Required.
+         either a JSON type or a IO type. Required.
         :type body: JSON or IO
         :keyword prefer: Optional. The prefer header to set server timeout, query statistics and
          visualization information. Default value is None.
@@ -382,6 +383,18 @@ class QueryOperations:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "query": "str",  # The query to execute. Required.
+                    "timespan": "str",  # Optional. Optional. The timespan over which to query
+                      data. This is an ISO8601 time period value.  This timespan is applied in addition
+                      to any that are specified in the query expression.
+                    "workspaces": [
+                        "str"  # Optional. A list of workspaces that are included in the
+                          query.
+                    ]
+                }
 
                 # response body for status code(s): 200
                 response == {
@@ -463,8 +476,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -701,7 +715,7 @@ class QueryOperations:
         <https://dev.loganalytics.io/documentation/Using-the-API>`_ is an example for using POST with
         an Analytics query.
 
-        :param body: The batch request body. Is either a model type or a IO type. Required.
+        :param body: The batch request body. Is either a JSON type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -712,6 +726,34 @@ class QueryOperations:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "requests": [
+                        {
+                            "body": {
+                                "query": "str",  # The query to execute. Required.
+                                "timespan": "str",  # Optional. Optional. The
+                                  timespan over which to query data. This is an ISO8601 time period
+                                  value.  This timespan is applied in addition to any that are
+                                  specified in the query expression.
+                                "workspaces": [
+                                    "str"  # Optional. A list of workspaces that
+                                      are included in the query.
+                                ]
+                            },
+                            "id": "str",  # The error details. Required.
+                            "workspace": "str",  # Workspace Id to be included in the
+                              query. Required.
+                            "headers": {
+                                "str": "str"  # Optional. Dictionary of
+                                  :code:`<string>`.
+                            },
+                            "method": "str",  # Optional. "POST"
+                            "path": "str"  # Optional. "/query"
+                        }
+                    ]
+                }
 
                 # response body for status code(s): 200
                 response == {
@@ -814,8 +856,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1230,8 +1273,9 @@ class MetadataOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1628,8 +1672,9 @@ class MetadataOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

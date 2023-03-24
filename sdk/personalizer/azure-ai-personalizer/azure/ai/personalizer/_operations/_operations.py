@@ -8,7 +8,19 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    IO,
+    Iterable,
+    Iterator,
+    Optional,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 import urllib.parse
 
 from azure.core.exceptions import (
@@ -66,7 +78,9 @@ def build_personalizer_get_service_configuration_request(**kwargs: Any) -> HttpR
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_personalizer_update_service_configuration_request(**kwargs: Any) -> HttpRequest:
+def build_personalizer_update_service_configuration_request(
+    **kwargs: Any,
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -163,7 +177,7 @@ def build_personalizer_get_evaluation_request(
     end_time: datetime.datetime,
     interval_in_minutes: Optional[int] = None,
     window: Optional[str] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -252,7 +266,11 @@ def build_personalizer_create_evaluation_request(evaluation_id: str, **kwargs: A
 
 
 def build_personalizer_list_evaluations_request(
-    *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+    *,
+    filter_expression: Optional[str] = None,
+    top: Optional[int] = None,
+    skip: int = 0,
+    **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -553,7 +571,14 @@ def build_personalizer_import_model_request(*, content: IO, **kwargs: Any) -> Ht
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+    return HttpRequest(
+        method="PUT",
+        url=_url,
+        params=_params,
+        headers=_headers,
+        content=content,
+        **kwargs,
+    )
 
 
 def build_personalizer_reset_model_request(**kwargs: Any) -> HttpRequest:
@@ -1412,7 +1437,7 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         end_time: datetime.datetime,
         interval_in_minutes: Optional[int] = None,
         window: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> JSON:
         """Offline Evaluation.
 
@@ -1601,7 +1626,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def create_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, evaluation_id: str, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation_id: str,
+        evaluation: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Create Offline Evaluation.
 
@@ -1642,7 +1672,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def create_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, evaluation_id: str, evaluation: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        evaluation_id: str,
+        evaluation: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Create Offline Evaluation.
 
@@ -1731,7 +1766,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @distributed_trace
     def list_evaluations(
-        self, *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+        self,
+        *,
+        filter_expression: Optional[str] = None,
+        top: Optional[int] = None,
+        skip: int = 0,
+        **kwargs: Any,
     ) -> Iterable[JSON]:
         """All Offline Evaluations.
 
@@ -1797,7 +1837,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1813,11 +1856,16 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1840,7 +1888,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -1849,7 +1901,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, reward: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        reward: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward.
 
@@ -1881,7 +1938,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, reward: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        reward: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward.
 
@@ -2277,7 +2339,7 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         feature_importance: JSON,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Create Feature Importance.
 
@@ -2314,7 +2376,7 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         feature_importance: IO,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         """Create Feature Importance.
 
@@ -2334,7 +2396,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @distributed_trace
     def create_feature_importance(  # pylint: disable=inconsistent-return-statements
-        self, feature_importance_id: str, feature_importance: Union[JSON, IO], **kwargs: Any
+        self,
+        feature_importance_id: str,
+        feature_importance: Union[JSON, IO],
+        **kwargs: Any,
     ) -> None:
         """Create Feature Importance.
 
@@ -2457,7 +2522,10 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -2473,11 +2541,16 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -2500,7 +2573,11 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 raise HttpResponseError(response=response)
 
             return pipeline_response
@@ -2836,7 +2913,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward (MultiSlot).
 
@@ -2872,7 +2954,12 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
 
     @overload
     def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
-        self, event_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        event_id: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> None:
         """Reward (MultiSlot).
 
@@ -3221,7 +3308,13 @@ class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: 
         return cast(JSON, deserialized)
 
     @overload
-    def rank_single_slot(self, rank_request: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    def rank_single_slot(
+        self,
+        rank_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of

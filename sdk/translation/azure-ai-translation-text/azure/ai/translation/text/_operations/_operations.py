@@ -27,7 +27,7 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
-from .._vendor import TranslatorClientMixinABC
+from .._vendor import TextTranslationClientMixinABC
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -40,7 +40,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_translator_get_languages_request(
+def build_text_translation_get_languages_request(
     *,
     client_trace_id: Optional[str] = None,
     scope: Optional[str] = None,
@@ -74,15 +74,15 @@ def build_translator_get_languages_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_translator_translate_request(
+def build_text_translation_translate_request(
     *,
     to: List[str],
     client_trace_id: Optional[str] = None,
     from_parameter: Optional[str] = None,
-    text_type: Optional[Union[str, _models.TextTypes]] = None,
+    text_type: Optional[Union[str, _models.TextType]] = None,
     category: Optional[str] = None,
-    profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-    profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+    profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+    profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
     include_alignment: Optional[bool] = None,
     include_sentence_length: Optional[bool] = None,
     suggested_from: Optional[str] = None,
@@ -137,7 +137,7 @@ def build_translator_translate_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_translator_transliterate_request(
+def build_text_translation_transliterate_request(
     *, language: str, from_script: str, to_script: str, client_trace_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -166,7 +166,7 @@ def build_translator_transliterate_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_translator_break_sentence_request(
+def build_text_translation_find_sentence_boundaries_request(
     *,
     client_trace_id: Optional[str] = None,
     language: Optional[str] = None,
@@ -200,7 +200,7 @@ def build_translator_break_sentence_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_translator_dictionary_lookup_request(
+def build_text_translation_lookup_dictionary_entries_request(
     *, from_parameter: str, to: str, client_trace_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -228,7 +228,7 @@ def build_translator_dictionary_lookup_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_translator_dictionary_examples_request(
+def build_text_translation_lookup_dictionary_examples_request(
     *, from_parameter: str, to: str, client_trace_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -256,7 +256,7 @@ def build_translator_dictionary_examples_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
+class TextTranslationClientOperationsMixin(TextTranslationClientMixinABC):
     @distributed_trace
     def get_languages(
         self,
@@ -314,7 +314,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         cls: ClsType[_models.GetLanguagesResult] = kwargs.pop("cls", None)
 
-        request = build_translator_get_languages_request(
+        request = build_text_translation_get_languages_request(
             client_trace_id=client_trace_id,
             scope=scope,
             accept_language=accept_language,
@@ -328,15 +328,16 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.MtErrorResponse, response.json())
+            error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -353,15 +354,15 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
     @overload
     def translate(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         to: List[str],
         client_trace_id: Optional[str] = None,
         from_parameter: Optional[str] = None,
-        text_type: Optional[Union[str, _models.TextTypes]] = None,
+        text_type: Optional[Union[str, _models.TextType]] = None,
         category: Optional[str] = None,
-        profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-        profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+        profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+        profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
         include_alignment: Optional[bool] = None,
         include_sentence_length: Optional[bool] = None,
         suggested_from: Optional[str] = None,
@@ -370,13 +371,13 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         allow_fallback: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.TranslatedTextElement]:
+    ) -> List[_models.TranslatedTextItem]:
         """Translate Text.
 
         Translate Text.
 
         :param content: Array of the text to be translated. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -401,7 +402,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextType
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -412,11 +413,11 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityAction
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarker
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -452,8 +453,8 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -465,10 +466,10 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         to: List[str],
         client_trace_id: Optional[str] = None,
         from_parameter: Optional[str] = None,
-        text_type: Optional[Union[str, _models.TextTypes]] = None,
+        text_type: Optional[Union[str, _models.TextType]] = None,
         category: Optional[str] = None,
-        profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-        profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+        profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+        profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
         include_alignment: Optional[bool] = None,
         include_sentence_length: Optional[bool] = None,
         suggested_from: Optional[str] = None,
@@ -477,7 +478,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         allow_fallback: Optional[bool] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.TranslatedTextElement]:
+    ) -> List[_models.TranslatedTextItem]:
         """Translate Text.
 
         Translate Text.
@@ -508,7 +509,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextType
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -519,11 +520,11 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityAction
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarker
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -559,23 +560,23 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def translate(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         to: List[str],
         client_trace_id: Optional[str] = None,
         from_parameter: Optional[str] = None,
-        text_type: Optional[Union[str, _models.TextTypes]] = None,
+        text_type: Optional[Union[str, _models.TextType]] = None,
         category: Optional[str] = None,
-        profanity_action: Optional[Union[str, _models.ProfanityActions]] = None,
-        profanity_marker: Optional[Union[str, _models.ProfanityMarkers]] = None,
+        profanity_action: Optional[Union[str, _models.ProfanityAction]] = None,
+        profanity_marker: Optional[Union[str, _models.ProfanityMarker]] = None,
         include_alignment: Optional[bool] = None,
         include_sentence_length: Optional[bool] = None,
         suggested_from: Optional[str] = None,
@@ -583,14 +584,14 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         to_script: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
         **kwargs: Any
-    ) -> List[_models.TranslatedTextElement]:
+    ) -> List[_models.TranslatedTextItem]:
         """Translate Text.
 
         Translate Text.
 
-        :param content: Array of the text to be translated. Is either a [InputTextElement] type or a IO
+        :param content: Array of the text to be translated. Is either a [InputTextItem] type or a IO
          type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword to: Specifies the language of the output text. The target language must be one of the
          supported languages included
          in the translation scope. For example, use to=de to translate to German.
@@ -615,7 +616,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
          HTML needs to be a well-formed,
          complete element. Possible values are: plain (default) or html. Known values are: "plain" and
          "html". Default value is None.
-        :paramtype text_type: str or ~azure.ai.translation.text.models.TextTypes
+        :paramtype text_type: str or ~azure.ai.translation.text.models.TextType
         :keyword category: A string specifying the category (domain) of the translation. This parameter
          is used to get translations
          from a customized system built with Custom Translator. Add the Category ID from your Custom
@@ -626,11 +627,11 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword profanity_action: Specifies how profanities should be treated in translations.
          Possible values are: NoAction (default), Marked or Deleted. Known values are: "NoAction",
          "Marked", and "Deleted". Default value is None.
-        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityActions
+        :paramtype profanity_action: str or ~azure.ai.translation.text.models.ProfanityAction
         :keyword profanity_marker: Specifies how profanities should be marked in translations.
          Possible values are: Asterisk (default) or Tag. Known values are: "Asterisk" and "Tag".
          Default value is None.
-        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarkers
+        :paramtype profanity_marker: str or ~azure.ai.translation.text.models.ProfanityMarker
         :keyword include_alignment: Specifies whether to include alignment projection from source text
          to translated text.
          Possible values are: true or false (default). Default value is None.
@@ -666,8 +667,8 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: list of TranslatedTextElement
-        :rtype: list[~azure.ai.translation.text.models.TranslatedTextElement]
+        :return: list of TranslatedTextItem
+        :rtype: list[~azure.ai.translation.text.models.TranslatedTextItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -682,7 +683,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.TranslatedTextElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.TranslatedTextItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -691,7 +692,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         else:
             _content = json.dumps(content, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_translator_translate_request(
+        request = build_text_translation_translate_request(
             to=to,
             client_trace_id=client_trace_id,
             from_parameter=from_parameter,
@@ -716,15 +717,16 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.MtErrorResponse, response.json())
+            error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -732,7 +734,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         response_headers["x-mt-system"] = self._deserialize("str", response.headers.get("x-mt-system"))
         response_headers["x-metered-usage"] = self._deserialize("int", response.headers.get("x-metered-usage"))
 
-        deserialized = _deserialize(List[_models.TranslatedTextElement], response.json())
+        deserialized = _deserialize(List[_models.TranslatedTextItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -742,7 +744,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
     @overload
     def transliterate(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         language: str,
         from_script: str,
@@ -756,7 +758,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         Transliterate Text.
 
         :param content: Array of the text to be transliterated. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -824,7 +826,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
     @distributed_trace
     def transliterate(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         language: str,
         from_script: str,
@@ -836,9 +838,9 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
 
         Transliterate Text.
 
-        :param content: Array of the text to be transliterated. Is either a [InputTextElement] type or
-         a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+        :param content: Array of the text to be transliterated. Is either a [InputTextItem] type or a
+         IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword language: Specifies the language of the text to convert from one script to another.
          Possible languages are listed in the transliteration scope obtained by querying the service
          for its supported languages. Required.
@@ -882,7 +884,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         else:
             _content = json.dumps(content, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_translator_transliterate_request(
+        request = build_text_translation_transliterate_request(
             language=language,
             from_script=from_script,
             to_script=to_script,
@@ -898,15 +900,16 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.MtErrorResponse, response.json())
+            error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -920,23 +923,23 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def break_sentence(
+    def find_sentence_boundaries(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
         script: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.BreakSentenceElement]:
-        """Break Sentence.
+    ) -> List[_models.BreakSentenceItem]:
+        """Find Sentence Boundaries.
 
-        Break Sentence.
+        Find Sentence Boundaries.
 
         :param content: Array of the text for which values the sentence boundaries will be calculated.
          Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -951,13 +954,13 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
+        :return: list of BreakSentenceItem
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def break_sentence(
+    def find_sentence_boundaries(
         self,
         content: IO,
         *,
@@ -966,10 +969,10 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         script: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.BreakSentenceElement]:
-        """Break Sentence.
+    ) -> List[_models.BreakSentenceItem]:
+        """Find Sentence Boundaries.
 
-        Break Sentence.
+        Find Sentence Boundaries.
 
         :param content: Array of the text for which values the sentence boundaries will be calculated.
          Required.
@@ -988,28 +991,28 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
+        :return: list of BreakSentenceItem
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def break_sentence(
+    def find_sentence_boundaries(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         client_trace_id: Optional[str] = None,
         language: Optional[str] = None,
         script: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.BreakSentenceElement]:
-        """Break Sentence.
+    ) -> List[_models.BreakSentenceItem]:
+        """Find Sentence Boundaries.
 
-        Break Sentence.
+        Find Sentence Boundaries.
 
         :param content: Array of the text for which values the sentence boundaries will be calculated.
-         Is either a [InputTextElement] type or a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+         Is either a [InputTextItem] type or a IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword client_trace_id: A client-generated GUID to uniquely identify the request. Default
          value is None.
         :paramtype client_trace_id: str
@@ -1024,8 +1027,8 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: list of BreakSentenceElement
-        :rtype: list[~azure.ai.translation.text.models.BreakSentenceElement]
+        :return: list of BreakSentenceItem
+        :rtype: list[~azure.ai.translation.text.models.BreakSentenceItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1040,7 +1043,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.BreakSentenceElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.BreakSentenceItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1049,7 +1052,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         else:
             _content = json.dumps(content, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_translator_break_sentence_request(
+        request = build_text_translation_find_sentence_boundaries_request(
             client_trace_id=client_trace_id,
             language=language,
             script=script,
@@ -1064,21 +1067,22 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.MtErrorResponse, response.json())
+            error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
-        deserialized = _deserialize(List[_models.BreakSentenceElement], response.json())
+        deserialized = _deserialize(List[_models.BreakSentenceItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1086,22 +1090,22 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def dictionary_lookup(
+    def lookup_dictionary_entries(
         self,
-        content: List[_models.InputTextElement],
+        content: List[_models.InputTextItem],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryLookupElement]:
-        """Dictionary Lookup.
+    ) -> List[_models.DictionaryLookupItem]:
+        """Lookup Dictionary Entries.
 
-        Dictionary Lookup.
+        Lookup Dictionary Entries.
 
         :param content: Array of the text to be sent to dictionary. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement]
+        :type content: list[~azure.ai.translation.text.models.InputTextItem]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1116,13 +1120,13 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
+        :return: list of DictionaryLookupItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def dictionary_lookup(
+    def lookup_dictionary_entries(
         self,
         content: IO,
         *,
@@ -1131,10 +1135,10 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryLookupElement]:
-        """Dictionary Lookup.
+    ) -> List[_models.DictionaryLookupItem]:
+        """Lookup Dictionary Entries.
 
-        Dictionary Lookup.
+        Lookup Dictionary Entries.
 
         :param content: Array of the text to be sent to dictionary. Required.
         :type content: IO
@@ -1152,28 +1156,28 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
+        :return: list of DictionaryLookupItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def dictionary_lookup(
+    def lookup_dictionary_entries(
         self,
-        content: Union[List[_models.InputTextElement], IO],
+        content: Union[List[_models.InputTextItem], IO],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.DictionaryLookupElement]:
-        """Dictionary Lookup.
+    ) -> List[_models.DictionaryLookupItem]:
+        """Lookup Dictionary Entries.
 
-        Dictionary Lookup.
+        Lookup Dictionary Entries.
 
-        :param content: Array of the text to be sent to dictionary. Is either a [InputTextElement] type
-         or a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.InputTextElement] or IO
+        :param content: Array of the text to be sent to dictionary. Is either a [InputTextItem] type or
+         a IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.InputTextItem] or IO
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1188,8 +1192,8 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: list of DictionaryLookupElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupElement]
+        :return: list of DictionaryLookupItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryLookupItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1204,7 +1208,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.DictionaryLookupElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DictionaryLookupItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1213,7 +1217,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         else:
             _content = json.dumps(content, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_translator_dictionary_lookup_request(
+        request = build_text_translation_lookup_dictionary_entries_request(
             from_parameter=from_parameter,
             to=to,
             client_trace_id=client_trace_id,
@@ -1228,21 +1232,22 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.MtErrorResponse, response.json())
+            error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
-        deserialized = _deserialize(List[_models.DictionaryLookupElement], response.json())
+        deserialized = _deserialize(List[_models.DictionaryLookupItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1250,22 +1255,22 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    def dictionary_examples(
+    def lookup_dictionary_examples(
         self,
-        content: List[_models.DictionaryExampleTextElement],
+        content: List[_models.DictionaryExampleTextItem],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryExampleElement]:
-        """Dictionary Examples.
+    ) -> List[_models.DictionaryExampleItem]:
+        """Lookup Dictionary Examples.
 
-        Dictionary Examples.
+        Lookup Dictionary Examples.
 
         :param content: Array of the text to be sent to dictionary. Required.
-        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextElement]
+        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextItem]
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1280,13 +1285,13 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
+        :return: list of DictionaryExampleItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def dictionary_examples(
+    def lookup_dictionary_examples(
         self,
         content: IO,
         *,
@@ -1295,10 +1300,10 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         client_trace_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> List[_models.DictionaryExampleElement]:
-        """Dictionary Examples.
+    ) -> List[_models.DictionaryExampleItem]:
+        """Lookup Dictionary Examples.
 
-        Dictionary Examples.
+        Lookup Dictionary Examples.
 
         :param content: Array of the text to be sent to dictionary. Required.
         :type content: IO
@@ -1316,28 +1321,28 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
+        :return: list of DictionaryExampleItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def dictionary_examples(
+    def lookup_dictionary_examples(
         self,
-        content: Union[List[_models.DictionaryExampleTextElement], IO],
+        content: Union[List[_models.DictionaryExampleTextItem], IO],
         *,
         from_parameter: str,
         to: str,
         client_trace_id: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.DictionaryExampleElement]:
-        """Dictionary Examples.
+    ) -> List[_models.DictionaryExampleItem]:
+        """Lookup Dictionary Examples.
 
-        Dictionary Examples.
+        Lookup Dictionary Examples.
 
         :param content: Array of the text to be sent to dictionary. Is either a
-         [DictionaryExampleTextElement] type or a IO type. Required.
-        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextElement] or IO
+         [DictionaryExampleTextItem] type or a IO type. Required.
+        :type content: list[~azure.ai.translation.text.models.DictionaryExampleTextItem] or IO
         :keyword from_parameter: Specifies the language of the input text.
          The source language must be one of the supported languages included in the dictionary scope.
          Required.
@@ -1352,8 +1357,8 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: list of DictionaryExampleElement
-        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleElement]
+        :return: list of DictionaryExampleItem
+        :rtype: list[~azure.ai.translation.text.models.DictionaryExampleItem]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -1368,7 +1373,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[List[_models.DictionaryExampleElement]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.DictionaryExampleItem]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1377,7 +1382,7 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         else:
             _content = json.dumps(content, cls=AzureJSONEncoder)  # type: ignore
 
-        request = build_translator_dictionary_examples_request(
+        request = build_text_translation_lookup_dictionary_examples_request(
             from_parameter=from_parameter,
             to=to,
             client_trace_id=client_trace_id,
@@ -1392,21 +1397,22 @@ class TranslatorClientOperationsMixin(TranslatorClientMixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _deserialize(_models.MtErrorResponse, response.json())
+            error = _deserialize(_models.ErrorResponse, response.json())
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["X-RequestId"] = self._deserialize("str", response.headers.get("X-RequestId"))
 
-        deserialized = _deserialize(List[_models.DictionaryExampleElement], response.json())
+        deserialized = _deserialize(List[_models.DictionaryExampleItem], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

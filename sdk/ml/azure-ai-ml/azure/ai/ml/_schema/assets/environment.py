@@ -134,13 +134,11 @@ class EnvironmentSchema(_BaseEnvironmentSchema):
 class AnonymousEnvironmentSchema(_BaseEnvironmentSchema, AnonymousAssetSchema):
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """trim_dump_only in PathAwareSchema removes all properties which are
-        dump only.
+        """trim_dump_only in PathAwareSchema removes all properties which are dump only.
 
-        By the time we reach this schema name and version properties are
-        removed so no warning is shown. This method overrides
-        trim_dump_only in PathAwareSchema to check for name and version
-        and raise warning if present. And then calls the it
+        By the time we reach this schema name and version properties are removed so no warning is shown. This method
+        overrides trim_dump_only in PathAwareSchema to check for name and version and raise warning if present. And then
+        calls the it
         """
         if isinstance(data, str) or data is None:
             return data

@@ -12,12 +12,12 @@ from typing import Any
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import TranslatorClientConfiguration
-from ._operations import TranslatorClientOperationsMixin
+from ._configuration import TextTranslationClientConfiguration
+from ._operations import TextTranslationClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
 
-class TranslatorClient(TranslatorClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
     machine translation technology to enable quick and accurate source-to-target text translation
     in real time across all supported languages.
@@ -53,8 +53,8 @@ class TranslatorClient(TranslatorClientOperationsMixin):  # pylint: disable=clie
         self, endpoint: str, **kwargs: Any
     ) -> None:
         _endpoint = "{Endpoint}"
-        self._config = TranslatorClientConfiguration(endpoint=endpoint, **kwargs)
-        self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._config = TextTranslationClientConfiguration(endpoint=endpoint, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -89,7 +89,7 @@ class TranslatorClient(TranslatorClientOperationsMixin):  # pylint: disable=clie
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "TranslatorClient":
+    def __enter__(self) -> "TextTranslationClient":
         self._client.__enter__()
         return self
 

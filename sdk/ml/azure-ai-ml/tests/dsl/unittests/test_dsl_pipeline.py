@@ -958,7 +958,7 @@ class TestDSLPipeline:
     )
     def test_command_function_reuse(self, mock_machinelearning_client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
@@ -2459,6 +2459,39 @@ class TestDSLPipeline:
             "tags": {},
         }
 
+    def test_dsl_pipeline_with_data_transfer_import_component(self) -> None:
+        s3_blob = load_component("./tests/test_configs/components/data_transfer/import_file_to_blob.yaml")
+        path_source_s3 = "test1/*"
+        connection_target = "azureml:my-s3-connection"
+        source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
+
+        with pytest.raises(ValidationException) as e:
+
+            @dsl.pipeline
+            def data_transfer_copy_pipeline_from_yaml():
+                s3_blob(source=source)
+
+            data_transfer_copy_pipeline_from_yaml()
+            assert "DataTransfer component is not callable for import task." in str(e.value)
+
+    def test_dsl_pipeline_with_data_transfer_export_component(self) -> None:
+        blob_azuresql = load_component("./tests/test_configs/components/data_transfer/export_blob_to_database.yaml")
+
+        my_cosmos_folder = Input(type=AssetTypes.URI_FILE, path="/data/testFile_ForSqlDB.parquet")
+        connection_target_azuresql = "azureml:my_export_azuresqldb_connection"
+        table_name = "dbo.Persons"
+        sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
+
+        with pytest.raises(ValidationException) as e:
+
+            @dsl.pipeline
+            def data_transfer_copy_pipeline_from_yaml():
+                blob_azuresql_node = blob_azuresql(source=my_cosmos_folder)
+                blob_azuresql_node.sink = sink
+
+            data_transfer_copy_pipeline_from_yaml()
+            assert "DataTransfer component is not callable for import task." in str(e.value)
+
     def test_node_sweep_with_optional_input(self) -> None:
         component_yaml = components_dir / "helloworld_component_optional_input.yml"
         component_func = load_component(component_yaml)
@@ -2982,3 +3015,100 @@ class TestDSLPipeline:
             warning_template.format(io_name="keys", io="input", node_name="downstream_node"),
             warning_template.format(io_name="__hash__", io="output", node_name="pipeline_component_func"),
         ]
+
+    def test_pass_pipeline_inpute_to_environment_variables(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline(
+            name="pass_pipeline_inpute_to_environment_variables",
+        )
+        def pipeline(job_in_number: int, environment_variables: str):
+            hello_world_component = component_func(component_in_number=job_in_number)
+            hello_world_component.environment_variables = environment_variables
+
+        pipeline_job = pipeline()
+        assert pipeline_job.jobs["hello_world_component"].environment_variables
+        pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert (
+            pipeline_dict["jobs"]["hello_world_component"]["environment_variables"]
+            == "${{parent.inputs.environment_variables}}"
+        )
+
+    def test_node_name_underscore(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"microsoftsamplescommandcomponentbasic_nopaths_test"}
+        assert (
+            pipeline_job.jobs["microsoftsamplescommandcomponentbasic_nopaths_test"].name
+            == "microsoftsamplescommandcomponentbasic_nopaths_test"
+        )
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            _ = component_func(component_in_number=2)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {
+            "microsoftsamplescommandcomponentbasic_nopaths_test",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_1",
+        }
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {
+            "microsoftsamplescommandcomponentbasic_nopaths_test",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_1",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_2",
+        }
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+            node = component_func(component_in_number=4)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+            component_func(component_in_number=4)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
+
+    def test_pipeline_input_binding_limits_timeout(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline(timeout) -> PipelineJob:
+            # case 1: if timeout is PipelineInput
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=timeout)
+            # case 2: if timeout is not PipelineInput
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
+
+        pipeline = my_pipeline(2)
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_dict = pipeline._to_rest_object().as_dict()
+        assert pipeline_dict["properties"]["jobs"]["node_0"]["limits"]["timeout"] == "${{parent.inputs.timeout}}"
+        assert pipeline_dict["properties"]["jobs"]["node_1"]["limits"]["timeout"] == "PT1S"

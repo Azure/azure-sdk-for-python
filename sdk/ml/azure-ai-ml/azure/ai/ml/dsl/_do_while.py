@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 
 def do_while(body, mapping, max_iteration_count: int, condition=None):
@@ -15,9 +16,11 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
             from azure.ai.ml.dsl import pipeline
             from mldesigner.dsl import do_while
 
+
             @pipeline()
             def your_do_while_body():
                 pass
+
 
             @pipeline()
             def pipeline_with_do_while_node():
@@ -27,13 +30,15 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
                     condition=do_while_body.outputs.condition_output,
                     mapping={
                         do_while_body.outputs.output1: do_while_body_inputs.input1,
-                        do_while_body.outputs.output2: [do_while_body_inputs.input2, do_while_body_inputs.input3]
-                    }
+                        do_while_body.outputs.output2: [
+                            do_while_body_inputs.input2,
+                            do_while_body_inputs.input3,
+                        ],
+                    },
                 )
                 # Connect to the do_while_node outputs
                 component = component_func(
-                    input1=do_while_body.outputs.output1,
-                    input2=do_while_body.outputs.output2
+                    input1=do_while_body.outputs.output1, input2=do_while_body.outputs.output2
                 )
 
     :param body: Pipeline job or command node for the do-while loop body.
@@ -54,4 +59,28 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
         _from_component_func=True,
     )
     do_while_node.set_limits(max_iteration_count=max_iteration_count)
+
+    def _infer_and_update_body_input_from_mapping():
+        # pylint: disable=protected-access
+        for source_output, body_input in mapping.items():
+            # handle case that mapping key is a NodeOutput
+            output_name = source_output._port_name if isinstance(source_output, NodeOutput) else source_output
+            # if loop body output type is not specified, skip as we have no place to infer
+            if body.outputs[output_name].type is None:
+                continue
+            # if input type is specified, no need to infer and skip
+            if body_input.type is not None:
+                continue
+            inferred_type = body.outputs[output_name].type
+            # update node input
+            body_input._meta._is_inferred_optional = True
+            body_input.type = inferred_type
+            # update node corresponding component input
+            input_name = body_input._meta.name
+            body.component.inputs[input_name]._is_inferred_optional = True
+            body.component.inputs[input_name].type = inferred_type
+
+    # infer and update for dynamic input
+    _infer_and_update_body_input_from_mapping()
+
     return do_while_node

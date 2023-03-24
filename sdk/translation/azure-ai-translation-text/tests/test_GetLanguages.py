@@ -9,8 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from azure.ai.translation.text import TranslatorClient
-from azure.ai.translation.text.models import InputTextElement
+from azure.ai.translation.text import TextTranslationClient
 
 from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest
 
@@ -18,7 +17,7 @@ from devtools_testutils.cognitiveservices_testcase import CognitiveServiceTest
 class TextAnalyticsTest(CognitiveServiceTest):
 
     def test_get_languages(self):
-        text_translator = TranslatorClient(endpoint="https://api.cognitive.microsofttranslator.com", credential=None)
+        text_translator = TextTranslationClient(endpoint="https://api.cognitive.microsofttranslator.com", credential=None)
 
         response = text_translator.get_languages()
 

@@ -58,6 +58,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
+    "sdk/easm/azure-defender-easm/azure/defender/easm/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
@@ -171,6 +172,7 @@
     "dtlksd",
     "DWORD",
     "eastus",
+    "Easm",
     "euap",
     "eckey",
     "ekus",
@@ -395,9 +397,36 @@
   ],
   "overrides": [
     {
+      "filename": "doc/dev/test_proxy_migration_guide.md",
+      "words": [
+        "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
+      "words": [
+        "certifi",
+        "passenv"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/tests/integration/test_proxy_startup.py",
+      "words": [
+        "spinup"
+      ]
+    },
+    {
       "filename": "sdk/remoterendering/**",
       "words": [
         "Phong"
+      ]
+    },
+    {              
+      "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
+      "words": [
+        "isfork",
+        "ISFORK",
+        "thead"
       ]
     },
     {
@@ -597,7 +626,8 @@
         "ierr",
         "mymodel",
         "heif",
-        "racwd"
+        "racwd",
+        "rrggbb"
       ]
     },
     {
@@ -922,7 +952,19 @@
       "filename": "sdk/agrifood/azure-agrifood-farming/**",
       "words": [
         "NDVI",
-        "Unhandleable"
+        "Unhandleable",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize",
+        "stac",
+        "nnumeral",
+        "nonly",
+        "STAC",
+        "Placeid",
+        "resouce",
+        "nnumeral"
       ]
      },
      {
@@ -1125,6 +1167,13 @@
         "nonly",
         "nthe",
         "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     },
     {

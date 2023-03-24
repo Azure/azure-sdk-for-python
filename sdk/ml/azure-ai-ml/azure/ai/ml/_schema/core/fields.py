@@ -129,6 +129,7 @@ class LocalPathField(fields.Str):
 
     def _resolve_path(self, value) -> Path:
         """Resolve path to absolute path based on base_path in context.
+
         Will resolve the path if it's already an absolute path.
         """
         try:
@@ -171,14 +172,12 @@ class LocalPathField(fields.Str):
 
 
 class SerializeValidatedUrl(fields.Url):
-    """This field will validate if value is an url during serialization, so
-    that only valid urls can be serialized as this schema.
+    """This field will validate if value is an url during serialization, so that only valid urls can be serialized as
+    this schema.
 
-    Use this schema instead of fields.Url when unioned with ArmStr or
-    its subclasses like ArmVersionedStr, so that the field can be
-    serialized correctly after deserialization. azureml:xxx => xxx =>
-    azureml:xxx e.g. The field will still always be serializable as any
-    string can be serialized as an ArmStr.
+    Use this schema instead of fields.Url when unioned with ArmStr or its subclasses like ArmVersionedStr, so that the
+    field can be serialized correctly after deserialization. azureml:xxx => xxx => azureml:xxx e.g. The field will still
+    always be serializable as any string can be serialized as an ArmStr.
     """
 
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[str]:
@@ -418,8 +417,7 @@ class RefField(Field):
 
 
 class NestedField(Nested):
-    """anticipates the default coming in next marshmallow version,
-    unknown=True."""
+    """anticipates the default coming in next marshmallow version, unknown=True."""
 
     def __init__(self, *args, **kwargs):
         if kwargs.get("unknown") is None:
@@ -427,6 +425,11 @@ class NestedField(Nested):
         super().__init__(*args, **kwargs)
 
 
+# Note: Currently contains a bug where the order in which fields are inputted can potentially cause a bug
+# Example, the first line below works, but the second one fails upon calling load_from_dict
+# with the error " AttributeError: 'list' object has no attribute 'get'"
+# inputs = UnionField([fields.List(NestedField(DataSchema)), NestedField(DataSchema)])
+# inputs = UnionField([NestedField(DataSchema), fields.List(NestedField(DataSchema))])
 class UnionField(fields.Field):
     def __init__(self, union_fields: List[fields.Field], is_strict=False, **kwargs):
         super().__init__(**kwargs)
@@ -505,14 +508,12 @@ class UnionField(fields.Field):
 
 
 class TypeSensitiveUnionField(UnionField):
-    """Union field which will try to simplify error messages based on type
-    field in failed serialization/deserialization.
+    """Union field which will try to simplify error messages based on type field in failed
+    serialization/deserialization.
 
-    If value doesn't have type, will skip error messages from fields
-    with type field If value has type & its type doesn't match any
-    allowed types, raise "Value {} not in set {}" If value has type &
-    its type matches at least 1 allowed value, it will raise the first
-    matched error.
+    If value doesn't have type, will skip error messages from fields with type field If value has type & its type
+    doesn't match any allowed types, raise "Value {} not in set {}" If value has type & its type matches at least 1
+    allowed value, it will raise the first matched error.
     """
 
     def __init__(
@@ -568,10 +569,11 @@ class TypeSensitiveUnionField(UnionField):
         self.insert_union_field(field)
 
     def _raise_simplified_error_base_on_type(self, e, value, attr):
-        """If value doesn't have type, raise original error; If value has type
-        & its type doesn't match any allowed types, raise "Value {} not in set
-        {}"; If value has type & its type matches at least 1 field, return the
-        first matched error message;"""
+        """If value doesn't have type, raise original error; If value has type.
+
+        & its type doesn't match any allowed types, raise "Value {} not in set {}"; If value has type & its type matches
+        at least 1 field, return the first matched error message;
+        """
         value_type = try_get_non_arbitrary_attr_for_potential_attr_dict(value, self.type_field_name)
         if value_type is None:
             # if value has no type field, raise original error

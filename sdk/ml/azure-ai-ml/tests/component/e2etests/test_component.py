@@ -269,6 +269,7 @@ class TestComponent(AzureRecordedTestCase):
     def test_datatransfer_copy_urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "data_copy_mode": "merge_with_overwrite",
             "display_name": "Data Transfer Component copy-files",
             "type": "data_transfer",
             "task": "copy_data",
@@ -289,6 +290,7 @@ class TestComponent(AzureRecordedTestCase):
     def test_datatransfer_copy_urifile_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "data_copy_mode": "fail_if_conflict",
             "display_name": "Data Transfer Component copy uri files",
             "type": "data_transfer",
             "task": "copy_data",
@@ -311,6 +313,7 @@ class TestComponent(AzureRecordedTestCase):
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
             "display_name": "Data Transfer Component merge-files",
             "type": "data_transfer",
+            "data_copy_mode": "merge_with_overwrite",
             "task": "copy_data",
             "inputs": {
                 "folder1": {"type": "uri_folder", "optional": False},
@@ -334,6 +337,7 @@ class TestComponent(AzureRecordedTestCase):
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
             "display_name": "Data Transfer Component merge mix type files",
             "type": "data_transfer",
+            "data_copy_mode": "merge_with_overwrite",
             "task": "copy_data",
             "inputs": {
                 "input1": {"type": "uri_file", "optional": False},
@@ -548,7 +552,7 @@ class TestComponent(AzureRecordedTestCase):
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             distribution=MpiDistribution(
                 process_count_per_instance=1,
                 # No affect because Mpi object does not allow extra fields
@@ -770,7 +774,7 @@ class TestComponent(AzureRecordedTestCase):
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             outputs={"component_out_path": {"type": "path"}},
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./tests/test_configs/components/helloworld_components_with_env",
         )
         component_resource = client.components.create_or_update(component)
@@ -913,6 +917,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         assert component_dict == expected_dict
 
+    @pytest.mark.usefixtures("mock_set_headers_with_user_aml_token")
     def test_create_pipeline_component_from_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name_0")}]
         pipeline_job = load_job(
@@ -995,3 +1000,29 @@ class TestComponent(AzureRecordedTestCase):
         current_dict = pydash.omit(from_rest_component._to_dict(), omit_fields)
         # TODO(2037030): verify when backend ready
         # assert previous_dict == current_dict
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_ipp_component_create(self, ipp_registry_client: MLClient, randstr: Callable[[str], str]):
+        component_path = "./tests/test_configs/components/component_ipp.yml"
+        command_component = load_component(source=component_path)
+        from_rest_component = create_component(
+            ipp_registry_client,
+            component_name=randstr("component_name"),
+            path=component_path,
+        )
+
+        assert from_rest_component._intellectual_property
+        assert from_rest_component._intellectual_property == command_component._intellectual_property
+
+        assert from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+        print(type(from_rest_component.outputs["model_output_not_ipp"]._intellectual_property))
+        assert (
+            from_rest_component.outputs["model_output_not_ipp"]._intellectual_property
+            == command_component.outputs["model_output_not_ipp"]._intellectual_property
+        )
+
+        assert from_rest_component.outputs["model_output_ipp"]._intellectual_property
+        assert (
+            from_rest_component.outputs["model_output_ipp"]._intellectual_property
+            == command_component.outputs["model_output_ipp"]._intellectual_property
+        )

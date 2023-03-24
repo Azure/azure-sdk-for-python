@@ -7,11 +7,11 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2022_12_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2022_12_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobScheduleAction
+from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
@@ -37,8 +37,8 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     :type name: str
     :param trigger: Trigger of the schedule.
     :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param create_job: The schedule action job definition.
-    :type create_job: Job
+    :param create_job: The schedule action job definition, or the existing job name.
+    :type create_job: Union[Job, str]
     :param display_name: Display name of the schedule.
     :type display_name: str
     :param description: Description of the schedule, defaults to None
@@ -54,7 +54,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         *,
         name: str,
         trigger: Union[CronTrigger, RecurrenceTrigger],
-        create_job: Job,
+        create_job: Union[Job, str],
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
@@ -267,7 +267,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             # job_definition.source_job_id = self.create_job.id
         elif isinstance(self.create_job, str):  # arm id reference
             # TODO: Update this after source job id move to JobBaseProperties
-            job_definition = RestPipelineJob(source_job_id=self.create_job)
+            # Rest pipeline job will hold a 'Default' as experiment_name,
+            # MFE will add default if None, so pass an empty string here.
+            job_definition = RestPipelineJob(source_job_id=self.create_job, experiment_name="")
         else:
             msg = "Unsupported job type '{}' in schedule {}."
             raise ValidationException(

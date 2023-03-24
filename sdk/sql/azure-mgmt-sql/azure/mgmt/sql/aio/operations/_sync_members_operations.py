@@ -344,8 +344,8 @@ class SyncMembersOperations:
         :type sync_group_name: str
         :param sync_member_name: The name of the sync member. Required.
         :type sync_member_name: str
-        :param parameters: The requested sync member resource state. Is either a model type or a IO
-         type. Required.
+        :param parameters: The requested sync member resource state. Is either a SyncMember type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.SyncMember or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -750,8 +750,8 @@ class SyncMembersOperations:
         :type sync_group_name: str
         :param sync_member_name: The name of the sync member. Required.
         :type sync_member_name: str
-        :param parameters: The requested sync member resource state. Is either a model type or a IO
-         type. Required.
+        :param parameters: The requested sync member resource state. Is either a SyncMember type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.SyncMember or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

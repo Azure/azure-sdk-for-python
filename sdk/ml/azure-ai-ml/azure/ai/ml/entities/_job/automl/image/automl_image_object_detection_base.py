@@ -6,7 +6,7 @@
 
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
@@ -149,8 +149,8 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         validation_iou_threshold: Optional[float] = None,
         validation_metric_type: Optional[Union[str, ValidationMetricType]] = None,
     ) -> None:
-        """Setting Image training parameters for for AutoML Image Object Detection
-        and Image Instance Segmentation tasks.
+        """Setting Image training parameters for for AutoML Image Object Detection and Image Instance Segmentation
+        tasks.
 
         :param advanced_settings: Settings for advanced scenarios.
         :type advanced_settings: str
@@ -439,8 +439,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         self,
         value: Union[SearchSpace, List[SearchSpace]],
     ) -> None:
-        """Add search space for AutoML Image Object Detection and Image
-        Instance Segmentation tasks.
+        """Add search space for AutoML Image Object Detection and Image Instance Segmentation tasks.
 
         :param value: Search through the parameter space
         :type value: Union[SearchSpace, List[SearchSpace]]

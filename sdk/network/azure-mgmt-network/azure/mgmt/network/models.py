@@ -8,4 +8,4 @@ from .v2019_02_01.models import *
 from .v2019_07_01.models import *
 from .v2020_04_01.models import *
 from .v2021_02_01_preview.models import *
-from .v2022_07_01.models import *
+from .v2022_09_01.models import *
