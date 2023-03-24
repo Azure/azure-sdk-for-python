@@ -27,7 +27,7 @@ try:
         detected_language = break_sentence.detected_language
         if detected_language:
             print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
-        print(f"The detected sentece boundaries:")
+        print(f"The detected sentence boundaries:")
         for boundary in break_sentence.sent_len:
             print(boundary)
 
@@ -37,7 +37,7 @@ except HttpResponseError as exception:
 ```
 
 ### Break Sentence with auto-detection
-You can ommit source languge of the input text. In this case, API will try to auto-detect the language.
+You can omit source language of the input text. In this case, API will try to auto-detect the language.
 
 ```Python Snippet:Sample4_BreakSentence
 try:
@@ -50,7 +50,7 @@ try:
         detected_language = break_sentence.detected_language
         if detected_language:
             print(f"Detected languages of the input text: {detected_language.language} with score: {detected_language.score}.")
-        print(f"The detected sentece boundaries:")
+        print(f"The detected sentence boundaries:")
         for boundary in break_sentence.sent_len:
             print(boundary)
 

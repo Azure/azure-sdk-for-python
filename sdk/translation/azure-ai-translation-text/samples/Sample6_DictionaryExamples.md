@@ -14,10 +14,10 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 ```Python Snippet:Sample6_DictionaryExamples
 try:
     source_language = "en"
-    target_anguage = "es"
+    target_language = "es"
     input_text_elements = [ DictionaryExampleTextElement(text = "fly", translation = "volar") ]
 
-    response = text_translator.dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_anguage)
+    response = text_translator.dictionary_examples(content = input_text_elements, from_parameter = source_language, to = target_language)
     dictionary_entry = response[0] if response else None
 
     if dictionary_entry:

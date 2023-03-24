@@ -45,7 +45,7 @@ except HttpResponseError as exception:
 ```
 
 ### Get Supported Languages for a given scope
-You can limit the scope of the response of the languages API by providing the optional paramter `scope`. A comma-separated list of names defining the group of languages to return. Allowed group names are: `translation`, `transliteration` and `dictionary`. If no scope is given, then all groups are returned, which is equivalent to passing `translation,transliteration,dictionary`.
+You can limit the scope of the response of the languages API by providing the optional parameter `scope`. A comma-separated list of names defining the group of languages to return. Allowed group names are: `translation`, `transliteration` and `dictionary`. If no scope is given, then all groups are returned, which is equivalent to passing `translation,transliteration,dictionary`.
 
 ```Python Snippet:Sample1_GetLanguagesScope
 try:

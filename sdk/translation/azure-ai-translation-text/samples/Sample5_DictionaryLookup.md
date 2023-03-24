@@ -18,10 +18,10 @@ Returns equivalent words for the source term in the target language.
 ```Python Snippet:Sample5_DictionaryLookup
 try:
     source_language = "en"
-    target_anguage = "es"
+    target_language = "es"
     input_text_elements = [ InputTextElement(text = "fly") ]
 
-    response = text_translator.dictionary_lookup(content = input_text_elements, from_parameter = source_language, to = target_anguage)
+    response = text_translator.dictionary_lookup(content = input_text_elements, from_parameter = source_language, to = target_language)
      dictionary_entry = response[0] if response else None
 
     if dictionary_entry:

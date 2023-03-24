@@ -134,7 +134,7 @@ field is to provide a user interface with a means to sort back-translations so t
 
 
 class BreakSentenceElement(_model_base.Model):
-    """Elemented containing break sentence result.
+    """Item containing break sentence result.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -523,14 +523,14 @@ class ErrorDetails(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Number indetifier of the error. Required.
+    :ivar code: Number identifier of the error. Required.
     :vartype code: int
     :ivar message: Human readable error description. Required.
     :vartype message: str
     """
 
     code: int = rest_field()
-    """Number indetifier of the error. Required. """
+    """Number identifier of the error. Required. """
     message: str = rest_field()
     """Human readable error description. Required. """
 

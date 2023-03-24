@@ -87,6 +87,7 @@
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -242,6 +243,7 @@
     "mhsm",
     "mipsle",
     "mktime",
+    "mosca",
     "msal",
     "msrest",
     "msrestazure",
@@ -254,6 +256,7 @@
     "nazsdk",
     "nbytes",
     "nbsp",
+    "NOACTION",
     "noarch",
     "NOPERM",
     "northcentralus",
@@ -387,7 +390,8 @@
     "yarl",
     "SDDL",
     "dacl",
-    "whls"
+    "whls",
+    "wordomatic"
   ],
   "overrides": [
     {
@@ -708,7 +712,7 @@
       "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
       "words": [
         "Syms",
-        "Updation",
+        "Updation"
       ]
     },
     {

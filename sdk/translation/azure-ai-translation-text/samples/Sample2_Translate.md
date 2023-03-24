@@ -33,11 +33,11 @@ except HttpResponseError as exception:
 ```
 
 ### Translate with auto-detection
-You can ommit source languge of the input text. In this case, API will try to auto-detect the language.
+You can omit source language of the input text. In this case, API will try to auto-detect the language.
 
 > Note that you must provide the source language rather than autodetection when using the dynamic dictionary feature.
 
-> Note you can use `suggestedFrom` paramter that specifies a fallback language if the language of the input text can't be identified. Language autodetection is applied when the from parameter is omitted. If detection fails, the suggestedFrom language will be assumed.
+> Note you can use `suggestedFrom` parameter that specifies a fallback language if the language of the input text can't be identified. Language autodetection is applied when the from parameter is omitted. If detection fails, the suggestedFrom language will be assumed.
 
 ```Python Snippet:Sample2_TranslateDetection
 try:
@@ -255,10 +255,10 @@ except HttpResponseError as exception:
     print(f"Message: {exception.message}")
 ```
 
-### Include sentence lenght
+### Include sentence length
 You can ask translator service to include sentence boundaries for the input text and the translated text.
 
-```Python Snippet:Sample2_TranslateSenteceLength
+```Python Snippet:Sample2_TranslateSentenceLength
 try:
     include_sentence_length = True
     target_languages = ["cs"]
@@ -285,7 +285,7 @@ except HttpResponseError as exception:
 ### Custom Translator
 You can get translations from a customized system built with [Custom Translator](https://learn.microsoft.com/en-us/azure/cognitive-services/translator/customization). Add the Category ID from your Custom Translator [project details](https://learn.microsoft.com/en-us/azure/cognitive-services/translator/custom-translator/how-to-create-project#view-project-details) to this parameter to use your deployed customized system.
 
-It is possible to set `allow_fallback` paramter. It specifies that the service is allowed to fall back to a general system when a custom system doesn't exist. Possible values are: `True` (default) or `False`.
+It is possible to set `allow_fallback` parameter. It specifies that the service is allowed to fall back to a general system when a custom system doesn't exist. Possible values are: `True` (default) or `False`.
 
 `allow_fallback=False` specifies that the translation should only use systems trained for the category specified by the request. If a translation for language X to language Y requires chaining through a pivot language E, then all the systems in the chain (X → E and E → Y) will need to be custom and have the same category. If no system is found with the specific category, the request will return a 400 status code. `allow_fallback=True` specifies that the service is allowed to fall back to a general system when a custom system doesn't exist.
 
