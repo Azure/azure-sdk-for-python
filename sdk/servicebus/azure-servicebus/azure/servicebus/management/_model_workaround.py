@@ -183,6 +183,7 @@ MODEL_CLASS_ATTRIBUTES: Dict[Type["Model"], Tuple[str, ...]] = {
         "auto_delete_on_idle",
         "entity_availability_status",
         "user_metadata",
+        "default_rule_description",
     ),
     SubscriptionDescriptionEntry: (
         "id",

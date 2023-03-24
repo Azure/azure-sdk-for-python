@@ -2148,6 +2148,9 @@ class SubscriptionDescription(_serialization.Model):  # pylint: disable=too-many
     :ivar dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
      subscription has dead letter support when a message expires.
     :vartype dead_lettering_on_filter_evaluation_exceptions: bool
+    :ivar default_rule_description: The default rule description.
+    :vartype default_rule_description:
+     ~azure.servicebus.management._generated.models.RuleDescription
     :ivar message_count: The number of messages in the subscription.
     :vartype message_count: int
     :ivar max_delivery_count: The maximum delivery count. A message is automatically deadlettered
@@ -2229,6 +2232,7 @@ class SubscriptionDescription(_serialization.Model):  # pylint: disable=too-many
                 "ns": "http://schemas.microsoft.com/netservices/2010/10/servicebus/connect",
             },
         },
+        "default_rule_description": {"key": "defaultRuleDescription", "type": "RuleDescription"},
         "message_count": {
             "key": "messageCount",
             "type": "int",
@@ -2325,6 +2329,7 @@ class SubscriptionDescription(_serialization.Model):  # pylint: disable=too-many
         default_message_time_to_live: Optional[datetime.timedelta] = None,
         dead_lettering_on_message_expiration: Optional[bool] = None,
         dead_lettering_on_filter_evaluation_exceptions: Optional[bool] = None,
+        default_rule_description: Optional["_models.RuleDescription"] = None,
         message_count: Optional[int] = None,
         max_delivery_count: Optional[int] = None,
         enable_batched_operations: Optional[bool] = None,
@@ -2358,6 +2363,9 @@ class SubscriptionDescription(_serialization.Model):  # pylint: disable=too-many
         :keyword dead_lettering_on_filter_evaluation_exceptions: A value that indicates whether this
          subscription has dead letter support when a message expires.
         :paramtype dead_lettering_on_filter_evaluation_exceptions: bool
+        :keyword default_rule_description: The default rule description.
+        :paramtype default_rule_description:
+         ~azure.servicebus.management._generated.models.RuleDescription
         :keyword message_count: The number of messages in the subscription.
         :paramtype message_count: int
         :keyword max_delivery_count: The maximum delivery count. A message is automatically
@@ -2403,6 +2411,7 @@ class SubscriptionDescription(_serialization.Model):  # pylint: disable=too-many
         self.default_message_time_to_live = default_message_time_to_live
         self.dead_lettering_on_message_expiration = dead_lettering_on_message_expiration
         self.dead_lettering_on_filter_evaluation_exceptions = dead_lettering_on_filter_evaluation_exceptions
+        self.default_rule_description = default_rule_description
         self.message_count = message_count
         self.max_delivery_count = max_delivery_count
         self.enable_batched_operations = enable_batched_operations
