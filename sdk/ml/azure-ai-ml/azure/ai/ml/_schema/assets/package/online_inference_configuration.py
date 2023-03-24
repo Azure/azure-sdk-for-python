@@ -23,7 +23,7 @@ class OnlineInferenceConfigurationSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts._package.azureml_online_inferencing_server import (
+        from azure.ai.ml.entities._assets._artifacts._package.custom_inferencing_server import (
             OnlineInferenceConfiguration,
         )
 

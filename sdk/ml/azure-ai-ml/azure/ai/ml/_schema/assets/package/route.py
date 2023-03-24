@@ -17,6 +17,6 @@ class RouteSchema(PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts._package.azureml_online_inferencing_server import Route
+        from azure.ai.ml.entities._assets._artifacts._package.custom_inferencing_server import Route
 
         return Route(**data)

@@ -554,21 +554,28 @@ class ModelOperations(_ScopeDependentOperations):
             )
 
             # Create a code asset if code is not already an ARM ID
-            if package_request.inferencing_server.code_configuration and not is_ARM_id_for_resource(
-                package_request.inferencing_server.code_configuration.code, AzureMLResourceType.CODE
-            ):
-                if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
-                    package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                        package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
-                        azureml_type=AzureMLResourceType.CODE,
-                    )
-                else:
-                    package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
-                        Code(
-                            base_path=package_request._base_path,
-                            path=package_request.inferencing_server.code_configuration.code,
-                        ),
-                        azureml_type=AzureMLResourceType.CODE,
+            if hasattr(package_request.inferencing_server, "code_configuration"):
+                if package_request.inferencing_server.code_configuration and not is_ARM_id_for_resource(
+                    package_request.inferencing_server.code_configuration.code, AzureMLResourceType.CODE
+                ):
+                    if package_request.inferencing_server.code_configuration.code.startswith(ARM_ID_PREFIX):
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+                            package_request.inferencing_server.code_configuration.code[len(ARM_ID_PREFIX) :],
+                            azureml_type=AzureMLResourceType.CODE,
+                        )
+                    else:
+                        package_request.inferencing_server.code_configuration.code = orchestrators.get_asset_arm_id(
+                            Code(
+                                base_path=package_request._base_path,
+                                path=package_request.inferencing_server.code_configuration.code,
+                            ),
+                            azureml_type=AzureMLResourceType.CODE,
+                        )
+                if package_request.inferencing_server.code_configuration and hasattr(
+                    package_request.inferencing_server.code_configuration, "code"
+                ):
+                    package_request.inferencing_server.code_configuration.code = (
+                        "azureml:/" + package_request.inferencing_server.code_configuration.code
                     )
 
             if package_request.base_environment_source and hasattr(
@@ -580,13 +587,6 @@ class ModelOperations(_ScopeDependentOperations):
 
                 package_request.base_environment_source.resource_id = (
                     "azureml:/" + package_request.base_environment_source.resource_id
-                )
-
-            if package_request.inferencing_server.code_configuration and hasattr(
-                package_request.inferencing_server.code_configuration, "code"
-            ):
-                package_request.inferencing_server.code_configuration.code = (
-                    "azureml:/" + package_request.inferencing_server.code_configuration.code
                 )
 
             package_request = package_request._to_rest_object()

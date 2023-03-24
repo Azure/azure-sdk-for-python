@@ -72,7 +72,7 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
         )
     except Exception as e:
         raise
-    deployment.environment = packaged_env.target_environment_id
+    deployment.environment = packaged_env.id
     deployment.model = None
     deployment.code_configuration = None
     return deployment

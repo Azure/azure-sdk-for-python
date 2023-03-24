@@ -165,7 +165,11 @@ class ModelPackage(Resource, PackageRequest):
     def _to_rest_object(self) -> PackageRequest:
         code = None
 
-        if self.inferencing_server and self.inferencing_server.code_configuration:
+        if (
+            self.inferencing_server
+            and hasattr(self.inferencing_server, "code_configuration")
+            and self.inferencing_server.code_configuration
+        ):
             self.inferencing_server.code_configuration._validate()
             code_id = (
                 self.inferencing_server.code_configuration.code

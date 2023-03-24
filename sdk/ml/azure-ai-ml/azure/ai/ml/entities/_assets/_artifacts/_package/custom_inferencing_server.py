@@ -62,7 +62,6 @@ class OnlineInferenceConfiguration:
 
 class CustomInferencingServer:
     def __init__(self, type: str = None, inference_configuration: OnlineInferenceConfiguration = None):
-        """CustomInferencingServer Variables are only populated by the server, and will be ignored when sending a request."""
         self.type = type
         self.inference_configuration = inference_configuration
 
