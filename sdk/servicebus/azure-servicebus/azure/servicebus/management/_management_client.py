@@ -36,7 +36,6 @@ from ._generated.models import (
     RuleDescriptionEntryContent,
     RuleDescriptionFeed,
     NamespacePropertiesEntry,
-    NamespaceProperties as NamespaceEntryProperties,
     NamespacePropertiesEntryContent,
     CreateTopicBody,
     CreateTopicBodyContent,
