@@ -613,7 +613,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         description, and when it was created.
 
         :return: Pageable of DocumentClassifierDetails.
-        :rtype: ~azure.core.paging.ItemPaged[DocumentClassifierDetails]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentClassifierDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2023-02-28-preview
