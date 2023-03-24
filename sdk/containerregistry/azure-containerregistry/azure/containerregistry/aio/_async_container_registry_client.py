@@ -864,7 +864,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
-    
+
     @distributed_trace_async
     async def delete_blob(self, repository: str, digest: str, **kwargs) -> None:
         """Delete a blob. If the blob cannot be found or a response status code of
