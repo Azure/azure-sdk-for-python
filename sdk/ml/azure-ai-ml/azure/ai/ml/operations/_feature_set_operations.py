@@ -29,8 +29,6 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
-    _get_latest_version_from_container,
-    _resolve_label_to_asset,
     read_feature_set_metadata_contents,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -71,10 +69,6 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         self._service_client = service_client
         self._datastore_operation = datastore_operations
         self._init_kwargs = kwargs
-
-        # Maps a label to a function which given an asset name,
-        # returns the asset associated with the label
-        self._managed_label_resolver = {"latest": self._get_latest_version}
 
     # @monitor_with_activity(logger, "FeatureSet.List", ActivityType.PUBLICAPI)
     def list(
@@ -118,43 +112,19 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "FeatureSet.Get", ActivityType.PUBLICAPI)
-    def get(self, *, name: str, version: Optional[str] = None, label: Optional[str] = None) -> _FeatureSet:
+    def get(self, *, name: str, version: str) -> _FeatureSet:
         """Get the specified FeatureSet asset.
 
         :param name: Name of FeatureSet asset.
         :type name: str
         :param version: Version of FeatureSet asset.
         :type version: str
-        :param label: Label of the FeatureSet asset. (mutually exclusive with version)
-        :type label: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FeatureSet cannot be successfully
             identified and retrieved. Details will be provided in the error message.
         :return: FeatureSet asset object.
         :rtype: ~azure.ai.ml.entities._FeatureSet
         """
         try:
-            if version and label:
-                msg = "Cannot specify both version and label."
-                raise ValidationException(
-                    message=msg,
-                    target=ErrorTarget.FEATURE_SET,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.INVALID_VALUE,
-                )
-
-            if label:
-                return _resolve_label_to_asset(self, name, label)
-
-            if not version:
-                msg = "Must provide either version or label."
-                raise ValidationException(
-                    message=msg,
-                    target=ErrorTarget.FEATURE_SET,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.MISSING_FIELD,
-                )
             featureset_version_resource = self._get(name, version)
             return _FeatureSet._from_rest_object(featureset_version_resource)
         except (ValidationException, SchemaValidationError) as ex:
@@ -346,8 +316,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         self,
         *,
         name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
+        version: str,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Archive a FeatureSet asset.
@@ -356,8 +325,6 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of FeatureSet asset.
         :type version: str
-        :param label: Label of the FeatureSet asset. (mutually exclusive with version)
-        :type label: str
         :return: None
         """
 
@@ -367,7 +334,6 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             is_archived=True,
             name=name,
             version=version,
-            label=label,
         )
 
     # @monitor_with_activity(logger, "FeatureSet.Restore", ActivityType.PUBLICAPI)
@@ -375,8 +341,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         self,
         *,
         name: str,
-        version: Optional[str] = None,
-        label: Optional[str] = None,
+        version: str,
         **kwargs,  # pylint:disable=unused-argument
     ) -> None:
         """Restore an archived FeatureSet asset.
@@ -385,8 +350,6 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :type name: str
         :param version: Version of FeatureSet asset.
         :type version: str
-        :param label: Label of the FeatureSet asset. (mutually exclusive with version)
-        :type label: str
         :return: None
         """
 
@@ -396,19 +359,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             is_archived=False,
             name=name,
             version=version,
-            label=label,
         )
-
-    def _get_latest_version(self, name: str) -> _FeatureSet:
-        """Returns the latest version of the asset with the given name.
-
-        Latest is defined as the most recently created, not the most
-        recently updated.
-        """
-        latest_version = _get_latest_version_from_container(
-            name, self._container_operation, self._resource_group_name, self._workspace_name
-        )
-        return self.get(name=name, version=latest_version)
 
 
 def validate_and_get_feature_set_spec(featureset: _FeatureSet) -> FeaturesetSpecMetadata:
