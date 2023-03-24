@@ -29,11 +29,11 @@ class AsyncDownloadBlobStream(
     async def __aexit__(self, *args) -> None:
         await self.close()
 
-    async def __aiter__(self) -> Self:
+    def __aiter__(self) -> Self:
         return self
 
     async def _yield_data(self) -> bytes:
-        data = await self._response.__anext__()
+        data = await anext(self._response)
         self._hasher.update(data)
         return data
 
