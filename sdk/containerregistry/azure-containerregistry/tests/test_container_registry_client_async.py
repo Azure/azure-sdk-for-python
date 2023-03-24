@@ -466,7 +466,6 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 digest, blob_size = await client.upload_blob(repo, data)
 
             # Assert
-            breakpoint()
             blob_content = b""
             stream = await client.download_blob(repo, digest)
             async for chunk in stream:
