@@ -11,7 +11,6 @@ import re
 from enum import Enum
 from typing import Dict, List, Optional, Union
 
-from marshmallow import Schema
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
@@ -21,6 +20,7 @@ from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConf
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
 from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
+from marshmallow import Schema
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline._io import NodeOutput
@@ -355,7 +355,7 @@ class Parallel(BaseNode):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
         if "resources" in obj and obj["resources"]:
-            obj["resources"] = JobResourceConfiguration._from_dict(obj["resources"])
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])
