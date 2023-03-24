@@ -56,6 +56,7 @@ async def sample_manage_classifiers_async():
             },
         )
         classifier_model = await poller.result()
+        print(f"Built classifier with ID: {classifier_model.classifier_id}\n")
 
         # Next, we get a paged list of all of our document classifiers
         # [START list_document_classifiers_async]
