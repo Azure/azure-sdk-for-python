@@ -8,21 +8,14 @@
 # --------------------------------------------------------------------------
 
 import datetime
-import sys
 from typing import Any, List, Mapping, Optional, TYPE_CHECKING, overload
 
 from .. import _model_base
 from .._model_base import rest_field
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class BrokerProperties(_model_base.Model):
@@ -70,17 +63,18 @@ class CloudEventEvent(_model_base.Model):
     :vartype source: str
     :ivar data: Event data specific to the event type.
     :vartype data: ~azuremessagingeventgrid.models.object
+    :ivar data_base64: Event data specific to the event type, encoded as a base64 string.
+    :vartype data_base64: bytes
     :ivar type: Type of event related to the originating occurrence. Required.
     :vartype type: str
     :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
     :vartype time: ~datetime.datetime
-    :ivar spec_version: The version of the CloudEvents specification which the event uses.
-     Required.
-    :vartype spec_version: str
-    :ivar data_schema: Identifies the schema that data adheres to.
-    :vartype data_schema: str
-    :ivar data_content_type: Content type of data value.
-    :vartype data_content_type: str
+    :ivar specversion: The version of the CloudEvents specification which the event uses. Required.
+    :vartype specversion: str
+    :ivar dataschema: Identifies the schema that data adheres to.
+    :vartype dataschema: str
+    :ivar datacontenttype: Content type of data value.
+    :vartype datacontenttype: str
     :ivar subject: This describes the subject of the event in the context of the event producer
      (identified by source).
     :vartype subject: str
@@ -92,15 +86,17 @@ class CloudEventEvent(_model_base.Model):
     """Identifies the context in which an event happened. The combination of id and source must be unique for each distinct event. Required. """
     data: Optional["_models.object"] = rest_field()
     """Event data specific to the event type. """
+    data_base64: Optional[bytes] = rest_field()
+    """Event data specific to the event type, encoded as a base64 string. """
     type: str = rest_field()
     """Type of event related to the originating occurrence. Required. """
     time: Optional[datetime.datetime] = rest_field()
     """The time (in UTC) the event was generated, in RFC3339 format. """
-    spec_version: str = rest_field(name="specVersion")
+    specversion: str = rest_field()
     """The version of the CloudEvents specification which the event uses. Required. """
-    data_schema: Optional[str] = rest_field(name="dataSchema")
+    dataschema: Optional[str] = rest_field()
     """Identifies the schema that data adheres to. """
-    data_content_type: Optional[str] = rest_field(name="dataContentType")
+    datacontenttype: Optional[str] = rest_field()
     """Content type of data value. """
     subject: Optional[str] = rest_field()
     """This describes the subject of the event in the context of the event producer (identified by source). """
@@ -112,11 +108,12 @@ class CloudEventEvent(_model_base.Model):
         id: str,  # pylint: disable=redefined-builtin
         source: str,
         type: str,
-        spec_version: str,
+        specversion: str,
         data: Optional["_models.object"] = None,
+        data_base64: Optional[bytes] = None,
         time: Optional[datetime.datetime] = None,
-        data_schema: Optional[str] = None,
-        data_content_type: Optional[str] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
         subject: Optional[str] = None,
     ):
         ...
