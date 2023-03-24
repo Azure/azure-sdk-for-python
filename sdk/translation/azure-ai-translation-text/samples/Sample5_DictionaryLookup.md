@@ -4,7 +4,7 @@
 
 To create a new `TranslatorClient`, you will need the service endpoint and credentials of your Translator resource. In this sample, you will use an `TranslatorCredential`, which you can create with an API key and region.
 
-```Python Snippet:CreateTranslatorClient
+```Python
 credential = TranslatorCredential("<apiKey>", "<region>")
 text_translator = TranslatorClient(endpoint="<endpoint>", credential=credential)
 ```
@@ -15,7 +15,7 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 
 Returns equivalent words for the source term in the target language.
 
-```Python Snippet:Sample5_DictionaryLookup
+```Python
 try:
     source_language = "en"
     target_language = "es"

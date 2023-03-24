@@ -6,7 +6,7 @@ This sample demonstrates how to get languages that are supported by other operat
 
 For this operation you can create a new `TranslatorClient` without any authentication. You will only need your endpoint:
 
-```Python Snippet:CreateTranslatorClient
+```Python
 translator_client = TranslatorClient(endpoint="<endpoint>")
 ```
 
@@ -16,7 +16,7 @@ The values of the `endpoint` variable can be retrieved from environment variable
 
 This will return language metadata from all supported scopes.
 
-```Python Snippet:Sample1_GetLanguages
+```Python
 try:
     response = response = text_translator.get_languages()
 
@@ -47,7 +47,7 @@ except HttpResponseError as exception:
 ### Get Supported Languages for a given scope
 You can limit the scope of the response of the languages API by providing the optional parameter `scope`. A comma-separated list of names defining the group of languages to return. Allowed group names are: `translation`, `transliteration` and `dictionary`. If no scope is given, then all groups are returned, which is equivalent to passing `translation,transliteration,dictionary`.
 
-```Python Snippet:Sample1_GetLanguagesScope
+```Python
 try:
     scope = "translation"
     response = response = text_translator.get_languages(scope=scope)
@@ -80,7 +80,7 @@ except HttpResponseError as exception:
 You can select the language to use for user interface strings. Some of the fields in the response are names of languages or names of regions. Use this parameter to define the language in which these names are returned. The language is specified by providing a well-formed BCP 47 language tag. For instance, use the value `fr` to request names in French or use the value `zh-Hant` to request names in Chinese Traditional.
 Names are provided in the English language when a target language is not specified or when localization is not available.
 
-```Python Snippet:Sample1_GetLanguagesAcceptLanguage
+```Python
 try:
     accept_language = "es"
     response = response = text_translator.get_languages(accept_language=accept_language)

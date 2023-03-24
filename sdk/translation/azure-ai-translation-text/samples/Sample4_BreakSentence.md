@@ -4,7 +4,7 @@
 
 To create a new `TranslatorClient`, you will need the service endpoint and credentials of your Translator resource. In this sample, you will use an `TranslatorCredential`, which you can create with an API key and region.
 
-```Python Snippet:CreateTranslatorClient
+```Python
 credential = TranslatorCredential("<apiKey>", "<region>")
 text_translator = TranslatorClient(endpoint="<endpoint>", credential=credential)
 ```
@@ -14,7 +14,7 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 ### Break Sentence with language and script parameters
 When the input language is known, you can provide those to the service call.
 
-```Python Snippet:Sample4_BreakSentenceWithLanguage
+```Python
 try:
     source_language = "zh-Hans"
     source_script = "Latn"
@@ -39,7 +39,7 @@ except HttpResponseError as exception:
 ### Break Sentence with auto-detection
 You can omit source language of the input text. In this case, API will try to auto-detect the language.
 
-```Python Snippet:Sample4_BreakSentence
+```Python
 try:
     input_text_elements = [ InputTextItem(text = "This is a test. This is the second sentence.") ]
 
