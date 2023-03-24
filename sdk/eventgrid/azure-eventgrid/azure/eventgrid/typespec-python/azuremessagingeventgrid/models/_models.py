@@ -201,6 +201,37 @@ class LockToken(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class LockTokenInput(_model_base.Model):
+    """LockTokenInput.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar lock_tokens: LockTokens. Required.
+    :vartype lock_tokens: list[str]
+    """
+
+    lock_tokens: List[str] = rest_field(name="lockTokens")
+    """LockTokens. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lock_tokens: List[str],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
 class LockTokensResponse(_model_base.Model):
     """Details of the LockTokens information. This is used for both Acknowledge and Release operation
     response.

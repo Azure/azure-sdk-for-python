@@ -10,6 +10,7 @@ from ._models import BrokerProperties
 from ._models import CloudEventEvent
 from ._models import FailedLockToken
 from ._models import LockToken
+from ._models import LockTokenInput
 from ._models import LockTokensResponse
 from ._models import ReceiveDetails
 from ._models import ReceiveResponse
@@ -23,6 +24,7 @@ __all__ = [
     "CloudEventEvent",
     "FailedLockToken",
     "LockToken",
+    "LockTokenInput",
     "LockTokensResponse",
     "ReceiveDetails",
     "ReceiveResponse",

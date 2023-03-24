@@ -95,7 +95,12 @@ def build_azure_messaging_event_grid_publish_batch_of_cloud_events_request(
 
 
 def build_azure_messaging_event_grid_receive_batch_of_cloud_events_request(
-    topic_name: str, event_subscription_name: str, *, max_events: int, timeout: int, **kwargs: Any
+    topic_name: str,
+    event_subscription_name: str,
+    *,
+    max_events: Optional[int] = None,
+    timeout: Optional[int] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -116,8 +121,10 @@ def build_azure_messaging_event_grid_receive_batch_of_cloud_events_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    _params["maxEvents"] = _SERIALIZER.query("max_events", max_events, "int")
-    _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+    if max_events is not None:
+        _params["maxEvents"] = _SERIALIZER.query("max_events", max_events, "int")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -126,7 +133,7 @@ def build_azure_messaging_event_grid_receive_batch_of_cloud_events_request(
 
 
 def build_azure_messaging_event_grid_acknowledge_batch_of_cloud_events_request(
-    topic_name: str, event_subscription_name: str, *, content: List[str], **kwargs: Any
+    topic_name: str, event_subscription_name: str, *, content: _models.LockTokenInput, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -309,7 +316,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -318,7 +325,13 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
     @distributed_trace
     def receive_batch_of_cloud_events(
-        self, topic_name: str, event_subscription_name: str, *, max_events: int, timeout: int, **kwargs: Any
+        self,
+        topic_name: str,
+        event_subscription_name: str,
+        *,
+        max_events: Optional[int] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.ReceiveResponse:
         """Receive Batch of Cloud Events from the Event Subscription.
 
@@ -326,10 +339,10 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
         :type topic_name: str
         :param event_subscription_name: Event Subscription Name. Required.
         :type event_subscription_name: str
-        :keyword max_events: Max Events count to be received. Required.
+        :keyword max_events: Max Events count to be received. Default value is None.
         :paramtype max_events: int
         :keyword timeout: Timeout value for receive operation in Seconds. Default is 60 seconds.
-         Required.
+         Default value is None.
         :paramtype timeout: int
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
          will have to context manage the returned stream.
@@ -387,7 +400,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
     @distributed_trace
     def acknowledge_batch_of_cloud_events(
-        self, topic_name: str, event_subscription_name: str, lock_tokens: List[str], **kwargs: Any
+        self, topic_name: str, event_subscription_name: str, lock_tokens: _models.LockTokenInput, **kwargs: Any
     ) -> _models.LockTokensResponse:
         """Acknowledge Cloud Events.
 
@@ -397,7 +410,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
         :type event_subscription_name: str
         :param lock_tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
-        :type lock_tokens: list[str]
+        :type lock_tokens: ~azuremessagingeventgrid.models.LockTokenInput
         :keyword content_type: content type. Default value is "application/json; charset=utf-8".
         :paramtype content_type: str
         :keyword bool stream: Whether to stream the response of this operation. Defaults to False. You
