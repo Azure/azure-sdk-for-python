@@ -7,13 +7,14 @@
 import logging
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
-from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.constants._job.job import JobPriorityValues, JobTierNames
-from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from typing_extensions import Literal
+
+from ..._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
+from ..._utils._experimental import experimental
+from ..._utils.utils import is_data_binding_expression
+from ...constants._job.job import JobPriorityValues, JobTierNames
+from ...entities._mixins import DictMixin, RestTranslatableMixin
+from ...exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -49,7 +50,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
         if obj is None:
             return None
         if isinstance(obj, dict):
-            queue_settings = RestQueueSettings.from_dict(obj["queue_settings"])
+            queue_settings = RestQueueSettings.from_dict(obj)
             return cls._from_rest_object(queue_settings)
         job_tier = JobTierNames.REST_TO_ENTITY.get(obj.job_tier, None) if obj.job_tier else None
         priority = JobPriorityValues.REST_TO_ENTITY.get(obj.priority, None) if obj.priority else None
