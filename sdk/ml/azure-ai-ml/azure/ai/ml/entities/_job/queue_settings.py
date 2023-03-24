@@ -9,7 +9,7 @@ from typing import Optional
 from typing_extensions import Literal
 
 from azure.ai.ml.constants._job.job import JobPriorityValues, JobTierNames
-from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
+from azure.ai.ml._restclient.v2023_04_01_preview.models import QueueSettings as RestQueueSettings
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException

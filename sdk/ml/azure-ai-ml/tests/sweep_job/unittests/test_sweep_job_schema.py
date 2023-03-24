@@ -6,12 +6,12 @@ import pytest
 import yaml
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestManagedIdentity
-from azure.ai.ml._restclient.v2023_02_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._schema import SweepJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
 from azure.ai.ml.entities import (

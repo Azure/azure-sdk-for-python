@@ -48,6 +48,9 @@ from azure.ai.ml._restclient.v2022_12_01_preview import (
 from azure.ai.ml._restclient.v2023_02_01_preview import (
     AzureMachineLearningWorkspaces as ServiceClient022023Preview,
 )
+from azure.ai.ml._restclient.v2023_04_01_preview import (
+    AzureMachineLearningWorkspaces as ServiceClient042023Preview,
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -322,6 +325,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2023_preview = ServiceClient042023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._rp_service_client,
@@ -472,7 +482,7 @@ class MLClient:
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_02_2023_preview,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,

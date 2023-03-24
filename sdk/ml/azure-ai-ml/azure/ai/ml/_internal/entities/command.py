@@ -7,7 +7,7 @@ from typing import Dict, List, Union
 from marshmallow import INCLUDE, Schema
 
 from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from ..._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from ..._restclient.v2023_04_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
 from ...entities import CommandJobLimits, JobResourceConfiguration

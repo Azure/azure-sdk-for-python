@@ -43,12 +43,12 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
 from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfigurationType
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestJobManagedIdentity
-from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
-from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+from azure.ai.ml._restclient.v2023_04_01_preview.models import IdentityConfigurationType
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedIdentity as RestJobManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
+from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
