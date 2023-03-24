@@ -79,7 +79,7 @@ def sample_manage_classifiers():
         document_model_admin_client.get_document_classifier(classifier_id=my_classifier.classifier_id)
     except ResourceNotFoundError:
         print("Successfully deleted classifier with ID {}".format(my_classifier.classifier_id))
-    # [END delete_document_model]
+    # [END delete_document_classifier]
 
 
 if __name__ == '__main__':

@@ -81,7 +81,7 @@ async def sample_manage_classifiers_async():
             await document_model_admin_client.get_document_classifier(classifier_id=my_classifier.classifier_id)
         except ResourceNotFoundError:
             print("Successfully deleted classifier with ID {}".format(my_classifier.classifier_id))
-        # [END delete_document_model_async]
+        # [END delete_document_classifier_async]
 
 
 async def main():

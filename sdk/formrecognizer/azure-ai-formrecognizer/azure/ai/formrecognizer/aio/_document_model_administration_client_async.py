@@ -594,7 +594,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :start-after: [START get_document_classifier_async]
                 :end-before: [END get_document_classifier_async]
                 :language: python
-                :dedent: 4
+                :dedent: 8
                 :caption: Get a classifier by its ID.
         """
 
@@ -625,7 +625,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :start-after: [START list_document_classifiers_async]
                 :end-before: [END list_document_classifiers_async]
                 :language: python
-                :dedent: 4
+                :dedent: 8
                 :caption: List all classifiers that were built successfully under the Form Recognizer resource.
         """
 
@@ -657,7 +657,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :start-after: [START delete_document_classifier_async]
                 :end-before: [END delete_document_classifier_async]
                 :language: python
-                :dedent: 4
+                :dedent: 8
                 :caption: Delete a classifier.
         """
 
