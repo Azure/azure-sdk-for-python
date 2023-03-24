@@ -2,17 +2,12 @@ import logging
 import os
 from io import StringIO
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict
 from unittest import mock
 from unittest.mock import patch
 
 import pydash
 import pytest
-
-from azure.ai.ml.constants._job import PipelineConstants
-from test_configs.dsl_pipeline import data_binding_expression
-from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated, assert_job_cancel
-
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -36,8 +31,17 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     InputOutputModes,
 )
-from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
-from azure.ai.ml.entities._builders import Command, Spark, DataTransferCopy
+from azure.ai.ml.constants._job import PipelineConstants
+from azure.ai.ml.entities import (
+    Component,
+    Data,
+    JobResourceConfiguration,
+    PipelineJob,
+    QueueSettings,
+    SparkJobEntry,
+    SparkResourceConfiguration,
+)
+from azure.ai.ml.entities._builders import Command, DataTransferCopy, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 from azure.ai.ml.exceptions import (
@@ -47,6 +51,8 @@ from azure.ai.ml.exceptions import (
     UserErrorException,
     ValidationException,
 )
+from test_configs.dsl_pipeline import data_binding_expression
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, prepare_dsl_curated
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -3112,3 +3118,56 @@ class TestDSLPipeline:
         pipeline_dict = pipeline._to_rest_object().as_dict()
         assert pipeline_dict["properties"]["jobs"]["node_0"]["limits"]["timeout"] == "${{parent.inputs.timeout}}"
         assert pipeline_dict["properties"]["jobs"]["node_1"]["limits"]["timeout"] == "PT1S"
+
+    @pytest.mark.parametrize(
+        "component_path, fields_to_test, fake_inputs",
+        [
+            pytest.param(
+                "./tests/test_configs/components/helloworld_component.yml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    # do not support data binding expression on queue_settings as it involves value mapping in
+                    # _to_rest_object
+                    # "queue_settings.priority": QueueSettings(priority="low"),
+                },
+                {},
+                id="command",
+            ),
+            pytest.param(
+                "./tests/test_configs/components/basic_parallel_component_score.yml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                },
+                {},
+                id="parallel.resources",
+            ),
+            pytest.param(
+                "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml",
+                {
+                    "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
+                    # seems that `type` is the only field for `identity` and hasn't been exposed to user
+                    # "identity.type": AmlTokenConfiguration(),
+                    "entry.entry": SparkJobEntry(entry="main.py"),
+                },
+                {
+                    "file_input": Input(path="./tests/test_configs/data"),
+                },
+                id="spark",
+            ),
+        ],
+    )
+    def test_data_binding_expression_on_node_runsettings(
+        self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
+    ):
+        component = load_component(component_path)
+        for field, value in fields_to_test.items():
+            attr, sub_attr = field.split(".")
+
+            @dsl.pipeline()
+            def pipeline_func(param: int = 2):
+                node = component(**fake_inputs)
+                setattr(node, attr, value)
+                setattr(getattr(node, attr), sub_attr, param)
+
+            pipeline_job = pipeline_func()
+            pipeline_job._to_rest_object()

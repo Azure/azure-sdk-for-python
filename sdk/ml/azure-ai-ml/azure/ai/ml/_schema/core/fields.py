@@ -13,15 +13,6 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import List, Optional
 
-from marshmallow import RAISE, fields
-from marshmallow.exceptions import ValidationError
-from marshmallow.fields import _T, Field, Nested
-from marshmallow.utils import (
-    FieldInstanceResolutionError,
-    from_iso_datetime,
-    resolve_field_instance,
-)
-
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._utils._arm_id_utils import (
     AMLVersionedArmId,
@@ -30,12 +21,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     parse_name_version,
 )
 from azure.ai.ml._utils._experimental import _is_warning_cached
-from azure.ai.ml._utils.utils import (
-    is_data_binding_expression,
-    is_valid_node_name,
-    load_file,
-    load_yaml,
-)
+from azure.ai.ml._utils.utils import is_data_binding_expression, is_valid_node_name, load_file, load_yaml
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -47,16 +33,18 @@ from azure.ai.ml.constants._common import (
     FILE_PREFIX,
     INTERNAL_REGISTRY_URI_FORMAT,
     LOCAL_COMPUTE_TARGET,
-    SERVERLESS_COMPUTE,
     LOCAL_PATH,
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
+    SERVERLESS_COMPUTE,
     AzureMLResourceType,
 )
-from azure.ai.ml.entities._job.pipeline._attr_dict import (
-    try_get_non_arbitrary_attr_for_potential_attr_dict,
-)
+from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from azure.ai.ml.exceptions import ValidationException
+from marshmallow import RAISE, fields
+from marshmallow.exceptions import ValidationError
+from marshmallow.fields import _T, Field, Nested
+from marshmallow.utils import FieldInstanceResolutionError, from_iso_datetime, resolve_field_instance
 
 module_logger = logging.getLogger(__name__)
 
@@ -782,6 +770,10 @@ class ExperimentalField(fields.Field):
             raise ValueError(
                 '"experimental_field" must be subclasses or ' "instances of marshmallow.base.FieldABC."
             ) from error
+
+    @property
+    def experimental_field(self):
+        return self._experimental_field
 
     # This sets the parent for the schema and also handles nesting.
     def _bind_to_schema(self, field_name, schema):

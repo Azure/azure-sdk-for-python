@@ -3,10 +3,9 @@
 # ---------------------------------------------------------
 from typing import Union
 
-from marshmallow import Schema, fields
-
-from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, UnionField
+from azure.ai.ml._schema.core.fields import DataBindingStr, ExperimentalField, NestedField, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
+from marshmallow import Schema, fields
 
 DATA_BINDING_SUPPORTED_KEY = "_data_binding_supported"
 
@@ -31,6 +30,15 @@ def _add_data_binding_to_field(field, attrs_to_skip, schema_stack):
     elif isinstance(field, fields.List):
         # handle list
         field.inner = _add_data_binding_to_field(field.inner, attrs_to_skip, schema_stack=schema_stack)
+    elif isinstance(field, ExperimentalField):
+        field = ExperimentalField(
+            _add_data_binding_to_field(field.experimental_field, attrs_to_skip, schema_stack=schema_stack),
+            data_key=field.data_key,
+            attribute=field.attribute,
+            dump_only=field.dump_only,
+            required=field.required,
+            allow_none=field.allow_none,
+        )
     elif isinstance(field, NestedField):
         # handle nested field
         support_data_binding_expression_for_fields(field.schema, attrs_to_skip, schema_stack=schema_stack)
