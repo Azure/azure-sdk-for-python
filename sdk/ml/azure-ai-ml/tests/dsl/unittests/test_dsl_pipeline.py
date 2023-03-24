@@ -3162,21 +3162,32 @@ class TestDSLPipeline:
         self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
     ):
         component = load_component(component_path)
-        for field, value in fields_to_test.items():
-            attr, sub_attr = field.split(".")
 
-            @dsl.pipeline()
-            def pipeline_func(param: str = "2"):
-                node = component(**fake_inputs)
+        @dsl.pipeline()
+        def pipeline_func(param: str = "2"):
+            node = component(**fake_inputs)
+            for field, value in fields_to_test.items():
+                attr, sub_attr = field.split(".")
                 setattr(node, attr, value)
                 setattr(getattr(node, attr), sub_attr, param)
 
-            pipeline_job = pipeline_func()
-            rest_object = pipeline_job._to_rest_object()
-            regenerated_job = PipelineJob._from_rest_object(rest_object)
-            expected_dict, actual_dict = pipeline_job._to_dict(), regenerated_job._to_dict()
-            # TODO: node level task is not necessary and with issue in serialization/de-serialization
-            for skip_dot_key in ["jobs.node.task.code"]:
-                pydash.set_(expected_dict, skip_dot_key, "placeholder")
-                pydash.set_(actual_dict, skip_dot_key, "placeholder")
-            assert actual_dict == expected_dict, f"failed on field {field}"
+        pipeline_job: PipelineJob = pipeline_func()
+        rest_object = pipeline_job._to_rest_object()
+        regenerated_job = PipelineJob._from_rest_object(rest_object)
+        expected_dict, actual_dict = pipeline_job._to_dict(), regenerated_job._to_dict()
+
+        # TODO: node level task is not necessary and with issue in serialization/de-serialization
+        for skip_dot_key in ["jobs.node.task.code"]:
+            pydash.set_(expected_dict, skip_dot_key, "placeholder")
+            pydash.set_(actual_dict, skip_dot_key, "placeholder")
+        assert actual_dict == expected_dict
+
+        # directly update component to arm id
+        for _node in pipeline_job.jobs.values():
+            _node._component = (
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/"
+                "Microsoft.MachineLearningServices/workspaces/ws/components/component_name/"
+                "versions/1.0.0"
+            )
+        # check if all the fields are correctly serialized
+        pipeline_job.component._get_anonymous_hash()
