@@ -10,6 +10,14 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessRight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access rights of the access policy."""
+
+    READ = "Read"
+    WRITE = "Write"
+    DELETE = "Delete"
+
+
 class CopyStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CopyStatusType."""
 

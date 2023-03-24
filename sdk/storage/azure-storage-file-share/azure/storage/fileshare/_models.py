@@ -465,6 +465,7 @@ class Handle(DictMixin):
     :keyword ~datetime.datetime open_time: Required. Time when the session that previously opened
      the handle has last been reconnected. (UTC)
     :keyword ~datetime.datetime last_reconnect_time: Time handle was last connected to (UTC)
+    :keyword List[Literal['Read', 'Write', 'Delete']] access_rights: Access rights of the handle.
     """
 
     def __init__(self, **kwargs):
@@ -476,6 +477,7 @@ class Handle(DictMixin):
         self.client_ip = kwargs.get('client_ip')
         self.open_time = kwargs.get('open_time')
         self.last_reconnect_time = kwargs.get('last_reconnect_time')
+        self.access_rights = kwargs.get('access_right_list')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -488,6 +490,7 @@ class Handle(DictMixin):
         handle.client_ip = generated.client_ip
         handle.open_time = generated.open_time
         handle.last_reconnect_time = generated.last_reconnect_time
+        handle.access_rights = generated.access_right_list
         return handle
 
 
