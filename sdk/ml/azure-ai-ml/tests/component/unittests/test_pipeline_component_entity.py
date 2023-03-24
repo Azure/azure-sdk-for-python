@@ -423,7 +423,7 @@ class TestPipelineComponentEntity:
             "literal_input2": {"job_input_type": "literal", "value": "12"},
         }
         assert node_dict["resources"] == {
-            "instance_count": 1,
+            "instance_count": "1",
             "properties": {"target_selector": {"my_resource_only": "false", "allow_spot_vm": "true"}},
             "shm_size": "2g",
         }

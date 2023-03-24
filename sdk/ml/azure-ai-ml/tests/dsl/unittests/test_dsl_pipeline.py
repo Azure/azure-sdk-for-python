@@ -10,6 +10,7 @@ import pydash
 import pytest
 
 from azure.ai.ml.constants._job import PipelineConstants
+from azure.ai.ml.dsl import pipeline
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated, assert_job_cancel
 

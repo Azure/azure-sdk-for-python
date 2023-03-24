@@ -15,7 +15,6 @@ from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
