@@ -140,9 +140,12 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                 rest_workspace_obj.feature_store_settings
                 and rest_workspace_obj.feature_store_settings.online_store_connection_name
             ):
-                online_store_connection = self._workspace_connection_operation.get(
-                    resource_group, name, rest_workspace_obj.feature_store_settings.online_store_connection_name
-                )
+                try:
+                    online_store_connection = self._workspace_connection_operation.get(
+                        resource_group, name, rest_workspace_obj.feature_store_settings.online_store_connection_name
+                    )
+                except ResourceNotFoundError:
+                    pass
 
             if online_store_connection:
                 if (
