@@ -1,0 +1,13 @@
+$schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.json
+type: command
+name: greeting
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest
+inputs:
+  whom:
+    type: string
+    optional: true
+code: ./src
+command: python greet.py $[[--whom ${{inputs.whom}}]]
+resources:
+  instance_type: Standard_D3_v2
