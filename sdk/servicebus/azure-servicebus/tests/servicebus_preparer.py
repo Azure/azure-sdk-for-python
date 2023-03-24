@@ -4,11 +4,9 @@ import time
 import datetime
 import logging
 
+from azure.core.exceptions import HttpResponseError
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
-try:
-    from azure.mgmt.resource import ResourceManagementClient
-except ImportError:
-    pass
+from azure.mgmt.resource import ResourceManagementClient
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
 from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights, SBAuthorizationRule
@@ -126,7 +124,7 @@ class ServiceBusResourceGroupPreparer(AzureMgmtPreparer):
                     raise AzureTestError("Timed out waiting for resource group to be deleted.")
                 else:
                     self.client.resource_groups.begin_delete(name, polling=False).result()
-            except Exception as err:  # NOTE: some track 1 libraries do not have azure-core installed. Cannot use HttpResponseError here
+            except HttpResponseError as err:
                 logging.info("Failed to delete resource group with name {}".format(name))
                 logging.info("{}".format(err))
                 pass
