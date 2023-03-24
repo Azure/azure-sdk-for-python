@@ -326,7 +326,7 @@
         },
         "FORMRECOGNIZER_TRAINING_DATA_CLASSIFIER": {
           "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataClassifier'), listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataClassifierSasProperties')).serviceSasToken)]"
+          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataClassifier'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataClassifierSasProperties')).serviceSasToken)]"
         },
         "FORMRECOGNIZER_REGION": {
             "type": "string",
@@ -370,7 +370,7 @@
         },
         "CLASSIFIER_CONTAINER_SAS_URL": {
           "type": "string",
-          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataClassifier'), listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataClassifierSasProperties')).serviceSasToken)]"
+          "value": "[concat(reference(parameters('blobResourceId'), '2019-06-01').primaryEndpoints.blob, parameters('trainingDataClassifier'), '?', listServiceSas(parameters('blobResourceId'), '2019-06-01', parameters('trainingDataClassifierSasProperties')).serviceSasToken)]"
         },
         "AZURE_FORM_RECOGNIZER_ENDPOINT": {
             "type": "string",
