@@ -447,6 +447,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
 
         entry = QueueDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[QueueDescriptionEntryContent] to QueueDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
         entry.content = cast(QueueDescriptionEntryContent, entry.content)
         result = QueueProperties._from_internal_entity(
             queue_name, entry.content.queue_description
@@ -691,6 +693,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 ),
             )
         entry = TopicDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[TopicDescriptionEntryContent] to TopicDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
         entry.content = cast(TopicDescriptionEntryContent, entry.content)
         result = TopicProperties._from_internal_entity(
             topic_name, entry.content.topic_description
@@ -950,6 +954,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
             )
 
         entry = SubscriptionDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[SubscriptionDescriptionEntryContent] to SubscriptionDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
         entry.content = cast(SubscriptionDescriptionEntryContent, entry.content)
         result = SubscriptionProperties._from_internal_entity(
             subscription_name,
@@ -1150,6 +1156,8 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
                 **kwargs
             )
         entry = RuleDescriptionEntry.deserialize(entry_ele)
+        # Need to cast from Optional[RuleDescriptionEntryContent] to RuleDescriptionEntryContent
+        # since we know for certain that `entry.content` will not be None here.
         entry.content = cast(RuleDescriptionEntryContent, entry.content)
         result = RuleProperties._from_internal_entity(
             rule_name, entry.content.rule_description
