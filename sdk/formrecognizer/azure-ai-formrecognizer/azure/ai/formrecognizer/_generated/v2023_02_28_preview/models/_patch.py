@@ -33,7 +33,7 @@ class AzureBlobFileListSource(GeneratedAzureBlobFileListSource):
         container_url: str,
         file_list: str,
         **kwargs: Any  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         super(AzureBlobFileListSource, self).__init__(container_url=container_url, file_list=file_list)
         self.container_url = container_url
         self.file_list = file_list
@@ -89,10 +89,7 @@ class AzureBlobContentSource(GeneratedAzureBlobContentSource):
         *,
         prefix: Optional[str] = None,
         **kwargs: Any  # pylint: disable=unused-argument
-    ):
-        """
-
-        """
+    ) -> None:
         super(AzureBlobContentSource, self).__init__(container_url=container_url, prefix=prefix)
         self.container_url = container_url
         self.prefix = prefix
@@ -151,7 +148,7 @@ class ClassifierDocumentTypeDetails(GeneratedClassifierDocumentTypeDetails):
         azure_blob_source: Optional[AzureBlobContentSource] = None,
         azure_blob_file_list_source: Optional[AzureBlobFileListSource] = None,
         **kwargs: Any  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         super(ClassifierDocumentTypeDetails, self).__init__(
             azure_blob_source=azure_blob_source,
             azure_blob_file_list_source=azure_blob_file_list_source

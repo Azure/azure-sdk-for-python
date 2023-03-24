@@ -8,6 +8,7 @@ import pytest
 import uuid
 import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
+from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -160,3 +161,52 @@ class TestClassifier(FormRecognizerTest):
         assert details["resource_location_url"]
         assert details["created_on"]
         assert details["last_updated_on"]
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
+    def test_mgmt_classifiers(self, client, formrecognizer_training_data_classifier, **kwargs):
+        set_bodiless_matcher()
+        poller = client.begin_build_document_classifier(
+            doc_types={
+                "IRS-1040-A": ClassifierDocumentTypeDetails(
+                    azure_blob_source=AzureBlobContentSource(
+                        container_url=formrecognizer_training_data_classifier,
+                        prefix="IRS-1040-A/train"
+                    )
+                ),
+                "IRS-1040-B": ClassifierDocumentTypeDetails(
+                    azure_blob_source=AzureBlobContentSource(
+                        container_url=formrecognizer_training_data_classifier,
+                        prefix="IRS-1040-B/train"
+                    )
+                )
+            },
+            description="IRS document classifier"
+        )
+        result = poller.result()
+
+        classifier = client.get_document_classifier(result.classifier_id)
+
+        assert result.classifier_id == classifier.classifier_id
+        assert result.description == classifier.description
+        assert result.api_version == classifier.api_version
+        assert result.created_date_time == classifier.created_date_time
+        assert result.expiration_date_time == classifier.expiration_date_time
+        for doc_type, source in result.doc_types.items():
+            assert doc_type in classifier.doc_types
+            assert source.azure_blob_source.container_url == classifier.doc_types[doc_type].azure_blob_source.container_url
+            assert source.azure_blob_source.prefix == classifier.doc_types[doc_type].azure_blob_source.prefix
+
+        classifiers_list = client.list_document_classifiers()
+        for classifier in classifiers_list:
+            assert classifier.classifier_id
+            assert classifier.api_version
+            assert classifier.created_date_time
+            assert classifier.expiration_date_time
+            assert classifier.doc_types
+
+        client.delete_document_classifier(classifier.classifier_id)
+
+        with pytest.raises(ResourceNotFoundError):
+            client.get_document_classifier(classifier.classifier_id)
