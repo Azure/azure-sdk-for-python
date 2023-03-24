@@ -11,12 +11,22 @@ from setuptools import setup, find_packages
 
 PACKAGE_NAME = "azure-ai-translation-text"
 version = "1.0.0b1"
+
+with open('README.md', encoding='utf-8') as f:
+    readme = f.read()
+with open('CHANGELOG.md', encoding='utf-8') as f:
+    changelog = f.read()
+
 setup(
     name=PACKAGE_NAME,
     version=version,
     description="azure-ai-translation-text",
-    author_email="",
-    url="",
+    author_email='azpysdkhelp@microsoft.com',
+    url='https://github.com/Azure/azure-sdk-for-python',
+    long_description=readme + '\n\n' + changelog,
+    long_description_content_type='text/markdown'
+    license='MIT License',
+    author='Microsoft Corporation',
     keywords="azure, azure sdk",
     packages=find_packages(exclude=[
         # Exclude packages that will be covered by PEP420 or nspkg
@@ -33,23 +43,4 @@ setup(
         "azure-core<2.0.0,>=1.24.0",
         "typing-extensions>=4.3.0; python_version<'3.8.0'",
     ],
-    long_description="""\
-    Text translation is a cloud-based REST API feature of the Translator service that uses neural
-machine translation technology to enable quick and accurate source-to-target text translation
-in real time across all supported languages.
-
-The following methods are supported by the Text Translation feature:
-
-Languages. Returns a list of languages supported by Translate, Transliterate, and Dictionary Lookup operations.
-
-Translate. Renders single source-language text to multiple target-language texts with a single request.
-
-Transliterate. Converts characters or letters of a source language to the corresponding characters or letters of a target language.
-
-Detect. Returns the source code language code and a boolean variable denoting whether the detected language is supported for text translation and transliteration.
-
-Dictionary lookup. Returns equivalent words for the source term in the target language.
-
-Dictionary example Returns grammatical structure and context examples for the source term and target term pair.
-    """
 )
