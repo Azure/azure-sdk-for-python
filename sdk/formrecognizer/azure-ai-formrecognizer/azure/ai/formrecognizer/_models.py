@@ -11,6 +11,7 @@ from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.v2023_02_28_preview.models import DocumentModelDetails as ModelDetails, Error
+from ._generated.models import ClassifierDocumentTypeDetails
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -3270,7 +3271,7 @@ class DocumentClassifierDetails:
     """Date and time (UTC) when the document classifier will expire."""
     api_version: str
     """API version used to create this document classifier."""
-    doc_types: Dict[str, Any]
+    doc_types: Dict[str, ClassifierDocumentTypeDetails]
     """List of document types to classify against."""
 
     def __init__(
@@ -3299,7 +3300,7 @@ class DocumentClassifierDetails:
             created_date_time=model.created_date_time,
             expiration_date_time=model.expiration_date_time,
             api_version=model.api_version,
-            doc_types={k: v for k, v in model.doc_types.items()}
+            doc_types={k: ClassifierDocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
         )
 
@@ -3311,7 +3312,7 @@ class DocumentClassifierDetails:
             "created_date_time": self.created_date_time,
             "expiration_date_time": self.expiration_date_time,
             "api_version": self.api_version,
-            "doc_types": {k: v for k, v in self.doc_types.items()} if self.doc_types else {}
+            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}  # type: ignore
         }
 
     @classmethod
@@ -3328,7 +3329,8 @@ class DocumentClassifierDetails:
             created_date_time=data.get("created_date_time", None),
             expiration_date_time=data.get("expiration_date_time", None),
             api_version=data.get("api_version", None),
-            doc_types={k: v for k, v in data.get("doc_types").items()}  # type: ignore
+            doc_types={k: ClassifierDocumentTypeDetails.from_dict(v)  # type: ignore
+                       for k, v in data.get("doc_types").items()}
             if data.get("doc_types")
             else {},
         )

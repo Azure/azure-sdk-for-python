@@ -19,7 +19,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
-    3) CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
+    3) CLASSIFIER_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
 """
 
 import os
@@ -28,13 +28,32 @@ import os
 def sample_manage_classifiers():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import ResourceNotFoundError
-    from azure.ai.formrecognizer import DocumentModelAdministrationClient
+    from azure.ai.formrecognizer import DocumentModelAdministrationClient, ClassifierDocumentTypeDetails, AzureBlobContentSource
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
-    container_sas_url = os.environ["CONTAINER_SAS_URL"]
+    container_sas_url = os.environ["CLASSIFIER_CONTAINER_SAS_URL"]
 
     document_model_admin_client = DocumentModelAdministrationClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
+    # build a document classifier
+    poller = document_model_admin_client.begin_build_document_classifier(
+        doc_types={
+            "IRS-1040-A": ClassifierDocumentTypeDetails(
+                azure_blob_source=AzureBlobContentSource(
+                    container_url=container_sas_url,
+                    prefix="IRS-1040-A/train"
+                )
+            ),
+            "IRS-1040-B": ClassifierDocumentTypeDetails(
+                azure_blob_source=AzureBlobContentSource(
+                    container_url=container_sas_url,
+                    prefix="IRS-1040-B/train"
+                )
+            )
+        },
+    )
+    classifier_model = poller.result()
 
     # Next, we get a paged list of all of our document classifiers
     # [START list_document_classifiers]
@@ -46,7 +65,7 @@ def sample_manage_classifiers():
     # [END list_document_classifiers]
 
     # [START get_document_classifier]
-    my_classifier = document_model_admin_client.get_document_classifier(classifier_id="<classifier ID>")
+    my_classifier = document_model_admin_client.get_document_classifier(classifier_id=classifier_model.classifier_id)
     print("\nClassifier ID: {}".format(my_classifier.classifier_id))
     print("Description: {}".format(my_classifier.description))
     print("Classifier created on: {}".format(my_classifier.created_date_time))
