@@ -12,5 +12,5 @@ The script is to refresh SDK code
 
 Step into root folder of this repo and run cmd with sdk folder:
 ```powershell
-D:\azure-sdk-for-python> python .\scripts\cadl_refresh_sdk\main.py .\sdk\contosowidgetmanager\azure-contosowidgetmanager
+D:\azure-sdk-for-python> python .\scripts\typespec_refresh_sdk\main.py .\sdk\contosowidgetmanager\azure-contosowidgetmanager
 ```
