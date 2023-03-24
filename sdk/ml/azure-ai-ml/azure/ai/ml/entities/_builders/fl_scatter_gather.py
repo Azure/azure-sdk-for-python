@@ -18,7 +18,7 @@ from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._validation import MutableValidationResult
 from .subcomponents import create_scatter_output_table
 from azure.ai.ml.dsl import pipeline
-from mldesigner.dsl import do_while
+from azure.ai.ml.dsl._do_while import do_while
 from azure.ai.ml import Input
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable 
