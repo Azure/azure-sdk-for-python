@@ -2463,7 +2463,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     self.execution_times += 1
                 if not self._message_iter:
                     if uamqp_transport:
-                        self._message_iter = await self._handler.receive_messages_iter_async()
+                        self._message_iter = self._handler.receive_messages_iter_async()
                     else:
                         self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
                 amqp_message = await self._message_iter.__anext__()
