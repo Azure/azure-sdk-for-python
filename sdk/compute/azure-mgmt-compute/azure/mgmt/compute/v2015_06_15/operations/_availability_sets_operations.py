@@ -280,7 +280,7 @@ class AvailabilitySetsOperations:
         :param name: The name of the availability set. Required.
         :type name: str
         :param parameters: Parameters supplied to the Create Availability Set operation. Is either a
-         model type or a IO type. Required.
+         AvailabilitySet type or a IO type. Required.
         :type parameters: ~azure.mgmt.compute.v2015_06_15.models.AvailabilitySet or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

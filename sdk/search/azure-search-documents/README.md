@@ -34,11 +34,12 @@ Use the Azure.Search.Documents client library to:
 * Create and manage analyzers for advanced text analysis or multi-lingual content.
 * Optimize results through scoring profiles to factor in business logic or freshness.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents) |
-[Package (PyPI)](https://pypi.org/project/azure-search-documents/) |
-[API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html) |
-[Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search) |
-[Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/search/azure-search-documents)
+| [Package (PyPI)](https://pypi.org/project/azure-search-documents/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-search-documents/)
+| [API reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-search-documents/latest/index.html)
+| [Product documentation](https://docs.microsoft.com/azure/search/search-what-is-azure-search)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples)
 
 ## _Disclaimer_
 
@@ -92,22 +93,20 @@ to get started exploring APIs, but it should be managed carefully.*
 
 We can use the api-key to create a new `SearchClient`.
 
+<!-- SNIPPET:sample_authentication.create_search_client_with_key -->
+
 ```python
-import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-index_name = "nycjobs"
-# Get the service endpoint and API key from the environment
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
+service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
+key = os.getenv("AZURE_SEARCH_API_KEY")
 
-# Create a client
-credential = AzureKeyCredential(key)
-client = SearchClient(endpoint=endpoint,
-                      index_name=index_name,
-                      credential=credential)
+search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 ```
+
+<!-- END SNIPPET -->
 
 ## Key concepts
 
@@ -200,40 +199,21 @@ You can use the `SearchIndexClient` to create a search index. Fields can be
 defined using convenient `SimpleField`, `SearchableField`, or `ComplexField`
 models. Indexes can also define suggesters, lexical analyzers, and more.
 
+<!-- SNIPPET:sample_index_crud_operations.create_index -->
+
 ```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents.indexes import SearchIndexClient
-from azure.search.documents.indexes.models import (
-    ComplexField,
-    CorsOptions,
-    SearchIndex,
-    ScoringProfile,
-    SearchFieldDataType,
-    SimpleField,
-    SearchableField
-)
-
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
-
-# Create a service client
-client = SearchIndexClient(endpoint, AzureKeyCredential(key))
-
-# Create the index
 name = "hotels"
 fields = [
-        SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-        SimpleField(name="baseRate", type=SearchFieldDataType.Double),
-        SearchableField(name="description", type=SearchFieldDataType.String),
-        ComplexField(name="address", fields=[
-            SimpleField(name="streetAddress", type=SearchFieldDataType.String),
-            SimpleField(name="city", type=SearchFieldDataType.String),
-        ])
-    ]
+    SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
+    SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+    SearchableField(name="description", type=SearchFieldDataType.String, collection=True),
+    ComplexField(name="address", fields=[
+        SimpleField(name="streetAddress", type=SearchFieldDataType.String),
+        SimpleField(name="city", type=SearchFieldDataType.String),
+    ], collection=True)
+]
 cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
 scoring_profiles = []
-
 index = SearchIndex(
     name=name,
     fields=fields,
@@ -243,6 +223,7 @@ index = SearchIndex(
 result = client.create_index(index)
 ```
 
+<!-- END SNIPPET -->
 
 ### Adding documents to your index
 
@@ -251,29 +232,23 @@ an index in a single batched request.  There are
 [a few special rules for merging](https://docs.microsoft.com/rest/api/searchservice/addupdate-or-delete-documents#document-actions)
 to be aware of.
 
+<!-- SNIPPET:sample_crud_operations.upload_document -->
+
 ```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient
-
-index_name = "hotels"
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
-
 DOCUMENT = {
     'Category': 'Hotel',
-    'hotelId': '1000',
-    'rating': 4.0,
-    'rooms': [],
-    'hotelName': 'Azure Inn',
+    'HotelId': '1000',
+    'Rating': 4.0,
+    'Rooms': [],
+    'HotelName': 'Azure Inn',
 }
-
-search_client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
 
 result = search_client.upload_documents(documents=[DOCUMENT])
 
 print("Upload of new document succeeded: {}".format(result[0].succeeded))
 ```
+
+<!-- END SNIPPET -->
 
 ### Authenticate in a National Cloud
 
@@ -303,48 +278,49 @@ you can retrieve a specific document from your index if you already know the
 key. You could get the key from a query, for example, and want to show more
 information about it or navigate your customer to that document.
 
+<!-- SNIPPET:sample_get_document.get_document -->
+
 ```python
-import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-index_name = "hotels"
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
+search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-client = SearchClient(endpoint, index_name, AzureKeyCredential(key))
+result = search_client.get_document(key="23")
 
-result = client.get_document(key="1")
-
-print("Details for hotel '1' are:")
+print("Details for hotel '23' are:")
 print("        Name: {}".format(result["HotelName"]))
 print("      Rating: {}".format(result["Rating"]))
 print("    Category: {}".format(result["Category"]))
 ```
 
+<!-- END SNIPPET -->
 
 ### Async APIs
+
 This library includes a complete async API. To use it, you must
 first install an async transport, such as [aiohttp](https://pypi.org/project/aiohttp/).
 See
 [azure-core documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md#transport)
 for more information.
 
+<!-- SNIPPET:sample_simple_query_async.simple_query_async -->
 
-```py
+```python
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio import SearchClient
 
-client = SearchClient(endpoint, index_name, AzureKeyCredential(api_key))
+search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
-async with client:
-  results = await client.search(search_text="hotel")
-  async for result in results:
-    print("{}: {})".format(result["hotelId"], result["hotelName"]))
+async with search_client:
+    results = await search_client.search(search_text="spa")
 
-...
-
+    print("Hotels containing 'spa' in the name (or other fields):")
+    async for result in results:
+        print("    Name: {} (rating {})".format(result["HotelName"], result["Rating"]))
 ```
+
+<!-- END SNIPPET -->
 
 ## Troubleshooting
 

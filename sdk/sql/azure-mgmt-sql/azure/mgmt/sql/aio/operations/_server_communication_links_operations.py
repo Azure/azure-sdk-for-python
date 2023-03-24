@@ -359,7 +359,7 @@ class ServerCommunicationLinksOperations:
         :param communication_link_name: The name of the server communication link. Required.
         :type communication_link_name: str
         :param parameters: The required parameters for creating a server communication link. Is either
-         a model type or a IO type. Required.
+         a ServerCommunicationLink type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerCommunicationLink or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

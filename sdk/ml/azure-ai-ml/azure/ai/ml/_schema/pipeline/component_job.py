@@ -15,15 +15,11 @@ from azure.ai.ml._schema.component import (
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
     AnonymousDataTransferCopyComponentSchema,
-    AnonymousDataTransferImportComponentSchema,
-    AnonymousDataTransferExportComponentSchema,
     ComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
     DataTransferCopyComponentFileRefField,
-    DataTransferImportComponentFileRefField,
-    DataTransferExportComponentFileRefField,
 )
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -418,16 +414,8 @@ class DataTransferCopySchema(BaseNodeSchema):
 
 class DataTransferImportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
-    component = TypeSensitiveUnionField(
-        {
-            NodeType.DATA_TRANSFER: [
-                # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousDataTransferImportComponentSchema, unknown=INCLUDE),
-                # component file reference
-                DataTransferImportComponentFileRefField(),
-            ],
-        },
-        plain_union_fields=[
+    component = UnionField(
+        [
             # for registry type assets
             RegistryStr(),
             # existing component
@@ -477,16 +465,8 @@ class DataTransferImportSchema(BaseNodeSchema):
 
 class DataTransferExportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
-    component = TypeSensitiveUnionField(
-        {
-            NodeType.DATA_TRANSFER: [
-                # inline component or component file reference starting with FILE prefix
-                NestedField(AnonymousDataTransferExportComponentSchema, unknown=INCLUDE),
-                # component file reference
-                DataTransferExportComponentFileRefField(),
-            ],
-        },
-        plain_union_fields=[
+    component = UnionField(
+        [
             # for registry type assets
             RegistryStr(),
             # existing component

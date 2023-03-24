@@ -4,6 +4,7 @@ The Azure Identity library provides [Azure Active Directory (Azure AD)](https://
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity)
 | [Package (PyPI)](https://pypi.org/project/azure-identity/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-identity/)
 | [API reference documentation][ref_docs]
 | [Azure AD documentation](https://learn.microsoft.com/azure/active-directory/)
 
@@ -92,7 +93,7 @@ More details on configuring your environment to use the `DefaultAzureCredential`
 
 This example demonstrates authenticating the `BlobServiceClient` from the [azure-storage-blob][azure_storage_blob] library using `DefaultAzureCredential`.
 
-```py
+```python
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 
@@ -105,7 +106,7 @@ client = BlobServiceClient(account_url, credential=default_credential)
 
 Interactive authentication is disabled in the `DefaultAzureCredential` by default and can be enabled with a keyword argument:
 
-```py
+```python
 DefaultAzureCredential(exclude_interactive_browser_credential=False)
 ```
 
@@ -115,7 +116,7 @@ When enabled, `DefaultAzureCredential` falls back to interactively authenticatin
 
 Many Azure hosts allow the assignment of a user-assigned managed identity. To configure `DefaultAzureCredential` to authenticate a user-assigned identity, use the `managed_identity_client_id` keyword argument:
 
-```py
+```python
 DefaultAzureCredential(managed_identity_client_id=client_id)
 ```
 
@@ -127,7 +128,7 @@ Alternatively, set the environment variable `AZURE_CLIENT_ID` to the identity's 
 
 The following example demonstrates creating a credential that will first attempt to authenticate using managed identity. The credential will fall back to authenticating via the Azure CLI when a managed identity is unavailable. This example uses the `EventHubProducerClient` from the [azure-eventhub][azure_eventhub] client library.
 
-```py
+```python
 from azure.eventhub import EventHubProducerClient
 from azure.identity import AzureCliCredential, ChainedTokenCredential, ManagedIdentityCredential
 
@@ -144,7 +145,7 @@ This library includes a set of async APIs. To use the async credentials in [azur
 
 Async credentials should be closed when they're no longer needed. Each async credential is an async context manager and defines an async `close` method. For example:
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 
 # call close when the credential is no longer needed
@@ -161,7 +162,7 @@ async with credential:
 This example demonstrates authenticating the asynchronous `SecretClient` from [azure-keyvault-secrets][azure_keyvault_secrets] with an asynchronous
 credential.
 
-```py
+```python
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.secrets.aio import SecretClient
 
@@ -185,7 +186,7 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 #### Authenticate with a user-assigned managed identity
 
-```py
+```python
 from azure.identity import ManagedIdentityCredential
 from azure.keyvault.secrets import SecretClient
 
@@ -195,7 +196,7 @@ client = SecretClient("https://my-vault.vault.azure.net", credential)
 
 #### Authenticate with a system-assigned managed identity
 
-```py
+```python
 from azure.identity import ManagedIdentityCredential
 from azure.keyvault.secrets import SecretClient
 
@@ -207,7 +208,7 @@ client = SecretClient("https://my-vault.vault.azure.net", credential)
 
 Credentials default to authenticating to the Azure AD endpoint for Azure Public Cloud. To access resources in other clouds, such as Azure Government or a private cloud, configure credentials with the `authority` argument. [AzureAuthorityHosts](https://aka.ms/azsdk/python/identity/docs#azure.identity.AzureAuthorityHosts) defines authorities for well-known clouds:
 
-```py
+```python
 from azure.identity import AzureAuthorityHosts
 
 DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_GOVERNMENT)
@@ -307,7 +308,7 @@ This library uses the standard [logging](https://docs.python.org/3/library/loggi
 
 Detailed DEBUG level logging, including request/response bodies and header values, isn't enabled by default. It can be enabled with the `logging_enable` argument. For example:
 
-```py
+```python
 credential = DefaultAzureCredential(logging_enable=True)
 ```
 

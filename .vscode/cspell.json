@@ -58,6 +58,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
+    "sdk/easm/azure-defender-easm/azure/defender/easm/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
@@ -87,6 +88,7 @@
     "sdk/ml/azure-ai-ml/NOTICE.txt",
     "sdk/loadtestservice/azure-developer-loadtesting/**",
     "sdk/monitor/azure-monitor-ingestion/**",
+    "sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_serialization.py",
     "eng/**/*.json",
     "eng/*.txt",
     "eng/tox/tox.ini",
@@ -170,6 +172,7 @@
     "dtlksd",
     "DWORD",
     "eastus",
+    "Easm",
     "euap",
     "eckey",
     "ekus",
@@ -391,9 +394,36 @@
   ],
   "overrides": [
     {
+      "filename": "doc/dev/test_proxy_migration_guide.md",
+      "words": [
+        "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
+      "words": [
+        "certifi",
+        "passenv"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/tests/integration/test_proxy_startup.py",
+      "words": [
+        "spinup"
+      ]
+    },
+    {
       "filename": "sdk/remoterendering/**",
       "words": [
         "Phong"
+      ]
+    },
+    {              
+      "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
+      "words": [
+        "isfork",
+        "ISFORK",
+        "thead"
       ]
     },
     {
@@ -442,6 +472,20 @@
       "words": [
         "essai",
         "myfoldername"
+      ]
+    },
+    {
+      "filename": "sdk/translation/azure-ai-translation-text/**",
+      "words": [
+        "akhtabar",
+        "deserializers",
+        "Esto",
+        "hudha",
+        "mosca",
+        "mros",
+        "NOACTION",
+        "prueba",
+        "wordomatic"
       ]
     },
     {
@@ -593,7 +637,8 @@
         "ierr",
         "mymodel",
         "heif",
-        "racwd"
+        "racwd",
+        "rrggbb"
       ]
     },
     {
@@ -708,7 +753,7 @@
       "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
       "words": [
         "Syms",
-        "Updation",
+        "Updation"
       ]
     },
     {
@@ -918,7 +963,19 @@
       "filename": "sdk/agrifood/azure-agrifood-farming/**",
       "words": [
         "NDVI",
-        "Unhandleable"
+        "Unhandleable",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize",
+        "stac",
+        "nnumeral",
+        "nonly",
+        "STAC",
+        "Placeid",
+        "resouce",
+        "nnumeral"
       ]
      },
      {
@@ -1121,6 +1178,13 @@
         "nonly",
         "nthe",
         "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     },
     {

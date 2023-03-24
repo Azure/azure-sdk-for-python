@@ -11,8 +11,21 @@ from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
 from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.data_transfer import copy_data, import_data, export_data
 from azure.ai.ml.data_transfer import Database, FileSystem
-from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
-from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep, DataTransferImport
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJob,
+    Data,
+    ParallelTask,
+    PipelineJob,
+    SparkJob,
+)
+from azure.ai.ml.entities._builders import (
+    Command,
+    Parallel,
+    Spark,
+    Sweep,
+    DataTransferImport,
+)
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
 from azure.ai.ml.entities._job.data_transfer.data_transfer_job import (
@@ -94,7 +107,8 @@ class TestDSLPipelineWithSpecificNodes:
 
             component_to_link = load_component(source=yaml_file, params_override=[{"name": "node_to_link"}])
             link_node = component_to_link(
-                component_in_number=2, component_in_path=sweep_job1.outputs.component_out_path
+                component_in_number=2,
+                component_in_path=sweep_job1.outputs.component_out_path,
             )
 
             return {
@@ -105,7 +119,9 @@ class TestDSLPipelineWithSpecificNodes:
             }
 
         pipeline: PipelineJob = train_with_sweep_in_pipeline(
-            raw_data=Input(path="/a/path/on/ds", mode="ro_mount"), max_total_trials=100, primary_metric="accuracy"
+            raw_data=Input(path="/a/path/on/ds", mode="ro_mount"),
+            max_total_trials=100,
+            primary_metric="accuracy",
         )
         assert len(pipeline.jobs) == 4, f"Expect 4 nodes are collected but got {len(pipeline.jobs)}"
         assert pipeline.component._source == "DSL"
@@ -200,7 +216,9 @@ class TestDSLPipelineWithSpecificNodes:
         omit_fields = ["trial"]
         assert pydash.omit(sweep_node_dict, *omit_fields) == pydash.omit(sweep_node_dict_from_rest, *omit_fields)
 
-    def test_dsl_pipeline_with_sweep_distributed_component_setting_instance_type(self) -> None:
+    def test_dsl_pipeline_with_sweep_distributed_component_setting_instance_type(
+        self,
+    ) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component_pytorch.yml"
 
         @dsl.pipeline(force_rerun=True)
@@ -232,7 +250,12 @@ class TestDSLPipelineWithSpecificNodes:
             "name": "sweep_job",
             "type": "sweep",
             "computeId": "test-aks-large",
-            "inputs": {"component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.raw_data}}"}},
+            "inputs": {
+                "component_in_path": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.inputs.raw_data}}",
+                }
+            },
             "_source": "YAML.COMPONENT",
             "resources": {"instance_type": "cpularge"},
         }
@@ -244,7 +267,11 @@ class TestDSLPipelineWithSpecificNodes:
         def train_with_parallel_in_pipeline():
             parallel_component: ParallelComponent = load_component(source=yaml_file)
             node1: Parallel = parallel_component(
-                job_data_path=Input(type=AssetTypes.MLTABLE, path="/a/path/on/ds", mode=InputOutputModes.EVAL_MOUNT),
+                job_data_path=Input(
+                    type=AssetTypes.MLTABLE,
+                    path="/a/path/on/ds",
+                    mode=InputOutputModes.EVAL_MOUNT,
+                ),
             )
             node1.resources = {"instance_count": 2}
 
@@ -338,10 +365,18 @@ class TestDSLPipelineWithSpecificNodes:
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "1g",
                     },
-                    "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "entry": {
+                        "file": "add_greeting_column.py",
+                        "spark_job_entry_type": "SparkJobPythonEntry",
+                    },
                     "files": ["my_files.txt"],
                     "identity": {"identity_type": "Managed"},
-                    "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+                    "inputs": {
+                        "file_input": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.iris_data}}",
+                        }
+                    },
                     "name": "add_greeting_column",
                     "py_files": ["utils.zip"],
                     "type": "spark",
@@ -357,13 +392,26 @@ class TestDSLPipelineWithSpecificNodes:
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "1g",
                     },
-                    "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "entry": {
+                        "file": "count_by_row.py",
+                        "spark_job_entry_type": "SparkJobPythonEntry",
+                    },
                     "files": ["my_files.txt"],
                     "identity": {"identity_type": "Managed"},
-                    "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+                    "inputs": {
+                        "file_input": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.iris_data}}",
+                        }
+                    },
                     "jars": ["scalaproj.jar"],
                     "name": "count_by_row",
-                    "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+                    "outputs": {
+                        "output": {
+                            "type": "literal",
+                            "value": "${{parent.outputs.output}}",
+                        }
+                    },
                     "type": "spark",
                 },
             },
@@ -379,7 +427,7 @@ class TestDSLPipelineWithSpecificNodes:
         component_func = load_component(source=yaml_file)
 
         # command job with dict distribution
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
@@ -417,8 +465,14 @@ class TestDSLPipelineWithSpecificNodes:
         @dsl.pipeline(experiment_name="test_pipeline_with_command_function")
         def pipeline(number, path):
             node1 = component_func(component_in_number=number, component_in_path=path)
-            node2 = command_job_func(component_in_number=number, component_in_path=node1.outputs.component_out_path)
-            node3 = command_function(component_in_number=number, component_in_path=node2.outputs.component_out_path)
+            node2 = command_job_func(
+                component_in_number=number,
+                component_in_path=node1.outputs.component_out_path,
+            )
+            node3 = command_function(
+                component_in_number=number,
+                component_in_path=node2.outputs.component_out_path,
+            )
             return {
                 "pipeline_output1": node1.outputs.component_out_path,
                 "pipeline_output2": node2.outputs.component_out_path,
@@ -441,7 +495,11 @@ class TestDSLPipelineWithSpecificNodes:
                 "experiment_name": "test_pipeline_with_command_function",
                 "inputs": {
                     "number": {"job_input_type": "literal", "value": "10"},
-                    "path": {"job_input_type": "uri_folder", "mode": "ReadOnlyMount", "uri": "/a/path/on/ds"},
+                    "path": {
+                        "job_input_type": "uri_folder",
+                        "mode": "ReadOnlyMount",
+                        "uri": "/a/path/on/ds",
+                    },
                 },
                 "is_archived": False,
                 "job_type": "Pipeline",
@@ -449,20 +507,35 @@ class TestDSLPipelineWithSpecificNodes:
                     "node1": {
                         "_source": "YAML.COMPONENT",
                         "inputs": {
-                            "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.number}}"},
-                            "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.path}}"},
+                            "component_in_number": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.number}}",
+                            },
+                            "component_in_path": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.path}}",
+                            },
                         },
                         "name": "node1",
                         "outputs": {
-                            "component_out_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output1}}"}
+                            "component_out_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output1}}",
+                            }
                         },
                         "type": "command",
                     },
                     "node2": {
                         "_source": "CLASS",
-                        "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
+                        "distribution": {
+                            "distribution_type": "PyTorch",
+                            "process_count_per_instance": 2,
+                        },
                         "inputs": {
-                            "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.number}}"},
+                            "component_in_number": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.number}}",
+                            },
                             "component_in_path": {
                                 "job_input_type": "literal",
                                 "value": "${{parent.jobs.node1.outputs.component_out_path}}",
@@ -470,7 +543,10 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "name": "node2",
                         "outputs": {
-                            "component_out_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output2}}"}
+                            "component_out_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output2}}",
+                            }
                         },
                         "resources": {"instance_count": 2},
                         "type": "command",
@@ -478,10 +554,16 @@ class TestDSLPipelineWithSpecificNodes:
                     "node3": {
                         "_source": "BUILDER",
                         "display_name": "my-evaluate-job",
-                        "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
+                        "distribution": {
+                            "distribution_type": "PyTorch",
+                            "process_count_per_instance": 2,
+                        },
                         "environment_variables": {"key": "val"},
                         "inputs": {
-                            "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.number}}"},
+                            "component_in_number": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.number}}",
+                            },
                             "component_in_path": {
                                 "job_input_type": "literal",
                                 "value": "${{parent.jobs.node2.outputs.component_out_path}}",
@@ -489,7 +571,10 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "name": "node3",
                         "outputs": {
-                            "component_out_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output3}}"}
+                            "component_out_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output3}}",
+                            }
                         },
                         "resources": {"instance_count": 2},
                         "type": "command",
@@ -498,7 +583,10 @@ class TestDSLPipelineWithSpecificNodes:
                 "outputs": {
                     "pipeline_output1": {"job_output_type": "uri_folder"},
                     "pipeline_output2": {"job_output_type": "mlflow_model"},
-                    "pipeline_output3": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"},
+                    "pipeline_output3": {
+                        "job_output_type": "mlflow_model",
+                        "mode": "ReadWriteMount",
+                    },
                 },
                 "properties": {},
                 "settings": {},
@@ -524,12 +612,16 @@ class TestDSLPipelineWithSpecificNodes:
             "folder1": folder1,
             "folder2": folder2,
         }
-        outputs = {"output": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_blob/paths/merged_blob")}
+        outputs = {
+            "output": Output(
+                type=AssetTypes.URI_FOLDER,
+                path="azureml://datastores/my_blob/paths/merged_blob",
+            )
+        }
 
         data_transfer_job = DataTransferCopyJob(
             inputs=inputs,
             outputs=outputs,
-            task=DataTransferTaskType.COPY_DATA,
             data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
@@ -538,7 +630,6 @@ class TestDSLPipelineWithSpecificNodes:
         data_transfer_function = copy_data(
             inputs=inputs,
             outputs=outputs,
-            task=DataTransferTaskType.COPY_DATA,
             data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
         )
 
@@ -579,8 +670,14 @@ class TestDSLPipelineWithSpecificNodes:
                         "_source": "YAML.COMPONENT",
                         "data_copy_mode": "merge_with_overwrite",
                         "inputs": {
-                            "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.folder1}}"},
-                            "folder2": {"job_input_type": "literal", "value": "${{parent.inputs.folder2}}"},
+                            "folder1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.folder1}}",
+                            },
+                            "folder2": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.folder2}}",
+                            },
                         },
                         "name": "node1",
                         "task": "copy_data",
@@ -607,11 +704,22 @@ class TestDSLPipelineWithSpecificNodes:
                         "_source": "BUILDER",
                         "data_copy_mode": "merge_with_overwrite",
                         "inputs": {
-                            "folder1": {"job_input_type": "literal", "value": "${{parent.jobs.node2.outputs.output}}"},
-                            "folder2": {"job_input_type": "literal", "value": "${{parent.jobs.node2.outputs.output}}"},
+                            "folder1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.jobs.node2.outputs.output}}",
+                            },
+                            "folder2": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.jobs.node2.outputs.output}}",
+                            },
                         },
                         "name": "node3",
-                        "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
+                        "outputs": {
+                            "output": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output}}",
+                            }
+                        },
                         "task": "copy_data",
                         "type": "data_transfer",
                     },
@@ -632,23 +740,17 @@ class TestDSLPipelineWithSpecificNodes:
         query_source_snowflake = "SELECT * FROM my_table"
         connection_target_azuresql = "azureml:my_azuresql_connection"
         outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
-        source = {"type": "database", "connection": "azureml:my_snowflake_connection", "query": query_source_snowflake}
-        data_transfer_job = DataTransferImportJob(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-            compute="adf_compute1",
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
+        source = {
+            "connection": "azureml:my_snowflake_connection",
+            "query": query_source_snowflake,
+        }
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_database_function")
         def pipeline(query_source_snowflake, connection_target_azuresql):
-            node1 = data_transfer_job_func(source=Database(**source))
-            node2 = import_data(source=Database(**source), outputs=outputs)
+            node1 = import_data(source=Database(**source), outputs=outputs)
 
             source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
-            node3 = data_transfer_job_func(source=source_snowflake)
-            node4 = import_data(source=source_snowflake, outputs=outputs)
+            node2 = import_data(source=source_snowflake, outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
@@ -663,7 +765,10 @@ class TestDSLPipelineWithSpecificNodes:
                         "job_input_type": "literal",
                         "value": "azureml:my_azuresql_connection",
                     },
-                    "query_source_snowflake": {"job_input_type": "literal", "value": "SELECT * FROM " "my_table"},
+                    "query_source_snowflake": {
+                        "job_input_type": "literal",
+                        "value": "SELECT * FROM " "my_table",
+                    },
                 },
                 "is_archived": False,
                 "job_type": "Pipeline",
@@ -671,6 +776,7 @@ class TestDSLPipelineWithSpecificNodes:
                     "node1": {
                         "_source": "BUILTIN",
                         "name": "node1",
+                        "outputs": {"sink": {"job_output_type": "mltable"}},
                         "source": {
                             "connection": "azureml:my_snowflake_connection",
                             "query": "SELECT * FROM my_table",
@@ -682,29 +788,6 @@ class TestDSLPipelineWithSpecificNodes:
                     "node2": {
                         "_source": "BUILTIN",
                         "name": "node2",
-                        "outputs": {"sink": {"job_output_type": "mltable"}},
-                        "source": {
-                            "connection": "azureml:my_snowflake_connection",
-                            "query": "SELECT * FROM my_table",
-                            "type": "database",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
-                    "node3": {
-                        "_source": "BUILTIN",
-                        "name": "node3",
-                        "source": {
-                            "connection": "${{parent.inputs.connection_target_azuresql}}",
-                            "query": "${{parent.inputs.query_source_snowflake}}",
-                            "type": "database",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
-                    "node4": {
-                        "_source": "BUILTIN",
-                        "name": "node4",
                         "outputs": {"sink": {"job_output_type": "mltable"}},
                         "source": {
                             "connection": "${{parent.inputs.connection_target_azuresql}}",
@@ -748,20 +831,12 @@ class TestDSLPipelineWithSpecificNodes:
         ]
         outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
         source = {
-            "type": "database",
             "stored_procedure": stored_procedure,
             "stored_procedure_params": stored_procedure_params,
         }
-        data_transfer_job = DataTransferImportJob(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_stored_database_function")
         def pipeline():
-            node1 = data_transfer_job_func(source=Database(**source))
             node2 = import_data(source=Database(**source), outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
@@ -775,20 +850,6 @@ class TestDSLPipelineWithSpecificNodes:
                 "is_archived": False,
                 "job_type": "Pipeline",
                 "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "name": "node1",
-                        "source": {
-                            "stored_procedure": "SelectEmployeeByJobAndDepartment",
-                            "stored_procedure_params": [
-                                {"name": "job", "type": "String", "value": "Engineer"},
-                                {"name": "department", "type": "String", "value": "Engineering"},
-                            ],
-                            "type": "database",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
                     "node2": {
                         "_source": "BUILTIN",
                         "name": "node2",
@@ -797,7 +858,11 @@ class TestDSLPipelineWithSpecificNodes:
                             "stored_procedure": "SelectEmployeeByJobAndDepartment",
                             "stored_procedure_params": [
                                 {"name": "job", "type": "String", "value": "Engineer"},
-                                {"name": "department", "type": "String", "value": "Engineering"},
+                                {
+                                    "name": "department",
+                                    "type": "String",
+                                    "value": "Engineering",
+                                },
                             ],
                             "type": "database",
                         },
@@ -833,22 +898,19 @@ class TestDSLPipelineWithSpecificNodes:
     def test_pipeline_with_data_transfer_import_file_system_function(self):
         path_source_s3 = "s3://my_bucket/my_folder"
         connection_target = "azureml:my_s3_connection"
-        outputs = {"sink": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/managed/paths/some_path")}
-        source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
-        data_transfer_job = DataTransferImportJob(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
+        outputs = {
+            "sink": Output(
+                type=AssetTypes.URI_FOLDER,
+                path="azureml://datastores/managed/paths/some_path",
+            )
+        }
+        source = {"connection": connection_target, "path": path_source_s3}
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_file_system_function")
         def pipeline(path_source_s3, connection_target):
-            node1 = data_transfer_job_func(source=FileSystem(**source))
             node2 = import_data(source=FileSystem(**source), outputs=outputs)
 
             source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
-            node3 = data_transfer_job_func(source=source_snowflake)
             node4 = import_data(source=source_snowflake, outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
@@ -860,23 +922,18 @@ class TestDSLPipelineWithSpecificNodes:
             "properties": {
                 "display_name": "pipeline",
                 "inputs": {
-                    "connection_target": {"job_input_type": "literal", "value": "azureml:my_s3_connection"},
-                    "path_source_s3": {"job_input_type": "literal", "value": "s3://my_bucket/my_folder"},
+                    "connection_target": {
+                        "job_input_type": "literal",
+                        "value": "azureml:my_s3_connection",
+                    },
+                    "path_source_s3": {
+                        "job_input_type": "literal",
+                        "value": "s3://my_bucket/my_folder",
+                    },
                 },
                 "is_archived": False,
                 "job_type": "Pipeline",
                 "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "name": "node1",
-                        "source": {
-                            "connection": "azureml:my_s3_connection",
-                            "path": "s3://my_bucket/my_folder",
-                            "type": "file_system",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
                     "node2": {
                         "_source": "BUILTIN",
                         "name": "node2",
@@ -889,17 +946,6 @@ class TestDSLPipelineWithSpecificNodes:
                         "source": {
                             "connection": "azureml:my_s3_connection",
                             "path": "s3://my_bucket/my_folder",
-                            "type": "file_system",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
-                    "node3": {
-                        "_source": "BUILTIN",
-                        "name": "node3",
-                        "source": {
-                            "connection": "${{parent.inputs.connection_target}}",
-                            "path": "${{parent.inputs.path_source_s3}}",
                             "type": "file_system",
                         },
                         "task": "import_data",
@@ -951,25 +997,22 @@ class TestDSLPipelineWithSpecificNodes:
     def test_pipeline_with_data_transfer_export_database_function(self):
         connection_target_azuresql = "azureml:my_azuresql_connection"
         table_name = "merged_table"
-        cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
-        inputs = {"source": cosmos_folder}
-        sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
-        data_transfer_job = DataTransferExportJob(
-            inputs=inputs,
-            sink=sink,
-            task=DataTransferTaskType.EXPORT_DATA,
+        cosmos_folder = Input(
+            type=AssetTypes.URI_FILE,
+            path="azureml://datastores/my_cosmos/paths/source_cosmos",
         )
-        data_transfer_job_func = to_component(job=data_transfer_job)
+        inputs = {"source": cosmos_folder}
+        sink = {
+            "type": "database",
+            "connection": connection_target_azuresql,
+            "table_name": table_name,
+        }
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_function")
         def pipeline(table_name, connection_target_azuresql):
-            node1 = data_transfer_job_func(source=cosmos_folder)
-            node1.sink = sink
             node2 = export_data(inputs={"source": cosmos_folder}, sink=sink)
 
             source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
-            node3 = data_transfer_job_func(source=cosmos_folder)
-            node3.sink = source_snowflake
             node4 = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
@@ -985,28 +1028,14 @@ class TestDSLPipelineWithSpecificNodes:
                         "job_input_type": "literal",
                         "value": "azureml:my_azuresql_connection",
                     },
-                    "table_name": {"job_input_type": "literal", "value": "merged_table"},
+                    "table_name": {
+                        "job_input_type": "literal",
+                        "value": "merged_table",
+                    },
                 },
                 "is_archived": False,
                 "job_type": "Pipeline",
                 "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {
-                                "job_input_type": "uri_file",
-                                "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                            }
-                        },
-                        "name": "node1",
-                        "sink": {
-                            "connection": "azureml:my_azuresql_connection",
-                            "table_name": "merged_table",
-                            "type": "database",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
                     "node2": {
                         "_source": "BUILTIN",
                         "inputs": {
@@ -1019,23 +1048,6 @@ class TestDSLPipelineWithSpecificNodes:
                         "sink": {
                             "connection": "azureml:my_azuresql_connection",
                             "table_name": "merged_table",
-                            "type": "database",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                    "node3": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {
-                                "job_input_type": "uri_file",
-                                "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                            }
-                        },
-                        "name": "node3",
-                        "sink": {
-                            "connection": "${{parent.inputs.connection_target_azuresql}}",
-                            "table_name": "${{parent.inputs.table_name}}",
                             "type": "database",
                         },
                         "task": "export_data",
@@ -1054,132 +1066,6 @@ class TestDSLPipelineWithSpecificNodes:
                             "connection": "${{parent.inputs.connection_target_azuresql}}",
                             "table_name": "${{parent.inputs.table_name}}",
                             "type": "database",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                },
-                "outputs": {},
-                "properties": {},
-                "settings": {"_source": "DSL"},
-                "tags": {},
-            }
-        }
-        for key, _ in pipeline1.jobs.items():
-            data_transfer_import_node = pipeline1.jobs[key]
-            data_transfer_import_node_dict = data_transfer_import_node._to_dict()
-
-            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
-            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(
-                data_transfer_import_node_rest_obj
-            )
-
-            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
-
-            # data_transfer_import_node_dict will dump to component dict according to schema, but
-            # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
-            omit_fields = ["component"]
-
-            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == pydash.omit(
-                data_transfer_import_node_dict_from_rest, *omit_fields
-            )
-
-    def test_pipeline_with_data_transfer_export_file_system_function(self):
-        path_source_s3 = "s3://my_bucket/my_folder"
-        connection_target = "azureml:my_s3_connection"
-
-        my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
-        inputs = {"source": my_cosmos_folder}
-        sink = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
-        data_transfer_job = DataTransferExportJob(
-            inputs=inputs,
-            sink=sink,
-            task=DataTransferTaskType.EXPORT_DATA,
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_file_system_function")
-        def pipeline(path_source_s3, connection_target, cosmos_folder, my_cosmos_folder):
-            node1 = data_transfer_job_func(source=my_cosmos_folder)
-            node1.sink = sink
-            node2 = export_data(inputs={"source": my_cosmos_folder}, sink=sink)
-
-            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
-            node3 = data_transfer_job_func(source=cosmos_folder)
-            node3.sink = source_snowflake
-            node4 = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)
-
-        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
-
-        pipeline1 = pipeline(path_source_s3, connection_target, my_cosmos_folder)
-        pipeline_job1 = pipeline1._to_rest_object().as_dict()
-        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {
-            "properties": {
-                "display_name": "pipeline",
-                "inputs": {
-                    "connection_target": {"job_input_type": "literal", "value": "azureml:my_s3_connection"},
-                    "path_source_s3": {"job_input_type": "literal", "value": "s3://my_bucket/my_folder"},
-                    "cosmos_folder": {
-                        "job_input_type": "uri_folder",
-                        "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                    },
-                },
-                "is_archived": False,
-                "job_type": "Pipeline",
-                "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {"job_input_type": "literal", "value": "${{parent.inputs.my_cosmos_folder}}"}
-                        },
-                        "name": "node1",
-                        "sink": {
-                            "connection": "azureml:my_s3_connection",
-                            "path": "s3://my_bucket/my_folder",
-                            "type": "file_system",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                    "node2": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {"job_input_type": "literal", "value": "${{parent.inputs.my_cosmos_folder}}"}
-                        },
-                        "name": "node2",
-                        "sink": {
-                            "connection": "azureml:my_s3_connection",
-                            "path": "s3://my_bucket/my_folder",
-                            "type": "file_system",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                    "node3": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}
-                        },
-                        "name": "node3",
-                        "sink": {
-                            "connection": "${{parent.inputs.connection_target}}",
-                            "path": "${{parent.inputs.path_source_s3}}",
-                            "type": "file_system",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                    "node4": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}
-                        },
-                        "name": "node4",
-                        "sink": {
-                            "connection": "${{parent.inputs.connection_target}}",
-                            "path": "${{parent.inputs.path_source_s3}}",
-                            "type": "file_system",
                         },
                         "task": "export_data",
                         "type": "data_transfer",
@@ -1215,7 +1101,7 @@ class TestDSLPipelineWithSpecificNodes:
         yaml_file = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_component.yml"
         component_func = load_component(yaml_file)
 
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/dataset/shakespeare.txt",
             type=AssetTypes.URI_FILE,
@@ -1318,14 +1204,28 @@ class TestDSLPipelineWithSpecificNodes:
                             "spark.executor.instances": 1,
                             "spark.executor.memory": "2g",
                         },
-                        "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                        "entry": {
+                            "file": "sampleword.py",
+                            "spark_job_entry_type": "SparkJobPythonEntry",
+                        },
                         "identity": {"identity_type": "Managed"},
                         "inputs": {
-                            "input1": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
-                            "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                            "input1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.iris_data}}",
+                            },
+                            "sample_rate": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.sample_rate}}",
+                            },
                         },
                         "name": "node1",
-                        "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output1}}"}},
+                        "outputs": {
+                            "output1": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output1}}",
+                            }
+                        },
                         "type": "spark",
                     },
                     "node2": {
@@ -1342,14 +1242,28 @@ class TestDSLPipelineWithSpecificNodes:
                             "spark.executor.instances": 1,
                             "spark.executor.memory": "1g",
                         },
-                        "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                        "entry": {
+                            "file": "sampleword.py",
+                            "spark_job_entry_type": "SparkJobPythonEntry",
+                        },
                         "identity": {"identity_type": "Managed"},
                         "inputs": {
-                            "input1": {"job_input_type": "literal", "value": "${{parent.jobs.node1.outputs.output1}}"},
-                            "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                            "input1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.jobs.node1.outputs.output1}}",
+                            },
+                            "sample_rate": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.sample_rate}}",
+                            },
                         },
                         "name": "node2",
-                        "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output2}}"}},
+                        "outputs": {
+                            "output1": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output2}}",
+                            }
+                        },
                         "type": "spark",
                     },
                     "node3": {
@@ -1366,21 +1280,41 @@ class TestDSLPipelineWithSpecificNodes:
                             "spark.executor.instances": 1,
                             "spark.executor.memory": "1g",
                         },
-                        "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                        "entry": {
+                            "file": "sampleword.py",
+                            "spark_job_entry_type": "SparkJobPythonEntry",
+                        },
                         "identity": {"identity_type": "Managed"},
                         "inputs": {
-                            "input1": {"job_input_type": "literal", "value": "${{parent.jobs.node2.outputs.output1}}"},
-                            "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                            "input1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.jobs.node2.outputs.output1}}",
+                            },
+                            "sample_rate": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.sample_rate}}",
+                            },
                         },
                         "name": "node3",
-                        "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output3}}"}},
+                        "outputs": {
+                            "output1": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output3}}",
+                            }
+                        },
                         "type": "spark",
                     },
                 },
                 "outputs": {
-                    "pipeline_output1": {"job_output_type": "uri_file", "mode": "Direct"},
+                    "pipeline_output1": {
+                        "job_output_type": "uri_file",
+                        "mode": "Direct",
+                    },
                     "pipeline_output2": {"job_output_type": "uri_folder"},
-                    "pipeline_output3": {"job_output_type": "uri_folder", "mode": "Direct"},
+                    "pipeline_output3": {
+                        "job_output_type": "uri_folder",
+                        "mode": "Direct",
+                    },
                 },
                 "properties": {},
                 "settings": {},
@@ -1393,7 +1327,7 @@ class TestDSLPipelineWithSpecificNodes:
         yaml_file = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_component.yml"
         component_func = load_component(yaml_file)
 
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/dataset/shakespeare.txt",
             type=AssetTypes.URI_FILE,
@@ -1500,14 +1434,28 @@ class TestDSLPipelineWithSpecificNodes:
                             "spark.executor.instances": 1,
                             "spark.executor.memory": "2g",
                         },
-                        "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                        "entry": {
+                            "file": "sampleword.py",
+                            "spark_job_entry_type": "SparkJobPythonEntry",
+                        },
                         "identity": {"identity_type": "Managed"},
                         "inputs": {
-                            "input1": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
-                            "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                            "input1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.iris_data}}",
+                            },
+                            "sample_rate": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.sample_rate}}",
+                            },
                         },
                         "name": "node1",
-                        "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output1}}"}},
+                        "outputs": {
+                            "output1": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output1}}",
+                            }
+                        },
                         "type": "spark",
                     },
                     "node2": {
@@ -1524,14 +1472,28 @@ class TestDSLPipelineWithSpecificNodes:
                             "spark.executor.instances": 1,
                             "spark.executor.memory": "1g",
                         },
-                        "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                        "entry": {
+                            "file": "sampleword.py",
+                            "spark_job_entry_type": "SparkJobPythonEntry",
+                        },
                         "identity": {"identity_type": "Managed"},
                         "inputs": {
-                            "input1": {"job_input_type": "literal", "value": "${{parent.jobs.node1.outputs.output1}}"},
-                            "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                            "input1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.jobs.node1.outputs.output1}}",
+                            },
+                            "sample_rate": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.sample_rate}}",
+                            },
                         },
                         "name": "node2",
-                        "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output2}}"}},
+                        "outputs": {
+                            "output1": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output2}}",
+                            }
+                        },
                         "type": "spark",
                     },
                     "node3": {
@@ -1548,21 +1510,41 @@ class TestDSLPipelineWithSpecificNodes:
                             "spark.executor.instances": 1,
                             "spark.executor.memory": "1g",
                         },
-                        "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                        "entry": {
+                            "file": "sampleword.py",
+                            "spark_job_entry_type": "SparkJobPythonEntry",
+                        },
                         "identity": {"identity_type": "Managed"},
                         "inputs": {
-                            "input1": {"job_input_type": "literal", "value": "${{parent.jobs.node2.outputs.output1}}"},
-                            "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                            "input1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.jobs.node2.outputs.output1}}",
+                            },
+                            "sample_rate": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.sample_rate}}",
+                            },
                         },
                         "name": "node3",
-                        "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output3}}"}},
+                        "outputs": {
+                            "output1": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output3}}",
+                            }
+                        },
                         "type": "spark",
                     },
                 },
                 "outputs": {
-                    "pipeline_output1": {"job_output_type": "uri_file", "mode": "Direct"},
+                    "pipeline_output1": {
+                        "job_output_type": "uri_file",
+                        "mode": "Direct",
+                    },
                     "pipeline_output2": {"job_output_type": "uri_folder"},
-                    "pipeline_output3": {"job_output_type": "uri_folder", "mode": "Direct"},
+                    "pipeline_output3": {
+                        "job_output_type": "uri_folder",
+                        "mode": "Direct",
+                    },
                 },
                 "properties": {},
                 "settings": {},
@@ -1571,7 +1553,7 @@ class TestDSLPipelineWithSpecificNodes:
         }
 
     def test_pipeline_with_spark_job_dynamic_allocation_disabled(self, client):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
             type=AssetTypes.URI_FILE,
@@ -1614,12 +1596,15 @@ class TestDSLPipelineWithSpecificNodes:
             }
 
         pipeline1 = pipeline(iris_data)
-        with pytest.raises(ValidationException) as ve:
-            pipeline1._to_rest_object().as_dict()
-            assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
+        result = pipeline1._validate()
+        assert (
+            "jobs.node" in result.error_messages
+            and result.error_messages["jobs.node"]
+            == "Should not specify min or max executors when dynamic allocation is disabled."
+        )
 
     def test_pipeline_with_spark_job(self):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         iris_data = Input(
             path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/dataset/shakespeare.txt",
             type=AssetTypes.URI_FILE,
@@ -1710,14 +1695,28 @@ class TestDSLPipelineWithSpecificNodes:
                             "spark.executor.instances": 1,
                             "spark.executor.memory": "1g",
                         },
-                        "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                        "entry": {
+                            "file": "sampleword.py",
+                            "spark_job_entry_type": "SparkJobPythonEntry",
+                        },
                         "identity": {"identity_type": "Managed"},
                         "inputs": {
-                            "input1": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
-                            "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                            "input1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.iris_data}}",
+                            },
+                            "sample_rate": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.sample_rate}}",
+                            },
                         },
                         "name": "spark_node",
-                        "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output1}}"}},
+                        "outputs": {
+                            "output1": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output1}}",
+                            }
+                        },
                         "type": "spark",
                     }
                 },
@@ -1742,12 +1741,16 @@ class TestDSLPipelineWithSpecificNodes:
             "folder1": folder1,
             "folder2": folder2,
         }
-        outputs = {"output": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_blob/paths/merged_blob")}
+        outputs = {
+            "output": Output(
+                type=AssetTypes.URI_FOLDER,
+                path="azureml://datastores/my_blob/paths/merged_blob",
+            )
+        }
 
         data_transfer_job = DataTransferCopyJob(
             inputs=inputs,
             outputs=outputs,
-            task=DataTransferTaskType.COPY_DATA,
             data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
@@ -1767,7 +1770,10 @@ class TestDSLPipelineWithSpecificNodes:
 
         pipeline1_dict = pipeline1._to_dict()
         assert pipeline1_dict == pipeline_regenerated_from_rest._to_dict()
-        omit_fields = ["properties.jobs.data_transfer_node.componentId", "properties.experiment_name"]
+        omit_fields = [
+            "properties.jobs.data_transfer_node.componentId",
+            "properties.experiment_name",
+        ]
         pipeline_job1 = pydash.omit(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             "properties": {
@@ -1789,11 +1795,22 @@ class TestDSLPipelineWithSpecificNodes:
                         "_source": "CLASS",
                         "data_copy_mode": "merge_with_overwrite",
                         "inputs": {
-                            "folder1": {"job_input_type": "literal", "value": "${{parent.inputs.folder1}}"},
-                            "folder2": {"job_input_type": "literal", "value": "${{parent.inputs.folder2}}"},
+                            "folder1": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.folder1}}",
+                            },
+                            "folder2": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.folder2}}",
+                            },
                         },
                         "name": "data_transfer_node",
-                        "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
+                        "outputs": {
+                            "output": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output}}",
+                            }
+                        },
                         "task": "copy_data",
                         "type": "data_transfer",
                     }
@@ -1805,439 +1822,15 @@ class TestDSLPipelineWithSpecificNodes:
             }
         }
 
-    def test_pipeline_with_data_transfer_import_database_job(self):
-        query_source_snowflake = "SELECT * FROM my_table"
-        connection_target_azuresql = "azureml:my_azuresql_connection"
-        # outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
-        source = {"type": "database", "connection": "azureml:my_snowflake_connection", "query": query_source_snowflake}
-        data_transfer_job = DataTransferImportJob(
-            source=source,
-            task=DataTransferTaskType.IMPORT_DATA,
-            compute="adf_compute1",
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_database_job")
-        def pipeline(query_source_snowflake, connection_target_azuresql):
-            node1 = data_transfer_job_func(source=Database(**source))
-            source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
-            node2 = data_transfer_job_func(source=source_snowflake)
-
-            return {
-                "pipeline_output": node2.outputs.sink,
-            }
-
-        pipeline1 = pipeline(query_source_snowflake, connection_target_azuresql)
-        pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
-
-        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
-
-        # pipeline1_dict will dump to component dict according to schema, but
-        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
-        omit_fields = ["jobs.*.component"]
-        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
-        pipeline_regenerated_from_rest_dict = omit_with_wildcard(
-            pipeline_regenerated_from_rest._to_dict(), *omit_fields
-        )
-
-        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
-
-        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
-        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {
-            "properties": {
-                "display_name": "pipeline",
-                "inputs": {
-                    "connection_target_azuresql": {
-                        "job_input_type": "literal",
-                        "value": "azureml:my_azuresql_connection",
-                    },
-                    "query_source_snowflake": {"job_input_type": "literal", "value": "SELECT * FROM " "my_table"},
-                },
-                "is_archived": False,
-                "job_type": "Pipeline",
-                "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "name": "node1",
-                        "source": {
-                            "connection": "azureml:my_snowflake_connection",
-                            "query": "SELECT * FROM my_table",
-                            "type": "database",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
-                    "node2": {
-                        "_source": "BUILTIN",
-                        "name": "node2",
-                        "outputs": {"sink": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                        "source": {
-                            "connection": "${{parent.inputs.connection_target_azuresql}}",
-                            "query": "${{parent.inputs.query_source_snowflake}}",
-                            "type": "database",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
-                },
-                "outputs": {"pipeline_output": {"job_output_type": "mltable"}},
-                "properties": {},
-                "settings": {"_source": "DSL"},
-                "tags": {},
-            }
-        }
-
-    def test_pipeline_with_data_transfer_import_stored_database_job(self):
-        stored_procedure = "SelectEmployeeByJobAndDepartment"
-        stored_procedure_params = [
-            {"name": "job", "value": "Engineer", "type": "String"},
-            {"name": "department", "value": "Engineering", "type": "String"},
-        ]
-        outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
-        source = {
-            "type": "database",
-            "stored_procedure": stored_procedure,
-            "stored_procedure_params": stored_procedure_params,
-        }
-        data_transfer_job = DataTransferImportJob(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_stored_database_job")
-        def pipeline(query_source_snowflake, connection_target_azuresql):
-            node1 = data_transfer_job_func(source=Database(**source))
-
-            return {
-                "pipeline_output": node1.outputs.sink,
-            }
-
-        pipeline1 = pipeline()
-        pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
-
-        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
-
-        # pipeline1_dict will dump to component dict according to schema, but
-        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
-        omit_fields = ["jobs.*.component"]
-        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
-        pipeline_regenerated_from_rest_dict = omit_with_wildcard(
-            pipeline_regenerated_from_rest._to_dict(), *omit_fields
-        )
-
-        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
-
-        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
-        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {
-            "properties": {
-                "display_name": "pipeline",
-                "inputs": {},
-                "is_archived": False,
-                "job_type": "Pipeline",
-                "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "name": "node1",
-                        "outputs": {"sink": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                        "source": {
-                            "stored_procedure": "SelectEmployeeByJobAndDepartment",
-                            "stored_procedure_params": [
-                                {"name": "job", "type": "String", "value": "Engineer"},
-                                {"name": "department", "type": "String", "value": "Engineering"},
-                            ],
-                            "type": "database",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    }
-                },
-                "outputs": {"pipeline_output": {"job_output_type": "mltable"}},
-                "properties": {},
-                "settings": {"_source": "DSL"},
-                "tags": {},
-            }
-        }
-
-    def test_pipeline_with_data_transfer_export_database_job(self):
-        connection_target_azuresql = "azureml:my_azuresql_connection"
-        table_name = "merged_table"
-        cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
-        inputs = {"source": cosmos_folder}
-        sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
-        data_transfer_job = DataTransferExportJob(
-            inputs=inputs,
-            sink=sink,
-            task=DataTransferTaskType.EXPORT_DATA,
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_job")
-        def pipeline(table_name, connection_target_azuresql):
-            node1 = data_transfer_job_func(source=cosmos_folder)
-            node1.sink = sink
-
-            source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
-            node2 = data_transfer_job_func(source=cosmos_folder)
-            node2.sink = source_snowflake
-
-        pipeline1 = pipeline(table_name, connection_target_azuresql)
-        pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
-
-        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
-
-        # pipeline1_dict will dump to component dict according to schema, but
-        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
-        omit_fields = ["jobs.*.component"]
-        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
-        pipeline_regenerated_from_rest_dict = omit_with_wildcard(
-            pipeline_regenerated_from_rest._to_dict(), *omit_fields
-        )
-
-        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
-
-        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
-        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {
-            "properties": {
-                "display_name": "pipeline",
-                "inputs": {
-                    "connection_target_azuresql": {
-                        "job_input_type": "literal",
-                        "value": "azureml:my_azuresql_connection",
-                    },
-                    "table_name": {"job_input_type": "literal", "value": "merged_table"},
-                },
-                "is_archived": False,
-                "job_type": "Pipeline",
-                "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {
-                                "job_input_type": "uri_file",
-                                "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                            }
-                        },
-                        "name": "node1",
-                        "sink": {
-                            "connection": "azureml:my_azuresql_connection",
-                            "table_name": "merged_table",
-                            "type": "database",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                    "node2": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {
-                                "job_input_type": "uri_file",
-                                "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                            }
-                        },
-                        "name": "node2",
-                        "sink": {
-                            "connection": "${{parent.inputs.connection_target_azuresql}}",
-                            "table_name": "${{parent.inputs.table_name}}",
-                            "type": "database",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                },
-                "outputs": {},
-                "properties": {},
-                "settings": {"_source": "DSL"},
-                "tags": {},
-            }
-        }
-
-    def test_pipeline_with_data_transfer_import_file_system_job(self):
-        path_source_s3 = "s3://my_bucket/my_folder"
-        connection_target = "azureml:my_s3_connection"
-        outputs = {"sink": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/managed/paths/some_path")}
-        source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
-        data_transfer_job = DataTransferImportJob(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_file_system_job")
-        def pipeline(path_source_s3, connection_target):
-            node1 = data_transfer_job_func(source=FileSystem(**source))
-            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
-            node2 = data_transfer_job_func(source=source_snowflake)
-            return {
-                "pipeline_output": node2.outputs.sink,
-            }
-
-        pipeline1 = pipeline(path_source_s3, connection_target)
-        pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
-
-        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
-
-        # pipeline1_dict will dump to component dict according to schema, but
-        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
-        omit_fields = ["jobs.*.component"]
-        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
-        pipeline_regenerated_from_rest_dict = omit_with_wildcard(
-            pipeline_regenerated_from_rest._to_dict(), *omit_fields
-        )
-
-        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
-
-        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
-        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {
-            "properties": {
-                "display_name": "pipeline",
-                "inputs": {
-                    "connection_target": {"job_input_type": "literal", "value": "azureml:my_s3_connection"},
-                    "path_source_s3": {"job_input_type": "literal", "value": "s3://my_bucket/my_folder"},
-                },
-                "is_archived": False,
-                "job_type": "Pipeline",
-                "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "name": "node1",
-                        "source": {
-                            "connection": "azureml:my_s3_connection",
-                            "path": "s3://my_bucket/my_folder",
-                            "type": "file_system",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
-                    "node2": {
-                        "_source": "BUILTIN",
-                        "name": "node2",
-                        "outputs": {"sink": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                        "source": {
-                            "connection": "${{parent.inputs.connection_target}}",
-                            "path": "${{parent.inputs.path_source_s3}}",
-                            "type": "file_system",
-                        },
-                        "task": "import_data",
-                        "type": "data_transfer",
-                    },
-                },
-                "outputs": {"pipeline_output": {"job_output_type": "uri_folder"}},
-                "properties": {},
-                "settings": {"_source": "DSL"},
-                "tags": {},
-            }
-        }
-
-    def test_pipeline_with_data_transfer_export_file_system_job(self):
-        path_source_s3 = "s3://my_bucket/my_folder"
-        connection_target = "azureml:my_s3_connection"
-        my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
-        inputs = {"source": my_cosmos_folder}
-        sink = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
-
-        data_transfer_job = DataTransferExportJob(
-            inputs=inputs,
-            sink=sink,
-            task=DataTransferTaskType.EXPORT_DATA,
-        )
-        data_transfer_job_func = to_component(job=data_transfer_job)
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_file_system_job")
-        def pipeline(path_source_s3, connection_target, cosmos_folder):
-            node1 = data_transfer_job_func(source=my_cosmos_folder)
-            node1.sink = sink
-
-            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
-            node2 = data_transfer_job_func(source=cosmos_folder)
-            node2.sink = source_snowflake
-
-        pipeline1 = pipeline(path_source_s3, connection_target, my_cosmos_folder)
-        pipeline_rest_obj = pipeline1._to_rest_object()
-        pipeline_job1 = pipeline_rest_obj.as_dict()
-
-        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
-
-        # pipeline1_dict will dump to component dict according to schema, but
-        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
-        omit_fields = ["jobs.*.component"]
-        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
-        pipeline_regenerated_from_rest_dict = omit_with_wildcard(
-            pipeline_regenerated_from_rest._to_dict(), *omit_fields
-        )
-
-        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
-
-        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
-        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {
-            "properties": {
-                "display_name": "pipeline",
-                "inputs": {
-                    "connection_target": {"job_input_type": "literal", "value": "azureml:my_s3_connection"},
-                    "cosmos_folder": {
-                        "job_input_type": "uri_folder",
-                        "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                    },
-                    "path_source_s3": {"job_input_type": "literal", "value": "s3://my_bucket/my_folder"},
-                },
-                "is_archived": False,
-                "job_type": "Pipeline",
-                "jobs": {
-                    "node1": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {
-                                "job_input_type": "uri_folder",
-                                "uri": "azureml://datastores/my_cosmos/paths/source_cosmos",
-                            }
-                        },
-                        "name": "node1",
-                        "sink": {
-                            "connection": "azureml:my_s3_connection",
-                            "path": "s3://my_bucket/my_folder",
-                            "type": "file_system",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                    "node2": {
-                        "_source": "BUILTIN",
-                        "inputs": {
-                            "source": {"job_input_type": "literal", "value": "${{parent.inputs.cosmos_folder}}"}
-                        },
-                        "name": "node2",
-                        "sink": {
-                            "connection": "${{parent.inputs.connection_target}}",
-                            "path": "${{parent.inputs.path_source_s3}}",
-                            "type": "file_system",
-                        },
-                        "task": "export_data",
-                        "type": "data_transfer",
-                    },
-                },
-                "outputs": {},
-                "properties": {},
-                "settings": {"_source": "DSL"},
-                "tags": {},
-            }
-        }
-
     def test_pipeline_with_parallel_job(self):
         # command job with dict distribution
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         inputs = {
-            "job_data_path": Input(type=AssetTypes.MLTABLE, path="./tests/test_configs/data", mode="eval_mount"),
+            "job_data_path": Input(
+                type=AssetTypes.MLTABLE,
+                path="./tests/test_configs/data",
+                mode="eval_mount",
+            ),
         }
         outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
         expected_resources = {"instance_count": 2}
@@ -2307,7 +1900,13 @@ class TestDSLPipelineWithSpecificNodes:
             "properties": {
                 "display_name": "pipeline",
                 "experiment_name": "test_pipeline_with_parallel_function",
-                "inputs": {"job_data_path": {"job_input_type": "mltable", "mode": "EvalMount", "uri": "/a/path/on/ds"}},
+                "inputs": {
+                    "job_data_path": {
+                        "job_input_type": "mltable",
+                        "mode": "EvalMount",
+                        "uri": "/a/path/on/ds",
+                    }
+                },
                 "is_archived": False,
                 "job_type": "Pipeline",
                 "jobs": {
@@ -2315,14 +1914,20 @@ class TestDSLPipelineWithSpecificNodes:
                         "_source": "CLASS",
                         "input_data": "${{inputs.job_data_path}}",
                         "inputs": {
-                            "job_data_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"}
+                            "job_data_path": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.job_data_path}}",
+                            }
                         },
                         "max_concurrency_per_instance": 1,
                         "mini_batch_error_threshold": 1,
                         "mini_batch_size": 5,
                         "name": "parallel_node",
                         "outputs": {
-                            "job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_job_out}}"}
+                            "job_output_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_job_out}}",
+                            }
                         },
                         "resources": {"instance_count": 2},
                         "task": {
@@ -2330,7 +1935,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/"
                             ),
                             "entry_script": "score.py",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                             "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
@@ -2345,11 +1950,15 @@ class TestDSLPipelineWithSpecificNodes:
         }
 
     def test_pipeline_with_parallel_function_inside(self):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_environment_variables = {"key": "val"}
         expected_resources = {"instance_count": 2}
         inputs = {
-            "job_data_path": Input(type=AssetTypes.MLTABLE, path="./tests/test_configs/data", mode="eval_mount"),
+            "job_data_path": Input(
+                type=AssetTypes.MLTABLE,
+                path="./tests/test_configs/data",
+                mode="eval_mount",
+            ),
         }
         input_data = "${{inputs.job_data_path}}"
         outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
@@ -2407,7 +2016,13 @@ class TestDSLPipelineWithSpecificNodes:
             "properties": {
                 "display_name": "pipeline",
                 "experiment_name": "test_pipeline_with_parallel_function_inside",
-                "inputs": {"path": {"job_input_type": "mltable", "mode": "EvalMount", "uri": "/a/path/on/ds"}},
+                "inputs": {
+                    "path": {
+                        "job_input_type": "mltable",
+                        "mode": "EvalMount",
+                        "uri": "/a/path/on/ds",
+                    }
+                },
                 "is_archived": False,
                 "job_type": "Pipeline",
                 "jobs": {
@@ -2417,14 +2032,22 @@ class TestDSLPipelineWithSpecificNodes:
                         "environment_variables": {"key": "val"},
                         "error_threshold": 1,
                         "input_data": "${{inputs.job_data_path}}",
-                        "inputs": {"job_data_path": {"job_input_type": "literal", "value": "${{parent.inputs.path}}"}},
+                        "inputs": {
+                            "job_data_path": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.path}}",
+                            }
+                        },
                         "logging_level": "DEBUG",
                         "max_concurrency_per_instance": 1,
                         "mini_batch_error_threshold": 1,
                         "mini_batch_size": 5,
                         "name": "node1",
                         "outputs": {
-                            "job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output1}}"}
+                            "job_output_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output1}}",
+                            }
                         },
                         "resources": {"instance_count": 2},
                         "task": {
@@ -2432,7 +2055,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/"
                             ),
                             "entry_script": "score.py",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                             "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
@@ -2445,7 +2068,11 @@ class TestDSLPipelineWithSpecificNodes:
                         "error_threshold": 1,
                         "input_data": "${{inputs.job_data_path}}",
                         "inputs": {
-                            "job_data_path": {"job_input_type": "mltable", "mode": "EvalMount", "uri": "new_path"}
+                            "job_data_path": {
+                                "job_input_type": "mltable",
+                                "mode": "EvalMount",
+                                "uri": "new_path",
+                            }
                         },
                         "logging_level": "DEBUG",
                         "max_concurrency_per_instance": 1,
@@ -2453,7 +2080,10 @@ class TestDSLPipelineWithSpecificNodes:
                         "mini_batch_size": 5,
                         "name": "node2",
                         "outputs": {
-                            "job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output2}}"}
+                            "job_output_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output2}}",
+                            }
                         },
                         "resources": {"instance_count": 2},
                         "task": {
@@ -2461,7 +2091,7 @@ class TestDSLPipelineWithSpecificNodes:
                                 "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/"
                             ),
                             "entry_script": "score.py",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                             "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                             "type": "run_function",
                         },
@@ -2469,8 +2099,14 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                 },
                 "outputs": {
-                    "pipeline_output1": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"},
-                    "pipeline_output2": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"},
+                    "pipeline_output1": {
+                        "job_output_type": "uri_folder",
+                        "mode": "ReadWriteMount",
+                    },
+                    "pipeline_output2": {
+                        "job_output_type": "uri_folder",
+                        "mode": "ReadWriteMount",
+                    },
                 },
                 "properties": {},
                 "settings": {"_source": "DSL"},
@@ -2479,7 +2115,7 @@ class TestDSLPipelineWithSpecificNodes:
         }
 
     def test_pipeline_with_command_function_inside(self):
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
@@ -2535,15 +2171,27 @@ class TestDSLPipelineWithSpecificNodes:
                     "node1": {
                         "_source": "BUILDER",
                         "display_name": "my-evaluate-job",
-                        "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
+                        "distribution": {
+                            "distribution_type": "PyTorch",
+                            "process_count_per_instance": 2,
+                        },
                         "environment_variables": {"key": "val"},
                         "inputs": {
-                            "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.number}}"},
-                            "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.path}}"},
+                            "component_in_number": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.number}}",
+                            },
+                            "component_in_path": {
+                                "job_input_type": "literal",
+                                "value": "${{parent.inputs.path}}",
+                            },
                         },
                         "name": "node1",
                         "outputs": {
-                            "component_out_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output1}}"}
+                            "component_out_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output1}}",
+                            }
                         },
                         "resources": {"instance_count": 2},
                         "type": "command",
@@ -2551,23 +2199,41 @@ class TestDSLPipelineWithSpecificNodes:
                     "node2": {
                         "_source": "BUILDER",
                         "display_name": "my-evaluate-job",
-                        "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
+                        "distribution": {
+                            "distribution_type": "PyTorch",
+                            "process_count_per_instance": 2,
+                        },
                         "environment_variables": {"key": "val"},
                         "inputs": {
-                            "component_in_number": {"job_input_type": "literal", "value": "1"},
-                            "component_in_path": {"job_input_type": "uri_folder", "uri": "new_path"},
+                            "component_in_number": {
+                                "job_input_type": "literal",
+                                "value": "1",
+                            },
+                            "component_in_path": {
+                                "job_input_type": "uri_folder",
+                                "uri": "new_path",
+                            },
                         },
                         "name": "node2",
                         "outputs": {
-                            "component_out_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output2}}"}
+                            "component_out_path": {
+                                "type": "literal",
+                                "value": "${{parent.outputs.pipeline_output2}}",
+                            }
                         },
                         "resources": {"instance_count": 2},
                         "type": "command",
                     },
                 },
                 "outputs": {
-                    "pipeline_output1": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"},
-                    "pipeline_output2": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"},
+                    "pipeline_output1": {
+                        "job_output_type": "mlflow_model",
+                        "mode": "ReadWriteMount",
+                    },
+                    "pipeline_output2": {
+                        "job_output_type": "mlflow_model",
+                        "mode": "ReadWriteMount",
+                    },
                 },
                 "properties": {},
                 "settings": {"_source": "DSL"},
@@ -2626,7 +2292,10 @@ class TestDSLPipelineWithSpecificNodes:
                     "_source": "YAML.COMPONENT",
                     "input_data": "${{inputs.job_data_path}}",
                     "inputs": {
-                        "job_data_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"}
+                        "job_data_path": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.job_data_path}}",
+                        }
                     },
                     "max_concurrency_per_instance": 1,
                     "mini_batch_error_threshold": 1,
@@ -2636,7 +2305,7 @@ class TestDSLPipelineWithSpecificNodes:
                     "task": {
                         "code": parse_local_path("./src", batch_inference1.base_path),
                         "entry_script": "score.py",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "type": "run_function",
                     },
@@ -2656,12 +2325,17 @@ class TestDSLPipelineWithSpecificNodes:
                     "mini_batch_error_threshold": 1,
                     "mini_batch_size": 1,
                     "name": "batch_inference_node2",
-                    "outputs": {"job_output_path": {"type": "literal", "value": "${{parent.outputs.job_out_data}}"}},
+                    "outputs": {
+                        "job_output_path": {
+                            "type": "literal",
+                            "value": "${{parent.outputs.job_out_data}}",
+                        }
+                    },
                     "resources": {"instance_count": 2},
                     "task": {
                         "code": parse_local_path("./src", batch_inference2.base_path),
                         "entry_script": "score.py",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                        "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "type": "run_function",
                     },
@@ -2690,7 +2364,10 @@ class TestDSLPipelineWithSpecificNodes:
         # create ClassificationJob with classification func inside pipeline is also supported
         @dsl.pipeline(name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster")
         def train_with_automl_in_pipeline(
-            main_data_input, target_column_name_input: str, max_total_trials_input: int, validation_data_size: float
+            main_data_input,
+            target_column_name_input: str,
+            max_total_trials_input: int,
+            validation_data_size: float,
         ):
             automl_classif_job = classification(
                 training_data=main_data_input,
@@ -2717,7 +2394,11 @@ class TestDSLPipelineWithSpecificNodes:
 
         pipeline_dict1 = pipeline1._to_rest_object().as_dict()
         pipeline_dict1 = pydash.omit(
-            pipeline_dict1["properties"], ["jobs.automl_classif_job.display_name", "jobs.automl_classif_job.properties"]
+            pipeline_dict1["properties"],
+            [
+                "jobs.automl_classif_job.display_name",
+                "jobs.automl_classif_job.properties",
+            ],
         )
 
         expected_dict = {
@@ -2725,7 +2406,10 @@ class TestDSLPipelineWithSpecificNodes:
             "inputs": {
                 "main_data_input": {"job_input_type": "mltable", "uri": "fake_path"},
                 "max_total_trials_input": {"job_input_type": "literal", "value": "10"},
-                "target_column_name_input": {"job_input_type": "literal", "value": "target"},
+                "target_column_name_input": {
+                    "job_input_type": "literal",
+                    "value": "target",
+                },
                 "validation_data_size": {"job_input_type": "literal", "value": "0.2"},
             },
             "is_archived": False,
@@ -2744,7 +2428,10 @@ class TestDSLPipelineWithSpecificNodes:
                     "tags": {},
                     "target_column_name": "${{parent.inputs.target_column_name_input}}",
                     "task": "classification",
-                    "training": {"enable_model_explainability": True, "enable_onnx_compatible_models": True},
+                    "training": {
+                        "enable_model_explainability": True,
+                        "enable_onnx_compatible_models": True,
+                    },
                     "training_data": "${{parent.inputs.main_data_input}}",
                     "type": "automl",
                 }
@@ -2759,7 +2446,10 @@ class TestDSLPipelineWithSpecificNodes:
         # create ClassificationJob inside pipeline is NOT supported
         @dsl.pipeline(name="train_with_automl_in_pipeline", default_compute_target="cpu-cluster")
         def train_with_automl_in_pipeline(
-            main_data_input, target_column_name_input: str, max_total_trials_input: int, validation_data_size: float
+            main_data_input,
+            target_column_name_input: str,
+            max_total_trials_input: int,
+            validation_data_size: float,
         ):
             automl_classif_job = ClassificationJob(
                 primary_metric="accuracy",
@@ -2781,7 +2471,10 @@ class TestDSLPipelineWithSpecificNodes:
 
         @dsl.pipeline(name="train_with_automl_in_pipeline", force_rerun=False)
         def train_with_automl_in_pipeline(component_in_number, component_in_path, target_column_name_input: str):
-            node1 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            node1 = component_func1(
+                component_in_number=component_in_number,
+                component_in_path=component_in_path,
+            )
 
             node2 = classification(
                 training_data=node1.outputs.component_out_path,
@@ -2813,7 +2506,10 @@ class TestDSLPipelineWithSpecificNodes:
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
                 "component_in_path": {"job_input_type": "mltable", "uri": "fake_path"},
-                "target_column_name_input": {"job_input_type": "literal", "value": "target"},
+                "target_column_name_input": {
+                    "job_input_type": "literal",
+                    "value": "target",
+                },
             },
             "is_archived": False,
             "job_type": "Pipeline",
@@ -2876,13 +2572,19 @@ class TestDSLPipelineWithSpecificNodes:
         pipeline_dict1 = pipeline1._to_rest_object().as_dict()
         pipeline_dict1 = pydash.omit(
             pipeline_dict1["properties"],
-            ["jobs.classification_node.display_name", "jobs.classification_node.properties"],
+            [
+                "jobs.classification_node.display_name",
+                "jobs.classification_node.properties",
+            ],
         )
         expected_dict = {
             "compute_id": "cpu-cluster",
             "display_name": "train_with_automl_in_pipeline",
             "inputs": {
-                "target_column_name_input": {"job_input_type": "literal", "value": "target"},
+                "target_column_name_input": {
+                    "job_input_type": "literal",
+                    "value": "target",
+                },
                 "training_data": {"job_input_type": "mltable", "uri": "fake_path"},
             },
             "is_archived": False,
@@ -2892,7 +2594,10 @@ class TestDSLPipelineWithSpecificNodes:
                     "log_verbosity": "info",
                     "name": "classification_node",
                     "outputs": {
-                        "best_model": {"type": "literal", "value": "${{parent.outputs.pipeline_job_out_best_model}}"}
+                        "best_model": {
+                            "type": "literal",
+                            "value": "${{parent.outputs.pipeline_job_out_best_model}}",
+                        }
                     },
                     "primary_metric": "accuracy",
                     "tags": {},
@@ -2916,12 +2621,18 @@ class TestDSLPipelineWithSpecificNodes:
         pipeline_dict2 = pipeline1._to_rest_object().as_dict()
         pipeline_dict2 = pydash.omit(
             pipeline_dict2["properties"],
-            ["jobs.classification_node.display_name", "jobs.classification_node.properties"],
+            [
+                "jobs.classification_node.display_name",
+                "jobs.classification_node.properties",
+            ],
         )
         expected_dict.update(
             {
                 "outputs": {
-                    "pipeline_job_out_best_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}
+                    "pipeline_job_out_best_model": {
+                        "job_output_type": "mlflow_model",
+                        "mode": "ReadWriteMount",
+                    }
                 },
             }
         )
@@ -2994,7 +2705,7 @@ class TestDSLPipelineWithSpecificNodes:
         command_func = command(
             name="test_component_with_services",
             display_name="command_with_services",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command=('echo "hello world" & sleep 1h'),
             environment_variables={"key": "val"},
             inputs={},
@@ -3078,7 +2789,7 @@ class TestDSLPipelineWithSpecificNodes:
         command_func = command(
             name="test_component_with_services",
             display_name="command_with_services",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command=('echo "hello world" & sleep 1h'),
             environment_variables={"key": "val"},
             inputs={},
@@ -3140,12 +2851,18 @@ class TestDSLPipelineWithSpecificNodes:
 
         @dsl.pipeline
         def sub_pipeline(component_in_number, component_in_path):
-            node1 = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            node1 = component_func1(
+                component_in_number=component_in_number,
+                component_in_path=component_in_path,
+            )
             return {"pipeline_out": node1.outputs.component_out_path}
 
         @dsl.pipeline
         def root_pipeline(component_in_number, component_in_path):
-            node1 = sub_pipeline(component_in_number=component_in_number, component_in_path=component_in_path)
+            node1 = sub_pipeline(
+                component_in_number=component_in_number,
+                component_in_path=component_in_path,
+            )
             sub_pipeline(component_in_number=2, component_in_path=data)
             return {"pipeline_out": node1.outputs.pipeline_out}
 

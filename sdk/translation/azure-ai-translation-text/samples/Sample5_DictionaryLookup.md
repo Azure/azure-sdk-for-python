@@ -4,7 +4,7 @@
 
 To create a new `TranslatorClient`, you will need the service endpoint and credentials of your Translator resource. In this sample, you will use an `TranslatorCredential`, which you can create with an API key and region.
 
-```Python Snippet:CreateTranslatorClient
+```Python
 credential = TranslatorCredential("<apiKey>", "<region>")
 text_translator = TranslatorClient(endpoint="<endpoint>", credential=credential)
 ```
@@ -15,13 +15,13 @@ The values of the `endpoint`, `apiKey` and `region` variables can be retrieved f
 
 Returns equivalent words for the source term in the target language.
 
-```Python Snippet:Sample5_DictionaryLookup
+```Python
 try:
     source_language = "en"
-    target_anguage = "es"
+    target_language = "es"
     input_text_elements = [ InputTextItem(text = "fly") ]
 
-    response = text_translator.dictionary_lookup(content = input_text_elements, from_parameter = source_language, to = target_anguage)
+    response = text_translator.dictionary_lookup(content = input_text_elements, from_parameter = source_language, to = target_language)
      dictionary_entry = response[0] if response else None
 
     if dictionary_entry:
@@ -35,5 +35,5 @@ except HttpResponseError as exception:
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
-[README]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
+[README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
 
