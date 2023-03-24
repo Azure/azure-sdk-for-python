@@ -430,18 +430,27 @@ class WorkspaceOperationsBase:
                 if workspace._feature_store_settings.offline_store_connection_name
                 else "",
             )
-            _set_val(param["online_store_connection_name"], "")
+            _set_val(
+                param["online_store_connection_name"],
+                workspace._feature_store_settings.online_store_connection_name
+                if workspace._feature_store_settings.online_store_connection_name
+                else "",
+            )
 
         setup_materialization_store = False
         if workspace._kind and workspace._kind.lower() == "featurestore":
             materialization_identity = kwargs.get("materialization_identity", None)
             offline_store_target = kwargs.get("offline_store_target", None)
+            online_store_target = kwargs.get("online_store_target", None)
 
-            setup_materialization_store = offline_store_target and materialization_identity
+            setup_materialization_store = (offline_store_target or online_store_target) and materialization_identity
 
         _set_val(param["setup_materialization_store"], "true" if setup_materialization_store else "false")
         if setup_materialization_store:
-            _set_val(param["offline_store_connection_target"], offline_store_target)
+            if offline_store_target is not None:
+                _set_val(param["offline_store_connection_target"], offline_store_target)
+            if online_store_target is not None:
+                _set_val(param["online_store_connection_target"], online_store_target)
             _set_val(param["materialization_identity_client_id"], materialization_identity.client_id)
             _set_val(param["materialization_identity_resource_id"], materialization_identity.resource_id)
 
