@@ -111,4 +111,4 @@ except HttpResponseError as exception:
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
-[README]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
+[README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md

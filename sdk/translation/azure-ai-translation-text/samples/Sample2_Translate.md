@@ -89,7 +89,7 @@ except HttpResponseError as exception:
 ```
 
 ### Translate multiple input texts
-You can translate multiple text elements with a various length. Each input element can be in different language (source language parameter needs to be omitted and language auto-detection is used). Refer to [Request limits for Translator](https://learn.microsoft.com/en-us/azure/cognitive-services/translator/request-limits) for current limits.
+You can translate multiple text elements with a various length. Each input element can be in different language (source language parameter needs to be omitted and language auto-detection is used). Refer to [Request limits for Translator](https://learn.microsoft.com/azure/cognitive-services/translator/request-limits) for current limits.
 
 ```Python Snippet:Sample2_TranslateMultipleSources
 try:
@@ -203,7 +203,7 @@ except HttpResponseError as exception:
 ```
 
 ### Profanity handling
-[Profanity handling](https://learn.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-translate#handle-profanity). Normally the Translator service will retain profanity that is present in the source in the translation. The degree of profanity and the context that makes words profane differ between cultures, and as a result the degree of profanity in the target language may be amplified or reduced.
+[Profanity handling](https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-translate#handle-profanity). Normally the Translator service will retain profanity that is present in the source in the translation. The degree of profanity and the context that makes words profane differ between cultures, and as a result the degree of profanity in the target language may be amplified or reduced.
 
 If you want to avoid getting profanity in the translation, regardless of the presence of profanity in the source text, you can use the profanity filtering option. The option allows you to choose whether you want to see profanity deleted, whether you want to mark profanities with appropriate tags (giving you the option to add your own post-processing), or you want no action taken. The accepted values of `ProfanityAction` are `DELETED`, `MARKED` and `NOACTION` (default).
 
@@ -283,7 +283,7 @@ except HttpResponseError as exception:
 ```
 
 ### Custom Translator
-You can get translations from a customized system built with [Custom Translator](https://learn.microsoft.com/en-us/azure/cognitive-services/translator/customization). Add the Category ID from your Custom Translator [project details](https://learn.microsoft.com/en-us/azure/cognitive-services/translator/custom-translator/how-to-create-project#view-project-details) to this parameter to use your deployed customized system.
+You can get translations from a customized system built with [Custom Translator](https://learn.microsoft.com/azure/cognitive-services/translator/customization). Add the Category ID from your Custom Translator [project details](https://learn.microsoft.com/azure/cognitive-services/translator/custom-translator/how-to-create-project#view-project-details) to this parameter to use your deployed customized system.
 
 It is possible to set `allow_fallback` parameter. It specifies that the service is allowed to fall back to a general system when a custom system doesn't exist. Possible values are: `True` (default) or `False`.
 
@@ -312,5 +312,5 @@ except HttpResponseError as exception:
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
-[README]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
+[README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
 

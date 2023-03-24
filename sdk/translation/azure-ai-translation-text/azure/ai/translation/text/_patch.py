@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+from typing import Union
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import ( SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
 from azure.core.credentials import ( TokenCredential, AzureKeyCredential )
@@ -31,7 +32,11 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.credential.region
 
 class TextTranslationClient(ServiceClientGenerated):
-    def __init__(self, endpoint: str | None, credential: AzureKeyCredential | TokenCredential | TranslatorCredential, **kwargs):
+    def __init__(
+            self,
+            endpoint: Union[str , None],
+            credential: Union[AzureKeyCredential , TokenCredential , TranslatorCredential],
+            **kwargs):
         if isinstance(credential, TranslatorCredential):
             if not kwargs.get("authentication_policy"):
                 kwargs["authentication_policy"] = TranslatorAuthenticationPolicy(credential)
@@ -42,7 +47,8 @@ class TextTranslationClient(ServiceClientGenerated):
 
         if isinstance(credential, AzureKeyCredential):
             if not kwargs.get("authentication_policy"):
-                kwargs["authentication_policy"] = AzureKeyCredentialPolicy(name="Ocp-Apim-Subscription-Key", credential=credential)
+                kwargs["authentication_policy"] = AzureKeyCredentialPolicy(
+                    name="Ocp-Apim-Subscription-Key", credential=credential)
 
         if not endpoint:
             endpoint = "https://api.cognitive.microsofttranslator.com"

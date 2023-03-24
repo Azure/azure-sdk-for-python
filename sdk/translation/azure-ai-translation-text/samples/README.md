@@ -35,11 +35,11 @@ See the [README][README] of the Text Translator client library for more informat
 * [Dictionary Examples][dictionaryexamples_sample]
 
 
-[README]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
+[README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
 
-[languages_sample]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample1_GetLanguages.md
-[translate_sample]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample2_Translate.md
-[transliterate_sample]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample3_Transliterate.md
-[breaksentence_sample]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample4_BreakSentence.md
-[dictionarylookup_sample]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample5_DictionaryLookup.md
-[dictionaryexamples_sample]: https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample6_DictionaryExamples.md
+[languages_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample1_GetLanguages.md
+[translate_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample2_Translate.md
+[transliterate_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample3_Transliterate.md
+[breaksentence_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample4_BreakSentence.md
+[dictionarylookup_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample5_DictionaryLookup.md
+[dictionaryexamples_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample6_DictionaryExamples.md
