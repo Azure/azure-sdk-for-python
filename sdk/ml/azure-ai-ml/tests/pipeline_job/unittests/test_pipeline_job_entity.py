@@ -2091,4 +2091,4 @@ class TestPipelineJobEntity:
         pipeline_job = load_job(yaml_path)
         # similar to sweep job, automl job job_tier value is also lowercase.
         rest_obj = pipeline_job._to_rest_object()
-        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "standard"}
+        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
