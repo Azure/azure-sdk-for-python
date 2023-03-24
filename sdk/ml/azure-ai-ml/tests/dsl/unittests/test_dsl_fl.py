@@ -159,7 +159,6 @@ class TestDSLPipeline:
             aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
             max_iterations=iterations,
         )
-        print(len(fl_node.subgraph))
         for iteration_subgraph in fl_node.subgraph:
             for index in range(len(silo_configs)):
                 silo_step = iteration_subgraph["silo_steps"][index]

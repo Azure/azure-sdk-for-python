@@ -108,15 +108,15 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         self.subgraph = []
         self._init = True  # Needed by parent class to work properly
 
-        self.scatter_gather()
+        self.scatter_gather_graph = self.scatter_gather()
 
         # set output to final aggregation step's output
-        self._outputs = self.subgraph[-1]["aggregation"].outputs
+        self._outputs = self.scatter_gather_graph.outputs
         super(FLScatterGather, self).__init__(
             type=JobType.COMPONENT,  # pylint: disable=redefined-builtin
             component=None,
             inputs=None,
-            outputs=self.subgraph[-1]["aggregation"].outputs,
+            outputs=self.scatter_gather_graph.outputs,
             name=None,
             display_name=None,
             description=None,
@@ -133,7 +133,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             name="Scatter gather",
             description="It includes all steps that needs to be executing in silo+aggregation",
         )
-        def scatter_gather_iteration_body(checkpoint: Input(optional=True)=None, **silo_inputs):
+        def scatter_gather_iteration_body(**silo_inputs):
             '''
                 Performs a scatter-gather iteration by running copies of the silo step on different
             computes/datstores according to this node's silo configs. The outputs of these
@@ -212,16 +212,38 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             self.subgraph.append(sg_graph)
             return executed_aggregation_component.outputs
         
-        # Constant scatter inputs 
-        loop_body = scatter_gather_iteration_body(**self.shared_silo_kwargs)
+        @pipeline(name="Scatter gather graph")
+        def create_scatter_gather_graph():
+            '''
+                Creates a scatter-gather graph by executing the scatter_gather_iteration_body
+                function in a do-while loop. The loop terminates when the user-supplied
+                termination condition is met.
+            '''
+            
+            silo_inputs = {}
+            # Start with static inputs
+            silo_inputs.update(self.shared_silo_kwargs)
 
-        # map aggregation outputs to scatter inputs
-        do_while_mapping = {k: getattr(loop_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
-        federated_learning_dowhile_node = do_while(
-            body=loop_body,
-            mapping=do_while_mapping,
-            max_iteration_count=self.max_iterations,
-        )
+            # merge in inputs passed in from previous iteration's aggregate step if they exist
+            if self.aggregation_to_silo_argument_map is not None:
+                silo_inputs.update({v: None for v in self.aggregation_to_silo_argument_map.values()})
+
+            loop_body = scatter_gather_iteration_body(**silo_inputs)
+            print("loop body inputs")
+            # print(loop_body.inputs) getattr(loop_body.inputs, v)
+            # map aggregation outputs to scatter inputs
+            # do_while_mapping = {k: getattr(loop_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
+            do_while_mapping = {k: getattr(loop_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
+            print(do_while_mapping)
+            do_while(
+                body=loop_body,
+                mapping=do_while_mapping,
+                max_iteration_count=self.max_iterations,
+            )
+            return loop_body.outputs
+        
+        scatter_gather_graph = create_scatter_gather_graph()
+        return scatter_gather_graph
 
     # TODO potential set default fail_on_missing value to false
     @classmethod
