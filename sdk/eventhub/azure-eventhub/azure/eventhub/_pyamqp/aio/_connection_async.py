@@ -134,6 +134,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._properties = kwargs.pop(
             "properties", None
         )  # type: Optional[Dict[str, str]]
+        self._remote_properties = None  # type: Optional[Dict[str, str]]
 
         self._allow_pipelined_open = kwargs.pop(
             "allow_pipelined_open", True
@@ -430,6 +431,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             )
             return
         self._remote_max_frame_size = frame[2]
+        self._remote_properties = frame[9]
         if self.state == ConnectionState.OPEN_SENT:
             await self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:

@@ -7,7 +7,6 @@ from typing import Dict, List, Union
 from marshmallow import INCLUDE, Schema
 
 from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from ..._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from ..._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from ..._schema import PathAwareSchema
 from ..._schema.core.fields import DistributionField
@@ -112,8 +111,7 @@ class Command(InternalBaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits()._from_rest_object(obj["limits"])
         return obj
 
 

@@ -10,6 +10,7 @@
 * Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally.
 
 #### Other Changes
+* Removed use of `six` package within the SDK.
 
 ### 4.3.1 (2023-02-23)
 

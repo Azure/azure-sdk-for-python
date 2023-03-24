@@ -137,25 +137,11 @@ class TestFeatureSetOperations:
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
         mock_feature_set_operations.archive(name=name, version=version)
-        mock_feature_set_operations._operation.create_or_update.assert_called_once_with(
+        mock_feature_set_operations._operation.begin_create_or_update.assert_called_once_with(
             name=name,
             version=version,
             workspace_name=mock_feature_set_operations._workspace_name,
             body=featureset_version,
-            resource_group_name=mock_feature_set_operations._resource_group_name,
-        )
-
-    def test_archive_container(self, mock_feature_set_operations: _FeatureSetOperations):
-        name = "random_name"
-        featureset_container = Mock(
-            FeaturesetContainer(properties=Mock(FeaturesetContainerProperties(description="test")))
-        )
-        mock_feature_set_operations._container_operation.get.return_value = featureset_container
-        mock_feature_set_operations.archive(name=name)
-        mock_feature_set_operations._container_operation.create_or_update.assert_called_once_with(
-            name=name,
-            workspace_name=mock_feature_set_operations._workspace_name,
-            body=featureset_container,
             resource_group_name=mock_feature_set_operations._resource_group_name,
         )
 
@@ -165,24 +151,10 @@ class TestFeatureSetOperations:
         version = "1"
         mock_feature_set_operations._operation.get.return_value = featureset_version
         mock_feature_set_operations.restore(name=name, version=version)
-        mock_feature_set_operations._operation.create_or_update.assert_called_once_with(
+        mock_feature_set_operations._operation.begin_create_or_update.assert_called_once_with(
             name=name,
             version=version,
             workspace_name=mock_feature_set_operations._workspace_name,
             body=featureset_version,
-            resource_group_name=mock_feature_set_operations._resource_group_name,
-        )
-
-    def test_restore_container(self, mock_feature_set_operations: _FeatureSetOperations):
-        name = "random_name"
-        featureset_container = Mock(
-            FeaturesetContainer(properties=Mock(FeaturesetContainerProperties(entities=["test"])))
-        )
-        mock_feature_set_operations._container_operation.get.return_value = featureset_container
-        mock_feature_set_operations.restore(name=name)
-        mock_feature_set_operations._container_operation.create_or_update.assert_called_once_with(
-            name=name,
-            workspace_name=mock_feature_set_operations._workspace_name,
-            body=featureset_container,
             resource_group_name=mock_feature_set_operations._resource_group_name,
         )

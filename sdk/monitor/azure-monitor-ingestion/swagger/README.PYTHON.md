@@ -8,7 +8,7 @@
 title: LogsIngestionClient
 description: Azure Monitor Data Collection Python Client
 generated-metadata: false
-
+package-name: azure-monitor-ingestion
 license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
 output-folder: ../azure/monitor/ingestion
@@ -18,4 +18,5 @@ input-file:
 python: true
 version-tolerant: true
 python3-only: true
+black: true
 ```

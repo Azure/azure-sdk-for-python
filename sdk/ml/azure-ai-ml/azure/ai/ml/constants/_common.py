@@ -303,6 +303,7 @@ class ArmConstants:
     STORAGE = "StorageAccount"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
+    LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
@@ -833,3 +834,8 @@ class Boolean:
     """True boolean type."""
     FALSE = "false"
     """False boolean type."""
+
+
+class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ALL = "all"
+    NONE = "none"

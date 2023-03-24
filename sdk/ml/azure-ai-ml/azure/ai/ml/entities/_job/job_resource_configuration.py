@@ -147,6 +147,12 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
+    def _from_dict(cls, dct: dict):
+        """Convert a dict to an Input object."""
+        obj = cls(**dict(dct.items()))
+        return obj
+
+    @classmethod
     def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
