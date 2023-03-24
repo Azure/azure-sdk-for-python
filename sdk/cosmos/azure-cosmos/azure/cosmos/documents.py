@@ -443,11 +443,3 @@ class _DistinctType(object):
     NoneType = "None"
     Ordered = "Ordered"
     Unordered = "Unordered"
-
-class PatchOperationType(object):
-    Add = "add"
-    Replace = "replace"
-    Remove = "remove"
-    Set = "set"
-    Increment = "incr"
-    Move = "move"

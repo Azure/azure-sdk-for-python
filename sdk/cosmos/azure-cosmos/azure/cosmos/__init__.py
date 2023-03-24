@@ -39,7 +39,6 @@ from .documents import (
     TriggerOperation,
     TriggerType,
     DatabaseAccount,
-    PatchOperationType
 )
 from .partition_key import PartitionKey
 from .permission import Permission
@@ -64,7 +63,6 @@ __all__ = (
     "TriggerOperation",
     "TriggerType",
     "ConnectionRetryPolicy",
-    "ThroughputProperties",
-    "PatchOperationType"
+    "ThroughputProperties"
 )
 __version__ = VERSION
