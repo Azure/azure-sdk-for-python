@@ -1,6 +1,6 @@
 # Release History
 
-## 7.8.4 (Unreleased)
+## 7.9.0 (Unreleased)
 
 ### Breaking Changes
 
