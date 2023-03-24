@@ -20,6 +20,9 @@ setup(
     keywords="azure, azure sdk",
     packages=find_packages(),
     include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
         "azure-core<2.0.0,>=1.24.0",
@@ -43,5 +46,5 @@ Detect. Returns the source code language code and a boolean variable denoting wh
 Dictionary lookup. Returns equivalent words for the source term in the target language.
 
 Dictionary example Returns grammatical structure and context examples for the source term and target term pair.
-    """,
+    """
 )
