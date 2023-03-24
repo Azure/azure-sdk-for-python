@@ -11,6 +11,7 @@ from typing import List, Any, Dict
 from packaging.version import Version
 from ghapi.all import GhApi
 from azure.storage.blob import BlobServiceClient, ContainerClient
+from util import add_certificate
 
 _LOG = logging.getLogger()
 
@@ -430,6 +431,7 @@ class CodegenTestPR:
     def prepare_test_env(self):
         self.install_package_locally()
         set_test_env_var()
+        add_certificate()
 
     @return_origin_path
     def run_test_proc(self):
@@ -454,9 +456,16 @@ class CodegenTestPR:
             log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
 
+    @staticmethod	
+    def clean_test_env():	
+        for item in ("SSL_CERT_DIR", "REQUESTS_CA_BUNDLE"):	
+            if os.getenv(item):	
+                os.environ.pop(item)
+
     def run_test(self):
         self.prepare_test_env()
         self.run_test_proc()
+        self.clean_test_env()
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
