@@ -112,6 +112,7 @@ class ReplayableTest(IntegrationTestBase):  # pylint: disable=too-many-instance-
         test_file_path = inspect.getfile(self.__class__)
         recording_dir = recording_dir or os.path.join(os.path.dirname(test_file_path), "recordings")
         self.is_live = self.config.record_mode
+        self.is_live = True
 
         self.vcr = vcr.VCR(
             cassette_library_dir=recording_dir,
