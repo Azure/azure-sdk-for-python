@@ -15,10 +15,9 @@ from ._generated.models import (
     TagWriteableProperties,
     TagAttributesBase,
     ManifestWriteableProperties,
-    OCIManifest,
     ManifestAttributesBase,
 )
-from ._helpers import _host_only, _is_tag, _strip_alg, _deserialize_manifest
+from ._helpers import _host_only, _is_tag, _strip_alg
 
 
 class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -322,7 +321,7 @@ class DownloadManifestResult(object):
     """The result from downloading a manifest from the registry.
 
     :ivar manifest: The OCI manifest that was downloaded.
-    :vartype manifest: ~azure.containerregistry.models.OCIManifest
+    :vartype manifest: ~azure.containerregistry.models.OciImageManifest
     :ivar data: The manifest stream that was downloaded.
     :vartype data: IO
     :ivar str digest: The manifest's digest, calculated by the registry.

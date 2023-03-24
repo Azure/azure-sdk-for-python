@@ -168,6 +168,7 @@ directive:
     delete $["x-accessibility"]
 ```
 
+# Remove parameter "accept" from "GetManifest"
 ``` yaml
 directive:
   from: swagger-document

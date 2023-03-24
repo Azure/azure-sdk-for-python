@@ -7,9 +7,9 @@ import logging
 import os
 import pytest
 
-from azure.containerregistry import ContainerRegistryClient
+from azure.containerregistry import ContainerRegistryClient, OciAnnotations, OciDescriptor, OciImageManifest
 from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
-from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
+# from azure.containerregistry._generated.models import OciAnnotations, OciDescriptor, OciImageManifest
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
@@ -87,18 +87,18 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         return ".azurecr.io" in endpoint
     
     def create_oci_manifest(self):
-        config1 = Descriptor(
+        config1 = OciDescriptor(
             media_type="application/vnd.acme.rocket.config",
             digest="sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
             size=171
         )
-        config2 = Descriptor(
+        config2 = OciDescriptor(
             media_type="application/vnd.oci.image.layer.v1.tar",
             digest="sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
             size=28,
-            annotations=Annotations(name="artifact.txt")
+            annotations=OciAnnotations(name="artifact.txt")
         )
-        return OCIManifest(config=config1, schema_version=2, layers=[config2])
+        return OciImageManifest(config=config1, schema_version=2, layers=[config2])
     
     def upload_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"

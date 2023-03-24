@@ -26,8 +26,7 @@ import os
 import json
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
+from azure.containerregistry import ContainerRegistryClient, OciAnnotations, OciDescriptor, OciImageManifest
 from utilities import load_registry, get_authority, get_audience, get_credential
 
 
@@ -55,19 +54,19 @@ class UploadDownloadManifest(object):
             # Upload a config
             config_digest = client.upload_blob(repository_name, config)
             # Create a manifest with config and layer info
-            manifest = OCIManifest(
-                config = Descriptor(
+            manifest = OciImageManifest(
+                config = OciDescriptor(
                     media_type="application/vnd.oci.image.config.v1+json",
                     digest=config_digest,
                     size=len(config.getbuffer())
                 ),
                 schema_version=2,
                 layers=[
-                    Descriptor(
+                    OciDescriptor(
                         media_type="application/vnd.oci.image.layer.v1.tar",
                         digest=layer_digest,
                         size=len(layer.getbuffer()),
-                        annotations=Annotations(name="artifact.txt")
+                        annotations=OciAnnotations(name="artifact.txt")
                     )
                 ]
             )

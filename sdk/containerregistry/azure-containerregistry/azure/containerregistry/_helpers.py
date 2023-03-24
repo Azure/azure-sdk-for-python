@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest
-from ._generated.models import OCIManifest
+from ._generated.models import OciImageManifest
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
@@ -117,22 +117,22 @@ def _parse_exp_time(raw_token):
 
     return time.time()
 
-def _serialize_manifest(manifest: OCIManifest) -> IO:
+def _serialize_manifest(manifest: OciImageManifest) -> IO[bytes]:
     data = json.dumps(manifest.serialize()).encode('utf-8')
     return BytesIO(data)
 
-def _deserialize_manifest(data: IO) -> OCIManifest:
+def _deserialize_manifest(data: IO[bytes]) -> OciImageManifest:
     data.seek(0)
     value = data.read()
     data.seek(0)
-    return OCIManifest.deserialize(json.loads(value.decode()))
+    return OciImageManifest.deserialize(json.loads(value.decode()))
 
-def _compute_digest(data: IO) -> str:
+def _compute_digest(data: IO[bytes]) -> str:
     data.seek(0)
     value = data.read()
     data.seek(0)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
-def _validate_digest(data: IO, digest: str) -> bool:
+def _validate_digest(data: IO[bytes], digest: str) -> bool:
     data_digest = _compute_digest(data)
     return data_digest == digest

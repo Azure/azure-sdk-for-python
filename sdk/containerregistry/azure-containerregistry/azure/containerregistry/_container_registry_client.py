@@ -19,7 +19,7 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors, OCIManifest, ManifestWrapper
+from ._generated.models import AcrErrors, OciImageManifest, ManifestWrapper
 from ._helpers import (
     _compute_digest,
     _is_tag,
@@ -855,7 +855,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def upload_manifest(
         self,
         repository: str,
-        manifest: Union[OCIManifest, IO[bytes]],
+        manifest: Union[OciImageManifest, IO[bytes]],
         *,
         tag: Optional[str] = None,
         media_type: str = OCI_IMAGE_MANIFEST,
@@ -864,8 +864,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Upload a manifest for an artifact.
 
         :param str repository: Name of the repository
-        :param manifest: The manifest to upload. Note: This must be a seekable stream.
-        :type manifest: ~azure.containerregistry.models.OCIManifest or IO
+        :param manifest: The manifest to upload. It can be an OciImageManifest object or seekable stream. 
+        :type manifest: ~azure.containerregistry.models.OciImageManifest or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
         :keyword media_type: The media type of the manifest. If not specified, this value will be set to
@@ -878,7 +878,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             If the digest in the response does not match the digest of the uploaded manifest.
         """
         try:
-            if isinstance(manifest, OCIManifest):
+            if isinstance(manifest, OciImageManifest):
                 data = _serialize_manifest(manifest)
             else:
                 data = manifest
@@ -965,7 +965,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     **kwargs
                 )
             )
-            manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
+            manifest = OciImageManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
             if tag_or_digest.startswith("sha256:"):
                 digest = tag_or_digest
