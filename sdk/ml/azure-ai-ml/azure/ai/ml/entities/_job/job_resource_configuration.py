@@ -10,7 +10,6 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfig
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml._utils.utils import is_data_binding_expression
 
 module_logger = logging.getLogger(__name__)
 

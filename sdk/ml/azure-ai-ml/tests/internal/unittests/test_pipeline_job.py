@@ -604,3 +604,27 @@ class TestPipelineJob:
             assert len(node_dict["properties"]) == 1
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
+
+    def test_pipeline_input_binding_instance_count(self):
+        internal_component_yaml = r"./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"
+        internal_component_func = load_component(source=internal_component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline(instance_count) -> PipelineJob:
+            # case 1: if instance_count is PipelineInput
+            node_0 = internal_component_func()
+            node_0.resources = JobResourceConfiguration()
+            node_0.resources.instance_count = instance_count
+            # case 2: if instance_count is not PipelineInput
+            node_1 = internal_component_func()
+            node_1.resources = JobResourceConfiguration()
+            node_1.resources.instance_count = 2
+
+        pipeline = my_pipeline(2)
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_dict = pipeline._to_rest_object().as_dict()
+        assert (
+            pipeline_dict["properties"]["jobs"]["node_0"]["resources"]["instance_count"]
+            == "${{parent.inputs.instance_count}}"
+        )
+        assert pipeline_dict["properties"]["jobs"]["node_1"]["resources"]["instance_count"] == 2
