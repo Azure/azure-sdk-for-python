@@ -200,8 +200,10 @@ def generate_dead_letter_entity_name(
         if queue_name
         else (topic_name + "/Subscriptions/" + subscription_name)
     )
-    entity_name = f"{entity_name}"
-    f"{TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX}"
+    entity_name = (
+        f"{entity_name}"
+        f"{TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX}"
+    )
 
     return entity_name
 
