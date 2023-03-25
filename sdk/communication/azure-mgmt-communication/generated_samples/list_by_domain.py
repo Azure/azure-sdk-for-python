@@ -14,7 +14,7 @@ from azure.mgmt.communication import CommunicationServiceManagementClient
     pip install azure-identity
     pip install azure-mgmt-communication
 # USAGE
-    python get_verified_exchange_online_domains.py
+    python list_by_domain.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,10 +29,15 @@ def main():
         subscription_id="11112222-3333-4444-5555-666677778888",
     )
 
-    response = client.email_services.list_verified_exchange_online_domains()
-    print(response)
+    response = client.sender_usernames.list_by_domains(
+        resource_group_name="contosoResourceGroup",
+        email_service_name="contosoEmailService",
+        domain_name="contoso.com",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/preview/2023-03-01-preview/examples/emailServices/getVerifiedExchangeOnlineDomains.json
+# x-ms-original-file: specification/communication/resource-manager/Microsoft.Communication/preview/2023-03-01-preview/examples/senderUsernames/listByDomain.json
 if __name__ == "__main__":
     main()
