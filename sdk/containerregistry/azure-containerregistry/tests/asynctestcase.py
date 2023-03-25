@@ -54,3 +54,12 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
         authority = get_authority(endpoint)
         audience = get_audience(authority)
         return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
+    
+    async def upload_manifest_prerequisites(self, repo, client):
+        layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
+        config = "config.json"
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        # upload config
+        await client.upload_blob(repo, open(os.path.join(base_path, config), "rb"))
+        # upload layers
+        await client.upload_blob(repo, open(os.path.join(base_path, layer), "rb"))

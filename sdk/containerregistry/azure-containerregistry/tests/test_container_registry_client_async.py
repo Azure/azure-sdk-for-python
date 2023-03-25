@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+import os
 import pytest
 import six
 
@@ -15,7 +16,8 @@ from azure.containerregistry import (
     ArtifactTagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
+from azure.containerregistry._helpers import _serialize_manifest, DOCKER_MANIFEST
+from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
 from azure.identity import AzureAuthorityHosts
 from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
@@ -450,6 +452,87 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 last_udpated_on = properties.last_udpated_on
             last_updated_on = properties.last_updated_on
             assert last_udpated_on == last_updated_on
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await self.upload_manifest_prerequisites(repo, client)
+
+            # Act
+            with pytest.raises(HttpResponseError):
+                await client.upload_manifest(repo, manifest, media_type=DOCKER_MANIFEST)
+            digest = await client.upload_manifest(repo, manifest)
+
+            # Cleanup
+            await client.delete_repository(repo)
+
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await self.upload_manifest_prerequisites(repo, client)
+
+            # Act
+            with pytest.raises(HttpResponseError):
+                await client.upload_manifest(repo, manifest, media_type=DOCKER_MANIFEST)
+            digest = await client.upload_manifest(repo, manifest_stream)
+
+            # Cleanup
+            await client.delete_repository(repo)
+
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = "v1"
+        manifest = self.create_oci_manifest()
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await self.upload_manifest_prerequisites(repo, client)
+            
+            # Act
+            async with pytest.raises(HttpResponseError):
+                await client.upload_manifest(repo, manifest, tag=tag, media_type=DOCKER_MANIFEST)
+            digest = await client.upload_manifest(repo, manifest, tag=tag)
+            
+            # Cleanup
+            await client.delete_repository(repo)
+
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = "v1"
+        manifest = self.create_oci_manifest()
+        manifest_stream = _serialize_manifest(manifest)
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await self.upload_manifest_prerequisites(repo, client)
+            
+            # Act
+            async with pytest.raises(HttpResponseError):
+                await client.upload_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
+            digest = await client.upload_manifest(repo, manifest_stream, tag=tag)
+            
+            # Cleanup
+            await client.delete_repository(repo)
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_docker_manifest_stream(self, containerregistry_endpoint):
+        repo = "library/hello-world"
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            with open(path, "rb") as docker_manifest_stream:
+                async with pytest.raises(HttpResponseError):
+                    # It fails as the default media type is oci image manifest media type
+                    await client.upload_manifest(repo, docker_manifest_stream)
+                digest = await client.upload_manifest(repo, docker_manifest_stream, media_type=DOCKER_MANIFEST)
+
     
     @acr_preparer()
     @recorded_by_proxy_async
