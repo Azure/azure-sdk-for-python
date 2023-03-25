@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, Optional, overload, Union, cast
+from typing import Any, Dict, IO, Optional, overload, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
@@ -18,8 +18,18 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
-from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+from .._container_registry_client import _return_response_headers
+from .._generated.models import AcrErrors, OciImageManifest
+from .._helpers import (
+    _compute_digest,
+    _is_tag,
+    _parse_next_link,
+    _serialize_manifest,
+    _validate_digest,
+    SUPPORTED_API_VERSIONS,
+    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    OCI_IMAGE_MANIFEST,
+)
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 
@@ -838,6 +848,58 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_attributes.tag, # type: ignore
             repository=repository
         )
+    
+    @distributed_trace_async
+    async def upload_manifest(
+        self,
+        repository: str,
+        manifest: Union[OciImageManifest, IO[bytes]],
+        *,
+        tag: Optional[str] = None,
+        media_type: str = OCI_IMAGE_MANIFEST,
+        **kwargs
+    ) -> str:
+        """Upload a manifest for an artifact.
+
+        :param str repository: Name of the repository
+        :param manifest: The manifest to upload. It can be an OciImageManifest object or seekable stream. 
+        :type manifest: ~azure.containerregistry.models.OciImageManifest or IO
+        :keyword tag: Tag of the manifest.
+        :paramtype tag: str or None
+        :keyword media_type: The media type of the manifest. If not specified, this value will be set to
+            a default value of "application/vnd.oci.image.manifest.v1+json".
+        :paramtype media_type: str
+        :returns: The digest of the uploaded manifest, calculated by the registry.
+        :rtype: str
+        :raises ValueError: If the parameter repository or manifest is None.
+        :raises ~azure.core.exceptions.HttpResponseError:
+            If the digest in the response does not match the digest of the uploaded manifest.
+        """
+        try:
+            if isinstance(manifest, OciImageManifest):
+                data = _serialize_manifest(manifest)
+            else:
+                data = manifest
+            tag_or_digest = tag
+            if tag_or_digest is None:
+                tag_or_digest = _compute_digest(data)
+
+            response_headers = await self._client.container_registry.create_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                payload=data,
+                content_type=media_type,
+                cls=_return_response_headers,
+                **kwargs
+            )
+            digest = response_headers['Docker-Content-Digest']
+            if not _validate_digest(data, digest):
+                raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
+        except ValueError:
+            if repository is None or manifest is None:
+                raise ValueError("The parameter repository and manifest cannot be None.")
+            raise
+        return digest
 
     @distributed_trace_async
     async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> None:
