@@ -73,7 +73,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         user settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
         Directory work or school accounts.
     :keyword int developer_credential_timeout: The timeout in seconds to use for developer credentials that run
-        subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10**.
+        subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
     """
 
     def __init__(self, **kwargs: Any) -> None:

@@ -37,7 +37,8 @@ class AzureDeveloperCliCredential:
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
-    :keyword int process_timeout: Seconds to wait for the Azure Developer CLI process to respond. Defaults to 10.
+    :keyword int process_timeout: Seconds to wait for the Azure Developer CLI process to respond. Defaults
+        to 10 seconds.
     """
 
     def __init__(
