@@ -10,11 +10,10 @@ import uuid
 import datetime
 import functools
 
-import msrest
 from azure.servicebus.management import ServiceBusAdministrationClient, QueueProperties, ApiVersion
 from azure.servicebus._common.utils import utc_now
 from utilities import get_logger
-from azure.core.exceptions import HttpResponseError, ServiceRequestError, ResourceNotFoundError, ResourceExistsError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 
 from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, recorded_by_proxy
@@ -214,11 +213,11 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
     def test_mgmt_queue_create_with_invalid_name(self, servicebus_connection_str, **kwargs):
         mgmt_service = ServiceBusAdministrationClient.from_connection_string(servicebus_connection_str)
 
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(HttpResponseError):
             mgmt_service.create_queue(Exception())
 
 
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(HttpResponseError):
             mgmt_service.create_queue('')
 
     @ServiceBusPreparer()
@@ -578,7 +577,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
 
             #change the name to a queue with an invalid name exist; should fail.
             queue_description.name = ''
-            with pytest.raises(msrest.exceptions.ValidationError):
+            with pytest.raises(HttpResponseError):
                 mgmt_service.update_queue(queue_description)
             queue_description.name = queue_name
 
@@ -672,7 +671,7 @@ class TestServiceBusAdministrationClientQueue(AzureMgmtRecordedTestCase):
         with pytest.raises(TypeError):
             mgmt_service.get_queue_runtime_properties(None)
 
-        with pytest.raises(msrest.exceptions.ValidationError):
+        with pytest.raises(HttpResponseError):
             mgmt_service.get_queue_runtime_properties("")
 
         with pytest.raises(ResourceNotFoundError):
