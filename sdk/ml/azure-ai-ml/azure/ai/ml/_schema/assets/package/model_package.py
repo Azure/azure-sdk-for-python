@@ -25,7 +25,7 @@ class ModelPackageSchema(PathAwareSchema):
     base_environment_source = NestedField(BaseEnvironmentSourceSchema)
     inferencing_server = NestedField(InferenceServerSchema)
     model_configuration = NestedField(ModelConfigurationSchema)
-    inputs = NestedField(ModelPackageInputSchema)
+    inputs = fields.List(NestedField(ModelPackageInputSchema))
     tags = fields.Dict()
     environment_variables = fields.Dict(
         metadata={"description": "Environment variables configuration for the model package."}

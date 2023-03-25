@@ -6,11 +6,14 @@ from pathlib import Path
 from typing import IO, AnyStr, List, Dict, Optional, Union
 
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     PackageRequest,
     PackageResponse,
     InferencingServer,
     ModelPackageInput as RestModelPackageInput,
+    PackageInputPathId as RestPackageInputPathId,
+    PackageInputPathVersion as RestPackageInputPathVersion,
+    PackageInputPathUrl as RestPackageInputPathUrl,
     BaseEnvironmentSource,
     ModelConfiguration,
     CodeConfiguration,
@@ -22,6 +25,74 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
 )
+
+
+class PackageInputPathId:
+    def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None, **kwargs):
+        self.input_path_type = input_path_type
+        self.resource_id = resource_id
+
+    def _to_rest_object(self) -> RestPackageInputPathId:
+        return RestPackageInputPathId(
+            input_path_type=self.input_path_type,
+            resource_id=self.resource_id,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, package_input_path_id_rest_object: RestPackageInputPathId) -> "PackageInputPathId":
+        return PackageInputPathId(
+            input_path_type=package_input_path_id_rest_object.input_path_type,
+            resource_id=package_input_path_id_rest_object.resource_id,
+        )
+
+
+class PackageInputPathVersion:
+    def __init__(
+        self,
+        input_path_type: Optional[str] = None,
+        resource_name: Optional[str] = None,
+        resource_version: Optional[str] = None,
+        **kwargs,
+    ):
+        self.input_path_type = input_path_type
+        self.resource_name = resource_name
+        self.resource_version = resource_version
+
+    def _to_rest_object(self) -> RestPackageInputPathVersion:
+        return RestPackageInputPathVersion(
+            input_path_type=self.input_path_type,
+            resource_name=self.resource_name,
+            resource_version=self.resource_version,
+        )
+
+    @classmethod
+    def _from_rest_object(
+        cls, package_input_path_version_rest_object: RestPackageInputPathVersion
+    ) -> "PackageInputPathVersion":
+        return PackageInputPathVersion(
+            input_path_type=package_input_path_version_rest_object.input_path_type,
+            resource_name=package_input_path_version_rest_object.resource_name,
+            resource_version=package_input_path_version_rest_object.resource_version,
+        )
+
+
+class PackageInputPathUrl:
+    def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None, **kwargs):
+        self.input_path_type = input_path_type
+        self.url = url
+
+    def _to_rest_object(self) -> RestPackageInputPathUrl:
+        return RestPackageInputPathUrl(
+            input_path_type=self.input_path_type,
+            url=self.url,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, package_input_path_url_rest_object: RestPackageInputPathUrl) -> "PackageInputPathUrl":
+        return PackageInputPathUrl(
+            input_path_type=package_input_path_url_rest_object.input_path_type,
+            url=package_input_path_url_rest_object.url,
+        )
 
 
 class ModelPackageInput:
@@ -44,27 +115,34 @@ class ModelPackageInput:
     def __init__(
         self,
         type: Optional[str] = None,
-        path: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        path: Optional[Union[PackageInputPathId, PackageInputPathUrl, PackageInputPathVersion]] = None,
+        mode: Optional[str] = None,
+        mount_path: Optional[str] = None,
         **kwargs,
     ):
         self.type = type
         self.path = path
-        self.tags = tags
+        self.mode = mode
+        self.mount_path = mount_path
 
     def _to_rest_object(self) -> RestModelPackageInput:
-        return ModelPackageInput(
-            type=self.type,
-            path=self.path,
-            tags=self.tags,
+        # import debugpy
+        # debugpy.connect(("localhost", 5678))
+        # debugpy.breakpoint()
+        return RestModelPackageInput(
+            input_type="UriFolder",
+            path=self.path._to_rest_object(),
+            mode=self.mode,
+            mount_path=self.mount_path,
         )
 
     @classmethod
     def _from_rest_object(cls, model_package_input_rest_object: RestModelPackageInput) -> "ModelPackageInput":
         return ModelPackageInput(
-            type=model_package_input_rest_object.type,
-            path=model_package_input_rest_object.path,
-            tags=model_package_input_rest_object.tags,
+            type=model_package_input_rest_object.input_type,
+            path=model_package_input_rest_object.path._from_rest_object(),
+            mode=model_package_input_rest_object.mode,
+            mount_path=model_package_input_rest_object.mount_path,
         )
 
 
@@ -163,6 +241,7 @@ class ModelPackage(Resource, PackageRequest):
         return target_environment_id
 
     def _to_rest_object(self) -> PackageRequest:
+
         code = None
 
         if (
@@ -181,13 +260,16 @@ class ModelPackage(Resource, PackageRequest):
             )
             self.inferencing_server.code_configuration = code
 
-        if self.base_environment_source:
-            self.base_environment_source = self.base_environment_source._to_rest_object()
+        package_request = PackageRequest(
+            target_environment_name=self.name,
+            base_environment_source=self.base_environment_source._to_rest_object()
+            if self.base_environment_source
+            else None,
+            inferencing_server=self.inferencing_server._to_rest_object() if self.inferencing_server else None,
+            model_configuration=self.model_configuration._to_rest_object() if self.model_configuration else None,
+            inputs=[input._to_rest_object() for input in self.inputs] if self.inputs else None,
+            tags=self.tags,
+            environment_variables=self.environment_variables,
+        )
 
-        if self.inferencing_server:
-            self.inferencing_server = self.inferencing_server._to_rest_object()
-
-        if self.model_configuration:
-            self.model_configuration = self.model_configuration._to_rest_object()
-
-        return self
+        return package_request
