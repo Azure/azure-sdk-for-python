@@ -315,8 +315,6 @@ class CachedNodeResolver(object):
         # 1. artifact downloading is thread-safe as we have a lock in ArtifactCache
         # 2. data copying is thread-safe as there is only read operation on source folder
         #    and target folder is unique for each thread
-        # This is still not the best solution as artifact downloading will be serial if there are multiple
-        # artifacts to download in 1 component. We can improve this by using Feature related
         if (
             len(cache_contents_to_resolve) > 1
             and is_concurrent_component_registration_enabled()
