@@ -353,19 +353,19 @@ class _AdditionalIncludes:
             and is_private_preview_enabled()
         ):
             with ThreadPoolExecutor(max_workers=num_threads) as executor:
-                for local_path, config_info in executor.map(
-                    self._resolve_additional_include_config, additional_includes_configs
-                ):
+                for result in executor.map(self._resolve_additional_include_config, additional_includes_configs):
+                    for local_path, config_info in result:
+                        additional_includes.append(local_path)
+                        self.merge_local_path_to_additional_includes(
+                            local_path=local_path, config_info=config_info, conflict_files=conflict_files
+                        )
+        else:
+            for result in map(self._resolve_additional_include_config, additional_includes_configs):
+                for local_path, config_info in result:
                     additional_includes.append(local_path)
                     self.merge_local_path_to_additional_includes(
                         local_path=local_path, config_info=config_info, conflict_files=conflict_files
                     )
-        else:
-            for local_path, config_info in map(self._resolve_additional_include_config, additional_includes_configs):
-                additional_includes.append(local_path)
-                self.merge_local_path_to_additional_includes(
-                    local_path=local_path, config_info=config_info, conflict_files=conflict_files
-                )
 
         # Check the file conflict in local path and artifact package.
         conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
