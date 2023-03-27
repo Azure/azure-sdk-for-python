@@ -104,6 +104,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
             resources=self.resources,
             task_details=image_classification_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -132,6 +133,7 @@ class ImageClassificationJob(AutoMLImageClassificationBase):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         image_classification_job = cls(

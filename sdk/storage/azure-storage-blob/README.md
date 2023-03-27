@@ -9,7 +9,12 @@ Blob storage is ideal for:
 * Storing data for backup and restore, disaster recovery, and archiving
 * Storing data for analysis by an on-premises or Azure-hosted service
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/azure/storage/blob) | [Package (PyPI)](https://pypi.org/project/azure-storage-blob/) | [API reference documentation](https://aka.ms/azsdk-python-storage-blob-ref) | [Product documentation](https://docs.microsoft.com/azure/storage/) | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/samples)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/azure/storage/blob)
+| [Package (PyPI)](https://pypi.org/project/azure-storage-blob/)
+| [Package (Conda)](https://anaconda.org/microsoft/azure-storage/)
+| [API reference documentation](https://aka.ms/azsdk-python-storage-blob-ref)
+| [Product documentation](https://docs.microsoft.com/azure/storage/)
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob/samples)
 
 
 ## Getting started

@@ -47,6 +47,7 @@ def assert_job_input_output_types(job: PipelineJob):
     "enable_pipeline_private_preview_features",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "enable_environment_id_arm_expansion",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
@@ -523,6 +524,58 @@ class TestPipelineJob(AzureRecordedTestCase):
         ],
     )
     def test_pipeline_job_with_parallel_job(
+        self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
+    ) -> None:
+        base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source=base_file_name + pipeline_job_path,
+            params_override=params_override,
+        )
+        created_job = client.jobs.create_or_update(pipeline_job)
+
+        for job in created_job.jobs.values():
+            # The parallel job must be translated to component job in the pipeline job.
+            assert isinstance(job, Parallel)
+
+        # assert on the number of converted jobs to make sure we didn't drop the parallel job
+        assert len(created_job.jobs.items()) == 1
+
+    @pytest.mark.parametrize(
+        "pipeline_job_path",
+        [
+            "file_component_literal_input_e2e.yml",
+        ],
+    )
+    def test_pipeline_job_with_parallel_component_job_bind_to_literal_input(
+        self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
+    ) -> None:
+        base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source=base_file_name + pipeline_job_path,
+            params_override=params_override,
+        )
+        created_job = client.jobs.create_or_update(pipeline_job)
+
+        for job in created_job.jobs.values():
+            # The parallel job must be translated to component job in the pipeline job.
+            assert isinstance(job, Parallel)
+
+        # assert on the number of converted jobs to make sure we didn't drop the parallel job
+        assert len(created_job.jobs.items()) == 1
+
+    @pytest.mark.skip(
+        reason="The task for fixing this is tracked by "
+        "https://msdata.visualstudio.com/Vienna/_workitems/edit/2298433"
+    )
+    @pytest.mark.parametrize(
+        "pipeline_job_path",
+        [
+            "file_literal_input_e2e.yml",
+        ],
+    )
+    def test_pipeline_job_with_inline_parallel_job_bind_to_literal_input(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
         base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
@@ -1769,6 +1822,28 @@ class TestPipelineJob(AzureRecordedTestCase):
         yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/" + test_path
         pipeline_job = load_job(yaml_path)
         assert_job_cancel(pipeline_job, client)
+
+    def test_pipeline_job_serverless_compute_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/pipeline_with_job_tier.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
+        assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
+
+    def test_pipeline_job_serverless_compute_sweep_in_pipeline_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/sweep_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
+
+    def test_pipeline_job_serverless_compute_automl_in_pipeline_with_job_tier(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}
 
     @pytest.mark.disable_mock_code_hash
     def test_register_automl_output(self, client: MLClient, randstr: Callable[[str], str]):

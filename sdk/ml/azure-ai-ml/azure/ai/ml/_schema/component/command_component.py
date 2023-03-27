@@ -44,7 +44,7 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
         values=UnionField(
             [
                 NestedField(OutputPortSchema),
-                NestedField(PrimitiveOutputSchema),
+                NestedField(PrimitiveOutputSchema, unknown=INCLUDE),
             ]
         ),
     )

@@ -12,6 +12,10 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
 )
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.core.exceptions import HttpResponseError
+from azure.ai.ml._azure_environments import (
+    _get_default_cloud_name,
+    _get_registry_discovery_endpoint_from_metadata,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -167,3 +171,18 @@ def get_storage_details_for_registry_assets(
         name=asset_name, version=asset_version, resource_group_name=rg_name, registry_name=reg_name, body=body
     )
     return sas_uri.blob_reference_for_consumption.credential["sasUri"]
+
+
+def get_registry_client(credential, registry_name, **kwargs):
+    base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
+    kwargs.pop("base_url", None)
+    service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
+        credential=credential, base_url=base_url, **kwargs
+    )
+    registry_discovery = RegistryDiscovery(
+        credential, registry_name, service_client_registry_discovery_client, **kwargs
+    )
+    service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
+    subscription_id = registry_discovery.subscription_id
+    resource_group_name = registry_discovery.resource_group
+    return service_client_10_2021_dataplanepreview, resource_group_name, subscription_id

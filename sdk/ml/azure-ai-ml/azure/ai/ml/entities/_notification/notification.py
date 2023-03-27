@@ -11,13 +11,13 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class Notification(RestTranslatableMixin):
+class _Notification(RestTranslatableMixin):
     """Configuration for notification."""
 
     def __init__(self, *, email_on: Optional[List[str]] = None, emails: Optional[List[str]] = None):
         """
         :keyword email_on: Send email notification to user on specified notification type.
-        :paramtype email_on: list[Literal]. Values can be [jobcompleted, jobfailed, jobcanceled]
+        :paramtype email_on: list[Literal]. Values can be [JobCompleted, JobFailed, JobCancelled]
         :keyword emails: This is the email recipient list which has a limitation of 499 characters in
          total concat with comma seperator.
         :paramtype emails: list[str]
@@ -29,7 +29,7 @@ class Notification(RestTranslatableMixin):
         return RestNotificationSetting(email_on=self.email_on, emails=self.emails)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestNotificationSetting) -> "Notification":
+    def _from_rest_object(cls, obj: RestNotificationSetting) -> "_Notification":
         if not obj:
             return None
-        return Notification(email_on=obj.email_on, emails=obj.emails)
+        return _Notification(email_on=obj.email_on, emails=obj.emails)

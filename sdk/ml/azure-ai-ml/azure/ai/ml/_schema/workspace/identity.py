@@ -17,6 +17,7 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIden
 class UserAssignedIdentitySchema(metaclass=PatchedSchemaMeta):
     principal_id = fields.Str(required=False)
     client_id = fields.Str(required=False)
+    resource_id = fields.Str(required=False)
 
     @post_load
     def make(self, data, **kwargs):

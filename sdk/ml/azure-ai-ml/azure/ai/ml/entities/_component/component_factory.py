@@ -8,22 +8,23 @@ from typing import Any, Callable, Dict, Optional, Tuple
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
-from azure.ai.ml.constants._common import SOURCE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._component import NodeType, DataTransferTaskType
-from azure.ai.ml.entities._component.automl_component import AutoMLComponent
-from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._component.component import Component
-from azure.ai.ml.entities._component.import_component import ImportComponent
-from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._component.datatransfer_component import (
+from ..._restclient.v2022_10_01.models import ComponentVersion
+from ..._utils.utils import is_internal_components_enabled
+from ...constants._common import AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY, CommonYamlFields
+from ...constants._component import DataTransferTaskType, NodeType
+from ...entities._component.automl_component import AutoMLComponent
+from ...entities._component.command_component import CommandComponent
+from ...entities._component.component import Component
+from ...entities._component.datatransfer_component import (
     DataTransferCopyComponent,
-    DataTransferImportComponent,
     DataTransferExportComponent,
+    DataTransferImportComponent,
 )
-from azure.ai.ml.entities._util import get_type_from_spec
+from ...entities._component.import_component import ImportComponent
+from ...entities._component.parallel_component import ParallelComponent
+from ...entities._component.pipeline_component import PipelineComponent
+from ...entities._component.spark_component import SparkComponent
+from ...entities._util import get_type_from_spec
 
 
 class _ComponentFactory:
@@ -81,10 +82,23 @@ class _ComponentFactory:
             create_schema_func=DataTransferExportComponent._create_schema_for_validation,
         )
 
-    def get_create_funcs(self, yaml_spec: dict) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
+    def get_create_funcs(
+        self, yaml_spec: dict, for_load=False
+    ) -> Tuple[Callable[..., Component], Callable[[Any], Schema]]:
         """Get registered functions to create instance & its corresponding schema for the given type."""
 
         _type = get_type_from_spec(yaml_spec, valid_keys=self._create_instance_funcs)
+        if for_load and is_internal_components_enabled():
+            schema_url = yaml_spec[CommonYamlFields.SCHEMA] if CommonYamlFields.SCHEMA in yaml_spec else None
+            if (
+                _type == NodeType.SPARK
+                and schema_url
+                and schema_url.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
+            ):
+                from azure.ai.ml._internal._schema.node import NodeType as InternalNodeType
+
+                _type = InternalNodeType.SPARK
+
         create_instance_func = self._create_instance_funcs[_type]
         create_schema_func = self._create_schema_funcs[_type]
         return create_instance_func, create_schema_func
@@ -127,11 +141,11 @@ class _ComponentFactory:
         )
 
     @classmethod
-    def load_from_rest(cls, *, obj: ComponentVersionData, _type: Optional[str] = None) -> Component:
+    def load_from_rest(cls, *, obj: ComponentVersion, _type: Optional[str] = None) -> Component:
         """Load a component from a rest object.
 
         :param obj: The rest object.
-        :type obj: ComponentVersionData
+        :type obj: ComponentVersion
         :param _type: the type name of the component. When None, it will be inferred from the rest object.
         :type _type: str
         """

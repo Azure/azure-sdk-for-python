@@ -6,7 +6,12 @@ Metrics Advisor is a scalable real-time time series monitoring, alerting, and ro
 - Configure and fine-tune the anomaly detection model used on your data
 - Diagnose anomalies and help with root cause analysis
 
-[Source code][src_code] | [Package (Pypi)][package] | [API reference documentation][reference_documentation] | [Product documentation][ma_docs] | [Samples][samples_readme]
+[Source code][src_code]
+| [Package (Pypi)][package]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-metricsadvisor/)
+| [API reference documentation][reference_documentation]
+| [Product documentation][ma_docs]
+| [Samples][samples_readme]
 
 ## _Disclaimer_
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Optional, TypeVar, Any
+from typing import Optional, TypeVar, Any, Tuple
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.credentials import AccessToken
@@ -36,7 +36,9 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         return self._client.get_cached_token(*scopes)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument

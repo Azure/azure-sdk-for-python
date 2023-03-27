@@ -11,7 +11,7 @@ from datetime import datetime
 import warnings
 from typing import Optional, Any, cast, Mapping, Union, Dict, Iterable, List, Tuple
 
-from msrest.serialization import TZ_UTC
+from datetime import timezone
 from .._pyamqp.message import Message, Header, Properties
 from .._pyamqp.utils import normalized_data_body, normalized_sequence_body, amqp_long_value
 
@@ -256,7 +256,7 @@ class AmqpAnnotatedMessage(object):
 
             if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
-                creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * 1000)
+                creation_time_from_ttl = int(time.mktime(datetime.now(timezone.utc).timetuple()) * 1000)
                 absolute_expiry_time_from_ttl = int(min(
                     MAX_ABSOLUTE_EXPIRY_TIME,
                     creation_time_from_ttl + self.header.time_to_live
