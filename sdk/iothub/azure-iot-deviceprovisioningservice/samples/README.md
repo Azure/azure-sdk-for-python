@@ -1,0 +1,62 @@
+# Azure IoT Device Provisioning Service client library for Python Samples
+
+These are code samples that show common usage of the Azure IoT Device Provisioning Service client library.
+The async versions of any sample files will be appended with `_async` to show async client usage examples.
+
+
+## Prerequisites
+* Python 3.7 or later is required to use this package
+* You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
+[Azure IoT Device Provisioning Service](https://learn.microsoft.com/en-us/azure/iot-dps/) resource to run these samples.
+
+## Setup
+
+1. Install the Azure IoT Device Provisioning Service client library for Python with [pip](https://pypi.org/project/pip/):
+
+```bash
+pip install azure-iot-deviceprovisioningservice
+```
+
+2. Clone or download this sample repository
+3. Open the sample folder in Visual Studio Code or your IDE of choice.
+
+## Running the samples
+
+1. Open a terminal window and `cd` to the directory that the samples are saved in.
+2. Set the environment variables specified in the sample file you wish to run.
+3. Follow the usage described in the file, e.g. `python dps_service_sample_individual_enrollments.py`
+
+## Samples
+
+- [Device Registration States](./dps_service_sample_device_registration.py) ([async version](./dps_service_sample_device_registration_async.py)):
+    - Create a basic enrollment group
+    - Register a device (Requires device SDK)
+    - Query device registration states for an enrollment group
+    - Get device registration state
+    - Delete device registration state
+
+- [Enrollment Groups](./dps_service_sample_enrollment_groups.py) ([async version](./dps_service_sample_enrollment_groups_async.py)):
+    - Create a symmetric key enrollment group
+    - Create an x509 certificate enrollment group
+    - Get an enrollment group
+    - Update an enrollment group
+    - Get enrollment group attestation mechanism
+    - Bulk enrollment group operations
+    - Delete enrollment group
+
+
+- [Individual Enrollments](./dps_service_sample_individual_enrollments.py) ([async version](./dps_service_sample_individual_enrollments_async.py)):
+    - Create a symmetric key individual enrollment
+    - Create a TPM attestation individual enrollment
+    - Create an x509 certificate individual enrollment
+    - Get an individual enrollment
+    - Update an individual enrollment
+    - Get an individual enrollment's attestation mechanism
+    - Bulk individual enrollment operations
+    - Delete an individual enrollment
+
+
+## Next steps
+
+Check out the [API reference documentation](https://learn.microsoft.com/en-us/rest/api/iot-dps/) to learn more about
+what you can do with the Azure IoT Device Provisioning Service client library.

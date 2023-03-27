@@ -1,0 +1,8 @@
+[packaging]
+package_name = "azure-iot-deviceprovisioningservice"
+package_pprint_name = "IoT Device Provisioning Service"
+package_doc_id = "iot"
+is_stable = true
+is_arm = false
+sample_link = ""
+title = "ProvisioningServiceClient"

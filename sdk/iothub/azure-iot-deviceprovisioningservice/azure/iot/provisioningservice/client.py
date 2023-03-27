@@ -1,0 +1,148 @@
+# coding=utf-8
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+from typing import Any, Dict, Optional, Union
+
+from azure.core.credentials import TokenCredential
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import (
+    BearerTokenCredentialPolicy,
+    ContentDecodePolicy,
+    DistributedTracingPolicy,
+    HeadersPolicy,
+    HttpLoggingPolicy,
+    NetworkTraceLoggingPolicy,
+    RetryPolicy,
+    UserAgentPolicy,
+)
+from azure.core.pipeline.transport import (
+    RequestsTransport,
+)  # pylint: disable=no-name-in-module
+
+from azure.iot.provisioningservice.auth import SharedKeyCredentialPolicy
+from azure.iot.provisioningservice.protocol import VERSION
+from azure.iot.provisioningservice.protocol import (
+    ProvisioningServiceClient as GeneratedProvisioningServiceClient,
+)
+
+from .util.connection_strings import parse_iot_dps_connection_string
+
+
+class ProvisioningServiceClient(object):
+    """
+    API for connecting to, and conducting operations on a Device Provisioning Service instance
+
+    :param str endpoint: The HTTP endpoint of the Device Provisioning Service instance
+    :param credential: The credential type used to authenticate with the Device Provisioning Service instance
+    """
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Optional[
+            Union[
+                str,
+                Dict[str, str],
+                TokenCredential,
+            ]
+        ] = None,  # pylint: disable=line-too-long
+        **kwargs: Any,
+    ) -> None:
+        # Validate endpoint
+        try:
+            if not endpoint.lower().startswith("http"):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Endpoint URL must be a string.")
+        endpoint = endpoint.rstrip("/")
+
+        self._pipeline = self._create_pipeline(
+            credential=credential, base_url=endpoint, **kwargs
+        )
+        # Generate base client
+        self._runtime_client = GeneratedProvisioningServiceClient(
+            credential=credential,
+            endpoint=endpoint,
+            pipeline=self._pipeline,
+            **kwargs,
+        )
+
+        self.individual_enrollment = self._runtime_client.individual_enrollment
+        self.enrollment_group = self._runtime_client.enrollment_group
+        self.device_registration_state = self._runtime_client.device_registration_state
+
+    @classmethod
+    def from_connection_string(
+        cls, connection_string: str, **kwargs: Any
+    ) -> "ProvisioningServiceClient":
+        """
+        Create a Provisioning Service Client from a connection string
+
+        :param str connection_string: The connection string for the Device Provisioning Service
+        :return: A new instance of :class:`ProvisioningServiceClient
+         <azure.iot.provisioningservice.ProvisioningServiceClient>`
+        :rtype: :class:`ProvisioningServiceClient
+         <azure.iot.provisioningservice.ProvisioningServiceClient>`
+        :raises: ValueError if connection string is invalid
+        """
+        cs_args = parse_iot_dps_connection_string(connection_string)
+        host_name, shared_access_key_name, shared_access_key = (
+            cs_args["HostName"],
+            cs_args["SharedAccessKeyName"],
+            cs_args["SharedAccessKey"],
+        )
+        # Create credential from keys
+        credential = SharedKeyCredentialPolicy(
+            host_name, shared_access_key_name, shared_access_key
+        )
+
+        return cls(endpoint=host_name, credential=credential, **kwargs)
+
+    @classmethod
+    def _create_pipeline(
+        self,
+        credential: Optional[
+            Union[
+                str,
+                Dict[str, str],
+                TokenCredential,
+            ]
+        ],
+        base_url: str,
+        **kwargs,
+    ) -> Pipeline:
+        transport = kwargs.get("transport") or RequestsTransport(**kwargs)
+        user_agent_policy = kwargs.get("user_agent_policy") or UserAgentPolicy(
+            sdk_moniker=f"az-iot-dps-python/{VERSION}", **kwargs
+        )
+
+        # Choose appropriate credential policy
+        self._credential_policy = None
+        if hasattr(credential, "get_token"):
+            self._credential_policy = BearerTokenCredentialPolicy(
+                credential=credential, scopes=base_url
+            )
+        elif isinstance(credential, SharedKeyCredentialPolicy):
+            self._credential_policy = credential
+        elif credential is not None:
+            raise TypeError(f"Unsupported credential: {credential}")
+
+        policies = [
+            user_agent_policy,
+            self._credential_policy,
+            HeadersPolicy(**kwargs),
+            UserAgentPolicy(**kwargs),
+            ContentDecodePolicy(**kwargs),
+            RetryPolicy(**kwargs),
+            HttpLoggingPolicy(**kwargs),
+            DistributedTracingPolicy(**kwargs),
+            NetworkTraceLoggingPolicy(**kwargs),
+        ]
+        # add additional policies from kwargs
+        if kwargs.get("_additional_pipeline_policies"):
+            policies = policies.extend(kwargs.get("_additional_pipeline_policies"))
+
+        return Pipeline(transport=transport, policies=policies)
