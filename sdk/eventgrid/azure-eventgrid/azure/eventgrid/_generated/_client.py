@@ -7,60 +7,47 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.rest import HttpRequest, HttpResponse
 
+from . import models as _models
 from ._configuration import EventGridPublisherClientConfiguration
+from ._operations import EventGridPublisherClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Dict
 
-    from azure.core.rest import HttpRequest, HttpResponse
-
-class EventGridPublisherClient(object):
+class EventGridPublisherClient(
+    EventGridPublisherClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """EventGrid Python Publisher Client.
 
+    :keyword api_version: Api Version. Default value is "2018-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        base_url = 'https://{topicHostname}'
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+        _endpoint = "https://{topicHostname}"
         self._config = EventGridPublisherClientConfiguration(**kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {}  # type: Dict[str, Any]
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `event_grid_publisher_client.rest`.
-        Use these helper methods to create the request you pass to this method.
-
-        >>> from event_grid_publisher_client.rest import build_publish_events_request
-        >>> request = build_publish_events_request(json=json, content=content, **kwargs)
-        <HttpRequest [POST], url: '/api/events'>
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
         >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
-
-        For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
-        and pass it in.
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -73,15 +60,12 @@ class EventGridPublisherClient(object):
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> EventGridPublisherClient
+    def __enter__(self) -> "EventGridPublisherClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
