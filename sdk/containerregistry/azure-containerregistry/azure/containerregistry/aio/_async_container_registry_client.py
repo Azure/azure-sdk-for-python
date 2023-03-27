@@ -867,8 +867,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def delete_blob(self, repository: str, digest: str, **kwargs) -> None:
-        """Delete a blob. If the blob cannot be found or a response status code of
-        404 is returned an error will not be raised.
+        """Delete a blob.
 
         :param str repository: Name of the repository the manifest belongs to
         :param str digest: Digest of the blob to be deleted
