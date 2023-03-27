@@ -12,7 +12,8 @@
 
 ### Other Changes
 
-- Removed `msrest` dependency and `six` references, and added `isodate` dependency
+- Removed `msrest` dependency and `six` dependencies
+- Added `isodate` dependency
 
 ## 4.9.1 (2022-11-08)
 
