@@ -16,14 +16,12 @@ from ._generated._serialization import Serializer, Deserializer
 
 def get_authentication_policy(
     credential: TokenCredential,
-    audience: Optional[str] = None
+    audience: str
 ) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
-    if not audience:
-        audience = "https://api.loganalytics.io/"
-    scope = audience.rstrip('/') + "/.default"
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
+    scope = audience.rstrip('/') + "/.default"
     if hasattr(credential, "get_token"):
         return BearerTokenCredentialPolicy(
             credential, scope
@@ -34,14 +32,12 @@ def get_authentication_policy(
 
 def get_metrics_authentication_policy(
     credential: TokenCredential,
-    audience: Optional[str] = None
+    audience: str
 ) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
-    if not audience:
-        audience = "https://management.azure.com/"
-    scope = audience.rstrip('/') + "/.default"
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
+    scope = audience.rstrip('/') + "/.default"
     if hasattr(credential, "get_token"):
         return BearerTokenCredentialPolicy(
             credential, scope

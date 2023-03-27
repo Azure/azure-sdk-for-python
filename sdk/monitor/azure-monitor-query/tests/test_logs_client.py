@@ -285,3 +285,10 @@ class TestLogsClient(AzureRecordedTestCase):
 
         assert response.visualization is not None
         assert response.statistics is not None
+    def test_client_different_endpoint(self):
+        credential = self.get_credential(LogsQueryClient)
+        endpoint = "https://api.loganalytics.azure.cn/v1"
+        client = LogsQueryClient(credential, endpoint=endpoint)
+
+        assert client._endpoint == endpoint
+        assert "https://api.loganalytics.azure.cn/.default" in client._client._config.authentication_policy._scopes

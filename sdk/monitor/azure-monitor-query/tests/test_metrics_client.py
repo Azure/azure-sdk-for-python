@@ -109,3 +109,11 @@ class TestMetricsClient(AzureRecordedTestCase):
         assert response is not None
         for item in response:
             assert item
+
+    def test_client_different_endpoint(self):
+        credential = self.get_credential(MetricsQueryClient)
+        endpoint = "https://management.chinacloudapi.cn"
+        client = MetricsQueryClient(credential, endpoint=endpoint)
+
+        assert client._endpoint == endpoint
+        assert f"{endpoint}/.default" in client._client._config.authentication_policy._scopes

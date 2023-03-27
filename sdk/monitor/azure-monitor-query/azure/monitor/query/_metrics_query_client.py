@@ -40,8 +40,8 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
-        audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
+        audience = kwargs.pop("audience", endpoint)
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
