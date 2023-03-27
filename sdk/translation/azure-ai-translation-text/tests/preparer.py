@@ -5,10 +5,10 @@
 
 import os
 import functools
-from devtools_testutils import PowerShellPreparer
+from devtools_testutils import EnvironmentVariableLoader
 
 TextTranslationPreparer = functools.partial(
-    PowerShellPreparer, 
+    EnvironmentVariableLoader,
     'text_translation',
     text_translation_endpoint="https://fakeEndpoint.cognitive.microsofttranslator.com",
     text_translation_custom_endpoint="https://fakeCustomEndpoint.cognitiveservices.azure.com",

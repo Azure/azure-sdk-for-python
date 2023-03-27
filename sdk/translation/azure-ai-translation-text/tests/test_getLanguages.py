@@ -12,7 +12,7 @@ class TestGetLanguages(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_all_scopes(self, **kwargs):
-        endpoint = kwargs.get("texttranslation_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_getlanguage_client(endpoint)
         response = client.get_languages()
 
@@ -23,7 +23,7 @@ class TestGetLanguages(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_translation_scope(self, **kwargs):
-        endpoint = kwargs.get("texttranslation_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_getlanguage_client(endpoint)
         response = client.get_languages(scope="translation")
 
@@ -36,7 +36,7 @@ class TestGetLanguages(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_transliteration_scope(self, **kwargs):
-        endpoint = kwargs.get("texttranslation_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_getlanguage_client(endpoint)
         response = client.get_languages(scope="transliteration")
 
@@ -62,7 +62,7 @@ class TestGetLanguages(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_transliteration_multiple_scripts(self, **kwargs):
-        endpoint = kwargs.get("texttranslation_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_getlanguage_client(endpoint)
         response = client.get_languages(scope="transliteration")
 
@@ -79,7 +79,7 @@ class TestGetLanguages(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_dictionary_scope(self, **kwargs):
-        endpoint = kwargs.get("texttranslation_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_getlanguage_client(endpoint)
         response = client.get_languages(scope="dictionary")
 
@@ -97,7 +97,7 @@ class TestGetLanguages(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_dictionary_multiple_translations(self, **kwargs):
-        endpoint = kwargs.get("texttranslation_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_getlanguage_client(endpoint)
         response = client.get_languages(scope="dictionary")
 
@@ -115,7 +115,7 @@ class TestGetLanguages(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_with_culture(self, **kwargs):
-        endpoint = kwargs.get("texttranslation_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         client = self.create_getlanguage_client(endpoint)
         response = client.get_languages(accept_language="es")
 
