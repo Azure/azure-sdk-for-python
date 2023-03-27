@@ -3,9 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
 from typing import AsyncIterable, AsyncContextManager, Callable, Awaitable
 from typing_extensions import Self
-import hashlib
 
 
 class AsyncDownloadBlobStream(
@@ -57,6 +57,4 @@ class AsyncDownloadBlobStream(
             return await self._yield_data()
 
     async def close(self) -> None:
-        # This is not currently supported in Core, and probably needs to be.
-        # await self._response.close()
-        pass
+        await self._response.close()

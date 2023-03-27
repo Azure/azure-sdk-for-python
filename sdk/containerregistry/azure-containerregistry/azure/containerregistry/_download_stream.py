@@ -3,9 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
 from typing import Iterable, ContextManager, Callable
 from typing_extensions import Self
-import hashlib
 
 
 class DownloadBlobStream(
@@ -57,6 +57,4 @@ class DownloadBlobStream(
             return self._yield_data()
 
     def close(self) -> None:
-        # This is not currently supported in Core, and probably needs to be.
-        # self._response.close()
-        pass
+        self._response.close()
