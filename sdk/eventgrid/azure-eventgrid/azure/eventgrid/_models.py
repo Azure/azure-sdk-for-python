@@ -6,7 +6,6 @@
 from typing import Any, cast
 import datetime as dt
 import uuid
-from datetime import datetime
 from ._messaging_shared import _get_json_content
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
