@@ -47,7 +47,7 @@ def read_remote_feature_set_spec_metadata_contents(
             starts_with = datastore_path_uri.path.rstrip("/")
             storage_client.download(f"{starts_with}/FeaturesetSpec.yaml", tmp_dir)
             downloaded_spec_path = Path(tmp_dir, "FeaturesetSpec.yaml")
-            with open(downloaded_spec_path, "r") as f:  # pylint: disable=unspecified-encoding
+            with open(downloaded_spec_path, "r") as f:
                 return yaml.safe_load(f)
     return None
 
