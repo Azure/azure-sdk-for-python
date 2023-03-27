@@ -569,7 +569,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Receiver on_attach callback.
         """
         # pylint: disable=protected-access, unused-argument
-        if receiver._session and attach_frame.source.address.decode(receiver._config.encoding) == receiver._entity_uri:
+        if receiver._session and attach_frame.source.address.decode() == receiver._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
             receiver._session._session_start = utc_now()
             expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
@@ -688,17 +688,17 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         if settle_operation == MESSAGE_COMPLETE:
-            return handler.settle_messages(message.delivery_id, 'accepted')
+            return handler.settle_messages(message._delivery_id, 'accepted')
         if settle_operation == MESSAGE_ABANDON:
             return handler.settle_messages(
-                message.delivery_id,
+                message._delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=False
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
             return handler.settle_messages(
-                message.delivery_id,
+                message._delivery_id,
                 'rejected',
                 error=AMQPError(
                     condition=DEADLETTERNAME,
@@ -711,7 +711,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
         if settle_operation == MESSAGE_DEFER:
             return handler.settle_messages(
-                message.delivery_id,
+                message._delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=True

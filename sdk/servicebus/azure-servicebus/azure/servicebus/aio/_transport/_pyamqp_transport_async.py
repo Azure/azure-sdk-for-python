@@ -239,17 +239,17 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
         if settle_operation == MESSAGE_COMPLETE:
-            return await handler.settle_messages_async(message.delivery_id, 'accepted')
+            return await handler.settle_messages_async(message._delivery_id, 'accepted')
         if settle_operation == MESSAGE_ABANDON:
             return await handler.settle_messages_async(
-                message.delivery_id,
+                message._delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=False
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
             return await handler.settle_messages_async(
-                message.delivery_id,
+                message._delivery_id,
                 'rejected',
                 error=AMQPError(
                     condition=DEADLETTERNAME,
@@ -262,7 +262,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             )
         if settle_operation == MESSAGE_DEFER:
             return await handler.settle_messages_async(
-                message.delivery_id,
+                message._delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=True
@@ -274,7 +274,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     @staticmethod
     async def on_attach_async(receiver, attach_frame):
         # pylint: disable=protected-access, unused-argument
-        if receiver._session and attach_frame.source.address.decode(receiver._config.encoding) == receiver._entity_uri:
+        if receiver._session and attach_frame.source.address.decode() == receiver._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
             receiver._session._session_start = utc_now()
             expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)

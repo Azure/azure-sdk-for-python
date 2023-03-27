@@ -223,7 +223,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             assert count == 10
 
     # @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
-    # TODO: pyamqp failing w/ assert 1 == 6
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2232,7 +2231,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         messages.append(message)
                 assert len(messages) == 2
 
-    # @pytest.mark.skip(reason="TODO: _counter doesn't exist in pyamqp")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2250,12 +2248,8 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender.send_messages(message)
 
                 messages = []
-                if uamqp_transport:
-                    def get_time():
-                      return receiver._handler._counter.get_current_ms()/1000
-                else:
-                    def get_time():
-                        return time.time()
+                def get_time():
+                    return time.time()
 
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 

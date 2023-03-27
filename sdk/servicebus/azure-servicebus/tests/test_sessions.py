@@ -275,7 +275,6 @@ class TestServiceBusSession(AzureMgmtRecordedTestCase):
                                                   max_wait_time=10,) as session:
                     pass
 
-    @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)

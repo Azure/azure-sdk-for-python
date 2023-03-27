@@ -1911,12 +1911,8 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 await sender.send_messages(message)
 
                 messages = []
-                if uamqp_transport:
-                    def get_time():
-                      return receiver._handler._counter.get_current_ms()/1000
-                else:
-                    def get_time():
-                        return time.time()
+                def get_time():
+                    return time.time()
 
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
 

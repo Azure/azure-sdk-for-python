@@ -326,11 +326,11 @@ if uamqp_installed:
             :keyword int timeout: Timeout.
             :keyword Callable callback: Callback to process request response.
             """
-            return (await mgmt_client.mgmt_request_async(
+            return await mgmt_client.mgmt_request_async(
                 mgmt_msg,
                 operation,
                 op_type=operation_type,
                 node=node,
                 timeout=timeout * UamqpTransportAsync.TIMEOUT_FACTOR if timeout else None,
                 callback=functools.partial(callback, amqp_transport=UamqpTransportAsync)
-            ))
+            )

@@ -813,7 +813,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
         self._message = message
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self._delivery_tag = self._amqp_transport.get_message_delivery_tag(message, frame)
-        self.delivery_id = self._amqp_transport.get_message_delivery_id(message, frame)    # only used by pyamqp
+        self._delivery_id = self._amqp_transport.get_message_delivery_id(message, frame)    # only used by pyamqp
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
@@ -956,7 +956,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
                 settler = None
             self._uamqp_message = LegacyMessage(
                 self._raw_amqp_message,
-                delivery_no=self.delivery_id,
+                delivery_no=self._delivery_id,
                 delivery_tag=self._delivery_tag,
                 settler=settler,
                 encoding=self._encoding,
