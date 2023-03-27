@@ -10,6 +10,10 @@
 
 - `SystemEventNames` enums for APIManagement were incorrectly capitalized, changed `Api` to `API`.
 
+### Other Changes
+
+- Removed `msrest` dependency and `six` references, and added `isodate` dependency
+
 ## 4.9.1 (2022-11-08)
 
 - This version and all future versions will require Python 3.7+.
