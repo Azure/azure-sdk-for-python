@@ -688,7 +688,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_application_gateways_delete_request(
@@ -703,8 +703,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -745,7 +746,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -813,7 +814,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
 
         request = build_application_gateways_get_request(
@@ -828,8 +829,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -867,7 +869,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
 
@@ -894,8 +896,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1030,7 +1033,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1168,7 +1171,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
 
@@ -1195,8 +1198,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1231,7 +1235,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1273,8 +1277,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1303,7 +1308,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1344,8 +1349,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1373,7 +1379,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_application_gateways_start_request(
@@ -1388,8 +1394,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1430,7 +1437,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1486,7 +1493,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_application_gateways_stop_request(
@@ -1501,8 +1508,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1543,7 +1551,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1586,7 +1594,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
     }
 
     async def _backend_health_initial(
-        self, resource_group_name: str, application_gateway_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, application_gateway_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> Optional[_models.ApplicationGatewayBackendHealth]:
         error_map = {
             401: ClientAuthenticationError,
@@ -1599,7 +1607,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.ApplicationGatewayBackendHealth]] = kwargs.pop("cls", None)
 
         request = build_application_gateways_backend_health_request(
@@ -1615,8 +1623,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1640,7 +1649,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_backend_health(
-        self, resource_group_name: str, application_gateway_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, application_gateway_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationGatewayBackendHealth]:
         """Gets the backend health of the specified application gateway in a resource group.
 
@@ -1648,9 +1657,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param application_gateway_name: The name of the application gateway. Required.
         :type application_gateway_name: str
-        :param expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend health.
-         Default value is None.
-        :type expand: str
+        :keyword expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend
+         health. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -1668,7 +1677,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayBackendHealth] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1718,6 +1727,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_gateway_name: str,
         probe_request: Union[_models.ApplicationGatewayOnDemandProbe, IO],
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.ApplicationGatewayBackendHealthOnDemand]:
@@ -1732,7 +1742,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ApplicationGatewayBackendHealthOnDemand]] = kwargs.pop("cls", None)
 
@@ -1760,8 +1770,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1789,8 +1800,8 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_gateway_name: str,
         probe_request: _models.ApplicationGatewayOnDemandProbe,
-        expand: Optional[str] = None,
         *,
+        expand: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationGatewayBackendHealthOnDemand]:
@@ -1803,9 +1814,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type application_gateway_name: str
         :param probe_request: Request body for on-demand test probe operation. Required.
         :type probe_request: ~azure.mgmt.network.v2022_09_01.models.ApplicationGatewayOnDemandProbe
-        :param expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend health.
-         Default value is None.
-        :type expand: str
+        :keyword expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend
+         health. Default value is None.
+        :paramtype expand: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1830,8 +1841,8 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_gateway_name: str,
         probe_request: IO,
-        expand: Optional[str] = None,
         *,
+        expand: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationGatewayBackendHealthOnDemand]:
@@ -1844,9 +1855,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         :type application_gateway_name: str
         :param probe_request: Request body for on-demand test probe operation. Required.
         :type probe_request: IO
-        :param expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend health.
-         Default value is None.
-        :type expand: str
+        :keyword expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend
+         health. Default value is None.
+        :paramtype expand: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1871,6 +1882,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         application_gateway_name: str,
         probe_request: Union[_models.ApplicationGatewayOnDemandProbe, IO],
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ApplicationGatewayBackendHealthOnDemand]:
@@ -1885,9 +1897,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
          ApplicationGatewayOnDemandProbe type or a IO type. Required.
         :type probe_request: ~azure.mgmt.network.v2022_09_01.models.ApplicationGatewayOnDemandProbe or
          IO
-        :param expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend health.
-         Default value is None.
-        :type expand: str
+        :keyword expand: Expands BackendAddressPool and BackendHttpSettings referenced in backend
+         health. Default value is None.
+        :paramtype expand: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -1908,7 +1920,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGatewayBackendHealthOnDemand] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1976,7 +1988,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         request = build_application_gateways_list_available_server_variables_request(
@@ -1989,8 +2001,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2031,7 +2044,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         request = build_application_gateways_list_available_request_headers_request(
@@ -2044,8 +2057,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2086,7 +2100,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         request = build_application_gateways_list_available_response_headers_request(
@@ -2099,8 +2113,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2141,7 +2156,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayAvailableWafRuleSetsResult] = kwargs.pop("cls", None)
 
         request = build_application_gateways_list_available_waf_rule_sets_request(
@@ -2154,8 +2169,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2195,7 +2211,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayAvailableSslOptions] = kwargs.pop("cls", None)
 
         request = build_application_gateways_list_available_ssl_options_request(
@@ -2208,8 +2224,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2245,7 +2262,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayAvailableSslPredefinedPolicies] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2286,8 +2303,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2327,7 +2345,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewaySslPredefinedPolicy] = kwargs.pop("cls", None)
 
         request = build_application_gateways_get_ssl_predefined_policy_request(
@@ -2341,8 +2359,9 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2402,7 +2421,7 @@ class ApplicationGatewayPrivateLinkResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayPrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2445,8 +2464,9 @@ class ApplicationGatewayPrivateLinkResourcesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2496,7 +2516,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_application_gateway_private_endpoint_connections_delete_request(
@@ -2512,8 +2532,9 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2557,7 +2578,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2619,7 +2640,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ApplicationGatewayPrivateEndpointConnection]] = kwargs.pop("cls", None)
 
@@ -2647,8 +2668,9 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2796,7 +2818,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGatewayPrivateEndpointConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -2874,7 +2896,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayPrivateEndpointConnection] = kwargs.pop("cls", None)
 
         request = build_application_gateway_private_endpoint_connections_get_request(
@@ -2890,8 +2912,9 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2931,7 +2954,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayPrivateEndpointConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -2974,8 +2997,9 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3033,7 +3057,7 @@ class ApplicationGatewayWafDynamicManifestsDefaultOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayWafDynamicManifestResult] = kwargs.pop("cls", None)
 
         request = build_application_gateway_waf_dynamic_manifests_default_get_request(
@@ -3047,8 +3071,9 @@ class ApplicationGatewayWafDynamicManifestsDefaultOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3104,7 +3129,7 @@ class ApplicationGatewayWafDynamicManifestsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationGatewayWafDynamicManifestResultList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -3146,8 +3171,9 @@ class ApplicationGatewayWafDynamicManifestsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3197,7 +3223,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_application_security_groups_delete_request(
@@ -3212,8 +3238,9 @@ class ApplicationSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3254,7 +3281,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3322,7 +3349,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationSecurityGroup] = kwargs.pop("cls", None)
 
         request = build_application_security_groups_get_request(
@@ -3337,8 +3364,9 @@ class ApplicationSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3376,7 +3404,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationSecurityGroup] = kwargs.pop("cls", None)
 
@@ -3403,8 +3431,9 @@ class ApplicationSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3539,7 +3568,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationSecurityGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -3677,7 +3706,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationSecurityGroup] = kwargs.pop("cls", None)
 
@@ -3704,8 +3733,9 @@ class ApplicationSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -3739,7 +3769,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -3780,8 +3810,9 @@ class ApplicationSecurityGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3811,7 +3842,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ApplicationSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -3853,8 +3884,9 @@ class ApplicationSecurityGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -3905,7 +3937,7 @@ class AvailableDelegationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AvailableDelegationsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -3947,8 +3979,9 @@ class AvailableDelegationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4003,7 +4036,7 @@ class AvailableResourceGroupDelegationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AvailableDelegationsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -4046,8 +4079,9 @@ class AvailableResourceGroupDelegationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4099,7 +4133,7 @@ class AvailableServiceAliasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AvailableServiceAliasesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -4141,8 +4175,9 @@ class AvailableServiceAliasesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4178,7 +4213,7 @@ class AvailableServiceAliasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AvailableServiceAliasesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -4221,8 +4256,9 @@ class AvailableServiceAliasesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4272,7 +4308,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_azure_firewalls_delete_request(
@@ -4287,8 +4323,9 @@ class AzureFirewallsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4329,7 +4366,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -4395,7 +4432,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AzureFirewall] = kwargs.pop("cls", None)
 
         request = build_azure_firewalls_get_request(
@@ -4410,8 +4447,9 @@ class AzureFirewallsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4449,7 +4487,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureFirewall] = kwargs.pop("cls", None)
 
@@ -4476,8 +4514,9 @@ class AzureFirewallsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4612,7 +4651,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureFirewall] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -4678,7 +4717,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.AzureFirewall]] = kwargs.pop("cls", None)
 
@@ -4705,8 +4744,9 @@ class AzureFirewallsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -4837,7 +4877,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureFirewall] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -4900,7 +4940,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AzureFirewallListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -4942,8 +4982,9 @@ class AzureFirewallsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -4972,7 +5013,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AzureFirewallListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -5013,8 +5054,9 @@ class AzureFirewallsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5042,7 +5084,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.IPPrefixesList]] = kwargs.pop("cls", None)
 
         request = build_azure_firewalls_list_learned_prefixes_request(
@@ -5057,8 +5099,9 @@ class AzureFirewallsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5107,7 +5150,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IPPrefixesList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -5185,7 +5228,7 @@ class AzureFirewallFqdnTagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AzureFirewallFqdnTagListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -5226,8 +5269,9 @@ class AzureFirewallFqdnTagsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5262,14 +5306,14 @@ class WebCategoriesOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, name: str, expand: Optional[str] = None, **kwargs: Any) -> _models.AzureWebCategory:
+    async def get(self, name: str, *, expand: Optional[str] = None, **kwargs: Any) -> _models.AzureWebCategory:
         """Gets the specified Azure Web Category.
 
         :param name: The name of the azureWebCategory. Required.
         :type name: str
-        :param expand: Expands resourceIds back referenced by the azureWebCategory resource. Default
+        :keyword expand: Expands resourceIds back referenced by the azureWebCategory resource. Default
          value is None.
-        :type expand: str
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AzureWebCategory or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.AzureWebCategory
@@ -5286,7 +5330,7 @@ class WebCategoriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AzureWebCategory] = kwargs.pop("cls", None)
 
         request = build_web_categories_get_request(
@@ -5301,8 +5345,9 @@ class WebCategoriesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5333,7 +5378,7 @@ class WebCategoriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AzureWebCategoryListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -5374,8 +5419,9 @@ class WebCategoriesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -5425,7 +5471,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_bastion_hosts_delete_request(
@@ -5440,8 +5486,9 @@ class BastionHostsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5482,7 +5529,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -5548,7 +5595,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BastionHost] = kwargs.pop("cls", None)
 
         request = build_bastion_hosts_get_request(
@@ -5563,8 +5610,9 @@ class BastionHostsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5602,7 +5650,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionHost] = kwargs.pop("cls", None)
 
@@ -5629,8 +5677,9 @@ class BastionHostsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5762,7 +5811,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionHost] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -5824,7 +5873,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.BastionHost]] = kwargs.pop("cls", None)
 
@@ -5851,8 +5900,9 @@ class BastionHostsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -5976,7 +6026,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionHost] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -6037,7 +6087,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BastionHostListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -6078,8 +6128,9 @@ class BastionHostsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6108,7 +6159,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BastionHostListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -6150,8 +6201,9 @@ class BastionHostsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6187,7 +6239,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.BastionShareableLinkListResult]] = kwargs.pop("cls", None)
 
@@ -6214,8 +6266,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6347,7 +6400,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionShareableLinkListResult] = kwargs.pop("cls", None)
 
@@ -6360,9 +6413,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         error_map.update(kwargs.pop("error_map", {}) or {})
         content_type = content_type or "application/json"
         _json = None
-        _content = None
         if isinstance(bsl_request, (IO, bytes)):
-            _content = bsl_request
+            _json = bsl_request
         else:
             _json = self._serialize.body(bsl_request, "BastionShareableLinkListRequest")
 
@@ -6401,8 +6453,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6476,7 +6529,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -6503,8 +6556,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6623,7 +6677,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -6756,7 +6810,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionShareableLinkListResult] = kwargs.pop("cls", None)
 
@@ -6810,8 +6864,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -6841,7 +6896,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.BastionActiveSessionListResult]] = kwargs.pop("cls", None)
 
         request = build_network_management_get_active_sessions_request(
@@ -6856,8 +6911,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -6907,7 +6963,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BastionActiveSessionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -6950,8 +7006,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7090,7 +7147,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionSessionDeleteResult] = kwargs.pop("cls", None)
 
@@ -7144,8 +7201,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -7163,15 +7221,15 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
 
     @distributed_trace_async
     async def check_dns_name_availability(
-        self, location: str, domain_name_label: str, **kwargs: Any
+        self, location: str, *, domain_name_label: str, **kwargs: Any
     ) -> _models.DnsNameAvailabilityResult:
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
         :param location: The location of the domain name. Required.
         :type location: str
-        :param domain_name_label: The domain name to be verified. It must conform to the following
+        :keyword domain_name_label: The domain name to be verified. It must conform to the following
          regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.
-        :type domain_name_label: str
+        :paramtype domain_name_label: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DnsNameAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.DnsNameAvailabilityResult
@@ -7188,7 +7246,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DnsNameAvailabilityResult] = kwargs.pop("cls", None)
 
         request = build_network_management_check_dns_name_availability_request(
@@ -7203,8 +7261,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7246,7 +7305,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteProviderPort] = kwargs.pop("cls", None)
 
         request = build_network_management_express_route_provider_port_request(
@@ -7260,8 +7319,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7287,8 +7347,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         network_manager_name: str,
         parameters: _models.ActiveConfigurationParameter,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActiveConnectivityConfigurationsListResult:
@@ -7300,9 +7360,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7318,8 +7378,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         network_manager_name: str,
         parameters: IO,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActiveConnectivityConfigurationsListResult:
@@ -7331,9 +7391,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Required.
         :type parameters: IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7349,6 +7409,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         network_manager_name: str,
         parameters: Union[_models.ActiveConfigurationParameter, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ActiveConnectivityConfigurationsListResult:
@@ -7361,9 +7422,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -7383,7 +7444,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ActiveConnectivityConfigurationsListResult] = kwargs.pop("cls", None)
 
@@ -7411,8 +7472,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7438,8 +7500,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         network_manager_name: str,
         parameters: _models.ActiveConfigurationParameter,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActiveSecurityAdminRulesListResult:
@@ -7451,9 +7513,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7469,8 +7531,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         network_manager_name: str,
         parameters: IO,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.ActiveSecurityAdminRulesListResult:
@@ -7482,9 +7544,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type network_manager_name: str
         :param parameters: Active Configuration Parameter. Required.
         :type parameters: IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7500,6 +7562,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         network_manager_name: str,
         parameters: Union[_models.ActiveConfigurationParameter, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.ActiveSecurityAdminRulesListResult:
@@ -7512,9 +7575,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :param parameters: Active Configuration Parameter. Is either a ActiveConfigurationParameter
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ActiveConfigurationParameter or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -7534,7 +7597,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ActiveSecurityAdminRulesListResult] = kwargs.pop("cls", None)
 
@@ -7562,8 +7625,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7589,8 +7653,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         virtual_network_name: str,
         parameters: _models.QueryRequestOptions,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveConnectivityConfigurationListResult:
@@ -7602,9 +7666,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7622,8 +7686,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         virtual_network_name: str,
         parameters: IO,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveConnectivityConfigurationListResult:
@@ -7635,9 +7699,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Required.
         :type parameters: IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7655,6 +7719,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         virtual_network_name: str,
         parameters: Union[_models.QueryRequestOptions, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveConnectivityConfigurationListResult:
@@ -7667,9 +7732,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -7691,7 +7756,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerEffectiveConnectivityConfigurationListResult] = kwargs.pop("cls", None)
 
@@ -7719,8 +7784,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7748,8 +7814,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         virtual_network_name: str,
         parameters: _models.QueryRequestOptions,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveSecurityAdminRulesListResult:
@@ -7761,9 +7827,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7780,8 +7846,8 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         virtual_network_name: str,
         parameters: IO,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveSecurityAdminRulesListResult:
@@ -7793,9 +7859,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :type virtual_network_name: str
         :param parameters: Parameters supplied to list correct page. Required.
         :type parameters: IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7812,6 +7878,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         resource_group_name: str,
         virtual_network_name: str,
         parameters: Union[_models.QueryRequestOptions, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.NetworkManagerEffectiveSecurityAdminRulesListResult:
@@ -7824,9 +7891,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         :param parameters: Parameters supplied to list correct page. Is either a QueryRequestOptions
          type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.QueryRequestOptions or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -7847,7 +7914,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerEffectiveSecurityAdminRulesListResult] = kwargs.pop("cls", None)
 
@@ -7875,8 +7942,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7923,7 +7991,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualWanSecurityProviders] = kwargs.pop("cls", None)
 
         request = build_network_management_supported_security_providers_request(
@@ -7938,8 +8006,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -7977,7 +8046,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.VpnProfileResponse]] = kwargs.pop("cls", None)
 
@@ -8004,8 +8073,9 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8145,7 +8215,7 @@ class NetworkManagementClientOperationsMixin(NetworkManagementClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnProfileResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -8233,7 +8303,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -8277,8 +8347,9 @@ class NetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8313,7 +8384,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -8356,8 +8427,9 @@ class NetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -8380,6 +8452,7 @@ class NetworkInterfacesOperations:
         cloud_service_name: str,
         role_instance_name: str,
         network_interface_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.NetworkInterface:
@@ -8393,8 +8466,8 @@ class NetworkInterfacesOperations:
         :type role_instance_name: str
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NetworkInterface
@@ -8411,7 +8484,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
         request = build_network_interfaces_get_cloud_service_network_interface_request(
@@ -8429,8 +8502,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8464,7 +8538,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_interfaces_delete_request(
@@ -8479,8 +8553,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8521,7 +8596,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -8565,7 +8640,7 @@ class NetworkInterfacesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, network_interface_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, network_interface_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.NetworkInterface:
         """Gets information about the specified network interface.
 
@@ -8573,8 +8648,8 @@ class NetworkInterfacesOperations:
         :type resource_group_name: str
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NetworkInterface
@@ -8591,7 +8666,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
         request = build_network_interfaces_get_request(
@@ -8607,8 +8682,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8646,7 +8722,7 @@ class NetworkInterfacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
@@ -8673,8 +8749,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -8809,7 +8886,7 @@ class NetworkInterfacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -8947,7 +9024,7 @@ class NetworkInterfacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
@@ -8974,8 +9051,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9008,7 +9086,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -9049,8 +9127,9 @@ class NetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9079,7 +9158,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -9121,8 +9200,9 @@ class NetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9152,7 +9232,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.EffectiveRouteListResult]] = kwargs.pop("cls", None)
 
         request = build_network_interfaces_get_effective_route_table_request(
@@ -9167,8 +9247,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9217,7 +9298,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.EffectiveRouteListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9275,7 +9356,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.EffectiveNetworkSecurityGroupListResult]] = kwargs.pop("cls", None)
 
         request = build_network_interfaces_list_effective_network_security_groups_request(
@@ -9290,8 +9371,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9340,7 +9422,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.EffectiveNetworkSecurityGroupListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9406,7 +9488,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -9450,8 +9532,9 @@ class NetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9486,7 +9569,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -9529,8 +9612,9 @@ class NetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9553,6 +9637,7 @@ class NetworkInterfacesOperations:
         virtual_machine_scale_set_name: str,
         virtualmachine_index: str,
         network_interface_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.NetworkInterface:
@@ -9566,8 +9651,8 @@ class NetworkInterfacesOperations:
         :type virtualmachine_index: str
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterface or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NetworkInterface
@@ -9584,7 +9669,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
         request = build_network_interfaces_get_virtual_machine_scale_set_network_interface_request(
@@ -9602,8 +9687,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9630,6 +9716,7 @@ class NetworkInterfacesOperations:
         virtual_machine_scale_set_name: str,
         virtualmachine_index: str,
         network_interface_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.NetworkInterfaceIPConfiguration"]:
@@ -9643,8 +9730,8 @@ class NetworkInterfacesOperations:
         :type virtualmachine_index: str
         :param network_interface_name: The name of the network interface. Required.
         :type network_interface_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkInterfaceIPConfiguration or the result of
          cls(response)
@@ -9655,7 +9742,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.NetworkInterfaceIPConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -9701,8 +9788,9 @@ class NetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9726,6 +9814,7 @@ class NetworkInterfacesOperations:
         virtualmachine_index: str,
         network_interface_name: str,
         ip_configuration_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.NetworkInterfaceIPConfiguration:
@@ -9741,8 +9830,8 @@ class NetworkInterfacesOperations:
         :type network_interface_name: str
         :param ip_configuration_name: The name of the ip configuration. Required.
         :type ip_configuration_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkInterfaceIPConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NetworkInterfaceIPConfiguration
@@ -9759,7 +9848,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.NetworkInterfaceIPConfiguration] = kwargs.pop("cls", None)
 
         request = build_network_interfaces_get_virtual_machine_scale_set_ip_configuration_request(
@@ -9778,8 +9867,9 @@ class NetworkInterfacesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -9838,7 +9928,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -9881,8 +9971,9 @@ class PublicIPAddressesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -9930,7 +10021,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -9976,8 +10067,9 @@ class PublicIPAddressesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -10002,6 +10094,7 @@ class PublicIPAddressesOperations:
         network_interface_name: str,
         ip_configuration_name: str,
         public_ip_address_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.PublicIPAddress:
@@ -10019,8 +10112,8 @@ class PublicIPAddressesOperations:
         :type ip_configuration_name: str
         :param public_ip_address_name: The name of the public IP Address. Required.
         :type public_ip_address_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.PublicIPAddress
@@ -10037,7 +10130,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
         request = build_public_ip_addresses_get_cloud_service_public_ip_address_request(
@@ -10057,8 +10150,9 @@ class PublicIPAddressesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10092,7 +10186,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_public_ip_addresses_delete_request(
@@ -10107,8 +10201,9 @@ class PublicIPAddressesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10153,7 +10248,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10197,7 +10292,7 @@ class PublicIPAddressesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, public_ip_address_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, public_ip_address_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.PublicIPAddress:
         """Gets the specified public IP address in a specified resource group.
 
@@ -10205,8 +10300,8 @@ class PublicIPAddressesOperations:
         :type resource_group_name: str
         :param public_ip_address_name: The name of the public IP address. Required.
         :type public_ip_address_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.PublicIPAddress
@@ -10223,7 +10318,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
         request = build_public_ip_addresses_get_request(
@@ -10239,8 +10334,9 @@ class PublicIPAddressesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10278,7 +10374,7 @@ class PublicIPAddressesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
@@ -10305,8 +10401,9 @@ class PublicIPAddressesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10441,7 +10538,7 @@ class PublicIPAddressesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -10579,7 +10676,7 @@ class PublicIPAddressesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
@@ -10606,8 +10703,9 @@ class PublicIPAddressesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10640,7 +10738,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -10681,8 +10779,9 @@ class PublicIPAddressesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -10711,7 +10810,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -10753,8 +10852,9 @@ class PublicIPAddressesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -10784,7 +10884,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.PublicIpDdosProtectionStatusResult]] = kwargs.pop("cls", None)
 
         request = build_public_ip_addresses_ddos_protection_status_request(
@@ -10799,8 +10899,9 @@ class PublicIPAddressesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -10853,7 +10954,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIpDdosProtectionStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10916,7 +11017,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -10959,8 +11060,9 @@ class PublicIPAddressesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -11008,7 +11110,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -11054,8 +11156,9 @@ class PublicIPAddressesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -11080,6 +11183,7 @@ class PublicIPAddressesOperations:
         network_interface_name: str,
         ip_configuration_name: str,
         public_ip_address_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.PublicIPAddress:
@@ -11097,8 +11201,8 @@ class PublicIPAddressesOperations:
         :type ip_configuration_name: str
         :param public_ip_address_name: The name of the public IP Address. Required.
         :type public_ip_address_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPAddress or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.PublicIPAddress
@@ -11115,7 +11219,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2018-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-10-01"))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
         request = build_public_ip_addresses_get_virtual_machine_scale_set_public_ip_address_request(
@@ -11135,8 +11239,9 @@ class PublicIPAddressesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11206,7 +11311,7 @@ class VipSwapOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         singleton_resource: Literal["swap"] = kwargs.pop("singleton_resource", "swap")
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SwapResource] = kwargs.pop("cls", None)
 
         request = build_vip_swap_get_request(
@@ -11222,8 +11327,9 @@ class VipSwapOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11258,7 +11364,7 @@ class VipSwapOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         singleton_resource: Literal["swap"] = kwargs.pop("singleton_resource", "swap")
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -11286,8 +11392,9 @@ class VipSwapOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11417,7 +11524,7 @@ class VipSwapOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         singleton_resource: Literal["swap"] = kwargs.pop("singleton_resource", "swap")
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -11486,7 +11593,7 @@ class VipSwapOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SwapResourceListResult] = kwargs.pop("cls", None)
 
         request = build_vip_swap_list_request(
@@ -11501,8 +11608,9 @@ class VipSwapOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11556,7 +11664,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_custom_ip_prefixes_delete_request(
@@ -11571,8 +11679,9 @@ class CustomIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11613,7 +11722,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -11657,7 +11766,7 @@ class CustomIPPrefixesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, custom_ip_prefix_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, custom_ip_prefix_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.CustomIpPrefix:
         """Gets the specified custom IP prefix in a specified resource group.
 
@@ -11665,8 +11774,8 @@ class CustomIPPrefixesOperations:
         :type resource_group_name: str
         :param custom_ip_prefix_name: The name of the custom IP prefix. Required.
         :type custom_ip_prefix_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CustomIpPrefix or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.CustomIpPrefix
@@ -11683,7 +11792,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.CustomIpPrefix] = kwargs.pop("cls", None)
 
         request = build_custom_ip_prefixes_get_request(
@@ -11699,8 +11808,9 @@ class CustomIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11738,7 +11848,7 @@ class CustomIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CustomIpPrefix] = kwargs.pop("cls", None)
 
@@ -11765,8 +11875,9 @@ class CustomIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -11901,7 +12012,7 @@ class CustomIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CustomIpPrefix] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -12038,7 +12149,7 @@ class CustomIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CustomIpPrefix] = kwargs.pop("cls", None)
 
@@ -12065,8 +12176,9 @@ class CustomIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12099,7 +12211,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.CustomIpPrefixListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -12140,8 +12252,9 @@ class CustomIPPrefixesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -12170,7 +12283,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.CustomIpPrefixListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -12212,8 +12325,9 @@ class CustomIPPrefixesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -12263,7 +12377,7 @@ class DdosCustomPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_ddos_custom_policies_delete_request(
@@ -12278,8 +12392,9 @@ class DdosCustomPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12320,7 +12435,7 @@ class DdosCustomPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -12388,7 +12503,7 @@ class DdosCustomPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DdosCustomPolicy] = kwargs.pop("cls", None)
 
         request = build_ddos_custom_policies_get_request(
@@ -12403,8 +12518,9 @@ class DdosCustomPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12442,7 +12558,7 @@ class DdosCustomPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosCustomPolicy] = kwargs.pop("cls", None)
 
@@ -12469,8 +12585,9 @@ class DdosCustomPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12603,7 +12720,7 @@ class DdosCustomPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosCustomPolicy] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -12741,7 +12858,7 @@ class DdosCustomPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosCustomPolicy] = kwargs.pop("cls", None)
 
@@ -12768,8 +12885,9 @@ class DdosCustomPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12823,7 +12941,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_ddos_protection_plans_delete_request(
@@ -12838,8 +12956,9 @@ class DdosProtectionPlansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -12884,7 +13003,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -12952,7 +13071,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DdosProtectionPlan] = kwargs.pop("cls", None)
 
         request = build_ddos_protection_plans_get_request(
@@ -12967,8 +13086,9 @@ class DdosProtectionPlansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13006,7 +13126,7 @@ class DdosProtectionPlansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosProtectionPlan] = kwargs.pop("cls", None)
 
@@ -13033,8 +13153,9 @@ class DdosProtectionPlansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13167,7 +13288,7 @@ class DdosProtectionPlansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosProtectionPlan] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -13307,7 +13428,7 @@ class DdosProtectionPlansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosProtectionPlan] = kwargs.pop("cls", None)
 
@@ -13334,8 +13455,9 @@ class DdosProtectionPlansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13368,7 +13490,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DdosProtectionPlanListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -13409,8 +13531,9 @@ class DdosProtectionPlansOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -13441,7 +13564,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DdosProtectionPlanListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -13483,8 +13606,9 @@ class DdosProtectionPlansOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -13538,7 +13662,7 @@ class DscpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DscpConfiguration] = kwargs.pop("cls", None)
 
@@ -13565,8 +13689,9 @@ class DscpConfigurationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13701,7 +13826,7 @@ class DscpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DscpConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -13762,7 +13887,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_dscp_configuration_delete_request(
@@ -13777,8 +13902,9 @@ class DscpConfigurationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13819,7 +13945,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -13887,7 +14013,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DscpConfiguration] = kwargs.pop("cls", None)
 
         request = build_dscp_configuration_get_request(
@@ -13902,8 +14028,9 @@ class DscpConfigurationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -13938,7 +14065,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DscpConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -13980,8 +14107,9 @@ class DscpConfigurationOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -14010,7 +14138,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.DscpConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -14051,8 +14179,9 @@ class DscpConfigurationOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -14102,7 +14231,7 @@ class AvailableEndpointServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.EndpointServicesListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -14144,8 +14273,9 @@ class AvailableEndpointServicesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -14195,7 +14325,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_circuit_authorizations_delete_request(
@@ -14211,8 +14341,9 @@ class ExpressRouteCircuitAuthorizationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -14255,7 +14386,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -14326,7 +14457,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitAuthorization] = kwargs.pop("cls", None)
 
         request = build_express_route_circuit_authorizations_get_request(
@@ -14342,8 +14473,9 @@ class ExpressRouteCircuitAuthorizationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -14382,7 +14514,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitAuthorization] = kwargs.pop("cls", None)
 
@@ -14410,8 +14542,9 @@ class ExpressRouteCircuitAuthorizationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -14558,7 +14691,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitAuthorization] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -14627,7 +14760,7 @@ class ExpressRouteCircuitAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AuthorizationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -14670,8 +14803,9 @@ class ExpressRouteCircuitAuthorizationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -14721,7 +14855,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_circuit_peerings_delete_request(
@@ -14737,8 +14871,9 @@ class ExpressRouteCircuitPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -14781,7 +14916,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -14852,7 +14987,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitPeering] = kwargs.pop("cls", None)
 
         request = build_express_route_circuit_peerings_get_request(
@@ -14868,8 +15003,9 @@ class ExpressRouteCircuitPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -14908,7 +15044,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitPeering] = kwargs.pop("cls", None)
 
@@ -14936,8 +15072,9 @@ class ExpressRouteCircuitPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -15082,7 +15219,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -15151,7 +15288,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitPeeringListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -15194,8 +15331,9 @@ class ExpressRouteCircuitPeeringsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -15245,7 +15383,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_circuit_connections_delete_request(
@@ -15262,8 +15400,9 @@ class ExpressRouteCircuitConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -15309,7 +15448,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -15383,7 +15522,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitConnection] = kwargs.pop("cls", None)
 
         request = build_express_route_circuit_connections_get_request(
@@ -15400,8 +15539,9 @@ class ExpressRouteCircuitConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -15441,7 +15581,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitConnection] = kwargs.pop("cls", None)
 
@@ -15470,8 +15610,9 @@ class ExpressRouteCircuitConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -15627,7 +15768,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -15700,7 +15841,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -15744,8 +15885,9 @@ class ExpressRouteCircuitConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -15812,7 +15954,7 @@ class PeerExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PeerExpressRouteCircuitConnection] = kwargs.pop("cls", None)
 
         request = build_peer_express_route_circuit_connections_get_request(
@@ -15829,8 +15971,9 @@ class PeerExpressRouteCircuitConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -15873,7 +16016,7 @@ class PeerExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PeerExpressRouteCircuitConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -15917,8 +16060,9 @@ class PeerExpressRouteCircuitConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -15968,7 +16112,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_circuits_delete_request(
@@ -15983,8 +16127,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16023,7 +16168,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16089,7 +16234,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
 
         request = build_express_route_circuits_get_request(
@@ -16104,8 +16249,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16143,7 +16289,7 @@ class ExpressRouteCircuitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
 
@@ -16170,8 +16316,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16306,7 +16453,7 @@ class ExpressRouteCircuitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -16440,7 +16587,7 @@ class ExpressRouteCircuitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
 
@@ -16467,8 +16614,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16502,7 +16650,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.ExpressRouteCircuitsArpTableListResult]] = kwargs.pop("cls", None)
 
         request = build_express_route_circuits_list_arp_table_request(
@@ -16519,8 +16667,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16574,7 +16723,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitsArpTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16634,7 +16783,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.ExpressRouteCircuitsRoutesTableListResult]] = kwargs.pop("cls", None)
 
         request = build_express_route_circuits_list_routes_table_request(
@@ -16651,8 +16800,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16706,7 +16856,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitsRoutesTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16766,7 +16916,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.ExpressRouteCircuitsRoutesTableSummaryListResult]] = kwargs.pop("cls", None)
 
         request = build_express_route_circuits_list_routes_table_summary_request(
@@ -16783,8 +16933,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16838,7 +16989,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitsRoutesTableSummaryListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16910,7 +17061,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitStats] = kwargs.pop("cls", None)
 
         request = build_express_route_circuits_get_stats_request(
@@ -16925,8 +17076,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -16974,7 +17126,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitStats] = kwargs.pop("cls", None)
 
         request = build_express_route_circuits_get_peering_stats_request(
@@ -16990,8 +17142,9 @@ class ExpressRouteCircuitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -17026,7 +17179,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -17068,8 +17221,9 @@ class ExpressRouteCircuitsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -17098,7 +17252,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -17139,8 +17293,9 @@ class ExpressRouteCircuitsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -17188,7 +17343,7 @@ class ExpressRouteServiceProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteServiceProviderListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -17229,8 +17384,9 @@ class ExpressRouteServiceProvidersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -17278,7 +17434,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -17319,8 +17475,9 @@ class ExpressRouteCrossConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -17352,7 +17509,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -17394,8 +17551,9 @@ class ExpressRouteCrossConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -17439,7 +17597,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCrossConnection] = kwargs.pop("cls", None)
 
         request = build_express_route_cross_connections_get_request(
@@ -17454,8 +17612,9 @@ class ExpressRouteCrossConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -17493,7 +17652,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnection] = kwargs.pop("cls", None)
 
@@ -17520,8 +17679,9 @@ class ExpressRouteCrossConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -17652,7 +17812,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -17792,7 +17952,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnection] = kwargs.pop("cls", None)
 
@@ -17819,8 +17979,9 @@ class ExpressRouteCrossConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -17854,7 +18015,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.ExpressRouteCircuitsArpTableListResult]] = kwargs.pop("cls", None)
 
         request = build_express_route_cross_connections_list_arp_table_request(
@@ -17871,8 +18032,9 @@ class ExpressRouteCrossConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -17926,7 +18088,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitsArpTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -17986,7 +18148,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult]] = kwargs.pop(
             "cls", None
         )
@@ -18005,8 +18167,9 @@ class ExpressRouteCrossConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -18062,7 +18225,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -18124,7 +18287,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.ExpressRouteCircuitsRoutesTableListResult]] = kwargs.pop("cls", None)
 
         request = build_express_route_cross_connections_list_routes_table_request(
@@ -18141,8 +18304,9 @@ class ExpressRouteCrossConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -18196,7 +18360,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCircuitsRoutesTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -18282,7 +18446,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionPeeringList] = kwargs.pop("cls", None)
 
         error_map = {
@@ -18325,8 +18489,9 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -18356,7 +18521,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_cross_connection_peerings_delete_request(
@@ -18372,8 +18537,9 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -18416,7 +18582,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -18487,7 +18653,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionPeering] = kwargs.pop("cls", None)
 
         request = build_express_route_cross_connection_peerings_get_request(
@@ -18503,8 +18669,9 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -18543,7 +18710,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnectionPeering] = kwargs.pop("cls", None)
 
@@ -18571,8 +18738,9 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -18719,7 +18887,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnectionPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -18804,7 +18972,7 @@ class ExpressRoutePortsLocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRoutePortsLocationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -18845,8 +19013,9 @@ class ExpressRoutePortsLocationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -18883,7 +19052,7 @@ class ExpressRoutePortsLocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRoutePortsLocation] = kwargs.pop("cls", None)
 
         request = build_express_route_ports_locations_get_request(
@@ -18897,8 +19066,9 @@ class ExpressRoutePortsLocationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -18952,7 +19122,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_ports_delete_request(
@@ -18967,8 +19137,9 @@ class ExpressRoutePortsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -19009,7 +19180,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -19077,7 +19248,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRoutePort] = kwargs.pop("cls", None)
 
         request = build_express_route_ports_get_request(
@@ -19092,8 +19263,9 @@ class ExpressRoutePortsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -19131,7 +19303,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePort] = kwargs.pop("cls", None)
 
@@ -19158,8 +19330,9 @@ class ExpressRoutePortsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -19292,7 +19465,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePort] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -19430,7 +19603,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePort] = kwargs.pop("cls", None)
 
@@ -19457,8 +19630,9 @@ class ExpressRoutePortsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -19495,7 +19669,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRoutePortListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -19537,8 +19711,9 @@ class ExpressRoutePortsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -19567,7 +19742,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRoutePortListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -19608,8 +19783,9 @@ class ExpressRoutePortsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -19713,7 +19889,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GenerateExpressRoutePortsLOAResult] = kwargs.pop("cls", None)
 
@@ -19740,8 +19916,9 @@ class ExpressRoutePortsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -19809,7 +19986,7 @@ class ExpressRouteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteLink] = kwargs.pop("cls", None)
 
         request = build_express_route_links_get_request(
@@ -19825,8 +20002,9 @@ class ExpressRouteLinksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -19865,7 +20043,7 @@ class ExpressRouteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteLinkListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -19908,8 +20086,9 @@ class ExpressRouteLinksOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -19959,7 +20138,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_port_authorizations_delete_request(
@@ -19975,8 +20154,9 @@ class ExpressRoutePortAuthorizationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -20019,7 +20199,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -20090,7 +20270,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRoutePortAuthorization] = kwargs.pop("cls", None)
 
         request = build_express_route_port_authorizations_get_request(
@@ -20106,8 +20286,9 @@ class ExpressRoutePortAuthorizationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -20146,7 +20327,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePortAuthorization] = kwargs.pop("cls", None)
 
@@ -20174,8 +20355,9 @@ class ExpressRoutePortAuthorizationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -20321,7 +20503,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePortAuthorization] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -20390,7 +20572,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRoutePortAuthorizationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -20433,8 +20615,9 @@ class ExpressRoutePortAuthorizationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -20471,12 +20654,12 @@ class ExpressRouteProviderPortsLocationOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def list(self, filter: Optional[str] = None, **kwargs: Any) -> _models.ExpressRouteProviderPortListResult:
+    async def list(self, *, filter: Optional[str] = None, **kwargs: Any) -> _models.ExpressRouteProviderPortListResult:
         """Retrieves all the ExpressRouteProviderPorts in a subscription.
 
-        :param filter: The filter to apply on the operation. For example, you can use $filter=location
-         eq '{state}'. Default value is None.
-        :type filter: str
+        :keyword filter: The filter to apply on the operation. For example, you can use
+         $filter=location eq '{state}'. Default value is None.
+        :paramtype filter: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ExpressRouteProviderPortListResult or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.ExpressRouteProviderPortListResult
@@ -20493,7 +20676,7 @@ class ExpressRouteProviderPortsLocationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteProviderPortListResult] = kwargs.pop("cls", None)
 
         request = build_express_route_provider_ports_location_list_request(
@@ -20507,8 +20690,9 @@ class ExpressRouteProviderPortsLocationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -20560,7 +20744,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_firewall_policies_delete_request(
@@ -20575,8 +20759,9 @@ class FirewallPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -20617,7 +20802,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -20661,7 +20846,7 @@ class FirewallPoliciesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, firewall_policy_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, firewall_policy_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.FirewallPolicy:
         """Gets the specified Firewall Policy.
 
@@ -20669,8 +20854,8 @@ class FirewallPoliciesOperations:
         :type resource_group_name: str
         :param firewall_policy_name: The name of the Firewall Policy. Required.
         :type firewall_policy_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FirewallPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.FirewallPolicy
@@ -20687,7 +20872,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FirewallPolicy] = kwargs.pop("cls", None)
 
         request = build_firewall_policies_get_request(
@@ -20703,8 +20888,9 @@ class FirewallPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -20742,7 +20928,7 @@ class FirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicy] = kwargs.pop("cls", None)
 
@@ -20769,8 +20955,9 @@ class FirewallPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -20905,7 +21092,7 @@ class FirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicy] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -21043,7 +21230,7 @@ class FirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicy] = kwargs.pop("cls", None)
 
@@ -21070,8 +21257,9 @@ class FirewallPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -21106,7 +21294,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -21148,8 +21336,9 @@ class FirewallPoliciesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -21178,7 +21367,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -21219,8 +21408,9 @@ class FirewallPoliciesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -21268,7 +21458,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_firewall_policy_rule_collection_groups_delete_request(
@@ -21284,8 +21474,9 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -21328,7 +21519,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -21399,7 +21590,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroup] = kwargs.pop("cls", None)
 
         request = build_firewall_policy_rule_collection_groups_get_request(
@@ -21415,8 +21606,9 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -21455,7 +21647,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroup] = kwargs.pop("cls", None)
 
@@ -21483,8 +21675,9 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -21630,7 +21823,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -21699,7 +21892,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -21742,8 +21935,9 @@ class FirewallPolicyRuleCollectionGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -21868,7 +22062,7 @@ class FirewallPolicyIdpsSignaturesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.QueryResults] = kwargs.pop("cls", None)
 
@@ -21895,8 +22089,9 @@ class FirewallPolicyIdpsSignaturesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22026,7 +22221,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SignaturesOverrides] = kwargs.pop("cls", None)
 
@@ -22053,8 +22248,9 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22164,7 +22360,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SignaturesOverrides] = kwargs.pop("cls", None)
 
@@ -22191,8 +22387,9 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22238,7 +22435,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SignaturesOverrides] = kwargs.pop("cls", None)
 
         request = build_firewall_policy_idps_signatures_overrides_get_request(
@@ -22253,8 +22450,9 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22301,7 +22499,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SignaturesOverridesList] = kwargs.pop("cls", None)
 
         request = build_firewall_policy_idps_signatures_overrides_list_request(
@@ -22316,8 +22514,9 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22447,7 +22646,7 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SignatureOverridesFilterValuesResponse] = kwargs.pop("cls", None)
 
@@ -22474,8 +22673,9 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22529,7 +22729,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_ip_allocations_delete_request(
@@ -22544,8 +22744,9 @@ class IpAllocationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22586,7 +22787,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -22630,7 +22831,7 @@ class IpAllocationsOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, ip_allocation_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, ip_allocation_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.IpAllocation:
         """Gets the specified IpAllocation by resource group.
 
@@ -22638,8 +22839,8 @@ class IpAllocationsOperations:
         :type resource_group_name: str
         :param ip_allocation_name: The name of the IpAllocation. Required.
         :type ip_allocation_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IpAllocation or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.IpAllocation
@@ -22656,7 +22857,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IpAllocation] = kwargs.pop("cls", None)
 
         request = build_ip_allocations_get_request(
@@ -22672,8 +22873,9 @@ class IpAllocationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22711,7 +22913,7 @@ class IpAllocationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpAllocation] = kwargs.pop("cls", None)
 
@@ -22738,8 +22940,9 @@ class IpAllocationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -22871,7 +23074,7 @@ class IpAllocationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpAllocation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -23009,7 +23212,7 @@ class IpAllocationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpAllocation] = kwargs.pop("cls", None)
 
@@ -23036,8 +23239,9 @@ class IpAllocationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -23070,7 +23274,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IpAllocationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -23111,8 +23315,9 @@ class IpAllocationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -23141,7 +23346,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IpAllocationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -23183,8 +23388,9 @@ class IpAllocationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -23222,7 +23428,7 @@ class IpGroupsOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, ip_groups_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, ip_groups_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.IpGroup:
         """Gets the specified ipGroups.
 
@@ -23230,9 +23436,9 @@ class IpGroupsOperations:
         :type resource_group_name: str
         :param ip_groups_name: The name of the ipGroups. Required.
         :type ip_groups_name: str
-        :param expand: Expands resourceIds (of Firewalls/Network Security Groups etc.) back referenced
-         by the IpGroups resource. Default value is None.
-        :type expand: str
+        :keyword expand: Expands resourceIds (of Firewalls/Network Security Groups etc.) back
+         referenced by the IpGroups resource. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IpGroup or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.IpGroup
@@ -23249,7 +23455,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IpGroup] = kwargs.pop("cls", None)
 
         request = build_ip_groups_get_request(
@@ -23265,8 +23471,9 @@ class IpGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -23301,7 +23508,7 @@ class IpGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpGroup] = kwargs.pop("cls", None)
 
@@ -23328,8 +23535,9 @@ class IpGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -23456,7 +23664,7 @@ class IpGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -23590,7 +23798,7 @@ class IpGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpGroup] = kwargs.pop("cls", None)
 
@@ -23617,8 +23825,9 @@ class IpGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -23653,7 +23862,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_ip_groups_delete_request(
@@ -23668,8 +23877,9 @@ class IpGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -23709,7 +23919,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -23765,7 +23975,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IpGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -23807,8 +24017,9 @@ class IpGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -23837,7 +24048,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IpGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -23878,8 +24089,9 @@ class IpGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -23928,7 +24140,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_load_balancers_delete_request(
@@ -23943,8 +24155,9 @@ class LoadBalancersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -23985,7 +24198,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -24029,7 +24242,7 @@ class LoadBalancersOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, load_balancer_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, load_balancer_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.LoadBalancer:
         """Gets the specified load balancer.
 
@@ -24037,8 +24250,8 @@ class LoadBalancersOperations:
         :type resource_group_name: str
         :param load_balancer_name: The name of the load balancer. Required.
         :type load_balancer_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: LoadBalancer or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.LoadBalancer
@@ -24055,7 +24268,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
 
         request = build_load_balancers_get_request(
@@ -24071,8 +24284,9 @@ class LoadBalancersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -24110,7 +24324,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
 
@@ -24137,8 +24351,9 @@ class LoadBalancersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -24270,7 +24485,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -24408,7 +24623,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
 
@@ -24435,8 +24650,9 @@ class LoadBalancersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -24469,7 +24685,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancerListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -24510,8 +24726,9 @@ class LoadBalancersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -24540,7 +24757,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancerListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -24582,8 +24799,9 @@ class LoadBalancersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -24613,7 +24831,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -24639,8 +24857,9 @@ class LoadBalancersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -24742,7 +24961,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -24805,7 +25024,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackendAddressInboundNatRulePortMappings] = kwargs.pop("cls", None)
 
@@ -24833,8 +25052,9 @@ class LoadBalancersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -24977,7 +25197,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackendAddressInboundNatRulePortMappings] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -25064,7 +25284,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancerBackendAddressPoolListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -25107,8 +25327,9 @@ class LoadBalancerBackendAddressPoolsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -25152,7 +25373,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BackendAddressPool] = kwargs.pop("cls", None)
 
         request = build_load_balancer_backend_address_pools_get_request(
@@ -25168,8 +25389,9 @@ class LoadBalancerBackendAddressPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -25208,7 +25430,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackendAddressPool] = kwargs.pop("cls", None)
 
@@ -25236,8 +25458,9 @@ class LoadBalancerBackendAddressPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -25381,7 +25604,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackendAddressPool] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -25444,7 +25667,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_load_balancer_backend_address_pools_delete_request(
@@ -25460,8 +25683,9 @@ class LoadBalancerBackendAddressPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -25504,7 +25728,7 @@ class LoadBalancerBackendAddressPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -25587,7 +25811,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancerFrontendIPConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -25630,8 +25854,9 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -25675,7 +25900,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FrontendIPConfiguration] = kwargs.pop("cls", None)
 
         request = build_load_balancer_frontend_ip_configurations_get_request(
@@ -25691,8 +25916,9 @@ class LoadBalancerFrontendIPConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -25751,7 +25977,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.InboundNatRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -25794,8 +26020,9 @@ class InboundNatRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -25825,7 +26052,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_inbound_nat_rules_delete_request(
@@ -25841,8 +26068,9 @@ class InboundNatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -25885,7 +26113,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -25934,6 +26162,7 @@ class InboundNatRulesOperations:
         resource_group_name: str,
         load_balancer_name: str,
         inbound_nat_rule_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.InboundNatRule:
@@ -25945,8 +26174,8 @@ class InboundNatRulesOperations:
         :type load_balancer_name: str
         :param inbound_nat_rule_name: The name of the inbound NAT rule. Required.
         :type inbound_nat_rule_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: InboundNatRule or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.InboundNatRule
@@ -25963,7 +26192,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.InboundNatRule] = kwargs.pop("cls", None)
 
         request = build_inbound_nat_rules_get_request(
@@ -25980,8 +26209,9 @@ class InboundNatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -26020,7 +26250,7 @@ class InboundNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InboundNatRule] = kwargs.pop("cls", None)
 
@@ -26048,8 +26278,9 @@ class InboundNatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -26193,7 +26424,7 @@ class InboundNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InboundNatRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -26281,7 +26512,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancerLoadBalancingRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -26324,8 +26555,9 @@ class LoadBalancerLoadBalancingRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -26369,7 +26601,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancingRule] = kwargs.pop("cls", None)
 
         request = build_load_balancer_load_balancing_rules_get_request(
@@ -26385,8 +26617,9 @@ class LoadBalancerLoadBalancingRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -26445,7 +26678,7 @@ class LoadBalancerOutboundRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancerOutboundRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -26488,8 +26721,9 @@ class LoadBalancerOutboundRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -26533,7 +26767,7 @@ class LoadBalancerOutboundRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.OutboundRule] = kwargs.pop("cls", None)
 
         request = build_load_balancer_outbound_rules_get_request(
@@ -26549,8 +26783,9 @@ class LoadBalancerOutboundRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -26609,7 +26844,7 @@ class LoadBalancerNetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -26652,8 +26887,9 @@ class LoadBalancerNetworkInterfacesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -26705,7 +26941,7 @@ class LoadBalancerProbesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LoadBalancerProbeListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -26748,8 +26984,9 @@ class LoadBalancerProbesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -26793,7 +27030,7 @@ class LoadBalancerProbesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.Probe] = kwargs.pop("cls", None)
 
         request = build_load_balancer_probes_get_request(
@@ -26809,8 +27046,9 @@ class LoadBalancerProbesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -26864,7 +27102,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_nat_gateways_delete_request(
@@ -26879,8 +27117,9 @@ class NatGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -26921,7 +27160,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -26965,7 +27204,7 @@ class NatGatewaysOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, nat_gateway_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, nat_gateway_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.NatGateway:
         """Gets the specified nat gateway in a specified resource group.
 
@@ -26973,8 +27212,8 @@ class NatGatewaysOperations:
         :type resource_group_name: str
         :param nat_gateway_name: The name of the nat gateway. Required.
         :type nat_gateway_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NatGateway or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NatGateway
@@ -26991,7 +27230,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NatGateway] = kwargs.pop("cls", None)
 
         request = build_nat_gateways_get_request(
@@ -27007,8 +27246,9 @@ class NatGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -27042,7 +27282,7 @@ class NatGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.NatGateway]] = kwargs.pop("cls", None)
 
@@ -27069,8 +27309,9 @@ class NatGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -27197,7 +27438,7 @@ class NatGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NatGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -27331,7 +27572,7 @@ class NatGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NatGateway] = kwargs.pop("cls", None)
 
@@ -27358,8 +27599,9 @@ class NatGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -27392,7 +27634,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NatGatewayListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -27433,8 +27675,9 @@ class NatGatewaysOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -27463,7 +27706,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NatGatewayListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -27505,8 +27748,9 @@ class NatGatewaysOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -27562,7 +27806,7 @@ class NetworkInterfaceIPConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceIPConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -27605,8 +27849,9 @@ class NetworkInterfaceIPConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -27650,7 +27895,7 @@ class NetworkInterfaceIPConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceIPConfiguration] = kwargs.pop("cls", None)
 
         request = build_network_interface_ip_configurations_get_request(
@@ -27666,8 +27911,9 @@ class NetworkInterfaceIPConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -27726,7 +27972,7 @@ class NetworkInterfaceLoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceLoadBalancerListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -27769,8 +28015,9 @@ class NetworkInterfaceLoadBalancersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -27820,7 +28067,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_interface_tap_configurations_delete_request(
@@ -27836,8 +28083,9 @@ class NetworkInterfaceTapConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -27880,7 +28128,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -27951,7 +28199,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceTapConfiguration] = kwargs.pop("cls", None)
 
         request = build_network_interface_tap_configurations_get_request(
@@ -27967,8 +28215,9 @@ class NetworkInterfaceTapConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -28007,7 +28256,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterfaceTapConfiguration] = kwargs.pop("cls", None)
 
@@ -28035,8 +28284,9 @@ class NetworkInterfaceTapConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -28183,7 +28433,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterfaceTapConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -28252,7 +28502,7 @@ class NetworkInterfaceTapConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkInterfaceTapConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -28295,8 +28545,9 @@ class NetworkInterfaceTapConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -28356,7 +28607,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkManager] = kwargs.pop("cls", None)
 
         request = build_network_managers_get_request(
@@ -28371,8 +28622,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -28482,7 +28734,7 @@ class NetworkManagersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManager] = kwargs.pop("cls", None)
 
@@ -28509,8 +28761,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -28535,7 +28788,7 @@ class NetworkManagersOperations:
     }
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, network_manager_name: str, force: Optional[bool] = None, **kwargs: Any
+        self, resource_group_name: str, network_manager_name: str, *, force: Optional[bool] = None, **kwargs: Any
     ) -> None:
         error_map = {
             401: ClientAuthenticationError,
@@ -28548,7 +28801,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_managers_delete_request(
@@ -28564,8 +28817,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -28587,7 +28841,7 @@ class NetworkManagersOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, network_manager_name: str, force: Optional[bool] = None, **kwargs: Any
+        self, resource_group_name: str, network_manager_name: str, *, force: Optional[bool] = None, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a network manager.
 
@@ -28595,10 +28849,10 @@ class NetworkManagersOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param force: Deletes the resource even if it is part of a deployed configuration. If the
+        :keyword force: Deletes the resource even if it is part of a deployed configuration. If the
          configuration has been deployed, the service will do a cleanup deployment in the background,
          prior to the delete. Default value is None.
-        :type force: bool
+        :paramtype force: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -28614,7 +28868,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -28747,7 +29001,7 @@ class NetworkManagersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManager] = kwargs.pop("cls", None)
 
@@ -28774,8 +29028,9 @@ class NetworkManagersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -28797,18 +29052,18 @@ class NetworkManagersOperations:
 
     @distributed_trace
     def list_by_subscription(
-        self, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkManager"]:
         """List all network managers in a subscription.
 
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManager or the result of cls(response)
         :rtype:
@@ -28818,7 +29073,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkManagerListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -28861,8 +29116,9 @@ class NetworkManagersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -28880,20 +29136,20 @@ class NetworkManagersOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkManager"]:
         """List network managers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManager or the result of cls(response)
         :rtype:
@@ -28903,7 +29159,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkManagerListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -28947,8 +29203,9 @@ class NetworkManagersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -29002,7 +29259,7 @@ class NetworkManagerCommitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerCommit] = kwargs.pop("cls", None)
 
@@ -29029,8 +29286,9 @@ class NetworkManagerCommitsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -29166,7 +29424,7 @@ class NetworkManagerCommitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerCommit] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -29239,8 +29497,8 @@ class NetworkManagerDeploymentStatusOperations:
         resource_group_name: str,
         network_manager_name: str,
         parameters: _models.NetworkManagerDeploymentStatusParameter,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkManagerDeploymentStatusListResult:
@@ -29254,9 +29512,9 @@ class NetworkManagerDeploymentStatusOperations:
          Required.
         :type parameters:
          ~azure.mgmt.network.v2022_09_01.models.NetworkManagerDeploymentStatusParameter
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29272,8 +29530,8 @@ class NetworkManagerDeploymentStatusOperations:
         resource_group_name: str,
         network_manager_name: str,
         parameters: IO,
-        top: Optional[int] = None,
         *,
+        top: Optional[int] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkManagerDeploymentStatusListResult:
@@ -29286,9 +29544,9 @@ class NetworkManagerDeploymentStatusOperations:
         :param parameters: Parameters supplied to specify which Managed Network deployment status is.
          Required.
         :type parameters: IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29304,6 +29562,7 @@ class NetworkManagerDeploymentStatusOperations:
         resource_group_name: str,
         network_manager_name: str,
         parameters: Union[_models.NetworkManagerDeploymentStatusParameter, IO],
+        *,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models.NetworkManagerDeploymentStatusListResult:
@@ -29317,9 +29576,9 @@ class NetworkManagerDeploymentStatusOperations:
          Is either a NetworkManagerDeploymentStatusParameter type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.network.v2022_09_01.models.NetworkManagerDeploymentStatusParameter or IO
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
+        :paramtype top: int
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -29339,7 +29598,7 @@ class NetworkManagerDeploymentStatusOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerDeploymentStatusListResult] = kwargs.pop("cls", None)
 
@@ -29367,8 +29626,9 @@ class NetworkManagerDeploymentStatusOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -29489,7 +29749,7 @@ class SubscriptionNetworkManagerConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
@@ -29515,8 +29775,9 @@ class SubscriptionNetworkManagerConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -29562,7 +29823,7 @@ class SubscriptionNetworkManagerConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
         request = build_subscription_network_manager_connections_get_request(
@@ -29576,8 +29837,9 @@ class SubscriptionNetworkManagerConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -29621,7 +29883,7 @@ class SubscriptionNetworkManagerConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_subscription_network_manager_connections_delete_request(
@@ -29635,8 +29897,9 @@ class SubscriptionNetworkManagerConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -29654,18 +29917,18 @@ class SubscriptionNetworkManagerConnectionsOperations:
 
     @distributed_trace
     def list(
-        self, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkManagerConnection"]:
         """List all network manager connections created by this subscription.
 
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManagerConnection or the result of
          cls(response)
@@ -29676,7 +29939,7 @@ class SubscriptionNetworkManagerConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkManagerConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -29719,8 +29982,9 @@ class SubscriptionNetworkManagerConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -29847,7 +30111,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
@@ -29873,8 +30137,9 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -29925,7 +30190,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
         request = build_management_group_network_manager_connections_get_request(
@@ -29939,8 +30204,9 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -29987,7 +30253,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_management_group_network_manager_connections_delete_request(
@@ -30001,8 +30267,9 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -30020,21 +30287,21 @@ class ManagementGroupNetworkManagerConnectionsOperations:
 
     @distributed_trace
     def list(
-        self, management_group_id: str, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+        self, management_group_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterable["_models.NetworkManagerConnection"]:
         """List all network manager connections created by this management group.
 
         :param management_group_id: The management group Id which uniquely identify the Microsoft Azure
          management group. Required.
         :type management_group_id: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkManagerConnection or the result of
          cls(response)
@@ -30045,7 +30312,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkManagerConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -30088,8 +30355,9 @@ class ManagementGroupNetworkManagerConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -30155,7 +30423,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ConnectivityConfiguration] = kwargs.pop("cls", None)
 
         request = build_connectivity_configurations_get_request(
@@ -30171,8 +30439,9 @@ class ConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -30298,7 +30567,7 @@ class ConnectivityConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectivityConfiguration] = kwargs.pop("cls", None)
 
@@ -30326,8 +30595,9 @@ class ConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -30356,6 +30626,7 @@ class ConnectivityConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -30370,7 +30641,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_connectivity_configurations_delete_request(
@@ -30387,8 +30658,9 @@ class ConnectivityConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -30414,6 +30686,7 @@ class ConnectivityConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -30427,10 +30700,10 @@ class ConnectivityConfigurationsOperations:
         :param configuration_name: The name of the network manager connectivity configuration.
          Required.
         :type configuration_name: str
-        :param force: Deletes the resource even if it is part of a deployed configuration. If the
+        :keyword force: Deletes the resource even if it is part of a deployed configuration. If the
          configuration has been deployed, the service will do a cleanup deployment in the background,
          prior to the delete. Default value is None.
-        :type force: bool
+        :paramtype force: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -30446,7 +30719,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -30495,6 +30768,7 @@ class ConnectivityConfigurationsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -30505,14 +30779,14 @@ class ConnectivityConfigurationsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ConnectivityConfiguration or the result of
          cls(response)
@@ -30523,7 +30797,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ConnectivityConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -30568,8 +30842,9 @@ class ConnectivityConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -30633,7 +30908,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkGroup] = kwargs.pop("cls", None)
 
         request = build_network_groups_get_request(
@@ -30649,8 +30924,9 @@ class NetworkGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -30677,8 +30953,8 @@ class NetworkGroupsOperations:
         network_manager_name: str,
         network_group_name: str,
         parameters: _models.NetworkGroup,
-        if_match: Optional[str] = None,
         *,
+        if_match: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkGroup:
@@ -30693,10 +30969,10 @@ class NetworkGroupsOperations:
         :param parameters: Parameters supplied to the specify which network group need to create.
          Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.NetworkGroup
-        :param if_match: The ETag of the transformation. Omit this value to always overwrite the
+        :keyword if_match: The ETag of the transformation. Omit this value to always overwrite the
          current resource. Specify the last-seen ETag value to prevent accidentally overwriting
          concurrent changes. Default value is None.
-        :type if_match: str
+        :paramtype if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30713,8 +30989,8 @@ class NetworkGroupsOperations:
         network_manager_name: str,
         network_group_name: str,
         parameters: IO,
-        if_match: Optional[str] = None,
         *,
+        if_match: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.NetworkGroup:
@@ -30729,10 +31005,10 @@ class NetworkGroupsOperations:
         :param parameters: Parameters supplied to the specify which network group need to create.
          Required.
         :type parameters: IO
-        :param if_match: The ETag of the transformation. Omit this value to always overwrite the
+        :keyword if_match: The ETag of the transformation. Omit this value to always overwrite the
          current resource. Specify the last-seen ETag value to prevent accidentally overwriting
          concurrent changes. Default value is None.
-        :type if_match: str
+        :paramtype if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30749,6 +31025,7 @@ class NetworkGroupsOperations:
         network_manager_name: str,
         network_group_name: str,
         parameters: Union[_models.NetworkGroup, IO],
+        *,
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> _models.NetworkGroup:
@@ -30763,10 +31040,10 @@ class NetworkGroupsOperations:
         :param parameters: Parameters supplied to the specify which network group need to create. Is
          either a NetworkGroup type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.NetworkGroup or IO
-        :param if_match: The ETag of the transformation. Omit this value to always overwrite the
+        :keyword if_match: The ETag of the transformation. Omit this value to always overwrite the
          current resource. Specify the last-seen ETag value to prevent accidentally overwriting
          concurrent changes. Default value is None.
-        :type if_match: str
+        :paramtype if_match: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -30786,7 +31063,7 @@ class NetworkGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkGroup] = kwargs.pop("cls", None)
 
@@ -30815,8 +31092,9 @@ class NetworkGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -30850,6 +31128,7 @@ class NetworkGroupsOperations:
         resource_group_name: str,
         network_manager_name: str,
         network_group_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -30864,7 +31143,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_groups_delete_request(
@@ -30881,8 +31160,9 @@ class NetworkGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -30908,6 +31188,7 @@ class NetworkGroupsOperations:
         resource_group_name: str,
         network_manager_name: str,
         network_group_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -30919,10 +31200,10 @@ class NetworkGroupsOperations:
         :type network_manager_name: str
         :param network_group_name: The name of the network group. Required.
         :type network_group_name: str
-        :param force: Deletes the resource even if it is part of a deployed configuration. If the
+        :keyword force: Deletes the resource even if it is part of a deployed configuration. If the
          configuration has been deployed, the service will do a cleanup deployment in the background,
          prior to the delete. Default value is None.
-        :type force: bool
+        :paramtype force: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -30938,7 +31219,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -30987,6 +31268,7 @@ class NetworkGroupsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -30997,14 +31279,14 @@ class NetworkGroupsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either NetworkGroup or the result of cls(response)
         :rtype:
@@ -31014,7 +31296,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -31059,8 +31341,9 @@ class NetworkGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -31131,7 +31414,7 @@ class StaticMembersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.StaticMember] = kwargs.pop("cls", None)
 
         request = build_static_members_get_request(
@@ -31148,8 +31431,9 @@ class StaticMembersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -31277,7 +31561,7 @@ class StaticMembersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StaticMember] = kwargs.pop("cls", None)
 
@@ -31306,8 +31590,9 @@ class StaticMembersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -31366,7 +31651,7 @@ class StaticMembersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_static_members_delete_request(
@@ -31383,8 +31668,9 @@ class StaticMembersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -31406,6 +31692,7 @@ class StaticMembersOperations:
         resource_group_name: str,
         network_manager_name: str,
         network_group_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -31418,14 +31705,14 @@ class StaticMembersOperations:
         :type network_manager_name: str
         :param network_group_name: The name of the network group. Required.
         :type network_group_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either StaticMember or the result of cls(response)
         :rtype:
@@ -31435,7 +31722,7 @@ class StaticMembersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.StaticMemberListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -31481,8 +31768,9 @@ class StaticMembersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -31617,7 +31905,7 @@ class ScopeConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ScopeConnection] = kwargs.pop("cls", None)
 
@@ -31645,8 +31933,9 @@ class ScopeConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -31698,7 +31987,7 @@ class ScopeConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ScopeConnection] = kwargs.pop("cls", None)
 
         request = build_scope_connections_get_request(
@@ -31714,8 +32003,9 @@ class ScopeConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -31763,7 +32053,7 @@ class ScopeConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_scope_connections_delete_request(
@@ -31779,8 +32069,9 @@ class ScopeConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -31801,6 +32092,7 @@ class ScopeConnectionsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -31811,14 +32103,14 @@ class ScopeConnectionsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ScopeConnection or the result of cls(response)
         :rtype:
@@ -31828,7 +32120,7 @@ class ScopeConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ScopeConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -31873,8 +32165,9 @@ class ScopeConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -31915,6 +32208,7 @@ class SecurityAdminConfigurationsOperations:
         self,
         resource_group_name: str,
         network_manager_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -31926,14 +32220,14 @@ class SecurityAdminConfigurationsOperations:
         :type resource_group_name: str
         :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SecurityAdminConfiguration or the result of
          cls(response)
@@ -31944,7 +32238,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityAdminConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -31989,8 +32283,9 @@ class SecurityAdminConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -32034,7 +32329,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityAdminConfiguration] = kwargs.pop("cls", None)
 
         request = build_security_admin_configurations_get_request(
@@ -32050,8 +32345,9 @@ class SecurityAdminConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -32174,7 +32470,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityAdminConfiguration] = kwargs.pop("cls", None)
 
@@ -32202,8 +32498,9 @@ class SecurityAdminConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -32232,6 +32529,7 @@ class SecurityAdminConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -32246,7 +32544,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_security_admin_configurations_delete_request(
@@ -32263,8 +32561,9 @@ class SecurityAdminConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -32290,6 +32589,7 @@ class SecurityAdminConfigurationsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -32301,10 +32601,10 @@ class SecurityAdminConfigurationsOperations:
         :type network_manager_name: str
         :param configuration_name: The name of the network manager Security Configuration. Required.
         :type configuration_name: str
-        :param force: Deletes the resource even if it is part of a deployed configuration. If the
+        :keyword force: Deletes the resource even if it is part of a deployed configuration. If the
          configuration has been deployed, the service will do a cleanup deployment in the background,
          prior to the delete. Default value is None.
-        :type force: bool
+        :paramtype force: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -32320,7 +32620,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -32390,6 +32690,7 @@ class AdminRuleCollectionsOperations:
         resource_group_name: str,
         network_manager_name: str,
         configuration_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -32402,14 +32703,14 @@ class AdminRuleCollectionsOperations:
         :type network_manager_name: str
         :param configuration_name: The name of the network manager Security Configuration. Required.
         :type configuration_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either AdminRuleCollection or the result of cls(response)
         :rtype:
@@ -32419,7 +32720,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AdminRuleCollectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -32465,8 +32766,9 @@ class AdminRuleCollectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -32518,7 +32820,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AdminRuleCollection] = kwargs.pop("cls", None)
 
         request = build_admin_rule_collections_get_request(
@@ -32535,8 +32837,9 @@ class AdminRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -32667,7 +32970,7 @@ class AdminRuleCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AdminRuleCollection] = kwargs.pop("cls", None)
 
@@ -32696,8 +32999,9 @@ class AdminRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -32727,6 +33031,7 @@ class AdminRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -32741,7 +33046,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_admin_rule_collections_delete_request(
@@ -32759,8 +33064,9 @@ class AdminRuleCollectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -32787,6 +33093,7 @@ class AdminRuleCollectionsOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -32801,10 +33108,10 @@ class AdminRuleCollectionsOperations:
         :param rule_collection_name: The name of the network manager security Configuration rule
          collection. Required.
         :type rule_collection_name: str
-        :param force: Deletes the resource even if it is part of a deployed configuration. If the
+        :keyword force: Deletes the resource even if it is part of a deployed configuration. If the
          configuration has been deployed, the service will do a cleanup deployment in the background,
          prior to the delete. Default value is None.
-        :type force: bool
+        :paramtype force: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -32820,7 +33127,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -32892,6 +33199,7 @@ class AdminRulesOperations:
         network_manager_name: str,
         configuration_name: str,
         rule_collection_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -32907,14 +33215,14 @@ class AdminRulesOperations:
         :param rule_collection_name: The name of the network manager security Configuration rule
          collection. Required.
         :type rule_collection_name: str
-        :param top: An optional query parameter which specifies the maximum number of records to be
+        :keyword top: An optional query parameter which specifies the maximum number of records to be
          returned by the server. Default value is None.
-        :type top: int
-        :param skip_token: SkipToken is only used if a previous operation returned a partial result. If
-         a previous response contains a nextLink element, the value of the nextLink element will include
-         a skipToken parameter that specifies a starting point to use for subsequent calls. Default
-         value is None.
-        :type skip_token: str
+        :paramtype top: int
+        :keyword skip_token: SkipToken is only used if a previous operation returned a partial result.
+         If a previous response contains a nextLink element, the value of the nextLink element will
+         include a skipToken parameter that specifies a starting point to use for subsequent calls.
+         Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either BaseAdminRule or the result of cls(response)
         :rtype:
@@ -32924,7 +33232,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AdminRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -32971,8 +33279,9 @@ class AdminRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -33027,7 +33336,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BaseAdminRule] = kwargs.pop("cls", None)
 
         request = build_admin_rules_get_request(
@@ -33045,8 +33354,9 @@ class AdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -33186,7 +33496,7 @@ class AdminRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BaseAdminRule] = kwargs.pop("cls", None)
 
@@ -33216,8 +33526,9 @@ class AdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -33248,6 +33559,7 @@ class AdminRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
@@ -33262,7 +33574,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_admin_rules_delete_request(
@@ -33281,8 +33593,9 @@ class AdminRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -33310,6 +33623,7 @@ class AdminRulesOperations:
         configuration_name: str,
         rule_collection_name: str,
         rule_name: str,
+        *,
         force: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
@@ -33326,10 +33640,10 @@ class AdminRulesOperations:
         :type rule_collection_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param force: Deletes the resource even if it is part of a deployed configuration. If the
+        :keyword force: Deletes the resource even if it is part of a deployed configuration. If the
          configuration has been deployed, the service will do a cleanup deployment in the background,
          prior to the delete. Default value is None.
-        :type force: bool
+        :paramtype force: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -33345,7 +33659,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -33425,7 +33739,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_profiles_delete_request(
@@ -33440,8 +33754,9 @@ class NetworkProfilesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -33482,7 +33797,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -33526,7 +33841,7 @@ class NetworkProfilesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, network_profile_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, network_profile_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.NetworkProfile:
         """Gets the specified network profile in a specified resource group.
 
@@ -33534,8 +33849,8 @@ class NetworkProfilesOperations:
         :type resource_group_name: str
         :param network_profile_name: The name of the public IP prefix. Required.
         :type network_profile_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkProfile or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NetworkProfile
@@ -33552,7 +33867,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkProfile] = kwargs.pop("cls", None)
 
         request = build_network_profiles_get_request(
@@ -33568,8 +33883,9 @@ class NetworkProfilesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -33681,7 +33997,7 @@ class NetworkProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkProfile] = kwargs.pop("cls", None)
 
@@ -33708,8 +34024,9 @@ class NetworkProfilesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -33823,7 +34140,7 @@ class NetworkProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkProfile] = kwargs.pop("cls", None)
 
@@ -33850,8 +34167,9 @@ class NetworkProfilesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -33884,7 +34202,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkProfileListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -33925,8 +34243,9 @@ class NetworkProfilesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -33955,7 +34274,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkProfileListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -33997,8 +34316,9 @@ class NetworkProfilesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -34048,7 +34368,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_security_groups_delete_request(
@@ -34063,8 +34383,9 @@ class NetworkSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -34105,7 +34426,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -34149,7 +34470,7 @@ class NetworkSecurityGroupsOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, network_security_group_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, network_security_group_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.NetworkSecurityGroup:
         """Gets the specified network security group.
 
@@ -34157,8 +34478,8 @@ class NetworkSecurityGroupsOperations:
         :type resource_group_name: str
         :param network_security_group_name: The name of the network security group. Required.
         :type network_security_group_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkSecurityGroup or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NetworkSecurityGroup
@@ -34175,7 +34496,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
 
         request = build_network_security_groups_get_request(
@@ -34191,8 +34512,9 @@ class NetworkSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -34230,7 +34552,7 @@ class NetworkSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
 
@@ -34257,8 +34579,9 @@ class NetworkSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -34393,7 +34716,7 @@ class NetworkSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -34531,7 +34854,7 @@ class NetworkSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
 
@@ -34558,8 +34881,9 @@ class NetworkSecurityGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -34593,7 +34917,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -34634,8 +34958,9 @@ class NetworkSecurityGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -34665,7 +34990,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -34707,8 +35032,9 @@ class NetworkSecurityGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -34758,7 +35084,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_security_rules_delete_request(
@@ -34774,8 +35100,9 @@ class SecurityRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -34818,7 +35145,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -34889,7 +35216,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
 
         request = build_security_rules_get_request(
@@ -34905,8 +35232,9 @@ class SecurityRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -34945,7 +35273,7 @@ class SecurityRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
 
@@ -34973,8 +35301,9 @@ class SecurityRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -35115,7 +35444,7 @@ class SecurityRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -35183,7 +35512,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -35226,8 +35555,9 @@ class SecurityRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -35282,7 +35612,7 @@ class DefaultSecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -35325,8 +35655,9 @@ class DefaultSecurityRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -35370,7 +35701,7 @@ class DefaultSecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
 
         request = build_default_security_rules_get_request(
@@ -35386,8 +35717,9 @@ class DefaultSecurityRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -35441,7 +35773,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_virtual_appliances_delete_request(
@@ -35456,8 +35788,9 @@ class NetworkVirtualAppliancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -35498,7 +35831,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -35542,7 +35875,12 @@ class NetworkVirtualAppliancesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, network_virtual_appliance_name: str, expand: Optional[str] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        network_virtual_appliance_name: str,
+        *,
+        expand: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.NetworkVirtualAppliance:
         """Gets the specified Network Virtual Appliance.
 
@@ -35550,8 +35888,8 @@ class NetworkVirtualAppliancesOperations:
         :type resource_group_name: str
         :param network_virtual_appliance_name: The name of Network Virtual Appliance. Required.
         :type network_virtual_appliance_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: NetworkVirtualAppliance or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.NetworkVirtualAppliance
@@ -35568,7 +35906,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkVirtualAppliance] = kwargs.pop("cls", None)
 
         request = build_network_virtual_appliances_get_request(
@@ -35584,8 +35922,9 @@ class NetworkVirtualAppliancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -35698,7 +36037,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkVirtualAppliance] = kwargs.pop("cls", None)
 
@@ -35725,8 +36064,9 @@ class NetworkVirtualAppliancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -35764,7 +36104,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkVirtualAppliance] = kwargs.pop("cls", None)
 
@@ -35791,8 +36131,9 @@ class NetworkVirtualAppliancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -35927,7 +36268,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkVirtualAppliance] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -35993,7 +36334,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkVirtualApplianceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -36035,8 +36376,9 @@ class NetworkVirtualAppliancesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -36066,7 +36408,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkVirtualApplianceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -36107,8 +36449,9 @@ class NetworkVirtualAppliancesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -36156,7 +36499,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_appliance_sites_delete_request(
@@ -36172,8 +36515,9 @@ class VirtualApplianceSitesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -36216,7 +36560,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -36287,7 +36631,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualApplianceSite] = kwargs.pop("cls", None)
 
         request = build_virtual_appliance_sites_get_request(
@@ -36303,8 +36647,9 @@ class VirtualApplianceSitesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -36343,7 +36688,7 @@ class VirtualApplianceSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualApplianceSite] = kwargs.pop("cls", None)
 
@@ -36371,8 +36716,9 @@ class VirtualApplianceSitesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -36516,7 +36862,7 @@ class VirtualApplianceSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualApplianceSite] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -36585,7 +36931,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkVirtualApplianceSiteListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -36628,8 +36974,9 @@ class VirtualApplianceSitesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -36679,7 +37026,7 @@ class VirtualApplianceSkusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkVirtualApplianceSkuListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -36720,8 +37067,9 @@ class VirtualApplianceSkusOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -36757,7 +37105,7 @@ class VirtualApplianceSkusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkVirtualApplianceSku] = kwargs.pop("cls", None)
 
         request = build_virtual_appliance_skus_get_request(
@@ -36771,8 +37119,9 @@ class VirtualApplianceSkusOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -36831,7 +37180,7 @@ class InboundSecurityRuleOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InboundSecurityRule] = kwargs.pop("cls", None)
 
@@ -36859,8 +37208,9 @@ class InboundSecurityRuleOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -37004,7 +37354,7 @@ class InboundSecurityRuleOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InboundSecurityRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -37163,7 +37513,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkWatcher] = kwargs.pop("cls", None)
 
@@ -37190,8 +37540,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -37240,7 +37591,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkWatcher] = kwargs.pop("cls", None)
 
         request = build_network_watchers_get_request(
@@ -37255,8 +37606,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -37291,7 +37643,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_network_watchers_delete_request(
@@ -37306,8 +37658,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -37349,7 +37702,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -37481,7 +37834,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkWatcher] = kwargs.pop("cls", None)
 
@@ -37508,8 +37861,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -37545,7 +37899,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkWatcherListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -37587,8 +37941,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -37618,7 +37973,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.NetworkWatcherListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -37659,8 +38014,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -37765,7 +38121,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Topology] = kwargs.pop("cls", None)
 
@@ -37792,8 +38148,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -37832,7 +38189,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VerificationIPFlowResult] = kwargs.pop("cls", None)
 
@@ -37859,8 +38216,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -37994,7 +38352,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VerificationIPFlowResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -38059,7 +38417,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NextHopResult] = kwargs.pop("cls", None)
 
@@ -38086,8 +38444,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -38221,7 +38580,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NextHopResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -38286,7 +38645,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityGroupViewResult] = kwargs.pop("cls", None)
 
@@ -38313,8 +38672,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -38448,7 +38808,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityGroupViewResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -38513,7 +38873,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TroubleshootingResult] = kwargs.pop("cls", None)
 
@@ -38540,8 +38900,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -38675,7 +39036,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TroubleshootingResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -38740,7 +39101,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TroubleshootingResult] = kwargs.pop("cls", None)
 
@@ -38767,8 +39128,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -38904,7 +39266,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TroubleshootingResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -38969,7 +39331,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLogInformation] = kwargs.pop("cls", None)
 
@@ -38996,8 +39358,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -39131,7 +39494,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLogInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -39196,7 +39559,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLogInformation] = kwargs.pop("cls", None)
 
@@ -39223,8 +39586,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -39360,7 +39724,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLogInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -39425,7 +39789,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectivityInformation] = kwargs.pop("cls", None)
 
@@ -39452,8 +39816,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -39592,7 +39957,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectivityInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -39657,7 +40022,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureReachabilityReport] = kwargs.pop("cls", None)
 
@@ -39684,8 +40049,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -39826,7 +40192,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureReachabilityReport] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -39891,7 +40257,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AvailableProvidersList] = kwargs.pop("cls", None)
 
@@ -39918,8 +40284,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -40056,7 +40423,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AvailableProvidersList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -40121,7 +40488,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkConfigurationDiagnosticResponse] = kwargs.pop("cls", None)
 
@@ -40148,8 +40515,9 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -40297,7 +40665,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkConfigurationDiagnosticResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -40383,7 +40751,7 @@ class PacketCapturesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PacketCaptureResult] = kwargs.pop("cls", None)
 
@@ -40411,8 +40779,9 @@ class PacketCapturesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -40551,7 +40920,7 @@ class PacketCapturesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PacketCaptureResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -40628,7 +40997,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PacketCaptureResult] = kwargs.pop("cls", None)
 
         request = build_packet_captures_get_request(
@@ -40644,8 +41013,9 @@ class PacketCapturesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -40680,7 +41050,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_packet_captures_delete_request(
@@ -40696,8 +41066,9 @@ class PacketCapturesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -40741,7 +41112,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40798,7 +41169,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_packet_captures_stop_request(
@@ -40814,8 +41185,9 @@ class PacketCapturesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -40859,7 +41231,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40916,7 +41288,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PacketCaptureQueryStatusResult] = kwargs.pop("cls", None)
 
         request = build_packet_captures_get_status_request(
@@ -40932,8 +41304,9 @@ class PacketCapturesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -40987,7 +41360,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PacketCaptureQueryStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41051,7 +41424,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PacketCaptureListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -41094,8 +41467,9 @@ class PacketCapturesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -41138,6 +41512,7 @@ class ConnectionMonitorsOperations:
         network_watcher_name: str,
         connection_monitor_name: str,
         parameters: Union[_models.ConnectionMonitor, IO],
+        *,
         migrate: Optional[str] = None,
         **kwargs: Any
     ) -> _models.ConnectionMonitorResult:
@@ -41152,7 +41527,7 @@ class ConnectionMonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionMonitorResult] = kwargs.pop("cls", None)
 
@@ -41181,8 +41556,9 @@ class ConnectionMonitorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -41214,8 +41590,8 @@ class ConnectionMonitorsOperations:
         network_watcher_name: str,
         connection_monitor_name: str,
         parameters: _models.ConnectionMonitor,
-        migrate: Optional[str] = None,
         *,
+        migrate: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectionMonitorResult]:
@@ -41231,9 +41607,9 @@ class ConnectionMonitorsOperations:
         :param parameters: Parameters that define the operation to create a connection monitor.
          Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ConnectionMonitor
-        :param migrate: Value indicating whether connection monitor V1 should be migrated to V2 format.
-         Default value is None.
-        :type migrate: str
+        :keyword migrate: Value indicating whether connection monitor V1 should be migrated to V2
+         format. Default value is None.
+        :paramtype migrate: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41259,8 +41635,8 @@ class ConnectionMonitorsOperations:
         network_watcher_name: str,
         connection_monitor_name: str,
         parameters: IO,
-        migrate: Optional[str] = None,
         *,
+        migrate: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectionMonitorResult]:
@@ -41276,9 +41652,9 @@ class ConnectionMonitorsOperations:
         :param parameters: Parameters that define the operation to create a connection monitor.
          Required.
         :type parameters: IO
-        :param migrate: Value indicating whether connection monitor V1 should be migrated to V2 format.
-         Default value is None.
-        :type migrate: str
+        :keyword migrate: Value indicating whether connection monitor V1 should be migrated to V2
+         format. Default value is None.
+        :paramtype migrate: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -41304,6 +41680,7 @@ class ConnectionMonitorsOperations:
         network_watcher_name: str,
         connection_monitor_name: str,
         parameters: Union[_models.ConnectionMonitor, IO],
+        *,
         migrate: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ConnectionMonitorResult]:
@@ -41319,9 +41696,9 @@ class ConnectionMonitorsOperations:
         :param parameters: Parameters that define the operation to create a connection monitor. Is
          either a ConnectionMonitor type or a IO type. Required.
         :type parameters: ~azure.mgmt.network.v2022_09_01.models.ConnectionMonitor or IO
-        :param migrate: Value indicating whether connection monitor V1 should be migrated to V2 format.
-         Default value is None.
-        :type migrate: str
+        :keyword migrate: Value indicating whether connection monitor V1 should be migrated to V2
+         format. Default value is None.
+        :paramtype migrate: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -41342,7 +41719,7 @@ class ConnectionMonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionMonitorResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -41421,7 +41798,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ConnectionMonitorResult] = kwargs.pop("cls", None)
 
         request = build_connection_monitors_get_request(
@@ -41437,8 +41814,9 @@ class ConnectionMonitorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -41473,7 +41851,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_connection_monitors_delete_request(
@@ -41489,8 +41867,9 @@ class ConnectionMonitorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -41535,7 +41914,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41677,7 +42056,7 @@ class ConnectionMonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionMonitorResult] = kwargs.pop("cls", None)
 
@@ -41705,8 +42084,9 @@ class ConnectionMonitorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -41741,7 +42121,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_connection_monitors_stop_request(
@@ -41757,8 +42137,9 @@ class ConnectionMonitorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -41803,7 +42184,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41860,7 +42241,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_connection_monitors_start_request(
@@ -41876,8 +42257,9 @@ class ConnectionMonitorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -41922,7 +42304,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41979,7 +42361,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ConnectionMonitorQueryResult] = kwargs.pop("cls", None)
 
         request = build_connection_monitors_query_request(
@@ -41995,8 +42377,9 @@ class ConnectionMonitorsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -42051,7 +42434,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ConnectionMonitorQueryResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -42117,7 +42500,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ConnectionMonitorListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -42160,8 +42543,9 @@ class ConnectionMonitorsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -42217,7 +42601,7 @@ class FlowLogsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLog] = kwargs.pop("cls", None)
 
@@ -42245,8 +42629,9 @@ class FlowLogsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -42386,7 +42771,7 @@ class FlowLogsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLog] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -42534,7 +42919,7 @@ class FlowLogsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLog] = kwargs.pop("cls", None)
 
@@ -42562,8 +42947,9 @@ class FlowLogsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -42612,7 +42998,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FlowLog] = kwargs.pop("cls", None)
 
         request = build_flow_logs_get_request(
@@ -42628,8 +43014,9 @@ class FlowLogsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -42664,7 +43051,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_flow_logs_delete_request(
@@ -42680,8 +43067,9 @@ class FlowLogsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -42725,7 +43113,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -42787,7 +43175,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.FlowLogListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -42830,8 +43218,9 @@ class FlowLogsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -42881,7 +43270,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -42921,8 +43310,9 @@ class Operations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -42970,7 +43360,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_private_endpoints_delete_request(
@@ -42985,8 +43375,9 @@ class PrivateEndpointsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -43028,7 +43419,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -43072,7 +43463,7 @@ class PrivateEndpointsOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, private_endpoint_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, private_endpoint_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.PrivateEndpoint:
         """Gets the specified private endpoint by resource group.
 
@@ -43080,8 +43471,8 @@ class PrivateEndpointsOperations:
         :type resource_group_name: str
         :param private_endpoint_name: The name of the private endpoint. Required.
         :type private_endpoint_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpoint or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.PrivateEndpoint
@@ -43098,7 +43489,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateEndpoint] = kwargs.pop("cls", None)
 
         request = build_private_endpoints_get_request(
@@ -43114,8 +43505,9 @@ class PrivateEndpointsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -43154,7 +43546,7 @@ class PrivateEndpointsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateEndpoint] = kwargs.pop("cls", None)
 
@@ -43181,8 +43573,9 @@ class PrivateEndpointsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -43318,7 +43711,7 @@ class PrivateEndpointsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateEndpoint] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -43381,7 +43774,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateEndpointListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -43423,8 +43816,9 @@ class PrivateEndpointsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -43454,7 +43848,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateEndpointListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -43495,8 +43889,9 @@ class PrivateEndpointsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -43550,7 +43945,7 @@ class AvailablePrivateEndpointTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AvailablePrivateEndpointTypesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -43592,8 +43987,9 @@ class AvailablePrivateEndpointTypesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -43630,7 +44026,7 @@ class AvailablePrivateEndpointTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AvailablePrivateEndpointTypesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -43673,8 +44069,9 @@ class AvailablePrivateEndpointTypesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -43724,7 +44121,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_private_dns_zone_groups_delete_request(
@@ -43740,8 +44137,9 @@ class PrivateDnsZoneGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -43784,7 +44182,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -43855,7 +44253,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateDnsZoneGroup] = kwargs.pop("cls", None)
 
         request = build_private_dns_zone_groups_get_request(
@@ -43871,8 +44269,9 @@ class PrivateDnsZoneGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -43911,7 +44310,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateDnsZoneGroup] = kwargs.pop("cls", None)
 
@@ -43939,8 +44338,9 @@ class PrivateDnsZoneGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -44084,7 +44484,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateDnsZoneGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -44152,7 +44552,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateDnsZoneGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -44195,8 +44595,9 @@ class PrivateDnsZoneGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -44247,7 +44648,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_private_link_services_delete_request(
@@ -44262,8 +44663,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -44303,7 +44705,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -44347,7 +44749,7 @@ class PrivateLinkServicesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, service_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, service_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.PrivateLinkService:
         """Gets the specified private link service by resource group.
 
@@ -44355,8 +44757,8 @@ class PrivateLinkServicesOperations:
         :type resource_group_name: str
         :param service_name: The name of the private link service. Required.
         :type service_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateLinkService or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.PrivateLinkService
@@ -44373,7 +44775,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateLinkService] = kwargs.pop("cls", None)
 
         request = build_private_link_services_get_request(
@@ -44389,8 +44791,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -44429,7 +44832,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkService] = kwargs.pop("cls", None)
 
@@ -44456,8 +44859,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -44593,7 +44997,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkService] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -44656,7 +45060,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateLinkServiceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -44698,8 +45102,9 @@ class PrivateLinkServicesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -44729,7 +45134,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateLinkServiceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -44770,8 +45175,9 @@ class PrivateLinkServicesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -44794,6 +45200,7 @@ class PrivateLinkServicesOperations:
         resource_group_name: str,
         service_name: str,
         pe_connection_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
@@ -44806,8 +45213,8 @@ class PrivateLinkServicesOperations:
         :type service_name: str
         :param pe_connection_name: The name of the private end point connection. Required.
         :type pe_connection_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PrivateEndpointConnection or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.PrivateEndpointConnection
@@ -44824,7 +45231,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
 
         request = build_private_link_services_get_private_endpoint_connection_request(
@@ -44841,8 +45248,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -44964,7 +45372,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
 
@@ -44992,8 +45400,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -45028,7 +45437,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_private_link_services_delete_private_endpoint_connection_request(
@@ -45044,8 +45453,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -45089,7 +45499,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -45152,7 +45562,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PrivateEndpointConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -45195,8 +45605,9 @@ class PrivateLinkServicesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -45227,7 +45638,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.PrivateLinkServiceVisibility]] = kwargs.pop("cls", None)
 
@@ -45253,8 +45664,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -45370,7 +45782,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkServiceVisibility] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -45434,7 +45846,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.PrivateLinkServiceVisibility]] = kwargs.pop("cls", None)
 
@@ -45461,8 +45873,9 @@ class PrivateLinkServicesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -45598,7 +46011,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkServiceVisibility] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -45664,7 +46077,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AutoApprovedPrivateLinkServicesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -45706,8 +46119,9 @@ class PrivateLinkServicesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -45744,7 +46158,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.AutoApprovedPrivateLinkServicesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -45789,8 +46203,9 @@ class PrivateLinkServicesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -45840,7 +46255,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_public_ip_prefixes_delete_request(
@@ -45855,8 +46270,9 @@ class PublicIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -45897,7 +46313,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -45941,7 +46357,7 @@ class PublicIPPrefixesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, public_ip_prefix_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, public_ip_prefix_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.PublicIPPrefix:
         """Gets the specified public IP prefix in a specified resource group.
 
@@ -45949,8 +46365,8 @@ class PublicIPPrefixesOperations:
         :type resource_group_name: str
         :param public_ip_prefix_name: The name of the public IP prefix. Required.
         :type public_ip_prefix_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PublicIPPrefix or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.PublicIPPrefix
@@ -45967,7 +46383,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPPrefix] = kwargs.pop("cls", None)
 
         request = build_public_ip_prefixes_get_request(
@@ -45983,8 +46399,9 @@ class PublicIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -46022,7 +46439,7 @@ class PublicIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPPrefix] = kwargs.pop("cls", None)
 
@@ -46049,8 +46466,9 @@ class PublicIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -46185,7 +46603,7 @@ class PublicIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPPrefix] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -46322,7 +46740,7 @@ class PublicIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPPrefix] = kwargs.pop("cls", None)
 
@@ -46349,8 +46767,9 @@ class PublicIPPrefixesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -46383,7 +46802,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPPrefixListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -46424,8 +46843,9 @@ class PublicIPPrefixesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -46454,7 +46874,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PublicIPPrefixListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -46496,8 +46916,9 @@ class PublicIPPrefixesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -46547,7 +46968,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_route_filters_delete_request(
@@ -46562,8 +46983,9 @@ class RouteFiltersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -46604,7 +47026,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -46648,7 +47070,7 @@ class RouteFiltersOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, route_filter_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, route_filter_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.RouteFilter:
         """Gets the specified route filter.
 
@@ -46656,8 +47078,8 @@ class RouteFiltersOperations:
         :type resource_group_name: str
         :param route_filter_name: The name of the route filter. Required.
         :type route_filter_name: str
-        :param expand: Expands referenced express route bgp peering resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced express route bgp peering resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteFilter or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.RouteFilter
@@ -46674,7 +47096,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteFilter] = kwargs.pop("cls", None)
 
         request = build_route_filters_get_request(
@@ -46690,8 +47112,9 @@ class RouteFiltersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -46729,7 +47152,7 @@ class RouteFiltersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilter] = kwargs.pop("cls", None)
 
@@ -46756,8 +47179,9 @@ class RouteFiltersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -46889,7 +47313,7 @@ class RouteFiltersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilter] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -47023,7 +47447,7 @@ class RouteFiltersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilter] = kwargs.pop("cls", None)
 
@@ -47050,8 +47474,9 @@ class RouteFiltersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -47086,7 +47511,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteFilterListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -47128,8 +47553,9 @@ class RouteFiltersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -47158,7 +47584,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteFilterListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -47199,8 +47625,9 @@ class RouteFiltersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -47248,7 +47675,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_route_filter_rules_delete_request(
@@ -47264,8 +47691,9 @@ class RouteFilterRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -47308,7 +47736,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -47379,7 +47807,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteFilterRule] = kwargs.pop("cls", None)
 
         request = build_route_filter_rules_get_request(
@@ -47395,8 +47823,9 @@ class RouteFilterRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -47435,7 +47864,7 @@ class RouteFilterRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilterRule] = kwargs.pop("cls", None)
 
@@ -47463,8 +47892,9 @@ class RouteFilterRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -47609,7 +48039,7 @@ class RouteFilterRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilterRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -47677,7 +48107,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteFilterRuleListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -47720,8 +48150,9 @@ class RouteFilterRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -47771,7 +48202,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_route_tables_delete_request(
@@ -47786,8 +48217,9 @@ class RouteTablesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -47828,7 +48260,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -47872,7 +48304,7 @@ class RouteTablesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, route_table_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, route_table_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.RouteTable:
         """Gets the specified route table.
 
@@ -47880,8 +48312,8 @@ class RouteTablesOperations:
         :type resource_group_name: str
         :param route_table_name: The name of the route table. Required.
         :type route_table_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: RouteTable or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.RouteTable
@@ -47898,7 +48330,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
 
         request = build_route_tables_get_request(
@@ -47914,8 +48346,9 @@ class RouteTablesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -47949,7 +48382,7 @@ class RouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
 
@@ -47976,8 +48409,9 @@ class RouteTablesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -48103,7 +48537,7 @@ class RouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -48237,7 +48671,7 @@ class RouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
 
@@ -48264,8 +48698,9 @@ class RouteTablesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -48300,7 +48735,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteTableListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -48342,8 +48777,9 @@ class RouteTablesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -48372,7 +48808,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteTableListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -48413,8 +48849,9 @@ class RouteTablesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -48462,7 +48899,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_routes_delete_request(
@@ -48478,8 +48915,9 @@ class RoutesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -48522,7 +48960,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -48593,7 +49031,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.Route] = kwargs.pop("cls", None)
 
         request = build_routes_get_request(
@@ -48609,8 +49047,9 @@ class RoutesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -48649,7 +49088,7 @@ class RoutesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Route] = kwargs.pop("cls", None)
 
@@ -48677,8 +49116,9 @@ class RoutesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -48814,7 +49254,7 @@ class RoutesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Route] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -48879,7 +49319,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -48922,8 +49362,9 @@ class RoutesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -48973,7 +49414,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_security_partner_providers_delete_request(
@@ -48988,8 +49429,9 @@ class SecurityPartnerProvidersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -49030,7 +49472,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -49098,7 +49540,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityPartnerProvider] = kwargs.pop("cls", None)
 
         request = build_security_partner_providers_get_request(
@@ -49113,8 +49555,9 @@ class SecurityPartnerProvidersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -49152,7 +49595,7 @@ class SecurityPartnerProvidersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityPartnerProvider] = kwargs.pop("cls", None)
 
@@ -49179,8 +49622,9 @@ class SecurityPartnerProvidersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -49315,7 +49759,7 @@ class SecurityPartnerProvidersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityPartnerProvider] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -49453,7 +49897,7 @@ class SecurityPartnerProvidersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityPartnerProvider] = kwargs.pop("cls", None)
 
@@ -49480,8 +49924,9 @@ class SecurityPartnerProvidersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -49519,7 +49964,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityPartnerProviderListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -49561,8 +50006,9 @@ class SecurityPartnerProvidersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -49592,7 +50038,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SecurityPartnerProviderListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -49633,8 +50079,9 @@ class SecurityPartnerProvidersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -49681,7 +50128,7 @@ class BgpServiceCommunitiesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BgpServiceCommunityListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -49722,8 +50169,9 @@ class BgpServiceCommunitiesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -49771,7 +50219,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_service_endpoint_policies_delete_request(
@@ -49786,8 +50234,9 @@ class ServiceEndpointPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -49828,7 +50277,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -49872,7 +50321,12 @@ class ServiceEndpointPoliciesOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, service_endpoint_policy_name: str, expand: Optional[str] = None, **kwargs: Any
+        self,
+        resource_group_name: str,
+        service_endpoint_policy_name: str,
+        *,
+        expand: Optional[str] = None,
+        **kwargs: Any
     ) -> _models.ServiceEndpointPolicy:
         """Gets the specified service Endpoint Policies in a specified resource group.
 
@@ -49880,8 +50334,8 @@ class ServiceEndpointPoliciesOperations:
         :type resource_group_name: str
         :param service_endpoint_policy_name: The name of the service endpoint policy. Required.
         :type service_endpoint_policy_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ServiceEndpointPolicy or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.ServiceEndpointPolicy
@@ -49898,7 +50352,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceEndpointPolicy] = kwargs.pop("cls", None)
 
         request = build_service_endpoint_policies_get_request(
@@ -49914,8 +50368,9 @@ class ServiceEndpointPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -49953,7 +50408,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicy] = kwargs.pop("cls", None)
 
@@ -49980,8 +50435,9 @@ class ServiceEndpointPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -50116,7 +50572,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicy] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -50254,7 +50710,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicy] = kwargs.pop("cls", None)
 
@@ -50281,8 +50737,9 @@ class ServiceEndpointPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -50316,7 +50773,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceEndpointPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -50357,8 +50814,9 @@ class ServiceEndpointPoliciesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -50390,7 +50848,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceEndpointPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -50432,8 +50890,9 @@ class ServiceEndpointPoliciesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -50487,7 +50946,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_service_endpoint_policy_definitions_delete_request(
@@ -50503,8 +50962,9 @@ class ServiceEndpointPolicyDefinitionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -50552,7 +51012,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -50628,7 +51088,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceEndpointPolicyDefinition] = kwargs.pop("cls", None)
 
         request = build_service_endpoint_policy_definitions_get_request(
@@ -50644,8 +51104,9 @@ class ServiceEndpointPolicyDefinitionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -50684,7 +51145,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicyDefinition] = kwargs.pop("cls", None)
 
@@ -50712,8 +51173,9 @@ class ServiceEndpointPolicyDefinitionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -50866,7 +51328,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicyDefinition] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -50935,7 +51397,7 @@ class ServiceEndpointPolicyDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceEndpointPolicyDefinitionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -50978,8 +51440,9 @@ class ServiceEndpointPolicyDefinitionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -51039,7 +51502,7 @@ class ServiceTagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceTagsListResult] = kwargs.pop("cls", None)
 
         request = build_service_tags_list_request(
@@ -51053,8 +51516,9 @@ class ServiceTagsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -51096,7 +51560,12 @@ class ServiceTagInformationOperations:
 
     @distributed_trace
     def list(
-        self, location: str, no_address_prefixes: Optional[bool] = None, tag_name: Optional[str] = None, **kwargs: Any
+        self,
+        location: str,
+        *,
+        no_address_prefixes: Optional[bool] = None,
+        tag_name: Optional[str] = None,
+        **kwargs: Any
     ) -> AsyncIterable["_models.ServiceTagInformation"]:
         """Gets a list of service tag information resources with pagination.
 
@@ -51104,11 +51573,11 @@ class ServiceTagInformationOperations:
          on location, you will get the list of service tags with prefix details across all regions but
          limited to the cloud that your subscription belongs to). Required.
         :type location: str
-        :param no_address_prefixes: Do not return address prefixes for the tag(s). Default value is
+        :keyword no_address_prefixes: Do not return address prefixes for the tag(s). Default value is
          None.
-        :type no_address_prefixes: bool
-        :param tag_name: Return tag information for a particular tag. Default value is None.
-        :type tag_name: str
+        :paramtype no_address_prefixes: bool
+        :keyword tag_name: Return tag information for a particular tag. Default value is None.
+        :paramtype tag_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ServiceTagInformation or the result of
          cls(response)
@@ -51119,7 +51588,7 @@ class ServiceTagInformationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceTagInformationListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -51163,8 +51632,9 @@ class ServiceTagInformationOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -51214,7 +51684,7 @@ class UsagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.UsagesListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -51256,8 +51726,9 @@ class UsagesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -51305,7 +51776,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_networks_delete_request(
@@ -51320,8 +51791,9 @@ class VirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -51362,7 +51834,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -51406,7 +51878,7 @@ class VirtualNetworksOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, virtual_network_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, virtual_network_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.VirtualNetwork:
         """Gets the specified virtual network by resource group.
 
@@ -51414,8 +51886,8 @@ class VirtualNetworksOperations:
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualNetwork or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.VirtualNetwork
@@ -51432,7 +51904,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
 
         request = build_virtual_networks_get_request(
@@ -51448,8 +51920,9 @@ class VirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -51487,7 +51960,7 @@ class VirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
 
@@ -51514,8 +51987,9 @@ class VirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -51650,7 +52124,7 @@ class VirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -51788,7 +52262,7 @@ class VirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
 
@@ -51815,8 +52289,9 @@ class VirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -51849,7 +52324,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -51890,8 +52365,9 @@ class VirtualNetworksOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -51920,7 +52396,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -51962,8 +52438,9 @@ class VirtualNetworksOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -51981,7 +52458,7 @@ class VirtualNetworksOperations:
 
     @distributed_trace_async
     async def check_ip_address_availability(
-        self, resource_group_name: str, virtual_network_name: str, ip_address: str, **kwargs: Any
+        self, resource_group_name: str, virtual_network_name: str, *, ip_address: str, **kwargs: Any
     ) -> _models.IPAddressAvailabilityResult:
         """Checks whether a private IP address is available for use.
 
@@ -51989,8 +52466,8 @@ class VirtualNetworksOperations:
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param ip_address: The private IP address to be verified. Required.
-        :type ip_address: str
+        :keyword ip_address: The private IP address to be verified. Required.
+        :paramtype ip_address: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: IPAddressAvailabilityResult or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.IPAddressAvailabilityResult
@@ -52007,7 +52484,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.IPAddressAvailabilityResult] = kwargs.pop("cls", None)
 
         request = build_virtual_networks_check_ip_address_availability_request(
@@ -52023,8 +52500,9 @@ class VirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -52063,7 +52541,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkListUsageResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -52106,8 +52584,9 @@ class VirtualNetworksOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -52127,6 +52606,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -52142,7 +52622,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.VirtualNetworkDdosProtectionStatusResult]] = kwargs.pop("cls", None)
 
         request = build_virtual_networks_list_ddos_protection_status_request(
@@ -52159,8 +52639,9 @@ class VirtualNetworksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -52187,6 +52668,7 @@ class VirtualNetworksOperations:
         self,
         resource_group_name: str,
         virtual_network_name: str,
+        *,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
@@ -52197,10 +52679,10 @@ class VirtualNetworksOperations:
         :type resource_group_name: str
         :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param top: The max number of ip addresses to return. Default value is None.
-        :type top: int
-        :param skip_token: The skipToken that is given with nextLink. Default value is None.
-        :type skip_token: str
+        :keyword top: The max number of ip addresses to return. Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The skipToken that is given with nextLink. Default value is None.
+        :paramtype skip_token: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -52219,7 +52701,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkDdosProtectionStatusResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -52264,8 +52746,9 @@ class VirtualNetworksOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -52355,7 +52838,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_subnets_delete_request(
@@ -52371,8 +52854,9 @@ class SubnetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -52415,7 +52899,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -52464,6 +52948,7 @@ class SubnetsOperations:
         resource_group_name: str,
         virtual_network_name: str,
         subnet_name: str,
+        *,
         expand: Optional[str] = None,
         **kwargs: Any
     ) -> _models.Subnet:
@@ -52475,8 +52960,8 @@ class SubnetsOperations:
         :type virtual_network_name: str
         :param subnet_name: The name of the subnet. Required.
         :type subnet_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Subnet or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.Subnet
@@ -52493,7 +52978,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.Subnet] = kwargs.pop("cls", None)
 
         request = build_subnets_get_request(
@@ -52510,8 +52995,9 @@ class SubnetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -52550,7 +53036,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Subnet] = kwargs.pop("cls", None)
 
@@ -52578,8 +53064,9 @@ class SubnetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -52720,7 +53207,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Subnet] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -52788,7 +53275,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -52816,8 +53303,9 @@ class SubnetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -52950,7 +53438,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -53015,7 +53503,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -53045,8 +53533,9 @@ class SubnetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -53179,7 +53668,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -53243,7 +53732,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.SubnetListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -53286,8 +53775,9 @@ class SubnetsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -53351,7 +53841,7 @@ class ResourceNavigationLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ResourceNavigationLinksListResult] = kwargs.pop("cls", None)
 
         request = build_resource_navigation_links_list_request(
@@ -53367,8 +53857,9 @@ class ResourceNavigationLinksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -53436,7 +53927,7 @@ class ServiceAssociationLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ServiceAssociationLinksListResult] = kwargs.pop("cls", None)
 
         request = build_service_association_links_list_request(
@@ -53452,8 +53943,9 @@ class ServiceAssociationLinksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -53507,7 +53999,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_network_peerings_delete_request(
@@ -53523,8 +54015,9 @@ class VirtualNetworkPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -53567,7 +54060,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -53638,7 +54131,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkPeering] = kwargs.pop("cls", None)
 
         request = build_virtual_network_peerings_get_request(
@@ -53654,8 +54147,9 @@ class VirtualNetworkPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -53681,6 +54175,7 @@ class VirtualNetworkPeeringsOperations:
         virtual_network_name: str,
         virtual_network_peering_name: str,
         virtual_network_peering_parameters: Union[_models.VirtualNetworkPeering, IO],
+        *,
         sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         **kwargs: Any
     ) -> _models.VirtualNetworkPeering:
@@ -53695,7 +54190,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkPeering] = kwargs.pop("cls", None)
 
@@ -53724,8 +54219,9 @@ class VirtualNetworkPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -53756,8 +54252,8 @@ class VirtualNetworkPeeringsOperations:
         virtual_network_name: str,
         virtual_network_peering_name: str,
         virtual_network_peering_parameters: _models.VirtualNetworkPeering,
-        sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         *,
+        sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkPeering]:
@@ -53773,9 +54269,9 @@ class VirtualNetworkPeeringsOperations:
          network peering operation. Required.
         :type virtual_network_peering_parameters:
          ~azure.mgmt.network.v2022_09_01.models.VirtualNetworkPeering
-        :param sync_remote_address_space: Parameter indicates the intention to sync the peering with
+        :keyword sync_remote_address_space: Parameter indicates the intention to sync the peering with
          the current address space on the remote vNet after it's updated. "true" Default value is None.
-        :type sync_remote_address_space: str or
+        :paramtype sync_remote_address_space: str or
          ~azure.mgmt.network.v2022_09_01.models.SyncRemoteAddressSpace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -53802,8 +54298,8 @@ class VirtualNetworkPeeringsOperations:
         virtual_network_name: str,
         virtual_network_peering_name: str,
         virtual_network_peering_parameters: IO,
-        sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         *,
+        sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkPeering]:
@@ -53818,9 +54314,9 @@ class VirtualNetworkPeeringsOperations:
         :param virtual_network_peering_parameters: Parameters supplied to the create or update virtual
          network peering operation. Required.
         :type virtual_network_peering_parameters: IO
-        :param sync_remote_address_space: Parameter indicates the intention to sync the peering with
+        :keyword sync_remote_address_space: Parameter indicates the intention to sync the peering with
          the current address space on the remote vNet after it's updated. "true" Default value is None.
-        :type sync_remote_address_space: str or
+        :paramtype sync_remote_address_space: str or
          ~azure.mgmt.network.v2022_09_01.models.SyncRemoteAddressSpace
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -53847,6 +54343,7 @@ class VirtualNetworkPeeringsOperations:
         virtual_network_name: str,
         virtual_network_peering_name: str,
         virtual_network_peering_parameters: Union[_models.VirtualNetworkPeering, IO],
+        *,
         sync_remote_address_space: Optional[Union[str, _models.SyncRemoteAddressSpace]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkPeering]:
@@ -53862,9 +54359,9 @@ class VirtualNetworkPeeringsOperations:
          network peering operation. Is either a VirtualNetworkPeering type or a IO type. Required.
         :type virtual_network_peering_parameters:
          ~azure.mgmt.network.v2022_09_01.models.VirtualNetworkPeering or IO
-        :param sync_remote_address_space: Parameter indicates the intention to sync the peering with
+        :keyword sync_remote_address_space: Parameter indicates the intention to sync the peering with
          the current address space on the remote vNet after it's updated. "true" Default value is None.
-        :type sync_remote_address_space: str or
+        :paramtype sync_remote_address_space: str or
          ~azure.mgmt.network.v2022_09_01.models.SyncRemoteAddressSpace
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -53886,7 +54383,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -53956,7 +54453,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkPeeringListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -53999,8 +54496,9 @@ class VirtualNetworkPeeringsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -54054,7 +54552,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
 
@@ -54081,8 +54579,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -54217,7 +54716,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -54291,7 +54790,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_get_request(
@@ -54306,8 +54805,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -54341,7 +54841,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_delete_request(
@@ -54356,8 +54856,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -54398,7 +54899,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -54458,7 +54959,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.VirtualNetworkGateway]] = kwargs.pop("cls", None)
 
@@ -54485,8 +54986,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -54617,7 +55119,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -54681,7 +55183,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkGatewayListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -54723,8 +55225,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -54760,7 +55263,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkGatewayListConnectionsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -54803,8 +55306,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -54824,6 +55328,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
+        *,
         gateway_vip: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[_models.VirtualNetworkGateway]:
@@ -54838,7 +55343,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.VirtualNetworkGateway]] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_reset_request(
@@ -54854,8 +55359,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -54882,6 +55388,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         self,
         resource_group_name: str,
         virtual_network_gateway_name: str,
+        *,
         gateway_vip: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualNetworkGateway]:
@@ -54891,9 +55398,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
-        :param gateway_vip: Virtual network gateway vip address supplied to the begin reset of the
+        :keyword gateway_vip: Virtual network gateway vip address supplied to the begin reset of the
          active-active feature enabled gateway. Default value is None.
-        :type gateway_vip: str
+        :paramtype gateway_vip: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -54911,7 +55418,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -54970,7 +55477,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_reset_vpn_client_shared_key_request(
@@ -54985,8 +55492,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -55028,7 +55536,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -55088,7 +55596,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -55115,8 +55623,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -55246,7 +55755,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -55311,7 +55820,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -55338,8 +55847,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -55469,7 +55979,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -55530,7 +56040,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_get_vpn_profile_package_url_request(
@@ -55545,8 +56055,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -55594,7 +56105,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -55639,7 +56150,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
     }
 
     async def _get_bgp_peer_status_initial(
-        self, resource_group_name: str, virtual_network_gateway_name: str, peer: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, virtual_network_gateway_name: str, *, peer: Optional[str] = None, **kwargs: Any
     ) -> Optional[_models.BgpPeerStatusListResult]:
         error_map = {
             401: ClientAuthenticationError,
@@ -55652,7 +56163,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.BgpPeerStatusListResult]] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_get_bgp_peer_status_request(
@@ -55668,8 +56179,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -55693,7 +56205,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
 
     @distributed_trace_async
     async def begin_get_bgp_peer_status(
-        self, resource_group_name: str, virtual_network_gateway_name: str, peer: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, virtual_network_gateway_name: str, *, peer: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[_models.BgpPeerStatusListResult]:
         """The GetBgpPeerStatus operation retrieves the status of all BGP peers.
 
@@ -55701,8 +56213,8 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
-        :param peer: The IP address of the peer to retrieve the status of. Default value is None.
-        :type peer: str
+        :keyword peer: The IP address of the peer to retrieve the status of. Default value is None.
+        :paramtype peer: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -55720,7 +56232,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BgpPeerStatusListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -55791,7 +56303,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_supported_vpn_devices_request(
@@ -55806,8 +56318,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -55841,7 +56354,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.GatewayRouteListResult]] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_get_learned_routes_request(
@@ -55856,8 +56369,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -55907,7 +56421,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.GatewayRouteListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -55952,7 +56466,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
     }
 
     async def _get_advertised_routes_initial(
-        self, resource_group_name: str, virtual_network_gateway_name: str, peer: str, **kwargs: Any
+        self, resource_group_name: str, virtual_network_gateway_name: str, *, peer: str, **kwargs: Any
     ) -> Optional[_models.GatewayRouteListResult]:
         error_map = {
             401: ClientAuthenticationError,
@@ -55965,7 +56479,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.GatewayRouteListResult]] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_get_advertised_routes_request(
@@ -55981,8 +56495,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -56006,7 +56521,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
 
     @distributed_trace_async
     async def begin_get_advertised_routes(
-        self, resource_group_name: str, virtual_network_gateway_name: str, peer: str, **kwargs: Any
+        self, resource_group_name: str, virtual_network_gateway_name: str, *, peer: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.GatewayRouteListResult]:
         """This operation retrieves a list of routes the virtual network gateway is advertising to the
         specified peer.
@@ -56015,8 +56530,8 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         :type resource_group_name: str
         :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
         :type virtual_network_gateway_name: str
-        :param peer: The IP address of the peer. Required.
-        :type peer: str
+        :keyword peer: The IP address of the peer. Required.
+        :paramtype peer: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -56034,7 +56549,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.GatewayRouteListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -56097,7 +56612,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.VpnClientIPsecParameters]] = kwargs.pop("cls", None)
 
@@ -56124,8 +56639,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -56263,7 +56779,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnClientIPsecParameters] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -56324,7 +56840,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnClientIPsecParameters] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_get_vpnclient_ipsec_parameters_request(
@@ -56339,8 +56855,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -56389,7 +56906,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnClientIPsecParameters] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -56526,7 +57043,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
@@ -56553,8 +57070,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -56592,7 +57110,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -56622,8 +57140,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -56752,7 +57271,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -56817,7 +57336,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -56844,8 +57363,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -56973,7 +57493,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -57034,7 +57554,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.VpnClientConnectionHealthDetailListResult]] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateways_get_vpnclient_connection_health_request(
@@ -57049,8 +57569,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -57100,7 +57621,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnClientConnectionHealthDetailListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -57162,7 +57683,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -57189,8 +57710,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -57309,7 +57831,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -57392,7 +57914,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
 
@@ -57419,8 +57941,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -57558,7 +58081,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -57633,7 +58156,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateway_connections_get_request(
@@ -57648,8 +58171,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -57683,7 +58207,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateway_connections_delete_request(
@@ -57698,8 +58222,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -57741,7 +58266,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -57801,7 +58326,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.VirtualNetworkGatewayConnection]] = kwargs.pop("cls", None)
 
@@ -57828,8 +58353,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -57965,7 +58491,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -58031,7 +58557,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionSharedKey] = kwargs.pop("cls", None)
 
@@ -58058,8 +58584,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -58204,7 +58731,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionSharedKey] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -58280,7 +58807,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ConnectionSharedKey] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateway_connections_get_shared_key_request(
@@ -58295,8 +58822,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -58333,7 +58861,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkGatewayConnectionListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -58375,8 +58903,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -58410,7 +58939,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ConnectionResetSharedKey]] = kwargs.pop("cls", None)
 
@@ -58437,8 +58966,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -58581,7 +59111,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionResetSharedKey] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -58646,7 +59176,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -58676,8 +59206,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -58809,7 +59340,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -58874,7 +59405,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -58901,8 +59432,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -59034,7 +59566,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -59095,7 +59627,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateway_connections_get_ike_sas_request(
@@ -59110,8 +59642,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -59161,7 +59694,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -59219,7 +59752,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateway_connections_reset_connection_request(
@@ -59234,8 +59767,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -59278,7 +59812,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -59358,7 +59892,7 @@ class LocalNetworkGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
 
@@ -59385,8 +59919,9 @@ class LocalNetworkGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -59521,7 +60056,7 @@ class LocalNetworkGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -59595,7 +60130,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
 
         request = build_local_network_gateways_get_request(
@@ -59610,8 +60145,9 @@ class LocalNetworkGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -59645,7 +60181,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_local_network_gateways_delete_request(
@@ -59660,8 +60196,9 @@ class LocalNetworkGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -59702,7 +60239,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -59834,7 +60371,7 @@ class LocalNetworkGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
 
@@ -59861,8 +60398,9 @@ class LocalNetworkGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -59897,7 +60435,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.LocalNetworkGatewayListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -59939,8 +60477,9 @@ class LocalNetworkGatewaysOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -60004,7 +60543,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkGatewayNatRule] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateway_nat_rules_get_request(
@@ -60020,8 +60559,9 @@ class VirtualNetworkGatewayNatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -60060,7 +60600,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayNatRule] = kwargs.pop("cls", None)
 
@@ -60088,8 +60628,9 @@ class VirtualNetworkGatewayNatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -60235,7 +60776,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayNatRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -60298,7 +60839,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_network_gateway_nat_rules_delete_request(
@@ -60314,8 +60855,9 @@ class VirtualNetworkGatewayNatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -60358,7 +60900,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -60421,7 +60963,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualNetworkGatewayNatRulesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -60464,8 +61006,9 @@ class VirtualNetworkGatewayNatRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -60515,7 +61058,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_network_taps_delete_request(
@@ -60530,8 +61073,9 @@ class VirtualNetworkTapsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -60570,7 +61114,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -60636,7 +61180,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkTap] = kwargs.pop("cls", None)
 
         request = build_virtual_network_taps_get_request(
@@ -60651,8 +61195,9 @@ class VirtualNetworkTapsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -60686,7 +61231,7 @@ class VirtualNetworkTapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkTap] = kwargs.pop("cls", None)
 
@@ -60713,8 +61258,9 @@ class VirtualNetworkTapsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -60845,7 +61391,7 @@ class VirtualNetworkTapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkTap] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -60979,7 +61525,7 @@ class VirtualNetworkTapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkTap] = kwargs.pop("cls", None)
 
@@ -61006,8 +61552,9 @@ class VirtualNetworkTapsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -61040,7 +61587,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkTapListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -61081,8 +61628,9 @@ class VirtualNetworkTapsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -61113,7 +61661,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualNetworkTapListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -61155,8 +61703,9 @@ class VirtualNetworkTapsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -61206,7 +61755,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_routers_delete_request(
@@ -61221,8 +61770,9 @@ class VirtualRoutersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -61264,7 +61814,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61308,7 +61858,7 @@ class VirtualRoutersOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, virtual_router_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, virtual_router_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.VirtualRouter:
         """Gets the specified Virtual Router.
 
@@ -61316,8 +61866,8 @@ class VirtualRoutersOperations:
         :type resource_group_name: str
         :param virtual_router_name: The name of the Virtual Router. Required.
         :type virtual_router_name: str
-        :param expand: Expands referenced resources. Default value is None.
-        :type expand: str
+        :keyword expand: Expands referenced resources. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualRouter or the result of cls(response)
         :rtype: ~azure.mgmt.network.v2022_09_01.models.VirtualRouter
@@ -61334,7 +61884,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualRouter] = kwargs.pop("cls", None)
 
         request = build_virtual_routers_get_request(
@@ -61350,8 +61900,9 @@ class VirtualRoutersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -61390,7 +61941,7 @@ class VirtualRoutersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualRouter] = kwargs.pop("cls", None)
 
@@ -61417,8 +61968,9 @@ class VirtualRoutersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -61552,7 +62104,7 @@ class VirtualRoutersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualRouter] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -61615,7 +62167,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualRouterListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -61657,8 +62209,9 @@ class VirtualRoutersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -61688,7 +62241,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualRouterListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -61729,8 +62282,9 @@ class VirtualRoutersOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -61779,7 +62333,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_router_peerings_delete_request(
@@ -61795,8 +62349,9 @@ class VirtualRouterPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -61840,7 +62395,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61911,7 +62466,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualRouterPeering] = kwargs.pop("cls", None)
 
         request = build_virtual_router_peerings_get_request(
@@ -61927,8 +62482,9 @@ class VirtualRouterPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -61968,7 +62524,7 @@ class VirtualRouterPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualRouterPeering] = kwargs.pop("cls", None)
 
@@ -61996,8 +62552,9 @@ class VirtualRouterPeeringsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -62142,7 +62699,7 @@ class VirtualRouterPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualRouterPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -62211,7 +62768,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualRouterPeeringListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -62254,8 +62811,9 @@ class VirtualRouterPeeringsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -62316,7 +62874,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualWAN] = kwargs.pop("cls", None)
 
         request = build_virtual_wans_get_request(
@@ -62331,8 +62889,9 @@ class VirtualWansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -62370,7 +62929,7 @@ class VirtualWansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualWAN] = kwargs.pop("cls", None)
 
@@ -62397,8 +62956,9 @@ class VirtualWansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -62528,7 +63088,7 @@ class VirtualWansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualWAN] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -62666,7 +63226,7 @@ class VirtualWansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualWAN] = kwargs.pop("cls", None)
 
@@ -62693,8 +63253,9 @@ class VirtualWansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -62728,7 +63289,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_wans_delete_request(
@@ -62743,8 +63304,9 @@ class VirtualWansOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -62785,7 +63347,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -62842,7 +63404,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualWANsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -62884,8 +63446,9 @@ class VirtualWansOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -62914,7 +63477,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualWANsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -62955,8 +63518,9 @@ class VirtualWansOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -63014,7 +63578,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnSite] = kwargs.pop("cls", None)
 
         request = build_vpn_sites_get_request(
@@ -63029,8 +63593,9 @@ class VpnSitesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -63068,7 +63633,7 @@ class VpnSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnSite] = kwargs.pop("cls", None)
 
@@ -63095,8 +63660,9 @@ class VpnSitesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -63226,7 +63792,7 @@ class VpnSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnSite] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -63364,7 +63930,7 @@ class VpnSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnSite] = kwargs.pop("cls", None)
 
@@ -63391,8 +63957,9 @@ class VpnSitesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -63426,7 +63993,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_vpn_sites_delete_request(
@@ -63441,8 +64008,9 @@ class VpnSitesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -63481,7 +64049,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -63537,7 +64105,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnSitesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -63579,8 +64147,9 @@ class VpnSitesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -63608,7 +64177,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnSitesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -63649,8 +64218,9 @@ class VpnSitesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -63712,7 +64282,7 @@ class VpnSiteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnSiteLink] = kwargs.pop("cls", None)
 
         request = build_vpn_site_links_get_request(
@@ -63728,8 +64298,9 @@ class VpnSiteLinksOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -63768,7 +64339,7 @@ class VpnSiteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnSiteLinksResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -63811,8 +64382,9 @@ class VpnSiteLinksOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -63866,7 +64438,7 @@ class VpnSitesConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -63893,8 +64465,9 @@ class VpnSitesConfigurationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -64016,7 +64589,7 @@ class VpnSitesConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -64108,7 +64681,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnServerConfiguration] = kwargs.pop("cls", None)
 
         request = build_vpn_server_configurations_get_request(
@@ -64123,8 +64696,9 @@ class VpnServerConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -64162,7 +64736,7 @@ class VpnServerConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfiguration] = kwargs.pop("cls", None)
 
@@ -64189,8 +64763,9 @@ class VpnServerConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -64333,7 +64908,7 @@ class VpnServerConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -64477,7 +65052,7 @@ class VpnServerConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfiguration] = kwargs.pop("cls", None)
 
@@ -64504,8 +65079,9 @@ class VpnServerConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -64539,7 +65115,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_vpn_server_configurations_delete_request(
@@ -64554,8 +65130,9 @@ class VpnServerConfigurationsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -64597,7 +65174,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -64657,7 +65234,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnServerConfigurationsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -64699,8 +65276,9 @@ class VpnServerConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -64730,7 +65308,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnServerConfigurationsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -64771,8 +65349,9 @@ class VpnServerConfigurationsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -64825,7 +65404,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfigurationPolicyGroup] = kwargs.pop("cls", None)
 
@@ -64855,8 +65434,9 @@ class ConfigurationPolicyGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -65003,7 +65583,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfigurationPolicyGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -65070,7 +65650,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_configuration_policy_groups_delete_request(
@@ -65086,8 +65666,9 @@ class ConfigurationPolicyGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -65134,7 +65715,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -65210,7 +65791,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnServerConfigurationPolicyGroup] = kwargs.pop("cls", None)
 
         request = build_configuration_policy_groups_get_request(
@@ -65226,8 +65807,9 @@ class ConfigurationPolicyGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -65267,7 +65849,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnServerConfigurationPolicyGroupsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -65310,8 +65892,9 @@ class ConfigurationPolicyGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -65371,7 +65954,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualHub] = kwargs.pop("cls", None)
 
         request = build_virtual_hubs_get_request(
@@ -65386,8 +65969,9 @@ class VirtualHubsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -65425,7 +66009,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHub] = kwargs.pop("cls", None)
 
@@ -65452,8 +66036,9 @@ class VirtualHubsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -65583,7 +66168,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHub] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -65721,7 +66306,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHub] = kwargs.pop("cls", None)
 
@@ -65748,8 +66333,9 @@ class VirtualHubsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -65783,7 +66369,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_hubs_delete_request(
@@ -65798,8 +66384,9 @@ class VirtualHubsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -65840,7 +66427,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -65897,7 +66484,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualHubsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -65939,8 +66526,9 @@ class VirtualHubsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -65969,7 +66557,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualHubsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -66010,8 +66598,9 @@ class VirtualHubsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -66043,7 +66632,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -66073,8 +66662,9 @@ class VirtualHubsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -66198,7 +66788,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -66261,7 +66851,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -66288,8 +66878,9 @@ class VirtualHubsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -66412,7 +67003,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -66475,7 +67066,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -66502,8 +67093,9 @@ class VirtualHubsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -66626,7 +67218,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -66719,7 +67311,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RouteMap] = kwargs.pop("cls", None)
 
         request = build_route_maps_get_request(
@@ -66735,8 +67327,9 @@ class RouteMapsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -66775,7 +67368,7 @@ class RouteMapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteMap] = kwargs.pop("cls", None)
 
@@ -66803,8 +67396,9 @@ class RouteMapsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -66943,7 +67537,7 @@ class RouteMapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteMap] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -67006,7 +67600,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_route_maps_delete_request(
@@ -67022,8 +67616,9 @@ class RouteMapsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -67066,7 +67661,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -67127,7 +67722,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListRouteMapsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -67170,8 +67765,9 @@ class RouteMapsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -67226,7 +67822,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubVirtualNetworkConnection] = kwargs.pop("cls", None)
 
@@ -67254,8 +67850,9 @@ class HubVirtualNetworkConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -67405,7 +68002,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubVirtualNetworkConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -67468,7 +68065,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_hub_virtual_network_connections_delete_request(
@@ -67484,8 +68081,9 @@ class HubVirtualNetworkConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -67528,7 +68126,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -67599,7 +68197,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.HubVirtualNetworkConnection] = kwargs.pop("cls", None)
 
         request = build_hub_virtual_network_connections_get_request(
@@ -67615,8 +68213,9 @@ class HubVirtualNetworkConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -67656,7 +68255,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListHubVirtualNetworkConnectionsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -67699,8 +68298,9 @@ class HubVirtualNetworkConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -67760,7 +68360,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
 
         request = build_vpn_gateways_get_request(
@@ -67775,8 +68375,9 @@ class VpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -67814,7 +68415,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
 
@@ -67841,8 +68442,9 @@ class VpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -67974,7 +68576,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -68040,7 +68642,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.VpnGateway]] = kwargs.pop("cls", None)
 
@@ -68067,8 +68669,9 @@ class VpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -68198,7 +68801,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -68260,7 +68863,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_vpn_gateways_delete_request(
@@ -68275,8 +68878,9 @@ class VpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -68315,7 +68919,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -68358,7 +68962,7 @@ class VpnGatewaysOperations:
     }
 
     async def _reset_initial(
-        self, resource_group_name: str, gateway_name: str, ip_configuration_id: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, gateway_name: str, *, ip_configuration_id: Optional[str] = None, **kwargs: Any
     ) -> Optional[_models.VpnGateway]:
         error_map = {
             401: ClientAuthenticationError,
@@ -68371,7 +68975,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.VpnGateway]] = kwargs.pop("cls", None)
 
         request = build_vpn_gateways_reset_request(
@@ -68387,8 +68991,9 @@ class VpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -68412,7 +69017,7 @@ class VpnGatewaysOperations:
 
     @distributed_trace_async
     async def begin_reset(
-        self, resource_group_name: str, gateway_name: str, ip_configuration_id: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, gateway_name: str, *, ip_configuration_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[_models.VpnGateway]:
         """Resets the primary of the vpn gateway in the specified resource group.
 
@@ -68420,9 +69025,9 @@ class VpnGatewaysOperations:
         :type resource_group_name: str
         :param gateway_name: The name of the gateway. Required.
         :type gateway_name: str
-        :param ip_configuration_id: VpnGateway ipConfigurationId to specify the gateway instance.
+        :keyword ip_configuration_id: VpnGateway ipConfigurationId to specify the gateway instance.
          Default value is None.
-        :type ip_configuration_id: str
+        :paramtype ip_configuration_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -68439,7 +69044,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -68502,7 +69107,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -68532,8 +69137,9 @@ class VpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -68662,7 +69268,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -68727,7 +69333,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -68757,8 +69363,9 @@ class VpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -68887,7 +69494,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -68949,7 +69556,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -68991,8 +69598,9 @@ class VpnGatewaysOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -69021,7 +69629,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -69062,8 +69670,9 @@ class VpnGatewaysOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -69116,7 +69725,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_vpn_link_connections_reset_connection_request(
@@ -69133,8 +69742,9 @@ class VpnLinkConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -69185,7 +69795,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -69248,7 +69858,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
         request = build_vpn_link_connections_get_ike_sas_request(
@@ -69265,8 +69875,9 @@ class VpnLinkConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -69323,7 +69934,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -69392,7 +70003,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnSiteLinkConnectionsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -69436,8 +70047,9 @@ class VpnLinkConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -69501,7 +70113,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnConnection] = kwargs.pop("cls", None)
 
         request = build_vpn_connections_get_request(
@@ -69517,8 +70129,9 @@ class VpnConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -69557,7 +70170,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnConnection] = kwargs.pop("cls", None)
 
@@ -69585,8 +70198,9 @@ class VpnConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -69733,7 +70347,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -69796,7 +70410,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_vpn_connections_delete_request(
@@ -69812,8 +70426,9 @@ class VpnConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -69856,7 +70471,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -69918,7 +70533,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -69949,8 +70564,9 @@ class VpnConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -70089,7 +70705,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -70156,7 +70772,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[str]] = kwargs.pop("cls", None)
 
@@ -70187,8 +70803,9 @@ class VpnConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -70327,7 +70944,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -70394,7 +71011,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnConnectionsResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -70437,8 +71054,9 @@ class VpnConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -70509,7 +71127,7 @@ class VpnSiteLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnSiteLinkConnection] = kwargs.pop("cls", None)
 
         request = build_vpn_site_link_connections_get_request(
@@ -70526,8 +71144,9 @@ class VpnSiteLinkConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -70595,7 +71214,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnGatewayNatRule] = kwargs.pop("cls", None)
 
         request = build_nat_rules_get_request(
@@ -70611,8 +71230,9 @@ class NatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -70651,7 +71271,7 @@ class NatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGatewayNatRule] = kwargs.pop("cls", None)
 
@@ -70679,8 +71299,9 @@ class NatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -70825,7 +71446,7 @@ class NatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGatewayNatRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -70888,7 +71509,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_nat_rules_delete_request(
@@ -70904,8 +71525,9 @@ class NatRulesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -70948,7 +71570,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -71010,7 +71632,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVpnGatewayNatRulesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -71053,8 +71675,9 @@ class NatRulesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -71114,7 +71737,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
 
         request = build_p2_svpn_gateways_get_request(
@@ -71129,8 +71752,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -71168,7 +71792,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
 
@@ -71195,8 +71819,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -71331,7 +71956,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -71397,7 +72022,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.P2SVpnGateway]] = kwargs.pop("cls", None)
 
@@ -71424,8 +72049,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -71558,7 +72184,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -71620,7 +72246,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_p2_svpn_gateways_delete_request(
@@ -71635,8 +72261,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -71675,7 +72302,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -71732,7 +72359,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListP2SVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -71774,8 +72401,9 @@ class P2SVpnGatewaysOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -71804,7 +72432,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListP2SVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -71845,8 +72473,9 @@ class P2SVpnGatewaysOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -71874,7 +72503,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.P2SVpnGateway]] = kwargs.pop("cls", None)
 
         request = build_p2_svpn_gateways_reset_request(
@@ -71889,8 +72518,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -71939,7 +72569,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -72001,7 +72631,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.VpnProfileResponse]] = kwargs.pop("cls", None)
 
@@ -72028,8 +72658,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -72162,7 +72793,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnProfileResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -72223,7 +72854,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.P2SVpnGateway]] = kwargs.pop("cls", None)
 
         request = build_p2_svpn_gateways_get_p2_s_vpn_connection_health_request(
@@ -72238,8 +72869,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -72289,7 +72921,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -72351,7 +72983,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.P2SVpnConnectionHealth]] = kwargs.pop("cls", None)
 
@@ -72378,8 +73010,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -72515,7 +73148,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.P2SVpnConnectionHealth] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -72580,7 +73213,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -72607,8 +73240,9 @@ class P2SVpnGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -72730,7 +73364,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -72809,7 +73443,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.VpnServerConfigurationsResponse]] = kwargs.pop("cls", None)
 
         request = build_vpn_server_configurations_associated_with_virtual_wan_list_request(
@@ -72824,8 +73458,9 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -72875,7 +73510,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VpnServerConfigurationsResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -72967,7 +73602,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.VirtualHubRouteTableV2] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_route_table_v2_s_get_request(
@@ -72983,8 +73618,9 @@ class VirtualHubRouteTableV2SOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -73024,7 +73660,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHubRouteTableV2] = kwargs.pop("cls", None)
 
@@ -73052,8 +73688,9 @@ class VirtualHubRouteTableV2SOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -73203,7 +73840,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHubRouteTableV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -73266,7 +73903,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_route_table_v2_s_delete_request(
@@ -73282,8 +73919,9 @@ class VirtualHubRouteTableV2SOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -73327,7 +73965,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -73390,7 +74028,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualHubRouteTableV2SResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -73433,8 +74071,9 @@ class VirtualHubRouteTableV2SOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -73490,7 +74129,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteGatewayList] = kwargs.pop("cls", None)
 
         request = build_express_route_gateways_list_by_subscription_request(
@@ -73503,8 +74142,9 @@ class ExpressRouteGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -73546,7 +74186,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteGatewayList] = kwargs.pop("cls", None)
 
         request = build_express_route_gateways_list_by_resource_group_request(
@@ -73560,8 +74200,9 @@ class ExpressRouteGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -73599,7 +74240,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteGateway] = kwargs.pop("cls", None)
 
@@ -73626,8 +74267,9 @@ class ExpressRouteGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -73764,7 +74406,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -73830,7 +74472,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.ExpressRouteGateway]] = kwargs.pop("cls", None)
 
@@ -73857,8 +74499,9 @@ class ExpressRouteGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -73991,7 +74634,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -74065,7 +74708,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteGateway] = kwargs.pop("cls", None)
 
         request = build_express_route_gateways_get_request(
@@ -74080,8 +74723,9 @@ class ExpressRouteGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -74115,7 +74759,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_gateways_delete_request(
@@ -74130,8 +74774,9 @@ class ExpressRouteGatewaysOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -74173,7 +74818,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -74254,7 +74899,7 @@ class ExpressRouteConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteConnection] = kwargs.pop("cls", None)
 
@@ -74282,8 +74927,9 @@ class ExpressRouteConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -74430,7 +75076,7 @@ class ExpressRouteConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -74507,7 +75153,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteConnection] = kwargs.pop("cls", None)
 
         request = build_express_route_connections_get_request(
@@ -74523,8 +75169,9 @@ class ExpressRouteConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -74558,7 +75205,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_express_route_connections_delete_request(
@@ -74574,8 +75221,9 @@ class ExpressRouteConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -74618,7 +75266,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -74687,7 +75335,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ExpressRouteConnectionList] = kwargs.pop("cls", None)
 
         request = build_express_route_connections_list_request(
@@ -74702,8 +75350,9 @@ class ExpressRouteConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -74771,7 +75420,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.BgpConnection] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_bgp_connection_get_request(
@@ -74787,8 +75436,9 @@ class VirtualHubBgpConnectionOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -74827,7 +75477,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BgpConnection] = kwargs.pop("cls", None)
 
@@ -74855,8 +75505,9 @@ class VirtualHubBgpConnectionOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -75001,7 +75652,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BgpConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -75064,7 +75715,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_bgp_connection_delete_request(
@@ -75080,8 +75731,9 @@ class VirtualHubBgpConnectionOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -75124,7 +75776,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -75206,7 +75858,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualHubBgpConnectionResults] = kwargs.pop("cls", None)
 
         error_map = {
@@ -75249,8 +75901,9 @@ class VirtualHubBgpConnectionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -75280,7 +75933,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.PeerRouteList]] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_bgp_connections_list_learned_routes_request(
@@ -75296,8 +75949,9 @@ class VirtualHubBgpConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -75348,7 +76002,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PeerRouteList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -75407,7 +76061,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[Optional[_models.PeerRouteList]] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_bgp_connections_list_advertised_routes_request(
@@ -75423,8 +76077,9 @@ class VirtualHubBgpConnectionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -75475,7 +76130,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.PeerRouteList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -75568,7 +76223,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.HubIpConfiguration] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_ip_configuration_get_request(
@@ -75584,8 +76239,9 @@ class VirtualHubIpConfigurationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -75624,7 +76280,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubIpConfiguration] = kwargs.pop("cls", None)
 
@@ -75652,8 +76308,9 @@ class VirtualHubIpConfigurationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -75798,7 +76455,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubIpConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -75861,7 +76518,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_virtual_hub_ip_configuration_delete_request(
@@ -75877,8 +76534,9 @@ class VirtualHubIpConfigurationOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -75921,7 +76579,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -75983,7 +76641,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListVirtualHubIpConfigurationResults] = kwargs.pop("cls", None)
 
         error_map = {
@@ -76026,8 +76684,9 @@ class VirtualHubIpConfigurationOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -76082,7 +76741,7 @@ class HubRouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubRouteTable] = kwargs.pop("cls", None)
 
@@ -76110,8 +76769,9 @@ class HubRouteTablesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -76253,7 +76913,7 @@ class HubRouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubRouteTable] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -76330,7 +76990,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.HubRouteTable] = kwargs.pop("cls", None)
 
         request = build_hub_route_tables_get_request(
@@ -76346,8 +77006,9 @@ class HubRouteTablesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -76381,7 +77042,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_hub_route_tables_delete_request(
@@ -76397,8 +77058,9 @@ class HubRouteTablesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -76441,7 +77103,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -76503,7 +77165,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListHubRouteTablesResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -76546,8 +77208,9 @@ class HubRouteTablesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -76602,7 +77265,7 @@ class RoutingIntentOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RoutingIntent] = kwargs.pop("cls", None)
 
@@ -76630,8 +77293,9 @@ class RoutingIntentOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -76778,7 +77442,7 @@ class RoutingIntentOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RoutingIntent] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -76855,7 +77519,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.RoutingIntent] = kwargs.pop("cls", None)
 
         request = build_routing_intent_get_request(
@@ -76871,8 +77535,9 @@ class RoutingIntentOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -76906,7 +77571,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_routing_intent_delete_request(
@@ -76922,8 +77587,9 @@ class RoutingIntentOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -76966,7 +77632,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -77028,7 +77694,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.ListRoutingIntentResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -77071,8 +77737,9 @@ class RoutingIntentOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -77124,7 +77791,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.WebApplicationFirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -77166,8 +77833,9 @@ class WebApplicationFirewallPoliciesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -77197,7 +77865,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.WebApplicationFirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -77238,8 +77906,9 @@ class WebApplicationFirewallPoliciesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -77281,7 +77950,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[_models.WebApplicationFirewallPolicy] = kwargs.pop("cls", None)
 
         request = build_web_application_firewall_policies_get_request(
@@ -77296,8 +77965,9 @@ class WebApplicationFirewallPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -77407,7 +78077,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.WebApplicationFirewallPolicy] = kwargs.pop("cls", None)
 
@@ -77434,8 +78104,9 @@ class WebApplicationFirewallPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -77473,7 +78144,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_web_application_firewall_policies_delete_request(
@@ -77488,8 +78159,9 @@ class WebApplicationFirewallPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -77528,7 +78200,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

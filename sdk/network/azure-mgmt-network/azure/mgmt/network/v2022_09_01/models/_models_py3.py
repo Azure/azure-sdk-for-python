@@ -31317,7 +31317,7 @@ class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
         "private_endpoint_network_policies": {"key": "properties.privateEndpointNetworkPolicies", "type": "str"},
         "private_link_service_network_policies": {"key": "properties.privateLinkServiceNetworkPolicies", "type": "str"},
         "application_gateway_ip_configurations": {
-            "key": "properties.applicationGatewayIpConfigurations",
+            "key": "properties.applicationGatewayIPConfigurations",
             "type": "[ApplicationGatewayIPConfiguration]",
         },
     }
