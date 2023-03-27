@@ -8,10 +8,10 @@ import hashlib
 import urllib
 import base64
 import hmac
+from  urllib.parse import ParseResult, urlparse
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from .utils import get_current_utc_time
-from  urllib.parse import ParseResult, urlparse
 
 class HMACCredentialsPolicy(SansIOHTTPPolicy):
     """Implementation of HMAC authentication policy.
@@ -55,7 +55,7 @@ class HMACCredentialsPolicy(SansIOHTTPPolicy):
         parsedUrl:ParseResult = urlparse(request.http_request.url)
         query_url = parsedUrl.path
 
-        if(parsedUrl.query):
+        if parsedUrl.query:
             query_url += "?" + parsedUrl.query
 
         if self._decode_url:

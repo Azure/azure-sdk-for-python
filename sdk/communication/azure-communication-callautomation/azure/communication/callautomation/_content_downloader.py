@@ -4,9 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import time
 from typing import Any
 
+from  urllib.parse import ParseResult, urlparse
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,15 +19,14 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
-from  urllib.parse import ParseResult, urlparse
 
 from ._generated import models as _models
 from ._generated._serialization import Serializer
+from ._generated.operations import CallRecordingOperations
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-from ._generated.operations import CallRecordingOperations
 
 class ContentDownloader(object):
     def __init__(
@@ -65,7 +64,9 @@ class ContentDownloader(object):
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        parsedEndpoint:ParseResult = urlparse(self._call_recording_client._config.endpoint)
+        parsedEndpoint:ParseResult = urlparse(
+            self._call_recording_client._config.endpoint # pylint: disable=protected-access
+        )
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -86,10 +87,12 @@ class ContentDownloader(object):
 
         if response.status_code in [200, 206]:
             return response
-        else:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._call_recording_client._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+
+        map_error(status_code=response.status_code, response=response, error_map=error_map)
+        error = self._call_recording_client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
+            _models.CommunicationErrorResponse, pipeline_response
+        )
+        raise HttpResponseError(response=response, model=error)
 
 
 
@@ -111,7 +114,9 @@ class ContentDownloader(object):
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        parsed_endpoint:ParseResult = urlparse(self._call_recording_client._config.endpoint)
+        parsed_endpoint:ParseResult = urlparse(
+            self._call_recording_client._config.endpoint  # pylint: disable=protected-access
+        )
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -130,31 +135,39 @@ class ContentDownloader(object):
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._call_recording_client._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+            error = self._call_recording_client._deserialize.failsafe_deserialize( # pylint: disable=protected-access
+                _models.CommunicationErrorResponse, pipeline_response
+            )
             raise HttpResponseError(response=response, model=error)
 
 def build_call_recording_delete_recording_request(recording_location: str, host: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = _headers.pop("Accept", "application/json")
-
     # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
     _headers["x-ms-host"] = _SERIALIZER.header("x-ms-host", host, "str")
-    return HttpRequest(method="DELETE", url=recording_location, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(
+        method="DELETE",
+        url=recording_location,
+        params=_params,
+        headers=_headers,
+        **kwargs
+    )
 
-def build_call_recording_download_recording_request(source_location: str, start:int, end:int, host:str, **kwargs: Any) -> HttpRequest:
+def build_call_recording_download_recording_request(source_location: str,
+                                                    start:int,
+                                                    end:int,
+                                                    host:str,
+                                                    **kwargs: Any
+                                                ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    accept = _headers.pop("Accept", "application/json")
-
     rangeHeader = "bytes=" + str(start)
-    if(end):
+    if end:
         rangeHeader += "-" + str(end)
     # Construct headers
     _headers["Range"] = _SERIALIZER.header("range", rangeHeader, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", "application/json", "str")
     _headers["x-ms-host"] = _SERIALIZER.header("x-ms-host", host, "str")
     return HttpRequest(method="GET", url=source_location, params=_params, headers=_headers, **kwargs)

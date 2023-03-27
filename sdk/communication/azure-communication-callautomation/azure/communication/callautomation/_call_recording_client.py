@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 
 from typing import TYPE_CHECKING  # pylint: disable=unused-import
+from azure.core.pipeline.transport import HttpResponse
 from ._models import RecordingStateResponse, StartRecordingOptions
 from ._content_downloader import ContentDownloader
-from azure.core.pipeline.transport import HttpResponse
 
 from ._generated.operations import CallRecordingOperations
 
@@ -148,7 +148,12 @@ class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-
         :return: HttpResponse (octet-stream)
         :rtype: HttpResponse (octet-stream)
         """
-        stream = self._downloader.download_streaming(source_location = source_location, offset = offset, length = length, **kwargs)
+        stream = self._downloader.download_streaming(
+            source_location = source_location,
+            offset = offset,
+            length = length,
+            **kwargs
+        )
         return stream
 
     def delete_recording(
@@ -182,6 +187,10 @@ class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-
         :param length: how many bytes. Not required.
         :type length: int
         """
-        stream = self._downloader.download_streaming(source_location = source_location, offset = offset, length = length, **kwargs)
+        stream = self._downloader.download_streaming(source_location = source_location,
+                                                     offset = offset,
+                                                     length = length,
+                                                     **kwargs
+                                                    )
         with open(destination_path, 'wb') as writer:
             writer.write(stream.read())
