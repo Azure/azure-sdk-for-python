@@ -14,7 +14,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
-from ._assets._artifacts.model_package import ModelPackage
+from ._assets._artifacts._package.model_package import ModelPackage
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
@@ -137,12 +137,21 @@ from ._workspace.networking import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
-from ._assets._artifacts._package.azureml_online_inferencing_server import AzureMLOnlineInferencingServer
-from ._assets._artifacts._package.azureml_batch_inferencing_server import AzureMLBatchInferencingServer
-from ._assets._artifacts._package.triton_inferencing_server import TritonInferencingServer
-from ._assets._artifacts._package.custom_inferencing_server import CustomInferencingServer
+from ._assets._artifacts._package.inferencing_server import (
+    AzureMLOnlineInferencingServer,
+    AzureMLBatchInferencingServer,
+    CustomInferencingServer,
+    TritonInferencingServer,
+    Route,
+)
 from ._assets._artifacts._package.model_configuration import ModelConfiguration
 from ._assets._artifacts._package.base_environment_source import BaseEnvironmentId
+from ._assets._artifacts._package.model_package import (
+    ModelPackage,
+    PackageInputPathId,
+    PackageInputPathUrl,
+    PackageInputPathVersion,
+)
 
 
 # TODO: enable in PuP
@@ -307,4 +316,8 @@ __all__ = [
     "CustomInferencingServer",
     "ModelConfiguration",
     "BaseEnvironmentId",
+    "PackageInputPathId",
+    "PackageInputPathUrl",
+    "PackageInputPathVersion",
+    "Route",
 ]

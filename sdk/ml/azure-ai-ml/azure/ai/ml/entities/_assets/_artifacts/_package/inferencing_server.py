@@ -4,13 +4,66 @@
 
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
-    OnlineInferenceConfiguration,
+    AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
+    AzureMLBatchInferencingServer as RestAzureMLBatchInferencingServer,
     CustomInferencingServer as RestCustomInferencingServer,
-    Route as RestRoute,
+    TritonInferencingServer as RestTritonInferencingServer,
     OnlineInferenceConfiguration as RestOnlineInferenceConfiguration,
+    Route as RestRoute,
 )
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
+class AzureMLOnlineInferencingServer:
+    def __init__(self, type: str = None, code_configuration: str = None):
+        """AzureMLOnlineInferencingServer Variables are only populated by the server, and will be ignored when sending a
+        request."""
+        self.type = type
+        self.code_configuration = code_configuration
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: RestAzureMLOnlineInferencingServer) -> "RestAzureMLOnlineInferencingServer":
+        return AzureMLOnlineInferencingServer(type=rest_obj.server_type, code_configuration=rest_obj.code_configuration)
+
+    def _to_rest_object(self) -> RestAzureMLOnlineInferencingServer:
+        return RestAzureMLOnlineInferencingServer(server_type=self.type, code_configuration=self.code_configuration)
+
+
+@experimental
+class AzureMLBatchInferencingServer:
+    def __init__(self, type: str = None, code_configuration: str = None):
+        """AzureMLBatchInferencingServer Variables are only populated by the server, and will be ignored when sending a
+        request."""
+        self.type = type
+        self.code_configuration = code_configuration
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: RestAzureMLBatchInferencingServer) -> "RestAzureMLBatchInferencingServer":
+        return AzureMLBatchInferencingServer(code_configuration=rest_obj.code_configuration)
+
+    def _to_rest_object(self) -> RestAzureMLBatchInferencingServer:
+        return RestAzureMLBatchInferencingServer(server_type=self.type, code_configuration=self.code_configuration)
+
+
+@experimental
+class TritonInferencingServer:
+    def __init__(self, inference_configuration: str = None):
+        """TritonInferencingServer Variables are only populated by the server, and will be ignored when sending a request."""
+        self.type = type
+        self.inference_configuration = inference_configuration
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: RestTritonInferencingServer) -> "RestTritonInferencingServer":
+        return CustomInferencingServer(
+            type=rest_obj.server_type, inference_configuration=rest_obj.inference_configuration
+        )
+
+    def _to_rest_object(self) -> RestTritonInferencingServer:
+        return RestCustomInferencingServer(server_type=self.type, inference_configuration=self.inference_configuration)
+
+
+@experimental
 class Route:
     def __init__(self, port: str = None, path: str = None):
         """Route Variables are only populated by the server, and will be ignored when sending a request."""
@@ -25,6 +78,7 @@ class Route:
         return RestRoute(port=self.port, path=self.path)
 
 
+@experimental
 class OnlineInferenceConfiguration:
     def __init__(
         self,
@@ -60,6 +114,7 @@ class OnlineInferenceConfiguration:
         )
 
 
+@experimental
 class CustomInferencingServer:
     def __init__(self, type: str = None, inference_configuration: OnlineInferenceConfiguration = None):
         self.type = type

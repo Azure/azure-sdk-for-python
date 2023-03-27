@@ -25,8 +25,11 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
 )
+from azure.ai.ml._utils.utils import snake_to_pascal
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class PackageInputPathId:
     def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None, **kwargs):
         self.input_path_type = input_path_type
@@ -46,6 +49,7 @@ class PackageInputPathId:
         )
 
 
+@experimental
 class PackageInputPathVersion:
     def __init__(
         self,
@@ -76,6 +80,7 @@ class PackageInputPathVersion:
         )
 
 
+@experimental
 class PackageInputPathUrl:
     def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None, **kwargs):
         self.input_path_type = input_path_type
@@ -95,6 +100,7 @@ class PackageInputPathUrl:
         )
 
 
+@experimental
 class ModelPackageInput:
     """Model package input.
 
@@ -130,9 +136,9 @@ class ModelPackageInput:
         # debugpy.connect(("localhost", 5678))
         # debugpy.breakpoint()
         return RestModelPackageInput(
-            input_type="UriFolder",
+            input_type=snake_to_pascal(self.type),
             path=self.path._to_rest_object(),
-            mode=self.mode,
+            mode=snake_to_pascal(self.mode),
             mount_path=self.mount_path,
         )
 
@@ -146,6 +152,7 @@ class ModelPackageInput:
         )
 
 
+@experimental
 class ModelPackage(Resource, PackageRequest):
     """Model for training and scoring.
 

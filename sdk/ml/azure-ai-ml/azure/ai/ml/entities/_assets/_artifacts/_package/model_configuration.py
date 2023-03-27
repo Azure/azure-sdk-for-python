@@ -4,8 +4,10 @@
 
 
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelConfiguration as RestModelConfiguration
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ModelConfiguration:
     def __init__(self, mode: str = None, mount_path: str = None):
         """ModelConfiguration Variables are only populated by the server, and will be ignored when sending a request."""

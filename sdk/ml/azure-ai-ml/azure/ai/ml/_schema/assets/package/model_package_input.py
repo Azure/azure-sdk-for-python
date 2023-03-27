@@ -30,7 +30,7 @@ class PackageInputPathIdSchema(PathBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts.model_package import PackageInputPathId
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import PackageInputPathId
 
         return PackageInputPathId(**data)
 
@@ -40,7 +40,7 @@ class PackageInputPathUrlSchema(PathBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts.model_package import PackageInputPathUrl
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import PackageInputPathUrl
 
         return PackageInputPathUrl(**data)
 
@@ -51,7 +51,7 @@ class PackageInputPathSchema(PathBaseSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts.model_package import PackageInputPathVersion
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import PackageInputPathVersion
 
         return PackageInputPathVersion(**data)
 
@@ -76,6 +76,6 @@ class ModelPackageInputSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts.model_package import ModelPackageInput
+        from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackageInput
 
         return ModelPackageInput(**data)

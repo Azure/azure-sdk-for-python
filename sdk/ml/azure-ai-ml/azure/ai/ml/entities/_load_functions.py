@@ -35,7 +35,7 @@ from azure.ai.ml.entities._schedule.schedule import JobSchedule
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, _ValidationResultBuilder
 from azure.ai.ml.entities._workspace.connections.workspace_connection import WorkspaceConnection
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._assets._artifacts.model_package import ModelPackage
+from azure.ai.ml.entities._assets._artifacts._package.model_package import ModelPackage
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
