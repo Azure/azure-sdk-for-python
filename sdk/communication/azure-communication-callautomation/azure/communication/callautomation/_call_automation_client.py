@@ -198,7 +198,8 @@ class CallAutomationClient(object):
         media_streaming_config = kwargs.pop(
             "media_streaming_configuration", None)
         user_custom_context = CustomContext(
-            voip_headers=target.voipHeaders, sip_headers=target.sipHeaders) if target.sipHeaders or target.voipHeaders else None
+            voip_headers=target.voipHeaders,
+            sip_headers=target.sipHeaders) if target.sipHeaders or target.voipHeaders else None
         create_call_request = CreateCallRequest(
             targets=[serialize_identifier(target.target)],
             callback_uri=callback_uri,
@@ -401,9 +402,10 @@ class CallAutomationClient(object):
             raise ValueError('incoming_call_context cannot be None.')
         if not target:
             raise ValueError('target cannot be None.')
-        
+
         user_custom_context = CustomContext(
-            voip_headers=target.voipHeaders, sip_headers=target.sipHeaders) if target.sipHeaders or target.voipHeaders else None
+            voip_headers=target.voipHeaders,
+            sip_headers=target.sipHeaders) if target.sipHeaders or target.voipHeaders else None
 
         redirect_call_request = RedirectCallRequest(
             incoming_call_context=incoming_call_context,
