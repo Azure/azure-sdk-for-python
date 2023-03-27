@@ -33,7 +33,7 @@ class AsyncDownloadBlobStream(
         return self
 
     async def _yield_data(self) -> bytes:
-        data = await anext(self._response)
+        data = await self._response.__anext__()
         self._hasher.update(data)
         return data
 
