@@ -9,7 +9,7 @@ import functools
 from devtools_testutils import recorded_by_proxy
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+from azure.ai.formrecognizer import AnalyzeResult, AnalysisFeature
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -20,6 +20,26 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzeDocument(FormRecognizerTest):
+
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy
+    def test_document_query_fields(self, client, **kwargs):
+        if self.is_live and kwargs.pop("formrecognizer_region", None) != "eastus":
+            pytest.skip("query_fields is only supported in eastus.")
+
+        with open(self.invoice_pdf, "rb") as fd:
+            document = fd.read()
+
+        poller = client.begin_analyze_document(
+            "prebuilt-document",
+            document,
+            features=[AnalysisFeature.QUERY_FIELDS_PREMIUM],
+            query_fields=["Charges"],
+        )
+
+        result = poller.result()
+        assert result.documents[0].fields["Charges"].value == "$56,651.49"
 
     @skip_flaky_test
     @FormRecognizerPreparer()
