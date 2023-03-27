@@ -79,23 +79,19 @@ class ContentDownloader(object):
             host = parsedEndpoint.hostname
         )
 
-
         pipeline_response: PipelineResponse = self._call_recording_client._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request, stream = True, **kwargs
         )
         response = pipeline_response.http_response
 
         if response.status_code in [200, 206]:
             return response
 
-        map_error(status_code=response.status_code, response=response, error_map=error_map)
+        map_error(status_code = response.status_code, response = response, error_map = error_map)
         error = self._call_recording_client._deserialize.failsafe_deserialize(  # pylint: disable=protected-access
             _models.CommunicationErrorResponse, pipeline_response
         )
-        raise HttpResponseError(response=response, model=error)
-
-
-
+        raise HttpResponseError(response = response, model = error)
 
     def delete_recording(  # pylint: disable=inconsistent-return-statements
         self, recording_location: str, **kwargs: Any
@@ -128,13 +124,13 @@ class ContentDownloader(object):
         )
 
         pipeline_response: PipelineResponse = self._call_recording_client._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream = False, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(status_code=response.status_code, response = response, error_map=error_map)
             error = self._call_recording_client._deserialize.failsafe_deserialize( # pylint: disable=protected-access
                 _models.CommunicationErrorResponse, pipeline_response
             )
@@ -147,10 +143,10 @@ def build_call_recording_delete_recording_request(recording_location: str, host:
     # Construct headers
     _headers["x-ms-host"] = _SERIALIZER.header("x-ms-host", host, "str")
     return HttpRequest(
-        method="DELETE",
-        url=recording_location,
-        params=_params,
-        headers=_headers,
+        method = "DELETE",
+        url = recording_location,
+        params = _params,
+        headers = _headers,
         **kwargs
     )
 
@@ -170,4 +166,4 @@ def build_call_recording_download_recording_request(source_location: str,
     _headers["Range"] = _SERIALIZER.header("range", rangeHeader, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", "application/json", "str")
     _headers["x-ms-host"] = _SERIALIZER.header("x-ms-host", host, "str")
-    return HttpRequest(method="GET", url=source_location, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method = "GET", url = source_location, params = _params, headers = _headers, **kwargs)
