@@ -83,15 +83,17 @@ class CommunicationUserIdentifier(object):
     """
     kind = CommunicationIdentifierKind.COMMUNICATION_USER
 
-    def __init__(self, id, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, id: str, **kwargs: Any) -> None:
         self.raw_id = kwargs.get('raw_id', id)
         self.properties = CommunicationUserProperties(id=id)
         if self.raw_id is None:
             self.raw_id = _communication_user_raw_id(self)
 
     def __eq__(self, other):
-        return self.raw_id == _communication_user_raw_id(other)
+        try:
+            return self.raw_id == other.properties['id']
+        except TypeError or KeyError or AttributeError:
+            return False
 
 
 def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
@@ -118,8 +120,7 @@ class PhoneNumberIdentifier(object):
     """
     kind = CommunicationIdentifierKind.PHONE_NUMBER
 
-    def __init__(self, value, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, value: str, **kwargs: Any) -> None:
         self.raw_id = kwargs.get('raw_id')
         self.properties = PhoneNumberProperties(value=value)
         if self.raw_id is None:
@@ -150,8 +151,7 @@ class UnknownIdentifier(object):
     """
     kind = CommunicationIdentifierKind.UNKNOWN
 
-    def __init__(self, identifier):
-        # type: (str) -> None
+    def __init__(self, identifier: str) -> None:
         self.raw_id = identifier
         self.properties = {}
 
@@ -188,8 +188,7 @@ class MicrosoftTeamsUserIdentifier(object):
     """
     kind = CommunicationIdentifierKind.MICROSOFT_TEAMS_USER
 
-    def __init__(self, user_id, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, user_id: str, **kwargs: Any) -> None:
         self.raw_id = kwargs.get('raw_id')
         self.properties = MicrosoftTeamsUserProperties(
             user_id=user_id,
@@ -246,8 +245,7 @@ class MicrosoftBotIdentifier(object):
     """
     kind = CommunicationIdentifierKind.MICROSOFT_BOT
 
-    def __init__(self, bot_id, **kwargs):
-        # type: (str, Any) -> None
+    def __init__(self, bot_id: str, **kwargs: Any) -> None:
         self.raw_id = kwargs.get('raw_id')
         self.properties = MicrosoftBotProperties(
             bot_id=bot_id,
@@ -297,7 +295,8 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
             return MicrosoftBotIdentifier(
                 bot_id=segments[1],
                 is_resource_account_configured=False,
-                cloud=CommunicationCloudEnvironment.PUBLIC
+                cloud=CommunicationCloudEnvironment.PUBLIC,
+                raw_id=raw_id
             )
         return UnknownIdentifier(identifier=raw_id)
 
@@ -306,59 +305,69 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     if prefix == TEAMS_USER_ANONYMOUS_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
-            is_anonymous=True
+            is_anonymous=True,
+            raw_id=raw_id
         )
     elif prefix == TEAMS_USER_PUBLIC_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
-            cloud=CommunicationCloudEnvironment.PUBLIC
+            cloud=CommunicationCloudEnvironment.PUBLIC,
+            raw_id=raw_id
         )
     elif prefix == TEAMS_USER_DOD_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
-            cloud=CommunicationCloudEnvironment.DOD
+            cloud=CommunicationCloudEnvironment.DOD,
+            raw_id=raw_id
         )
     elif prefix == TEAMS_USER_GCCH_CLOUD_PREFIX:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
-            cloud=CommunicationCloudEnvironment.GCCH
+            cloud=CommunicationCloudEnvironment.GCCH,
+            raw_id=raw_id
         )
     elif prefix in [ACS_USER_PREFIX, ACS_USER_DOD_CLOUD_PREFIX, ACS_USER_GCCH_CLOUD_PREFIX, SPOOL_USER_PREFIX]:
         return CommunicationUserIdentifier(
-            id=raw_id
+            id=raw_id,
+            raw_id=raw_id
         )
     elif prefix == BOT_GCCH_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.GCCH
+            cloud=CommunicationCloudEnvironment.GCCH,
+            raw_id=raw_id
         )
     elif prefix == BOT_PUBLIC_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.PUBLIC
+            cloud=CommunicationCloudEnvironment.PUBLIC,
+            raw_id=raw_id
         )
     elif prefix == BOT_DOD_CLOUD_GLOBAL_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=False,
-            cloud=CommunicationCloudEnvironment.DOD
+            cloud=CommunicationCloudEnvironment.DOD,
+            raw_id=raw_id
         )
     elif prefix == BOT_GCCH_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.GCCH
+            cloud=CommunicationCloudEnvironment.GCCH,
+            raw_id=raw_id
         )
     elif prefix == BOT_DOD_CLOUD_PREFIX:
         return MicrosoftBotIdentifier(
             bot_id=suffix,
             is_resource_account_configured=True,
-            cloud=CommunicationCloudEnvironment.DOD
+            cloud=CommunicationCloudEnvironment.DOD,
+            raw_id=raw_id
         )
     return UnknownIdentifier(
         identifier=raw_id

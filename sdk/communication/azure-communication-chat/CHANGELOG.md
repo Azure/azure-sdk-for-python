@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 1.2.0b1 (Unreleased)
 
 ### Features Added
 - Added support for proactive refreshing of tokens
