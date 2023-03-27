@@ -7,7 +7,6 @@ import json
 import hashlib
 import hmac
 import base64
-import six
 
 try:
     from urllib.parse import quote
@@ -114,14 +113,14 @@ def _eventgrid_data_typecheck(event):
     except AttributeError:
         data = event.data
 
-    if isinstance(data, six.binary_type):
+    if isinstance(data, bytes):
         raise TypeError(
             "Data in EventGridEvent cannot be bytes. Please refer to"
             "https://docs.microsoft.com/en-us/azure/event-grid/event-schema"
         )
 
 def _cloud_event_to_generated(cloud_event, **kwargs):
-    if isinstance(cloud_event.data, six.binary_type):
+    if isinstance(cloud_event.data, bytes):
         data_base64 = cloud_event.data
         data = None
     else:
