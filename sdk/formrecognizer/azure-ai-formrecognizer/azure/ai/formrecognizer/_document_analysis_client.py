@@ -124,11 +124,11 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             _client_op_path = self._client
             if kwargs.pop("features", None):
                 raise ValueError(
-                    f"Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
                 )
             if kwargs.pop("query_fields", None):
                 raise ValueError(
-                    f"Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
                 )
         else:
             _client_op_path = self._client.document_models
@@ -200,11 +200,11 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             _client_op_path = self._client
             if kwargs.pop("features", None):
                 raise ValueError(
-                    f"Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
                 )
             if kwargs.pop("query_fields", None):
                 raise ValueError(
-                    f"Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
                 )
         else:
             _client_op_path = self._client.document_models
