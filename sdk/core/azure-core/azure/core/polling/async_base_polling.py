@@ -30,9 +30,10 @@ from .base_polling import (
     BadStatus,
     BadResponse,
     OperationFailed,
-    LROBasePolling,
+    _SansIOLROBasePolling,
     _raise_if_bad_http_status_and_method,
 )
+from ._async_poller import AsyncPollingMethod
 from ..pipeline._tools import is_rest
 
 if TYPE_CHECKING:
@@ -51,8 +52,16 @@ PollingReturnType = TypeVar("PollingReturnType")
 __all__ = ["AsyncLROBasePolling"]
 
 
-class AsyncLROBasePolling(LROBasePolling[PollingReturnType], Generic[PollingReturnType]):
-    """A subclass or LROBasePolling that redefine "run" as async."""
+class AsyncLROBasePolling(_SansIOLROBasePolling[PollingReturnType, "AsyncPipelineClient"], AsyncPollingMethod[PollingReturnType]):
+    """A base LRO async poller.
+
+    This assumes a basic flow:
+    - I analyze the response to decide the polling approach
+    - I poll
+    - I ask the final resource depending of the polling approach
+
+    If your polling need are more specific, you could implement a PollingMethod directly
+    """
 
     _initial_response: "AsyncPipelineResponseType"
     """Store the initial response."""
@@ -60,14 +69,12 @@ class AsyncLROBasePolling(LROBasePolling[PollingReturnType], Generic[PollingRetu
     _pipeline_response: "AsyncPipelineResponseType"
     """Store the latest received HTTP response, initialized by the first answer."""
 
-    _client: "AsyncPipelineClient"
-    """The Azure Core Async Pipeline client used to make request."""
 
     @property
     def _transport(self) -> "AsyncHttpTransport":
         return self._client._pipeline._transport  # pylint: disable=protected-access
 
-    async def run(self) -> None:  # pylint:disable=invalid-overridden-method
+    async def run(self) -> None:
         try:
             await self._poll()
 
@@ -86,7 +93,7 @@ class AsyncLROBasePolling(LROBasePolling[PollingReturnType], Generic[PollingRetu
         except OperationFailed as err:
             raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
-    async def _poll(self) -> None:  # pylint:disable=invalid-overridden-method
+    async def _poll(self) -> None:
         """Poll status of operation so long as operation is incomplete and
         we have an endpoint to query.
 
@@ -110,23 +117,23 @@ class AsyncLROBasePolling(LROBasePolling[PollingReturnType], Generic[PollingRetu
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    async def _sleep(self, delay: float):  # pylint:disable=invalid-overridden-method
+    async def _sleep(self, delay: float):
         await self._transport.sleep(delay)
 
-    async def _delay(self):  # pylint:disable=invalid-overridden-method
+    async def _delay(self):
         """Check for a 'retry-after' header to set timeout,
         otherwise use configured timeout.
         """
         delay = self._extract_delay()
         await self._sleep(delay)
 
-    async def update_status(self):  # pylint:disable=invalid-overridden-method
+    async def update_status(self):
         """Update the current status of the LRO."""
         self._pipeline_response = await self.request_status(self._operation.get_polling_url())
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
-    async def request_status(self, status_link: str):  # pylint:disable=invalid-overridden-method
+    async def request_status(self, status_link: str):
         """Do a simple GET to this status link.
 
         This method re-inject 'x-ms-client-request-id'.

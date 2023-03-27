@@ -51,6 +51,7 @@ if TYPE_CHECKING:
 
 ABC = abc.ABC
 PollingReturnType = TypeVar("PollingReturnType")
+PipelineClientType = TypeVar("PipelineClientType")
 
 _FINISHED = frozenset(["succeeded", "canceled", "failed"])
 _FAILED = frozenset(["canceled", "failed"])
@@ -199,7 +200,7 @@ class OperationResourcePolling(LongRunningOperation):
         self, operation_location_header: str = "operation-location", *, lro_options: Optional[Dict[str, Any]] = None
     ):
         self._operation_location_header = operation_location_header
-
+        self._location_url = None
         self._lro_options = lro_options or {}
 
     def can_poll(self, pipeline_response):
@@ -365,22 +366,8 @@ class StatusCheckPolling(LongRunningOperation):
         return None
 
 
-class LROBasePolling(PollingMethod[PollingReturnType], Generic[PollingReturnType]):  # pylint: disable=too-many-instance-attributes
-    """A base LRO poller.
-
-    This assumes a basic flow:
-    - I analyze the response to decide the polling approach
-    - I poll
-    - I ask the final resource depending of the polling approach
-
-    If your polling need are more specific, you could implement a PollingMethod directly
-    """
-
-    _initial_response: PipelineResponseType
-    """Store the initial response."""
-
-    _pipeline_response: PipelineResponseType
-    """Store the latest received HTTP response, initialized by the first answer."""
+class _SansIOLROBasePolling(Generic[PollingReturnType, PipelineClientType]):
+    """A base class that has no opinion on IO, to help mypy be accurate."""
 
     _deserialization_callback: Callable[[Any], PollingReturnType]
     """The deserialization callback that returns the final instance."""
@@ -391,7 +378,7 @@ class LROBasePolling(PollingMethod[PollingReturnType], Generic[PollingReturnType
     _status: str
     """Hold the current of this poller"""
 
-    _client: "PipelineClient"
+    _client: PipelineClientType
     """The Azure Core Pipeline client used to make request."""
 
     def __init__(
@@ -413,31 +400,10 @@ class LROBasePolling(PollingMethod[PollingReturnType], Generic[PollingReturnType
         self._lro_options = lro_options
         self._path_format_arguments = path_format_arguments
 
-    def status(self) -> str:
-        """Return the current status as a string.
-        :rtype: str
-        """
-        if not self._operation:
-            raise ValueError("set_initial_status was never called. Did you give this instance to a poller?")
-        return self._status
-
-    def finished(self) -> bool:
-        """Is this polling finished?
-        :rtype: bool
-        """
-        return _finished(self.status())
-
-    def resource(self) -> PollingReturnType:
-        """Return the built resource."""
-        return self._parse_resource(self._pipeline_response)
-
-    @property
-    def _transport(self) -> "HttpTransport":
-        return self._client._pipeline._transport  # pylint: disable=protected-access
 
     def initialize(
         self,
-        client: "PipelineClient",
+        client: PipelineClientType,
         initial_response: Any,
         deserialization_callback: Callable[[Any], PollingReturnType],
     ) -> None:
@@ -496,6 +462,58 @@ class LROBasePolling(PollingMethod[PollingReturnType], Generic[PollingReturnType
         initial_response.context.transport = client._pipeline._transport  # pylint: disable=protected-access
         return client, initial_response, deserialization_callback
 
+    def status(self) -> str:
+        """Return the current status as a string.
+        :rtype: str
+        """
+        if not self._operation:
+            raise ValueError("set_initial_status was never called. Did you give this instance to a poller?")
+        return self._status
+
+    def finished(self) -> bool:
+        """Is this polling finished?
+        :rtype: bool
+        """
+        return _finished(self.status())
+
+    def resource(self) -> PollingReturnType:
+        """Return the built resource."""
+        return self._parse_resource(self._pipeline_response)
+
+    def _parse_resource(self, pipeline_response: "PipelineResponseType") -> PollingReturnType:
+        """Assuming this response is a resource, use the deserialization callback to parse it.
+        If body is empty, assuming no resource to return.
+        """
+        response = pipeline_response.http_response
+        if not _is_empty(response):
+            return self._deserialization_callback(pipeline_response)
+        return None
+
+    def _get_request_id(self) -> str:
+        return self._pipeline_response.http_response.request.headers["x-ms-client-request-id"]
+
+
+class LROBasePolling(_SansIOLROBasePolling[PollingReturnType, "PipelineClient"], PollingMethod[PollingReturnType]):  # pylint: disable=too-many-instance-attributes
+    """A base LRO poller.
+
+    This assumes a basic flow:
+    - I analyze the response to decide the polling approach
+    - I poll
+    - I ask the final resource depending of the polling approach
+
+    If your polling need are more specific, you could implement a PollingMethod directly
+    """
+
+    _initial_response: "PipelineResponseType"
+    """Store the initial response."""
+
+    _pipeline_response: "PipelineResponseType"
+    """Store the latest received HTTP response, initialized by the first answer."""
+
+    @property
+    def _transport(self) -> "HttpTransport":
+        return self._client._pipeline._transport  # pylint: disable=protected-access
+
     def run(self) -> None:
         try:
             self._poll()
@@ -539,15 +557,6 @@ class LROBasePolling(PollingMethod[PollingReturnType], Generic[PollingReturnType
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    def _parse_resource(self, pipeline_response: "PipelineResponseType") -> PollingReturnType:
-        """Assuming this response is a resource, use the deserialization callback to parse it.
-        If body is empty, assuming no resource to return.
-        """
-        response = pipeline_response.http_response
-        if not _is_empty(response):
-            return self._deserialization_callback(pipeline_response)
-        return None
-
     def _sleep(self, delay: float) -> None:
         self._transport.sleep(delay)
 
@@ -569,9 +578,6 @@ class LROBasePolling(PollingMethod[PollingReturnType], Generic[PollingReturnType
         self._pipeline_response = self.request_status(self._operation.get_polling_url())
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
-
-    def _get_request_id(self) -> str:
-        return self._pipeline_response.http_response.request.headers["x-ms-client-request-id"]
 
     def request_status(self, status_link: str):
         """Do a simple GET to this status link.
