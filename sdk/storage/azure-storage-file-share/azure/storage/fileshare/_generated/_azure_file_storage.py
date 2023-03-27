@@ -43,7 +43,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
      URI. Default value is None.
     :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2022-11-02". Note that overriding this default value may result in unsupported behavior.
+     is "2023-01-03". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
     :keyword file_range_write_from_url: Only update is supported: - Update: Writes the bytes
      downloaded from the source url into the specified range. Default value is "update". Note that
@@ -67,7 +67,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
             allow_source_trailing_dot=allow_source_trailing_dot,
             **kwargs
         )
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

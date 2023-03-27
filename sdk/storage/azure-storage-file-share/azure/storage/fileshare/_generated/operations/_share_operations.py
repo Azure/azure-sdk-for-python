@@ -53,7 +53,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -98,7 +98,7 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -138,7 +138,7 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -183,7 +183,7 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -231,7 +231,7 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -277,7 +277,7 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -324,7 +324,7 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -370,7 +370,7 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -411,7 +411,7 @@ def build_create_snapshot_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -450,7 +450,7 @@ def build_create_permission_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -491,7 +491,7 @@ def build_get_permission_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -533,7 +533,7 @@ def build_set_properties_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -578,7 +578,7 @@ def build_set_metadata_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -614,7 +614,7 @@ def build_get_access_policy_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -649,7 +649,7 @@ def build_set_access_policy_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -685,7 +685,7 @@ def build_get_statistics_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -725,7 +725,7 @@ def build_restore_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2022-11-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2022-11-02"))
+    version: Literal["2023-01-03"] = kwargs.pop("version", _headers.pop("x-ms-version", "2023-01-03"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -847,8 +847,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -931,8 +932,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1051,8 +1053,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1153,8 +1156,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1253,8 +1257,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1358,8 +1363,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1458,8 +1464,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1572,8 +1579,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1654,8 +1662,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1813,8 +1822,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1891,8 +1901,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1990,8 +2001,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2078,8 +2090,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2161,8 +2174,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2261,8 +2275,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2344,8 +2359,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2439,8 +2455,9 @@ class ShareOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
