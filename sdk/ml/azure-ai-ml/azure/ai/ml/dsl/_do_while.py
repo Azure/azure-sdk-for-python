@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from azure.ai.ml.entities._builders.do_while import DoWhile
-from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 
