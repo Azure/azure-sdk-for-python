@@ -1,5 +1,5 @@
 # Release History
 
-## 1.0.0b1 (1970-01-01)
+## 1.0.0-beta.1 (Unreleased)
 
-- Initial version
+- Initial preview of the Azure Health Insights CancerProfiling client library.

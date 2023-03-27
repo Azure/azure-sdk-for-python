@@ -1,9 +1,8 @@
 # Azure Cognitive Services Health Insights Clinical Matching client library for Python
-Remove comment
-<!--
-[Health Insights](https://review.learn.microsoft.com/en-us/azure/cognitive-services/health-decision-support/overview?branch=main) is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
-The [Clinical Matching model](https://review.learn.microsoft.com/en-us/azure/cognitive-services/health-decision-support/trial-matcher/overview?branch=main) receives patients data and clinical trials protocols, and provides relevant clinical trials based on eligibility criteria.
--->
+
+[Health Insights](https://review.learn.microsoft.com/azure/azure-health-insights/?branch=release-azure-health-insights) is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
+The [Clinical Matching model][clinical_matching_docs] receives patients data and clinical trials protocols, and provides relevant clinical trials based on eligibility criteria.
+
 
 ## Getting started
 
@@ -31,9 +30,8 @@ This table shows the relationship between SDK versions and supported API version
 
 #### Get the endpoint
 
-You can find the endpoint for your Health Insights service resource using the
-***[Azure Portal](https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights)
-or [Azure CLI](https://learn.microsoft.com/cli/azure/):
+You can find the endpoint for your Health Insights service resource using the [Azure Portal][azure_portal] or [Azure CLI][azure_cli]
+
 
 ```bash
 # Get the endpoint for the Health Insights service resource
@@ -49,10 +47,9 @@ Alternatively, you can use **Azure CLI** snippet below to get the API key of you
 az cognitiveservices account keys list --resource-group <your-resource-group-name> --name <your-resource-name>
 ```
 
-#### Create a CancerProfilingClient with an API Key Credential
+#### Create a ClinicalMatchingClient with an API Key Credential
 
-Once you have the value for the API key, you can pass it as a string into an instance of **AzureKeyCredential**. Use the key as the credential parameter
-to authenticate the client:
+Once you have the value for the API key, you can pass it as a string into an instance of **AzureKeyCredential**. Use the key as the credential parameter to authenticate the client:
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -81,7 +78,12 @@ Trial Matcher provides the user of the services two main modes of operation: pat
 
 ## Examples
 
-- [Match Trials - Find potential eligible trials for a patient](#match-trials)
+<!--  
+[Match Trials - Find potential eligible trials for a patient (async)][match_trials_sample_async]
+[Match Trials - Find potential eligible trials for a patient (sync)][match_trials_sample_sync]
+[Match trials with FHIR data][sample_match_trials_fhir]
+[Match trials unstructured clinical note][sample_match_trials_unstructured_clinical_note]
+ -->
 
 ### Match trials
 
@@ -91,35 +93,59 @@ Finding potential eligible trials for a patient.
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.clinicalmatching import ClinicalMatchingClient
 
-KEY = os.environ["HEALTHINSIGHTS_KEY"]
-ENDPOINT = os.environ["HEALTHINSIGHTS_ENDPOINT"]
-TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
-client = ClinicalMatchingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
+KEY = os.getenv("HEALTHINSIGHTS_KEY") or "0"
+ENDPOINT = os.getenv("HEALTHINSIGHTS_ENDPOINT") or "0"
 
-poller = client.begin_match_trials(data)
-response = poller.result()
+trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT,
+                                              credential=AzureKeyCredential(KEY))
 
-if response.status == JobStatus.SUCCEEDED:
-    results = response.results
-    for patient_result in results.patients:
-        print(f"Inferences of Patient {patient_result.id}")
-        for tm_inferences in patient_result.inferences:
-            print(f"Trial Id {tm_inferences.id}")
-            print(f"Type: {str(tm_inferences.type)}  Value: {tm_inferences.value}")
-            print(f"Description {tm_inferences.description}")
-else:
-    errors = response.errors
-    if errors is not None:
-        for error in errors:
-            print(f"{error.code} : {error.message}")
+clinical_info_list = [ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                            code="C0006826",
+                                            name="Malignant Neoplasms",
+                                            value="true"),
+                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                            code="C1522449",
+                                            name="Therapeutic radiology procedure",
+                                            value="true"),
+                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                            code="C1512162",
+                                            name="Eastern Cooperative Oncology Group",
+                                            value="1"),
+                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                            code="C0019693",
+                                            name="HIV Infections",
+                                            value="false"),
+                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                            code="C1300072",
+                                            name="Tumor stage",
+                                            value="2")]
 
+patient1 = self.get_patient_from_fhir_patient()
+# Create registry filter
+registry_filters = ClinicalTrialRegistryFilter()
+# Limit the trial to a specific patient condition ("Non-small cell lung cancer")
+registry_filters.conditions = ["Non-small cell lung cancer"]
+# Limit the clinical trial to a certain phase, phase 1
+registry_filters.phases = [ClinicalTrialPhase.PHASE1]
+# Specify the clinical trial registry source as ClinicalTrials.Gov
+registry_filters.sources = [ClinicalTrialSource.CLINICALTRIALS_GOV]
+# Limit the clinical trial to a certain location, in this case California, USA
+registry_filters.facility_locations = [GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
+# Limit the trial to a specific study type, interventional
+registry_filters.study_types = [ClinicalTrialStudyType.INTERVENTIONAL]
+
+clinical_trials = ClinicalTrials(registry_filters=[registry_filters])
+configuration = TrialMatcherModelConfiguration(clinical_trials=clinical_trials)
+trial_matcher_data = TrialMatcherData(patients=[patient1], configuration=configuration)
+
+poller = await trial_matcher_client.begin_match_trials(trial_matcher_data)
 ```
 
 ## Troubleshooting
 
 ### General
 
-Health Insights Clinical Matching client library will raise exceptions defined in [Azure Core](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions).
+Health Insights Clinical Matching client library will raise exceptions defined in [Azure Core][azure_core].
 
 ### Logging
 
@@ -138,21 +164,10 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
-<!--
-This code sample show common scenario operation with the Azure Health Insights Clinical Matching library. More samples can be found under the [samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/) directory.
-
-- Match Trials FHIR: [sample_match_trials_fhir.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_fhir.py)
-
-- Match Trials Structured Coded Elements: [sample_match_trials_structured_coded_elements.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_structured_coded_elements.py)
-
-- Match Trials Structured Coded Elements Sync: [sample_match_trials_structured_coded_elements_sync.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_structured_coded_elements_sync.py)
-
-- Match Trials Unstructured Clinical Note: [sample_match_trials_unstructured_clinical_note.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_unstructured_clinical_note.py)
--->
 ### Additional documentation
-<!--
-For more extensive documentation on Azure Health Insights Clinical Matching, see the [Clinical Matching documentation](https://review.learn.microsoft.com/en-us/azure/cognitive-services/health-decision-support/trial-matcher/?branch=main) on docs.microsoft.com.
--->
+
+For more extensive documentation on Azure Health Insights Clinical Matching, see the [Clinical Matching documentation][clinical_matching_docs] on docs.microsoft.com.
+
 
 ## Contributing
 
@@ -171,5 +186,16 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
+[azure_core]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
+[azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
+[azure_cli]: https://learn.microsoft.com/cli/azure/
+[clinical_matching_docs]: https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/trial-matcher/overview?branch=main
+
+<!--
+[match_trials_sample_async]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_structured_coded_elements.py
+[match_trials_sample_sync]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_structured_coded_elements_sync.py
+[sample_match_trials_fhir]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_fhir.py
+[sample_match_trials_unstructured_clinical_note]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_unstructured_clinical_note.py
+-->

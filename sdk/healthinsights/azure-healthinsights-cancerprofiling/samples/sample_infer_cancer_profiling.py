@@ -38,7 +38,7 @@ class HealthInsightsSamples:
         # Create an Onco Phenotype client
         # <client>
         cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT,
-                                                    credential=AzureKeyCredential(KEY))
+                                                        credential=AzureKeyCredential(KEY))
         # </client>
 
         # Construct patient
