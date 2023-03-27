@@ -29,7 +29,8 @@ import httpx
 from azure.core.pipeline import Pipeline
 
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.transport import HttpRequest, HttpTransport
+from azure.core.pipeline.transport import HttpTransport
+from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl import HttpResponseImpl
 
 
@@ -51,7 +52,7 @@ class HttpXTransportResponse(HttpResponseImpl):
         return self.internal_response.content
 
     def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
-        return HttpXStreamDownloadGenerator(_, self)
+        return HttpXStreamDownloadGenerator(pipeline, self)
 
 # pylint: disable=unused-argument
 class HttpXStreamDownloadGenerator:
@@ -77,7 +78,7 @@ class HttpXTransport(HttpTransport):
     """
 
     def __init__(self, **kwargs) -> None:
-        self.client: Optional[httpx.Client] = kwargs.get("client", None)
+        self.client = kwargs.get("client", None)
 
     def open(self) -> None:
         if self.client is None:
@@ -107,12 +108,10 @@ class HttpXTransport(HttpTransport):
             **kwargs,
         }
 
-        stream_ctx: Optional[ContextManager] = None
-
         try:
             if stream_response:
+                stream_ctx: ContextManager = self.client.stream(**parameters)
                 response = stream_ctx.__enter__()
-                stream_ctx = self.client.stream(**parameters)
             else:
                 response = self.client.request(**parameters)
         except (

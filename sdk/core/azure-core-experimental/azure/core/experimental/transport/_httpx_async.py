@@ -30,15 +30,26 @@ import httpx
 from azure.core.pipeline import Pipeline
 
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
-from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 
-from ._httpx import HttpXTransportResponse
 
 
-class AsyncHttpXTransportResponse(HttpXTransportResponse, AsyncHttpResponseImpl):
+class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
+    def __init__(self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]) -> None:
+        super().__init__(
+            request=request,
+            internal_response=httpx_response,
+            status_code=httpx_response.status_code,
+            headers=httpx_response.headers,
+            reason=httpx_response.reason_phrase,
+            content_type=httpx_response.headers.get("content-type"),
+            stream_download_generator=stream_contextmanager,
+        )
+
     def stream_download(self, pipeline: Pipeline, **kwargs: Any) -> AsyncIterator[bytes]:
-        return AsyncHttpXStreamDownloadGenerator(_, self)
+        return AsyncHttpXStreamDownloadGenerator(pipeline, self)
 
     async def load_body(self) -> None:
         self._content = self.internal_response.content
@@ -70,7 +81,7 @@ class AsyncHttpXTransport(AsyncHttpTransport):
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.client: Optional[httpx.AsyncClient] = kwargs.get("client", None)
+        self.client = kwargs.get("client", None)
 
     async def open(self) -> None:
         if self.client is None:
