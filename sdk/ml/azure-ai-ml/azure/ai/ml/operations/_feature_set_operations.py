@@ -12,6 +12,7 @@ from typing import Dict, Optional
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
+from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     ListViewType,
@@ -30,6 +31,7 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.ai.ml._utils._feature_store_utils import (
     _archive_or_restore,
     read_feature_set_metadata_contents,
+    read_remote_feature_set_spec_metadata_contents,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._assets._artifacts.feature_set import _FeatureSet
@@ -140,7 +142,7 @@ class _FeatureSetOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._FeatureSet]
         """
 
-        featureset_spec = validate_and_get_feature_set_spec(featureset)
+        featureset_spec = self._validate_and_get_feature_set_spec(featureset)
         featureset.properties["featuresetPropertiesVersion"] = "1"
         featureset.properties["featuresetProperties"] = json.dumps(featureset_spec._to_dict())
 
@@ -361,32 +363,43 @@ class _FeatureSetOperations(_ScopeDependentOperations):
             version=version,
         )
 
+    def _validate_and_get_feature_set_spec(self, featureset: _FeatureSet) -> FeaturesetSpecMetadata:
+        # pylint: disable=no-member
+        if not (featureset.specification and featureset.specification.path):
+            msg = "Missing FeatureSet specification path. Path is required for feature set."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                error_type=ValidationErrorType.MISSING_FIELD,
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
-def validate_and_get_feature_set_spec(featureset: _FeatureSet) -> FeaturesetSpecMetadata:
-    # pylint: disable=no-member
-    if not (featureset.specification and featureset.specification.path):
-        msg = "Missing FeatureSet specification path. Path is required for feature set."
-        raise ValidationException(
-            message=msg,
-            no_personal_data_message=msg,
-            error_type=ValidationErrorType.MISSING_FIELD,
-            target=ErrorTarget.FEATURE_SET,
-            error_category=ErrorCategory.USER_ERROR,
-        )
+        featureset_spec_path = str(featureset.specification.path)
+        if is_url(featureset_spec_path):
+            try:
+                featureset_spec_contents = read_remote_feature_set_spec_metadata_contents(
+                    base_uri=featureset_spec_path,
+                    datastore_operations=self._datastore_operation,
+                )
+                featureset_spec_path = None
+            except Exception as ex:  # pylint: disable=broad-except
+                module_logger.info("Unable to access FeaturesetSpec at path %s", featureset_spec_path)
+                raise ex
+            return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_path)
 
-    featureset_spec_path = str(featureset.specification.path)
-    if not os.path.isabs(featureset_spec_path):
-        featureset_spec_path = Path(featureset.base_path, featureset_spec_path).resolve()
+        if not os.path.isabs(featureset_spec_path):
+            featureset_spec_path = Path(featureset.base_path, featureset_spec_path).resolve()
 
-    if not os.path.isdir(featureset_spec_path):
-        raise ValidationException(
-            message="No such directory: {}".format(featureset_spec_path),
-            no_personal_data_message="No such directory",
-            target=ErrorTarget.FEATURE_SET,
-            error_category=ErrorCategory.USER_ERROR,
-            error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
-        )
+        if not os.path.isdir(featureset_spec_path):
+            raise ValidationException(
+                message="No such directory: {}".format(featureset_spec_path),
+                no_personal_data_message="No such directory",
+                target=ErrorTarget.FEATURE_SET,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
+            )
 
-    featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
-    featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec.yaml")
-    return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
+        featureset_spec_contents = read_feature_set_metadata_contents(path=featureset_spec_path)
+        featureset_spec_yaml_path = Path(featureset_spec_path, "FeaturesetSpec.yaml")
+        return FeaturesetSpecMetadata._load(featureset_spec_contents, featureset_spec_yaml_path)
