@@ -528,7 +528,7 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
                 component_in_number_1=command_component.outputs.output_in_number,
                 component_in_path=do_while_body_pipeline.outputs.output_in_path,
             )
-            return basic_component.outputs
+            return {"output_in_path": basic_component.outputs.output_in_path}
 
         pipeline_job = pipeline_with_do_while(
             component_in_number=2,
@@ -538,6 +538,53 @@ class TestDoWhilePipeline(TestControlFlowPipeline):
         pipeline_job.settings.default_compute = "cpu-cluster"
 
         assert_job_cancel(pipeline_job, client)
+
+    def test_do_while_pipeline_with_primitive_consumption(self, client: MLClient):
+        baisc_component_func = load_component(
+            "./tests/test_configs/dsl_pipeline/do_while/components/primitive_type_components/basic_component.yml"
+        )
+        boolean_func = load_component(
+            "./tests/test_configs/dsl_pipeline/do_while/components/primitive_type_components/boolean.yml"
+        )
+        integer_func = load_component(
+            "./tests/test_configs/dsl_pipeline/do_while/components/primitive_type_components/integer.yml"
+        )
+        number_func = load_component(
+            "./tests/test_configs/dsl_pipeline/do_while/components/primitive_type_components/number.yml"
+        )
+        string_func = load_component(
+            "./tests/test_configs/dsl_pipeline/do_while/components/primitive_type_components/string.yml"
+        )
+
+        @pipeline
+        def pipeline_component_func(bool_param: bool, int_param: int, float_param: float, str_param: str):
+            baisc_component_func(
+                bool_param=bool_param,
+                int_param=int_param,
+                float_param=float_param,
+                str_param=str_param,
+            )
+
+        @pipeline
+        def pipeline_func():
+            # components return primitive type outputs
+            bool_node = boolean_func()
+            int_node = integer_func()
+            float_node = number_func()
+            str_node = string_func()
+            # pipeline component consume above primitive type outputs
+            pipeline_node = pipeline_component_func(  # noqa: F841
+                bool_param=bool_node.outputs.output,
+                int_param=int_node.outputs.output,
+                float_param=float_node.outputs.output,
+                str_param=str_node.outputs.output,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        assert_job_cancel(pipeline_job, client)
+
 
 @pytest.mark.skipif(
     condition=is_live(),
