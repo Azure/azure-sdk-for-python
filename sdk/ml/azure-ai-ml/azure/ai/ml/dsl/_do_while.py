@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 
@@ -68,19 +69,24 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
             # if loop body output type is not specified, skip as we have no place to infer
             if body.outputs[output_name].type is None:
                 continue
-            # if input type is specified, no need to infer and skip
-            if body_input.type is not None:
-                continue
-            inferred_type = body.outputs[output_name].type
-            # update node input
-            body_input._meta._is_inferred_optional = True
-            body_input.type = inferred_type
-            # update node corresponding component input
-            input_name = body_input._meta.name
-            body.component.inputs[input_name]._is_inferred_optional = True
-            body.component.inputs[input_name].type = inferred_type
+            # body input can be a list of inputs, normalize as a list to process
+            if not isinstance(body_input, list):
+                body_input = [body_input]
+            for single_input in body_input:
+                # if input type is specified, no need to infer and skip
+                if single_input.type is not None:
+                    continue
+                inferred_type = body.outputs[output_name].type
+                # update node input
+                single_input._meta._is_inferred_optional = True
+                single_input.type = inferred_type
+                # update node corresponding component input
+                input_name = single_input._meta.name
+                body.component.inputs[input_name]._is_inferred_optional = True
+                body.component.inputs[input_name].type = inferred_type
 
-    # infer and update for dynamic input
-    _infer_and_update_body_input_from_mapping()
+    # when mapping is a dictionary, infer and update for dynamic input
+    if isinstance(mapping, dict):
+        _infer_and_update_body_input_from_mapping()
 
     return do_while_node
