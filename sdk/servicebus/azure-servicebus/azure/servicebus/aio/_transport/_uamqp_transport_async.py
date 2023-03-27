@@ -22,6 +22,7 @@ except ImportError:
     uamqp_installed = False
 
 from ._base_async import AmqpTransportAsync
+from .._async_utils import get_running_loop
 from ..._common.utils import (
     get_receive_links,
     receive_trace_context_manager
@@ -231,13 +232,16 @@ if uamqp_installed:
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> None:  # pylint: disable=unused-argument
-            UamqpTransportAsync.settle_message_via_receiver_link_impl(
-                handler,
-                message,
-                settle_operation,
-                dead_letter_reason,
-                dead_letter_error_description
-            )()
+            await get_running_loop().run_in_executor(
+                None,
+                UamqpTransportAsync.settle_message_via_receiver_link_impl(
+                    handler,
+                    message,
+                    settle_operation,
+                    dead_letter_reason,
+                    dead_letter_error_description
+                ),
+            )
 
         @staticmethod
         async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):

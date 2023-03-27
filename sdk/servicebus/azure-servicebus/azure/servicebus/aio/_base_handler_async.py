@@ -260,6 +260,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 return await operation(**kwargs)
             except StopAsyncIteration:
                 raise
+            except ImportError:
+                raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = await self._handle_exception(exception)
                 if require_last_exception:

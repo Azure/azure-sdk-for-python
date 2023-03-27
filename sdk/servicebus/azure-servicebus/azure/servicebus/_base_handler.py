@@ -412,10 +412,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 return operation(**kwargs)
             except StopIteration:
                 raise
+            except ImportError:
+                raise
             except Exception as exception:  # pylint: disable=broad-except
                 # If optional dependency is not installed, do not retry.
-                if isinstance(exception, ImportError):
-                    raise exception
                 last_exception = self._handle_exception(exception)
                 if require_last_exception:
                     kwargs["last_exception"] = last_exception
