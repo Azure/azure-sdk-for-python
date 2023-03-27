@@ -37,7 +37,9 @@ from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 
 
 class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
-    def __init__(self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]) -> None:
+    def __init__(
+            self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
+        ) -> None:
         super().__init__(
             request=request,
             internal_response=httpx_response,
@@ -49,7 +51,7 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
         )
 
     def stream_download(self, pipeline: Pipeline, **kwargs: Any) -> AsyncIterator[bytes]:
-        return AsyncHttpXStreamDownloadGenerator(pipeline, self)
+        return AsyncHttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
     async def load_body(self) -> None:
         self._content = self.internal_response.content

@@ -57,5 +57,5 @@ if sys.version_info >= (3, 7):
                 return AsyncHttpXTransport
             except ImportError:
                 raise ImportError("httpx package is not installed")
-            
+
         raise AttributeError(f"module 'azure.core.experimental.transport' has no attribute {name}")

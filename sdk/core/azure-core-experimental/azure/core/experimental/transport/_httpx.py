@@ -52,7 +52,7 @@ class HttpXTransportResponse(HttpResponseImpl):
         return self.internal_response.content
 
     def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
-        return HttpXStreamDownloadGenerator(pipeline, self)
+        return HttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
 # pylint: disable=unused-argument
 class HttpXStreamDownloadGenerator:
@@ -66,7 +66,7 @@ class HttpXStreamDownloadGenerator:
     def __next__(self):
         try:
             return next(self.iter_bytes_func)
-        except StopIteration as se:
+        except StopIteration:
             self.response.stream_contextmanager.__exit__(None, None, None)
             raise
 
@@ -107,10 +107,10 @@ class HttpXTransport(HttpTransport):
             "files": request.files,
             **kwargs,
         }
-
+        stream_ctx: Optional[ContextManager] = None
         try:
             if stream_response:
-                stream_ctx: ContextManager = self.client.stream(**parameters)
+                stream_ctx = self.client.stream(**parameters)
                 response = stream_ctx.__enter__()
             else:
                 response = self.client.request(**parameters)
@@ -123,3 +123,4 @@ class HttpXTransport(HttpTransport):
             raise ServiceRequestError(err, error=err)
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
+    
