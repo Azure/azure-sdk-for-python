@@ -212,7 +212,7 @@ class TestIfElseUT(TestControlFlowPipelineUT):
 class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
     def test_invalid_do_while_pipeline(self):
         basic_component_func = load_component(
-            "./tests/test_configs/dsl_pipeline/do_while/components/basic_component/component.yml"
+            "./tests/test_configs/dsl_pipeline/do_while/basic_component/component.yml"
         )
 
         @pipeline
