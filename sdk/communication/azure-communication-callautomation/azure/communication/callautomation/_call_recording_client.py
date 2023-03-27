@@ -6,6 +6,8 @@
 
 from typing import TYPE_CHECKING  # pylint: disable=unused-import
 from ._models import RecordingStateResponse, StartRecordingOptions
+from ._content_downloader import ContentDownloader
+from azure.core.pipeline.transport import HttpResponse
 
 from ._generated.operations import CallRecordingOperations
 
@@ -20,6 +22,7 @@ class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-
         call_recording_client: CallRecordingOperations
     ) -> None:
         self._call_recording_client = call_recording_client
+        self._downloader = ContentDownloader(call_recording_client)
 
     def start_recording(
         self,
@@ -126,3 +129,59 @@ class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-
             recording_id = recording_id, **kwargs)
         return RecordingStateResponse._from_generated(# pylint:disable=protected-access
             recording_state_response)
+
+    def download_streaming(
+        self,
+        source_location: str,
+        offset: int = None,
+        length: int = None,
+        **kwargs
+    ) -> HttpResponse:
+        """Download a stream of the call recording.
+
+        :param source_location: The source location. Required.
+        :type source_location: str
+        :param offset: Offset byte. Not required.
+        :type offset: int
+        :param length: how many bytes. Not required.
+        :type length: int
+        :return: HttpResponse (octet-stream)
+        :rtype: HttpResponse (octet-stream)
+        """
+        stream = self._downloader.download_streaming(source_location = source_location, offset = offset, length = length, **kwargs)
+        return stream
+
+    def delete_recording(
+        self,
+        recording_location: str,
+        **kwargs
+    ) -> None:
+        """Delete a call recording.
+
+        :param recording_location: The recording location. Required.
+        :type recording_location: str
+        """
+        self._downloader.delete_recording(recording_location = recording_location, **kwargs)
+
+    def download_to(
+        self,
+        source_location: str,
+        destination_path: str,
+        offset: int = None,
+        length: int = None,
+        **kwargs
+    ) -> None:
+        """Download a stream of the call recording to the destination.
+
+        :param source_location: The source location uri. Required.
+        :type source_location: str
+        :param destination_path: The destination path. Required.
+        :type destination_path: str
+        :param offset: Offset byte. Not required.
+        :type offset: int
+        :param length: how many bytes. Not required.
+        :type length: int
+        """
+        stream = self._downloader.download_streaming(source_location = source_location, offset = offset, length = length, **kwargs)
+        with open(destination_path, 'wb') as writer:
+            writer.write(stream.read())
