@@ -152,6 +152,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     Class which defines uamqp-based methods used by the producer and consumer.
     """
 
+    KIND = "pyamqp"
+
     # define constants
     MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
     MAX_MESSAGE_LENGTH_BYTES = MAX_MESSAGE_LENGTH_BYTES

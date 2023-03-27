@@ -270,7 +270,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
         self._running = False
-        self._handler: Union["uamqp_AMQPClientSync", "AMQPClientSync"] = None   # type: ignore
+        self._handler: Optional[Union["uamqp_AMQPClientSync", "AMQPClientSync"]] = None
         self._auth_uri = None
         self._properties = create_properties(
             self._config.user_agent,

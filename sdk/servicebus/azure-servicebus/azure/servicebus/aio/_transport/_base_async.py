@@ -17,6 +17,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
     Abstract class that defines a set of common methods needed by producer and consumer.
     """
+    KIND: str
+
     # define constants
     MAX_FRAME_SIZE_BYTES: int
     MAX_MESSAGE_LENGTH_BYTES: int

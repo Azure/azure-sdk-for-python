@@ -728,7 +728,7 @@ class ServiceBusMessageBatch(object):
             DeprecationWarning,
         )
         if not self._uamqp_message:
-            if issubclass(self._amqp_transport, PyamqpTransport):
+            if self._amqp_transport.KIND == "pyamqp":
                 message = AmqpAnnotatedMessage(message=pyamqp_Message(*self._message))
                 self._uamqp_message = LegacyBatchMessage(
                     message,
