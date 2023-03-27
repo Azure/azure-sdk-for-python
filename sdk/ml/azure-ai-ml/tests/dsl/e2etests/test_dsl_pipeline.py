@@ -3032,18 +3032,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         baisc_component_func = load_component(
             "./tests/test_configs/dsl_pipeline/primitive_type_components/basic_component.yml"
         )
-        boolean_func = load_component(
-            "./tests/test_configs/dsl_pipeline/primitive_type_components/boolean.yml"
-        )
-        integer_func = load_component(
-            "./tests/test_configs/dsl_pipeline/primitive_type_components/integer.yml"
-        )
-        number_func = load_component(
-            "./tests/test_configs/dsl_pipeline/primitive_type_components/number.yml"
-        )
-        string_func = load_component(
-            "./tests/test_configs/dsl_pipeline/primitive_type_components/string.yml"
-        )
+        boolean_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/boolean.yml")
+        integer_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/integer.yml")
+        number_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/number.yml")
+        string_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/string.yml")
 
         @dsl.pipeline
         def pipeline_component_func(bool_param: bool, int_param: int, float_param: float, str_param: str):
