@@ -44,6 +44,10 @@ def build_list_request(
     skip = kwargs.pop('skip', None)  # type: Optional[str]
     tags = kwargs.pop('tags', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
+    page_size = kwargs.pop('page_size', 20)  # type: Optional[int]
+    name = kwargs.pop('name', None)  # type: Optional[str]
+    description = kwargs.pop('description', None)  # type: Optional[str]
+    created_by = kwargs.pop('created_by', None)  # type: Optional[str]
 
     accept = "application/json"
     # Construct URL
@@ -65,6 +69,14 @@ def build_list_request(
         _query_parameters['tags'] = _SERIALIZER.query("tags", tags, 'str')
     if list_view_type is not None:
         _query_parameters['listViewType'] = _SERIALIZER.query("list_view_type", list_view_type, 'str')
+    if page_size is not None:
+        _query_parameters['pageSize'] = _SERIALIZER.query("page_size", page_size, 'int')
+    if name is not None:
+        _query_parameters['name'] = _SERIALIZER.query("name", name, 'str')
+    if description is not None:
+        _query_parameters['description'] = _SERIALIZER.query("description", description, 'str')
+    if created_by is not None:
+        _query_parameters['createdBy'] = _SERIALIZER.query("created_by", created_by, 'str')
 
     # Construct headers
     _header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
@@ -229,6 +241,10 @@ class FeaturesetContainersOperations(object):
         skip=None,  # type: Optional[str]
         tags=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
+        page_size=20,  # type: Optional[int]
+        name=None,  # type: Optional[str]
+        description=None,  # type: Optional[str]
+        created_by=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable["_models.FeaturesetContainerResourceArmPaginatedResult"]
@@ -248,6 +264,14 @@ class FeaturesetContainersOperations(object):
         :param list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly,
          ListViewType.All]View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
+        :param page_size: page size.
+        :type page_size: int
+        :param name: name for the featureset.
+        :type name: str
+        :param description: description for the feature set.
+        :type description: str
+        :param created_by: createdBy user name.
+        :type created_by: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either FeaturesetContainerResourceArmPaginatedResult or
          the result of cls(response)
@@ -273,6 +297,10 @@ class FeaturesetContainersOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=self.list.metadata['url'],
                 )
                 request = _convert_request(request)
@@ -288,6 +316,10 @@ class FeaturesetContainersOperations(object):
                     skip=skip,
                     tags=tags,
                     list_view_type=list_view_type,
+                    page_size=page_size,
+                    name=name,
+                    description=description,
+                    created_by=created_by,
                     template_url=next_link,
                 )
                 request = _convert_request(request)
@@ -640,7 +672,7 @@ class FeaturesetContainersOperations(object):
             return deserialized
 
 
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'azure-async-operation'}, **kwargs)
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'original-uri'}, **kwargs)
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         if cont_token:

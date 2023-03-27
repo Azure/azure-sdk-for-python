@@ -11,7 +11,6 @@ from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml.entities._workspace.networking import (
     ManagedNetwork,
-    OutboundRule,
     FqdnDestination,
     ServiceTagDestination,
     PrivateEndpointDestination,
@@ -66,20 +65,23 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
         if dest:
             if isinstance(dest, str):
-                return FqdnDestination(dest, _snake_to_camel(category))
+                return FqdnDestination(rule_name=None, destination=dest, category=_snake_to_camel(category))
             else:
                 if dest.get("subresource_target", False):
                     return PrivateEndpointDestination(
-                        dest["service_resource_id"],
-                        dest["subresource_target"],
-                        dest["spark_enabled"],
-                        _snake_to_camel(category),
+                        rule_name=None,
+                        service_resource_id=dest["service_resource_id"],
+                        subresource_target=dest["subresource_target"],
+                        spark_enabled=dest["spark_enabled"],
+                        category=_snake_to_camel(category),
                     )
-                if dest.get("service_tag", False):
-                    return ServiceTagDestination(
-                        dest["service_tag"], dest["protocol"], dest["port_ranges"], _snake_to_camel(category)
-                    )
-        return OutboundRule(data)
+            return ServiceTagDestination(
+                rule_name=None,
+                service_tag=dest["service_tag"],
+                protocol=dest["protocol"],
+                port_ranges=dest["port_ranges"],
+                category=_snake_to_camel(category),
+            )
 
     def fqdn_dest2dict(self, fqdndest):
         res = fqdndest
@@ -118,7 +120,18 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        if data.get("outbound_rules", False):
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), data["outbound_rules"])
+        rules_dict = data.get("outbound_rules", False)
+        if rules_dict:
+            rules_as_list = []
+            for rule_name in rules_dict:
+                rule = rules_dict[rule_name]
+                rule.rule_name = rule_name
+                rules_as_list.append(rule)
+            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), rules_as_list)
         else:
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
+
+    @pre_dump
+    def predump(self, data, **kwargs):
+        data.outbound_rules = {rule.rule_name: rule for rule in data.outbound_rules}
+        return data

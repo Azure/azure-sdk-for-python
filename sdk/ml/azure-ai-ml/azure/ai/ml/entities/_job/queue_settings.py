@@ -24,7 +24,7 @@ class QueueSettings(RestTranslatableMixin, DictMixin):
      "Standard", "Premium".
     :vartype job_tier: str or ~azure.mgmt.machinelearningservices.models.JobTier
     :ivar priority: Controls the priority of the job on a compute.
-    :vartype priority: int
+    :vartype priority: str
     """
 
     def __init__(
