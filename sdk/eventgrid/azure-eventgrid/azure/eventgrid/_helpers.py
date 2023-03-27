@@ -13,11 +13,11 @@ try:
 except ImportError:
     from urllib2 import quote  # type: ignore
 
-from ._generated._serialization import Serializer
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
+from ._generated._serialization import Serializer
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
