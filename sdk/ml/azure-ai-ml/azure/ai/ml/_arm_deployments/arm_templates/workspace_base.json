@@ -475,6 +475,41 @@
             "metadata": {
                 "description": "Whether to set up materialization store"
             }
+        },
+        "storage_accounts" : {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of storage accounts used by Hub."
+            }
+        },
+        "key_vaults" : {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of key vaults used by Hub."
+            }
+        },
+        "container_registies" : {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of container registries used by Hub."
+            }
+        },
+        "existing_workspaces" : {
+            "type": "array",
+            "defaultValue": [],
+            "metadata": {
+                "description": "A list of existing workspaces used by Hub to perform convert."
+            }
+        },
+        "hub_resource_id" : {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Resource Id of Hub used for lean workspace."
+            }
         }
     },
     "variables": {
@@ -507,7 +542,9 @@
         "defaultPEConnections": "[array(variables('privateEndpointSettings'))]",
         "privateEndpointDeploymentName": "[concat('DeployPrivateEndpoint-', uniqueString(parameters('privateEndpointName')))]",
         "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
-        "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]"
+        "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
+        "isLeanWorkspace": "[equals(parameters('kind'), 'lean')]",
+        "isHubWorkspace": "[equals(parameters('kind'), 'hub')]"
     },
     "resources": [
         {
@@ -551,7 +588,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'), equals(length(parameters('storage_accounts')), 0))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
             "name": "[parameters('storageAccountName')]",
@@ -582,7 +619,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('keyVaultOption'), 'new'), equals(length(parameters('key_vaults')), 0))]",
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2019-09-01",
             "tags": "[parameters('tagValues')]",
@@ -602,7 +639,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('containerRegistryOption'), 'new'), equals(length(parameters('container_registies')), 0))]",
             "type": "Microsoft.ContainerRegistry/registries",
             "apiVersion": "2019-05-01",
             "tags": "[parameters('tagValues')]",
@@ -632,7 +669,7 @@
             }
         },
         {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'), not(variables('isHubWorkspace')))]",
             "type": "Microsoft.Insights/components",
             "tags": "[parameters('tagValues')]",
             "apiVersion": "2020-02-02-preview",
@@ -692,7 +729,12 @@
                     },
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
-                }
+                },
+                "storageAccounts": "parameters('storage_accounts')",
+                "keyVaults": "parameters('key_vaults')",
+                "containerRegistries": "parameters('container_registies')",
+                "existingWorkspaces": "parameters('existing_workspaces')",
+                "hubResourceId": "parameters('hub_resource_id')"
             }
         },
         {

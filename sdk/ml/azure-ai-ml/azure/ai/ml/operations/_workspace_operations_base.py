@@ -461,6 +461,20 @@ class WorkspaceOperationsBase:
             managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
 
+        #Hub related param
+        if workspace.hub_storageaccounts:
+            _set_val(param["storage_accounts"], workspace.hub_storageaccounts)
+        if workspace.hub_keyvaults:
+            _set_val(param["key_vaults"], workspace.hub_keyvaults)
+        if workspace.hub_containerregistries:
+            _set_val(param["container_registies"], workspace.hub_containerregistries)
+        if workspace.hub_existingworkspaces:
+            _set_val(param["existing_workspaces"], workspace.hub_existingworkspaces)
+
+        #Lean related param
+        if workspace.hub_resourceid:
+            _set_val(param["hub_resource_id"], workspace.hub_resourceid)
+
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed
 
