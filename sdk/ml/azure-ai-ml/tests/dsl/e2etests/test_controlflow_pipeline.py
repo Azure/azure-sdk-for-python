@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from azure.ai.ml.dsl._group_decorator import group
 from devtools_testutils import AzureRecordedTestCase, is_live
@@ -394,6 +396,148 @@ class TestIfElse(TestControlFlowPipeline):
             "type": "if_else",
         }
 
+
+class TestDoWhilePipeline(TestControlFlowPipeline):
+    @property
+    def _basic_component_func(self):
+        return load_component("./tests/test_configs/dsl_pipeline/do_while/components/basic_component/component.yml")
+
+    def test_do_while_pipeline(self, client: MLClient):
+        @pipeline
+        def do_while_body_pipeline_component(
+            component_in_number: Input(type="integer", optional=True),
+            component_in_path: Input(type="uri_folder"),
+        ):
+            # Call component obj as function: apply given inputs & parameters to create a node in pipeline
+            basic_component = self._basic_component_func(
+                component_in_number=component_in_number,
+                component_in_path=component_in_path,
+            )
+            return basic_component.outputs
+
+        @pipeline
+        def pipeline_with_do_while(
+            component_in_number: Input(type="integer"),
+            component_in_path: Input(type="uri_folder"),
+        ):
+            # Do while node with pipeline component
+            do_while_body_pipeline = do_while_body_pipeline_component(
+                component_in_number=component_in_number,
+                component_in_path=component_in_path,
+            )
+            do_while_with_pipeline = do_while(  # noqa: F841
+                body=do_while_body_pipeline,
+                condition=do_while_body_pipeline.outputs.is_number_larger_than_zero,
+                mapping={
+                    do_while_body_pipeline.outputs.output_in_path: do_while_body_pipeline.inputs.component_in_path,
+                },
+                max_iteration_count=5,
+            )
+
+            command_component = self._basic_component_func(
+                component_in_number=component_in_number,
+                component_in_path=component_in_path,
+            )
+            do_while_with_command_component = do_while(  # noqa: F841
+                body=command_component,
+                condition=command_component.outputs.is_number_larger_than_zero,
+                mapping={
+                    "output_in_number": command_component.inputs.component_in_number,
+                    command_component.outputs.output_in_path: command_component.inputs.component_in_path,
+                },
+                max_iteration_count=5,
+            )
+
+            # Use the outputs of do_while node
+            basic_component = do_while_body_pipeline_component(
+                component_in_number=None,
+                component_in_path=command_component.outputs.output_in_path,
+            )
+            return {"output_in_path": basic_component.outputs.output_in_path}
+
+        pipeline_job = pipeline_with_do_while(
+            component_in_number=2,
+            component_in_path=Input(type="uri_folder", path=str(Path(__file__).parent)),
+        )
+        # set pipeline level compute
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        assert_job_cancel(pipeline_job, client)
+
+    def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient):
+        @pipeline
+        def do_while_body_pipeline_component(
+            component_in_number: Input(type="integer"),
+            component_in_number_1: Input(type="integer"),
+            component_in_path: Input(type="uri_folder"),
+        ):
+            """E2E dummy train-score-eval pipeline with components defined via yaml."""
+            # Call component obj as function: apply given inputs & parameters to create a node in pipeline
+            train_with_sample_data = self._basic_component_func(
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number_1,
+                component_in_path=component_in_path,
+            )
+            return train_with_sample_data.outputs
+
+        @pipeline
+        def pipeline_with_do_while(
+            component_in_number: Input(type="integer"),
+            component_in_path: Input(type="uri_folder"),
+        ):
+            # Do while node with pipeline component
+            do_while_body_pipeline = do_while_body_pipeline_component(
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number,
+                component_in_path=component_in_path,
+            )
+            do_while_with_pipeline = do_while(  # noqa: F841
+                body=do_while_body_pipeline,
+                condition=do_while_body_pipeline.outputs.is_number_larger_than_zero,
+                mapping={
+                    do_while_body_pipeline.outputs.output_in_number: [
+                        do_while_body_pipeline.inputs.component_in_number,
+                        do_while_body_pipeline.inputs.component_in_number_1,
+                    ],
+                    "output_in_path": do_while_body_pipeline.inputs.component_in_path,
+                },
+                max_iteration_count=5,
+            )
+
+            command_component = self._basic_component_func(
+                component_in_number=component_in_number,
+                component_in_number_1=component_in_number,
+                component_in_path=component_in_path,
+            )
+            do_while_with_command_component = do_while(  # noqa: F841
+                body=command_component,
+                condition=command_component.outputs.is_number_larger_than_zero,
+                mapping={
+                    "output_in_number": [
+                        command_component.inputs.component_in_number,
+                        command_component.inputs.component_in_number_1,
+                    ],
+                    "output_in_path": command_component.inputs.component_in_path,
+                },
+                max_iteration_count=5,
+            )
+
+            # Use the outputs of do_while node
+            basic_component = do_while_body_pipeline_component(
+                component_in_number=do_while_body_pipeline.outputs.output_in_number,
+                component_in_number_1=command_component.outputs.output_in_number,
+                component_in_path=do_while_body_pipeline.outputs.output_in_path,
+            )
+            return basic_component.outputs
+
+        pipeline_job = pipeline_with_do_while(
+            component_in_number=2,
+            component_in_path=Input(type="uri_folder", path=str(Path(__file__).parent)),
+        )
+        # set pipeline level compute
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        assert_job_cancel(pipeline_job, client)
 
 @pytest.mark.skipif(
     condition=is_live(),
