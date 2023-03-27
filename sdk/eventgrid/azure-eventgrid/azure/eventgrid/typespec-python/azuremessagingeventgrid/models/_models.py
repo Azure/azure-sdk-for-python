@@ -202,7 +202,7 @@ class LockToken(_model_base.Model):
 
 
 class LockTokenInput(_model_base.Model):
-    """LockTokenInput.
+    """Lock token input formatting.
 
     All required parameters must be populated in order to send to Azure.
 
