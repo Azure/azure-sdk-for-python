@@ -150,6 +150,8 @@ from ._feature_set.feature_set_specification import _FeatureSetSpecification
 from ._feature_set.materialization_compute_resource import _MaterializationComputeResource
 from ._feature_set.materialization_settings import _MaterializationSettings
 from ._feature_set.materialization_type import _MaterializationType
+from ._feature_set.feature_set_backfill_response import _FeatureSetBackfillResponse
+from ._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
 from ._feature_store.feature_store import _FeatureStore
 from ._feature_store.materialization_store import _MaterializationStore
 from ._notification.notification import _Notification
@@ -304,6 +306,8 @@ __all__ = [
     "_FeatureStore",
     "_MaterializationStore",
     "_Notification",
+    "_FeatureSetBackfillResponse",
+    "_FeatureSetMaterializationResponse",
     # builders
     "Command",
     "Parallel",

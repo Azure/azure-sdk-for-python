@@ -3,12 +3,11 @@
 # ---------------------------------------------------------
 import json
 from pathlib import Path
+from typing import Any, Dict
 
 import pydash
 import pytest
 import yaml
-from test_utilities.utils import parse_local_path
-
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
     Ae365exepool,
@@ -35,7 +34,15 @@ from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, 
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJobLimits,
+    Data,
+    JobResourceConfiguration,
+    PipelineJob,
+    SparkResourceConfiguration,
+)
+from test_utilities.utils import parse_local_path
 
 from .._utils import (
     DATA_VERSION,
@@ -121,8 +128,11 @@ class TestPipelineJob:
         for input_name, input_obj in inputs.items():
             if isinstance(input_obj, Input):
                 data_name = input_obj.path.split("@")[0]
-                inputs[input_name] = Data(name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE)
-                input_data_names[input_name] = data_name
+                if "spark" in yaml_path:
+                    input_data_names[input_name] = input_obj
+                else:
+                    inputs[input_name] = Data(name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE)
+                    input_data_names[input_name] = data_name
         if len(input_data_names) == 0:
             return
 
@@ -138,10 +148,13 @@ class TestPipelineJob:
 
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         for input_name, dataset_name in input_data_names.items():
-            expected_rest_obj = {
-                "job_input_type": AssetTypes.MLTABLE,
-                "uri": dataset_name + ":" + DATA_VERSION,
-            }
+            if "spark" in yaml_path:
+                expected_rest_obj = {"job_input_type": AssetTypes.MLTABLE, "uri": dataset_name.path, "mode": "Direct"}
+            else:
+                expected_rest_obj = {
+                    "job_input_type": AssetTypes.MLTABLE,
+                    "uri": dataset_name + ":" + DATA_VERSION,
+                }
             assert node_rest_dict["inputs"][input_name] == expected_rest_obj
 
     @pytest.mark.parametrize(
@@ -598,3 +611,70 @@ class TestPipelineJob:
             assert len(node_dict["properties"]) == 1
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
+
+    @pytest.mark.parametrize(
+        "component_path, fields_to_test, fake_inputs",
+        [
+            pytest.param(
+                "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "limits.timeout": CommandJobLimits(timeout=100),
+                },
+                {},
+                id="command",
+            ),
+            pytest.param(
+                "./tests/test_configs/internal/batch_inference/batch_score.yaml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "limits.timeout": CommandJobLimits(timeout=100),
+                },
+                {
+                    "model_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"),
+                    "images_to_score": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+                },
+                id="parallel.resources",
+            ),
+            pytest.param(
+                "tests/test_configs/internal/spark-component/spec.yaml",
+                {
+                    "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
+                },
+                {
+                    "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                    "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                },
+                id="spark",
+            ),
+        ],
+    )
+    def test_data_binding_expression_on_node_runsettings(
+        self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
+    ):
+        component = load_component(component_path)
+
+        @pipeline()
+        def pipeline_func(param: str = "2"):
+            node = component(**fake_inputs)
+            for field, value in fields_to_test.items():
+                attr, sub_attr = field.split(".")
+                setattr(node, attr, value)
+                setattr(getattr(node, attr), sub_attr, str(param))
+
+        pipeline_job: PipelineJob = pipeline_func()
+        rest_object = pipeline_job._to_rest_object()
+        regenerated_job = PipelineJob._from_rest_object(rest_object)
+        expected_dict, actual_dict = pipeline_job._to_dict(), regenerated_job._to_dict()
+
+        assert actual_dict == expected_dict
+
+        # directly update component to arm id
+        for _node in pipeline_job.jobs.values():
+            _node._component = (
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/"
+                "Microsoft.MachineLearningServices/workspaces/ws/components/component_name/"
+                "versions/1.0.0"
+            )
+        # check if all the fields are correctly serialized
+        pipeline_job.component._get_anonymous_hash()
