@@ -14,7 +14,7 @@ try:
 except ImportError:
     from urllib2 import quote  # type: ignore
 
-from msrest import Serializer
+from ._generated._serialization import Serializer
 from azure.core.exceptions import raise_with_traceback
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
