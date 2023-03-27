@@ -10,7 +10,6 @@ import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
-from functools import partial
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Union
 
@@ -263,21 +262,23 @@ class CachedNodeResolver(object):
 
     def _resolve_cache_contents(self, cache_contents_to_resolve: List[_CacheContent], resolver):
         """Resolve all components to resolve and save the results in cache."""
-        _components = list(map(lambda x: x.component_ref, cache_contents_to_resolve))
-        _map_func = partial(resolver, azureml_type=AzureMLResourceType.COMPONENT)
 
-        if len(_components) > 1 and is_concurrent_component_registration_enabled() and is_private_preview_enabled():
+        def _map_func(_cache_content: _CacheContent):
+            _cache_content.arm_id = resolver(_cache_content.component_ref, azureml_type=AzureMLResourceType.COMPONENT)
+            if is_on_disk_cache_enabled() and is_private_preview_enabled():
+                self._save_to_on_disk_cache(_cache_content.on_disk_hash, _cache_content.arm_id)
+
+        if (
+            len(cache_contents_to_resolve) > 1
+            and is_concurrent_component_registration_enabled()
+            and is_private_preview_enabled()
+        ):
             # given deduplication has already been done, we can safely assume that there is no
             # conflict in concurrent local cache access
             with ThreadPoolExecutor(max_workers=self._get_component_registration_max_workers()) as executor:
-                resolution_results = executor.map(_map_func, _components)
+                list(executor.map(_map_func, cache_contents_to_resolve))
         else:
-            resolution_results = map(_map_func, _components)
-
-        for cache_content, resolution_results in zip(cache_contents_to_resolve, resolution_results):
-            cache_content.arm_id = resolution_results
-            if is_on_disk_cache_enabled() and is_private_preview_enabled():
-                self._save_to_on_disk_cache(cache_content.on_disk_hash, cache_content.arm_id)
+            list(map(_map_func, cache_contents_to_resolve))
 
     def _prepare_items_to_resolve(self):
         """Pop all nodes in self._nodes_to_resolve to prepare cache contents to resolve and nodes to resolve. Nodes in
