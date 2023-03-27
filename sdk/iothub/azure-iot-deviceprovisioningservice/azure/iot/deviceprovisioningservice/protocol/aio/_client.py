@@ -21,18 +21,18 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ProvisioningServiceClient:
+class ProvisioningServiceClient:  # pylint: disable=client-accepts-api-version-keyword
     """API for service operations with the Azure IoT Hub Device Provisioning Service.
 
     :ivar individual_enrollment: IndividualEnrollmentOperations operations
     :vartype individual_enrollment:
-     azure.iot.provisioningservice.aio.operations.IndividualEnrollmentOperations
+     azure.iot.deviceprovisioningservice.aio.operations.IndividualEnrollmentOperations
     :ivar enrollment_group: EnrollmentGroupOperations operations
     :vartype enrollment_group:
-     azure.iot.provisioningservice.aio.operations.EnrollmentGroupOperations
+     azure.iot.deviceprovisioningservice.aio.operations.EnrollmentGroupOperations
     :ivar device_registration_state: DeviceRegistrationStateOperations operations
     :vartype device_registration_state:
-     azure.iot.provisioningservice.aio.operations.DeviceRegistrationStateOperations
+     azure.iot.deviceprovisioningservice.aio.operations.DeviceRegistrationStateOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: Service URL. Default value is

@@ -1,9 +1,9 @@
 import pytest
 
-from azure.iot.provisioningservice.aio import (
+from azure.iot.deviceprovisioningservice.aio import (
     ProvisioningServiceClient as AsyncProvisioningServiceClient,
 )
-from azure.iot.provisioningservice.client import ProvisioningServiceClient
+from azure.iot.deviceprovisioningservice.client import ProvisioningServiceClient
 
 endpoint = "fake_endpoint"
 

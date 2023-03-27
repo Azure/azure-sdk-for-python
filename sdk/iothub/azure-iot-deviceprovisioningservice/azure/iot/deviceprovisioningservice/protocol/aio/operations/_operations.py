@@ -18,422 +18,36 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .._serialization import Serializer
-from .._vendor import _format_url_section
+from ...operations._operations import (
+    build_device_registration_state_delete_request,
+    build_device_registration_state_get_request,
+    build_device_registration_state_query_request,
+    build_enrollment_group_create_or_update_request,
+    build_enrollment_group_delete_request,
+    build_enrollment_group_get_attestation_mechanism_request,
+    build_enrollment_group_get_request,
+    build_enrollment_group_query_request,
+    build_enrollment_group_run_bulk_operation_request,
+    build_individual_enrollment_create_or_update_request,
+    build_individual_enrollment_delete_request,
+    build_individual_enrollment_get_attestation_mechanism_request,
+    build_individual_enrollment_get_request,
+    build_individual_enrollment_query_request,
+    build_individual_enrollment_run_bulk_operation_request,
+)
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
-
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
-
-
-def build_individual_enrollment_get_request(id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollments/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_individual_enrollment_create_or_update_request(
-    id: str, *, if_match: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollments/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_individual_enrollment_delete_request(
-    id: str, *, if_match: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollments/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_individual_enrollment_query_request(
-    *, x_ms_max_item_count: Optional[int] = None, x_ms_continuation: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollments/query"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if x_ms_max_item_count is not None:
-        _headers["x-ms-max-item-count"] = _SERIALIZER.header("x_ms_max_item_count", x_ms_max_item_count, "int")
-    if x_ms_continuation is not None:
-        _headers["x-ms-continuation"] = _SERIALIZER.header("x_ms_continuation", x_ms_continuation, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_individual_enrollment_get_attestation_mechanism_request(id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollments/{id}/attestationmechanism"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_individual_enrollment_run_bulk_operation_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollments"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_enrollment_group_get_request(id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollmentGroups/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_enrollment_group_create_or_update_request(
-    id: str, *, if_match: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollmentGroups/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_enrollment_group_delete_request(id: str, *, if_match: Optional[str] = None, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollmentGroups/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_enrollment_group_query_request(
-    *, x_ms_max_item_count: Optional[int] = None, x_ms_continuation: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollmentGroups/query"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if x_ms_max_item_count is not None:
-        _headers["x-ms-max-item-count"] = _SERIALIZER.header("x_ms_max_item_count", x_ms_max_item_count, "int")
-    if x_ms_continuation is not None:
-        _headers["x-ms-continuation"] = _SERIALIZER.header("x_ms_continuation", x_ms_continuation, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_enrollment_group_get_attestation_mechanism_request(id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollmentGroups/{id}/attestationmechanism"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_enrollment_group_run_bulk_operation_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/enrollmentGroups"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_device_registration_state_get_request(id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/registrations/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_device_registration_state_delete_request(
-    id: str, *, if_match: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/registrations/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if if_match is not None:
-        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_device_registration_state_query_request(
-    id: str, *, x_ms_max_item_count: Optional[int] = None, x_ms_continuation: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: Literal["2021-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/registrations/{id}/query"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if x_ms_max_item_count is not None:
-        _headers["x-ms-max-item-count"] = _SERIALIZER.header("x_ms_max_item_count", x_ms_max_item_count, "int")
-    if x_ms_continuation is not None:
-        _headers["x-ms-continuation"] = _SERIALIZER.header("x_ms_continuation", x_ms_continuation, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
 class IndividualEnrollmentOperations:
@@ -442,19 +56,19 @@ class IndividualEnrollmentOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.iot.provisioningservice.ProvisioningServiceClient`'s
+        :class:`~azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient`'s
         :attr:`individual_enrollment` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def get(self, id: str, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get(self, id: str, **kwargs: Any) -> JSON:
         """Get a device enrollment record.
 
         Get a device enrollment record.
@@ -715,7 +329,7 @@ class IndividualEnrollmentOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -736,7 +350,7 @@ class IndividualEnrollmentOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def create_or_update(
+    async def create_or_update(
         self,
         id: str,
         enrollment: JSON,
@@ -1215,7 +829,7 @@ class IndividualEnrollmentOperations:
         """
 
     @overload
-    def create_or_update(
+    async def create_or_update(
         self,
         id: str,
         enrollment: IO,
@@ -1470,8 +1084,8 @@ class IndividualEnrollmentOperations:
                 }
         """
 
-    @distributed_trace
-    def create_or_update(
+    @distributed_trace_async
+    async def create_or_update(
         self, id: str, enrollment: Union[JSON, IO], *, if_match: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Create or update a device enrollment record.
@@ -1977,7 +1591,7 @@ class IndividualEnrollmentOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -1997,8 +1611,8 @@ class IndividualEnrollmentOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def delete(  # pylint: disable=inconsistent-return-statements
         self, id: str, *, if_match: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Delete a device enrollment record.
@@ -2038,7 +1652,7 @@ class IndividualEnrollmentOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -2052,7 +1666,7 @@ class IndividualEnrollmentOperations:
             return cls(pipeline_response, None, {})
 
     @overload
-    def query(
+    async def query(
         self,
         query_specification: JSON,
         *,
@@ -2339,7 +1953,7 @@ class IndividualEnrollmentOperations:
         """
 
     @overload
-    def query(
+    async def query(
         self,
         query_specification: IO,
         *,
@@ -2620,8 +2234,8 @@ class IndividualEnrollmentOperations:
                 ]
         """
 
-    @distributed_trace
-    def query(
+    @distributed_trace_async
+    async def query(
         self,
         query_specification: Union[JSON, IO],
         *,
@@ -2941,7 +2555,7 @@ class IndividualEnrollmentOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -2966,8 +2580,8 @@ class IndividualEnrollmentOperations:
 
         return cast(List[JSON], deserialized)
 
-    @distributed_trace
-    def get_attestation_mechanism(self, id: str, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get_attestation_mechanism(self, id: str, **kwargs: Any) -> JSON:
         """Get the attestation mechanism in the device enrollment record.
 
         Get the attestation mechanism in the device enrollment record.
@@ -3095,7 +2709,7 @@ class IndividualEnrollmentOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -3116,7 +2730,7 @@ class IndividualEnrollmentOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def run_bulk_operation(
+    async def run_bulk_operation(
         self, bulk_operation: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Bulk device enrollment operation with maximum of 10 enrollments.
@@ -3423,7 +3037,9 @@ class IndividualEnrollmentOperations:
         """
 
     @overload
-    def run_bulk_operation(self, bulk_operation: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def run_bulk_operation(
+        self, bulk_operation: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Bulk device enrollment operation with maximum of 10 enrollments.
 
         Bulk device enrollment operation with maximum of 10 enrollments.
@@ -3458,8 +3074,8 @@ class IndividualEnrollmentOperations:
                 }
         """
 
-    @distributed_trace
-    def run_bulk_operation(self, bulk_operation: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def run_bulk_operation(self, bulk_operation: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Bulk device enrollment operation with maximum of 10 enrollments.
 
         Bulk device enrollment operation with maximum of 10 enrollments.
@@ -3795,7 +3411,7 @@ class IndividualEnrollmentOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -3822,19 +3438,19 @@ class EnrollmentGroupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.iot.provisioningservice.ProvisioningServiceClient`'s
+        :class:`~azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient`'s
         :attr:`enrollment_group` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def get(self, id: str, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get(self, id: str, **kwargs: Any) -> JSON:
         """Get a device enrollment group.
 
         Get a device enrollment group.
@@ -4046,7 +3662,7 @@ class EnrollmentGroupOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -4067,7 +3683,7 @@ class EnrollmentGroupOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def create_or_update(
+    async def create_or_update(
         self,
         id: str,
         enrollment_group: JSON,
@@ -4450,7 +4066,7 @@ class EnrollmentGroupOperations:
         """
 
     @overload
-    def create_or_update(
+    async def create_or_update(
         self,
         id: str,
         enrollment_group: IO,
@@ -4656,8 +4272,8 @@ class EnrollmentGroupOperations:
                 }
         """
 
-    @distributed_trace
-    def create_or_update(
+    @distributed_trace_async
+    async def create_or_update(
         self, id: str, enrollment_group: Union[JSON, IO], *, if_match: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Create or update a device enrollment group.
@@ -5068,7 +4684,7 @@ class EnrollmentGroupOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -5088,8 +4704,8 @@ class EnrollmentGroupOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def delete(  # pylint: disable=inconsistent-return-statements
         self, id: str, *, if_match: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Delete a device enrollment group.
@@ -5127,7 +4743,7 @@ class EnrollmentGroupOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -5141,7 +4757,7 @@ class EnrollmentGroupOperations:
             return cls(pipeline_response, None, {})
 
     @overload
-    def query(
+    async def query(
         self,
         query_specification: JSON,
         *,
@@ -5379,7 +4995,7 @@ class EnrollmentGroupOperations:
         """
 
     @overload
-    def query(
+    async def query(
         self,
         query_specification: IO,
         *,
@@ -5611,8 +5227,8 @@ class EnrollmentGroupOperations:
                 ]
         """
 
-    @distributed_trace
-    def query(
+    @distributed_trace_async
+    async def query(
         self,
         query_specification: Union[JSON, IO],
         *,
@@ -5883,7 +5499,7 @@ class EnrollmentGroupOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -5908,8 +5524,8 @@ class EnrollmentGroupOperations:
 
         return cast(List[JSON], deserialized)
 
-    @distributed_trace
-    def get_attestation_mechanism(self, id: str, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get_attestation_mechanism(self, id: str, **kwargs: Any) -> JSON:
         """Get the attestation mechanism in the device enrollment group record.
 
         Get the attestation mechanism in the device enrollment group record.
@@ -6035,7 +5651,7 @@ class EnrollmentGroupOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -6056,7 +5672,7 @@ class EnrollmentGroupOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def run_bulk_operation(
+    async def run_bulk_operation(
         self, bulk_operation: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Bulk device enrollment group operation with maximum of 10 groups.
@@ -6304,7 +5920,9 @@ class EnrollmentGroupOperations:
         """
 
     @overload
-    def run_bulk_operation(self, bulk_operation: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def run_bulk_operation(
+        self, bulk_operation: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Bulk device enrollment group operation with maximum of 10 groups.
 
         Bulk device enrollment group operation with maximum of 10 groups.
@@ -6335,8 +5953,8 @@ class EnrollmentGroupOperations:
                 }
         """
 
-    @distributed_trace
-    def run_bulk_operation(self, bulk_operation: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def run_bulk_operation(self, bulk_operation: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Bulk device enrollment group operation with maximum of 10 groups.
 
         Bulk device enrollment group operation with maximum of 10 groups.
@@ -6613,7 +6231,7 @@ class EnrollmentGroupOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -6640,19 +6258,19 @@ class DeviceRegistrationStateOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.iot.provisioningservice.ProvisioningServiceClient`'s
+        :class:`~azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient`'s
         :attr:`device_registration_state` attribute.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @distributed_trace
-    def get(self, id: str, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get(self, id: str, **kwargs: Any) -> JSON:
         """Gets the device registration state.
 
         Gets the device registration state.
@@ -6720,7 +6338,7 @@ class DeviceRegistrationStateOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -6740,8 +6358,8 @@ class DeviceRegistrationStateOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def delete(  # pylint: disable=inconsistent-return-statements
         self, id: str, *, if_match: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Deletes the device registration.
@@ -6779,7 +6397,7 @@ class DeviceRegistrationStateOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 
@@ -6792,8 +6410,8 @@ class DeviceRegistrationStateOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def query(
+    @distributed_trace_async
+    async def query(
         self,
         id: str,
         *,
@@ -6878,7 +6496,7 @@ class DeviceRegistrationStateOperations:
         request.url = self._client.format_url(request.url)
 
         _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=_stream, **kwargs
         )
 

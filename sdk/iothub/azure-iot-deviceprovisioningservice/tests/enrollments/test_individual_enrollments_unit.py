@@ -3,11 +3,6 @@ import re
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-
-from azure.iot.provisioningservice.enums import (
-    AttestationMechanismType,
-    BulkEnrollmentOperationMode,
-)
 from tests.conftest import (
     REPROVISION_MIGRATE,
     REPROVISION_NEVER,
@@ -24,14 +19,10 @@ query_url = "{}/query?".format(enrollment_endpoint)
 attestation_url = re.compile("{}/.+/attestationmechanism".format(enrollment_endpoint))
 
 enrollment_list = [
+    (generate_enrollment(attestation_type="tpm", endorsement_key="mykey")),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.TPM.value, endorsement_key="mykey"
-        )
-    ),
-    (
-        generate_enrollment(
-            attestation_type=AttestationMechanismType.TPM.value,
+            attestation_type="tpm",
             endorsement_key="mykey",
             device_id="1",
             iot_hub_host_name="myHub",
@@ -40,7 +31,7 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.TPM.value,
+            attestation_type="tpm",
             endorsement_key="mykey",
             provisioning_status="enabled",
             initial_twin_properties={"key": "value"},
@@ -48,19 +39,19 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.X509.value,
+            attestation_type="x509",
             certificate_path="myCert",
         )
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.X509.value,
+            attestation_type="x509",
             secondary_certificate_path="myCert2",
         )
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.X509.value,
+            attestation_type="x509",
             certificate_path="myCert",
             device_id="1",
             iot_hub_host_name="myHub",
@@ -69,41 +60,37 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.X509.value,
+            attestation_type="x509",
             certificate_path="myCert",
             provisioning_status="enabled",
             initial_twin_properties={"key": "value"},
         )
     ),
+    (generate_enrollment(attestation_type="symmetricKey")),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value
-        )
-    ),
-    (
-        generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
         )
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.TPM.value,
+            attestation_type="tpm",
             endorsement_key="mykey",
             reprovision_policy=REPROVISION_MIGRATE,
         )
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.X509.value,
+            attestation_type="x509",
             certificate_path="myCert",
             reprovision_policy=REPROVISION_RESET,
         )
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
             reprovision_policy=REPROVISION_NEVER,
@@ -111,7 +98,7 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
             reprovision_policy=REPROVISION_NEVER,
@@ -121,7 +108,7 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
             reprovision_policy=REPROVISION_NEVER,
@@ -131,7 +118,7 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
             reprovision_policy=REPROVISION_NEVER,
@@ -140,7 +127,7 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
             reprovision_policy=REPROVISION_NEVER,
@@ -151,14 +138,14 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
         )
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            attestation_type="symmetricKey",
             primary_key="primarykey",
             secondary_key="secondarykey",
             initial_twin_properties={"key": ["value1", "value2"]},
@@ -166,7 +153,7 @@ enrollment_list = [
     ),
     (
         generate_enrollment(
-            attestation_type=AttestationMechanismType.TPM.value,
+            attestation_type="tpm",
             endorsement_key="mykey",
             provisioning_status="enabled",
             initial_twin_properties={"key": ["value1", "value2"]},
@@ -380,13 +367,13 @@ class TestIndividualEnrollmentBulk(object):
     @pytest.mark.parametrize(
         "enrollments, mode",
         [
-            (enrollment_list, BulkEnrollmentOperationMode.CREATE.value),
+            (enrollment_list, "create"),
             (
                 enrollment_list,
-                BulkEnrollmentOperationMode.UPDATE.value,
+                "update",
             ),
-            (enrollment_list, BulkEnrollmentOperationMode.UPDATE_IF_MATCH_E_TAG.value),
-            (enrollment_list, BulkEnrollmentOperationMode.DELETE.value),
+            (enrollment_list, "updateIfMatchETag"),
+            (enrollment_list, "delete"),
         ],
     )
     def test_individual_enrollment_run_bulk_operation(
@@ -399,13 +386,13 @@ class TestIndividualEnrollmentBulk(object):
     @pytest.mark.parametrize(
         "enrollments, mode",
         [
-            (enrollment_list, BulkEnrollmentOperationMode.CREATE.value),
+            (enrollment_list, "create"),
             (
                 enrollment_list,
-                BulkEnrollmentOperationMode.UPDATE.value,
+                "update",
             ),
-            (enrollment_list, BulkEnrollmentOperationMode.UPDATE_IF_MATCH_E_TAG.value),
-            (enrollment_list, BulkEnrollmentOperationMode.DELETE.value),
+            (enrollment_list, "updateIfMatchETag"),
+            (enrollment_list, "delete"),
         ],
     )
     def test_individual_enrollment_run_bulk_operation_error(

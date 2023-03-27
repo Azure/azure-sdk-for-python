@@ -5,16 +5,9 @@ from pathlib import PurePath
 from shutil import rmtree
 
 import pytest
-
-from azure.iot.provisioningservice import ProvisioningServiceClient
-from azure.iot.provisioningservice.aio import (
+from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+from azure.iot.deviceprovisioningservice.aio import (
     ProvisioningServiceClient as AsyncProvisioningServiceClient,
-)
-from azure.iot.provisioningservice.enums import (
-    AttestationMechanismType,
-    BulkEnrollmentOperationMode,
-    IndividualEnrollmentAllocationPolicy,
-    IndividualEnrollmentProvisioningStatus,
 )
 from tests.conftest import (
     API_VERSION,
@@ -51,16 +44,16 @@ def event_loop():
 
 class TestIndividualEnrollments(object):
     def test_dps_enrollment_tpm_lifecycle(self):
-        attestation_type = AttestationMechanismType.TPM.value
+        attestation_type = "tpm"
         enrollment_id = create_random_name("ind_enroll_tpm_")
         device_id = create_random_name("device_")
         enrollment = generate_enrollment(
             id=enrollment_id,
             attestation_type=attestation_type,
             endorsement_key=TEST_ENDORSEMENT_KEY,
-            provisioning_status=IndividualEnrollmentProvisioningStatus.ENABLED.value,
+            provisioning_status="enabled",
             device_id=device_id,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.STATIC.value,
+            allocation_policy="static",
         )
 
         enrollment_response = client.individual_enrollment.create_or_update(
@@ -73,15 +66,9 @@ class TestIndividualEnrollments(object):
             enrollment_response["attestation"]["tpm"]["endorsementKey"]
             == TEST_ENDORSEMENT_KEY
         )
-        assert (
-            enrollment_response["allocationPolicy"]
-            == IndividualEnrollmentAllocationPolicy.STATIC.value
-        )
+        assert enrollment_response["allocationPolicy"] == "static"
         assert enrollment_response["deviceId"] == device_id
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.ENABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "enabled"
 
         # check for enrollment in query response
         enrollment_list = client.individual_enrollment.query(
@@ -103,9 +90,7 @@ class TestIndividualEnrollments(object):
         assert attestation_response["tpm"]["endorsementKey"] == TEST_ENDORSEMENT_KEY
 
         # update enrollment
-        enrollment[
-            "provisioningStatus"
-        ] = IndividualEnrollmentProvisioningStatus.DISABLED.value
+        enrollment["provisioningStatus"] = "disabled"
         enrollment["optionalDeviceInformation"] = DEVICE_INFO
         enrollment_response = client.individual_enrollment.create_or_update(
             id=enrollment_id,
@@ -113,10 +98,7 @@ class TestIndividualEnrollments(object):
             if_match=enrollment_response["etag"],
         )
 
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "disabled"
 
         assert (
             enrollment_response["optionalDeviceInformation"]["additionalProperties"]
@@ -133,16 +115,16 @@ class TestIndividualEnrollments(object):
         assert len(enrollment_list) == 0
 
     async def test_dps_enrollment_tpm_lifecycle_async(self):
-        attestation_type = AttestationMechanismType.TPM.value
+        attestation_type = "tpm"
         enrollment_id = create_random_name("ind_enroll_tpm_")
         device_id = create_random_name("device_")
         enrollment = generate_enrollment(
             id=enrollment_id,
             attestation_type=attestation_type,
             endorsement_key=TEST_ENDORSEMENT_KEY,
-            provisioning_status=IndividualEnrollmentProvisioningStatus.ENABLED.value,
+            provisioning_status="enabled",
             device_id=device_id,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.STATIC.value,
+            allocation_policy="static",
         )
 
         enrollment_response = await async_client.individual_enrollment.create_or_update(
@@ -155,15 +137,9 @@ class TestIndividualEnrollments(object):
             enrollment_response["attestation"]["tpm"]["endorsementKey"]
             == TEST_ENDORSEMENT_KEY
         )
-        assert (
-            enrollment_response["allocationPolicy"]
-            == IndividualEnrollmentAllocationPolicy.STATIC.value
-        )
+        assert enrollment_response["allocationPolicy"] == "static"
         assert enrollment_response["deviceId"] == device_id
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.ENABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "enabled"
 
         # check for enrollment in query response
         enrollment_list = await async_client.individual_enrollment.query(
@@ -189,9 +165,7 @@ class TestIndividualEnrollments(object):
         assert attestation_response["tpm"]["endorsementKey"] == TEST_ENDORSEMENT_KEY
 
         # update enrollment
-        enrollment[
-            "provisioningStatus"
-        ] = IndividualEnrollmentProvisioningStatus.DISABLED.value
+        enrollment["provisioningStatus"] = "disabled"
         enrollment["optionalDeviceInformation"] = DEVICE_INFO
         enrollment_response = await async_client.individual_enrollment.create_or_update(
             id=enrollment_id,
@@ -199,10 +173,7 @@ class TestIndividualEnrollments(object):
             if_match=enrollment_response["etag"],
         )
 
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "disabled"
 
         assert (
             enrollment_response["optionalDeviceInformation"]["additionalProperties"]
@@ -221,7 +192,7 @@ class TestIndividualEnrollments(object):
     def test_dps_enrollment_x509_lifecycle(self):
         enrollment_id = create_random_name("x509_enrollment_")
         device_id = create_random_name("x509_device_")
-        attestation_type = AttestationMechanismType.X509.value
+        attestation_type = "x509"
 
         if not exists(CERT_FOLDER):
             mkdir(CERT_FOLDER)
@@ -234,8 +205,8 @@ class TestIndividualEnrollments(object):
             device_id=device_id,
             certificate_path=cert_path,
             secondary_certificate_path=cert_path,
-            provisioning_status=IndividualEnrollmentProvisioningStatus.ENABLED.value,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.HASHED.value,
+            provisioning_status="enabled",
+            allocation_policy="hashed",
             attestation_type=attestation_type,
             reprovision_policy=REPROVISION_MIGRATE,
         )
@@ -250,10 +221,7 @@ class TestIndividualEnrollments(object):
 
         # check auth
         assert enrollment_response["attestation"]["x509"]
-        assert (
-            enrollment_response["attestation"]["type"]
-            == AttestationMechanismType.X509.value
-        )
+        assert enrollment_response["attestation"]["type"] == "x509"
         assert (
             enrollment_response["attestation"]["x509"]["clientCertificates"]["primary"][
                 "info"
@@ -267,14 +235,8 @@ class TestIndividualEnrollments(object):
             == thumb
         )
 
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.ENABLED.value
-        )
-        assert (
-            enrollment_response["allocationPolicy"]
-            == IndividualEnrollmentAllocationPolicy.HASHED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "enabled"
+        assert enrollment_response["allocationPolicy"] == "hashed"
         assert enrollment_response["reprovisionPolicy"]["migrateDeviceData"]
         assert enrollment_response["reprovisionPolicy"]["updateHubAssignment"]
 
@@ -291,12 +253,8 @@ class TestIndividualEnrollments(object):
         assert enrollment_response["registrationId"] == enrollment_id
 
         # check enrollment update
-        enrollment[
-            "provisioningStatus"
-        ] = IndividualEnrollmentProvisioningStatus.DISABLED.value
-        enrollment[
-            "allocationPolicy"
-        ] = IndividualEnrollmentAllocationPolicy.CUSTOM.value
+        enrollment["provisioningStatus"] = "disabled"
+        enrollment["allocationPolicy"] = "custom"
         enrollment["customAllocationDefinition"] = CUSTOM_ALLOCATION
         enrollment_response = client.individual_enrollment.create_or_update(
             id=enrollment_id,
@@ -305,10 +263,7 @@ class TestIndividualEnrollments(object):
         )
 
         assert enrollment_response["registrationId"] == enrollment_id
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "disabled"
         assert (
             enrollment_response["customAllocationDefinition"]["webhookUrl"]
             == WEBHOOK_URL
@@ -333,7 +288,7 @@ class TestIndividualEnrollments(object):
     async def test_dps_enrollment_x509_lifecycle_async(self):
         enrollment_id = create_random_name("x509_enrollment_")
         device_id = create_random_name("x509_device_")
-        attestation_type = AttestationMechanismType.X509.value
+        attestation_type = "x509"
 
         if not exists(CERT_FOLDER):
             mkdir(CERT_FOLDER)
@@ -346,8 +301,8 @@ class TestIndividualEnrollments(object):
             device_id=device_id,
             certificate_path=cert_path,
             secondary_certificate_path=cert_path,
-            provisioning_status=IndividualEnrollmentProvisioningStatus.ENABLED.value,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.HASHED.value,
+            provisioning_status="enabled",
+            allocation_policy="hashed",
             attestation_type=attestation_type,
             reprovision_policy=REPROVISION_MIGRATE,
         )
@@ -362,10 +317,7 @@ class TestIndividualEnrollments(object):
 
         # check auth
         assert enrollment_response["attestation"]["x509"]
-        assert (
-            enrollment_response["attestation"]["type"]
-            == AttestationMechanismType.X509.value
-        )
+        assert enrollment_response["attestation"]["type"] == "x509"
         assert (
             enrollment_response["attestation"]["x509"]["clientCertificates"]["primary"][
                 "info"
@@ -379,14 +331,8 @@ class TestIndividualEnrollments(object):
             == thumb
         )
 
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.ENABLED.value
-        )
-        assert (
-            enrollment_response["allocationPolicy"]
-            == IndividualEnrollmentAllocationPolicy.HASHED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "enabled"
+        assert enrollment_response["allocationPolicy"] == "hashed"
         assert enrollment_response["reprovisionPolicy"]["migrateDeviceData"]
         assert enrollment_response["reprovisionPolicy"]["updateHubAssignment"]
 
@@ -405,12 +351,8 @@ class TestIndividualEnrollments(object):
         assert enrollment_response["registrationId"] == enrollment_id
 
         # check enrollment update
-        enrollment[
-            "provisioningStatus"
-        ] = IndividualEnrollmentProvisioningStatus.DISABLED.value
-        enrollment[
-            "allocationPolicy"
-        ] = IndividualEnrollmentAllocationPolicy.CUSTOM.value
+        enrollment["provisioningStatus"] = "disabled"
+        enrollment["allocationPolicy"] = "custom"
         enrollment["customAllocationDefinition"] = CUSTOM_ALLOCATION
         enrollment_response = await async_client.individual_enrollment.create_or_update(
             id=enrollment_id,
@@ -419,10 +361,7 @@ class TestIndividualEnrollments(object):
         )
 
         assert enrollment_response["registrationId"] == enrollment_id
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "disabled"
         assert (
             enrollment_response["customAllocationDefinition"]["webhookUrl"]
             == WEBHOOK_URL
@@ -445,12 +384,12 @@ class TestIndividualEnrollments(object):
         rmtree(CERT_FOLDER, ignore_errors=True)
 
     def test_dps_enrollment_symmetrickey_lifecycle(self):
-        attestation_type = AttestationMechanismType.SYMMETRIC_KEY.value
+        attestation_type = "symmetricKey"
         enrollment_id = create_random_name("sym_key_enrollment_")
         primary_key = generate_key()
         secondary_key = generate_key()
         device_id = create_random_name("sym_key_device_")
-        allocation_policy = IndividualEnrollmentAllocationPolicy.GEO_LATENCY.value
+        allocation_policy = "geoLatency"
         reprovision_policy = REPROVISION_MIGRATE
         enrollment = generate_enrollment(
             id=enrollment_id,
@@ -506,12 +445,8 @@ class TestIndividualEnrollments(object):
         assert attestation_response["symmetricKey"]["secondaryKey"] == secondary_key
 
         # check enrollment update
-        enrollment[
-            "provisioningStatus"
-        ] = IndividualEnrollmentProvisioningStatus.DISABLED.value
-        enrollment[
-            "allocationPolicy"
-        ] = IndividualEnrollmentAllocationPolicy.CUSTOM.value
+        enrollment["provisioningStatus"] = "disabled"
+        enrollment["allocationPolicy"] = "custom"
         enrollment["customAllocationDefinition"] = CUSTOM_ALLOCATION
         enrollment_response = client.individual_enrollment.create_or_update(
             id=enrollment_id,
@@ -520,10 +455,7 @@ class TestIndividualEnrollments(object):
         )
 
         assert enrollment_response["registrationId"] == enrollment_id
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "disabled"
 
         assert (
             enrollment_response["customAllocationDefinition"]["webhookUrl"]
@@ -543,7 +475,7 @@ class TestIndividualEnrollments(object):
         enrollment2 = generate_enrollment(
             id=enrollment_id2,
             attestation_type=attestation_type,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.CUSTOM.value,
+            allocation_policy="custom",
             webhook_url=WEBHOOK_URL,
             api_version=API_VERSION,
         )
@@ -572,12 +504,12 @@ class TestIndividualEnrollments(object):
         assert len(enrollment_list) == 0
 
     async def test_dps_enrollment_symmetrickey_lifecycle_async(self):
-        attestation_type = AttestationMechanismType.SYMMETRIC_KEY.value
+        attestation_type = "symmetricKey"
         enrollment_id = create_random_name("sym_key_enrollment_")
         primary_key = generate_key()
         secondary_key = generate_key()
         device_id = create_random_name("sym_key_device_")
-        allocation_policy = IndividualEnrollmentAllocationPolicy.GEO_LATENCY.value
+        allocation_policy = "geoLatency"
         reprovision_policy = REPROVISION_MIGRATE
         enrollment = generate_enrollment(
             id=enrollment_id,
@@ -637,12 +569,8 @@ class TestIndividualEnrollments(object):
         assert attestation_response["symmetricKey"]["secondaryKey"] == secondary_key
 
         # check enrollment update
-        enrollment[
-            "provisioningStatus"
-        ] = IndividualEnrollmentProvisioningStatus.DISABLED.value
-        enrollment[
-            "allocationPolicy"
-        ] = IndividualEnrollmentAllocationPolicy.CUSTOM.value
+        enrollment["provisioningStatus"] = "disabled"
+        enrollment["allocationPolicy"] = "custom"
         enrollment["customAllocationDefinition"] = CUSTOM_ALLOCATION
         enrollment_response = await async_client.individual_enrollment.create_or_update(
             id=enrollment_id,
@@ -651,10 +579,7 @@ class TestIndividualEnrollments(object):
         )
 
         assert enrollment_response["registrationId"] == enrollment_id
-        assert (
-            enrollment_response["provisioningStatus"]
-            == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        )
+        assert enrollment_response["provisioningStatus"] == "disabled"
 
         assert (
             enrollment_response["customAllocationDefinition"]["webhookUrl"]
@@ -674,7 +599,7 @@ class TestIndividualEnrollments(object):
         enrollment2 = generate_enrollment(
             id=enrollment_id2,
             attestation_type=attestation_type,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.CUSTOM.value,
+            allocation_policy="custom",
             webhook_url=WEBHOOK_URL,
             api_version=API_VERSION,
         )
@@ -703,24 +628,24 @@ class TestIndividualEnrollments(object):
         assert len(enrollment_list) == 0
 
     def test_individual_enrollment_bulk_operations(self):
-        attestation_type = AttestationMechanismType.TPM.value
+        attestation_type = "tpm"
         enrollment_id = create_random_name("ind_enroll_tpm_")
         device_id = create_random_name("device_")
         enrollment = generate_enrollment(
             id=enrollment_id,
             attestation_type=attestation_type,
             endorsement_key=TEST_ENDORSEMENT_KEY,
-            provisioning_status=IndividualEnrollmentProvisioningStatus.ENABLED.value,
+            provisioning_status="enabled",
             device_id=device_id,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.STATIC.value,
+            allocation_policy="static",
         )
 
-        attestation_type = AttestationMechanismType.SYMMETRIC_KEY.value
+        attestation_type = "symmetricKey"
         enrollment_id2 = create_random_name("sym_key_enrollment_")
         primary_key = generate_key()
         secondary_key = generate_key()
         device_id = create_random_name("sym_key_device_")
-        allocation_policy = IndividualEnrollmentAllocationPolicy.GEO_LATENCY.value
+        allocation_policy = "geoLatency"
         reprovision_policy = REPROVISION_MIGRATE
         enrollment2 = generate_enrollment(
             id=enrollment_id2,
@@ -734,7 +659,7 @@ class TestIndividualEnrollments(object):
 
         bulk_enrollment_operation = {
             "enrollments": [enrollment, enrollment2],
-            "mode": BulkEnrollmentOperationMode.CREATE.value,
+            "mode": "create",
         }
 
         bulk_enrollment_response = client.individual_enrollment.run_bulk_operation(
@@ -742,44 +667,40 @@ class TestIndividualEnrollments(object):
         )
         assert bulk_enrollment_response
 
-        bulk_enrollment_operation["enrollments"][0][
-            "provisioningStatus"
-        ] == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        bulk_enrollment_operation["enrollments"][1][
-            "provisioningStatus"
-        ] == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        bulk_enrollment_operation["mode"] = BulkEnrollmentOperationMode.UPDATE.value
+        bulk_enrollment_operation["enrollments"][0]["provisioningStatus"] == "disabled"
+        bulk_enrollment_operation["enrollments"][1]["provisioningStatus"] == "disabled"
+        bulk_enrollment_operation["mode"] = "update"
 
         bulk_enrollment_response = client.individual_enrollment.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
 
-        bulk_enrollment_operation["mode"] = BulkEnrollmentOperationMode.DELETE.value
+        bulk_enrollment_operation["mode"] = "delete"
         bulk_enrollment_response = client.individual_enrollment.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
 
     async def test_individual_enrollment_bulk_operations_async(self):
-        attestation_type = AttestationMechanismType.TPM.value
+        attestation_type = "tpm"
         enrollment_id = create_random_name("ind_enroll_tpm_")
         device_id = create_random_name("device_")
         enrollment = generate_enrollment(
             id=enrollment_id,
             attestation_type=attestation_type,
             endorsement_key=TEST_ENDORSEMENT_KEY,
-            provisioning_status=IndividualEnrollmentProvisioningStatus.ENABLED.value,
+            provisioning_status="enabled",
             device_id=device_id,
-            allocation_policy=IndividualEnrollmentAllocationPolicy.STATIC.value,
+            allocation_policy="static",
         )
 
-        attestation_type = AttestationMechanismType.SYMMETRIC_KEY.value
+        attestation_type = "symmetricKey"
         enrollment_id2 = create_random_name("sym_key_enrollment_")
         primary_key = generate_key()
         secondary_key = generate_key()
         device_id = create_random_name("sym_key_device_")
-        allocation_policy = IndividualEnrollmentAllocationPolicy.GEO_LATENCY.value
+        allocation_policy = "geoLatency"
         reprovision_policy = REPROVISION_MIGRATE
         enrollment2 = generate_enrollment(
             id=enrollment_id2,
@@ -793,7 +714,7 @@ class TestIndividualEnrollments(object):
 
         bulk_enrollment_operation = {
             "enrollments": [enrollment, enrollment2],
-            "mode": BulkEnrollmentOperationMode.CREATE.value,
+            "mode": "create",
         }
 
         bulk_enrollment_response = (
@@ -803,13 +724,9 @@ class TestIndividualEnrollments(object):
         )
         assert bulk_enrollment_response
 
-        bulk_enrollment_operation["enrollments"][0][
-            "provisioningStatus"
-        ] == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        bulk_enrollment_operation["enrollments"][1][
-            "provisioningStatus"
-        ] == IndividualEnrollmentProvisioningStatus.DISABLED.value
-        bulk_enrollment_operation["mode"] = BulkEnrollmentOperationMode.UPDATE.value
+        bulk_enrollment_operation["enrollments"][0]["provisioningStatus"] == "disabled"
+        bulk_enrollment_operation["enrollments"][1]["provisioningStatus"] == "disabled"
+        bulk_enrollment_operation["mode"] = "update"
 
         bulk_enrollment_response = (
             await async_client.individual_enrollment.run_bulk_operation(
@@ -818,7 +735,7 @@ class TestIndividualEnrollments(object):
         )
         assert bulk_enrollment_response
 
-        bulk_enrollment_operation["mode"] = BulkEnrollmentOperationMode.DELETE.value
+        bulk_enrollment_operation["mode"] = "delete"
         bulk_enrollment_response = (
             await async_client.individual_enrollment.run_bulk_operation(
                 bulk_operation=bulk_enrollment_operation

@@ -3,8 +3,6 @@ import re
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-
-from azure.iot.provisioningservice.enums import BulkEnrollmentGroupOperationMode
 from tests.conftest import (
     REPROVISION_MIGRATE,
     REPROVISION_NEVER,
@@ -361,16 +359,16 @@ class TestGroupEnrollmentBulk(object):
     @pytest.mark.parametrize(
         "groups, mode",
         [
-            (enrollment_group_list, BulkEnrollmentGroupOperationMode.CREATE.value),
+            (enrollment_group_list, "create"),
             (
                 enrollment_group_list,
-                BulkEnrollmentGroupOperationMode.UPDATE.value,
+                "update",
             ),
             (
                 enrollment_group_list,
-                BulkEnrollmentGroupOperationMode.UPDATE_IF_MATCH_E_TAG.value,
+                "updateIfMatchETag",
             ),
-            (enrollment_group_list, BulkEnrollmentGroupOperationMode.DELETE),
+            (enrollment_group_list, "delete"),
         ],
     )
     def test_group_enrollment_run_bulk_operation(
@@ -383,16 +381,16 @@ class TestGroupEnrollmentBulk(object):
     @pytest.mark.parametrize(
         "groups, mode",
         [
-            (enrollment_group_list, BulkEnrollmentGroupOperationMode.CREATE.value),
+            (enrollment_group_list, "create"),
             (
                 enrollment_group_list,
-                BulkEnrollmentGroupOperationMode.UPDATE.value,
+                "update",
             ),
             (
                 enrollment_group_list,
-                BulkEnrollmentGroupOperationMode.UPDATE_IF_MATCH_E_TAG.value,
+                "updateIfMatchETag",
             ),
-            (enrollment_group_list, BulkEnrollmentGroupOperationMode.DELETE.value),
+            (enrollment_group_list, "delete"),
         ],
     )
     def test_group_enrollment_run_bulk_operation_error(

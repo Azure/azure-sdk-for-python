@@ -36,8 +36,7 @@ class DeviceRegistrationSamples(object):
 
     async def create_enrollment_group_and_register_device_async(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice.aio import ProvisioningServiceClient
-        from azure.iot.provisioningservice.enums import AttestationMechanismType
+        from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -47,7 +46,7 @@ class DeviceRegistrationSamples(object):
         enrollment_group = {
             "enrollmentGroupId": self.enrollment_group_id,
             "attestation": {
-                "type": AttestationMechanismType.SYMMETRIC_KEY.value,
+                "type": "symmetricKey",
             },
         }
 
@@ -75,7 +74,7 @@ class DeviceRegistrationSamples(object):
 
     async def query_registration_state_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice.aio import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -88,7 +87,7 @@ class DeviceRegistrationSamples(object):
 
     async def get_device_registration_state_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice.aio import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -99,7 +98,7 @@ class DeviceRegistrationSamples(object):
 
     async def delete_device_registration_state_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice.aio import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -118,7 +117,7 @@ class DeviceRegistrationSamples(object):
 
     async def cleanup_enrollment_group(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice.aio import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -167,7 +166,6 @@ def _compute_device_symmetric_key(key, string_to_sign, key_is_base64=True):
     """
     import hashlib
     import hmac
-
     from base64 import b64decode, b64encode
 
     if key_is_base64:

@@ -4,31 +4,32 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Any, Dict, Optional, Union
 
-from azure.core.credentials import TokenCredential
-from azure.core.pipeline import Pipeline
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+
+from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
-    BearerTokenCredentialPolicy,
+    AsyncBearerTokenCredentialPolicy,
+    AsyncRetryPolicy,
     ContentDecodePolicy,
     DistributedTracingPolicy,
     HeadersPolicy,
     HttpLoggingPolicy,
     NetworkTraceLoggingPolicy,
-    RetryPolicy,
     UserAgentPolicy,
 )
-from azure.core.pipeline.transport import (
-    RequestsTransport,
-)  # pylint: disable=no-name-in-module
 
-from azure.iot.provisioningservice.auth import SharedKeyCredentialPolicy
-from azure.iot.provisioningservice.protocol import VERSION
-from azure.iot.provisioningservice.protocol import (
+from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
+from azure.iot.deviceprovisioningservice.protocol import VERSION
+from azure.iot.deviceprovisioningservice.protocol.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
 
-from .util.connection_strings import parse_iot_dps_connection_string
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
+
+from ..util.connection_strings import parse_iot_dps_connection_string
 
 
 class ProvisioningServiceClient(object):
@@ -46,7 +47,7 @@ class ProvisioningServiceClient(object):
             Union[
                 str,
                 Dict[str, str],
-                TokenCredential,
+                "AsyncTokenCredential",
             ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
@@ -62,12 +63,10 @@ class ProvisioningServiceClient(object):
         self._pipeline = self._create_pipeline(
             credential=credential, base_url=endpoint, **kwargs
         )
-        # Generate base client
+
+        # Generate protocol client
         self._runtime_client = GeneratedProvisioningServiceClient(
-            credential=credential,
-            endpoint=endpoint,
-            pipeline=self._pipeline,
-            **kwargs,
+            credential=credential, endpoint=endpoint, pipeline=self._pipeline, **kwargs
         )
 
         self.individual_enrollment = self._runtime_client.individual_enrollment
@@ -81,14 +80,14 @@ class ProvisioningServiceClient(object):
         """
         Create a Provisioning Service Client from a connection string
 
-        :param str connection_string: The connection string for the Device Provisioning Service
+        :param str connection_string: The connection string for the Device Provisioning Service instance
         :return: A new instance of :class:`ProvisioningServiceClient
-         <azure.iot.provisioningservice.ProvisioningServiceClient>`
+         <azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient>`
         :rtype: :class:`ProvisioningServiceClient
-         <azure.iot.provisioningservice.ProvisioningServiceClient>`
+         <azure.iot.deviceprovisioningservice.aio.ProvisioningServiceClient>`
         :raises: ValueError if connection string is invalid
         """
-        cs_args = parse_iot_dps_connection_string(connection_string)
+        cs_args = parse_iot_dps_connection_string(connection_string=connection_string)
         host_name, shared_access_key_name, shared_access_key = (
             cs_args["HostName"],
             cs_args["SharedAccessKeyName"],
@@ -108,13 +107,13 @@ class ProvisioningServiceClient(object):
             Union[
                 str,
                 Dict[str, str],
-                TokenCredential,
+                "AsyncTokenCredential",
             ]
         ],
         base_url: str,
-        **kwargs,
-    ) -> Pipeline:
-        transport = kwargs.get("transport") or RequestsTransport(**kwargs)
+        **kwargs: Any,
+    ) -> AsyncPipeline:
+        transport = kwargs.get("transport")
         user_agent_policy = kwargs.get("user_agent_policy") or UserAgentPolicy(
             sdk_moniker=f"az-iot-dps-python/{VERSION}", **kwargs
         )
@@ -122,7 +121,7 @@ class ProvisioningServiceClient(object):
         # Choose appropriate credential policy
         self._credential_policy = None
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(
                 credential=credential, scopes=base_url
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
@@ -130,19 +129,25 @@ class ProvisioningServiceClient(object):
         elif credential is not None:
             raise TypeError(f"Unsupported credential: {credential}")
 
+        transport = kwargs.get("transport", None)
+        if not transport:
+            try:
+                from azure.core.pipeline.transport import AioHttpTransport
+            except ImportError:
+                raise ImportError(
+                    "Unable to create async transport. Please check aiohttp is installed."
+                )
+            transport = AioHttpTransport(**kwargs)
+
         policies = [
             user_agent_policy,
             self._credential_policy,
             HeadersPolicy(**kwargs),
             UserAgentPolicy(**kwargs),
             ContentDecodePolicy(**kwargs),
-            RetryPolicy(**kwargs),
+            AsyncRetryPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
         ]
-        # add additional policies from kwargs
-        if kwargs.get("_additional_pipeline_policies"):
-            policies = policies.extend(kwargs.get("_additional_pipeline_policies"))
-
-        return Pipeline(transport=transport, policies=policies)
+        return AsyncPipeline(transport=transport, policies=policies)

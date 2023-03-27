@@ -42,7 +42,7 @@ class EnrollmentSamples(object):
 
     def create_symmetric_key_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -62,7 +62,7 @@ class EnrollmentSamples(object):
 
     def create_x590_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -91,7 +91,7 @@ class EnrollmentSamples(object):
 
     def create_tpm_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -112,7 +112,7 @@ class EnrollmentSamples(object):
 
     def get_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -127,7 +127,7 @@ class EnrollmentSamples(object):
 
     def get_enrollment_attestation_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -148,7 +148,7 @@ class EnrollmentSamples(object):
 
     def update_enrollment_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -175,7 +175,7 @@ class EnrollmentSamples(object):
 
     def bulk_enrollment_operations_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string
@@ -218,7 +218,7 @@ class EnrollmentSamples(object):
 
     def delete_enrollments_sample(self):
         # Instantiate a DPS Service Client using a connection string
-        from azure.iot.provisioningservice import ProvisioningServiceClient
+        from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 
         dps_service_client = ProvisioningServiceClient.from_connection_string(
             self.connection_string

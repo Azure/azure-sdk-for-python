@@ -3,12 +3,6 @@ from math import ceil
 from os import getcwd, makedirs, urandom
 from os.path import exists
 
-# from azure.iot.provisioningservice.enums import (
-#     AttestationMechanismType,
-#     EnrollmentGroupAllocationPolicy,
-#     IndividualEnrollmentAllocationPolicy,
-# )
-
 CERT_NAME = "azdps_sdk"
 CERT_ENDING = "-cert.pem"
 KEY_ENDING = "-key.pem"

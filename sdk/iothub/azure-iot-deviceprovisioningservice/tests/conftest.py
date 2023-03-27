@@ -1,9 +1,10 @@
-from azure.iot.provisioningservice.auth import SharedKeyCredentialPolicy
+from functools import partial
+
 import pytest
 import responses
-from functools import partial
+from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
 from urllib3.util.retry import Retry
-from azure.iot.provisioningservice import ProvisioningServiceClient
 
 # TODO - Tests
 #   1. Create DPS before running test if connection string is not given

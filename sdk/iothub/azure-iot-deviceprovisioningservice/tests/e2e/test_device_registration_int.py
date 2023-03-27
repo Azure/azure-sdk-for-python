@@ -1,20 +1,14 @@
 from os import getenv
 
 from azure.identity import EnvironmentCredential
-from azure.mgmt.iothubprovisioningservices import IotDpsClient
-
-from azure.iot.provisioningservice import ProvisioningServiceClient
-from azure.iot.provisioningservice.aio import (
+from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+from azure.iot.deviceprovisioningservice.aio import (
     ProvisioningServiceClient as AsyncProvisioningServiceClient,
 )
-from azure.iot.provisioningservice.enums import (
-    AttestationMechanismType,
-    DeviceRegistrationStateStatus,
-    EnrollmentGroupAllocationPolicy,
-)
-from azure.iot.provisioningservice.util.connection_strings import (
+from azure.iot.deviceprovisioningservice.util.connection_strings import (
     parse_iot_dps_connection_string,
 )
+from azure.mgmt.iothubprovisioningservices import IotDpsClient
 from tests.conftest import IOTDPS_PROVISIONING_HOST
 from tests.utility.common import (
     create_random_name,
@@ -67,8 +61,8 @@ class TestDeviceRegistrationState(object):
         device_id = create_random_name("device-")
         enrollment_group = generate_enrollment_group(
             id=enrollment_group_id,
-            allocation_policy=EnrollmentGroupAllocationPolicy.STATIC.value,
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            allocation_policy="static",
+            attestation_type="symmetricKey",
         )
         enrollment_group = client.enrollment_group.create_or_update(
             id=enrollment_group_id, enrollment_group=enrollment_group
@@ -88,10 +82,7 @@ class TestDeviceRegistrationState(object):
 
         # get registration
         registration_response = client.device_registration_state.get(id=device_id)
-        assert (
-            registration_response["status"]
-            == DeviceRegistrationStateStatus.ASSIGNED.value
-        )
+        assert registration_response["status"] == "assigned"
         registration_id = registration_response["registrationId"]
 
         # query registration
@@ -119,8 +110,8 @@ class TestDeviceRegistrationState(object):
         device_id = create_random_name("device-")
         enrollment_group = generate_enrollment_group(
             id=enrollment_group_id,
-            allocation_policy=EnrollmentGroupAllocationPolicy.STATIC.value,
-            attestation_type=AttestationMechanismType.SYMMETRIC_KEY.value,
+            allocation_policy="static",
+            attestation_type="symmetricKey",
         )
         enrollment_group = await async_client.enrollment_group.create_or_update(
             id=enrollment_group_id, enrollment_group=enrollment_group
@@ -142,10 +133,7 @@ class TestDeviceRegistrationState(object):
         registration_response = await async_client.device_registration_state.get(
             id=device_id
         )
-        assert (
-            registration_response["status"]
-            == DeviceRegistrationStateStatus.ASSIGNED.value
-        )
+        assert registration_response["status"] == "assigned"
         registration_id = registration_response["registrationId"]
 
         # query registration

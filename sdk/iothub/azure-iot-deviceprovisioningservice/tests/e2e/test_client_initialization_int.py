@@ -8,11 +8,11 @@ import requests
 from azure.core.credentials import AccessToken
 from urllib3 import encode_multipart_formdata
 
-from azure.iot.provisioningservice import ProvisioningServiceClient
-from azure.iot.provisioningservice.aio import (
+from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+from azure.iot.deviceprovisioningservice.aio import (
     ProvisioningServiceClient as AsyncProvisioningServiceClient,
 )
-from azure.iot.provisioningservice.util.connection_strings import (
+from azure.iot.deviceprovisioningservice.util.connection_strings import (
     parse_iot_dps_connection_string,
 )
 
