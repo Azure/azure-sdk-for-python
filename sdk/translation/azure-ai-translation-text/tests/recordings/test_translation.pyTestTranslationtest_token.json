@@ -1,0 +1,31 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeCustomEndpoint.cognitiveservices.azure.com/translator/text/v3.0/translate?to=cs\u0026api-version=3.0",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "29",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.11.2 (Windows-10-10.0.19042-SP0)"
+      },
+      "RequestBody": "[{\u0022text\u0022: \u0022This is a test.\u0022}]",
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "apim-request-id": "3adc3652-c816-4264-ae95-7d6df2747bd2",
+        "Content-Length": "224",
+        "Content-Type": "application/json",
+        "Date": "Mon, 27 Mar 2023 06:37:11 GMT"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "401",
+          "message": "Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource."
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
