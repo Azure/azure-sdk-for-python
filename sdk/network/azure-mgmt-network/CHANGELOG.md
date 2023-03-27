@@ -1,6 +1,6 @@
 # Release History
 
-## 23.0.0 (2023-03-21)
+## 23.0.0 (2023-03-28)
 
 ### Other Changes
 
@@ -1558,15 +1558,15 @@ This new ApiVersion is for new Application Gateway features:
 
 ## 1.0.0 (2017-05-15)
 
-  - Tag 1.0.0rc3 as stable (same content)
+  - Tag 1.0.0b3 as stable (same content)
 
-## 1.0.0rc3 (2017-05-03)
+## 1.0.0b3 (2017-05-03)
 
 **Features**
 
   - Added check connectivity api to network watcher
 
-## 1.0.0rc2 (2017-04-18)
+## 1.0.0b2 (2017-04-18)
 
 **Features**
 
@@ -1577,7 +1577,7 @@ This new ApiVersion is for new Application Gateway features:
 
   - Restore access to NetworkWatcher and PacketCapture from 2016-09-01
 
-## 1.0.0rc1 (2017-04-11)
+## 1.0.0b1 (2017-04-11)
 
 **Features**
 
