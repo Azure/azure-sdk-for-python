@@ -114,7 +114,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         return cls(
             endpoint=obj.endpoint,
             type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
-            if obj.type
+            if obj.job_service_type
             else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
