@@ -29,6 +29,12 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
         tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         file = file or os.environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE)
+        if not tenant_id:
+            raise ValueError("tenant_id is required")
+        if not client_id:
+            raise ValueError("client_id is required")
+        if not file:
+            raise ValueError("file is required")
         super().__init__(
             tenant_id=tenant_id,
             client_id=client_id,
