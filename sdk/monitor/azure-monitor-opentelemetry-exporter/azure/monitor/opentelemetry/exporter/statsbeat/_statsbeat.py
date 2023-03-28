@@ -29,6 +29,8 @@ _EU_ENDPOINTS = [
     "swedencentral",
     "switzerlandnorth",
     "switzerlandwest",
+    "uksouth",
+    "ukwest",
 ]
 
 _STATSBEAT_METER_PROVIDER = None
@@ -43,6 +45,7 @@ def collect_statsbeat_metrics(exporter) -> None:
         with _STATSBEAT_LOCK:
             statsbeat_exporter = _StatsBeatExporter(
                 connection_string=_get_stats_connection_string(exporter._endpoint),
+                disable_offline_storage=exporter._disable_offline_storage,
             )
             reader = PeriodicExportingMetricReader(
                 statsbeat_exporter,
@@ -56,8 +59,9 @@ def collect_statsbeat_metrics(exporter) -> None:
                 _STATSBEAT_METER_PROVIDER,
                 exporter._instrumentation_key,
                 exporter._endpoint,
-                exporter._enable_local_storage,
+                exporter._disable_offline_storage,
                 long_interval_threshold,
+                exporter._credential is not None,
             )
         # Export some initial stats on program start
         _STATSBEAT_METER_PROVIDER.force_flush()

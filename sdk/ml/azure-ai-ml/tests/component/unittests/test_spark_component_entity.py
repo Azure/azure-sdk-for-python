@@ -75,13 +75,10 @@ class TestSparkComponentEntity:
     def test_spark_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "type": "spark",
-            "properties": {},
             "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "py_files": ["utils.zip"],
-            "jars": None,
             "files": ["my_files.txt"],
-            "archives": None,
             "identity": {"identity_type": "UserIdentity"},
             "conf": {
                 "spark.driver.cores": 2,
@@ -91,14 +88,9 @@ class TestSparkComponentEntity:
                 "spark.executor.memory": "1g",
             },
             "args": "--file_input ${{inputs.file_input}}",
-            "name": None,
-            "display_name": None,
-            "tags": {},
-            "computeId": None,
             "inputs": {
                 "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
-            "outputs": {},
             "_source": "YAML.COMPONENT",
             "componentId": "fake_component",
         }

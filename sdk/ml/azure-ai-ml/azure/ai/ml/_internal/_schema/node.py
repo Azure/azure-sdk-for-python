@@ -4,16 +4,17 @@
 
 from marshmallow import INCLUDE, fields, post_load, pre_dump
 
-from azure.ai.ml._schema import ArmVersionedStr, NestedField, RegistryStr, StringTransformedEnum, UnionField
-from azure.ai.ml._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
-from azure.ai.ml.constants._common import AzureMLResourceType
-
-from .component import InternalBaseComponentSchema, NodeType
+from ..._schema import ArmVersionedStr, NestedField, RegistryStr, UnionField
+from ..._schema.core.fields import DumpableEnumField
+from ..._schema.pipeline.component_job import BaseNodeSchema, _resolve_inputs_outputs
+from ...constants._common import AzureMLResourceType
+from .component import InternalComponentSchema, NodeType
 
 
 class InternalBaseNodeSchema(BaseNodeSchema):
     class Meta:
         unknown = INCLUDE
+
     component = UnionField(
         [
             # for registry type assets
@@ -21,24 +22,23 @@ class InternalBaseNodeSchema(BaseNodeSchema):
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # inline component or component file reference starting with FILE prefix
-            NestedField(InternalBaseComponentSchema, unknown=INCLUDE),
+            NestedField(InternalComponentSchema, unknown=INCLUDE),
         ],
         required=True,
     )
-    type = StringTransformedEnum(
+    type = DumpableEnumField(
         allowed_values=NodeType.all_values(),
-        casing_transform=lambda x: x,
     )
 
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
-        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from ...entities._builders import parse_inputs_outputs
 
         # parse inputs/outputs
         data = parse_inputs_outputs(data)
 
         # dict to node object
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        from ...entities._job.pipeline._load_component import pipeline_node_factory
 
         return pipeline_node_factory.load_from_dict(data=data)
 
@@ -48,7 +48,7 @@ class InternalBaseNodeSchema(BaseNodeSchema):
 
 
 class ScopeSchema(InternalBaseNodeSchema):
-    type = StringTransformedEnum(allowed_values=[NodeType.SCOPE], casing_transform=lambda x: x)
+    type = DumpableEnumField(allowed_values=[NodeType.SCOPE])
     adla_account_name = fields.Str(required=True)
     scope_param = fields.Str()
     custom_job_name_suffix = fields.Str()
@@ -56,7 +56,7 @@ class ScopeSchema(InternalBaseNodeSchema):
 
 
 class HDInsightSchema(InternalBaseNodeSchema):
-    type = StringTransformedEnum(allowed_values=[NodeType.HDI], casing_transform=lambda x: x)
+    type = DumpableEnumField(allowed_values=[NodeType.HDI])
 
     compute_name = fields.Str()
     queue = fields.Str()

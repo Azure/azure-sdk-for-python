@@ -1,5 +1,98 @@
 # Release History
 
+## 4.0.0 (2023-03-20)
+
+### Features Added
+
+  - Added operation GovernanceRulesOperations.begin_execute
+  - Added operation GovernanceRulesOperations.list
+  - Added operation GovernanceRulesOperations.operation_results
+  - Added operation group HealthReportOperations
+  - Added operation group HealthReportsOperations
+  - Model GovernanceRule has a new parameter excluded_scopes
+  - Model GovernanceRule has a new parameter include_member_scopes
+  - Model GovernanceRule has a new parameter metadata
+  - Model GovernanceRule has a new parameter tenant_id
+  - Model ResourceDetails has a new parameter connector_id
+  - Model ResourceDetails has a new parameter id
+  - Model ScanProperties has a new parameter last_scan_time
+
+### Breaking Changes
+
+  - Operation GovernanceRulesOperations.create_or_update has a new required parameter scope
+  - Operation GovernanceRulesOperations.get has a new required parameter scope
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_security_connector
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_subscription
+  - Removed operation group GovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRulesExecuteStatusOperations
+  - Removed operation group SecurityConnectorGovernanceRulesOperations
+  - Removed operation group SubscriptionGovernanceRulesExecuteStatusOperations
+  - Renamed operation GovernanceRulesOperations.delete to GovernanceRulesOperations.begin_delete
+
+## 4.0.0b2 (2023-03-06)
+
+### Features Added
+
+  - Added operation GovernanceRulesOperations.begin_execute
+  - Added operation GovernanceRulesOperations.list
+  - Added operation GovernanceRulesOperations.operation_results
+  - Model GovernanceRule has a new parameter excluded_scopes
+  - Model GovernanceRule has a new parameter include_member_scopes
+  - Model GovernanceRule has a new parameter metadata
+  - Model GovernanceRule has a new parameter tenant_id
+
+### Breaking Changes
+
+  - Operation GovernanceRulesOperations.create_or_update has a new required parameter scope
+  - Operation GovernanceRulesOperations.get has a new required parameter scope
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_security_connector
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_subscription
+  - Removed operation group GovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRulesExecuteStatusOperations
+  - Removed operation group SecurityConnectorGovernanceRulesOperations
+  - Removed operation group SubscriptionGovernanceRulesExecuteStatusOperations
+  - Renamed operation GovernanceRulesOperations.delete to GovernanceRulesOperations.begin_delete
+
+## 4.0.0b1 (2023-02-16)
+
+### Features Added
+
+  - Added operation GovernanceRulesOperations.begin_execute
+  - Added operation GovernanceRulesOperations.list
+  - Added operation GovernanceRulesOperations.operation_results
+  - Model GovernanceRule has a new parameter excluded_scopes
+  - Model GovernanceRule has a new parameter include_member_scopes
+  - Model GovernanceRule has a new parameter metadata
+  - Model GovernanceRule has a new parameter tenant_id
+
+### Breaking Changes
+
+  - Operation GovernanceRulesOperations.create_or_update has a new required parameter scope
+  - Operation GovernanceRulesOperations.get has a new required parameter scope
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_security_connector
+  - Removed operation GovernanceRulesOperations.begin_rule_id_execute_single_subscription
+  - Removed operation group GovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRuleOperations
+  - Removed operation group SecurityConnectorGovernanceRulesExecuteStatusOperations
+  - Removed operation group SecurityConnectorGovernanceRulesOperations
+  - Removed operation group SubscriptionGovernanceRulesExecuteStatusOperations
+  - Renamed operation GovernanceRulesOperations.delete to GovernanceRulesOperations.begin_delete
+
+## 3.0.0 (2022-11-17)
+
+### Features Added
+
+  - Model DefenderFoDatabasesAwsOffering has a new parameter rds
+
+### Breaking Changes
+
+  - Model DefenderFoDatabasesAwsOfferingArcAutoProvisioning no longer has parameter service_principal_secret_metadata
+  - Model DefenderForDatabasesGcpOfferingArcAutoProvisioning no longer has parameter configuration
+  - Model DefenderForServersAwsOfferingArcAutoProvisioning no longer has parameter service_principal_secret_metadata
+  - Model DefenderForServersGcpOfferingArcAutoProvisioning no longer has parameter configuration
+
 ## 2.0.0 (2022-09-28)
 
 ### Features Added

@@ -9,9 +9,14 @@ from typing import Dict, Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient2022_05_01
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreSecrets, NoneDatastoreCredentials
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient2022_10_01
+from azure.ai.ml._restclient.v2022_10_01.models import (
+    Datastore as DatastoreData,
+    DatastoreSecrets,
+    NoneDatastoreCredentials,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
@@ -24,22 +29,21 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class DatastoreOperations(_ScopeDependentOperations):
     """Represents a client for performing operations on Datastores.
 
-    You should not instantiate this class directly. Instead, you should
-    create MLClient and use this client via the property
-    MLClient.datastores
+    You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
+    property MLClient.datastores
     """
 
     def __init__(
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        serviceclient_2022_05_01: ServiceClient2022_05_01,
+        serviceclient_2022_10_01: ServiceClient2022_10_01,
         **kwargs: Dict
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
-        self._operation = serviceclient_2022_05_01.datastores
-        self._credential = serviceclient_2022_05_01._config.credential
+        self._operation = serviceclient_2022_10_01.datastores
+        self._credential = serviceclient_2022_10_01._config.credential
         self._init_kwargs = kwargs
 
     @monitor_with_activity(logger, "Datastore.List", ActivityType.PUBLICAPI)
@@ -75,9 +79,8 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Datastore.Delete", ActivityType.PUBLICAPI)
     def delete(self, name: str) -> None:
-        """Deletes a datastore reference with the given name from the
-        workspace. This method does not delete the actual datastore or
-        underlying data in the datastore.
+        """Deletes a datastore reference with the given name from the workspace. This method does not delete the actual
+        datastore or underlying data in the datastore.
 
         :param name: Name of the datastore
         :type name: str
@@ -92,8 +95,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Datastore.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, *, include_secrets: bool = False) -> Datastore:
-        """Returns information about the datastore referenced by the given
-        name.
+        """Returns information about the datastore referenced by the given name.
 
         :param name: Datastore name
         :type name: str
@@ -146,8 +148,7 @@ class DatastoreOperations(_ScopeDependentOperations):
 
     @monitor_with_activity(logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, datastore: Datastore) -> Datastore:
-        """Attaches the passed in datastore to the workspace or updates the
-        datastore if it already exists.
+        """Attaches the passed in datastore to the workspace or updates the datastore if it already exists.
 
         :param datastore: The configuration of the datastore to attach.
         :type datastore: Datastore
@@ -164,7 +165,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 skip_validation=True,
             )
             return Datastore._from_rest_object(datastore_resource)
-        except Exception as ex: # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:

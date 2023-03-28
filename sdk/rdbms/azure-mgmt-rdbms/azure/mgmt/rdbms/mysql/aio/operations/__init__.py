@@ -27,8 +27,12 @@ from ._wait_statistics_operations import WaitStatisticsOperations
 from ._my_sql_management_client_operations import MySQLManagementClientOperationsMixin
 from ._advisors_operations import AdvisorsOperations
 from ._recommended_actions_operations import RecommendedActionsOperations
-from ._location_based_recommended_action_sessions_operation_status_operations import LocationBasedRecommendedActionSessionsOperationStatusOperations
-from ._location_based_recommended_action_sessions_result_operations import LocationBasedRecommendedActionSessionsResultOperations
+from ._location_based_recommended_action_sessions_operation_status_operations import (
+    LocationBasedRecommendedActionSessionsOperationStatusOperations,
+)
+from ._location_based_recommended_action_sessions_result_operations import (
+    LocationBasedRecommendedActionSessionsResultOperations,
+)
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._server_keys_operations import ServerKeysOperations
@@ -36,33 +40,34 @@ from ._server_keys_operations import ServerKeysOperations
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ServersOperations',
-    'ReplicasOperations',
-    'FirewallRulesOperations',
-    'VirtualNetworkRulesOperations',
-    'DatabasesOperations',
-    'ConfigurationsOperations',
-    'ServerParametersOperations',
-    'LogFilesOperations',
-    'ServerAdministratorsOperations',
-    'RecoverableServersOperations',
-    'ServerBasedPerformanceTierOperations',
-    'LocationBasedPerformanceTierOperations',
-    'CheckNameAvailabilityOperations',
-    'Operations',
-    'ServerSecurityAlertPoliciesOperations',
-    'QueryTextsOperations',
-    'TopQueryStatisticsOperations',
-    'WaitStatisticsOperations',
-    'MySQLManagementClientOperationsMixin',
-    'AdvisorsOperations',
-    'RecommendedActionsOperations',
-    'LocationBasedRecommendedActionSessionsOperationStatusOperations',
-    'LocationBasedRecommendedActionSessionsResultOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'ServerKeysOperations',
+    "ServersOperations",
+    "ReplicasOperations",
+    "FirewallRulesOperations",
+    "VirtualNetworkRulesOperations",
+    "DatabasesOperations",
+    "ConfigurationsOperations",
+    "ServerParametersOperations",
+    "LogFilesOperations",
+    "ServerAdministratorsOperations",
+    "RecoverableServersOperations",
+    "ServerBasedPerformanceTierOperations",
+    "LocationBasedPerformanceTierOperations",
+    "CheckNameAvailabilityOperations",
+    "Operations",
+    "ServerSecurityAlertPoliciesOperations",
+    "QueryTextsOperations",
+    "TopQueryStatisticsOperations",
+    "WaitStatisticsOperations",
+    "MySQLManagementClientOperationsMixin",
+    "AdvisorsOperations",
+    "RecommendedActionsOperations",
+    "LocationBasedRecommendedActionSessionsOperationStatusOperations",
+    "LocationBasedRecommendedActionSessionsResultOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "ServerKeysOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

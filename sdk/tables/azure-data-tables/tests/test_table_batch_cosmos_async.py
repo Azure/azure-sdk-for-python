@@ -18,6 +18,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ClientAuthenticationError,
 )
+from azure.data.tables.aio import TableServiceClient, TableClient
 from azure.data.tables import (
     TableEntity,
     UpdateMode,
@@ -30,8 +31,9 @@ from azure.data.tables import (
     generate_table_sas,
     TableErrorCode,
 )
-from azure.data.tables.aio import TableServiceClient
+from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX
 
+from test_table_batch_async import CheckBatchURL, RequestCorrect
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import cosmos_decorator_async
 
@@ -795,3 +797,37 @@ class TestTableBatchCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
             assert len(entities) ==  transaction_count
         finally:
             await self._tear_down()
+
+
+class TestBatchCosmosAsyncUnitTests(AsyncTableTestCase):
+    tables_cosmos_account_name = "fake_cosmos_account"
+    tables_primary_cosmos_account_key = "fakeXMZjnGsZGvd4bVr3Il5SeHA=="
+    entity1 = {
+        "PartitionKey": "pk001",
+        "RowKey": "rk001"
+    }
+    entity2 = {
+        "PartitionKey": "pk001",
+        "RowKey": "rk002"
+    }
+    batch = [
+        ("upsert", entity1),
+        ("upsert", entity2)
+    ]
+
+    @pytest.mark.asyncio
+    async def test_batch_url_with_connection_string_cosmos(self):
+        endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+        conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.{2}:443/;'.format(
+            self.tables_cosmos_account_name, self.tables_primary_cosmos_account_key, endpoint_suffix)
+        table = TableClient.from_connection_string(
+            conn_string,
+            table_name='foo',
+            endpoint_type='cosmos',
+            per_call_policies=[CheckBatchURL("https://{}.table.{}:443".format(self.tables_cosmos_account_name, endpoint_suffix), "foo")]
+        )
+        assert table.account_name == self.tables_cosmos_account_name
+        assert table.url.startswith('https://' + self.tables_cosmos_account_name + '.table.' + endpoint_suffix)
+        assert table.scheme == 'https'
+        with pytest.raises(RequestCorrect):
+            await table.submit_transaction(self.batch)

@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -83,8 +83,8 @@ class ActiveBaseSecurityAdminRule(_serialization.Model):
         rule_collection_description: Optional[str] = None,
         rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
         rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -116,7 +116,7 @@ class ActiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ActiveBaseSecurityUserRule(_serialization.Model):
@@ -185,8 +185,8 @@ class ActiveBaseSecurityUserRule(_serialization.Model):
         rule_collection_description: Optional[str] = None,
         rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
         rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -218,7 +218,7 @@ class ActiveBaseSecurityUserRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ActiveConfigurationParameter(_serialization.Model):
@@ -236,7 +236,7 @@ class ActiveConfigurationParameter(_serialization.Model):
         "skip_token": {"key": "skipToken", "type": "str"},
     }
 
-    def __init__(self, *, regions: Optional[List[str]] = None, skip_token: Optional[str] = None, **kwargs):
+    def __init__(self, *, regions: Optional[List[str]] = None, skip_token: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword regions: List of regions.
         :paramtype regions: list[str]
@@ -313,8 +313,8 @@ class EffectiveConnectivityConfiguration(_serialization.Model):
         is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
         applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
         delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -428,8 +428,8 @@ class ActiveConnectivityConfiguration(
         delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
         commit_time: Optional[datetime.datetime] = None,
         region: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -477,7 +477,8 @@ class ActiveConnectivityConfiguration(
 
 
 class ActiveConnectivityConfigurationsListResult(_serialization.Model):
-    """Result of the request to list active connectivity configurations. It contains a list of active connectivity configurations and a skiptoken to get the next set of results.
+    """Result of the request to list active connectivity configurations. It contains a list of active
+    connectivity configurations and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active connectivity configurations.
     :vartype value:
@@ -497,8 +498,8 @@ class ActiveConnectivityConfigurationsListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ActiveConnectivityConfiguration"]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of active connectivity configurations.
         :paramtype value:
@@ -633,8 +634,8 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
         rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
         rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         flag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -670,7 +671,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -794,8 +795,8 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disa
         rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
         rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         flag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -831,7 +832,7 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disa
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -962,8 +963,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
         access: Optional[Union[str, "_models.SecurityConfigurationRuleAccess"]] = None,
         priority: Optional[int] = None,
         direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -1025,7 +1026,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1040,7 +1041,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
 
 
 class ActiveSecurityAdminRulesListResult(_serialization.Model):
-    """Result of the request to list active security admin rules. It contains a list of active security admin rules and a skiptoken to get the next set of results.
+    """Result of the request to list active security admin rules. It contains a list of active
+    security admin rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security admin rules.
     :vartype value:
@@ -1060,8 +1062,8 @@ class ActiveSecurityAdminRulesListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ActiveBaseSecurityAdminRule"]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of active security admin rules.
         :paramtype value:
@@ -1180,8 +1182,8 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
         direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -1235,7 +1237,7 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1248,7 +1250,8 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
 
 
 class ActiveSecurityUserRulesListResult(_serialization.Model):
-    """Result of the request to list active security user rules. It contains a list of active security user rules and a skiptoken to get the next set of results.
+    """Result of the request to list active security user rules. It contains a list of active security
+    user rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security user rules.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.ActiveBaseSecurityUserRule]
@@ -1267,8 +1270,8 @@ class ActiveSecurityUserRulesListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ActiveBaseSecurityUserRule"]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of active security user rules.
         :paramtype value:
@@ -1302,8 +1305,8 @@ class AddressPrefixItem(_serialization.Model):
         *,
         address_prefix: Optional[str] = None,
         address_prefix_type: Optional[Union[str, "_models.AddressPrefixType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword address_prefix: Address prefix.
         :paramtype address_prefix: str
@@ -1346,7 +1349,7 @@ class ProxyResource(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -1400,10 +1403,10 @@ class BaseAdminRule(ProxyResource):
 
     _subtype_map = {"kind": {"Custom": "AdminRule", "Default": "DefaultAdminRule"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -1505,8 +1508,8 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
         access: Optional[Union[str, "_models.SecurityConfigurationRuleAccess"]] = None,
         priority: Optional[int] = None,
         direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: A friendly name for the rule.
         :paramtype display_name: str
@@ -1538,7 +1541,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
         super().__init__(**kwargs)
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1567,8 +1570,8 @@ class AdminRuleListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.BaseAdminRule"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.BaseAdminRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of admin rules.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.BaseAdminRule]
@@ -1625,10 +1628,10 @@ class BaseUserRule(ProxyResource):
 
     _subtype_map = {"kind": {"Custom": "UserRule", "Default": "DefaultUserRule"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -1662,8 +1665,8 @@ class CloudErrorBody(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudErrorBody"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: An identifier for the error. Codes are invariant and are intended to be consumed
          programmatically.
@@ -1730,8 +1733,8 @@ class ConfigurationGroup(_serialization.Model):
         member_type: Optional[str] = None,
         group_members: Optional[List["_models.GroupMembersItem"]] = None,
         conditional_membership: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -1831,8 +1834,8 @@ class ConnectivityConfiguration(ProxyResource):  # pylint: disable=too-many-inst
         is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
         applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
         delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: A friendly name for the resource.
         :paramtype display_name: str
@@ -1867,7 +1870,8 @@ class ConnectivityConfiguration(ProxyResource):  # pylint: disable=too-many-inst
 
 
 class ConnectivityConfigurationListResult(_serialization.Model):
-    """Result of the request to list network manager connectivity configurations. It contains a list of configurations and a link to get the next set of results.
+    """Result of the request to list network manager connectivity configurations. It contains a list
+    of configurations and a link to get the next set of results.
 
     :ivar value: Gets a page of Connectivity Configurations.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityConfiguration]
@@ -1885,8 +1889,8 @@ class ConnectivityConfigurationListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ConnectivityConfiguration"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of Connectivity Configurations.
         :paramtype value:
@@ -1928,8 +1932,8 @@ class ConnectivityGroupItem(_serialization.Model):
         use_hub_gateway: Optional[Union[str, "_models.UseHubGateway"]] = None,
         is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
         group_connectivity: Optional[Union[str, "_models.GroupConnectivity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword network_group_id: Network group Id.
         :paramtype network_group_id: str
@@ -2047,13 +2051,13 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, flag: Optional[str] = None, **kwargs):
+    def __init__(self, *, flag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword flag: Default rule flag.
         :paramtype flag: str
         """
         super().__init__(**kwargs)
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2153,13 +2157,13 @@ class DefaultUserRule(BaseUserRule):  # pylint: disable=too-many-instance-attrib
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, flag: Optional[str] = None, **kwargs):
+    def __init__(self, *, flag: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword flag: Default rule flag.
         :paramtype flag: str
         """
         super().__init__(**kwargs)
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2230,8 +2234,8 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
         rule_collection_description: Optional[str] = None,
         rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
         rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -2257,7 +2261,7 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
@@ -2373,8 +2377,8 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
         rule_collection_applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
         rule_groups: Optional[List["_models.ConfigurationGroup"]] = None,
         flag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -2404,7 +2408,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2529,8 +2533,8 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
         access: Optional[Union[str, "_models.SecurityConfigurationRuleAccess"]] = None,
         priority: Optional[int] = None,
         direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -2586,7 +2590,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -2623,8 +2627,8 @@ class EffectiveVirtualNetwork(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         membership_type: Optional[Union[str, "_models.MembershipType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Effective vnet Id.
         :paramtype id: str
@@ -2641,7 +2645,8 @@ class EffectiveVirtualNetwork(_serialization.Model):
 
 
 class EffectiveVirtualNetworksListResult(_serialization.Model):
-    """Result of the request to list Effective Virtual Network. It contains a list of groups and a URL link to get the next set of results.
+    """Result of the request to list Effective Virtual Network. It contains a list of groups and a URL
+    link to get the next set of results.
 
     :ivar value: Gets a page of EffectiveVirtualNetwork.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetwork]
@@ -2660,8 +2665,8 @@ class EffectiveVirtualNetworksListResult(_serialization.Model):
         *,
         value: Optional[List["_models.EffectiveVirtualNetwork"]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of EffectiveVirtualNetwork.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetwork]
@@ -2689,7 +2694,9 @@ class EffectiveVirtualNetworksParameter(_serialization.Model):
         "skip_token": {"key": "skipToken", "type": "str"},
     }
 
-    def __init__(self, *, conditional_members: Optional[str] = None, skip_token: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, conditional_members: Optional[str] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword conditional_members: Conditional Members.
         :paramtype conditional_members: str
@@ -2713,7 +2720,7 @@ class GroupMembersItem(_serialization.Model):
         "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource_id: Resource Id.
         :paramtype resource_id: str
@@ -2736,7 +2743,9 @@ class Hub(_serialization.Model):
         "resource_type": {"key": "resourceType", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, resource_type: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, resource_id: Optional[str] = None, resource_type: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: Resource Id.
         :paramtype resource_id: str
@@ -2810,8 +2819,8 @@ class NetworkGroup(ProxyResource):  # pylint: disable=too-many-instance-attribut
         member_type: Optional[str] = None,
         group_members: Optional[List["_models.GroupMembersItem"]] = None,
         conditional_membership: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: A friendly name for the network group.
         :paramtype display_name: str
@@ -2835,7 +2844,8 @@ class NetworkGroup(ProxyResource):  # pylint: disable=too-many-instance-attribut
 
 
 class NetworkGroupListResult(_serialization.Model):
-    """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get the next set of results.
+    """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get
+    the next set of results.
 
     :ivar value: Gets a page of NetworkGroup.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkGroup]
@@ -2849,8 +2859,8 @@ class NetworkGroupListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NetworkGroup"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NetworkGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NetworkGroup.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkGroup]
@@ -2898,8 +2908,8 @@ class Resource(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -2987,8 +2997,8 @@ class NetworkManager(Resource):  # pylint: disable=too-many-instance-attributes
         description: Optional[str] = None,
         network_manager_scopes: Optional["_models.NetworkManagerPropertiesNetworkManagerScopes"] = None,
         network_manager_scope_accesses: Optional[List[Union[str, "_models.ConfigurationType"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -3050,8 +3060,8 @@ class NetworkManagerCommit(_serialization.Model):
         target_locations: Optional[List[str]] = None,
         configuration_ids: Optional[List[str]] = None,
         commit_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_locations: List of target locations.
         :paramtype target_locations: list[str]
@@ -3107,8 +3117,8 @@ class NetworkManagerDeploymentStatus(_serialization.Model):
         configuration_ids: Optional[List[str]] = None,
         deployment_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
         error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword commit_time: Commit Time.
         :paramtype commit_time: ~datetime.datetime
@@ -3157,8 +3167,8 @@ class NetworkManagerDeploymentStatusListResult(_serialization.Model):
         *,
         value: Optional[List["_models.NetworkManagerDeploymentStatus"]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of Network Manager Deployment Status.
         :paramtype value:
@@ -3197,8 +3207,8 @@ class NetworkManagerDeploymentStatusParameter(_serialization.Model):
         regions: Optional[List[str]] = None,
         deployment_types: Optional[List[Union[str, "_models.ConfigurationType"]]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword regions: List of locations.
         :paramtype regions: list[str]
@@ -3216,7 +3226,8 @@ class NetworkManagerDeploymentStatusParameter(_serialization.Model):
 
 
 class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):
-    """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a list of groups and a skiptoken to get the next set of results.
+    """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a
+    list of groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveConnectivityConfiguration.
     :vartype value:
@@ -3236,8 +3247,8 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.
         *,
         value: Optional[List["_models.EffectiveConnectivityConfiguration"]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NetworkManagerEffectiveConnectivityConfiguration.
         :paramtype value:
@@ -3252,7 +3263,8 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.
 
 
 class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
-    """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of groups and a skiptoken to get the next set of results.
+    """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of
+    groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveSecurityAdminRules.
     :vartype value:
@@ -3272,8 +3284,8 @@ class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
         *,
         value: Optional[List["_models.EffectiveBaseSecurityAdminRule"]] = None,
         skip_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NetworkManagerEffectiveSecurityAdminRules.
         :paramtype value:
@@ -3288,7 +3300,8 @@ class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
 
 
 class NetworkManagerListResult(_serialization.Model):
-    """Result of the request to list NetworkManager. It contains a list of network managers and a URL link to get the next set of results.
+    """Result of the request to list NetworkManager. It contains a list of network managers and a URL
+    link to get the next set of results.
 
     :ivar value: Gets a page of NetworkManager.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManager]
@@ -3302,8 +3315,8 @@ class NetworkManagerListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NetworkManager"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NetworkManager"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NetworkManager.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManager]
@@ -3330,8 +3343,8 @@ class NetworkManagerPropertiesNetworkManagerScopes(_serialization.Model):
     }
 
     def __init__(
-        self, *, management_groups: Optional[List[str]] = None, subscriptions: Optional[List[str]] = None, **kwargs
-    ):
+        self, *, management_groups: Optional[List[str]] = None, subscriptions: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword management_groups: List of management groups.
         :paramtype management_groups: list[str]
@@ -3354,7 +3367,7 @@ class NetworkManagerSecurityGroupItem(_serialization.Model):
         "network_group_id": {"key": "networkGroupId", "type": "str"},
     }
 
-    def __init__(self, *, network_group_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, network_group_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword network_group_id: Network manager group Id.
         :paramtype network_group_id: str
@@ -3409,8 +3422,8 @@ class NetworkSecurityPerimeter(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -3425,7 +3438,8 @@ class NetworkSecurityPerimeter(Resource):
 
 
 class NetworkSecurityPerimeterListResult(_serialization.Model):
-    """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security perimeters and a URL link to get the next set of results.
+    """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security
+    perimeters and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkSecurityPerimeter.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter]
@@ -3443,8 +3457,8 @@ class NetworkSecurityPerimeterListResult(_serialization.Model):
         *,
         value: Optional[List["_models.NetworkSecurityPerimeter"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NetworkSecurityPerimeter.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter]
@@ -3487,6 +3501,10 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
     :ivar network_security_perimeters: Inbound rule specified by the perimeter id.
     :vartype network_security_perimeters:
      list[~azure.mgmt.network.v2021_02_01_preview.models.PerimeterBasedAccessRule]
+    :ivar email_addresses: Outbound rules email address format.
+    :vartype email_addresses: list[str]
+    :ivar phone_numbers: Outbound rules phone number format.
+    :vartype phone_numbers: list[str]
     """
 
     _validation = {
@@ -3510,6 +3528,8 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
             "key": "properties.networkSecurityPerimeters",
             "type": "[PerimeterBasedAccessRule]",
         },
+        "email_addresses": {"key": "properties.emailAddresses", "type": "[str]"},
+        "phone_numbers": {"key": "properties.phoneNumbers", "type": "[str]"},
     }
 
     def __init__(
@@ -3523,8 +3543,10 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         fully_qualified_domain_names: Optional[List[str]] = None,
         subscriptions: Optional[List["_models.SubscriptionId"]] = None,
         network_security_perimeters: Optional[List["_models.PerimeterBasedAccessRule"]] = None,
-        **kwargs
-    ):
+        email_addresses: Optional[List[str]] = None,
+        phone_numbers: Optional[List[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -3544,6 +3566,10 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         :keyword network_security_perimeters: Inbound rule specified by the perimeter id.
         :paramtype network_security_perimeters:
          list[~azure.mgmt.network.v2021_02_01_preview.models.PerimeterBasedAccessRule]
+        :keyword email_addresses: Outbound rules email address format.
+        :paramtype email_addresses: list[str]
+        :keyword phone_numbers: Outbound rules phone number format.
+        :paramtype phone_numbers: list[str]
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.provisioning_state = None
@@ -3552,10 +3578,13 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
         self.fully_qualified_domain_names = fully_qualified_domain_names
         self.subscriptions = subscriptions
         self.network_security_perimeters = network_security_perimeters
+        self.email_addresses = email_addresses
+        self.phone_numbers = phone_numbers
 
 
 class NspAccessRuleListResult(_serialization.Model):
-    """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL link to get the next set of results.
+    """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL
+    link to get the next set of results.
 
     :ivar value: Gets a page of NSP access rule.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule]
@@ -3569,8 +3598,8 @@ class NspAccessRuleListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NspAccessRule"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NspAccessRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NSP access rule.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule]
@@ -3642,8 +3671,8 @@ class NspAssociation(Resource):
         private_link_resource: Optional["_models.SubResource"] = None,
         profile: Optional["_models.SubResource"] = None,
         access_mode: Optional[Union[str, "_models.AssociationAccessMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -3669,7 +3698,8 @@ class NspAssociation(Resource):
 
 
 class NspAssociationsListResult(_serialization.Model):
-    """Result of the request to list NSP resource associations. Contains a list of NSP resource associations and a URL link to get the next set of results.
+    """Result of the request to list NSP resource associations. Contains a list of NSP resource
+    associations and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP resource associations.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation]
@@ -3683,8 +3713,8 @@ class NspAssociationsListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NspAssociation"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NspAssociation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NSP resource associations.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation]
@@ -3710,9 +3740,10 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the NSP Link resource. Known values are:
-     "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
+     "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
+     "WaitForRemoteCompletion".
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2021_02_01_preview.models.NspProvisioningState
+     ~azure.mgmt.network.v2021_02_01_preview.models.NspLinkProvisioningState
     :ivar auto_approved_remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with
      which the link gets created in Auto-approval mode. It should be used when the NSP admin have
      Microsoft.Network/networkSecurityPerimeters/linkPerimeter/action permission on the remote NSP
@@ -3720,6 +3751,8 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype auto_approved_remote_perimeter_resource_id: str
     :ivar remote_perimeter_guid: Remote NSP Guid with which the link gets created.
     :vartype remote_perimeter_guid: str
+    :ivar remote_perimeter_location: Remote NSP location with which the link gets created.
+    :vartype remote_perimeter_location: str
     :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\
      *'] to allow inbound to all profiles. It's default value is ['*\ '].
     :vartype local_inbound_profiles: list[str]
@@ -3751,6 +3784,7 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "etag": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "remote_perimeter_guid": {"readonly": True},
+        "remote_perimeter_location": {"readonly": True},
         "local_inbound_profiles": {"unique": True},
         "local_outbound_profiles": {"readonly": True, "unique": True},
         "remote_inbound_profiles": {"unique": True},
@@ -3769,6 +3803,7 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
             "type": "str",
         },
         "remote_perimeter_guid": {"key": "properties.remotePerimeterGuid", "type": "str"},
+        "remote_perimeter_location": {"key": "properties.remotePerimeterLocation", "type": "str"},
         "local_inbound_profiles": {"key": "properties.localInboundProfiles", "type": "[str]"},
         "local_outbound_profiles": {"key": "properties.localOutboundProfiles", "type": "[str]"},
         "remote_inbound_profiles": {"key": "properties.remoteInboundProfiles", "type": "[str]"},
@@ -3784,8 +3819,8 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
         local_inbound_profiles: Optional[List[str]] = None,
         remote_inbound_profiles: Optional[List[str]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword auto_approved_remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with
          which the link gets created in Auto-approval mode. It should be used when the NSP admin have
@@ -3808,6 +3843,7 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.provisioning_state = None
         self.auto_approved_remote_perimeter_resource_id = auto_approved_remote_perimeter_resource_id
         self.remote_perimeter_guid = None
+        self.remote_perimeter_location = None
         self.local_inbound_profiles = local_inbound_profiles
         self.local_outbound_profiles = None
         self.remote_inbound_profiles = remote_inbound_profiles
@@ -3817,7 +3853,8 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
 
 class NspLinkListResult(_serialization.Model):
-    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a URL link to get the next set of results.
+    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a
+    URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP Link resources.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
@@ -3830,7 +3867,9 @@ class NspLinkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.NspLink"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.NspLink"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NSP Link resources.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
@@ -3856,14 +3895,17 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
     :ivar provisioning_state: The provisioning state of the NSP LinkReference resource. Known
-     values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", and "Failed".
+     values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
+     "WaitForRemoteCompletion".
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2021_02_01_preview.models.NspProvisioningState
+     ~azure.mgmt.network.v2021_02_01_preview.models.NspLinkProvisioningState
     :ivar remote_perimeter_resource_id: Perimeter ARM Id for the remote NSP with which the link is
      created.
     :vartype remote_perimeter_resource_id: str
     :ivar remote_perimeter_guid: Remote NSP Guid with which the link is created.
     :vartype remote_perimeter_guid: str
+    :ivar remote_perimeter_location: Remote NSP location with which the link gets created.
+    :vartype remote_perimeter_location: str
     :ivar local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use ['\
      *'] to allow inbound to all profiles. It's default value is ['*\ '].
     :vartype local_inbound_profiles: list[str]
@@ -3894,6 +3936,7 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
         "provisioning_state": {"readonly": True},
         "remote_perimeter_resource_id": {"readonly": True},
         "remote_perimeter_guid": {"readonly": True},
+        "remote_perimeter_location": {"readonly": True},
         "local_inbound_profiles": {"unique": True},
         "local_outbound_profiles": {"readonly": True, "unique": True},
         "remote_inbound_profiles": {"readonly": True},
@@ -3909,6 +3952,7 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "remote_perimeter_resource_id": {"key": "properties.remotePerimeterResourceId", "type": "str"},
         "remote_perimeter_guid": {"key": "properties.remotePerimeterGuid", "type": "str"},
+        "remote_perimeter_location": {"key": "properties.remotePerimeterLocation", "type": "str"},
         "local_inbound_profiles": {"key": "properties.localInboundProfiles", "type": "[str]"},
         "local_outbound_profiles": {"key": "properties.localOutboundProfiles", "type": "[str]"},
         "remote_inbound_profiles": {"key": "properties.remoteInboundProfiles", "type": "[str]"},
@@ -3922,8 +3966,8 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
         *,
         local_inbound_profiles: Optional[List[str]] = None,
         status: Optional[Union[str, "_models.NspLinkStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword local_inbound_profiles: Local Inbound profile names to which Inbound is allowed. Use
          ['\ *'] to allow inbound to all profiles. It's default value is ['*\ '].
@@ -3936,6 +3980,7 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
         self.provisioning_state = None
         self.remote_perimeter_resource_id = None
         self.remote_perimeter_guid = None
+        self.remote_perimeter_location = None
         self.local_inbound_profiles = local_inbound_profiles
         self.local_outbound_profiles = None
         self.remote_inbound_profiles = None
@@ -3945,7 +3990,8 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
 
 
 class NspLinkReferenceListResult(_serialization.Model):
-    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference resources and a URL link to get the next set of results.
+    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference
+    resources and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP LinkReference resources.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
@@ -3959,8 +4005,12 @@ class NspLinkReferenceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NspLinkReference"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.NspLinkReference"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NSP LinkReference resources.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
@@ -4018,8 +4068,8 @@ class NspProfile(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -4034,7 +4084,8 @@ class NspProfile(Resource):
 
 
 class NspProfileListResult(_serialization.Model):
-    """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to get the next set of results.
+    """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to
+    get the next set of results.
 
     :ivar value: Gets a page of NSP profile.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspProfile]
@@ -4048,8 +4099,8 @@ class NspProfileListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.NspProfile"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.NspProfile"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of NSP profile.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspProfile]
@@ -4062,7 +4113,8 @@ class NspProfileListResult(_serialization.Model):
 
 
 class PerimeterAssociableResource(Resource):
-    """Resource that is onboarded to use network security perimeter. Also referred as perimeter associable resource.
+    """Resource that is onboarded to use network security perimeter. Also referred as perimeter
+    associable resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4109,8 +4161,8 @@ class PerimeterAssociableResource(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -4145,8 +4197,8 @@ class PerimeterAssociableResourcesListResult(_serialization.Model):
         *,
         value: Optional[List["_models.PerimeterAssociableResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets paged list of perimeter associable resources.
         :paramtype value:
@@ -4183,7 +4235,7 @@ class PerimeterBasedAccessRule(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: NSP id in the ARM id format.
         :paramtype id: str
@@ -4206,7 +4258,7 @@ class QueryRequestOptions(_serialization.Model):
         "skip_token": {"key": "skipToken", "type": "str"},
     }
 
-    def __init__(self, *, skip_token: Optional[str] = None, **kwargs):
+    def __init__(self, *, skip_token: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword skip_token: When present, the value can be passed to a subsequent query call (together
          with the same query and scopes used in the current request) to retrieve the next page of data.
@@ -4271,8 +4323,8 @@ class RuleCollection(ProxyResource):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         applies_to_groups: Optional[List["_models.NetworkManagerSecurityGroupItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: A display name of the rule collection.
         :paramtype display_name: str
@@ -4305,8 +4357,8 @@ class RuleCollectionListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.RuleCollection"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.RuleCollection"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of network manager security configuration rule collections.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.RuleCollection]
@@ -4378,8 +4430,8 @@ class SecurityConfiguration(ProxyResource):
         description: Optional[str] = None,
         security_type: Optional[Union[str, "_models.SecurityType"]] = None,
         delete_existing_ns_gs: Optional[Union[str, "_models.DeleteExistingNSGs"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: A display name of the security configuration.
         :paramtype display_name: str
@@ -4420,8 +4472,8 @@ class SecurityConfigurationListResult(_serialization.Model):
         *,
         value: Optional[List["_models.SecurityConfiguration"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Gets a page of security configurations.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfiguration]
@@ -4444,7 +4496,7 @@ class SubResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -4464,7 +4516,7 @@ class SubscriptionId(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Subscription id in the ARM id format.
         :paramtype id: str
@@ -4511,8 +4563,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -4550,7 +4602,7 @@ class TagsObject(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -4644,8 +4696,8 @@ class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
         source_port_ranges: Optional[List[str]] = None,
         destination_port_ranges: Optional[List[str]] = None,
         direction: Optional[Union[str, "_models.SecurityConfigurationRuleDirection"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: A friendly name for the rule.
         :paramtype display_name: str
@@ -4669,7 +4721,7 @@ class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
         super().__init__(**kwargs)
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -4696,8 +4748,8 @@ class UserRuleListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.BaseUserRule"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.BaseUserRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: A list of user rules.
         :paramtype value: list[~azure.mgmt.network.v2021_02_01_preview.models.BaseUserRule]

@@ -15,15 +15,17 @@ class ApplicationConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     IDs, see examples.
     """
 
-    #: Checks that the string value of the data defined in Property contains the given value
     CONTAINS = "Contains"
-    #: Checks that the string value of the data defined in Property equals any of the given values
-    #: (exact fit)
+    """Checks that the string value of the data defined in Property contains the given value"""
+    EQUALS = "Equals"
+    """Checks that the string value of the data defined in Property equals the given value"""
     IN = "In"
+    """Checks that the string value of the data defined in Property equals any of the given values
+    #: (exact fit)"""
 
 
 class ApplicationSourceResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The application source, what it affects, e.g. Assessments."""
 
-    #: The source of the application is assessments
     ASSESSMENTS = "Assessments"
+    """The source of the application is assessments"""

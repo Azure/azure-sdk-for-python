@@ -99,7 +99,7 @@ class RsaKey(Key):  # pylint:disable=too-many-public-methods
 
     @classmethod
     def from_jwk(cls, jwk):
-        if jwk.kty != "RSA" and jwk.kty != "RSA-HSM":
+        if jwk.kty not in ("RSA", "RSA-HSM"):
             raise ValueError('The specified jwk must have a key type of "RSA" or "RSA-HSM"')
 
         if not jwk.n or not jwk.e:

@@ -12,6 +12,7 @@ from azure.containerregistry import (
     ArtifactTagProperties,
     RepositoryProperties,
     ArtifactManifestProperties,
+    ContainerRegistryClient,
 )
 
 from testcase import ContainerRegistryTestClass
@@ -27,21 +28,21 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        repositories = client.list_repository_names()
-        assert isinstance(repositories, ItemPaged)
+            repositories = client.list_repository_names()
+            assert isinstance(repositories, ItemPaged)
 
-        count = 0
-        prev = None
-        for repo in repositories:
-            count += 1
-            assert isinstance(repo, six.string_types)
-            assert prev != repo
-            prev = repo
+            count = 0
+            prev = None
+            for repo in repositories:
+                count += 1
+                assert isinstance(repo, six.string_types)
+                assert prev != repo
+                prev = repo
 
-        assert count > 0
+            assert count > 0
 
     @acr_preparer()
     @recorded_by_proxy
@@ -49,26 +50,26 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        results_per_page = 2
-        total_pages = 0
+            results_per_page = 2
+            total_pages = 0
 
-        repository_pages = client.list_repository_names(results_per_page=results_per_page)
+            repository_pages = client.list_repository_names(results_per_page=results_per_page)
 
-        prev = None
-        for page in repository_pages.by_page():
-            page_count = 0
-            for repo in page:
-                assert isinstance(repo, six.string_types)
-                assert prev != repo
-                prev = repo
-                page_count += 1
-            assert page_count <= results_per_page
-            total_pages += 1
+            prev = None
+            for page in repository_pages.by_page():
+                page_count = 0
+                for repo in page:
+                    assert isinstance(repo, six.string_types)
+                    assert prev != repo
+                    prev = repo
+                    page_count += 1
+                assert page_count <= results_per_page
+                total_pages += 1
 
-        assert total_pages >= 1
+            assert total_pages >= 1
 
     @acr_preparer()
     @recorded_by_proxy
@@ -76,13 +77,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        properties = client.get_repository_properties("library/hello-world")
+            properties = client.get_repository_properties("library/hello-world")
 
-        assert isinstance(properties, RepositoryProperties)
-        assert properties.name == HELLO_WORLD
+            assert isinstance(properties, RepositoryProperties)
+            assert properties.name == HELLO_WORLD
 
     @acr_preparer()
     @recorded_by_proxy
@@ -90,14 +91,14 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        count = 0
-        for manifest in client.list_manifest_properties("library/hello-world"):
-            assert isinstance(manifest, ArtifactManifestProperties)
-            count += 1
-        assert count > 0
+            count = 0
+            for manifest in client.list_manifest_properties("library/hello-world"):
+                assert isinstance(manifest, ArtifactManifestProperties)
+                count += 1
+            assert count > 0
 
     @acr_preparer()
     @recorded_by_proxy
@@ -105,14 +106,14 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        registry_artifact = client.get_manifest_properties("library/hello-world", "latest")
+            registry_artifact = client.get_manifest_properties("library/hello-world", "latest")
 
-        assert isinstance(registry_artifact, ArtifactManifestProperties)
-        assert "latest" in registry_artifact.tags
-        assert registry_artifact.repository_name == "library/hello-world"
+            assert isinstance(registry_artifact, ArtifactManifestProperties)
+            assert "latest" in registry_artifact.tags
+            assert registry_artifact.repository_name == "library/hello-world"
 
     @acr_preparer()
     @recorded_by_proxy
@@ -120,14 +121,14 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        count = 0
-        for tag in client.list_tag_properties("library/hello-world"):
-            count += 1
-            assert isinstance(tag, ArtifactTagProperties)
-        assert count > 0
+            count = 0
+            for tag in client.list_tag_properties("library/hello-world"):
+                count += 1
+                assert isinstance(tag, ArtifactTagProperties)
+            assert count > 0
 
     @acr_preparer()
     @recorded_by_proxy
@@ -135,11 +136,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        with pytest.raises(ClientAuthenticationError):
-            client.delete_repository("library/hello-world")
+            with pytest.raises(ClientAuthenticationError):
+                client.delete_repository("library/hello-world")
 
     @acr_preparer()
     @recorded_by_proxy
@@ -147,11 +148,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        with pytest.raises(ClientAuthenticationError):
-            client.delete_tag("library/hello-world", "latest")
+            with pytest.raises(ClientAuthenticationError):
+                client.delete_tag("library/hello-world", "latest")
 
     @acr_preparer()
     @recorded_by_proxy
@@ -159,11 +160,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
-        assert client._credential is None
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            assert client._credential is None
 
-        with pytest.raises(ClientAuthenticationError):
-            client.delete_manifest("library/hello-world", "latest")
+            with pytest.raises(ClientAuthenticationError):
+                client.delete_manifest("library/hello-world", "latest")
 
     @acr_preparer()
     @recorded_by_proxy
@@ -171,12 +172,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            properties = client.get_repository_properties(HELLO_WORLD)
 
-        properties = client.get_repository_properties(HELLO_WORLD)
-
-        with pytest.raises(ClientAuthenticationError):
-            client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
+            with pytest.raises(ClientAuthenticationError):
+                client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
 
     @acr_preparer()
     @recorded_by_proxy
@@ -184,12 +184,11 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            properties = client.get_tag_properties(HELLO_WORLD, "latest")
 
-        properties = client.get_tag_properties(HELLO_WORLD, "latest")
-
-        with pytest.raises(ClientAuthenticationError):
-            client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+            with pytest.raises(ClientAuthenticationError):
+                client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
 
     @acr_preparer()
     @recorded_by_proxy
@@ -197,9 +196,26 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        client = self.create_anon_client(containerregistry_anonregistry_endpoint)
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            properties = client.get_manifest_properties(HELLO_WORLD, "latest")
 
-        properties = client.get_manifest_properties(HELLO_WORLD, "latest")
+            with pytest.raises(ClientAuthenticationError):
+                client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
 
-        with pytest.raises(ClientAuthenticationError):
-            client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+
+def test_set_api_version():
+    containerregistry_endpoint="https://fake_url.azurecr.io"
+
+    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
+        assert client._client._config.api_version == "2021-07-01"
+
+    with ContainerRegistryClient(
+        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
+    ) as client:
+        assert client._client._config.api_version == "2019-08-15-preview"
+
+    with pytest.raises(ValueError):
+        with ContainerRegistryClient(
+            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
+        ) as client:
+            pass

@@ -8,7 +8,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import TYPE_CHECKING, Any
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
-from ._client import MonitorIngestionClient as GeneratedClient
+from ._client import LogsIngestionClient as GeneratedClient
+from ._models import LogsUploadError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -27,21 +28,17 @@ class LogsIngestionClient(GeneratedClient):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: "TokenCredential", **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         scope = "https://monitor.azure.com//.default"
         super().__init__(
             endpoint,
             credential,
-            authentication_policy=BearerTokenCredentialPolicy(
-                credential, scope, **kwargs
-            ),
+            authentication_policy=BearerTokenCredentialPolicy(credential, scope, **kwargs),
             **kwargs
         )
 
 
-__all__ = ["LogsIngestionClient"]
+__all__ = ["LogsIngestionClient", "LogsUploadError"]
 
 
 def patch_sdk():

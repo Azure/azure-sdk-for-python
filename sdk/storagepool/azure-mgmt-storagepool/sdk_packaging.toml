@@ -5,3 +5,4 @@ package_pprint_name = "Storage Pool Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+title = "StoragePoolManagement"

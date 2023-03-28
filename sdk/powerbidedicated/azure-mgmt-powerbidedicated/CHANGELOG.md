@@ -1,5 +1,23 @@
 # Release History
 
+## 1.1.0b1 (2022-10-28)
+
+### Features Added
+
+  - Model CapacitySku has a new parameter capacity
+  - Model DedicatedCapacity has a new parameter friendly_name
+  - Model DedicatedCapacity has a new parameter tenant_id
+  - Model DedicatedCapacityMutableProperties has a new parameter friendly_name
+  - Model DedicatedCapacityMutableProperties has a new parameter tenant_id
+  - Model DedicatedCapacityProperties has a new parameter friendly_name
+  - Model DedicatedCapacityProperties has a new parameter tenant_id
+  - Model DedicatedCapacityUpdateParameters has a new parameter friendly_name
+  - Model DedicatedCapacityUpdateParameters has a new parameter tenant_id
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter properties
+  - Model OperationDisplay has a new parameter description
+  - Model SkuDetailsForExistingResource has a new parameter resource_type
+
 ## 1.0.0 (2021-03-26)
 
 **Features**

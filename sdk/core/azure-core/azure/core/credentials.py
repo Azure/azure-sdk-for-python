@@ -14,6 +14,7 @@ class AccessToken(NamedTuple):
     token: str
     expires_on: int
 
+
 AccessToken.token.__doc__ = """The token string."""
 AccessToken.expires_on.__doc__ = """The token's expiration time in Unix time."""
 
@@ -41,10 +42,16 @@ class TokenCredential(Protocol):
 AzureNamedKey = namedtuple("AzureNamedKey", ["name", "key"])
 
 
-__all__ = ["AzureKeyCredential", "AzureSasCredential", "AccessToken", "AzureNamedKeyCredential", "TokenCredential"]
+__all__ = [
+    "AzureKeyCredential",
+    "AzureSasCredential",
+    "AccessToken",
+    "AzureNamedKeyCredential",
+    "TokenCredential",
+]
 
 
-class AzureKeyCredential(object):
+class AzureKeyCredential:
     """Credential type used for authenticating to an Azure service.
     It provides the ability to update the key without creating a new client.
 
@@ -52,23 +59,20 @@ class AzureKeyCredential(object):
     :raises: TypeError
     """
 
-    def __init__(self, key):
-        # type: (str) -> None
+    def __init__(self, key: str) -> None:
         if not isinstance(key, str):
             raise TypeError("key must be a string.")
-        self._key = key  # type: str
+        self._key = key
 
     @property
-    def key(self):
-        # type () -> str
+    def key(self) -> str:
         """The value of the configured key.
 
         :rtype: str
         """
         return self._key
 
-    def update(self, key):
-        # type: (str) -> None
+    def update(self, key: str) -> None:
         """Update the key.
 
         This can be used when you've regenerated your service key and want
@@ -84,7 +88,7 @@ class AzureKeyCredential(object):
         self._key = key
 
 
-class AzureSasCredential(object):
+class AzureSasCredential:
     """Credential type used for authenticating to an Azure service.
     It provides the ability to update the shared access signature without creating a new client.
 
@@ -92,23 +96,20 @@ class AzureSasCredential(object):
     :raises: TypeError
     """
 
-    def __init__(self, signature):
-        # type: (str) -> None
+    def __init__(self, signature: str) -> None:
         if not isinstance(signature, str):
             raise TypeError("signature must be a string.")
-        self._signature = signature  # type: str
+        self._signature = signature
 
     @property
-    def signature(self):
-        # type () -> str
+    def signature(self) -> str:
         """The value of the configured shared access signature.
 
         :rtype: str
         """
         return self._signature
 
-    def update(self, signature):
-        # type: (str) -> None
+    def update(self, signature: str) -> None:
         """Update the shared access signature.
 
         This can be used when you've regenerated your shared access signature and want
@@ -124,7 +125,7 @@ class AzureSasCredential(object):
         self._signature = signature
 
 
-class AzureNamedKeyCredential(object):
+class AzureNamedKeyCredential:
     """Credential type used for working with any service needing a named key that follows patterns
     established by the other credential types.
 
@@ -133,23 +134,20 @@ class AzureNamedKeyCredential(object):
     :raises: TypeError
     """
 
-    def __init__(self, name, key):
-        # type: (str, str) -> None
+    def __init__(self, name: str, key: str) -> None:
         if not isinstance(name, str) or not isinstance(key, str):
             raise TypeError("Both name and key must be strings.")
         self._credential = AzureNamedKey(name, key)
 
     @property
-    def named_key(self):
-        # type () -> AzureNamedKey
+    def named_key(self) -> AzureNamedKey:
         """The value of the configured name.
 
         :rtype: AzureNamedKey
         """
         return self._credential
 
-    def update(self, name, key):
-        # type: (str, str) -> None
+    def update(self, name: str, key: str) -> None:
         """Update the named key credential.
 
         Both name and key must be provided in order to update the named key credential.

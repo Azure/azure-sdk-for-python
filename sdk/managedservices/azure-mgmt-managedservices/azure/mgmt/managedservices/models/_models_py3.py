@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,45 +8,45 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._managed_services_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Authorization(msrest.serialization.Model):
-    """Authorization tuple containing principal Id (of user/service principal/security group) and role definition id.
+class Authorization(_serialization.Model):
+    """The Azure Active Directory principal identifier and Azure built-in role that describes the access the principal will receive on the delegated resource in the managed tenant.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param principal_id: Required. Principal Id of the security group/service principal/user that
-     would be assigned permissions to the projected subscription.
-    :type principal_id: str
-    :param principal_id_display_name: Display name of the principal Id.
-    :type principal_id_display_name: str
-    :param role_definition_id: Required. The role definition identifier. This role will define all
-     the permissions that the security group/service principal/user must have on the projected
-     subscription. This role cannot be an owner role.
-    :type role_definition_id: str
-    :param delegated_role_definition_ids: The delegatedRoleDefinitionIds field is required when the
+    :ivar principal_id: The identifier of the Azure Active Directory principal. Required.
+    :vartype principal_id: str
+    :ivar principal_id_display_name: The display name of the Azure Active Directory principal.
+    :vartype principal_id_display_name: str
+    :ivar role_definition_id: The identifier of the Azure built-in role that defines the
+     permissions that the Azure Active Directory principal will have on the projected scope.
+     Required.
+    :vartype role_definition_id: str
+    :ivar delegated_role_definition_ids: The delegatedRoleDefinitionIds field is required when the
      roleDefinitionId refers to the User Access Administrator Role. It is the list of role
      definition ids which define all the permissions that the user in the authorization can assign
-     to other security groups/service principals/users.
-    :type delegated_role_definition_ids: list[str]
+     to other principals.
+    :vartype delegated_role_definition_ids: list[str]
     """
 
     _validation = {
-        'principal_id': {'required': True},
-        'role_definition_id': {'required': True},
+        "principal_id": {"required": True},
+        "role_definition_id": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'principal_id_display_name': {'key': 'principalIdDisplayName', 'type': 'str'},
-        'role_definition_id': {'key': 'roleDefinitionId', 'type': 'str'},
-        'delegated_role_definition_ids': {'key': 'delegatedRoleDefinitionIds', 'type': '[str]'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "principal_id_display_name": {"key": "principalIdDisplayName", "type": "str"},
+        "role_definition_id": {"key": "roleDefinitionId", "type": "str"},
+        "delegated_role_definition_ids": {"key": "delegatedRoleDefinitionIds", "type": "[str]"},
     }
 
     def __init__(
@@ -57,41 +58,87 @@ class Authorization(msrest.serialization.Model):
         delegated_role_definition_ids: Optional[List[str]] = None,
         **kwargs
     ):
-        super(Authorization, self).__init__(**kwargs)
+        """
+        :keyword principal_id: The identifier of the Azure Active Directory principal. Required.
+        :paramtype principal_id: str
+        :keyword principal_id_display_name: The display name of the Azure Active Directory principal.
+        :paramtype principal_id_display_name: str
+        :keyword role_definition_id: The identifier of the Azure built-in role that defines the
+         permissions that the Azure Active Directory principal will have on the projected scope.
+         Required.
+        :paramtype role_definition_id: str
+        :keyword delegated_role_definition_ids: The delegatedRoleDefinitionIds field is required when
+         the roleDefinitionId refers to the User Access Administrator Role. It is the list of role
+         definition ids which define all the permissions that the user in the authorization can assign
+         to other principals.
+        :paramtype delegated_role_definition_ids: list[str]
+        """
+        super().__init__(**kwargs)
         self.principal_id = principal_id
         self.principal_id_display_name = principal_id_display_name
         self.role_definition_id = role_definition_id
         self.delegated_role_definition_ids = delegated_role_definition_ids
 
 
-class EligibleAuthorization(msrest.serialization.Model):
-    """Eligible authorization tuple containing principle Id (of user/service principal/security group), role definition id, and the just-in-time access setting.
+class EligibleApprover(_serialization.Model):
+    """Defines the Azure Active Directory principal that can approve any just-in-time access requests by the principal defined in the EligibleAuthorization.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param principal_id: Required. Principal Id of the security group/service principal/user that
-     would be delegated permissions to the projected subscription.
-    :type principal_id: str
-    :param principal_id_display_name: Display name of the principal Id.
-    :type principal_id_display_name: str
-    :param role_definition_id: Required. The role definition identifier. This role will delegate
-     all the permissions that the security group/service principal/user must have on the projected
-     subscription. This role cannot be an owner role.
-    :type role_definition_id: str
-    :param just_in_time_access_policy: Just-in-time access policy setting.
-    :type just_in_time_access_policy: ~azure.mgmt.managedservices.models.JustInTimeAccessPolicy
+    :ivar principal_id: The identifier of the Azure Active Directory principal. Required.
+    :vartype principal_id: str
+    :ivar principal_id_display_name: The display name of the Azure Active Directory principal.
+    :vartype principal_id_display_name: str
     """
 
     _validation = {
-        'principal_id': {'required': True},
-        'role_definition_id': {'required': True},
+        "principal_id": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'principal_id_display_name': {'key': 'principalIdDisplayName', 'type': 'str'},
-        'role_definition_id': {'key': 'roleDefinitionId', 'type': 'str'},
-        'just_in_time_access_policy': {'key': 'justInTimeAccessPolicy', 'type': 'JustInTimeAccessPolicy'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "principal_id_display_name": {"key": "principalIdDisplayName", "type": "str"},
+    }
+
+    def __init__(self, *, principal_id: str, principal_id_display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword principal_id: The identifier of the Azure Active Directory principal. Required.
+        :paramtype principal_id: str
+        :keyword principal_id_display_name: The display name of the Azure Active Directory principal.
+        :paramtype principal_id_display_name: str
+        """
+        super().__init__(**kwargs)
+        self.principal_id = principal_id
+        self.principal_id_display_name = principal_id_display_name
+
+
+class EligibleAuthorization(_serialization.Model):
+    """The Azure Active Directory principal identifier, Azure built-in role, and just-in-time access policy that describes the just-in-time access the principal will receive on the delegated resource in the managed tenant.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar principal_id: The identifier of the Azure Active Directory principal. Required.
+    :vartype principal_id: str
+    :ivar principal_id_display_name: The display name of the Azure Active Directory principal.
+    :vartype principal_id_display_name: str
+    :ivar role_definition_id: The identifier of the Azure built-in role that defines the
+     permissions that the Azure Active Directory principal will have on the projected scope.
+     Required.
+    :vartype role_definition_id: str
+    :ivar just_in_time_access_policy: The just-in-time access policy setting.
+    :vartype just_in_time_access_policy: ~azure.mgmt.managedservices.models.JustInTimeAccessPolicy
+    """
+
+    _validation = {
+        "principal_id": {"required": True},
+        "role_definition_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "principal_id_display_name": {"key": "principalIdDisplayName", "type": "str"},
+        "role_definition_id": {"key": "roleDefinitionId", "type": "str"},
+        "just_in_time_access_policy": {"key": "justInTimeAccessPolicy", "type": "JustInTimeAccessPolicy"},
     }
 
     def __init__(
@@ -100,150 +147,190 @@ class EligibleAuthorization(msrest.serialization.Model):
         principal_id: str,
         role_definition_id: str,
         principal_id_display_name: Optional[str] = None,
-        just_in_time_access_policy: Optional["JustInTimeAccessPolicy"] = None,
+        just_in_time_access_policy: Optional["_models.JustInTimeAccessPolicy"] = None,
         **kwargs
     ):
-        super(EligibleAuthorization, self).__init__(**kwargs)
+        """
+        :keyword principal_id: The identifier of the Azure Active Directory principal. Required.
+        :paramtype principal_id: str
+        :keyword principal_id_display_name: The display name of the Azure Active Directory principal.
+        :paramtype principal_id_display_name: str
+        :keyword role_definition_id: The identifier of the Azure built-in role that defines the
+         permissions that the Azure Active Directory principal will have on the projected scope.
+         Required.
+        :paramtype role_definition_id: str
+        :keyword just_in_time_access_policy: The just-in-time access policy setting.
+        :paramtype just_in_time_access_policy:
+         ~azure.mgmt.managedservices.models.JustInTimeAccessPolicy
+        """
+        super().__init__(**kwargs)
         self.principal_id = principal_id
         self.principal_id_display_name = principal_id_display_name
         self.role_definition_id = role_definition_id
         self.just_in_time_access_policy = just_in_time_access_policy
 
 
-class ErrorDefinition(msrest.serialization.Model):
-    """Error response indicates Azure Resource Manager is not able to process the incoming request. The reason is provided in the error message.
+class ErrorDefinition(_serialization.Model):
+    """The error response indicating why the incoming request wasn’t able to be processed.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
-    :type code: str
-    :param message: Required. Error message indicating why the operation failed.
-    :type message: str
-    :param details: Internal error details.
-    :type details: list[~azure.mgmt.managedservices.models.ErrorDefinition]
+    :ivar code: The error code. Required.
+    :vartype code: str
+    :ivar message: The error message indicating why the operation failed. Required.
+    :vartype message: str
+    :ivar details: The internal error details.
+    :vartype details: list[~azure.mgmt.managedservices.models.ErrorDefinition]
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDefinition]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        details: Optional[List["ErrorDefinition"]] = None,
-        **kwargs
-    ):
-        super(ErrorDefinition, self).__init__(**kwargs)
+    def __init__(self, *, code: str, message: str, details: Optional[List["_models.ErrorDefinition"]] = None, **kwargs):
+        """
+        :keyword code: The error code. Required.
+        :paramtype code: str
+        :keyword message: The error message indicating why the operation failed. Required.
+        :paramtype message: str
+        :keyword details: The internal error details.
+        :paramtype details: list[~azure.mgmt.managedservices.models.ErrorDefinition]
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response.
 
-    :param error: The error details.
-    :type error: ~azure.mgmt.managedservices.models.ErrorDefinition
+    :ivar error: The error details.
+    :vartype error: ~azure.mgmt.managedservices.models.ErrorDefinition
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDefinition'},
+        "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDefinition"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.mgmt.managedservices.models.ErrorDefinition
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class JustInTimeAccessPolicy(msrest.serialization.Model):
+class JustInTimeAccessPolicy(_serialization.Model):
     """Just-in-time access policy setting.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param multi_factor_auth_provider: Required. MFA provider. Possible values include: "Azure",
-     "None".
-    :type multi_factor_auth_provider: str or
+    :ivar multi_factor_auth_provider: The multi-factor authorization provider to be used for
+     just-in-time access requests. Known values are: "Azure" and "None".
+    :vartype multi_factor_auth_provider: str or
      ~azure.mgmt.managedservices.models.MultiFactorAuthProvider
-    :param maximum_activation_duration: Maximum access duration in ISO 8601 format.  The default
-     value is "PT8H".
-    :type maximum_activation_duration: ~datetime.timedelta
+    :ivar maximum_activation_duration: The maximum access duration in ISO 8601 format for
+     just-in-time access requests.
+    :vartype maximum_activation_duration: ~datetime.timedelta
+    :ivar managed_by_tenant_approvers: The list of managedByTenant approvers for the eligible
+     authorization.
+    :vartype managed_by_tenant_approvers: list[~azure.mgmt.managedservices.models.EligibleApprover]
     """
 
     _validation = {
-        'multi_factor_auth_provider': {'required': True},
+        "multi_factor_auth_provider": {"required": True},
     }
 
     _attribute_map = {
-        'multi_factor_auth_provider': {'key': 'multiFactorAuthProvider', 'type': 'str'},
-        'maximum_activation_duration': {'key': 'maximumActivationDuration', 'type': 'duration'},
+        "multi_factor_auth_provider": {"key": "multiFactorAuthProvider", "type": "str"},
+        "maximum_activation_duration": {"key": "maximumActivationDuration", "type": "duration"},
+        "managed_by_tenant_approvers": {"key": "managedByTenantApprovers", "type": "[EligibleApprover]"},
     }
 
     def __init__(
         self,
         *,
-        multi_factor_auth_provider: Union[str, "MultiFactorAuthProvider"],
-        maximum_activation_duration: Optional[datetime.timedelta] = None,
+        multi_factor_auth_provider: Union[str, "_models.MultiFactorAuthProvider"] = "None",
+        maximum_activation_duration: datetime.timedelta = "PT8H",
+        managed_by_tenant_approvers: Optional[List["_models.EligibleApprover"]] = None,
         **kwargs
     ):
-        super(JustInTimeAccessPolicy, self).__init__(**kwargs)
+        """
+        :keyword multi_factor_auth_provider: The multi-factor authorization provider to be used for
+         just-in-time access requests. Known values are: "Azure" and "None".
+        :paramtype multi_factor_auth_provider: str or
+         ~azure.mgmt.managedservices.models.MultiFactorAuthProvider
+        :keyword maximum_activation_duration: The maximum access duration in ISO 8601 format for
+         just-in-time access requests.
+        :paramtype maximum_activation_duration: ~datetime.timedelta
+        :keyword managed_by_tenant_approvers: The list of managedByTenant approvers for the eligible
+         authorization.
+        :paramtype managed_by_tenant_approvers:
+         list[~azure.mgmt.managedservices.models.EligibleApprover]
+        """
+        super().__init__(**kwargs)
         self.multi_factor_auth_provider = multi_factor_auth_provider
         self.maximum_activation_duration = maximum_activation_duration
+        self.managed_by_tenant_approvers = managed_by_tenant_approvers
 
 
-class MarketplaceRegistrationDefinition(msrest.serialization.Model):
+class MarketplaceRegistrationDefinition(_serialization.Model):
     """MarketplaceRegistrationDefinition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of a marketplace registration definition.
-    :type properties:
+    :ivar properties: The properties of the marketplace registration definition.
+    :vartype properties:
      ~azure.mgmt.managedservices.models.MarketplaceRegistrationDefinitionProperties
-    :param plan: Plan details for the managed services.
-    :type plan: ~azure.mgmt.managedservices.models.Plan
-    :ivar id: Fully qualified path of the marketplace registration definition.
+    :ivar plan: The details for the Managed Services offer’s plan in Azure Marketplace.
+    :vartype plan: ~azure.mgmt.managedservices.models.Plan
+    :ivar id: The fully qualified path of the marketplace registration definition.
     :vartype id: str
-    :ivar type: Type of the resource.
+    :ivar type: The type of the Azure resource
+     (Microsoft.ManagedServices/marketplaceRegistrationDefinitions).
     :vartype type: str
-    :ivar name: Name of the marketplace registration definition.
+    :ivar name: The name of the marketplace registration definition.
     :vartype name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'MarketplaceRegistrationDefinitionProperties'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "properties": {"key": "properties", "type": "MarketplaceRegistrationDefinitionProperties"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["MarketplaceRegistrationDefinitionProperties"] = None,
-        plan: Optional["Plan"] = None,
+        properties: Optional["_models.MarketplaceRegistrationDefinitionProperties"] = None,
+        plan: Optional["_models.Plan"] = None,
         **kwargs
     ):
-        super(MarketplaceRegistrationDefinition, self).__init__(**kwargs)
+        """
+        :keyword properties: The properties of the marketplace registration definition.
+        :paramtype properties:
+         ~azure.mgmt.managedservices.models.MarketplaceRegistrationDefinitionProperties
+        :keyword plan: The details for the Managed Services offer’s plan in Azure Marketplace.
+        :paramtype plan: ~azure.mgmt.managedservices.models.Plan
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.plan = plan
         self.id = None
@@ -251,84 +338,103 @@ class MarketplaceRegistrationDefinition(msrest.serialization.Model):
         self.name = None
 
 
-class MarketplaceRegistrationDefinitionList(msrest.serialization.Model):
-    """List of marketplace registration definitions.
+class MarketplaceRegistrationDefinitionList(_serialization.Model):
+    """The list of marketplace registration definitions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of marketplace registration definitions.
+    :ivar value: The list of marketplace registration definitions.
     :vartype value: list[~azure.mgmt.managedservices.models.MarketplaceRegistrationDefinition]
-    :ivar next_link: Link to next page of marketplace registration definitions.
+    :ivar next_link: The link to the next page of marketplace registration definitions.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MarketplaceRegistrationDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MarketplaceRegistrationDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MarketplaceRegistrationDefinitionList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class MarketplaceRegistrationDefinitionProperties(msrest.serialization.Model):
-    """Properties of a marketplace registration definition.
+class MarketplaceRegistrationDefinitionProperties(_serialization.Model):
+    """The properties of the marketplace registration definition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param managed_by_tenant_id: Required. Id of the managedBy tenant.
-    :type managed_by_tenant_id: str
-    :param authorizations: Required. Authorization tuple containing principal id of the
-     user/security group or service principal and id of the build-in role.
-    :type authorizations: list[~azure.mgmt.managedservices.models.Authorization]
-    :param eligible_authorizations: Eligible PIM authorization tuple containing principal id of the
-     user/security group or service principal, id of the built-in role, and just-in-time access
-     policy setting.
-    :type eligible_authorizations: list[~azure.mgmt.managedservices.models.EligibleAuthorization]
-    :param offer_display_name: The marketplace offer display name.
-    :type offer_display_name: str
-    :param publisher_display_name: The marketplace publisher display name.
-    :type publisher_display_name: str
-    :param plan_display_name: The marketplace plan display name.
-    :type plan_display_name: str
+    :ivar managed_by_tenant_id: The identifier of the managedBy tenant. Required.
+    :vartype managed_by_tenant_id: str
+    :ivar authorizations: The collection of authorization objects describing the access Azure
+     Active Directory principals in the managedBy tenant will receive on the delegated resource in
+     the managed tenant. Required.
+    :vartype authorizations: list[~azure.mgmt.managedservices.models.Authorization]
+    :ivar eligible_authorizations: The collection of eligible authorization objects describing the
+     just-in-time access Azure Active Directory principals in the managedBy tenant will receive on
+     the delegated resource in the managed tenant.
+    :vartype eligible_authorizations:
+     list[~azure.mgmt.managedservices.models.EligibleAuthorization]
+    :ivar offer_display_name: The marketplace offer display name.
+    :vartype offer_display_name: str
+    :ivar publisher_display_name: The marketplace publisher display name.
+    :vartype publisher_display_name: str
+    :ivar plan_display_name: The marketplace plan display name.
+    :vartype plan_display_name: str
     """
 
     _validation = {
-        'managed_by_tenant_id': {'required': True},
-        'authorizations': {'required': True},
+        "managed_by_tenant_id": {"required": True},
+        "authorizations": {"required": True},
     }
 
     _attribute_map = {
-        'managed_by_tenant_id': {'key': 'managedByTenantId', 'type': 'str'},
-        'authorizations': {'key': 'authorizations', 'type': '[Authorization]'},
-        'eligible_authorizations': {'key': 'eligibleAuthorizations', 'type': '[EligibleAuthorization]'},
-        'offer_display_name': {'key': 'offerDisplayName', 'type': 'str'},
-        'publisher_display_name': {'key': 'publisherDisplayName', 'type': 'str'},
-        'plan_display_name': {'key': 'planDisplayName', 'type': 'str'},
+        "managed_by_tenant_id": {"key": "managedByTenantId", "type": "str"},
+        "authorizations": {"key": "authorizations", "type": "[Authorization]"},
+        "eligible_authorizations": {"key": "eligibleAuthorizations", "type": "[EligibleAuthorization]"},
+        "offer_display_name": {"key": "offerDisplayName", "type": "str"},
+        "publisher_display_name": {"key": "publisherDisplayName", "type": "str"},
+        "plan_display_name": {"key": "planDisplayName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         managed_by_tenant_id: str,
-        authorizations: List["Authorization"],
-        eligible_authorizations: Optional[List["EligibleAuthorization"]] = None,
+        authorizations: List["_models.Authorization"],
+        eligible_authorizations: Optional[List["_models.EligibleAuthorization"]] = None,
         offer_display_name: Optional[str] = None,
         publisher_display_name: Optional[str] = None,
         plan_display_name: Optional[str] = None,
         **kwargs
     ):
-        super(MarketplaceRegistrationDefinitionProperties, self).__init__(**kwargs)
+        """
+        :keyword managed_by_tenant_id: The identifier of the managedBy tenant. Required.
+        :paramtype managed_by_tenant_id: str
+        :keyword authorizations: The collection of authorization objects describing the access Azure
+         Active Directory principals in the managedBy tenant will receive on the delegated resource in
+         the managed tenant. Required.
+        :paramtype authorizations: list[~azure.mgmt.managedservices.models.Authorization]
+        :keyword eligible_authorizations: The collection of eligible authorization objects describing
+         the just-in-time access Azure Active Directory principals in the managedBy tenant will receive
+         on the delegated resource in the managed tenant.
+        :paramtype eligible_authorizations:
+         list[~azure.mgmt.managedservices.models.EligibleAuthorization]
+        :keyword offer_display_name: The marketplace offer display name.
+        :paramtype offer_display_name: str
+        :keyword publisher_display_name: The marketplace publisher display name.
+        :paramtype publisher_display_name: str
+        :keyword plan_display_name: The marketplace plan display name.
+        :paramtype plan_display_name: str
+        """
+        super().__init__(**kwargs)
         self.managed_by_tenant_id = managed_by_tenant_id
         self.authorizations = authorizations
         self.eligible_authorizations = eligible_authorizations
@@ -337,55 +443,52 @@ class MarketplaceRegistrationDefinitionProperties(msrest.serialization.Model):
         self.plan_display_name = plan_display_name
 
 
-class Operation(msrest.serialization.Model):
-    """Object that describes a single Microsoft.ManagedServices operation.
+class Operation(_serialization.Model):
+    """The object that describes a single Microsoft.ManagedServices operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :ivar name: The operation name with the format: {provider}/{resource}/{operation}.
     :vartype name: str
     :ivar display: The object that represents the operation.
     :vartype display: ~azure.mgmt.managedservices.models.OperationDisplay
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
+        "name": {"readonly": True},
+        "display": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.ManagedServices.
-    :type provider: str
-    :param resource: Resource on which the operation is performed: Registration definition,
-     registration assignment etc.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: The service provider.
+    :vartype provider: str
+    :ivar resource: The resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: The operation type.
+    :vartype operation: str
+    :ivar description: The description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -397,299 +500,358 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: The service provider.
+        :paramtype provider: str
+        :keyword resource: The resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: The operation type.
+        :paramtype operation: str
+        :keyword description: The description of the operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationList(msrest.serialization.Model):
-    """List of the operations.
+class OperationList(_serialization.Model):
+    """The list of the operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of Microsoft.ManagedServices operations.
+    :ivar value: The list of Microsoft.ManagedServices operations.
     :vartype value: list[~azure.mgmt.managedservices.models.Operation]
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class Plan(msrest.serialization.Model):
-    """Plan details for the managed services.
+class Plan(_serialization.Model):
+    """The details for the Managed Services offer’s plan in Azure Marketplace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The plan name.
-    :type name: str
-    :param publisher: Required. The publisher ID.
-    :type publisher: str
-    :param product: Required. The product code.
-    :type product: str
-    :param version: Required. The plan's version.
-    :type version: str
+    :ivar name: Azure Marketplace plan name. Required.
+    :vartype name: str
+    :ivar publisher: Azure Marketplace publisher ID. Required.
+    :vartype publisher: str
+    :ivar product: Azure Marketplace product code. Required.
+    :vartype product: str
+    :ivar version: Azure Marketplace plan's version. Required.
+    :vartype version: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'publisher': {'required': True},
-        'product': {'required': True},
-        'version': {'required': True},
+        "name": {"required": True},
+        "publisher": {"required": True},
+        "product": {"required": True},
+        "version": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'product': {'key': 'product', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "product": {"key": "product", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        publisher: str,
-        product: str,
-        version: str,
-        **kwargs
-    ):
-        super(Plan, self).__init__(**kwargs)
+    def __init__(self, *, name: str, publisher: str, product: str, version: str, **kwargs):
+        """
+        :keyword name: Azure Marketplace plan name. Required.
+        :paramtype name: str
+        :keyword publisher: Azure Marketplace publisher ID. Required.
+        :paramtype publisher: str
+        :keyword product: Azure Marketplace product code. Required.
+        :paramtype product: str
+        :keyword version: Azure Marketplace plan's version. Required.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.publisher = publisher
         self.product = product
         self.version = version
 
 
-class RegistrationAssignment(msrest.serialization.Model):
-    """Registration assignment.
+class RegistrationAssignment(_serialization.Model):
+    """The registration assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of a registration assignment.
-    :type properties: ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
+    :ivar properties: The properties of a registration assignment.
+    :vartype properties: ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
     :ivar id: The fully qualified path of the registration assignment.
     :vartype id: str
-    :ivar type: Type of the resource.
+    :ivar type: The type of the Azure resource (Microsoft.ManagedServices/registrationAssignments).
     :vartype type: str
-    :ivar name: Name of the registration assignment.
+    :ivar name: The name of the registration assignment.
     :vartype name: str
+    :ivar system_data: The metadata for the registration assignment resource.
+    :vartype system_data: ~azure.mgmt.managedservices.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'RegistrationAssignmentProperties'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "properties": {"key": "properties", "type": "RegistrationAssignmentProperties"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["RegistrationAssignmentProperties"] = None,
-        **kwargs
-    ):
-        super(RegistrationAssignment, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.RegistrationAssignmentProperties"] = None, **kwargs):
+        """
+        :keyword properties: The properties of a registration assignment.
+        :paramtype properties: ~azure.mgmt.managedservices.models.RegistrationAssignmentProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.id = None
         self.type = None
         self.name = None
+        self.system_data = None
 
 
-class RegistrationAssignmentList(msrest.serialization.Model):
-    """List of registration assignments.
+class RegistrationAssignmentList(_serialization.Model):
+    """The list of registration assignments.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of registration assignments.
+    :ivar value: The list of registration assignments.
     :vartype value: list[~azure.mgmt.managedservices.models.RegistrationAssignment]
-    :ivar next_link: Link to next page of registration assignments.
+    :ivar next_link: The link to the next page of registration assignments.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RegistrationAssignment]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RegistrationAssignment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RegistrationAssignmentList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class RegistrationAssignmentProperties(msrest.serialization.Model):
-    """Properties of a registration assignment.
+class RegistrationAssignmentProperties(_serialization.Model):
+    """The properties of the registration assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param registration_definition_id: Required. Fully qualified path of the registration
-     definition.
-    :type registration_definition_id: str
-    :ivar provisioning_state: Current state of the registration assignment. Possible values
-     include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
-     "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
+    :ivar registration_definition_id: The fully qualified path of the registration definition.
+     Required.
+    :vartype registration_definition_id: str
+    :ivar provisioning_state: The current provisioning state of the registration assignment. Known
+     values are: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
+     "Deleted", "Canceled", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
-    :ivar registration_definition: Registration definition inside registration assignment.
+    :ivar registration_definition: The registration definition associated with the registration
+     assignment.
     :vartype registration_definition:
      ~azure.mgmt.managedservices.models.RegistrationAssignmentPropertiesRegistrationDefinition
     """
 
     _validation = {
-        'registration_definition_id': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'registration_definition': {'readonly': True},
+        "registration_definition_id": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "registration_definition": {"readonly": True},
     }
 
     _attribute_map = {
-        'registration_definition_id': {'key': 'registrationDefinitionId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'registration_definition': {'key': 'registrationDefinition', 'type': 'RegistrationAssignmentPropertiesRegistrationDefinition'},
+        "registration_definition_id": {"key": "registrationDefinitionId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "registration_definition": {
+            "key": "registrationDefinition",
+            "type": "RegistrationAssignmentPropertiesRegistrationDefinition",
+        },
     }
 
-    def __init__(
-        self,
-        *,
-        registration_definition_id: str,
-        **kwargs
-    ):
-        super(RegistrationAssignmentProperties, self).__init__(**kwargs)
+    def __init__(self, *, registration_definition_id: str, **kwargs):
+        """
+        :keyword registration_definition_id: The fully qualified path of the registration definition.
+         Required.
+        :paramtype registration_definition_id: str
+        """
+        super().__init__(**kwargs)
         self.registration_definition_id = registration_definition_id
         self.provisioning_state = None
         self.registration_definition = None
 
 
-class RegistrationAssignmentPropertiesRegistrationDefinition(msrest.serialization.Model):
-    """Registration definition inside registration assignment.
+class RegistrationAssignmentPropertiesRegistrationDefinition(_serialization.Model):
+    """The registration definition associated with the registration assignment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of registration definition inside registration assignment.
-    :type properties:
+    :ivar properties: The properties of the registration definition associated with the
+     registration assignment.
+    :vartype properties:
      ~azure.mgmt.managedservices.models.RegistrationAssignmentPropertiesRegistrationDefinitionProperties
-    :param plan: Plan details for the managed services.
-    :type plan: ~azure.mgmt.managedservices.models.Plan
-    :ivar id: Fully qualified path of the registration definition.
+    :ivar plan: The details for the Managed Services offer’s plan in Azure Marketplace.
+    :vartype plan: ~azure.mgmt.managedservices.models.Plan
+    :ivar id: The fully qualified path of the registration definition.
     :vartype id: str
-    :ivar type: Type of the resource (Microsoft.ManagedServices/registrationDefinitions).
+    :ivar type: The type of the Azure resource (Microsoft.ManagedServices/registrationDefinitions).
     :vartype type: str
-    :ivar name: Name of the registration definition.
+    :ivar name: The name of the registration definition.
     :vartype name: str
+    :ivar system_data: The metadata for the registration definition resource.
+    :vartype system_data: ~azure.mgmt.managedservices.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'RegistrationAssignmentPropertiesRegistrationDefinitionProperties'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "properties": {"key": "properties", "type": "RegistrationAssignmentPropertiesRegistrationDefinitionProperties"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["RegistrationAssignmentPropertiesRegistrationDefinitionProperties"] = None,
-        plan: Optional["Plan"] = None,
+        properties: Optional["_models.RegistrationAssignmentPropertiesRegistrationDefinitionProperties"] = None,
+        plan: Optional["_models.Plan"] = None,
         **kwargs
     ):
-        super(RegistrationAssignmentPropertiesRegistrationDefinition, self).__init__(**kwargs)
+        """
+        :keyword properties: The properties of the registration definition associated with the
+         registration assignment.
+        :paramtype properties:
+         ~azure.mgmt.managedservices.models.RegistrationAssignmentPropertiesRegistrationDefinitionProperties
+        :keyword plan: The details for the Managed Services offer’s plan in Azure Marketplace.
+        :paramtype plan: ~azure.mgmt.managedservices.models.Plan
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.plan = plan
         self.id = None
         self.type = None
         self.name = None
+        self.system_data = None
 
 
-class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(msrest.serialization.Model):
-    """Properties of registration definition inside registration assignment.
+class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(_serialization.Model):
+    """The properties of the registration definition associated with the registration assignment.
 
-    :param description: Description of the registration definition.
-    :type description: str
-    :param authorizations: Authorization tuple containing principal id of the user/security group
-     or service principal and id of the build-in role.
-    :type authorizations: list[~azure.mgmt.managedservices.models.Authorization]
-    :param eligible_authorizations: Eligible PIM authorization tuple containing principal id of the
-     user/security group or service principal, id of the built-in role, and just-in-time access
-     policy setting.
-    :type eligible_authorizations: list[~azure.mgmt.managedservices.models.EligibleAuthorization]
-    :param registration_definition_name: Name of the registration definition.
-    :type registration_definition_name: str
-    :param provisioning_state: Current state of the registration definition. Possible values
-     include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
-     "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
-    :type provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
-    :param managee_tenant_id: Id of the home tenant.
-    :type managee_tenant_id: str
-    :param managee_tenant_name: Name of the home tenant.
-    :type managee_tenant_name: str
-    :param managed_by_tenant_id: Id of the managedBy tenant.
-    :type managed_by_tenant_id: str
-    :param managed_by_tenant_name: Name of the managedBy tenant.
-    :type managed_by_tenant_name: str
+    :ivar description: The description of the registration definition.
+    :vartype description: str
+    :ivar authorizations: The collection of authorization objects describing the access Azure
+     Active Directory principals in the managedBy tenant will receive on the delegated resource in
+     the managed tenant.
+    :vartype authorizations: list[~azure.mgmt.managedservices.models.Authorization]
+    :ivar eligible_authorizations: The collection of eligible authorization objects describing the
+     just-in-time access Azure Active Directory principals in the managedBy tenant will receive on
+     the delegated resource in the managed tenant.
+    :vartype eligible_authorizations:
+     list[~azure.mgmt.managedservices.models.EligibleAuthorization]
+    :ivar registration_definition_name: The name of the registration definition.
+    :vartype registration_definition_name: str
+    :ivar provisioning_state: The current provisioning state of the registration definition. Known
+     values are: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
+     "Deleted", "Canceled", "Failed", "Succeeded", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
+    :ivar managee_tenant_id: The identifier of the managed tenant.
+    :vartype managee_tenant_id: str
+    :ivar managee_tenant_name: The name of the managed tenant.
+    :vartype managee_tenant_name: str
+    :ivar managed_by_tenant_id: The identifier of the managedBy tenant.
+    :vartype managed_by_tenant_id: str
+    :ivar managed_by_tenant_name: The name of the managedBy tenant.
+    :vartype managed_by_tenant_name: str
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'authorizations': {'key': 'authorizations', 'type': '[Authorization]'},
-        'eligible_authorizations': {'key': 'eligibleAuthorizations', 'type': '[EligibleAuthorization]'},
-        'registration_definition_name': {'key': 'registrationDefinitionName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'managee_tenant_id': {'key': 'manageeTenantId', 'type': 'str'},
-        'managee_tenant_name': {'key': 'manageeTenantName', 'type': 'str'},
-        'managed_by_tenant_id': {'key': 'managedByTenantId', 'type': 'str'},
-        'managed_by_tenant_name': {'key': 'managedByTenantName', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "authorizations": {"key": "authorizations", "type": "[Authorization]"},
+        "eligible_authorizations": {"key": "eligibleAuthorizations", "type": "[EligibleAuthorization]"},
+        "registration_definition_name": {"key": "registrationDefinitionName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "managee_tenant_id": {"key": "manageeTenantId", "type": "str"},
+        "managee_tenant_name": {"key": "manageeTenantName", "type": "str"},
+        "managed_by_tenant_id": {"key": "managedByTenantId", "type": "str"},
+        "managed_by_tenant_name": {"key": "managedByTenantName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         description: Optional[str] = None,
-        authorizations: Optional[List["Authorization"]] = None,
-        eligible_authorizations: Optional[List["EligibleAuthorization"]] = None,
+        authorizations: Optional[List["_models.Authorization"]] = None,
+        eligible_authorizations: Optional[List["_models.EligibleAuthorization"]] = None,
         registration_definition_name: Optional[str] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         managee_tenant_id: Optional[str] = None,
         managee_tenant_name: Optional[str] = None,
         managed_by_tenant_id: Optional[str] = None,
         managed_by_tenant_name: Optional[str] = None,
         **kwargs
     ):
-        super(RegistrationAssignmentPropertiesRegistrationDefinitionProperties, self).__init__(**kwargs)
+        """
+        :keyword description: The description of the registration definition.
+        :paramtype description: str
+        :keyword authorizations: The collection of authorization objects describing the access Azure
+         Active Directory principals in the managedBy tenant will receive on the delegated resource in
+         the managed tenant.
+        :paramtype authorizations: list[~azure.mgmt.managedservices.models.Authorization]
+        :keyword eligible_authorizations: The collection of eligible authorization objects describing
+         the just-in-time access Azure Active Directory principals in the managedBy tenant will receive
+         on the delegated resource in the managed tenant.
+        :paramtype eligible_authorizations:
+         list[~azure.mgmt.managedservices.models.EligibleAuthorization]
+        :keyword registration_definition_name: The name of the registration definition.
+        :paramtype registration_definition_name: str
+        :keyword provisioning_state: The current provisioning state of the registration definition.
+         Known values are: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created",
+         "Deleting", "Deleted", "Canceled", "Failed", "Succeeded", and "Updating".
+        :paramtype provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
+        :keyword managee_tenant_id: The identifier of the managed tenant.
+        :paramtype managee_tenant_id: str
+        :keyword managee_tenant_name: The name of the managed tenant.
+        :paramtype managee_tenant_name: str
+        :keyword managed_by_tenant_id: The identifier of the managedBy tenant.
+        :paramtype managed_by_tenant_id: str
+        :keyword managed_by_tenant_name: The name of the managedBy tenant.
+        :paramtype managed_by_tenant_name: str
+        """
+        super().__init__(**kwargs)
         self.description = description
         self.authorizations = authorizations
         self.eligible_authorizations = eligible_authorizations
@@ -701,142 +863,244 @@ class RegistrationAssignmentPropertiesRegistrationDefinitionProperties(msrest.se
         self.managed_by_tenant_name = managed_by_tenant_name
 
 
-class RegistrationDefinition(msrest.serialization.Model):
-    """Registration definition.
+class RegistrationDefinition(_serialization.Model):
+    """The registration definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param properties: Properties of a registration definition.
-    :type properties: ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
-    :param plan: Plan details for the managed services.
-    :type plan: ~azure.mgmt.managedservices.models.Plan
-    :ivar id: Fully qualified path of the registration definition.
+    :ivar properties: The properties of a registration definition.
+    :vartype properties: ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
+    :ivar plan: The details for the Managed Services offer’s plan in Azure Marketplace.
+    :vartype plan: ~azure.mgmt.managedservices.models.Plan
+    :ivar id: The fully qualified path of the registration definition.
     :vartype id: str
-    :ivar type: Type of the resource.
+    :ivar type: The type of the Azure resource (Microsoft.ManagedServices/registrationDefinitions).
     :vartype type: str
-    :ivar name: Name of the registration definition.
+    :ivar name: The name of the registration definition.
     :vartype name: str
+    :ivar system_data: The metadata for the registration assignment resource.
+    :vartype system_data: ~azure.mgmt.managedservices.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'RegistrationDefinitionProperties'},
-        'plan': {'key': 'plan', 'type': 'Plan'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "properties": {"key": "properties", "type": "RegistrationDefinitionProperties"},
+        "plan": {"key": "plan", "type": "Plan"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["RegistrationDefinitionProperties"] = None,
-        plan: Optional["Plan"] = None,
+        properties: Optional["_models.RegistrationDefinitionProperties"] = None,
+        plan: Optional["_models.Plan"] = None,
         **kwargs
     ):
-        super(RegistrationDefinition, self).__init__(**kwargs)
+        """
+        :keyword properties: The properties of a registration definition.
+        :paramtype properties: ~azure.mgmt.managedservices.models.RegistrationDefinitionProperties
+        :keyword plan: The details for the Managed Services offer’s plan in Azure Marketplace.
+        :paramtype plan: ~azure.mgmt.managedservices.models.Plan
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.plan = plan
         self.id = None
         self.type = None
         self.name = None
+        self.system_data = None
 
 
-class RegistrationDefinitionList(msrest.serialization.Model):
-    """List of registration definitions.
+class RegistrationDefinitionList(_serialization.Model):
+    """The list of registration definitions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: List of registration definitions.
+    :ivar value: The list of registration definitions.
     :vartype value: list[~azure.mgmt.managedservices.models.RegistrationDefinition]
-    :ivar next_link: Link to next page of registration definitions.
+    :ivar next_link: The link to the next page of registration definitions.
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RegistrationDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RegistrationDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RegistrationDefinitionList, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class RegistrationDefinitionProperties(msrest.serialization.Model):
-    """Properties of a registration definition.
+class RegistrationDefinitionProperties(_serialization.Model):
+    """The properties of a registration definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param description: Description of the registration definition.
-    :type description: str
-    :param authorizations: Required. Authorization tuple containing principal id of the
-     user/security group or service principal and id of the build-in role.
-    :type authorizations: list[~azure.mgmt.managedservices.models.Authorization]
-    :param eligible_authorizations: Eligible PIM authorization tuple containing principal id of the
-     user/security group or service principal, id of the built-in role, and just-in-time access
-     policy setting.
-    :type eligible_authorizations: list[~azure.mgmt.managedservices.models.EligibleAuthorization]
-    :param registration_definition_name: Name of the registration definition.
-    :type registration_definition_name: str
-    :param managed_by_tenant_id: Required. Id of the managedBy tenant.
-    :type managed_by_tenant_id: str
-    :ivar provisioning_state: Current state of the registration definition. Possible values
-     include: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
-     "Deleted", "Canceled", "Failed", "Succeeded", "Updating".
+    :ivar description: The description of the registration definition.
+    :vartype description: str
+    :ivar authorizations: The collection of authorization objects describing the access Azure
+     Active Directory principals in the managedBy tenant will receive on the delegated resource in
+     the managed tenant. Required.
+    :vartype authorizations: list[~azure.mgmt.managedservices.models.Authorization]
+    :ivar eligible_authorizations: The collection of eligible authorization objects describing the
+     just-in-time access Azure Active Directory principals in the managedBy tenant will receive on
+     the delegated resource in the managed tenant.
+    :vartype eligible_authorizations:
+     list[~azure.mgmt.managedservices.models.EligibleAuthorization]
+    :ivar registration_definition_name: The name of the registration definition.
+    :vartype registration_definition_name: str
+    :ivar managed_by_tenant_id: The identifier of the managedBy tenant. Required.
+    :vartype managed_by_tenant_id: str
+    :ivar provisioning_state: The current provisioning state of the registration definition. Known
+     values are: "NotSpecified", "Accepted", "Running", "Ready", "Creating", "Created", "Deleting",
+     "Deleted", "Canceled", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.managedservices.models.ProvisioningState
-    :ivar managed_by_tenant_name: Name of the managedBy tenant.
+    :ivar managee_tenant_id: The identifier of the managed tenant.
+    :vartype managee_tenant_id: str
+    :ivar managee_tenant_name: The name of the managed tenant.
+    :vartype managee_tenant_name: str
+    :ivar managed_by_tenant_name: The name of the managedBy tenant.
     :vartype managed_by_tenant_name: str
     """
 
     _validation = {
-        'authorizations': {'required': True},
-        'managed_by_tenant_id': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'managed_by_tenant_name': {'readonly': True},
+        "authorizations": {"required": True},
+        "managed_by_tenant_id": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "managee_tenant_id": {"readonly": True},
+        "managee_tenant_name": {"readonly": True},
+        "managed_by_tenant_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'authorizations': {'key': 'authorizations', 'type': '[Authorization]'},
-        'eligible_authorizations': {'key': 'eligibleAuthorizations', 'type': '[EligibleAuthorization]'},
-        'registration_definition_name': {'key': 'registrationDefinitionName', 'type': 'str'},
-        'managed_by_tenant_id': {'key': 'managedByTenantId', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'managed_by_tenant_name': {'key': 'managedByTenantName', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "authorizations": {"key": "authorizations", "type": "[Authorization]"},
+        "eligible_authorizations": {"key": "eligibleAuthorizations", "type": "[EligibleAuthorization]"},
+        "registration_definition_name": {"key": "registrationDefinitionName", "type": "str"},
+        "managed_by_tenant_id": {"key": "managedByTenantId", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "managee_tenant_id": {"key": "manageeTenantId", "type": "str"},
+        "managee_tenant_name": {"key": "manageeTenantName", "type": "str"},
+        "managed_by_tenant_name": {"key": "managedByTenantName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        authorizations: List["Authorization"],
+        authorizations: List["_models.Authorization"],
         managed_by_tenant_id: str,
         description: Optional[str] = None,
-        eligible_authorizations: Optional[List["EligibleAuthorization"]] = None,
+        eligible_authorizations: Optional[List["_models.EligibleAuthorization"]] = None,
         registration_definition_name: Optional[str] = None,
         **kwargs
     ):
-        super(RegistrationDefinitionProperties, self).__init__(**kwargs)
+        """
+        :keyword description: The description of the registration definition.
+        :paramtype description: str
+        :keyword authorizations: The collection of authorization objects describing the access Azure
+         Active Directory principals in the managedBy tenant will receive on the delegated resource in
+         the managed tenant. Required.
+        :paramtype authorizations: list[~azure.mgmt.managedservices.models.Authorization]
+        :keyword eligible_authorizations: The collection of eligible authorization objects describing
+         the just-in-time access Azure Active Directory principals in the managedBy tenant will receive
+         on the delegated resource in the managed tenant.
+        :paramtype eligible_authorizations:
+         list[~azure.mgmt.managedservices.models.EligibleAuthorization]
+        :keyword registration_definition_name: The name of the registration definition.
+        :paramtype registration_definition_name: str
+        :keyword managed_by_tenant_id: The identifier of the managedBy tenant. Required.
+        :paramtype managed_by_tenant_id: str
+        """
+        super().__init__(**kwargs)
         self.description = description
         self.authorizations = authorizations
         self.eligible_authorizations = eligible_authorizations
         self.registration_definition_name = registration_definition_name
         self.managed_by_tenant_id = managed_by_tenant_id
         self.provisioning_state = None
+        self.managee_tenant_id = None
+        self.managee_tenant_name = None
         self.managed_by_tenant_name = None
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs
+    ):
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.managedservices.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at

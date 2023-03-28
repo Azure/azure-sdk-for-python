@@ -1,0 +1,98 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/rank?api-version=2022-09-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "560",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "eventId": "123456789",
+        "actions": [
+          {
+            "id": "Video1",
+            "features": [
+              {
+                "videoType": "documentary",
+                "videoLength": 35,
+                "director": "CarlSagan"
+              },
+              {
+                "mostWatchedByAge": "30-35"
+              }
+            ]
+          },
+          {
+            "id": "Video2",
+            "features": [
+              {
+                "videoType": "documentary",
+                "videoLength": 35,
+                "director": "CarlSagan"
+              },
+              {
+                "mostWatchedByAge": "40-45"
+              }
+            ]
+          }
+        ],
+        "contextFeatures": [
+          {
+            "currentContext": {
+              "day": "tuesday",
+              "time": "night",
+              "weather": "rainy"
+            }
+          },
+          {
+            "userContext": {
+              "payingUser": true,
+              "favoriteGenre": "documentary",
+              "hoursOnSite": 0.12,
+              "lastWatchedType": "movie"
+            }
+          }
+        ],
+        "excludedActions": [
+          "Video1"
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "93e76b2f-d21f-4000-9cf5-d29636b1a3f8",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "197",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
+        "Date": "Thu, 03 Nov 2022 15:57:08 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "56",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "ranking": [
+          {
+            "id": "Video1",
+            "probability": 0.0
+          },
+          {
+            "id": "Video2",
+            "probability": 1.0
+          }
+        ],
+        "eventId": "123456789",
+        "rewardActionId": "Video2"
+      }
+    }
+  ],
+  "Variables": {}
+}

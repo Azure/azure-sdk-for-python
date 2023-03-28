@@ -3,6 +3,7 @@ import re
 import pydash
 import pytest
 from marshmallow import ValidationError
+from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from azure.ai.ml import (
     Input,
@@ -10,18 +11,24 @@ from azure.ai.ml import (
     Output,
     PyTorchDistribution,
     TensorFlowDistribution,
+    UserIdentityConfiguration,
     command,
     load_component,
     load_job,
-    spark, UserIdentityConfiguration,
+    spark,
 )
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration, QueueSettings
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.entities._job.job_service import JobService as JobService
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
-from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -97,6 +104,11 @@ class TestCommandFunction:
     def test_command_function(self, test_command):
         assert isinstance(test_command, Command)
         assert test_command._source == "BUILDER"
+
+        # Test print and jupyter rendering for the builder object
+        print(test_command)
+        test_command._repr_html_()
+
         expected_command = {
             "_source": "BUILDER",
             "computeId": "cpu-cluster",
@@ -115,11 +127,8 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "name": "my_job",
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
         actual_command = pydash.omit(
@@ -135,7 +144,7 @@ class TestCommandFunction:
             "properties": {
                 "component_spec": {
                     "_source": "BUILDER",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
@@ -151,7 +160,6 @@ class TestCommandFunction:
                     },
                     "is_deterministic": True,
                     "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -174,7 +182,7 @@ class TestCommandFunction:
             "properties": {
                 "component_spec": {
                     "_source": "BUILDER",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
@@ -190,7 +198,6 @@ class TestCommandFunction:
                     },
                     "is_deterministic": False,
                     "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -247,11 +254,7 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
             "type": "command",
         }
         actual_dict = pydash.omit(node1_dict, "componentId", "properties")
@@ -279,11 +282,7 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
         }
         # node1 copies test_command's dict
         assert node1_dict == expected_dict
@@ -314,9 +313,6 @@ class TestCommandFunction:
             },
             "limits": {"job_limits_type": "Command", "timeout": "PT10S"},
             "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
         }
         # node3 copies node2's property
         assert node3_dict == expected_dict
@@ -361,12 +357,7 @@ class TestCommandFunction:
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "limits": None,
             "outputs": {"my_model": {"job_output_type": "mlflow_model"}},
-            "resources": None,
-            "name": None,
-            "tags": {},
-            "properties": {},
         }
         assert node1_dict == expected_dict
 
@@ -379,7 +370,7 @@ class TestCommandFunction:
                 "component_spec": {
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
@@ -394,7 +385,6 @@ class TestCommandFunction:
                     },
                     "is_deterministic": True,
                     "outputs": {"my_model": {"type": "mlflow_model"}},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -554,15 +544,12 @@ class TestCommandFunction:
                 "component_spec": {
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "command": "echo hello",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
-                    "inputs": {},
                     "is_deterministic": True,
-                    "outputs": {},
-                    "tags": {},
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -584,12 +571,7 @@ class TestCommandFunction:
             "display_name": "my-fancy-job",
             "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
             "environment_variables": {"foo": "bar"},
-            "inputs": {},
-            "limits": None,
             "name": "my_job",
-            "outputs": {},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
         assert actual_node == expected_node
@@ -638,7 +620,6 @@ class TestCommandFunction:
         assert rest_dict["resources"] == {
             "instance_count": 4,
             "instance_type": "STANDARD_D2",
-            "properties": {},
             "docker_args": "test command",
             "shm_size": "3g",
         }
@@ -659,10 +640,10 @@ class TestCommandFunction:
         rest_dict = node1._to_rest_object()
 
         assert rest_dict["distribution"] == {"distribution_type": "Mpi", "process_count_per_instance": 4}
-        assert rest_dict["resources"] == {"instance_count": 4, "instance_type": "STANDARD_D2", "properties": {}}
+        assert rest_dict["resources"] == {"instance_count": 4, "instance_type": "STANDARD_D2"}
 
     def test_resources_from_dict(self, test_command_params):
-        expected_resources = {"instance_count": 4, "instance_type": "STANDARD_D2", "properties": {}}
+        expected_resources = {"instance_count": 4, "instance_type": "STANDARD_D2"}
         test_command_params.update(
             {
                 "resources": JobResourceConfiguration(instance_count=4, instance_type="STANDARD_D2"),
@@ -697,7 +678,27 @@ class TestCommandFunction:
         )
         command_node = command(**test_command_params)
         rest_dict = command_node._to_rest_object()
-        assert rest_dict["resources"] == {"instance_type": "STANDARD_D2", "properties": {}}
+        assert rest_dict["resources"] == {"instance_type": "STANDARD_D2"}
+
+    def test_queue_settings(self, test_command_params):
+        expected_queue_settings = {"job_tier": "Standard", "priority": 2}
+        test_command_params.update(
+            {
+                "queue_settings": QueueSettings(job_tier="standard", priority="medium"),
+            }
+        )
+        command_node = command(**test_command_params)
+        rest_dict = command_node._to_rest_object()
+        assert rest_dict["queue_settings"] == expected_queue_settings
+
+        test_command_params.update(
+            {
+                "queue_settings": dict(job_tier="standard", priority="medium"),
+            }
+        )
+        command_node = command(**test_command_params)
+        rest_dict = command_node._to_rest_object()
+        assert rest_dict["queue_settings"] == expected_queue_settings
 
     def test_to_component_input(self):
         # test literal input
@@ -740,39 +741,38 @@ class TestCommandFunction:
             assert ComponentTranslatableMixin._to_output(job_output, job_dict)._to_dict() == input_type
 
     def test_spark_job_with_dynamic_allocation_disabled(self):
-        with pytest.raises(ValidationException) as ve:
-            node = spark(
-                code="./tests/test_configs/spark_job/basic_spark_job/src",
-                entry={"file": "./main.py"},
-                resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-                driver_cores=1,
-                driver_memory="2g",
-                executor_cores=2,
-                executor_memory="2g",
-                executor_instances=2,
-                dynamic_allocation_min_executors=1,
-                dynamic_allocation_max_executors=3,
-            )
-            node._to_rest_object()
-            assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=2,
+            dynamic_allocation_min_executors=1,
+            dynamic_allocation_max_executors=3,
+        )
+        result = node._validate()
+        message = "Should not specify min or max executors when dynamic allocation is disabled."
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_executor_instances_is_mandatory_when_dynamic_allocation_disabled(self):
-        with pytest.raises(ValidationException) as ve:
-            node = spark(
-                code="./tests/test_configs/spark_job/basic_spark_job/src",
-                entry={"file": "./main.py"},
-                resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-                driver_cores=1,
-                driver_memory="2g",
-                executor_cores=2,
-                executor_memory="2g",
-            )
-            node._to_rest_object()
-            assert (
-                ve.message
-                == "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
-                "spark.executor.instances are mandatory fields."
-            )
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+        )
+        result = node._validate()
+        message = (
+            "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
+            "spark.executor.instances are mandatory fields."
+        )
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
         node = spark(
@@ -791,26 +791,25 @@ class TestCommandFunction:
         assert node.executor_instances == 1
 
     def test_excutor_instances_throw_error_when_out_of_range(self):
-        with pytest.raises(ValidationException) as ve:
-            node = spark(
-                code="./tests/test_configs/spark_job/basic_spark_job/src",
-                entry={"file": "./main.py"},
-                resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-                driver_cores=1,
-                driver_memory="2g",
-                executor_cores=2,
-                executor_memory="2g",
-                executor_instances=4,
-                dynamic_allocation_enabled=True,
-                dynamic_allocation_min_executors=1,
-                dynamic_allocation_max_executors=3,
-            )
-            node._to_rest_object()
-            message = (
-                "Executor instances must be a valid non-negative integer and must be between "
-                "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors."
-            )
-            assert ve.message == message
+        node = spark(
+            code="./tests/test_configs/spark_job/basic_spark_job/src",
+            entry={"file": "./main.py"},
+            resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+            driver_cores=1,
+            driver_memory="2g",
+            executor_cores=2,
+            executor_memory="2g",
+            executor_instances=4,
+            dynamic_allocation_enabled=True,
+            dynamic_allocation_min_executors=1,
+            dynamic_allocation_max_executors=3,
+        )
+        result = node._validate()
+        message = (
+            "Executor instances must be a valid non-negative integer and must be between "
+            "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
+        )
+        assert "*" in result.error_messages and message == result.error_messages["*"]
 
     def test_spark_job_with_additional_conf(self):
         node = spark(
@@ -842,18 +841,18 @@ class TestCommandFunction:
 
     def test_command_services_nodes(self) -> None:
         services = {
-            "my_jupyterlab": {"job_service_type": "JupyterLab", "nodes": "all"},
-            "my_tensorboard": {
-                "job_service_type": "TensorBoard",
-                "properties": {
+            "my_jupyterlab": JobService(job_service_type="jupyter_lab", nodes="all"),
+            "my_tensorboard": JobService(
+                job_service_type="tensor_board",
+                properties={
                     "logDir": "~/tblog",
                 },
-            },
+            ),
         }
         command_obj = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
@@ -863,21 +862,22 @@ class TestCommandFunction:
         assert rest_obj["services"]["my_jupyterlab"].get("nodes") == {"nodes_value_type": "All"}
         assert rest_obj["services"]["my_tensorboard"].get("nodes") == None
 
-        services_invalid_nodes = {"my_service": {"nodes": "All"}}
         with pytest.raises(ValidationException, match="nodes should be either 'all' or None"):
-            command_obj = command(
-                name="interactive-command-job",
-                description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-                command="ls",
-                compute="testCompute",
-                services=services_invalid_nodes,
-            )
-            assert command_obj
+            services_invalid_nodes = {"my_service": JobService(nodes="All")}
 
     def test_command_services(self) -> None:
         services = {
-            "my_jupyter": {"job_service_type": "Jupyter"},
+            "my_ssh": JobService(job_service_type="ssh"),
+            "my_tensorboard": JobService(
+                job_service_type="tensor_board",
+                properties={
+                    "logDir": "~/tblog",
+                },
+            ),
+            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
+        }
+        rest_services = {
+            "my_ssh": {"job_service_type": "SSH"},
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
                 "properties": {
@@ -889,7 +889,7 @@ class TestCommandFunction:
         node = command(
             name="interactive-command-job",
             description="description",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             command="ls",
             compute="testCompute",
             services=services,
@@ -903,15 +903,15 @@ class TestCommandFunction:
             assert isinstance(service, JobService)
 
         node_rest_obj = node._to_rest_object()
-        assert node_rest_obj["services"] == services
+        assert node_rest_obj["services"] == rest_services
 
         # test invalid services
-        invalid_services_0 = "jupyter"
+        invalid_services_0 = "ssh"
         with pytest.raises(ValidationException, match="Services must be a dict"):
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_0,
@@ -923,7 +923,7 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_1,
@@ -935,12 +935,54 @@ class TestCommandFunction:
             node = command(
                 name="interactive-command-job",
                 description="description",
-                environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+                environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
                 command="ls",
                 compute="testCompute",
                 services=invalid_services_2,
             )
             assert node
+
+    def test_command_services_subtypes(self) -> None:
+        services = {
+            "my_ssh": SshJobService(),
+            "my_tensorboard": TensorBoardJobService(log_dir="~/tblog"),
+            "my_jupyterlab": JupyterLabJobService(),
+            "my_vscode": VsCodeJobService(),
+        }
+        rest_services = {
+            "my_ssh": {"job_service_type": "SSH"},
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+            "my_vscode": {"job_service_type": "VSCode"},
+        }
+        node = command(
+            name="interactive-command-job",
+            description="description",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+            command="ls",
+            compute="testCompute",
+            services=services,
+        )
+
+        node_services = node.services
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
+
+        command_job_services = node._to_job().services
+        assert isinstance(command_job_services.get("my_ssh"), SshJobService)
+        assert isinstance(command_job_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(command_job_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(command_job_services.get("my_vscode"), VsCodeJobService)
+
+        node_rest_obj = node._to_rest_object()
+        assert node_rest_obj["services"] == rest_services
 
     def test_command_hash(self, test_command_params):
         node1 = command(**test_command_params)
@@ -961,43 +1003,82 @@ class TestCommandFunction:
         test_command_params["identity"] = UserIdentityConfiguration()
         command_node = command(**test_command_params)
         rest_dict = command_node._to_rest_object()
-        assert rest_dict["identity"] == {'type': 'user_identity'}
+        assert rest_dict["identity"] == {"type": "user_identity"}
 
         @pipeline
         def my_pipeline():
             command_node()
 
         pipeline_job = my_pipeline()
-        omit_fields = [
-            "jobs.*.componentId",
-            "jobs.*._source"
-        ]
+        omit_fields = ["jobs.*.componentId", "jobs.*._source"]
         actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
 
         assert actual_dict["jobs"] == {
-            'my_job': {'computeId': 'cpu-cluster',
-                       'display_name': 'my-fancy-job',
-                       'distribution': {'distribution_type': 'Mpi',
-                                        'process_count_per_instance': 4},
-                       'environment_variables': {'foo': 'bar'},
-                       'identity': {'type': 'user_identity'},
-                       'inputs': {'boolean': {'job_input_type': 'literal',
-                                              'value': 'False'},
-                                  'float': {'job_input_type': 'literal', 'value': '0.01'},
-                                  'integer': {'job_input_type': 'literal', 'value': '1'},
-                                  'string': {'job_input_type': 'literal', 'value': 'str'},
-                                  'uri_file': {'job_input_type': 'uri_file',
-                                               'mode': 'Download',
-                                               'uri': 'https://my-blob/path/to/data'},
-                                  'uri_folder': {'job_input_type': 'uri_folder',
-                                                 'mode': 'ReadOnlyMount',
-                                                 'uri': 'https://my-blob/path/to/data'}},
-                       'limits': None,
-                       'name': 'my_job',
-                       'outputs': {'my_model': {'job_output_type': 'mlflow_model',
-                                                'mode': 'ReadWriteMount'}},
-                       'properties': {},
-                       'resources': None,
-                       'tags': {},
-                       'type': 'command'}
+            "my_job": {
+                "computeId": "cpu-cluster",
+                "display_name": "my-fancy-job",
+                "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+                "environment_variables": {"foo": "bar"},
+                "identity": {"type": "user_identity"},
+                "inputs": {
+                    "boolean": {"job_input_type": "literal", "value": "False"},
+                    "float": {"job_input_type": "literal", "value": "0.01"},
+                    "integer": {"job_input_type": "literal", "value": "1"},
+                    "string": {"job_input_type": "literal", "value": "str"},
+                    "uri_file": {
+                        "job_input_type": "uri_file",
+                        "mode": "Download",
+                        "uri": "https://my-blob/path/to/data",
+                    },
+                    "uri_folder": {
+                        "job_input_type": "uri_folder",
+                        "mode": "ReadOnlyMount",
+                        "uri": "https://my-blob/path/to/data",
+                    },
+                },
+                "name": "my_job",
+                "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
+                "type": "command",
+            }
         }
+
+    def test_set_identity(self, test_command):
+        from azure.ai.ml.entities._credentials import AmlTokenConfiguration
+
+        node1 = test_command()
+        node2 = node1()
+        node2.identity = AmlTokenConfiguration()
+        node3 = node1()
+        node3.identity = {"type": "AMLToken"}
+        assert node2.identity == node3.identity
+
+    def test_sweep_set_search_space(self, test_command):
+        from azure.ai.ml.entities._job.sweep.search_space import Choice
+
+        node1 = test_command()
+        command_node_to_sweep_1 = node1()
+        sweep_node_1 = command_node_to_sweep_1.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_1.search_space = {"batch_size": {"type": "choice", "values": [25, 35]}}
+
+        command_node_to_sweep_2 = node1()
+        sweep_node_2 = command_node_to_sweep_2.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_2.search_space = {"batch_size": Choice(values=[25, 35])}
+        assert sweep_node_1.search_space == sweep_node_2.search_space
+
+    def test_unsupported_positional_args(self, test_command):
+        with pytest.raises(ValidationException) as e:
+            test_command(1)
+        msg = (
+            "Component function doesn't support positional arguments, got (1,) "
+            "for my_job. Please use keyword arguments like: "
+            "component_func(float=xxx, integer=xxx, string=xxx, boolean=xxx, uri_folder=xxx, uri_file=xxx)."
+        )
+        assert msg in str(e.value)

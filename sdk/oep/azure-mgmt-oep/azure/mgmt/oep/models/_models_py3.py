@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._open_energy_platform_management_service_apis_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CheckNameAvailabilityRequest(msrest.serialization.Model):
+class CheckNameAvailabilityRequest(_serialization.Model):
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -25,72 +27,84 @@ class CheckNameAvailabilityRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
         """
         :keyword name: The name of the resource for which availability needs to be checked.
         :paramtype name: str
         :keyword type: The resource type.
         :paramtype type: str
         """
-        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CheckNameAvailabilityResponse(msrest.serialization.Model):
+class CheckNameAvailabilityResponse(_serialization.Model):
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
     :vartype name_available: bool
-    :ivar reason: The reason why the given name is not available. Possible values include:
-     "Invalid", "AlreadyExists".
-    :vartype reason: str or
-     ~open_energy_platform_management_service_apis.models.CheckNameAvailabilityReason
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.oep.models.CheckNameAvailabilityReason
     :ivar message: Detailed reason why the given name is available.
     :vartype message: str
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "CheckNameAvailabilityReason"]] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
         message: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword name_available: Indicates if the resource name is available.
         :paramtype name_available: bool
-        :keyword reason: The reason why the given name is not available. Possible values include:
-         "Invalid", "AlreadyExists".
-        :paramtype reason: str or
-         ~open_energy_platform_management_service_apis.models.CheckNameAvailabilityReason
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.oep.models.CheckNameAvailabilityReason
         :keyword message: Detailed reason why the given name is available.
         :paramtype message: str
         """
-        super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message
 
 
-class DataPartitionNames(msrest.serialization.Model):
+class DataPartitionAddOrRemoveRequest(_serialization.Model):
+    """Defines the partition add/ delete action properties.
+
+    :ivar name: The list of Energy services resource's Data Partition Names.
+    :vartype name: ~azure.mgmt.oep.models.DataPartitionNames
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "DataPartitionNames"},
+    }
+
+    def __init__(self, *, name: Optional["_models.DataPartitionNames"] = None, **kwargs):
+        """
+        :keyword name: The list of Energy services resource's Data Partition Names.
+        :paramtype name: ~azure.mgmt.oep.models.DataPartitionNames
+        """
+        super().__init__(**kwargs)
+        self.name = name
+
+
+class DataPartitionNames(_serialization.Model):
     """The list of Energy services resource's Data Partition Names.
 
     :ivar name:
@@ -98,49 +112,107 @@ class DataPartitionNames(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name:
         :paramtype name: str
         """
-        super(DataPartitionNames, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class EnergyResourceUpdate(msrest.serialization.Model):
+class DataPartitionProperties(_serialization.Model):
+    """Defines the properties of an individual data partition.
+
+    :ivar name: Name of the data partition.
+    :vartype name: str
+    :ivar provisioning_state: Name of the data partition.
+    :vartype provisioning_state: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, provisioning_state: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Name of the data partition.
+        :paramtype name: str
+        :keyword provisioning_state: Name of the data partition.
+        :paramtype provisioning_state: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.provisioning_state = provisioning_state
+
+
+class DataPartitionsList(_serialization.Model):
+    """List of data partitions.
+
+    :ivar data_partition_names:
+    :vartype data_partition_names: list[~azure.mgmt.oep.models.DataPartitionNames]
+    """
+
+    _attribute_map = {
+        "data_partition_names": {"key": "dataPartitionNames", "type": "[DataPartitionNames]"},
+    }
+
+    def __init__(self, *, data_partition_names: Optional[List["_models.DataPartitionNames"]] = None, **kwargs):
+        """
+        :keyword data_partition_names:
+        :paramtype data_partition_names: list[~azure.mgmt.oep.models.DataPartitionNames]
+        """
+        super().__init__(**kwargs)
+        self.data_partition_names = data_partition_names
+
+
+class DataPartitionsListResult(_serialization.Model):
+    """List of data partitions.
+
+    :ivar data_partition_info: List of data partitions along with their properties in a given OEP
+     resource.
+    :vartype data_partition_info: list[~azure.mgmt.oep.models.DataPartitionProperties]
+    """
+
+    _attribute_map = {
+        "data_partition_info": {"key": "dataPartitionInfo", "type": "[DataPartitionProperties]"},
+    }
+
+    def __init__(self, *, data_partition_info: Optional[List["_models.DataPartitionProperties"]] = None, **kwargs):
+        """
+        :keyword data_partition_info: List of data partitions along with their properties in a given
+         OEP resource.
+        :paramtype data_partition_info: list[~azure.mgmt.oep.models.DataPartitionProperties]
+        """
+        super().__init__(**kwargs)
+        self.data_partition_info = data_partition_info
+
+
+class EnergyResourceUpdate(_serialization.Model):
     """The resource model definition used for updating a tracked ARM resource.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(EnergyResourceUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -155,30 +227,26 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~open_energy_platform_management_service_apis.models.SystemData
+    :vartype system_data: ~azure.mgmt.oep.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -202,141 +270,132 @@ class EnergyService(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~open_energy_platform_management_service_apis.models.SystemData
+    :vartype system_data: ~azure.mgmt.oep.models.SystemData
     :ivar properties:
-    :vartype properties:
-     ~open_energy_platform_management_service_apis.models.EnergyServiceProperties
-    :ivar tags: A set of tags. Resource tags.
+    :vartype properties: ~azure.mgmt.oep.models.EnergyServiceProperties
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. Geo-location where the resource lives.
+    :ivar location: Geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'EnergyServiceProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "EnergyServiceProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        properties: Optional["EnergyServiceProperties"] = None,
+        properties: Optional["_models.EnergyServiceProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """
         :keyword properties:
-        :paramtype properties:
-         ~open_energy_platform_management_service_apis.models.EnergyServiceProperties
-        :keyword tags: A set of tags. Resource tags.
+        :paramtype properties: ~azure.mgmt.oep.models.EnergyServiceProperties
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. Geo-location where the resource lives.
+        :keyword location: Geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(EnergyService, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
         self.tags = tags
         self.location = location
 
 
-class EnergyServiceList(msrest.serialization.Model):
+class EnergyServiceList(_serialization.Model):
     """The list of oep resources.
 
     :ivar next_link: The link used to get the next page of oep resources list.
     :vartype next_link: str
     :ivar value: The list of oep resources.
-    :vartype value: list[~open_energy_platform_management_service_apis.models.EnergyService]
+    :vartype value: list[~azure.mgmt.oep.models.EnergyService]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[EnergyService]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[EnergyService]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["EnergyService"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.EnergyService"]] = None, **kwargs
     ):
         """
         :keyword next_link: The link used to get the next page of oep resources list.
         :paramtype next_link: str
         :keyword value: The list of oep resources.
-        :paramtype value: list[~open_energy_platform_management_service_apis.models.EnergyService]
+        :paramtype value: list[~azure.mgmt.oep.models.EnergyService]
         """
-        super(EnergyServiceList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class EnergyServiceProperties(msrest.serialization.Model):
+class EnergyServiceProperties(_serialization.Model):
     """EnergyServiceProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar dns_name:
     :vartype dns_name: str
-    :ivar provisioning_state: Possible values include: "Unknown", "Succeeded", "Failed",
-     "Canceled", "Creating", "Deleting", "Updating".
-    :vartype provisioning_state: str or
-     ~open_energy_platform_management_service_apis.models.ProvisioningState
+    :ivar provisioning_state: Known values are: "Unknown", "Succeeded", "Failed", "Canceled",
+     "Creating", "Deleting", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.oep.models.ProvisioningState
     :ivar auth_app_id:
     :vartype auth_app_id: str
     :ivar data_partition_names:
-    :vartype data_partition_names:
-     list[~open_energy_platform_management_service_apis.models.DataPartitionNames]
+    :vartype data_partition_names: list[~azure.mgmt.oep.models.DataPartitionNames]
     """
 
     _validation = {
-        'dns_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "dns_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'dns_name': {'key': 'dnsName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'auth_app_id': {'key': 'authAppId', 'type': 'str'},
-        'data_partition_names': {'key': 'dataPartitionNames', 'type': '[DataPartitionNames]'},
+        "dns_name": {"key": "dnsName", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "auth_app_id": {"key": "authAppId", "type": "str"},
+        "data_partition_names": {"key": "dataPartitionNames", "type": "[DataPartitionNames]"},
     }
 
     def __init__(
         self,
         *,
         auth_app_id: Optional[str] = None,
-        data_partition_names: Optional[List["DataPartitionNames"]] = None,
+        data_partition_names: Optional[List["_models.DataPartitionNames"]] = None,
         **kwargs
     ):
         """
         :keyword auth_app_id:
         :paramtype auth_app_id: str
         :keyword data_partition_names:
-        :paramtype data_partition_names:
-         list[~open_energy_platform_management_service_apis.models.DataPartitionNames]
+        :paramtype data_partition_names: list[~azure.mgmt.oep.models.DataPartitionNames]
         """
-        super(EnergyServiceProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dns_name = None
         self.provisioning_state = None
         self.auth_app_id = auth_app_id
         self.data_partition_names = data_partition_names
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -344,31 +403,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -380,35 +435,30 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~open_energy_platform_management_service_apis.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.oep.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~open_energy_platform_management_service_apis.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.oep.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -416,32 +466,27 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~open_energy_platform_management_service_apis.models.ErrorDetail
+    :vartype error: ~azure.mgmt.oep.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
-        :paramtype error: ~open_energy_platform_management_service_apis.models.ErrorDetail
+        :paramtype error: ~azure.mgmt.oep.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -453,42 +498,37 @@ class Operation(msrest.serialization.Model):
      data-plane operations and "false" for ARM/control-plane operations.
     :vartype is_data_action: bool
     :ivar display: Localized display information for this particular operation.
-    :vartype display: ~open_energy_platform_management_service_apis.models.OperationDisplay
+    :vartype display: ~azure.mgmt.oep.models.OperationDisplay
     :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Possible values include: "user",
-     "system", "user,system".
-    :vartype origin: str or ~open_energy_platform_management_service_apis.models.Origin
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.oep.models.Origin
     :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. Possible values include: "Internal".
-    :vartype action_type: str or ~open_energy_platform_management_service_apis.models.ActionType
+     internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.oep.models.ActionType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'is_data_action': {'readonly': True},
-        'origin': {'readonly': True},
-        'action_type': {'readonly': True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: Localized display information for this particular operation.
-        :paramtype display: ~open_energy_platform_management_service_apis.models.OperationDisplay
+        :paramtype display: ~azure.mgmt.oep.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = None
         self.display = display
@@ -496,7 +536,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Localized display information for this particular operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -516,124 +556,112 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~open_energy_platform_management_service_apis.models.Operation]
+    :vartype value: list[~azure.mgmt.oep.models.Operation]
     :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or
-     ~open_energy_platform_management_service_apis.models.CreatedByType
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.oep.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or
-     ~open_energy_platform_management_service_apis.models.CreatedByType
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.oep.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or
-         ~open_energy_platform_management_service_apis.models.CreatedByType
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.oep.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or
-         ~open_energy_platform_management_service_apis.models.CreatedByType
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.oep.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at

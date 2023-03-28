@@ -3,33 +3,42 @@
 # ---------------------------------------------------------
 from marshmallow import fields
 
-from azure.ai.ml._internal._schema.node import InternalBaseNodeSchema, NodeType
-from azure.ai.ml._schema import NestedField, StringTransformedEnum
-from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.core.fields import DistributionField
-from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from ..._schema import AnonymousEnvironmentSchema, ArmVersionedStr, NestedField, RegistryStr, UnionField
+from ..._schema.core.fields import DumpableEnumField
+from ..._schema.job import ParameterizedCommandSchema, ParameterizedParallelSchema
+from ..._schema.job.job_limits import CommandJobLimitsSchema
+from ...constants._common import AzureMLResourceType
+from .._schema.node import InternalBaseNodeSchema, NodeType
 
 
-class CommandSchema(InternalBaseNodeSchema):
-    type = StringTransformedEnum(allowed_values=[NodeType.COMMAND], casing_transform=lambda x: x)
-    compute = fields.Str()
-    environment = fields.Str()
+class CommandSchema(InternalBaseNodeSchema, ParameterizedCommandSchema):
+    class Meta:
+        exclude = ["code", "distribution"]  # internal command doesn't have code & distribution
+
+    environment = UnionField(
+        [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            NestedField(AnonymousEnvironmentSchema),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ],
+    )
+    type = DumpableEnumField(allowed_values=[NodeType.COMMAND])
     limits = NestedField(CommandJobLimitsSchema)
-    resources = NestedField(JobResourceConfigurationSchema)
 
 
 class DistributedSchema(CommandSchema):
-    type = StringTransformedEnum(allowed_values=[NodeType.DISTRIBUTED], casing_transform=lambda x: x)
-    distribution = DistributionField()
+    class Meta:
+        exclude = ["code"]  # need to enable distribution comparing to CommandSchema
+
+    type = DumpableEnumField(allowed_values=[NodeType.DISTRIBUTED])
 
 
-class ParallelSchema(CommandSchema):
-    type = StringTransformedEnum(allowed_values=[NodeType.PARALLEL], casing_transform=lambda x: x)
-    max_concurrency_per_instance = fields.Int()
-    error_threshold = fields.Int()
-    mini_batch_size = fields.Int()
-    logging_level = StringTransformedEnum(
-        allowed_values=["INFO", "WARNING", "DEBUG"], casing_transform=lambda x: x.upper()
-    )
-    retry_settings = NestedField(RetrySettingsSchema)
+class ParallelSchema(InternalBaseNodeSchema, ParameterizedParallelSchema):
+    class Meta:
+        # partition_keys can still be used with unknown warning, but need to do dump before setting
+        exclude = ["task", "input_data", "mini_batch_error_threshold", "partition_keys"]
+
+    type = DumpableEnumField(allowed_values=[NodeType.PARALLEL])
+    compute = fields.Str()
+    environment = fields.Str()
+    limits = NestedField(CommandJobLimitsSchema)

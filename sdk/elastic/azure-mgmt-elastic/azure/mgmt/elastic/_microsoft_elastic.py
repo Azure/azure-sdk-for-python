@@ -6,31 +6,43 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
+
+from . import models
+from ._configuration import MicrosoftElasticConfiguration
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    AllTrafficFiltersOperations,
+    AssociateTrafficFilterOperations,
+    CreateAndAssociateIPFilterOperations,
+    CreateAndAssociatePLFilterOperations,
+    DeploymentInfoOperations,
+    DetachAndDeleteTrafficFilterOperations,
+    DetachTrafficFilterOperations,
+    ExternalUserOperations,
+    ListAssociatedTrafficFiltersOperations,
+    MonitorOperations,
+    MonitoredResourcesOperations,
+    MonitorsOperations,
+    Operations,
+    TagRulesOperations,
+    TrafficFiltersOperations,
+    UpgradableVersionsOperations,
+    VMCollectionOperations,
+    VMHostOperations,
+    VMIngestionOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import MicrosoftElasticConfiguration
-from .operations import Operations
-from .operations import MonitorsOperations
-from .operations import MonitoredResourcesOperations
-from .operations import DeploymentInfoOperations
-from .operations import TagRulesOperations
-from .operations import VMHostOperations
-from .operations import VMIngestionOperations
-from .operations import VMCollectionOperations
-from . import models
 
 
-class MicrosoftElastic(object):
+class MicrosoftElastic:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """MicrosoftElastic.
 
     :ivar operations: Operations operations
@@ -41,6 +53,8 @@ class MicrosoftElastic(object):
     :vartype monitored_resources: azure.mgmt.elastic.operations.MonitoredResourcesOperations
     :ivar deployment_info: DeploymentInfoOperations operations
     :vartype deployment_info: azure.mgmt.elastic.operations.DeploymentInfoOperations
+    :ivar external_user: ExternalUserOperations operations
+    :vartype external_user: azure.mgmt.elastic.operations.ExternalUserOperations
     :ivar tag_rules: TagRulesOperations operations
     :vartype tag_rules: azure.mgmt.elastic.operations.TagRulesOperations
     :ivar vm_host: VMHostOperations operations
@@ -49,66 +63,118 @@ class MicrosoftElastic(object):
     :vartype vm_ingestion: azure.mgmt.elastic.operations.VMIngestionOperations
     :ivar vm_collection: VMCollectionOperations operations
     :vartype vm_collection: azure.mgmt.elastic.operations.VMCollectionOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar upgradable_versions: UpgradableVersionsOperations operations
+    :vartype upgradable_versions: azure.mgmt.elastic.operations.UpgradableVersionsOperations
+    :ivar monitor: MonitorOperations operations
+    :vartype monitor: azure.mgmt.elastic.operations.MonitorOperations
+    :ivar all_traffic_filters: AllTrafficFiltersOperations operations
+    :vartype all_traffic_filters: azure.mgmt.elastic.operations.AllTrafficFiltersOperations
+    :ivar list_associated_traffic_filters: ListAssociatedTrafficFiltersOperations operations
+    :vartype list_associated_traffic_filters:
+     azure.mgmt.elastic.operations.ListAssociatedTrafficFiltersOperations
+    :ivar create_and_associate_ip_filter: CreateAndAssociateIPFilterOperations operations
+    :vartype create_and_associate_ip_filter:
+     azure.mgmt.elastic.operations.CreateAndAssociateIPFilterOperations
+    :ivar create_and_associate_pl_filter: CreateAndAssociatePLFilterOperations operations
+    :vartype create_and_associate_pl_filter:
+     azure.mgmt.elastic.operations.CreateAndAssociatePLFilterOperations
+    :ivar associate_traffic_filter: AssociateTrafficFilterOperations operations
+    :vartype associate_traffic_filter:
+     azure.mgmt.elastic.operations.AssociateTrafficFilterOperations
+    :ivar detach_and_delete_traffic_filter: DetachAndDeleteTrafficFilterOperations operations
+    :vartype detach_and_delete_traffic_filter:
+     azure.mgmt.elastic.operations.DetachAndDeleteTrafficFilterOperations
+    :ivar detach_traffic_filter: DetachTrafficFilterOperations operations
+    :vartype detach_traffic_filter: azure.mgmt.elastic.operations.DetachTrafficFilterOperations
+    :ivar traffic_filters: TrafficFiltersOperations operations
+    :vartype traffic_filters: azure.mgmt.elastic.operations.TrafficFiltersOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g. 00000000-0000-0000-0000-000000000000).
+    :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
+     00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = MicrosoftElasticConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = MicrosoftElasticConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.monitors = MonitorsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+        self._serialize.client_side_validation = False
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.monitors = MonitorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.monitored_resources = MonitoredResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.deployment_info = DeploymentInfoOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.tag_rules = TagRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.vm_host = VMHostOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.vm_ingestion = VMIngestionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.vm_collection = VMCollectionOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.deployment_info = DeploymentInfoOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.external_user = ExternalUserOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.tag_rules = TagRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vm_host = VMHostOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vm_ingestion = VMIngestionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vm_collection = VMCollectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.upgradable_versions = UpgradableVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.monitor = MonitorOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.all_traffic_filters = AllTrafficFiltersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.list_associated_traffic_filters = ListAssociatedTrafficFiltersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.create_and_associate_ip_filter = CreateAndAssociateIPFilterOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.create_and_associate_pl_filter = CreateAndAssociatePLFilterOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.associate_traffic_filter = AssociateTrafficFilterOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.detach_and_delete_traffic_filter = DetachAndDeleteTrafficFilterOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.detach_traffic_filter = DetachTrafficFilterOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.traffic_filters = TrafficFiltersOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

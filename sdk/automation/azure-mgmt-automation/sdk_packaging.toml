@@ -4,3 +4,4 @@ package_pprint_name = "Automation"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+title = "AutomationClient"

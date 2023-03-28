@@ -6,98 +6,152 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AccessKeyInfoBase
 from ._models_py3 import AuthInfoBase
 from ._models_py3 import AzureKeyVaultProperties
 from ._models_py3 import AzureResource
 from ._models_py3 import AzureResourcePropertiesBase
+from ._models_py3 import BasicErrorDryrunPrerequisiteResult
+from ._models_py3 import ConfigurationInfo
+from ._models_py3 import ConfigurationName
+from ._models_py3 import ConfigurationNameItem
+from ._models_py3 import ConfigurationNameResult
+from ._models_py3 import ConfigurationResult
 from ._models_py3 import ConfluentBootstrapServer
 from ._models_py3 import ConfluentSchemaRegistry
+from ._models_py3 import CreateOrUpdateDryrunParameters
+from ._models_py3 import DatabaseAadAuthInfo
+from ._models_py3 import DryrunList
+from ._models_py3 import DryrunOperationPreview
+from ._models_py3 import DryrunParameters
+from ._models_py3 import DryrunPatch
+from ._models_py3 import DryrunPrerequisiteResult
+from ._models_py3 import DryrunResource
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
+from ._models_py3 import FirewallRules
 from ._models_py3 import KeyVaultSecretReferenceSecretInfo
 from ._models_py3 import KeyVaultSecretUriSecretInfo
-from ._models_py3 import LinkerList
 from ._models_py3 import LinkerPatch
+from ._models_py3 import LinkerProperties
 from ._models_py3 import LinkerResource
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
+from ._models_py3 import PermissionsMissingDryrunPrerequisiteResult
 from ._models_py3 import ProxyResource
+from ._models_py3 import PublicNetworkSolution
 from ._models_py3 import Resource
+from ._models_py3 import ResourceList
 from ._models_py3 import SecretAuthInfo
 from ._models_py3 import SecretInfoBase
 from ._models_py3 import SecretStore
+from ._models_py3 import SelfHostedServer
 from ._models_py3 import ServicePrincipalCertificateAuthInfo
 from ._models_py3 import ServicePrincipalSecretAuthInfo
 from ._models_py3 import SourceConfiguration
-from ._models_py3 import SourceConfigurationResult
 from ._models_py3 import SystemAssignedIdentityAuthInfo
 from ._models_py3 import SystemData
 from ._models_py3 import TargetServiceBase
+from ._models_py3 import UserAccountAuthInfo
 from ._models_py3 import UserAssignedIdentityAuthInfo
 from ._models_py3 import VNetSolution
 from ._models_py3 import ValidateOperationResult
 from ._models_py3 import ValidationResultItem
 from ._models_py3 import ValueSecretInfo
 
-
-from ._service_linker_management_client_enums import (
-    ActionType,
-    AuthType,
-    AzureResourceType,
-    ClientType,
-    CreatedByType,
-    Origin,
-    SecretType,
-    TargetServiceType,
-    VNetSolutionType,
-    ValidationResultStatus,
-)
+from ._service_linker_management_client_enums import AccessKeyPermissions
+from ._service_linker_management_client_enums import ActionType
+from ._service_linker_management_client_enums import AllowType
+from ._service_linker_management_client_enums import AuthType
+from ._service_linker_management_client_enums import AzureResourceType
+from ._service_linker_management_client_enums import ClientType
+from ._service_linker_management_client_enums import CreatedByType
+from ._service_linker_management_client_enums import DeleteOrUpdateBehavior
+from ._service_linker_management_client_enums import DryrunActionName
+from ._service_linker_management_client_enums import DryrunPrerequisiteResultType
+from ._service_linker_management_client_enums import DryrunPreviewOperationType
+from ._service_linker_management_client_enums import Origin
+from ._service_linker_management_client_enums import SecretType
+from ._service_linker_management_client_enums import TargetServiceType
+from ._service_linker_management_client_enums import VNetSolutionType
+from ._service_linker_management_client_enums import ValidationResultStatus
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AuthInfoBase',
-    'AzureKeyVaultProperties',
-    'AzureResource',
-    'AzureResourcePropertiesBase',
-    'ConfluentBootstrapServer',
-    'ConfluentSchemaRegistry',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'KeyVaultSecretReferenceSecretInfo',
-    'KeyVaultSecretUriSecretInfo',
-    'LinkerList',
-    'LinkerPatch',
-    'LinkerResource',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'ProxyResource',
-    'Resource',
-    'SecretAuthInfo',
-    'SecretInfoBase',
-    'SecretStore',
-    'ServicePrincipalCertificateAuthInfo',
-    'ServicePrincipalSecretAuthInfo',
-    'SourceConfiguration',
-    'SourceConfigurationResult',
-    'SystemAssignedIdentityAuthInfo',
-    'SystemData',
-    'TargetServiceBase',
-    'UserAssignedIdentityAuthInfo',
-    'VNetSolution',
-    'ValidateOperationResult',
-    'ValidationResultItem',
-    'ValueSecretInfo',
-    'ActionType',
-    'AuthType',
-    'AzureResourceType',
-    'ClientType',
-    'CreatedByType',
-    'Origin',
-    'SecretType',
-    'TargetServiceType',
-    'VNetSolutionType',
-    'ValidationResultStatus',
+    "AccessKeyInfoBase",
+    "AuthInfoBase",
+    "AzureKeyVaultProperties",
+    "AzureResource",
+    "AzureResourcePropertiesBase",
+    "BasicErrorDryrunPrerequisiteResult",
+    "ConfigurationInfo",
+    "ConfigurationName",
+    "ConfigurationNameItem",
+    "ConfigurationNameResult",
+    "ConfigurationResult",
+    "ConfluentBootstrapServer",
+    "ConfluentSchemaRegistry",
+    "CreateOrUpdateDryrunParameters",
+    "DatabaseAadAuthInfo",
+    "DryrunList",
+    "DryrunOperationPreview",
+    "DryrunParameters",
+    "DryrunPatch",
+    "DryrunPrerequisiteResult",
+    "DryrunResource",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "FirewallRules",
+    "KeyVaultSecretReferenceSecretInfo",
+    "KeyVaultSecretUriSecretInfo",
+    "LinkerPatch",
+    "LinkerProperties",
+    "LinkerResource",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PermissionsMissingDryrunPrerequisiteResult",
+    "ProxyResource",
+    "PublicNetworkSolution",
+    "Resource",
+    "ResourceList",
+    "SecretAuthInfo",
+    "SecretInfoBase",
+    "SecretStore",
+    "SelfHostedServer",
+    "ServicePrincipalCertificateAuthInfo",
+    "ServicePrincipalSecretAuthInfo",
+    "SourceConfiguration",
+    "SystemAssignedIdentityAuthInfo",
+    "SystemData",
+    "TargetServiceBase",
+    "UserAccountAuthInfo",
+    "UserAssignedIdentityAuthInfo",
+    "VNetSolution",
+    "ValidateOperationResult",
+    "ValidationResultItem",
+    "ValueSecretInfo",
+    "AccessKeyPermissions",
+    "ActionType",
+    "AllowType",
+    "AuthType",
+    "AzureResourceType",
+    "ClientType",
+    "CreatedByType",
+    "DeleteOrUpdateBehavior",
+    "DryrunActionName",
+    "DryrunPrerequisiteResultType",
+    "DryrunPreviewOperationType",
+    "Origin",
+    "SecretType",
+    "TargetServiceType",
+    "VNetSolutionType",
+    "ValidationResultStatus",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

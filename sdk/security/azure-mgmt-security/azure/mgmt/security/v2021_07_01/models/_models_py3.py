@@ -7,9 +7,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class Resource(_serialization.Model):
@@ -26,9 +30,9 @@ class Resource(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -37,12 +41,8 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
@@ -71,10 +71,10 @@ class Setting(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
@@ -84,18 +84,12 @@ class Setting(Resource):
         "kind": {"key": "kind", "type": "str"},
     }
 
-    _subtype_map = {
-        'kind': {'AlertSyncSettings': 'AlertSyncSettings', 'DataExportSettings': 'DataExportSettings'}
-    }
+    _subtype_map = {"kind": {"AlertSyncSettings": "AlertSyncSettings", "DataExportSettings": "DataExportSettings"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class AlertSyncSettings(Setting):
@@ -119,10 +113,10 @@ class AlertSyncSettings(Setting):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
@@ -133,18 +127,13 @@ class AlertSyncSettings(Setting):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is the alert sync setting enabled.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.kind = 'AlertSyncSettings'  # type: str
+        self.kind: str = "AlertSyncSettings"
         self.enabled = enabled
 
 
@@ -166,11 +155,11 @@ class CloudErrorBody(_serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -181,12 +170,8 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.code = None
         self.message = None
@@ -216,10 +201,10 @@ class DataExportSettings(Setting):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'kind': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "kind": {"required": True},
     }
 
     _attribute_map = {
@@ -230,18 +215,13 @@ class DataExportSettings(Setting):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: Is the data export setting enabled.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
-        self.kind = 'DataExportSettings'  # type: str
+        self.kind: str = "DataExportSettings"
         self.enabled = enabled
 
 
@@ -257,8 +237,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -266,12 +246,8 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.type = None
         self.info = None
@@ -289,7 +265,7 @@ class SettingsList(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -297,12 +273,7 @@ class SettingsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Setting"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Setting"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The settings list.
         :paramtype value: list[~azure.mgmt.security.v2021_07_01.models.Setting]

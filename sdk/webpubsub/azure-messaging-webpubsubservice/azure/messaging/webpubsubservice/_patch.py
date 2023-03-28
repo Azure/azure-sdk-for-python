@@ -55,13 +55,10 @@ def _parse_connection_string(connection_string: str, **kwargs: Any) -> Any:
                     segment, connection_string
                 )
             )
-
     if "endpoint" not in kwargs:
         raise ValueError("connection_string missing 'endpoint' field")
-
     if "accesskey" not in kwargs:
         raise ValueError("connection_string missing 'accesskey' field")
-
     return kwargs
 
 
@@ -108,7 +105,6 @@ class JwtCredentialPolicy(SansIOHTTPPolicy):
         }
         if self._user:
             data[self.NAME_CLAIM_TYPE] = self._user
-
         encoded = jwt.encode(
             payload=data,
             key=self._credential.key,

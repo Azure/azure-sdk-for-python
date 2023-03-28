@@ -9,6 +9,7 @@ from azure.core.pipeline.policies import RetryMode
 from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
 
 
+
 class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent = kwargs.get("user_agent")  # type: Optional[str]
@@ -29,9 +30,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.max_batch_size = kwargs.get("max_batch_size", self.prefetch)  # type: int
         self.receive_timeout = kwargs.get("receive_timeout", 0)  # type: int
         self.send_timeout = kwargs.get("send_timeout", 60)  # type: int
-        self.custom_endpoint_address = kwargs.get(
-            "custom_endpoint_address"
-        )  # type: Optional[str]
+        self.custom_endpoint_address = kwargs.get("custom_endpoint_address")  # type: Optional[str]
         self.connection_verify = kwargs.get("connection_verify")  # type: Optional[str]
         self.connection_port = DEFAULT_AMQPS_PORT
         self.custom_endpoint_hostname = None

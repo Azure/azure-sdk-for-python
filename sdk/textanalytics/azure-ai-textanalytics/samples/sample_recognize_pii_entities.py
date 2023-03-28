@@ -14,6 +14,8 @@ DESCRIPTION:
     In this sample, we will be working for a company that handles loan payments. To follow privacy guidelines,
     we need to redact all of our information before we make it public.
 
+    See more information in the service docs: https://aka.ms/azsdk/language/pii
+
 USAGE:
     python sample_recognize_pii_entities.py
 
@@ -21,8 +23,6 @@ USAGE:
     1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
-
-import os
 
 
 def sample_recognize_pii_entities() -> None:
@@ -33,6 +33,7 @@ def sample_recognize_pii_entities() -> None:
         "our customers"
     )
     # [START recognize_pii_entities]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

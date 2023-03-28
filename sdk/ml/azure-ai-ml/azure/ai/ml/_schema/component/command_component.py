@@ -7,7 +7,7 @@
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load
+from marshmallow import INCLUDE, fields, post_dump, post_load
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -44,15 +44,23 @@ class CommandComponentSchema(ComponentSchema, ParameterizedCommandSchema):
         values=UnionField(
             [
                 NestedField(OutputPortSchema),
-                NestedField(PrimitiveOutputSchema),
+                NestedField(PrimitiveOutputSchema, unknown=INCLUDE),
             ]
         ),
     )
+    properties = fields.Dict(keys=fields.Str(), values=fields.Raw())
+
+    @post_dump
+    def remove_unnecessary_fields(self, component_schema_dict, **kwargs):
+        # remove empty properties to keep the component spec unchanged
+        if not component_schema_dict.get("properties"):
+            component_schema_dict.pop("properties", None)
+        return component_schema_dict
 
 
 class RestCommandComponentSchema(CommandComponentSchema):
-    """When component load from rest, won't validate on name since there might
-    be existing component with invalid name."""
+    """When component load from rest, won't validate on name since there might be existing component with invalid
+    name."""
 
     name = fields.Str(required=True)
 
@@ -60,10 +68,8 @@ class RestCommandComponentSchema(CommandComponentSchema):
 class AnonymousCommandComponentSchema(AnonymousAssetSchema, CommandComponentSchema):
     """Anonymous command component schema.
 
-    Note inheritance follows order: AnonymousAssetSchema,
-    CommandComponentSchema because we need name and version to be
-    dump_only(marshmallow collects fields follows method resolution
-    order).
+    Note inheritance follows order: AnonymousAssetSchema, CommandComponentSchema because we need name and version to be
+    dump_only(marshmallow collects fields follows method resolution order).
     """
 
     @post_load

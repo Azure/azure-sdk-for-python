@@ -4,18 +4,18 @@
 from abc import ABC
 from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     LogVerbosity,
     NlpLearningRateScheduler,
-    SamplingAlgorithmType
+    SamplingAlgorithmType,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
-from azure.ai.ml.entities._job.automl.nlp.nlp_search_space import NlpSearchSpace
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
 from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters
 from azure.ai.ml.entities._job.automl.nlp.nlp_limit_settings import NlpLimitSettings
+from azure.ai.ml.entities._job.automl.nlp.nlp_search_space import NlpSearchSpace
 from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.utils import cast_to_specific_search_space
@@ -72,7 +72,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
                     message=msg,
                     no_personal_data_message=msg,
                     target=ErrorTarget.AUTOML,
-                    error_category=ErrorCategory.USER_ERROR
+                    error_category=ErrorCategory.USER_ERROR,
                 )
             self.set_training_parameters(**value)
 
@@ -185,13 +185,13 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self.validation_data = validation_data
 
     def set_limits(
-            self,
-            *,
-            max_trials: Optional[int] = 1,
-            max_concurrent_trials: Optional[int] = 1,
-            max_nodes: Optional[int] = 1,
-            timeout_minutes: int = None,
-            trial_timeout_minutes: int = None
+        self,
+        *,
+        max_trials: int = 1,
+        max_concurrent_trials: int = 1,
+        max_nodes: int = 1,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ) -> None:
         self._limits = NlpLimitSettings(
             max_trials=max_trials,
@@ -202,13 +202,12 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def set_sweep(
-            self,
-            *,
-            sampling_algorithm: Union[str, SamplingAlgorithmType],
-            early_termination: Optional[EarlyTerminationPolicy] = None
+        self,
+        *,
+        sampling_algorithm: Union[str, SamplingAlgorithmType],
+        early_termination: Optional[EarlyTerminationPolicy] = None,
     ):
-        """
-        Sweep settings for all AutoML NLP tasks.
+        """Sweep settings for all AutoML NLP tasks.
 
         :param sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
         Possible values include: "Grid", "Random", and "Bayesian".
@@ -223,20 +222,19 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._sweep.early_termination = early_termination or self._sweep.early_termination
 
     def set_training_parameters(
-            self,
-            *,
-            gradient_accumulation_steps: Optional[int] = None,
-            learning_rate: Optional[float] = None,
-            learning_rate_scheduler: Optional[Union[str, NlpLearningRateScheduler]] = None,
-            model_name: Optional[str] = None,
-            number_of_epochs: Optional[int] = None,
-            training_batch_size: Optional[int] = None,
-            validation_batch_size: Optional[int] = None,
-            warmup_ratio: Optional[float] = None,
-            weight_decay: Optional[float] = None
+        self,
+        *,
+        gradient_accumulation_steps: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[Union[str, NlpLearningRateScheduler]] = None,
+        model_name: Optional[str] = None,
+        number_of_epochs: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_ratio: Optional[float] = None,
+        weight_decay: Optional[float] = None,
     ) -> None:
-        """
-        Fix certain training parameters throughout the training procedure for all candidates.
+        """Fix certain training parameters throughout the training procedure for all candidates.
 
         :param gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
         pass. This must be a positive integer.
@@ -259,7 +257,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         self._training_parameters = self._training_parameters or NlpFixedParameters()
 
         self._training_parameters.gradient_accumulation_steps = (
-            gradient_accumulation_steps if gradient_accumulation_steps is not None
+            gradient_accumulation_steps
+            if gradient_accumulation_steps is not None
             else self._training_parameters.gradient_accumulation_steps
         )
 
@@ -286,7 +285,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
         self._training_parameters.validation_batch_size = (
-            validation_batch_size if validation_batch_size is not None
+            validation_batch_size
+            if validation_batch_size is not None
             else self._training_parameters.validation_batch_size
         )
 
@@ -304,16 +304,16 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         )
 
     def extend_search_space(self, value: Union[SearchSpace, List[SearchSpace]]) -> None:
-        """
-        Add (a) search space(s) for this AutoML NLP job.
+        """Add (a) search space(s) for this AutoML NLP job.
 
         :param value: either a SearchSpace object or a list of SearchSpace objects with nlp-specific parameters.
         :return: None.
         """
         self._search_space = self._search_space or []
         if isinstance(value, list):
-            self._search_space.extend([cast_to_specific_search_space(item, NlpSearchSpace, self.task_type)
-                                       for item in value])
+            self._search_space.extend(
+                [cast_to_specific_search_space(item, NlpSearchSpace, self.task_type) for item in value]
+            )
         else:
             self._search_space.append(cast_to_specific_search_space(value, NlpSearchSpace, self.task_type))
 
@@ -326,10 +326,8 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     def _restore_data_inputs(self):
         """Restore MLTableJobInputs to Inputs within data_settings.
 
-        self.training_data and self.validation_data should reflect what
-        user passed in (Input) Once we get response back from service
-        (as MLTableJobInput), we should set responsible ones back to
-        Input
+        self.training_data and self.validation_data should reflect what user passed in (Input) Once we get response back
+        from service (as MLTableJobInput), we should set responsible ones back to Input
         """
         super()._restore_data_inputs()
         self.training_data = self.training_data if self.training_data else None

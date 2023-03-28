@@ -31,7 +31,7 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 from packaging.version import parse
 
-from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, lambda_filter_azure_pkg
+from ci_tools.functions import MANAGEMENT_PACKAGE_IDENTIFIERS, lambda_filter_azure_pkg, str_to_bool
 from ci_tools.parsing import parse_require, ParsedSetup
 
 DEV_REQ_FILE = "dev_requirements.txt"
@@ -39,8 +39,6 @@ NEW_DEV_REQ_FILE = "new_dev_requirements.txt"
 
 
 logging.getLogger().setLevel(logging.INFO)
-
-
 
 
 def log_file(file_location, is_error=False):
@@ -79,17 +77,6 @@ def clean_coverage(coverage_dir):
             cleanup_folder(coverage_dir)
         else:
             raise
-
-
-def str_to_bool(input_string):
-    if isinstance(input_string, bool):
-        return input_string
-    elif input_string.lower() in ("true", "t", "1"):
-        return True
-    elif input_string.lower() in ("false", "f", "0"):
-        return False
-    else:
-        return False
 
 
 def run_check_call(
@@ -150,31 +137,6 @@ def is_error_code_5_allowed(target_pkg, pkg_name):
     else:
         return False
 
-def find_whl(package_name, version, whl_directory):
-    if not os.path.exists(whl_directory):
-        logging.error("Whl directory is incorrect")
-        exit(1)
-
-    parsed_version = parse(version)
-
-    logging.info("Searching whl for package {0}-{1}".format(package_name, parsed_version.base_version))
-    whl_name_format = "{0}-{1}*.whl".format(package_name.replace("-", "_"), parsed_version.base_version)
-    whls = []
-    for root, dirnames, filenames in os.walk(whl_directory):
-        for filename in fnmatch.filter(filenames, whl_name_format):
-            whls.append(os.path.join(root, filename))
-
-    whls = [os.path.relpath(w, whl_directory) for w in whls]
-
-    if not whls:
-        logging.error(
-            "whl is not found in whl directory {0} for package {1}-{2}".format(
-                whl_directory, package_name, parsed_version.base_version
-            )
-        )
-        exit(1)
-
-    return whls[0]
 
 # This method installs package from a pre-built whl
 def install_package_from_whl(package_whl_path, working_dir, python_sym_link=sys.executable):
@@ -243,9 +205,12 @@ def is_required_version_on_pypi(package_name: str, spec: str) -> bool:
     client = PyPIClient()
     versions = []
     try:
-        versions = [str(v) for v in client.get_ordered_versions(package_name) if str(v) in spec]
+        versions = client.get_ordered_versions(package_name)
+
+        if spec:
+            versions = [str(v) for v in versions if str(v) in spec]
     except:
-        logging.error("Package {} is not found on PyPI", package_name)
+        logging.error("Package {} is not found on PyPI".format(package_name))
     return versions
 
 

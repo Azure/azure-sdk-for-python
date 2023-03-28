@@ -4,3 +4,7 @@ extends:
   template: ./tests.yml
   parameters:
     TestMarkArgument: "core_sdk_test"
+    CloudConfig:
+      Public:
+        SubscriptionConfiguration: $(python-ml-core-sdk-sub-scope)
+        Location: eastus2euap

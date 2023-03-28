@@ -1,0 +1,160 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/configurations/policy?api-version=2022-09-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "556ec8a1-5286-4df8-8b82-ade5c4ff144b",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "155",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 03 Nov 2022 15:57:07 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "11",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "name": "1f8622f33afb4845823480ac4aaa9a2d",
+        "arguments": "--ccb_explore_adf --epsilon 0.20000000298023224 --power_t 0 -l 0.001 --cb_type mtr -q ::"
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/multislot/rank?api-version=2022-09-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "847",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "eventId": "123456789",
+        "actions": [
+          {
+            "id": "NewsArticle",
+            "features": [
+              {
+                "type": "News"
+              }
+            ]
+          },
+          {
+            "id": "SportsArticle",
+            "features": [
+              {
+                "type": "Sports"
+              }
+            ]
+          },
+          {
+            "id": "EntertainmentArticle",
+            "features": [
+              {
+                "type": "Entertainment"
+              }
+            ]
+          }
+        ],
+        "slots": [
+          {
+            "id": "Main Article",
+            "baselineAction": "NewsArticle",
+            "positionFeatures": [
+              {
+                "Size": "Large",
+                "Position": "Top Middle"
+              }
+            ],
+            "excludedActions": [
+              "SportsArticle",
+              "EntertainmentArticle"
+            ]
+          },
+          {
+            "id": "Side Bar",
+            "baselineAction": "SportsArticle",
+            "positionFeatures": [
+              {
+                "Size": "Small",
+                "Position": "Bottom Right"
+              }
+            ],
+            "excludedActions": [
+              "EntertainmentArticle"
+            ]
+          }
+        ],
+        "contextFeatures": [
+          {
+            "user": {
+              "profileType": "anonymousUser",
+              "latLong": "47.6,-122.1"
+            }
+          },
+          {
+            "environment": {
+              "dayOfMonth": "28",
+              "monthOfYear": "8",
+              "weather": "Sunny"
+            }
+          },
+          {
+            "device": {
+              "mobile": true,
+              "windows": true
+            }
+          },
+          {
+            "recentActivity": {
+              "itemsInCart": 3
+            }
+          }
+        ]
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "apim-request-id": "1f838062-5bdd-4db2-9763-f9bafd9c9889",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "201",
+        "Content-Type": "application/json; charset=utf-8",
+        "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
+        "Date": "Thu, 03 Nov 2022 15:57:07 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "5",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "slots": [
+          {
+            "id": "Main Article",
+            "rewardActionId": "NewsArticle"
+          },
+          {
+            "id": "Side Bar",
+            "rewardActionId": "SportsArticle"
+          }
+        ],
+        "eventId": "123456789"
+      }
+    }
+  ],
+  "Variables": {}
+}

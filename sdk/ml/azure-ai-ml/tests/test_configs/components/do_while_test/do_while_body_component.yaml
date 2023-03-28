@@ -1,0 +1,65 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+name: do_while_body_component
+display_name: do_while_body_component
+type: command
+is_deterministic: true
+tags:
+  codegenBy: mldesigner
+inputs:
+  input_1:
+    type: uri_folder
+  input_2:
+    type: uri_folder
+  bool_param:
+    type: boolean
+  int_param:
+    type: integer
+  float_param:
+    type: number
+  str_param:
+    type: string
+outputs:
+  output_1:
+    type: uri_folder
+  output_2:
+    type: uri_folder
+  condition:
+    type: boolean
+    is_control: true
+  bool_param_output:
+    type: boolean
+    is_control: true
+  int_param_output:
+    type: integer
+    is_control: true
+  float_param_output:
+    type: number
+    is_control: true
+  str_param_output:
+    type: string
+    is_control: true
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file:
+    channels:
+    - defaults
+    dependencies:
+    - python=3.8.12
+    - pip=21.2.2
+    - pip:
+      - --extra-index-url=https://azuremlsdktestpypi.azureedge.net/sdk-cli-v2
+      - mldesigner==0.1.0b6
+      - mlflow==1.29.0
+      - azureml-mlflow==1.45.0
+      - azure-ai-ml==1.0.0
+      - azure-core==1.26.0
+      - azure-common==1.1.28
+      - azureml-core==1.45.0.post2
+      - azure-ml-component==0.9.13.post1
+      - azure-identity==1.11.0
+command: mldesigner execute --source entry.py --name do_while_body_component --inputs
+  input_1="${{inputs.input_1}}" input_2="${{inputs.input_2}}" bool_param="${{inputs.bool_param}}"
+  int_param="${{inputs.int_param}}" float_param="${{inputs.float_param}}" str_param="${{inputs.str_param}}"
+  --outputs output_1="${{outputs.output_1}}" output_2="${{outputs.output_2}}" condition="${{outputs.condition}}"
+  bool_param_output="${{outputs.bool_param_output}}" int_param_output="${{outputs.int_param_output}}"
+  float_param_output="${{outputs.float_param_output}}" str_param_output="${{outputs.str_param_output}}"

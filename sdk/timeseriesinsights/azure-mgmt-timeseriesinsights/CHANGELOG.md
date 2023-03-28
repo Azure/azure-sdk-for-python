@@ -1,5 +1,70 @@
 # Release History
 
+## 2.0.0b1 (2022-10-28)
+
+### Features Added
+
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Model AzureEventSourceProperties has a new parameter local_timestamp
+  - Model AzureEventSourceProperties has a new parameter time
+  - Model AzureEventSourceProperties has a new parameter type
+  - Model EventHubEventSourceCommonProperties has a new parameter local_timestamp
+  - Model EventHubEventSourceCommonProperties has a new parameter time
+  - Model EventHubEventSourceCommonProperties has a new parameter type
+  - Model EventHubEventSourceCreateOrUpdateParameters has a new parameter local_timestamp_properties_local_timestamp
+  - Model EventHubEventSourceCreateOrUpdateParameters has a new parameter time
+  - Model EventHubEventSourceCreateOrUpdateParameters has a new parameter type
+  - Model EventHubEventSourceCreationProperties has a new parameter local_timestamp
+  - Model EventHubEventSourceCreationProperties has a new parameter time
+  - Model EventHubEventSourceCreationProperties has a new parameter type
+  - Model EventHubEventSourceResource has a new parameter local_timestamp
+  - Model EventHubEventSourceResource has a new parameter time
+  - Model EventHubEventSourceResource has a new parameter type_properties_ingress_start_at_type
+  - Model EventHubEventSourceResourceProperties has a new parameter local_timestamp
+  - Model EventHubEventSourceResourceProperties has a new parameter time
+  - Model EventHubEventSourceResourceProperties has a new parameter type
+  - Model EventSourceCommonProperties has a new parameter local_timestamp
+  - Model EventSourceCommonProperties has a new parameter time
+  - Model EventSourceCommonProperties has a new parameter type
+  - Model Gen2EnvironmentCreateOrUpdateParameters has a new parameter private_endpoint_connections
+  - Model Gen2EnvironmentCreateOrUpdateParameters has a new parameter public_network_access
+  - Model Gen2EnvironmentResource has a new parameter private_endpoint_connections
+  - Model Gen2EnvironmentResource has a new parameter public_network_access
+  - Model Gen2EnvironmentResourceProperties has a new parameter private_endpoint_connections
+  - Model Gen2EnvironmentResourceProperties has a new parameter public_network_access
+  - Model IoTHubEventSourceCommonProperties has a new parameter local_timestamp
+  - Model IoTHubEventSourceCommonProperties has a new parameter time
+  - Model IoTHubEventSourceCommonProperties has a new parameter type
+  - Model IoTHubEventSourceCreateOrUpdateParameters has a new parameter local_timestamp_properties_local_timestamp
+  - Model IoTHubEventSourceCreateOrUpdateParameters has a new parameter time
+  - Model IoTHubEventSourceCreateOrUpdateParameters has a new parameter type
+  - Model IoTHubEventSourceCreationProperties has a new parameter local_timestamp
+  - Model IoTHubEventSourceCreationProperties has a new parameter time
+  - Model IoTHubEventSourceCreationProperties has a new parameter type
+  - Model IoTHubEventSourceResource has a new parameter local_timestamp
+  - Model IoTHubEventSourceResource has a new parameter time
+  - Model IoTHubEventSourceResource has a new parameter type_properties_ingress_start_at_type
+  - Model IoTHubEventSourceResourceProperties has a new parameter local_timestamp
+  - Model IoTHubEventSourceResourceProperties has a new parameter time
+  - Model IoTHubEventSourceResourceProperties has a new parameter type
+  - Model Operation has a new parameter origin
+  - Model Operation has a new parameter service_specification
+
+### Breaking Changes
+
+  - Model EventHubEventSourceMutableProperties no longer has parameter local_timestamp
+  - Model EventHubEventSourceUpdateParameters no longer has parameter local_timestamp
+  - Model EventSourceMutableProperties no longer has parameter local_timestamp
+  - Model IoTHubEventSourceMutableProperties no longer has parameter local_timestamp
+  - Model IoTHubEventSourceUpdateParameters no longer has parameter local_timestamp
+  - Parameter kind of model EnvironmentUpdateParameters is now required
+  - Parameter kind of model EventHubEventSourceUpdateParameters is now required
+  - Parameter kind of model EventSourceUpdateParameters is now required
+  - Parameter kind of model Gen1EnvironmentUpdateParameters is now required
+  - Parameter kind of model Gen2EnvironmentUpdateParameters is now required
+  - Parameter kind of model IoTHubEventSourceUpdateParameters is now required
+
 ## 1.0.0 (2021-03-26)
 
 **Features**

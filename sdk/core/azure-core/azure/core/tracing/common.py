@@ -25,29 +25,20 @@
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
 from contextlib import contextmanager
+from typing import Any, Optional, Callable, Type, Generator
 import warnings
 
 from ._abstract_span import AbstractSpan
 from ..settings import settings
 
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Union, Callable, List, Type, Generator
-
-
 __all__ = [
-    'change_context',
-    'with_current_context',
+    "change_context",
+    "with_current_context",
 ]
 
 
-def get_function_and_class_name(func, *args):
-    # type: (Callable, List[Any]) -> str
+def get_function_and_class_name(func: Callable, *args) -> str:
     """
     Given a function and its unamed arguments, returns class_name.function_name. It assumes the first argument
     is `self`. If there are no arguments then it only returns the function name.
@@ -63,9 +54,9 @@ def get_function_and_class_name(func, *args):
             return "{}.{}".format(args[0].__class__.__name__, func.__name__)  # pylint: disable=protected-access
         return func.__name__
 
+
 @contextmanager
-def change_context(span):
-    # type: (Optional[AbstractSpan]) -> Generator
+def change_context(span: Optional[AbstractSpan]) -> Generator:
     """Execute this block inside the given context and restore it afterwards.
 
     This does not start and ends the span, but just make sure all code is executed within
@@ -77,7 +68,7 @@ def change_context(span):
     :type span: AbstractSpan
     :rtype: contextmanager
     """
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is None or span is None:
         yield
     else:
@@ -86,7 +77,10 @@ def change_context(span):
                 yield
         except AttributeError:
             # This plugin does not support "change_context"
-            warnings.warn('Your tracing plugin should be updated to support "change_context"', DeprecationWarning)
+            warnings.warn(
+                'Your tracing plugin should be updated to support "change_context"',
+                DeprecationWarning,
+            )
             original_span = span_impl_type.get_current_span()
             try:
                 span_impl_type.set_current_span(span)
@@ -95,15 +89,14 @@ def change_context(span):
                 span_impl_type.set_current_span(original_span)
 
 
-def with_current_context(func):
-    # type: (Callable) -> Any
+def with_current_context(func: Callable) -> Any:
     """Passes the current spans to the new context the function will be run in.
 
     :param func: The function that will be run in the new context
     :return: The func wrapped with correct context
     :rtype: callable
     """
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is None:
         return func
 

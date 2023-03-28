@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the authentication type being used for connecting to the endpoint. Defaults to
     'KeyBased'. If 'KeyBased' is selected, a connection string must be specified (at least the
     primary connection string). If 'IdentityBased' is select, the endpointUri and entityPath
@@ -21,31 +20,32 @@ class AuthenticationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     KEY_BASED = "KeyBased"
     IDENTITY_BASED = "IdentityBased"
 
-class ConnectionPropertiesProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state.
-    """
+
+class ConnectionPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ConnectionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of time series connection resource.
-    """
+
+class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of time series connection resource."""
 
     AZURE_DATA_EXPLORER = "AzureDataExplorer"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DigitalTwinsIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DigitalTwinsIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of Managed Identity used by the DigitalTwinsInstance. Only SystemAssigned is
     supported.
     """
@@ -53,9 +53,9 @@ class DigitalTwinsIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state.
-    """
+
+class EndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state."""
 
     PROVISIONING = "Provisioning"
     DELETING = "Deleting"
@@ -70,26 +70,26 @@ class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     MOVING = "Moving"
     DISABLED = "Disabled"
 
-class EndpointType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of Digital Twins endpoint
-    """
+
+class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of Digital Twins endpoint."""
 
     EVENT_HUB = "EventHub"
     EVENT_GRID = "EventGrid"
     SERVICE_BUS = "ServiceBus"
 
-class PrivateLinkServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of a private endpoint connection.
-    """
+
+class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a private endpoint connection."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state."""
 
     PROVISIONING = "Provisioning"
     DELETING = "Deleting"
@@ -103,23 +103,23 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RESTORING = "Restoring"
     MOVING = "Moving"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Public network access for the DigitalTwinsInstance.
-    """
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Public network access for the DigitalTwinsInstance."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class Reason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Message providing the reason why the given name is invalid.
-    """
+
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Message providing the reason why the given name is invalid."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class TimeSeriesDatabaseConnectionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state.
-    """
+
+class TimeSeriesDatabaseConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state."""
 
     PROVISIONING = "Provisioning"
     DELETING = "Deleting"

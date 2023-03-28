@@ -27,7 +27,7 @@
 from collections.abc import AsyncIterator
 from io import BytesIO
 
-import js # pylint: disable=import-error
+import js  # pylint: disable=import-error
 from pyodide import JsException  # pylint: disable=import-error
 from pyodide.http import pyfetch  # pylint: disable=import-error
 
@@ -41,7 +41,6 @@ from azure.core.pipeline.transport import HttpRequest, AsyncioRequestsTransport
 
 class PyodideTransportResponse(AsyncHttpResponseImpl):
     """Async response object for the `PyodideTransport`."""
-
 
     def _js_stream(self):
         """So we get a fresh stream every time."""
@@ -61,6 +60,7 @@ class PyodideTransportResponse(AsyncHttpResponseImpl):
         """Backcompat"""
         if self._content is None:
             self._content = await self._internal_response.clone().bytes()
+
 
 class PyodideStreamDownloadGenerator(AsyncIterator):
     """Simple stream download generator that returns the contents of
@@ -105,6 +105,7 @@ class PyodideStreamDownloadGenerator(AsyncIterator):
         self._stream.seek(start_pos)
         self._buffer_left -= self._block_size
         return self._stream.read(self._block_size)
+
 
 class PyodideTransport(AsyncioRequestsTransport):
     """**This object is experimental**, meaning it may be changed in a future release

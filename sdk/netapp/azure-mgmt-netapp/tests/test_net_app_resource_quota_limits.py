@@ -15,3 +15,4 @@ class TestNetAppResourceQuota(AzureMgmtRecordedTestCase):
         limits = self.client.net_app_resource_quota_limits.list(LOCATION)
 
         assert limits is not None
+        assert len(list(limits)) > 0

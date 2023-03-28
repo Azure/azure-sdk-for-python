@@ -1,5 +1,105 @@
 # Release History
 
+## 23.0.0 (2023-03-27)
+
+### Features Added
+
+  - Added operation ApplicationsOperations.begin_refresh_permissions
+  - Added operation PolicyExemptionsOperations.update
+  - Added operation group JitRequestsOperations
+  - Model Application has a new parameter artifacts
+  - Model Application has a new parameter authorizations
+  - Model Application has a new parameter billing_details
+  - Model Application has a new parameter created_by
+  - Model Application has a new parameter customer_support
+  - Model Application has a new parameter jit_access_policy
+  - Model Application has a new parameter management_mode
+  - Model Application has a new parameter publisher_tenant_id
+  - Model Application has a new parameter support_urls
+  - Model Application has a new parameter updated_by
+  - Model ApplicationDefinition has a new parameter deployment_policy
+  - Model ApplicationDefinition has a new parameter locking_policy
+  - Model ApplicationDefinition has a new parameter management_policy
+  - Model ApplicationDefinition has a new parameter notification_policy
+  - Model ApplicationDefinition has a new parameter policies
+  - Model ApplicationPatchable has a new parameter artifacts
+  - Model ApplicationPatchable has a new parameter authorizations
+  - Model ApplicationPatchable has a new parameter billing_details
+  - Model ApplicationPatchable has a new parameter created_by
+  - Model ApplicationPatchable has a new parameter customer_support
+  - Model ApplicationPatchable has a new parameter jit_access_policy
+  - Model ApplicationPatchable has a new parameter management_mode
+  - Model ApplicationPatchable has a new parameter publisher_tenant_id
+  - Model ApplicationPatchable has a new parameter support_urls
+  - Model ApplicationPatchable has a new parameter updated_by
+  - Model PolicyAssignment has a new parameter overrides
+  - Model PolicyAssignment has a new parameter resource_selectors
+  - Model PolicyAssignmentUpdate has a new parameter overrides
+  - Model PolicyAssignmentUpdate has a new parameter resource_selectors
+  - Model PolicyExemption has a new parameter assignment_scope_validation
+  - Model PolicyExemption has a new parameter resource_selectors
+
+### Breaking Changes
+
+  - Model ApplicationDefinition no longer has parameter identity
+  - Parameter name of model ApplicationArtifact is now required
+  - Parameter type of model ApplicationArtifact is now required
+  - Parameter uri of model ApplicationArtifact is now required
+
+## 23.0.0b1 (2023-02-22)
+
+### Features Added
+
+  - Added operation ApplicationsOperations.begin_refresh_permissions
+  - Added operation group JitRequestsOperations
+  - Model Application has a new parameter artifacts
+  - Model Application has a new parameter authorizations
+  - Model Application has a new parameter billing_details
+  - Model Application has a new parameter created_by
+  - Model Application has a new parameter customer_support
+  - Model Application has a new parameter jit_access_policy
+  - Model Application has a new parameter management_mode
+  - Model Application has a new parameter publisher_tenant_id
+  - Model Application has a new parameter support_urls
+  - Model Application has a new parameter updated_by
+  - Model ApplicationDefinition has a new parameter deployment_policy
+  - Model ApplicationDefinition has a new parameter locking_policy
+  - Model ApplicationDefinition has a new parameter management_policy
+  - Model ApplicationDefinition has a new parameter notification_policy
+  - Model ApplicationDefinition has a new parameter policies
+  - Model ApplicationPatchable has a new parameter artifacts
+  - Model ApplicationPatchable has a new parameter authorizations
+  - Model ApplicationPatchable has a new parameter billing_details
+  - Model ApplicationPatchable has a new parameter created_by
+  - Model ApplicationPatchable has a new parameter customer_support
+  - Model ApplicationPatchable has a new parameter jit_access_policy
+  - Model ApplicationPatchable has a new parameter management_mode
+  - Model ApplicationPatchable has a new parameter publisher_tenant_id
+  - Model ApplicationPatchable has a new parameter support_urls
+  - Model ApplicationPatchable has a new parameter updated_by
+
+### Breaking Changes
+
+  - Model ApplicationDefinition no longer has parameter identity
+  - Parameter name of model ApplicationArtifact is now required
+  - Parameter type of model ApplicationArtifact is now required
+  - Parameter uri of model ApplicationArtifact is now required
+
+## 22.1.0b1 (2023-02-16)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
+## 22.0.0 (2022-12-15)
+
+### Breaking Changes
+
+  - Renamed operation TagsOperations.create_or_update_at_scope to TagsOperations.begin_create_or_update_at_scope
+  - Renamed operation TagsOperations.delete_at_scope to TagsOperations.begin_delete_at_scope
+  - Renamed operation TagsOperations.update_at_scope to TagsOperations.begin_update_at_scope
+
 ## 21.2.1 (2022-10-20)
 
 ### Bugs Fixed

@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from _router_test_case_async import AsyncRouterTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from _router_test_case_async import AsyncRouterRecordedTestCase
 from _decorators_async import RouterPreparersAsync
 from _validators import ExceptionPolicyValidator
 from _shared.asynctestcase import AsyncCommunicationTestCase
@@ -50,14 +51,7 @@ exception_actions = [
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestExceptionPolicyAsync(AsyncRouterTestCase):
-    def __init__(self, method_name):
-        super(TestExceptionPolicyAsync, self).__init__(method_name)
-        self.exception_policy_ids = {}  # type: Dict[str, List[str]]
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-
+class TestExceptionPolicyAsync(AsyncRouterRecordedTestCase):
     async def clean_up(self):
         # delete in live mode
         if not self.is_playback():
@@ -164,16 +158,8 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
         else:
             self.classification_policy_ids[self._testMethodName] = [cp_id]
 
-    def setUp(self):
-        super(TestExceptionPolicyAsync, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestExceptionPolicyAsync, self).tearDown()
-
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')
@@ -230,7 +216,8 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         exception_rules = exception_rules
                     )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')
@@ -311,7 +298,8 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         exception_rules = updated_exception_rules
                     )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')
@@ -391,7 +379,8 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         exception_rules = updated_exception_rules
                     )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')
@@ -459,7 +448,8 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                         exception_rules = exception_rules
                     )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')
@@ -521,7 +511,8 @@ class TestExceptionPolicyAsync(AsyncRouterTestCase):
                     assert nfe.value.reason == "Not Found"
                     assert nfe.value.status_code == 404
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_classification_policy')

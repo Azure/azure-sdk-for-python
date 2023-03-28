@@ -36,7 +36,7 @@ class TestSearchIndexingBufferedSenderAsync(AzureRecordedTestCase):
                     doc_count = await self._test_merge_documents_missing(client, batch_client, doc_count)
                     doc_count = await self._test_merge_or_upload_documents(client, batch_client, doc_count)
         finally:
-            batch_client.close()
+            await batch_client.close()
 
     async def _test_upload_documents_new(self, client, batch_client, doc_count):
         batch_client._batch_action_count = 2

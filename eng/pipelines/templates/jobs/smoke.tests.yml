@@ -69,8 +69,8 @@ jobs:
             Location: 'eastus2euap'
           Python_37_Windows (AzureCloud):
             PythonVersion: '3.7'
-            Pool: "azsdk-pool-mms-win-2019-general"
-            OSVmImage: "MMS2019"
+            Pool: "azsdk-pool-mms-win-2022-general"
+            OSVmImage: "MMS2022"
             SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
             ArmTemplateParameters: $(azureCloudArmParameters)
           Python_38_Windows (AzureCloud):
@@ -192,8 +192,8 @@ jobs:
         - pwsh: |
             $ErrorActionPreference = "Continue"
             while ($retries++ -lt 15) {
-              Write-Host "pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
-              pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
+              Write-Host "python -m pip install -r $(requirements) --no-deps --upgrade --no-cache-dir"
+              python -m pip install -r "$(requirements)" --no-deps --upgrade --no-cache-dir
               if ($LASTEXITCODE) {
                 if ($retries -ge 15) {
                   exit $LASTEXITCODE
@@ -208,12 +208,12 @@ jobs:
 
       - ${{ if eq(parameters.Daily, true) }}:
         - pwsh: |
-            pip install -r "$(requirements)" --pre --no-deps --upgrade `
+            python -m pip install -r "$(requirements)" --pre --no-deps --upgrade `
               --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
 
           displayName: Install requirements from dev feed without dependencies
 
-      - pwsh: pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_async.txt
+      - pwsh: python -m pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_async.txt
         displayName: "Install requirements_async.txt"
         condition: and(succeeded(), ne(variables['SkipAsyncInstall'], true))
 
@@ -222,10 +222,10 @@ jobs:
             | Out-File $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
         displayName: Create dependency list from installed packages
 
-      - script: pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
+      - script: python -m pip install -r $(Build.SourcesDirectory)/common/smoketest/requirements_dependencies.txt
         displayName: Install package dependencies from PyPI
 
-      - script: pip freeze
+      - script: python -m pip freeze
         displayName: Show installed packages (pip freeze)
 
       - template: /eng/common/TestResources/deploy-test-resources.yml

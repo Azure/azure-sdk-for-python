@@ -13,7 +13,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestModelSchema:
     def test_deserialize_and_serialize(self) -> None:
         path = Path("./tests/test_configs/model/model_full.yml")

@@ -34,7 +34,7 @@ steps:
   - script: |
       python -m pip install pip==20.3.3
       python -m pip install wheel==0.37.0
-      pip install -r eng/ci_tools.txt
+      python -m pip install -r eng/ci_tools.txt
       pip --version
       pip freeze
     displayName: 'Prep Environment'
@@ -79,45 +79,19 @@ steps:
       displayName: Dump Test-Proxy Logs
       condition: succeededOrFailed()
 
-  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
-    parameters:
-      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
-      ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
-
-  - task: PublishPipelineArtifact@1
-    displayName: Publish Tox Logs
-    condition: failed()
-    continueOnError: true
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)/_tox_logs'
-      artifactType: 'pipeline'
-
   - ${{ parameters.AfterTestSteps }}
 
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_coverage'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_coverage'
+      CustomCondition: '${{ parameters.RunCoverage }}'
+
   - pwsh: |
-      if (Test-Path -Path '.\_coverage\') {
-        Get-ChildItem .\_coverage\ -Recurse |
-        Foreach-Object {
-          Get-Content $_
-        }
-      }
-    displayName: 'Show .coverage files'
+      python -m pip install coverage==4.5.4
+      python scripts/devops_tasks/create_coverage.py
+    displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
-
-  - task: PublishPipelineArtifact@1
-    displayName: 'Publish .coverage files'
-    continueOnError: true
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
-    inputs:
-      targetPath: '$(Build.SourcesDirectory)/_coverage'
-      artifactType: 'pipeline'
-
-  - task: PublishTestResults@2
-    condition: always()
-    inputs:
-      testResultsFiles: '**/*test*.xml'
-      testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
-      failTaskOnFailedTests: true
 
   - task: PythonScript@0
     displayName: 'Test Samples'
@@ -129,3 +103,29 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
+
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/_tox_logs'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_tox_logs'
+      CustomCondition: failed()
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFiles: '**/*test*.xml'
+      testRunTitle: '${{ parameters.ServiceDirectory }} ${{ parameters.CloudName }} $(Agent.JobName)'
+      failTaskOnFailedTests: true
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'

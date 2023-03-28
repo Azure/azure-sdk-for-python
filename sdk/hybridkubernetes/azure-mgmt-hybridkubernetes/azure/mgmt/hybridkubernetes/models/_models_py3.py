@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._connected_kubernetes_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -31,22 +40,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -67,40 +74,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class ConnectedCluster(TrackedResource):
+class ConnectedCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Represents a connected cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -115,17 +122,17 @@ class ConnectedCluster(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: Required. The identity of the connected cluster.
-    :type identity: ~connected_kubernetes_client.models.ConnectedClusterIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar identity: The identity of the connected cluster. Required.
+    :vartype identity: ~azure.mgmt.hybridkubernetes.models.ConnectedClusterIdentity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~connected_kubernetes_client.models.SystemData
-    :param agent_public_key_certificate: Required. Base64 encoded public certificate used by the
-     agent to do the initial handshake to the backend services in Azure.
-    :type agent_public_key_certificate: str
+    :vartype system_data: ~azure.mgmt.hybridkubernetes.models.SystemData
+    :ivar agent_public_key_certificate: Base64 encoded public certificate used by the agent to do
+     the initial handshake to the backend services in Azure. Required.
+    :vartype agent_public_key_certificate: str
     :ivar kubernetes_version: The Kubernetes version of the connected cluster resource.
     :vartype kubernetes_version: str
     :ivar total_node_count: Number of nodes present in the connected cluster resource.
@@ -134,15 +141,14 @@ class ConnectedCluster(TrackedResource):
     :vartype total_core_count: int
     :ivar agent_version: Version of the agent running on the connected cluster resource.
     :vartype agent_version: str
-    :param provisioning_state: Provisioning state of the connected cluster resource. Possible
-     values include: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting",
-     "Accepted".
-    :type provisioning_state: str or ~connected_kubernetes_client.models.ProvisioningState
-    :param distribution: The Kubernetes distribution running on this connected cluster.
-    :type distribution: str
-    :param infrastructure: The infrastructure on which the Kubernetes cluster represented by this
+    :ivar provisioning_state: Provisioning state of the connected cluster resource. Known values
+     are: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+    :vartype provisioning_state: str or ~azure.mgmt.hybridkubernetes.models.ProvisioningState
+    :ivar distribution: The Kubernetes distribution running on this connected cluster.
+    :vartype distribution: str
+    :ivar infrastructure: The infrastructure on which the Kubernetes cluster represented by this
      connected cluster is running on.
-    :type infrastructure: str
+    :vartype infrastructure: str
     :ivar offering: Connected cluster offering.
     :vartype offering: str
     :ivar managed_identity_certificate_expiration_time: Expiration time of the managed identity
@@ -151,64 +157,86 @@ class ConnectedCluster(TrackedResource):
     :ivar last_connectivity_time: Time representing the last instance when heart beat was received
      from the cluster.
     :vartype last_connectivity_time: ~datetime.datetime
-    :ivar connectivity_status: Represents the connectivity status of the connected cluster.
-     Possible values include: "Connecting", "Connected", "Offline", "Expired".
-    :vartype connectivity_status: str or ~connected_kubernetes_client.models.ConnectivityStatus
+    :ivar connectivity_status: Represents the connectivity status of the connected cluster. Known
+     values are: "Connecting", "Connected", "Offline", and "Expired".
+    :vartype connectivity_status: str or ~azure.mgmt.hybridkubernetes.models.ConnectivityStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'identity': {'required': True},
-        'system_data': {'readonly': True},
-        'agent_public_key_certificate': {'required': True},
-        'kubernetes_version': {'readonly': True},
-        'total_node_count': {'readonly': True},
-        'total_core_count': {'readonly': True},
-        'agent_version': {'readonly': True},
-        'offering': {'readonly': True},
-        'managed_identity_certificate_expiration_time': {'readonly': True},
-        'last_connectivity_time': {'readonly': True},
-        'connectivity_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "identity": {"required": True},
+        "system_data": {"readonly": True},
+        "agent_public_key_certificate": {"required": True},
+        "kubernetes_version": {"readonly": True},
+        "total_node_count": {"readonly": True},
+        "total_core_count": {"readonly": True},
+        "agent_version": {"readonly": True},
+        "offering": {"readonly": True},
+        "managed_identity_certificate_expiration_time": {"readonly": True},
+        "last_connectivity_time": {"readonly": True},
+        "connectivity_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ConnectedClusterIdentity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'agent_public_key_certificate': {'key': 'properties.agentPublicKeyCertificate', 'type': 'str'},
-        'kubernetes_version': {'key': 'properties.kubernetesVersion', 'type': 'str'},
-        'total_node_count': {'key': 'properties.totalNodeCount', 'type': 'int'},
-        'total_core_count': {'key': 'properties.totalCoreCount', 'type': 'int'},
-        'agent_version': {'key': 'properties.agentVersion', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'distribution': {'key': 'properties.distribution', 'type': 'str'},
-        'infrastructure': {'key': 'properties.infrastructure', 'type': 'str'},
-        'offering': {'key': 'properties.offering', 'type': 'str'},
-        'managed_identity_certificate_expiration_time': {'key': 'properties.managedIdentityCertificateExpirationTime', 'type': 'iso-8601'},
-        'last_connectivity_time': {'key': 'properties.lastConnectivityTime', 'type': 'iso-8601'},
-        'connectivity_status': {'key': 'properties.connectivityStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ConnectedClusterIdentity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "agent_public_key_certificate": {"key": "properties.agentPublicKeyCertificate", "type": "str"},
+        "kubernetes_version": {"key": "properties.kubernetesVersion", "type": "str"},
+        "total_node_count": {"key": "properties.totalNodeCount", "type": "int"},
+        "total_core_count": {"key": "properties.totalCoreCount", "type": "int"},
+        "agent_version": {"key": "properties.agentVersion", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "distribution": {"key": "properties.distribution", "type": "str"},
+        "infrastructure": {"key": "properties.infrastructure", "type": "str"},
+        "offering": {"key": "properties.offering", "type": "str"},
+        "managed_identity_certificate_expiration_time": {
+            "key": "properties.managedIdentityCertificateExpirationTime",
+            "type": "iso-8601",
+        },
+        "last_connectivity_time": {"key": "properties.lastConnectivityTime", "type": "iso-8601"},
+        "connectivity_status": {"key": "properties.connectivityStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        identity: "ConnectedClusterIdentity",
+        identity: "_models.ConnectedClusterIdentity",
         agent_public_key_certificate: str,
         tags: Optional[Dict[str, str]] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         distribution: Optional[str] = None,
         infrastructure: Optional[str] = None,
         **kwargs
     ):
-        super(ConnectedCluster, self).__init__(tags=tags, location=location, **kwargs)
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword identity: The identity of the connected cluster. Required.
+        :paramtype identity: ~azure.mgmt.hybridkubernetes.models.ConnectedClusterIdentity
+        :keyword agent_public_key_certificate: Base64 encoded public certificate used by the agent to
+         do the initial handshake to the backend services in Azure. Required.
+        :paramtype agent_public_key_certificate: str
+        :keyword provisioning_state: Provisioning state of the connected cluster resource. Known values
+         are: "Succeeded", "Failed", "Canceled", "Provisioning", "Updating", "Deleting", and "Accepted".
+        :paramtype provisioning_state: str or ~azure.mgmt.hybridkubernetes.models.ProvisioningState
+        :keyword distribution: The Kubernetes distribution running on this connected cluster.
+        :paramtype distribution: str
+        :keyword infrastructure: The infrastructure on which the Kubernetes cluster represented by this
+         connected cluster is running on.
+        :paramtype infrastructure: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.system_data = None
         self.agent_public_key_certificate = agent_public_key_certificate
@@ -225,7 +253,7 @@ class ConnectedCluster(TrackedResource):
         self.connectivity_status = None
 
 
-class ConnectedClusterIdentity(msrest.serialization.Model):
+class ConnectedClusterIdentity(_serialization.Model):
     """Identity for the connected cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -238,91 +266,94 @@ class ConnectedClusterIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant id associated with the connected cluster. This property will only
      be provided for a system assigned identity.
     :vartype tenant_id: str
-    :param type: Required. The type of identity used for the connected cluster. The type
-     'SystemAssigned, includes a system created identity. The type 'None' means no identity is
-     assigned to the connected cluster. Possible values include: "None", "SystemAssigned". Default
-     value: "SystemAssigned".
-    :type type: str or ~connected_kubernetes_client.models.ResourceIdentityType
+    :ivar type: The type of identity used for the connected cluster. The type 'SystemAssigned,
+     includes a system created identity. The type 'None' means no identity is assigned to the
+     connected cluster. Known values are: "None" and "SystemAssigned".
+    :vartype type: str or ~azure.mgmt.hybridkubernetes.models.ResourceIdentityType
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Union[str, "ResourceIdentityType"] = "SystemAssigned",
-        **kwargs
-    ):
-        super(ConnectedClusterIdentity, self).__init__(**kwargs)
+    def __init__(self, *, type: Union[str, "_models.ResourceIdentityType"] = "SystemAssigned", **kwargs):
+        """
+        :keyword type: The type of identity used for the connected cluster. The type 'SystemAssigned,
+         includes a system created identity. The type 'None' means no identity is assigned to the
+         connected cluster. Known values are: "None" and "SystemAssigned".
+        :paramtype type: str or ~azure.mgmt.hybridkubernetes.models.ResourceIdentityType
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class ConnectedClusterList(msrest.serialization.Model):
+class ConnectedClusterList(_serialization.Model):
     """The paginated list of connected Clusters.
 
-    :param value: The list of connected clusters.
-    :type value: list[~connected_kubernetes_client.models.ConnectedCluster]
-    :param next_link: The link to fetch the next page of connected cluster.
-    :type next_link: str
+    :ivar value: The list of connected clusters.
+    :vartype value: list[~azure.mgmt.hybridkubernetes.models.ConnectedCluster]
+    :ivar next_link: The link to fetch the next page of connected cluster.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConnectedCluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ConnectedCluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ConnectedCluster"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ConnectedCluster"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(ConnectedClusterList, self).__init__(**kwargs)
+        """
+        :keyword value: The list of connected clusters.
+        :paramtype value: list[~azure.mgmt.hybridkubernetes.models.ConnectedCluster]
+        :keyword next_link: The link to fetch the next page of connected cluster.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ConnectedClusterPatch(msrest.serialization.Model):
+class ConnectedClusterPatch(_serialization.Model):
     """Object containing updates for patch operations.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param properties: Describes the connected cluster resource properties that can be updated
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Describes the connected cluster resource properties that can be updated
      during PATCH operation.
-    :type properties: any
+    :vartype properties: JSON
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        properties: Optional[Any] = None,
-        **kwargs
-    ):
-        super(ConnectedClusterPatch, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, properties: Optional[JSON] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Describes the connected cluster resource properties that can be updated
+         during PATCH operation.
+        :paramtype properties: JSON
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.properties = properties
 
 
-class CredentialResult(msrest.serialization.Model):
+class CredentialResult(_serialization.Model):
     """The credential result response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -330,60 +361,56 @@ class CredentialResult(msrest.serialization.Model):
     :ivar name: The name of the credential.
     :vartype name: str
     :ivar value: Base64-encoded Kubernetes configuration file.
-    :vartype value: bytearray
+    :vartype value: bytes
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'bytearray'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CredentialResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class CredentialResults(msrest.serialization.Model):
+class CredentialResults(_serialization.Model):
     """The list of credential result response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar hybrid_connection_config: Contains the REP (rendezvous endpoint) and “Sender” access
      token.
-    :vartype hybrid_connection_config: ~connected_kubernetes_client.models.HybridConnectionConfig
+    :vartype hybrid_connection_config: ~azure.mgmt.hybridkubernetes.models.HybridConnectionConfig
     :ivar kubeconfigs: Base64-encoded Kubernetes configuration file.
-    :vartype kubeconfigs: list[~connected_kubernetes_client.models.CredentialResult]
+    :vartype kubeconfigs: list[~azure.mgmt.hybridkubernetes.models.CredentialResult]
     """
 
     _validation = {
-        'hybrid_connection_config': {'readonly': True},
-        'kubeconfigs': {'readonly': True},
+        "hybrid_connection_config": {"readonly": True},
+        "kubeconfigs": {"readonly": True},
     }
 
     _attribute_map = {
-        'hybrid_connection_config': {'key': 'hybridConnectionConfig', 'type': 'HybridConnectionConfig'},
-        'kubeconfigs': {'key': 'kubeconfigs', 'type': '[CredentialResult]'},
+        "hybrid_connection_config": {"key": "hybridConnectionConfig", "type": "HybridConnectionConfig"},
+        "kubeconfigs": {"key": "kubeconfigs", "type": "[CredentialResult]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CredentialResults, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.hybrid_connection_config = None
         self.kubeconfigs = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -391,29 +418,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -425,32 +450,30 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~connected_kubernetes_client.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.hybridkubernetes.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~connected_kubernetes_client.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.hybridkubernetes.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -458,34 +481,33 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~connected_kubernetes_client.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.hybridkubernetes.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.hybridkubernetes.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class HybridConnectionConfig(msrest.serialization.Model):
+class HybridConnectionConfig(_serialization.Model):
     """Contains the REP (rendezvous endpoint) and “Sender” access token.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar expiration_time: Timestamp when this token will be expired.
-    :vartype expiration_time: long
+    :vartype expiration_time: int
     :ivar hybrid_connection_name: Name of the connection.
     :vartype hybrid_connection_name: str
     :ivar relay: Name of the relay.
@@ -495,66 +517,69 @@ class HybridConnectionConfig(msrest.serialization.Model):
     """
 
     _validation = {
-        'expiration_time': {'readonly': True},
-        'hybrid_connection_name': {'readonly': True},
-        'relay': {'readonly': True},
-        'token': {'readonly': True},
+        "expiration_time": {"readonly": True},
+        "hybrid_connection_name": {"readonly": True},
+        "relay": {"readonly": True},
+        "token": {"readonly": True},
     }
 
     _attribute_map = {
-        'expiration_time': {'key': 'expirationTime', 'type': 'long'},
-        'hybrid_connection_name': {'key': 'hybridConnectionName', 'type': 'str'},
-        'relay': {'key': 'relay', 'type': 'str'},
-        'token': {'key': 'token', 'type': 'str'},
+        "expiration_time": {"key": "expirationTime", "type": "int"},
+        "hybrid_connection_name": {"key": "hybridConnectionName", "type": "str"},
+        "relay": {"key": "relay", "type": "str"},
+        "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HybridConnectionConfig, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.expiration_time = None
         self.hybrid_connection_name = None
         self.relay = None
         self.token = None
 
 
-class ListClusterUserCredentialProperties(msrest.serialization.Model):
+class ListClusterUserCredentialProperties(_serialization.Model):
     """ListClusterUserCredentialProperties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param authentication_method: Required. The mode of client authentication. Possible values
-     include: "Token", "AAD".
-    :type authentication_method: str or ~connected_kubernetes_client.models.AuthenticationMethod
-    :param client_proxy: Required. Boolean value to indicate whether the request is for client side
-     proxy or not.
-    :type client_proxy: bool
+    :ivar authentication_method: The mode of client authentication. Required. Known values are:
+     "Token" and "AAD".
+    :vartype authentication_method: str or ~azure.mgmt.hybridkubernetes.models.AuthenticationMethod
+    :ivar client_proxy: Boolean value to indicate whether the request is for client side proxy or
+     not. Required.
+    :vartype client_proxy: bool
     """
 
     _validation = {
-        'authentication_method': {'required': True},
-        'client_proxy': {'required': True},
+        "authentication_method": {"required": True},
+        "client_proxy": {"required": True},
     }
 
     _attribute_map = {
-        'authentication_method': {'key': 'authenticationMethod', 'type': 'str'},
-        'client_proxy': {'key': 'clientProxy', 'type': 'bool'},
+        "authentication_method": {"key": "authenticationMethod", "type": "str"},
+        "client_proxy": {"key": "clientProxy", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        authentication_method: Union[str, "AuthenticationMethod"],
-        client_proxy: bool,
-        **kwargs
+        self, *, authentication_method: Union[str, "_models.AuthenticationMethod"], client_proxy: bool, **kwargs
     ):
-        super(ListClusterUserCredentialProperties, self).__init__(**kwargs)
+        """
+        :keyword authentication_method: The mode of client authentication. Required. Known values are:
+         "Token" and "AAD".
+        :paramtype authentication_method: str or
+         ~azure.mgmt.hybridkubernetes.models.AuthenticationMethod
+        :keyword client_proxy: Boolean value to indicate whether the request is for client side proxy
+         or not. Required.
+        :paramtype client_proxy: bool
+        """
+        super().__init__(**kwargs)
         self.authentication_method = authentication_method
         self.client_proxy = client_proxy
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """The Connected cluster API operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -562,46 +587,44 @@ class Operation(msrest.serialization.Model):
     :ivar name: Operation name: {Microsoft.Kubernetes}/{resource}/{operation}.
     :vartype name: str
     :ivar display: The object that represents the operation.
-    :vartype display: ~connected_kubernetes_client.models.OperationDisplay
+    :vartype display: ~azure.mgmt.hybridkubernetes.models.OperationDisplay
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
+        "name": {"readonly": True},
+        "display": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider: Microsoft.connectedClusters.
-    :type provider: str
-    :param resource: Connected Cluster Resource on which the operation is performed.
-    :type resource: str
-    :param operation: Operation type: Read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation.
-    :type description: str
+    :ivar provider: Service provider: Microsoft.connectedClusters.
+    :vartype provider: str
+    :ivar resource: Connected Cluster Resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: Operation type: Read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -613,84 +636,109 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: Service provider: Microsoft.connectedClusters.
+        :paramtype provider: str
+        :keyword resource: Connected Cluster Resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: Operation type: Read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """The paginated list of connected cluster API operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The list of connected cluster API operations.
-    :vartype value: list[~connected_kubernetes_client.models.Operation]
-    :param next_link: The link to fetch the next page of connected cluster API operations.
-    :type next_link: str
+    :vartype value: list[~azure.mgmt.hybridkubernetes.models.Operation]
+    :ivar next_link: The link to fetch the next page of connected cluster API operations.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationList, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword next_link: The link to fetch the next page of connected cluster API operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~connected_kubernetes_client.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~connected_kubernetes_client.models.LastModifiedByType
-    :param last_modified_at: The timestamp of resource modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.hybridkubernetes.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.hybridkubernetes.models.LastModifiedByType
+    :ivar last_modified_at: The timestamp of resource modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "LastModifiedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.LastModifiedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.hybridkubernetes.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.hybridkubernetes.models.LastModifiedByType
+        :keyword last_modified_at: The timestamp of resource modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at

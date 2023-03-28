@@ -1,0 +1,25 @@
+{% for operation in operation_group.operations %}
+    {% if operation.request_builder and not async_mode %}
+{{ operation.request_builder }}
+    {% endif %}
+{% endfor %}
+class {{ operation_group.name }}{{ "(" + operation_group.name.replace("Operations", "") + "ABC)" if operation_group.is_mixin else "" }}:
+{% if not operation_group.is_mixin %}
+    """
+    {{ operation_group.doc(async_mode) }}
+    """
+    models = _models
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._api_version = input_args.pop(0) if input_args else kwargs.pop("api_version")
+
+{% endif %}
+    {% for operation in operation_group.operations %}
+        {% include "operation.py.jinja2" %}
+
+    {% endfor %}

@@ -28,12 +28,16 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import MixinABC, _format_url_section
+from .._vendor import ConversationAuthoringClientMixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -42,11 +46,15 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_list_projects_request(
+    *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -65,12 +73,14 @@ def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_create_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -79,7 +89,7 @@ def build_create_project_request(project_name: str, **kwargs: Any) -> HttpReques
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -92,11 +102,13 @@ def build_create_project_request(project_name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -105,7 +117,7 @@ def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -116,11 +128,13 @@ def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_delete_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +143,7 @@ def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpReques
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -140,7 +154,7 @@ def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpReques
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_export_project_request(
+def build_conversation_authoring_export_project_request(
     project_name: str,
     *,
     string_index_type: str,
@@ -152,7 +166,9 @@ def build_export_project_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +177,7 @@ def build_export_project_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if exported_project_format is not None:
@@ -179,14 +195,16 @@ def build_export_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_project_request(
+def build_conversation_authoring_import_project_request(
     project_name: str, *, exported_project_format: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -195,7 +213,7 @@ def build_import_project_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if exported_project_format is not None:
@@ -210,12 +228,14 @@ def build_import_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -224,7 +244,7 @@ def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -237,13 +257,15 @@ def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_deployments_request(
+def build_conversation_authoring_list_deployments_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -252,7 +274,7 @@ def build_list_deployments_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -267,12 +289,14 @@ def build_list_deployments_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -281,7 +305,7 @@ def build_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequ
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -294,11 +318,15 @@ def build_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_deployment_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_deployment_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -308,7 +336,7 @@ def build_get_deployment_request(project_name: str, deployment_name: str, **kwar
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -319,12 +347,16 @@ def build_get_deployment_request(project_name: str, deployment_name: str, **kwar
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_deploy_project_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_deploy_project_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -334,7 +366,7 @@ def build_deploy_project_request(project_name: str, deployment_name: str, **kwar
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -347,11 +379,15 @@ def build_deploy_project_request(project_name: str, deployment_name: str, **kwar
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_deployment_request(project_name: str, deployment_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_delete_deployment_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -361,7 +397,7 @@ def build_delete_deployment_request(project_name: str, deployment_name: str, **k
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -372,14 +408,16 @@ def build_delete_deployment_request(project_name: str, deployment_name: str, **k
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_deployment_from_resources_request(
+def build_conversation_authoring_delete_deployment_from_resources_request(
     project_name: str, deployment_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -389,7 +427,7 @@ def build_delete_deployment_from_resources_request(
         "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -402,13 +440,15 @@ def build_delete_deployment_from_resources_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_deployment_delete_from_resources_status_request(
+def build_conversation_authoring_get_deployment_delete_from_resources_status_request(
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -419,7 +459,7 @@ def build_get_deployment_delete_from_resources_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -430,13 +470,15 @@ def build_get_deployment_delete_from_resources_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_deployment_job_status_request(
+def build_conversation_authoring_get_deployment_job_status_request(
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -447,7 +489,7 @@ def build_get_deployment_job_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -458,11 +500,15 @@ def build_get_deployment_job_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_swap_deployments_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_swap_deployments_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -472,7 +518,7 @@ def build_get_swap_deployments_job_status_request(project_name: str, job_id: str
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -483,11 +529,15 @@ def build_get_swap_deployments_job_status_request(project_name: str, job_id: str
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_export_project_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_export_project_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -497,7 +547,7 @@ def build_get_export_project_job_status_request(project_name: str, job_id: str, 
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -508,11 +558,15 @@ def build_get_export_project_job_status_request(project_name: str, job_id: str, 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_import_project_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_import_project_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -522,7 +576,7 @@ def build_get_import_project_job_status_request(project_name: str, job_id: str, 
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -533,13 +587,15 @@ def build_get_import_project_job_status_request(project_name: str, job_id: str, 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_trained_models_request(
+def build_conversation_authoring_list_trained_models_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -548,7 +604,7 @@ def build_list_trained_models_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -563,11 +619,15 @@ def build_list_trained_models_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_trained_model_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_trained_model_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -577,7 +637,7 @@ def build_get_trained_model_request(project_name: str, trained_model_label: str,
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -588,11 +648,15 @@ def build_get_trained_model_request(project_name: str, trained_model_label: str,
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_trained_model_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_delete_trained_model_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -602,7 +666,7 @@ def build_delete_trained_model_request(project_name: str, trained_model_label: s
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -613,11 +677,15 @@ def build_delete_trained_model_request(project_name: str, trained_model_label: s
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_snapshot_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_load_snapshot_request(
+    project_name: str, trained_model_label: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -627,7 +695,7 @@ def build_load_snapshot_request(project_name: str, trained_model_label: str, **k
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -638,7 +706,7 @@ def build_load_snapshot_request(project_name: str, trained_model_label: str, **k
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_model_evaluation_results_request(
+def build_conversation_authoring_list_model_evaluation_results_request(
     project_name: str,
     trained_model_label: str,
     *,
@@ -650,7 +718,9 @@ def build_list_model_evaluation_results_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -660,7 +730,7 @@ def build_list_model_evaluation_results_request(
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
@@ -676,13 +746,15 @@ def build_list_model_evaluation_results_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_model_evaluation_summary_request(
+def build_conversation_authoring_get_model_evaluation_summary_request(
     project_name: str, trained_model_label: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -694,7 +766,7 @@ def build_get_model_evaluation_summary_request(
         "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -705,13 +777,15 @@ def build_get_model_evaluation_summary_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_load_snapshot_status_request(
+def build_conversation_authoring_get_load_snapshot_status_request(
     project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -724,7 +798,7 @@ def build_get_load_snapshot_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -735,13 +809,15 @@ def build_get_load_snapshot_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_deployment_resources_request(
+def build_conversation_authoring_list_deployment_resources_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -750,7 +826,7 @@ def build_list_deployment_resources_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -765,12 +841,14 @@ def build_list_deployment_resources_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_assign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_assign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -779,7 +857,7 @@ def build_assign_deployment_resources_request(project_name: str, **kwargs: Any) 
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -792,12 +870,14 @@ def build_assign_deployment_resources_request(project_name: str, **kwargs: Any) 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_unassign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_unassign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -806,7 +886,7 @@ def build_unassign_deployment_resources_request(project_name: str, **kwargs: Any
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -819,11 +899,15 @@ def build_unassign_deployment_resources_request(project_name: str, **kwargs: Any
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_assign_deployment_resources_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_assign_deployment_resources_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -833,7 +917,7 @@ def build_get_assign_deployment_resources_status_request(project_name: str, job_
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -844,13 +928,15 @@ def build_get_assign_deployment_resources_status_request(project_name: str, job_
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_unassign_deployment_resources_status_request(
+def build_conversation_authoring_get_unassign_deployment_resources_status_request(
     project_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -860,7 +946,7 @@ def build_get_unassign_deployment_resources_status_request(
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -871,13 +957,15 @@ def build_get_unassign_deployment_resources_status_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_training_jobs_request(
+def build_conversation_authoring_list_training_jobs_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -886,7 +974,7 @@ def build_list_training_jobs_request(
         "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if top is not None:
@@ -901,11 +989,15 @@ def build_list_training_jobs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_training_job_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_training_job_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -915,7 +1007,7 @@ def build_get_training_job_status_request(project_name: str, job_id: str, **kwar
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -926,11 +1018,15 @@ def build_get_training_job_status_request(project_name: str, job_id: str, **kwar
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_cancel_training_job_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_cancel_training_job_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -940,7 +1036,7 @@ def build_cancel_training_job_request(project_name: str, job_id: str, **kwargs: 
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -951,11 +1047,13 @@ def build_cancel_training_job_request(project_name: str, job_id: str, **kwargs: 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
+def build_conversation_authoring_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -964,7 +1062,7 @@ def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) ->
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -975,13 +1073,15 @@ def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_assigned_resource_deployments_request(
+def build_conversation_authoring_list_assigned_resource_deployments_request(
     *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1000,13 +1100,15 @@ def build_list_assigned_resource_deployments_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_supported_languages_request(
+def build_conversation_authoring_list_supported_languages_request(
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1026,7 +1128,7 @@ def build_list_supported_languages_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_supported_prebuilt_entities_request(
+def build_conversation_authoring_list_supported_prebuilt_entities_request(
     *,
     language: Optional[str] = None,
     multilingual: Optional[bool] = None,
@@ -1037,7 +1139,9 @@ def build_list_supported_prebuilt_entities_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1060,13 +1164,15 @@ def build_list_supported_prebuilt_entities_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_training_config_versions_request(
+def build_conversation_authoring_list_training_config_versions_request(
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version: Literal["2022-10-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1086,13 +1192,15 @@ def build_list_training_config_versions_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
+class ConversationAuthoringClientOperationsMixin(
+    ConversationAuthoringClientMixinABC
+):  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-projects
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-projects
         for more information.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -1140,7 +1248,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1153,7 +1261,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_projects_request(
+                request = build_conversation_authoring_list_projects_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -1165,7 +1273,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1185,7 +1293,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -1193,13 +1301,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1219,7 +1327,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Creates a new project or updates an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/create-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -1294,7 +1402,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Creates a new project or updates an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/create-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -1346,7 +1454,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Creates a new project or updates an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/create-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -1403,8 +1511,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1414,7 +1522,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = project
 
-        request = build_create_project_request(
+        request = build_conversation_authoring_create_project_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1426,9 +1534,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1451,15 +1559,16 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return cast(JSON, deserialized)
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_project(self, project_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -1511,9 +1620,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_project_request(
+        request = build_conversation_authoring_get_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1522,9 +1631,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1556,9 +1665,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_delete_project_request(
+        request = build_conversation_authoring_delete_project_request(
             project_name=project_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1567,9 +1676,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1602,7 +1711,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Deletes a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -1679,12 +1788,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_project_initial(  # type: ignore
+            raw_result = self._delete_project_initial(
                 project_name=project_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
         kwargs.pop("error_map", None)
@@ -1696,7 +1805,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1704,9 +1813,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1718,7 +1827,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _export_project_initial(
         self,
@@ -1741,9 +1850,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_export_project_request(
+        request = build_conversation_authoring_export_project_request(
             project_name=project_name,
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
@@ -1756,9 +1865,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1799,8 +1908,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Triggers a job to export a project's data.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/export for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/export
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1889,12 +1999,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._export_project_initial(  # type: ignore
+            raw_result = self._export_project_initial(
                 project_name=project_name,
                 string_index_type=string_index_type,
                 exported_project_format=exported_project_format,
@@ -1914,7 +2024,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -1922,9 +2032,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -1936,7 +2046,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _import_project_initial(
         self,
@@ -1957,8 +2067,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1968,7 +2078,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = project
 
-        request = build_import_project_request(
+        request = build_conversation_authoring_import_project_request(
             project_name=project_name,
             exported_project_format=exported_project_format,
             content_type=content_type,
@@ -1981,9 +2091,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2024,8 +2134,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2259,8 +2370,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2354,8 +2466,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2439,13 +2552,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._import_project_initial(  # type: ignore
+            raw_result = self._import_project_initial(
                 project_name=project_name,
                 project=project,
                 exported_project_format=exported_project_format,
@@ -2464,7 +2577,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2472,9 +2585,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2486,7 +2599,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _train_initial(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
         error_map = {
@@ -2500,8 +2613,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -2511,7 +2624,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = configuration
 
-        request = build_train_request(
+        request = build_conversation_authoring_train_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2523,9 +2636,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2559,8 +2672,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/train
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2699,8 +2813,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/train
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2816,8 +2931,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def begin_train(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/train
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2932,13 +3048,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._train_initial(  # type: ignore
+            raw_result = self._train_initial(
                 project_name=project_name,
                 configuration=configuration,
                 content_type=content_type,
@@ -2956,7 +3072,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2964,9 +3080,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -2978,7 +3094,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_deployments(
@@ -2987,7 +3103,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Lists the deployments belonging to a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3029,7 +3145,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -3042,7 +3158,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_deployments_request(
+                request = build_conversation_authoring_list_deployments_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -3055,7 +3171,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -3075,7 +3191,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -3083,13 +3199,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -3116,8 +3232,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3127,7 +3243,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = deployments
 
-        request = build_swap_deployments_request(
+        request = build_conversation_authoring_swap_deployments_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3139,9 +3255,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3176,7 +3292,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Swaps two existing deployments with each other.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/swap-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3271,7 +3387,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Swaps two existing deployments with each other.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/swap-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3356,7 +3472,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Swaps two existing deployments with each other.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/swap-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3439,13 +3555,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._swap_deployments_initial(  # type: ignore
+            raw_result = self._swap_deployments_initial(
                 project_name=project_name,
                 deployments=deployments,
                 content_type=content_type,
@@ -3463,7 +3579,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3471,9 +3587,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3485,14 +3601,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a deployment.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-deployment
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3538,9 +3654,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_deployment_request(
+        request = build_conversation_authoring_get_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -3550,9 +3666,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3586,8 +3702,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -3597,7 +3713,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = deployment
 
-        request = build_deploy_project_request(
+        request = build_conversation_authoring_deploy_project_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -3610,9 +3726,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3653,7 +3769,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Creates a new deployment or replaces an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/deploy-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3725,7 +3841,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Creates a new deployment or replaces an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/deploy-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3780,7 +3896,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Creates a new deployment or replaces an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/deploy-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3830,13 +3946,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._deploy_project_initial(  # type: ignore
+            raw_result = self._deploy_project_initial(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 deployment=deployment,
@@ -3855,7 +3971,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3863,9 +3979,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -3877,7 +3993,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _delete_deployment_initial(self, project_name: str, deployment_name: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
@@ -3891,9 +4007,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_delete_deployment_request(
+        request = build_conversation_authoring_delete_deployment_request(
             project_name=project_name,
             deployment_name=deployment_name,
             api_version=self._config.api_version,
@@ -3903,9 +4019,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3938,7 +4054,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Deletes a project deployment.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4017,12 +4133,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_deployment_initial(  # type: ignore
+            raw_result = self._delete_deployment_initial(
                 project_name=project_name,
                 deployment_name=deployment_name,
                 cls=lambda x, y, z: x,
@@ -4039,7 +4155,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -4047,9 +4163,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4061,7 +4177,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     def _delete_deployment_from_resources_initial(  # pylint: disable=inconsistent-return-statements
         self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
@@ -4077,8 +4193,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -4088,7 +4204,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = body
 
-        request = build_delete_deployment_from_resources_request(
+        request = build_conversation_authoring_delete_deployment_from_resources_request(
             project_name=project_name,
             deployment_name=deployment_name,
             content_type=content_type,
@@ -4101,9 +4217,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4132,7 +4248,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Deletes a project deployment from the specified assigned resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment-from-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4183,7 +4299,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Deletes a project deployment from the specified assigned resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment-from-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4214,7 +4330,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Deletes a project deployment from the specified assigned resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment-from-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4241,11 +4357,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._delete_deployment_from_resources_initial(  # type: ignore
                 project_name=project_name,
@@ -4268,9 +4384,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -4282,7 +4398,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_deployment_delete_from_resources_status(
@@ -4291,7 +4407,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status of an existing delete deployment from specific resources job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-delete-from-resources-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-deployment-delete-from-resources-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4373,9 +4489,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_deployment_delete_from_resources_status_request(
+        request = build_conversation_authoring_get_deployment_delete_from_resources_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -4386,9 +4502,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4413,7 +4529,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status of an existing deployment job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-deployment-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4495,9 +4611,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_deployment_job_status_request(
+        request = build_conversation_authoring_get_deployment_job_status_request(
             project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
@@ -4508,9 +4624,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4535,7 +4651,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status of an existing swap deployment job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-swap-deployments-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-swap-deployments-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4615,9 +4731,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_swap_deployments_job_status_request(
+        request = build_conversation_authoring_get_swap_deployments_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4627,9 +4743,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4654,7 +4770,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-export-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-export-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4736,9 +4852,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_export_project_job_status_request(
+        request = build_conversation_authoring_get_export_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4748,9 +4864,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4775,7 +4891,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status for an import.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-import-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-import-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4855,9 +4971,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_import_project_job_status_request(
+        request = build_conversation_authoring_get_import_project_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -4867,9 +4983,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4896,7 +5012,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Lists the trained models belonging to a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-trained-models
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-trained-models
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4932,7 +5048,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -4945,7 +5061,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_trained_models_request(
+                request = build_conversation_authoring_list_trained_models_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -4958,7 +5074,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -4978,7 +5094,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -4986,13 +5102,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -5010,7 +5126,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the details of a trained model.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-trained-model
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-trained-model
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5050,9 +5166,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_trained_model_request(
+        request = build_conversation_authoring_get_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5062,9 +5178,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5091,7 +5207,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Deletes an existing trained model.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-trained-model
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-trained-model
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5113,9 +5229,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_delete_trained_model_request(
+        request = build_conversation_authoring_delete_trained_model_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5125,9 +5241,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5140,9 +5256,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         if cls:
             return cls(pipeline_response, None, {})
 
-    def _load_snapshot_initial(  # pylint: disable=inconsistent-return-statements
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> None:
+    def _load_snapshot_initial(self, project_name: str, trained_model_label: str, **kwargs: Any) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5154,9 +5268,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_load_snapshot_request(
+        request = build_conversation_authoring_load_snapshot_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5166,30 +5280,42 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @distributed_trace
-    def begin_load_snapshot(self, project_name: str, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:
+    def begin_load_snapshot(self, project_name: str, trained_model_label: str, **kwargs: Any) -> LROPoller[JSON]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/load-snapshot
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/load-snapshot
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5203,19 +5329,77 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._load_snapshot_initial(  # type: ignore
+            raw_result = self._load_snapshot_initial(
                 project_name=project_name,
                 trained_model_label=trained_model_label,
                 cls=lambda x, y, z: x,
@@ -5225,18 +5409,24 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -5248,7 +5438,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_model_evaluation_results(
@@ -5265,7 +5455,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         inference results for the data included in the evaluation process.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-results
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-model-evaluation-results
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5327,7 +5517,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -5340,7 +5530,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_model_evaluation_results_request(
+                request = build_conversation_authoring_list_model_evaluation_results_request(
                     project_name=project_name,
                     trained_model_label=trained_model_label,
                     string_index_type=string_index_type,
@@ -5355,7 +5545,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -5375,7 +5565,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -5383,13 +5573,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -5408,7 +5598,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         measurements of the model e.g., F1, Precision, Recall, etc.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-summary
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-model-evaluation-summary
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5520,9 +5710,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_model_evaluation_summary_request(
+        request = build_conversation_authoring_get_model_evaluation_summary_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             api_version=self._config.api_version,
@@ -5532,9 +5722,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5559,7 +5749,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status for loading a snapshot.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-load-snapshot-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-load-snapshot-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5641,9 +5831,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_load_snapshot_status_request(
+        request = build_conversation_authoring_get_load_snapshot_status_request(
             project_name=project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,
@@ -5654,9 +5844,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5683,7 +5873,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Lists the deployments resources assigned to the project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5710,7 +5900,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -5723,7 +5913,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_deployment_resources_request(
+                request = build_conversation_authoring_list_deployment_resources_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -5736,7 +5926,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -5756,7 +5946,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -5764,13 +5954,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -5783,9 +5973,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         return ItemPaged(get_next, extract_data)
 
-    def _assign_deployment_resources_initial(  # pylint: disable=inconsistent-return-statements
+    def _assign_deployment_resources_initial(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5797,8 +5987,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -5808,7 +5998,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = body
 
-        request = build_assign_deployment_resources_request(
+        request = build_conversation_authoring_assign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5820,35 +6010,47 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     def begin_assign_deployment_resources(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
         For more details about AAD authentication, check here:
         https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/assign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5865,8 +6067,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5885,19 +6087,74 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         }
                     ]
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
     def begin_assign_deployment_resources(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
         For more details about AAD authentication, check here:
         https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/assign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5914,22 +6171,80 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace
     def begin_assign_deployment_resources(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
         available only via AAD authentication and not supported via subscription key authentication.
         For more details about AAD authentication, check here:
         https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/assign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5946,20 +6261,78 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._assign_deployment_resources_initial(  # type: ignore
+            raw_result = self._assign_deployment_resources_initial(
                 project_name=project_name,
                 body=body,
                 content_type=content_type,
@@ -5970,18 +6343,24 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -5993,11 +6372,11 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _unassign_deployment_resources_initial(  # pylint: disable=inconsistent-return-statements
+    def _unassign_deployment_resources_initial(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
+    ) -> Optional[JSON]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6009,8 +6388,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6020,7 +6399,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         else:
             _json = body
 
-        request = build_unassign_deployment_resources_request(
+        request = build_conversation_authoring_unassign_deployment_resources_request(
             project_name=project_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -6032,33 +6411,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        deserialized = None
         response_headers = {}
-        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 202:
+            response_headers["operation-location"] = self._deserialize(
+                "str", response.headers.get("operation-location")
+            )
 
         if cls:
-            return cls(pipeline_response, None, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
 
     @overload
     def begin_unassign_deployment_resources(
         self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/unassign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6075,8 +6466,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -6089,17 +6480,72 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                           Required.
                     ]
                 }
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @overload
     def begin_unassign_deployment_resources(
         self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/unassign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6116,20 +6562,78 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
 
     @distributed_trace
     def begin_unassign_deployment_resources(
         self, project_name: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[JSON]:
         """Unassign resources from a project. This disallows deploying new deployments to these resources,
         and deletes existing deployments assigned to them.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/unassign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6147,20 +6651,78 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype polling: bool or ~azure.core.polling.PollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._unassign_deployment_resources_initial(  # type: ignore
+            raw_result = self._unassign_deployment_resources_initial(
                 project_name=project_name,
                 body=body,
                 content_type=content_type,
@@ -6171,18 +6733,24 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
             if cls:
-                return cls(pipeline_response, None, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -6194,14 +6762,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_assign_deployment_resources_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an existing assign deployment resources job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-assign-deployment-resources-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-assign-deployment-resources-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6281,9 +6849,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_assign_deployment_resources_status_request(
+        request = build_conversation_authoring_get_assign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6293,9 +6861,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6320,7 +6888,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status of an existing unassign deployment resources job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-unassign-deployment-resources-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-unassign-deployment-resources-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6400,9 +6968,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_unassign_deployment_resources_status_request(
+        request = build_conversation_authoring_get_unassign_deployment_resources_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6412,9 +6980,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6441,7 +7009,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Lists the non-expired training jobs created for a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-jobs
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-training-jobs
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6550,7 +7118,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -6563,7 +7131,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_training_jobs_request(
+                request = build_conversation_authoring_list_training_jobs_request(
                     project_name=project_name,
                     top=top,
                     skip=skip,
@@ -6576,7 +7144,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -6596,7 +7164,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -6604,13 +7172,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -6628,7 +7196,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Gets the status for a training job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-training-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-training-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6741,9 +7309,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_training_job_status_request(
+        request = build_conversation_authoring_get_training_job_status_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6753,9 +7321,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6787,9 +7355,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[JSON]]
+        cls: ClsType[Optional[JSON]] = kwargs.pop("cls", None)
 
-        request = build_cancel_training_job_request(
+        request = build_conversation_authoring_cancel_training_job_request(
             project_name=project_name,
             job_id=job_id,
             api_version=self._config.api_version,
@@ -6799,9 +7367,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6834,7 +7402,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Triggers a cancellation for a running training job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/cancel-training-job
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/cancel-training-job
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6946,12 +7514,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._cancel_training_job_initial(  # type: ignore
+            raw_result = self._cancel_training_job_initial(
                 project_name=project_name,
                 job_id=job_id,
                 cls=lambda x, y, z: x,
@@ -6968,7 +7536,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             else:
                 deserialized = None
             if cls:
-                return cls(pipeline_response, deserialized, {})
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -6976,9 +7544,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: PollingMethod = cast(
                 PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )  # type: PollingMethod
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -6990,14 +7558,14 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_project_deletion_job_status(self, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for a project deletion job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project-deletion-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-project-deletion-status
         for more information.
 
         :param job_id: The job ID. Required.
@@ -7075,9 +7643,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        request = build_get_project_deletion_job_status_request(
+        request = build_conversation_authoring_get_project_deletion_job_status_request(
             job_id=job_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7086,9 +7654,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -7117,7 +7685,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         owned by other resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-assigned-resource-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-assigned-resource-deployments
         for more information.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -7151,7 +7719,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7164,7 +7732,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_assigned_resource_deployments_request(
+                request = build_conversation_authoring_list_assigned_resource_deployments_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -7176,7 +7744,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -7196,7 +7764,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -7204,13 +7772,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -7230,7 +7798,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Lists the supported languages for the given project type.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-languages
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-supported-languages
         for more information.
 
         :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
@@ -7260,7 +7828,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7273,7 +7841,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_supported_languages_request(
+                request = build_conversation_authoring_list_supported_languages_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
@@ -7286,7 +7854,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -7306,7 +7874,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -7314,13 +7882,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -7346,7 +7914,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Lists the supported prebuilt entities that can be used while creating composed entities.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-prebuilt-entities
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-supported-prebuilt-entities
         for more information.
 
         :keyword language: The language to get supported prebuilt entities for. Required if
@@ -7379,7 +7947,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7392,7 +7960,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_supported_prebuilt_entities_request(
+                request = build_conversation_authoring_list_supported_prebuilt_entities_request(
                     language=language,
                     multilingual=multilingual,
                     top=top,
@@ -7406,7 +7974,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -7426,7 +7994,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -7434,13 +8002,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -7460,7 +8028,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Lists the support training config version for a given project type.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-config-versions
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-training-config-versions
         for more information.
 
         :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
@@ -7490,7 +8058,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -7503,7 +8071,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_training_config_versions_request(
+                request = build_conversation_authoring_list_training_config_versions_request(
                     project_kind=project_kind,
                     top=top,
                     skip=skip,
@@ -7516,7 +8084,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -7536,7 +8104,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -7544,13 +8112,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response

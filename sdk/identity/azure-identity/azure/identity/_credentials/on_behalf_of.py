@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional, Tuple
 
 import six
+import msal
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -15,12 +16,7 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.interactive import _build_auth_record
 from .._internal.msal_credentials import MsalCredential
-
-if TYPE_CHECKING:
-    from typing import Any, List, Optional
-    import msal
-    from .. import AuthenticationRecord
-
+from .. import AuthenticationRecord
 
 class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
     """Authenticates a service principal via the on-behalf-of flow.
@@ -53,8 +49,12 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, **kwargs):
-        # type: (str, str, **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            **kwargs: Any
+    ) -> None:
         self._assertion = kwargs.pop("user_assertion", None)
         if not self._assertion:
             raise TypeError('"user_assertion" is required.')
@@ -79,12 +79,17 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         else:
             raise TypeError('Either "client_certificate" or "client_secret" must be provided')
 
-        super(OnBehalfOfCredential, self).__init__(client_id, credential, tenant_id=tenant_id, **kwargs)
-        self._auth_record = None  # type: Optional[AuthenticationRecord]
+        super(OnBehalfOfCredential, self).__init__(
+            client_id=client_id,
+            client_credential=credential,
+            tenant_id=tenant_id,
+            **kwargs)
+        self._auth_record: Optional[AuthenticationRecord] = None
 
     @wrap_exceptions
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         if self._auth_record:
             claims = kwargs.get("claims")
             app = self._get_app(**kwargs)
@@ -95,14 +100,18 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
                 now = int(time.time())
                 result = app.acquire_token_silent_with_error(list(scopes), account=account, claims_challenge=claims)
                 if result and "access_token" in result and "expires_in" in result:
-                    return AccessToken(result["access_token"], now + int(result["expires_in"]))
+                    return (
+                        AccessToken(
+                            result["access_token"], now + int(result["expires_in"])
+                        ),
+                        None,
+                    )
 
-        return None
+        return None, None
 
     @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
-        app = self._get_app(**kwargs)  # type: msal.ConfidentialClientApplication
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        app: msal.ConfidentialClientApplication = self._get_app(**kwargs)
         request_time = int(time.time())
         result = app.acquire_token_on_behalf_of(self._assertion, list(scopes), claims_challenge=kwargs.get("claims"))
         if "access_token" not in result or "expires_in" not in result:

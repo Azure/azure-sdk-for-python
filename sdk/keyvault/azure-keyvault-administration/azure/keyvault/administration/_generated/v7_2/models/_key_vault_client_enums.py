@@ -7,97 +7,95 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Supported permissions for data actions.
-    """
+class DataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported permissions for data actions."""
 
-    #: Read HSM key metadata.
     READ_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/read/action"
-    #: Update an HSM key.
+    """Read HSM key metadata."""
     WRITE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/write/action"
-    #: Read deleted HSM key.
+    """Update an HSM key."""
     READ_DELETED_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/deletedKeys/read/action"
-    #: Recover deleted HSM key.
+    """Read deleted HSM key."""
     RECOVER_DELETED_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/deletedKeys/recover/action"
-    #: Backup HSM keys.
+    """Recover deleted HSM key."""
     BACKUP_HSM_KEYS = "Microsoft.KeyVault/managedHsm/keys/backup/action"
-    #: Restore HSM keys.
+    """Backup HSM keys."""
     RESTORE_HSM_KEYS = "Microsoft.KeyVault/managedHsm/keys/restore/action"
-    #: Delete role assignment.
+    """Restore HSM keys."""
     DELETE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/delete/action"
-    #: Get role assignment.
+    """Delete role assignment."""
     GET_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/read/action"
-    #: Create or update role assignment.
+    """Get role assignment."""
     WRITE_ROLE_ASSIGNMENT = "Microsoft.KeyVault/managedHsm/roleAssignments/write/action"
-    #: Get role definition.
+    """Create or update role assignment."""
     READ_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/read/action"
-    #: Create or update role definition.
+    """Get role definition."""
     WRITE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/write/action"
-    #: Delete role definition.
+    """Create or update role definition."""
     DELETE_ROLE_DEFINITION = "Microsoft.KeyVault/managedHsm/roleDefinitions/delete/action"
-    #: Encrypt using an HSM key.
+    """Delete role definition."""
     ENCRYPT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/encrypt/action"
-    #: Decrypt using an HSM key.
+    """Encrypt using an HSM key."""
     DECRYPT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/decrypt/action"
-    #: Wrap using an HSM key.
+    """Decrypt using an HSM key."""
     WRAP_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/wrap/action"
-    #: Unwrap using an HSM key.
+    """Wrap using an HSM key."""
     UNWRAP_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/unwrap/action"
-    #: Sign using an HSM key.
+    """Unwrap using an HSM key."""
     SIGN_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/sign/action"
-    #: Verify using an HSM key.
+    """Sign using an HSM key."""
     VERIFY_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/verify/action"
-    #: Create an HSM key.
+    """Verify using an HSM key."""
     CREATE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/create"
-    #: Delete an HSM key.
+    """Create an HSM key."""
     DELETE_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/delete"
-    #: Export an HSM key.
+    """Delete an HSM key."""
     EXPORT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/export/action"
-    #: Import an HSM key.
+    """Export an HSM key."""
     IMPORT_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/import/action"
-    #: Purge a deleted HSM key.
+    """Import an HSM key."""
     PURGE_DELETED_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/deletedKeys/delete"
-    #: Download an HSM security domain.
+    """Purge a deleted HSM key."""
     DOWNLOAD_HSM_SECURITY_DOMAIN = "Microsoft.KeyVault/managedHsm/securitydomain/download/action"
-    #: Upload an HSM security domain.
+    """Download an HSM security domain."""
     UPLOAD_HSM_SECURITY_DOMAIN = "Microsoft.KeyVault/managedHsm/securitydomain/upload/action"
-    #: Check the status of the HSM security domain exchange file.
+    """Upload an HSM security domain."""
     READ_HSM_SECURITY_DOMAIN_STATUS = "Microsoft.KeyVault/managedHsm/securitydomain/upload/read"
-    #: Download an HSM security domain transfer key.
+    """Check the status of the HSM security domain exchange file."""
     READ_HSM_SECURITY_DOMAIN_TRANSFER_KEY = "Microsoft.KeyVault/managedHsm/securitydomain/transferkey/read"
-    #: Start an HSM backup.
+    """Download an HSM security domain transfer key."""
     START_HSM_BACKUP = "Microsoft.KeyVault/managedHsm/backup/start/action"
-    #: Start an HSM restore.
+    """Start an HSM backup."""
     START_HSM_RESTORE = "Microsoft.KeyVault/managedHsm/restore/start/action"
-    #: Read an HSM backup status.
+    """Start an HSM restore."""
     READ_HSM_BACKUP_STATUS = "Microsoft.KeyVault/managedHsm/backup/status/action"
-    #: Read an HSM restore status.
+    """Read an HSM backup status."""
     READ_HSM_RESTORE_STATUS = "Microsoft.KeyVault/managedHsm/restore/status/action"
+    """Read an HSM restore status."""
 
-class RoleDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The role definition type.
-    """
+
+class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role definition type."""
 
     MICROSOFT_AUTHORIZATION_ROLE_DEFINITIONS = "Microsoft.Authorization/roleDefinitions"
 
-class RoleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The role scope.
-    """
 
-    #: Global scope.
-    GLOBAL_ENUM = "/"
-    #: Keys scope.
+class RoleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role scope."""
+
+    GLOBAL = "/"
+    """Global scope"""
     KEYS = "/keys"
+    """Keys scope"""
 
-class RoleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The role type.
-    """
 
-    #: Built in role.
+class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role type."""
+
     BUILT_IN_ROLE = "AKVBuiltInRole"
-    #: Custom role.
+    """Built in role."""
     CUSTOM_ROLE = "CustomRole"
+    """Custom role."""

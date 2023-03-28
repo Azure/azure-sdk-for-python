@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
+from typing import Optional
+
+from azure.ai.ml._restclient.v2023_02_01_preview.models import NlpVerticalLimitSettings as RestNlpLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -21,11 +23,11 @@ class NlpLimitSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        max_concurrent_trials: int = None,
+        max_concurrent_trials: Optional[int] = None,
         max_trials: int = 1,
         max_nodes: int = 1,
-        timeout_minutes: int = None,
-        trial_timeout_minutes: int = None,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ):
         self.max_concurrent_trials = max_concurrent_trials
         self.max_trials = max_trials

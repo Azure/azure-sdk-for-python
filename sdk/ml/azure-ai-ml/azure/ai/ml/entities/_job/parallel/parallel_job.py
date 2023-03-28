@@ -4,7 +4,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
@@ -54,6 +54,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type task: ParallelTask
     :param mini_batch_size: The mini batch size.
     :type mini_batch_size: str
+    :param partition_keys: The partition keys.
+    :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
     :param inputs: Inputs of the job.
@@ -65,8 +67,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     def __init__(
         self,
         *,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Output] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.PARALLEL
@@ -91,7 +93,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     def _load_from_rest(cls, obj: JobBaseData):
         pass
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a parallel job to component job.
 
         :param context: Context of parallel job YAML file.
@@ -107,6 +109,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         return ParallelComponent(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             task=self.task,
             retry_settings=self.retry_settings,
@@ -119,7 +122,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             resources=self.resources if self.resources else None,
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a parallel job to a pipeline node.
 
         :param context: Context of parallel job YAML file.
@@ -137,6 +140,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             inputs=self.inputs,
             outputs=self.outputs,
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             # task will be inherited from component & base_path will be set correctly.
             retry_settings=self.retry_settings,

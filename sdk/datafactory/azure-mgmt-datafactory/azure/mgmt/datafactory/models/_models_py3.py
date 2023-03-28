@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -46,8 +47,8 @@ class AccessPolicyResponse(_serialization.Model):
         policy: Optional["_models.UserAccessPolicy"] = None,
         access_token: Optional[str] = None,
         data_plane_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword policy: The user access policy.
         :paramtype policy: ~azure.mgmt.datafactory.models.UserAccessPolicy
@@ -115,8 +116,8 @@ class Activity(_serialization.Model):
         description: Optional[str] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -133,7 +134,7 @@ class Activity(_serialization.Model):
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.name = name
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.description = description
         self.depends_on = depends_on
         self.user_properties = user_properties
@@ -170,8 +171,8 @@ class ActivityDependency(_serialization.Model):
         activity: str,
         dependency_conditions: List[Union[str, "_models.DependencyCondition"]],
         additional_properties: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -234,8 +235,8 @@ class ActivityPolicy(_serialization.Model):
         retry_interval_in_seconds: Optional[int] = None,
         secure_input: Optional[bool] = None,
         secure_output: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -335,7 +336,7 @@ class ActivityRun(_serialization.Model):  # pylint: disable=too-many-instance-at
         "error": {"key": "error", "type": "object"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -379,7 +380,9 @@ class ActivityRunsQueryResponse(_serialization.Model):
         "continuation_token": {"key": "continuationToken", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ActivityRun"], continuation_token: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.ActivityRun"], continuation_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of activity runs. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.ActivityRun]
@@ -403,7 +406,7 @@ class AddDataFlowToDebugSessionResponse(_serialization.Model):
         "job_version": {"key": "jobVersion", "type": "str"},
     }
 
-    def __init__(self, *, job_version: Optional[str] = None, **kwargs):
+    def __init__(self, *, job_version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword job_version: The ID of data flow debug job version.
         :paramtype job_version: str
@@ -426,7 +429,7 @@ class AdditionalColumns(_serialization.Model):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, name: Optional[JSON] = None, value: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, name: Optional[JSON] = None, value: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword name: Additional column name. Type: string (or Expression with resultType string).
         :paramtype name: JSON
@@ -439,7 +442,8 @@ class AdditionalColumns(_serialization.Model):
 
 
 class LinkedService(_serialization.Model):
-    """The nested object which contains the information and credential which can be used to connect with related store or compute resource.
+    """The nested object which contains the information and credential which can be used to connect
+    with related store or compute resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AmazonMWSLinkedService, AmazonRdsForOracleLinkedService, AmazonRdsForSqlServerLinkedService,
@@ -634,8 +638,8 @@ class LinkedService(_serialization.Model):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -651,7 +655,7 @@ class LinkedService(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.connect_via = connect_via
         self.description = description
         self.parameters = parameters
@@ -751,8 +755,8 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -803,7 +807,7 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             annotations=annotations,
             **kwargs
         )
-        self.type = "AmazonMWS"  # type: str
+        self.type: str = "AmazonMWS"
         self.endpoint = endpoint
         self.marketplace_id = marketplace_id
         self.seller_id = seller_id
@@ -817,7 +821,8 @@ class AmazonMWSLinkedService(LinkedService):  # pylint: disable=too-many-instanc
 
 
 class Dataset(_serialization.Model):
-    """The Azure Data Factory nested object which identifies data within different data stores, such as tables, files, folders, and documents.
+    """The Azure Data Factory nested object which identifies data within different data stores, such
+    as tables, files, folders, and documents.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     AmazonMWSObjectDataset, AmazonRdsForOracleTableDataset, AmazonRdsForSqlServerTableDataset,
@@ -1002,8 +1007,8 @@ class Dataset(_serialization.Model):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1028,7 +1033,7 @@ class Dataset(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.description = description
         self.structure = structure
         self.schema = schema
@@ -1099,8 +1104,8 @@ class AmazonMWSObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1136,7 +1141,7 @@ class AmazonMWSObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "AmazonMWSObject"  # type: str
+        self.type: str = "AmazonMWSObject"
         self.table_name = table_name
 
 
@@ -1237,8 +1242,8 @@ class CopySource(_serialization.Model):
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1258,7 +1263,7 @@ class CopySource(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.source_retry_count = source_retry_count
         self.source_retry_wait = source_retry_wait
         self.max_concurrent_connections = max_concurrent_connections
@@ -1397,8 +1402,8 @@ class TabularSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1430,7 +1435,7 @@ class TabularSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "TabularSource"  # type: str
+        self.type: str = "TabularSource"
         self.query_timeout = query_timeout
         self.additional_columns = additional_columns
 
@@ -1495,8 +1500,8 @@ class AmazonMWSSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1533,7 +1538,7 @@ class AmazonMWSSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AmazonMWSSource"  # type: str
+        self.type: str = "AmazonMWSSource"
         self.query = query
 
 
@@ -1594,8 +1599,8 @@ class AmazonRdsForOracleLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1626,7 +1631,7 @@ class AmazonRdsForOracleLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AmazonRdsForOracle"  # type: str
+        self.type: str = "AmazonRdsForOracle"
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -1664,8 +1669,8 @@ class AmazonRdsForOraclePartitionSettings(_serialization.Model):
         partition_column_name: Optional[JSON] = None,
         partition_upper_bound: Optional[JSON] = None,
         partition_lower_bound: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partition_names: Names of the physical partitions of AmazonRdsForOracle table.
         :paramtype partition_names: JSON
@@ -1758,8 +1763,8 @@ class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.AmazonRdsForOraclePartitionSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1801,7 +1806,7 @@ class AmazonRdsForOracleSource(CopySource):  # pylint: disable=too-many-instance
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AmazonRdsForOracleSource"  # type: str
+        self.type: str = "AmazonRdsForOracleSource"
         self.oracle_reader_query = oracle_reader_query
         self.query_timeout = query_timeout
         self.partition_option = partition_option
@@ -1876,8 +1881,8 @@ class AmazonRdsForOracleTableDataset(Dataset):  # pylint: disable=too-many-insta
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1917,7 +1922,7 @@ class AmazonRdsForOracleTableDataset(Dataset):  # pylint: disable=too-many-insta
             folder=folder,
             **kwargs
         )
-        self.type = "AmazonRdsForOracleTable"  # type: str
+        self.type: str = "AmazonRdsForOracleTable"
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
 
@@ -1991,8 +1996,8 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
         always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2029,7 +2034,7 @@ class AmazonRdsForSqlServerLinkedService(LinkedService):  # pylint: disable=too-
             annotations=annotations,
             **kwargs
         )
-        self.type = "AmazonRdsForSqlServer"  # type: str
+        self.type: str = "AmazonRdsForSqlServer"
         self.connection_string = connection_string
         self.user_name = user_name
         self.password = password
@@ -2120,8 +2125,8 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2172,7 +2177,7 @@ class AmazonRdsForSqlServerSource(TabularSource):  # pylint: disable=too-many-in
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AmazonRdsForSqlServerSource"  # type: str
+        self.type: str = "AmazonRdsForSqlServerSource"
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -2248,8 +2253,8 @@ class AmazonRdsForSqlServerTableDataset(Dataset):  # pylint: disable=too-many-in
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2289,7 +2294,7 @@ class AmazonRdsForSqlServerTableDataset(Dataset):  # pylint: disable=too-many-in
             folder=folder,
             **kwargs
         )
-        self.type = "AmazonRdsForSqlServerTable"  # type: str
+        self.type: str = "AmazonRdsForSqlServerTable"
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
 
@@ -2367,8 +2372,8 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
         password: Optional["_models.SecretBase"] = None,
         port: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2408,7 +2413,7 @@ class AmazonRedshiftLinkedService(LinkedService):  # pylint: disable=too-many-in
             annotations=annotations,
             **kwargs
         )
-        self.type = "AmazonRedshift"  # type: str
+        self.type: str = "AmazonRedshift"
         self.server = server
         self.username = username
         self.password = password
@@ -2482,8 +2487,8 @@ class AmazonRedshiftSource(TabularSource):
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
         redshift_unload_settings: Optional["_models.RedshiftUnloadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2523,7 +2528,7 @@ class AmazonRedshiftSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AmazonRedshiftSource"  # type: str
+        self.type: str = "AmazonRedshiftSource"
         self.query = query
         self.redshift_unload_settings = redshift_unload_settings
 
@@ -2600,8 +2605,8 @@ class AmazonRedshiftTableDataset(Dataset):  # pylint: disable=too-many-instance-
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2644,7 +2649,7 @@ class AmazonRedshiftTableDataset(Dataset):  # pylint: disable=too-many-instance-
             folder=folder,
             **kwargs
         )
-        self.type = "AmazonRedshiftTable"  # type: str
+        self.type: str = "AmazonRedshiftTable"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -2719,8 +2724,8 @@ class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-man
         service_url: Optional[JSON] = None,
         force_path_style: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2760,7 +2765,7 @@ class AmazonS3CompatibleLinkedService(LinkedService):  # pylint: disable=too-man
             annotations=annotations,
             **kwargs
         )
-        self.type = "AmazonS3Compatible"  # type: str
+        self.type: str = "AmazonS3Compatible"
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
         self.service_url = service_url
@@ -2827,8 +2832,8 @@ class DatasetLocation(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2842,7 +2847,7 @@ class DatasetLocation(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.folder_path = folder_path
         self.file_name = file_name
 
@@ -2892,8 +2897,8 @@ class AmazonS3CompatibleLocation(DatasetLocation):
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
         version: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2914,7 +2919,7 @@ class AmazonS3CompatibleLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "AmazonS3CompatibleLocation"  # type: str
+        self.type: str = "AmazonS3CompatibleLocation"
         self.bucket_name = bucket_name
         self.version = version
 
@@ -2978,8 +2983,8 @@ class StoreReadSettings(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -2993,7 +2998,7 @@ class StoreReadSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.max_concurrent_connections = max_concurrent_connections
         self.disable_metrics_collection = disable_metrics_collection
 
@@ -3083,8 +3088,8 @@ class AmazonS3CompatibleReadSettings(StoreReadSettings):  # pylint: disable=too-
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3132,7 +3137,7 @@ class AmazonS3CompatibleReadSettings(StoreReadSettings):  # pylint: disable=too-
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AmazonS3CompatibleReadSettings"  # type: str
+        self.type: str = "AmazonS3CompatibleReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -3241,8 +3246,8 @@ class AmazonS3Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
         modified_datetime_end: Optional[JSON] = None,
         format: Optional["_models.DatasetStorageFormat"] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3298,7 +3303,7 @@ class AmazonS3Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "AmazonS3Object"  # type: str
+        self.type: str = "AmazonS3Object"
         self.bucket_name = bucket_name
         self.key = key
         self.prefix = prefix
@@ -3381,8 +3386,8 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
         service_url: Optional[JSON] = None,
         session_token: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3423,7 +3428,7 @@ class AmazonS3LinkedService(LinkedService):  # pylint: disable=too-many-instance
             annotations=annotations,
             **kwargs
         )
-        self.type = "AmazonS3"  # type: str
+        self.type: str = "AmazonS3"
         self.authentication_type = authentication_type
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
@@ -3477,8 +3482,8 @@ class AmazonS3Location(DatasetLocation):
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
         version: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3499,7 +3504,7 @@ class AmazonS3Location(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "AmazonS3Location"  # type: str
+        self.type: str = "AmazonS3Location"
         self.bucket_name = bucket_name
         self.version = version
 
@@ -3589,8 +3594,8 @@ class AmazonS3ReadSettings(StoreReadSettings):  # pylint: disable=too-many-insta
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3638,7 +3643,7 @@ class AmazonS3ReadSettings(StoreReadSettings):  # pylint: disable=too-many-insta
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AmazonS3ReadSettings"  # type: str
+        self.type: str = "AmazonS3ReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -3715,8 +3720,8 @@ class ControlActivity(Activity):
         description: Optional[str] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3738,7 +3743,7 @@ class ControlActivity(Activity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Container"  # type: str
+        self.type: str = "Container"
 
 
 class AppendVariableActivity(ControlActivity):
@@ -3791,8 +3796,8 @@ class AppendVariableActivity(ControlActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         variable_name: Optional[str] = None,
         value: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3818,7 +3823,7 @@ class AppendVariableActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "AppendVariable"  # type: str
+        self.type: str = "AppendVariable"
         self.variable_name = variable_name
         self.value = value
 
@@ -3879,8 +3884,8 @@ class AppFiguresLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -3908,7 +3913,7 @@ class AppFiguresLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AppFigures"  # type: str
+        self.type: str = "AppFigures"
         self.user_name = user_name
         self.password = password
         self.client_key = client_key
@@ -3931,7 +3936,7 @@ class ArmIdWrapper(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -3989,8 +3994,8 @@ class AsanaLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4018,7 +4023,7 @@ class AsanaLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Asana"  # type: str
+        self.type: str = "Asana"
         self.api_token = api_token
         self.encrypted_credential = encrypted_credential
 
@@ -4094,8 +4099,8 @@ class AvroDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         location: Optional["_models.DatasetLocation"] = None,
         avro_compression_codec: Optional[JSON] = None,
         avro_compression_level: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4136,7 +4141,7 @@ class AvroDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Avro"  # type: str
+        self.type: str = "Avro"
         self.location = location
         self.avro_compression_codec = avro_compression_codec
         self.avro_compression_level = avro_compression_level
@@ -4188,8 +4193,8 @@ class DatasetStorageFormat(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4201,7 +4206,7 @@ class DatasetStorageFormat(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.serializer = serializer
         self.deserializer = deserializer
 
@@ -4239,8 +4244,8 @@ class AvroFormat(DatasetStorageFormat):
         additional_properties: Optional[Dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4253,7 +4258,7 @@ class AvroFormat(DatasetStorageFormat):
         super().__init__(
             additional_properties=additional_properties, serializer=serializer, deserializer=deserializer, **kwargs
         )
-        self.type = "AvroFormat"  # type: str
+        self.type: str = "AvroFormat"
 
 
 class CopySink(_serialization.Model):
@@ -4365,8 +4370,8 @@ class CopySink(_serialization.Model):
         sink_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4392,7 +4397,7 @@ class CopySink(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.write_batch_size = write_batch_size
         self.write_batch_timeout = write_batch_timeout
         self.sink_retry_count = sink_retry_count
@@ -4464,8 +4469,8 @@ class AvroSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreWriteSettings"] = None,
         format_settings: Optional["_models.AvroWriteSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4503,7 +4508,7 @@ class AvroSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AvroSink"  # type: str
+        self.type: str = "AvroSink"
         self.store_settings = store_settings
         self.format_settings = format_settings
 
@@ -4562,8 +4567,8 @@ class AvroSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4594,7 +4599,7 @@ class AvroSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AvroSource"  # type: str
+        self.type: str = "AvroSource"
         self.store_settings = store_settings
         self.additional_columns = additional_columns
 
@@ -4634,7 +4639,7 @@ class FormatWriteSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4642,7 +4647,7 @@ class FormatWriteSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AvroWriteSettings(FormatWriteSettings):
@@ -4689,8 +4694,8 @@ class AvroWriteSettings(FormatWriteSettings):
         record_namespace: Optional[str] = None,
         max_rows_per_file: Optional[JSON] = None,
         file_name_prefix: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4708,7 +4713,7 @@ class AvroWriteSettings(FormatWriteSettings):
         :paramtype file_name_prefix: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "AvroWriteSettings"  # type: str
+        self.type: str = "AvroWriteSettings"
         self.record_name = record_name
         self.record_namespace = record_namespace
         self.max_rows_per_file = max_rows_per_file
@@ -4744,10 +4749,10 @@ class CustomSetupBase(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzPowerShellSetup(CustomSetupBase):
@@ -4771,13 +4776,13 @@ class AzPowerShellSetup(CustomSetupBase):
         "version": {"key": "typeProperties.version", "type": "str"},
     }
 
-    def __init__(self, *, version: str, **kwargs):
+    def __init__(self, *, version: str, **kwargs: Any) -> None:
         """
         :keyword version: The required version of Azure PowerShell to install. Required.
         :paramtype version: str
         """
         super().__init__(**kwargs)
-        self.type = "AzPowerShellSetup"  # type: str
+        self.type: str = "AzPowerShellSetup"
         self.version = version
 
 
@@ -4859,8 +4864,8 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
         access_key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -4901,7 +4906,7 @@ class AzureBatchLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureBatch"  # type: str
+        self.type: str = "AzureBatch"
         self.account_name = account_name
         self.access_key = access_key
         self.batch_uri = batch_uri
@@ -5001,8 +5006,8 @@ class AzureBlobDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         modified_datetime_end: Optional[JSON] = None,
         format: Optional["_models.DatasetStorageFormat"] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5055,7 +5060,7 @@ class AzureBlobDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "AzureBlob"  # type: str
+        self.type: str = "AzureBlob"
         self.folder_path = folder_path
         self.table_root_location = table_root_location
         self.file_name = file_name
@@ -5140,8 +5145,8 @@ class AzureBlobFSDataset(Dataset):  # pylint: disable=too-many-instance-attribut
         file_name: Optional[JSON] = None,
         format: Optional["_models.DatasetStorageFormat"] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5185,7 +5190,7 @@ class AzureBlobFSDataset(Dataset):  # pylint: disable=too-many-instance-attribut
             folder=folder,
             **kwargs
         )
-        self.type = "AzureBlobFSFile"  # type: str
+        self.type: str = "AzureBlobFSFile"
         self.folder_path = folder_path
         self.file_name = file_name
         self.format = format
@@ -5211,7 +5216,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
     :ivar annotations: List of tags that can be used for describing the linked service.
     :vartype annotations: list[JSON]
     :ivar url: Endpoint for the Azure Data Lake Storage Gen2 service. Type: string (or Expression
-     with resultType string). Required.
+     with resultType string).
     :vartype url: JSON
     :ivar account_key: Account key for the Azure Data Lake Storage Gen2 service. Type: string (or
      Expression with resultType string).
@@ -5245,11 +5250,15 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
      servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
      be AzureKeyVaultSecretReference.
     :vartype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+    :ivar sas_uri: SAS URI of the Azure Data Lake Storage Gen2 service. Type: string, SecureString
+     or AzureKeyVaultSecretReference.
+    :vartype sas_uri: JSON
+    :ivar sas_token: The Azure key vault secret reference of sasToken in sas uri.
+    :vartype sas_token: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
         "type": {"required": True},
-        "url": {"required": True},
     }
 
     _attribute_map = {
@@ -5269,17 +5278,19 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
         "service_principal_credential_type": {"key": "typeProperties.servicePrincipalCredentialType", "type": "object"},
         "service_principal_credential": {"key": "typeProperties.servicePrincipalCredential", "type": "SecretBase"},
+        "sas_uri": {"key": "typeProperties.sasUri", "type": "object"},
+        "sas_token": {"key": "typeProperties.sasToken", "type": "SecretBase"},
     }
 
     def __init__(
         self,
         *,
-        url: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
+        url: Optional[JSON] = None,
         account_key: Optional[JSON] = None,
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
@@ -5289,8 +5300,10 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         credential: Optional["_models.CredentialReference"] = None,
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
-        **kwargs
-    ):
+        sas_uri: Optional[JSON] = None,
+        sas_token: Optional["_models.SecretBase"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5304,7 +5317,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         :keyword annotations: List of tags that can be used for describing the linked service.
         :paramtype annotations: list[JSON]
         :keyword url: Endpoint for the Azure Data Lake Storage Gen2 service. Type: string (or
-         Expression with resultType string). Required.
+         Expression with resultType string).
         :paramtype url: JSON
         :keyword account_key: Account key for the Azure Data Lake Storage Gen2 service. Type: string
          (or Expression with resultType string).
@@ -5338,6 +5351,11 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
          servicePrincipalCredentialType is 'ServicePrincipalCert', servicePrincipalCredential can only
          be AzureKeyVaultSecretReference.
         :paramtype service_principal_credential: ~azure.mgmt.datafactory.models.SecretBase
+        :keyword sas_uri: SAS URI of the Azure Data Lake Storage Gen2 service. Type: string,
+         SecureString or AzureKeyVaultSecretReference.
+        :paramtype sas_uri: JSON
+        :keyword sas_token: The Azure key vault secret reference of sasToken in sas uri.
+        :paramtype sas_token: ~azure.mgmt.datafactory.models.SecretBase
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -5347,7 +5365,7 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureBlobFS"  # type: str
+        self.type: str = "AzureBlobFS"
         self.url = url
         self.account_key = account_key
         self.service_principal_id = service_principal_id
@@ -5358,6 +5376,8 @@ class AzureBlobFSLinkedService(LinkedService):  # pylint: disable=too-many-insta
         self.credential = credential
         self.service_principal_credential_type = service_principal_credential_type
         self.service_principal_credential = service_principal_credential
+        self.sas_uri = sas_uri
+        self.sas_token = sas_token
 
 
 class AzureBlobFSLocation(DatasetLocation):
@@ -5400,8 +5420,8 @@ class AzureBlobFSLocation(DatasetLocation):
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         file_system: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5419,7 +5439,7 @@ class AzureBlobFSLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "AzureBlobFSLocation"  # type: str
+        self.type: str = "AzureBlobFSLocation"
         self.file_system = file_system
 
 
@@ -5503,8 +5523,8 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5549,7 +5569,7 @@ class AzureBlobFSReadSettings(StoreReadSettings):  # pylint: disable=too-many-in
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureBlobFSReadSettings"  # type: str
+        self.type: str = "AzureBlobFSReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -5625,8 +5645,8 @@ class AzureBlobFSSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5665,7 +5685,7 @@ class AzureBlobFSSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureBlobFSSink"  # type: str
+        self.type: str = "AzureBlobFSSink"
         self.copy_behavior = copy_behavior
         self.metadata = metadata
 
@@ -5730,8 +5750,8 @@ class AzureBlobFSSource(CopySource):
         treat_empty_as_null: Optional[JSON] = None,
         skip_header_line_count: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5766,7 +5786,7 @@ class AzureBlobFSSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureBlobFSSource"  # type: str
+        self.type: str = "AzureBlobFSSource"
         self.treat_empty_as_null = treat_empty_as_null
         self.skip_header_line_count = skip_header_line_count
         self.recursive = recursive
@@ -5826,8 +5846,8 @@ class StoreWriteSettings(_serialization.Model):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5843,7 +5863,7 @@ class StoreWriteSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.max_concurrent_connections = max_concurrent_connections
         self.disable_metrics_collection = disable_metrics_collection
         self.copy_behavior = copy_behavior
@@ -5893,8 +5913,8 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
         block_size_in_mb: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -5918,7 +5938,7 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
             copy_behavior=copy_behavior,
             **kwargs
         )
-        self.type = "AzureBlobFSWriteSettings"  # type: str
+        self.type: str = "AzureBlobFSWriteSettings"
         self.block_size_in_mb = block_size_in_mb
 
 
@@ -5977,6 +5997,13 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
     :vartype encrypted_credential: str
     :ivar credential: The credential reference containing authentication information.
     :vartype credential: ~azure.mgmt.datafactory.models.CredentialReference
+    :ivar authentication_type: The type used for authentication. Type: string. Known values are:
+     "Anonymous", "AccountKey", "SasUri", "ServicePrincipal", and "Msi".
+    :vartype authentication_type: str or
+     ~azure.mgmt.datafactory.models.AzureStorageAuthenticationType
+    :ivar container_uri: Container uri of the Azure Blob Storage resource only support for
+     anonymous access. Type: string (or Expression with resultType string).
+    :vartype container_uri: JSON
     """
 
     _validation = {
@@ -6002,6 +6029,8 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         "account_kind": {"key": "typeProperties.accountKind", "type": "str"},
         "encrypted_credential": {"key": "typeProperties.encryptedCredential", "type": "str"},
         "credential": {"key": "typeProperties.credential", "type": "CredentialReference"},
+        "authentication_type": {"key": "typeProperties.authenticationType", "type": "str"},
+        "container_uri": {"key": "typeProperties.containerUri", "type": "object"},
     }
 
     def __init__(
@@ -6024,8 +6053,10 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         account_kind: Optional[str] = None,
         encrypted_credential: Optional[str] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        authentication_type: Optional[Union[str, "_models.AzureStorageAuthenticationType"]] = None,
+        container_uri: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6075,6 +6106,13 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         :paramtype encrypted_credential: str
         :keyword credential: The credential reference containing authentication information.
         :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
+        :keyword authentication_type: The type used for authentication. Type: string. Known values are:
+         "Anonymous", "AccountKey", "SasUri", "ServicePrincipal", and "Msi".
+        :paramtype authentication_type: str or
+         ~azure.mgmt.datafactory.models.AzureStorageAuthenticationType
+        :keyword container_uri: Container uri of the Azure Blob Storage resource only support for
+         anonymous access. Type: string (or Expression with resultType string).
+        :paramtype container_uri: JSON
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -6084,7 +6122,7 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureBlobStorage"  # type: str
+        self.type: str = "AzureBlobStorage"
         self.connection_string = connection_string
         self.account_key = account_key
         self.sas_uri = sas_uri
@@ -6097,6 +6135,8 @@ class AzureBlobStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         self.account_kind = account_kind
         self.encrypted_credential = encrypted_credential
         self.credential = credential
+        self.authentication_type = authentication_type
+        self.container_uri = container_uri
 
 
 class AzureBlobStorageLocation(DatasetLocation):
@@ -6139,8 +6179,8 @@ class AzureBlobStorageLocation(DatasetLocation):
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         container: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6158,7 +6198,7 @@ class AzureBlobStorageLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "AzureBlobStorageLocation"  # type: str
+        self.type: str = "AzureBlobStorageLocation"
         self.container = container
 
 
@@ -6247,8 +6287,8 @@ class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6296,7 +6336,7 @@ class AzureBlobStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureBlobStorageReadSettings"  # type: str
+        self.type: str = "AzureBlobStorageReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -6353,8 +6393,8 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
         block_size_in_mb: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6378,7 +6418,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
             copy_behavior=copy_behavior,
             **kwargs
         )
-        self.type = "AzureBlobStorageWriteSettings"  # type: str
+        self.type: str = "AzureBlobStorageWriteSettings"
         self.block_size_in_mb = block_size_in_mb
 
 
@@ -6448,8 +6488,8 @@ class AzureDatabricksDeltaLakeDataset(Dataset):  # pylint: disable=too-many-inst
         folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[JSON] = None,
         database: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6488,7 +6528,7 @@ class AzureDatabricksDeltaLakeDataset(Dataset):  # pylint: disable=too-many-inst
             folder=folder,
             **kwargs
         )
-        self.type = "AzureDatabricksDeltaLakeDataset"  # type: str
+        self.type: str = "AzureDatabricksDeltaLakeDataset"
         self.table = table
         self.database = database
 
@@ -6524,7 +6564,7 @@ class ExportSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6532,7 +6572,7 @@ class ExportSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzureDatabricksDeltaLakeExportCommand(ExportSettings):
@@ -6570,8 +6610,8 @@ class AzureDatabricksDeltaLakeExportCommand(ExportSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         date_format: Optional[JSON] = None,
         timestamp_format: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6584,7 +6624,7 @@ class AzureDatabricksDeltaLakeExportCommand(ExportSettings):
         :paramtype timestamp_format: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "AzureDatabricksDeltaLakeExportCommand"  # type: str
+        self.type: str = "AzureDatabricksDeltaLakeExportCommand"
         self.date_format = date_format
         self.timestamp_format = timestamp_format
 
@@ -6620,7 +6660,7 @@ class ImportSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6628,7 +6668,7 @@ class ImportSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
@@ -6666,8 +6706,8 @@ class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         date_format: Optional[JSON] = None,
         timestamp_format: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6680,7 +6720,7 @@ class AzureDatabricksDeltaLakeImportCommand(ImportSettings):
         :paramtype timestamp_format: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "AzureDatabricksDeltaLakeImportCommand"  # type: str
+        self.type: str = "AzureDatabricksDeltaLakeImportCommand"
         self.date_format = date_format
         self.timestamp_format = timestamp_format
 
@@ -6758,8 +6798,8 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
         encrypted_credential: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
         workspace_resource_id: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6800,7 +6840,7 @@ class AzureDatabricksDeltaLakeLinkedService(LinkedService):  # pylint: disable=t
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureDatabricksDeltaLake"  # type: str
+        self.type: str = "AzureDatabricksDeltaLake"
         self.domain = domain
         self.access_token = access_token
         self.cluster_id = cluster_id
@@ -6873,8 +6913,8 @@ class AzureDatabricksDeltaLakeSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
         import_settings: Optional["_models.AzureDatabricksDeltaLakeImportCommand"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -6914,7 +6954,7 @@ class AzureDatabricksDeltaLakeSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureDatabricksDeltaLakeSink"  # type: str
+        self.type: str = "AzureDatabricksDeltaLakeSink"
         self.pre_copy_script = pre_copy_script
         self.import_settings = import_settings
 
@@ -6973,8 +7013,8 @@ class AzureDatabricksDeltaLakeSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         export_settings: Optional["_models.AzureDatabricksDeltaLakeExportCommand"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7006,7 +7046,7 @@ class AzureDatabricksDeltaLakeSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureDatabricksDeltaLakeSource"  # type: str
+        self.type: str = "AzureDatabricksDeltaLakeSource"
         self.query = query
         self.export_settings = export_settings
 
@@ -7158,8 +7198,8 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
         encrypted_credential: Optional[JSON] = None,
         policy_id: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7248,7 +7288,7 @@ class AzureDatabricksLinkedService(LinkedService):  # pylint: disable=too-many-i
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureDatabricks"  # type: str
+        self.type: str = "AzureDatabricks"
         self.domain = domain
         self.access_token = access_token
         self.authentication = authentication
@@ -7361,8 +7401,8 @@ class ExecutionActivity(Activity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7388,7 +7428,7 @@ class ExecutionActivity(Activity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Execution"  # type: str
+        self.type: str = "Execution"
         self.linked_service_name = linked_service_name
         self.policy = policy
 
@@ -7454,8 +7494,8 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         command_timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7489,7 +7529,7 @@ class AzureDataExplorerCommandActivity(ExecutionActivity):
             policy=policy,
             **kwargs
         )
-        self.type = "AzureDataExplorerCommand"  # type: str
+        self.type: str = "AzureDataExplorerCommand"
         self.command = command
         self.command_timeout = command_timeout
 
@@ -7567,8 +7607,8 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7608,7 +7648,7 @@ class AzureDataExplorerLinkedService(LinkedService):  # pylint: disable=too-many
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureDataExplorer"  # type: str
+        self.type: str = "AzureDataExplorer"
         self.endpoint = endpoint
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -7687,8 +7727,8 @@ class AzureDataExplorerSink(CopySink):  # pylint: disable=too-many-instance-attr
         ingestion_mapping_name: Optional[JSON] = None,
         ingestion_mapping_as_json: Optional[JSON] = None,
         flush_immediately: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7731,7 +7771,7 @@ class AzureDataExplorerSink(CopySink):  # pylint: disable=too-many-instance-attr
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureDataExplorerSink"  # type: str
+        self.type: str = "AzureDataExplorerSink"
         self.ingestion_mapping_name = ingestion_mapping_name
         self.ingestion_mapping_as_json = ingestion_mapping_as_json
         self.flush_immediately = flush_immediately
@@ -7803,8 +7843,8 @@ class AzureDataExplorerSource(CopySource):
         no_truncation: Optional[JSON] = None,
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7842,7 +7882,7 @@ class AzureDataExplorerSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureDataExplorerSource"  # type: str
+        self.type: str = "AzureDataExplorerSource"
         self.query = query
         self.no_truncation = no_truncation
         self.query_timeout = query_timeout
@@ -7911,8 +7951,8 @@ class AzureDataExplorerTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -7949,7 +7989,7 @@ class AzureDataExplorerTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "AzureDataExplorerTable"  # type: str
+        self.type: str = "AzureDataExplorerTable"
         self.table = table
 
 
@@ -8037,8 +8077,8 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
         resource_group_name: Optional[JSON] = None,
         data_lake_analytics_uri: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8085,7 +8125,7 @@ class AzureDataLakeAnalyticsLinkedService(LinkedService):  # pylint: disable=too
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureDataLakeAnalytics"  # type: str
+        self.type: str = "AzureDataLakeAnalytics"
         self.account_name = account_name
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -8172,8 +8212,8 @@ class AzureDataLakeStoreDataset(Dataset):  # pylint: disable=too-many-instance-a
         file_name: Optional[JSON] = None,
         format: Optional["_models.DatasetStorageFormat"] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8218,7 +8258,7 @@ class AzureDataLakeStoreDataset(Dataset):  # pylint: disable=too-many-instance-a
             folder=folder,
             **kwargs
         )
-        self.type = "AzureDataLakeStoreFile"  # type: str
+        self.type: str = "AzureDataLakeStoreFile"
         self.folder_path = folder_path
         self.file_name = file_name
         self.format = format
@@ -8318,8 +8358,8 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
         resource_group_name: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8372,7 +8412,7 @@ class AzureDataLakeStoreLinkedService(LinkedService):  # pylint: disable=too-man
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureDataLakeStore"  # type: str
+        self.type: str = "AzureDataLakeStore"
         self.data_lake_store_uri = data_lake_store_uri
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -8420,8 +8460,8 @@ class AzureDataLakeStoreLocation(DatasetLocation):
         additional_properties: Optional[Dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8436,7 +8476,7 @@ class AzureDataLakeStoreLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "AzureDataLakeStoreLocation"  # type: str
+        self.type: str = "AzureDataLakeStoreLocation"
 
 
 class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
@@ -8531,8 +8571,8 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8585,7 +8625,7 @@ class AzureDataLakeStoreReadSettings(StoreReadSettings):  # pylint: disable=too-
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureDataLakeStoreReadSettings"  # type: str
+        self.type: str = "AzureDataLakeStoreReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -8662,8 +8702,8 @@ class AzureDataLakeStoreSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
         enable_adls_single_file_parallel: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8701,7 +8741,7 @@ class AzureDataLakeStoreSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureDataLakeStoreSink"  # type: str
+        self.type: str = "AzureDataLakeStoreSink"
         self.copy_behavior = copy_behavior
         self.enable_adls_single_file_parallel = enable_adls_single_file_parallel
 
@@ -8756,8 +8796,8 @@ class AzureDataLakeStoreSource(CopySource):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8786,7 +8826,7 @@ class AzureDataLakeStoreSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureDataLakeStoreSource"  # type: str
+        self.type: str = "AzureDataLakeStoreSource"
         self.recursive = recursive
 
 
@@ -8835,8 +8875,8 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
         expiry_date_time: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -8861,7 +8901,7 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
             copy_behavior=copy_behavior,
             **kwargs
         )
-        self.type = "AzureDataLakeStoreWriteSettings"  # type: str
+        self.type: str = "AzureDataLakeStoreWriteSettings"
         self.expiry_date_time = expiry_date_time
 
 
@@ -8953,8 +8993,8 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
         file_share: Optional[JSON] = None,
         snapshot: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9003,7 +9043,7 @@ class AzureFileStorageLinkedService(LinkedService):  # pylint: disable=too-many-
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureFileStorage"  # type: str
+        self.type: str = "AzureFileStorage"
         self.host = host
         self.user_id = user_id
         self.password = password
@@ -9051,8 +9091,8 @@ class AzureFileStorageLocation(DatasetLocation):
         additional_properties: Optional[Dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9067,7 +9107,7 @@ class AzureFileStorageLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "AzureFileStorageLocation"  # type: str
+        self.type: str = "AzureFileStorageLocation"
 
 
 class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
@@ -9155,8 +9195,8 @@ class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9204,7 +9244,7 @@ class AzureFileStorageReadSettings(StoreReadSettings):  # pylint: disable=too-ma
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureFileStorageReadSettings"  # type: str
+        self.type: str = "AzureFileStorageReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -9256,8 +9296,8 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9278,7 +9318,7 @@ class AzureFileStorageWriteSettings(StoreWriteSettings):
             copy_behavior=copy_behavior,
             **kwargs
         )
-        self.type = "AzureFileStorageWriteSettings"  # type: str
+        self.type: str = "AzureFileStorageWriteSettings"
 
 
 class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
@@ -9354,8 +9394,8 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         policy: Optional["_models.ActivityPolicy"] = None,
         headers: Optional[JSON] = None,
         body: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9396,7 +9436,7 @@ class AzureFunctionActivity(ExecutionActivity):  # pylint: disable=too-many-inst
             policy=policy,
             **kwargs
         )
-        self.type = "AzureFunctionActivity"  # type: str
+        self.type: str = "AzureFunctionActivity"
         self.method = method
         self.function_name = function_name
         self.headers = headers
@@ -9473,8 +9513,8 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
         credential: Optional["_models.CredentialReference"] = None,
         resource_id: Optional[JSON] = None,
         authentication: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9512,7 +9552,7 @@ class AzureFunctionLinkedService(LinkedService):  # pylint: disable=too-many-ins
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureFunction"  # type: str
+        self.type: str = "AzureFunction"
         self.function_app_url = function_app_url
         self.function_key = function_key
         self.encrypted_credential = encrypted_credential
@@ -9572,8 +9612,8 @@ class AzureKeyVaultLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9600,7 +9640,7 @@ class AzureKeyVaultLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureKeyVault"  # type: str
+        self.type: str = "AzureKeyVault"
         self.base_url = base_url
         self.credential = credential
 
@@ -9627,10 +9667,10 @@ class SecretBase(_serialization.Model):
 
     _subtype_map = {"type": {"AzureKeyVaultSecret": "AzureKeyVaultSecretReference", "SecureString": "SecureString"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class AzureKeyVaultSecretReference(SecretBase):
@@ -9669,8 +9709,8 @@ class AzureKeyVaultSecretReference(SecretBase):
         store: "_models.LinkedServiceReference",
         secret_name: JSON,
         secret_version: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword store: The Azure Key Vault linked service reference. Required.
         :paramtype store: ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -9682,7 +9722,7 @@ class AzureKeyVaultSecretReference(SecretBase):
         :paramtype secret_version: JSON
         """
         super().__init__(**kwargs)
-        self.type = "AzureKeyVaultSecret"  # type: str
+        self.type: str = "AzureKeyVaultSecret"
         self.store = store
         self.secret_name = secret_name
         self.secret_version = secret_version
@@ -9744,8 +9784,8 @@ class AzureMariaDBLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9776,7 +9816,7 @@ class AzureMariaDBLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureMariaDB"  # type: str
+        self.type: str = "AzureMariaDB"
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -9842,8 +9882,8 @@ class AzureMariaDBSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9880,7 +9920,7 @@ class AzureMariaDBSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AzureMariaDBSource"  # type: str
+        self.type: str = "AzureMariaDBSource"
         self.query = query
 
 
@@ -9945,8 +9985,8 @@ class AzureMariaDBTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -9982,7 +10022,7 @@ class AzureMariaDBTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "AzureMariaDBTable"  # type: str
+        self.type: str = "AzureMariaDBTable"
         self.table_name = table_name
 
 
@@ -10056,8 +10096,8 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
         global_parameters: Optional[Dict[str, JSON]] = None,
         web_service_outputs: Optional[Dict[str, "_models.AzureMLWebServiceFile"]] = None,
         web_service_inputs: Optional[Dict[str, "_models.AzureMLWebServiceFile"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -10100,7 +10140,7 @@ class AzureMLBatchExecutionActivity(ExecutionActivity):  # pylint: disable=too-m
             policy=policy,
             **kwargs
         )
-        self.type = "AzureMLBatchExecution"  # type: str
+        self.type: str = "AzureMLBatchExecution"
         self.global_parameters = global_parameters
         self.web_service_outputs = web_service_outputs
         self.web_service_inputs = web_service_inputs
@@ -10202,8 +10242,8 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
         data_path_assignments: Optional[JSON] = None,
         ml_parent_run_id: Optional[JSON] = None,
         continue_on_step_failure: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -10262,7 +10302,7 @@ class AzureMLExecutePipelineActivity(ExecutionActivity):  # pylint: disable=too-
             policy=policy,
             **kwargs
         )
-        self.type = "AzureMLExecutePipeline"  # type: str
+        self.type: str = "AzureMLExecutePipeline"
         self.ml_pipeline_id = ml_pipeline_id
         self.ml_pipeline_endpoint_id = ml_pipeline_endpoint_id
         self.version = version
@@ -10357,8 +10397,8 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         tenant: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
         authentication: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -10405,7 +10445,7 @@ class AzureMLLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureML"  # type: str
+        self.type: str = "AzureML"
         self.ml_endpoint = ml_endpoint
         self.api_key = api_key
         self.update_resource_endpoint = update_resource_endpoint
@@ -10497,8 +10537,8 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
         service_principal_key: Optional["_models.SecretBase"] = None,
         tenant: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -10543,7 +10583,7 @@ class AzureMLServiceLinkedService(LinkedService):  # pylint: disable=too-many-in
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureMLService"  # type: str
+        self.type: str = "AzureMLService"
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.ml_workspace_name = ml_workspace_name
@@ -10626,8 +10666,8 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -10666,7 +10706,7 @@ class AzureMLUpdateResourceActivity(ExecutionActivity):  # pylint: disable=too-m
             policy=policy,
             **kwargs
         )
-        self.type = "AzureMLUpdateResource"  # type: str
+        self.type: str = "AzureMLUpdateResource"
         self.trained_model_name = trained_model_name
         self.trained_model_linked_service_name = trained_model_linked_service_name
         self.trained_model_file_path = trained_model_file_path
@@ -10695,7 +10735,9 @@ class AzureMLWebServiceFile(_serialization.Model):
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
     }
 
-    def __init__(self, *, file_path: JSON, linked_service_name: "_models.LinkedServiceReference", **kwargs):
+    def __init__(
+        self, *, file_path: JSON, linked_service_name: "_models.LinkedServiceReference", **kwargs: Any
+    ) -> None:
         """
         :keyword file_path: The relative file path, including container name, in the Azure Blob Storage
          specified by the LinkedService. Type: string (or Expression with resultType string). Required.
@@ -10766,8 +10808,8 @@ class AzureMySqlLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -10798,7 +10840,7 @@ class AzureMySqlLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureMySql"  # type: str
+        self.type: str = "AzureMySql"
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -10864,8 +10906,8 @@ class AzureMySqlSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -10902,7 +10944,7 @@ class AzureMySqlSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureMySqlSink"  # type: str
+        self.type: str = "AzureMySqlSink"
         self.pre_copy_script = pre_copy_script
 
 
@@ -10965,8 +11007,8 @@ class AzureMySqlSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11002,7 +11044,7 @@ class AzureMySqlSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AzureMySqlSource"  # type: str
+        self.type: str = "AzureMySqlSource"
         self.query = query
 
 
@@ -11073,8 +11115,8 @@ class AzureMySqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11114,7 +11156,7 @@ class AzureMySqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
             folder=folder,
             **kwargs
         )
-        self.type = "AzureMySqlTable"  # type: str
+        self.type: str = "AzureMySqlTable"
         self.table_name = table_name
         self.table = table
 
@@ -11175,8 +11217,8 @@ class AzurePostgreSqlLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11207,7 +11249,7 @@ class AzurePostgreSqlLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzurePostgreSql"  # type: str
+        self.type: str = "AzurePostgreSql"
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -11273,8 +11315,8 @@ class AzurePostgreSqlSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11311,7 +11353,7 @@ class AzurePostgreSqlSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzurePostgreSqlSink"  # type: str
+        self.type: str = "AzurePostgreSqlSink"
         self.pre_copy_script = pre_copy_script
 
 
@@ -11375,8 +11417,8 @@ class AzurePostgreSqlSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11413,7 +11455,7 @@ class AzurePostgreSqlSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AzurePostgreSqlSource"  # type: str
+        self.type: str = "AzurePostgreSqlSource"
         self.query = query
 
 
@@ -11489,8 +11531,8 @@ class AzurePostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11533,7 +11575,7 @@ class AzurePostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance
             folder=folder,
             **kwargs
         )
-        self.type = "AzurePostgreSqlTable"  # type: str
+        self.type: str = "AzurePostgreSqlTable"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -11594,8 +11636,8 @@ class AzureQueueSink(CopySink):
         sink_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11629,7 +11671,7 @@ class AzureQueueSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureQueueSink"  # type: str
+        self.type: str = "AzureQueueSink"
 
 
 class AzureSearchIndexDataset(Dataset):
@@ -11695,8 +11737,8 @@ class AzureSearchIndexDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11733,7 +11775,7 @@ class AzureSearchIndexDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "AzureSearchIndex"  # type: str
+        self.type: str = "AzureSearchIndex"
         self.index_name = index_name
 
 
@@ -11798,8 +11840,8 @@ class AzureSearchIndexSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         write_behavior: Optional[Union[str, "_models.AzureSearchIndexWriteBehaviorType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11837,7 +11879,7 @@ class AzureSearchIndexSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureSearchIndexSink"  # type: str
+        self.type: str = "AzureSearchIndexSink"
         self.write_behavior = write_behavior
 
 
@@ -11898,8 +11940,8 @@ class AzureSearchLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         key: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -11930,7 +11972,7 @@ class AzureSearchLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureSearch"  # type: str
+        self.type: str = "AzureSearch"
         self.url = url
         self.key = key
         self.encrypted_credential = encrypted_credential
@@ -12025,8 +12067,8 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
         encrypted_credential: Optional[JSON] = None,
         always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -12075,7 +12117,7 @@ class AzureSqlDatabaseLinkedService(LinkedService):  # pylint: disable=too-many-
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureSqlDatabase"  # type: str
+        self.type: str = "AzureSqlDatabase"
         self.connection_string = connection_string
         self.password = password
         self.service_principal_id = service_principal_id
@@ -12170,8 +12212,8 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
         azure_cloud_type: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -12218,7 +12260,7 @@ class AzureSqlDWLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureSqlDW"  # type: str
+        self.type: str = "AzureSqlDW"
         self.connection_string = connection_string
         self.password = password
         self.service_principal_id = service_principal_id
@@ -12301,8 +12343,8 @@ class AzureSqlDWTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -12345,7 +12387,7 @@ class AzureSqlDWTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
             folder=folder,
             **kwargs
         )
-        self.type = "AzureSqlDWTable"  # type: str
+        self.type: str = "AzureSqlDWTable"
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -12440,8 +12482,8 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
         encrypted_credential: Optional[JSON] = None,
         always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -12490,7 +12532,7 @@ class AzureSqlMILinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureSqlMI"  # type: str
+        self.type: str = "AzureSqlMI"
         self.connection_string = connection_string
         self.password = password
         self.service_principal_id = service_principal_id
@@ -12574,8 +12616,8 @@ class AzureSqlMITableDataset(Dataset):  # pylint: disable=too-many-instance-attr
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -12618,7 +12660,7 @@ class AzureSqlMITableDataset(Dataset):  # pylint: disable=too-many-instance-attr
             folder=folder,
             **kwargs
         )
-        self.type = "AzureSqlMITable"  # type: str
+        self.type: str = "AzureSqlMITable"
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -12725,8 +12767,8 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_use_table_lock: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
         upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -12785,7 +12827,7 @@ class AzureSqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureSqlSink"  # type: str
+        self.type: str = "AzureSqlSink"
         self.sql_writer_stored_procedure_name = sql_writer_stored_procedure_name
         self.sql_writer_table_type = sql_writer_table_type
         self.pre_copy_script = pre_copy_script
@@ -12880,8 +12922,8 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -12932,7 +12974,7 @@ class AzureSqlSource(TabularSource):  # pylint: disable=too-many-instance-attrib
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AzureSqlSource"  # type: str
+        self.type: str = "AzureSqlSource"
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -13013,8 +13055,8 @@ class AzureSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attrib
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13057,7 +13099,7 @@ class AzureSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attrib
             folder=folder,
             **kwargs
         )
-        self.type = "AzureSqlTable"  # type: str
+        self.type: str = "AzureSqlTable"
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -13128,8 +13170,8 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
         sas_uri: Optional[JSON] = None,
         sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13165,7 +13207,7 @@ class AzureStorageLinkedService(LinkedService):  # pylint: disable=too-many-inst
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureStorage"  # type: str
+        self.type: str = "AzureStorage"
         self.connection_string = connection_string
         self.account_key = account_key
         self.sas_uri = sas_uri
@@ -13231,8 +13273,8 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         authentication: Optional[JSON] = None,
         workspace_resource_id: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13264,7 +13306,7 @@ class AzureSynapseArtifactsLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureSynapseArtifacts"  # type: str
+        self.type: str = "AzureSynapseArtifacts"
         self.endpoint = endpoint
         self.authentication = authentication
         self.workspace_resource_id = workspace_resource_id
@@ -13333,8 +13375,8 @@ class AzureTableDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13371,7 +13413,7 @@ class AzureTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "AzureTable"  # type: str
+        self.type: str = "AzureTable"
         self.table_name = table_name
 
 
@@ -13450,8 +13492,8 @@ class AzureTableSink(CopySink):  # pylint: disable=too-many-instance-attributes
         azure_table_partition_key_name: Optional[JSON] = None,
         azure_table_row_key_name: Optional[JSON] = None,
         azure_table_insert_type: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13497,7 +13539,7 @@ class AzureTableSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "AzureTableSink"  # type: str
+        self.type: str = "AzureTableSink"
         self.azure_table_default_partition_key_value = azure_table_default_partition_key_value
         self.azure_table_partition_key_name = azure_table_partition_key_name
         self.azure_table_row_key_name = azure_table_row_key_name
@@ -13569,8 +13611,8 @@ class AzureTableSource(TabularSource):
         additional_columns: Optional[JSON] = None,
         azure_table_source_query: Optional[JSON] = None,
         azure_table_source_ignore_table_not_found: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13610,7 +13652,7 @@ class AzureTableSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "AzureTableSource"  # type: str
+        self.type: str = "AzureTableSource"
         self.azure_table_source_query = azure_table_source_query
         self.azure_table_source_ignore_table_not_found = azure_table_source_ignore_table_not_found
 
@@ -13680,8 +13722,8 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
         sas_uri: Optional[JSON] = None,
         sas_token: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13717,7 +13759,7 @@ class AzureTableStorageLinkedService(LinkedService):  # pylint: disable=too-many
             annotations=annotations,
             **kwargs
         )
-        self.type = "AzureTableStorage"  # type: str
+        self.type: str = "AzureTableStorage"
         self.connection_string = connection_string
         self.account_key = account_key
         self.sas_uri = sas_uri
@@ -13747,7 +13789,9 @@ class BigDataPoolParametrizationReference(_serialization.Model):
         "reference_name": {"key": "referenceName", "type": "object"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.BigDataPoolReferenceType"], reference_name: JSON, **kwargs):
+    def __init__(
+        self, *, type: Union[str, "_models.BigDataPoolReferenceType"], reference_name: JSON, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Big data pool reference type. Required. "BigDataPoolReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.BigDataPoolReferenceType
@@ -13825,8 +13869,8 @@ class BinaryDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13864,7 +13908,7 @@ class BinaryDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Binary"  # type: str
+        self.type: str = "Binary"
         self.location = location
         self.compression = compression
 
@@ -13902,7 +13946,7 @@ class FormatReadSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13910,7 +13954,7 @@ class FormatReadSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class BinaryReadSettings(FormatReadSettings):
@@ -13942,8 +13986,8 @@ class BinaryReadSettings(FormatReadSettings):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -13952,7 +13996,7 @@ class BinaryReadSettings(FormatReadSettings):
         :paramtype compression_properties: ~azure.mgmt.datafactory.models.CompressionReadSettings
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "BinaryReadSettings"  # type: str
+        self.type: str = "BinaryReadSettings"
         self.compression_properties = compression_properties
 
 
@@ -14015,8 +14059,8 @@ class BinarySink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreWriteSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14052,7 +14096,7 @@ class BinarySink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "BinarySink"  # type: str
+        self.type: str = "BinarySink"
         self.store_settings = store_settings
 
 
@@ -14109,8 +14153,8 @@ class BinarySource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
         format_settings: Optional["_models.BinaryReadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14140,7 +14184,7 @@ class BinarySource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "BinarySource"  # type: str
+        self.type: str = "BinarySource"
         self.store_settings = store_settings
         self.format_settings = format_settings
 
@@ -14197,8 +14241,8 @@ class Trigger(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14210,7 +14254,7 @@ class Trigger(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.description = description
         self.runtime_state = None
         self.annotations = annotations
@@ -14272,8 +14316,8 @@ class MultiplePipelineTrigger(Trigger):
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
         pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14288,7 +14332,7 @@ class MultiplePipelineTrigger(Trigger):
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
-        self.type = "MultiplePipelineTrigger"  # type: str
+        self.type: str = "MultiplePipelineTrigger"
         self.pipelines = pipelines
 
 
@@ -14363,8 +14407,8 @@ class BlobEventsTrigger(MultiplePipelineTrigger):  # pylint: disable=too-many-in
         blob_path_begins_with: Optional[str] = None,
         blob_path_ends_with: Optional[str] = None,
         ignore_empty_blobs: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14398,7 +14442,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):  # pylint: disable=too-many-in
             pipelines=pipelines,
             **kwargs
         )
-        self.type = "BlobEventsTrigger"  # type: str
+        self.type: str = "BlobEventsTrigger"
         self.blob_path_begins_with = blob_path_begins_with
         self.blob_path_ends_with = blob_path_ends_with
         self.ignore_empty_blobs = ignore_empty_blobs
@@ -14485,8 +14529,8 @@ class BlobSink(CopySink):  # pylint: disable=too-many-instance-attributes
         blob_writer_add_header: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
         metadata: Optional[List["_models.MetadataItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14534,7 +14578,7 @@ class BlobSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "BlobSink"  # type: str
+        self.type: str = "BlobSink"
         self.blob_writer_overwrite_files = blob_writer_overwrite_files
         self.blob_writer_date_time_format = blob_writer_date_time_format
         self.blob_writer_add_header = blob_writer_add_header
@@ -14602,8 +14646,8 @@ class BlobSource(CopySource):
         treat_empty_as_null: Optional[JSON] = None,
         skip_header_line_count: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14638,7 +14682,7 @@ class BlobSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "BlobSource"  # type: str
+        self.type: str = "BlobSource"
         self.treat_empty_as_null = treat_empty_as_null
         self.skip_header_line_count = skip_header_line_count
         self.recursive = recursive
@@ -14704,8 +14748,8 @@ class BlobTrigger(MultiplePipelineTrigger):
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
         pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14732,7 +14776,7 @@ class BlobTrigger(MultiplePipelineTrigger):
             pipelines=pipelines,
             **kwargs
         )
-        self.type = "BlobTrigger"  # type: str
+        self.type: str = "BlobTrigger"
         self.folder_path = folder_path
         self.max_concurrency = max_concurrency
         self.linked_service = linked_service
@@ -14809,8 +14853,8 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14850,7 +14894,7 @@ class CassandraLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             annotations=annotations,
             **kwargs
         )
-        self.type = "Cassandra"  # type: str
+        self.type: str = "Cassandra"
         self.host = host
         self.authentication_type = authentication_type
         self.port = port
@@ -14929,8 +14973,8 @@ class CassandraSource(TabularSource):
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
         consistency_level: Optional[Union[str, "_models.CassandraSourceReadConsistencyLevels"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -14975,7 +15019,7 @@ class CassandraSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "CassandraSource"  # type: str
+        self.type: str = "CassandraSource"
         self.query = query
         self.consistency_level = consistency_level
 
@@ -15047,8 +15091,8 @@ class CassandraTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
         keyspace: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -15088,13 +15132,16 @@ class CassandraTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
             folder=folder,
             **kwargs
         )
-        self.type = "CassandraTable"  # type: str
+        self.type: str = "CassandraTable"
         self.table_name = table_name
         self.keyspace = keyspace
 
 
 class ChainingTrigger(Trigger):
-    """Trigger that allows the referenced pipeline to depend on other pipeline runs based on runDimension Name/Value pairs. Upstream pipelines should declare the same runDimension Name and their runs should have the values for those runDimensions. The referenced pipeline run would be triggered if the values for the runDimension match for all upstream pipeline runs.
+    """Trigger that allows the referenced pipeline to depend on other pipeline runs based on
+    runDimension Name/Value pairs. Upstream pipelines should declare the same runDimension Name and
+    their runs should have the values for those runDimensions. The referenced pipeline run would be
+    triggered if the values for the runDimension match for all upstream pipeline runs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -15150,8 +15197,8 @@ class ChainingTrigger(Trigger):
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -15172,7 +15219,7 @@ class ChainingTrigger(Trigger):
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
-        self.type = "ChainingTrigger"  # type: str
+        self.type: str = "ChainingTrigger"
         self.pipeline = pipeline
         self.depends_on = depends_on
         self.run_dimension = run_dimension
@@ -15212,8 +15259,8 @@ class CloudError(_serialization.Model):
         message: str,
         target: Optional[str] = None,
         details: Optional[List["_models.CloudError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: Error code. Required.
         :paramtype code: str
@@ -15260,7 +15307,7 @@ class CmdkeySetup(CustomSetupBase):
         "password": {"key": "typeProperties.password", "type": "SecretBase"},
     }
 
-    def __init__(self, *, target_name: JSON, user_name: JSON, password: "_models.SecretBase", **kwargs):
+    def __init__(self, *, target_name: JSON, user_name: JSON, password: "_models.SecretBase", **kwargs: Any) -> None:
         """
         :keyword target_name: The server name of data source access. Required.
         :paramtype target_name: JSON
@@ -15270,7 +15317,7 @@ class CmdkeySetup(CustomSetupBase):
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
         """
         super().__init__(**kwargs)
-        self.type = "CmdkeySetup"  # type: str
+        self.type: str = "CmdkeySetup"
         self.target_name = target_name
         self.user_name = user_name
         self.password = password
@@ -15288,7 +15335,7 @@ class CMKIdentityDefinition(_serialization.Model):
         "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs):
+    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword user_assigned_identity: The resource id of the user assigned identity to authenticate
          to customer's key vault.
@@ -15360,8 +15407,8 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -15398,7 +15445,7 @@ class CommonDataServiceForAppsEntityDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "CommonDataServiceForAppsEntity"  # type: str
+        self.type: str = "CommonDataServiceForAppsEntity"
         self.entity_name = entity_name
 
 
@@ -15518,8 +15565,8 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -15590,7 +15637,7 @@ class CommonDataServiceForAppsLinkedService(LinkedService):  # pylint: disable=t
             annotations=annotations,
             **kwargs
         )
-        self.type = "CommonDataServiceForApps"  # type: str
+        self.type: str = "CommonDataServiceForApps"
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
@@ -15676,8 +15723,8 @@ class CommonDataServiceForAppsSink(CopySink):  # pylint: disable=too-many-instan
         disable_metrics_collection: Optional[JSON] = None,
         ignore_null_values: Optional[JSON] = None,
         alternate_key_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -15720,7 +15767,7 @@ class CommonDataServiceForAppsSink(CopySink):  # pylint: disable=too-many-instan
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "CommonDataServiceForAppsSink"  # type: str
+        self.type: str = "CommonDataServiceForAppsSink"
         self.write_behavior = write_behavior
         self.ignore_null_values = ignore_null_values
         self.alternate_key_name = alternate_key_name
@@ -15781,8 +15828,8 @@ class CommonDataServiceForAppsSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -15814,7 +15861,7 @@ class CommonDataServiceForAppsSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "CommonDataServiceForAppsSource"  # type: str
+        self.type: str = "CommonDataServiceForAppsSource"
         self.query = query
         self.additional_columns = additional_columns
 
@@ -15843,7 +15890,9 @@ class ComponentSetup(CustomSetupBase):
         "license_key": {"key": "typeProperties.licenseKey", "type": "SecretBase"},
     }
 
-    def __init__(self, *, component_name: str, license_key: Optional["_models.SecretBase"] = None, **kwargs):
+    def __init__(
+        self, *, component_name: str, license_key: Optional["_models.SecretBase"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword component_name: The name of the 3rd party component. Required.
         :paramtype component_name: str
@@ -15851,7 +15900,7 @@ class ComponentSetup(CustomSetupBase):
         :paramtype license_key: ~azure.mgmt.datafactory.models.SecretBase
         """
         super().__init__(**kwargs)
-        self.type = "ComponentSetup"  # type: str
+        self.type: str = "ComponentSetup"
         self.component_name = component_name
         self.license_key = license_key
 
@@ -15888,7 +15937,7 @@ class CompressionReadSettings(_serialization.Model):
         }
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -15896,7 +15945,7 @@ class CompressionReadSettings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
@@ -15982,8 +16031,8 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16029,7 +16078,7 @@ class ConcurLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "Concur"  # type: str
+        self.type: str = "Concur"
         self.connection_properties = connection_properties
         self.client_id = client_id
         self.username = username
@@ -16101,8 +16150,8 @@ class ConcurObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16138,7 +16187,7 @@ class ConcurObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "ConcurObject"  # type: str
+        self.type: str = "ConcurObject"
         self.table_name = table_name
 
 
@@ -16202,8 +16251,8 @@ class ConcurSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16240,7 +16289,7 @@ class ConcurSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "ConcurSource"  # type: str
+        self.type: str = "ConcurSource"
         self.query = query
 
 
@@ -16269,7 +16318,7 @@ class ConnectionStateProperties(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.actions_required = None
@@ -16409,8 +16458,8 @@ class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attr
         preserve: Optional[List[JSON]] = None,
         validate_data_consistency: Optional[JSON] = None,
         skip_error_file: Optional["_models.SkipErrorFile"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16481,7 +16530,7 @@ class CopyActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attr
             policy=policy,
             **kwargs
         )
-        self.type = "Copy"  # type: str
+        self.type: str = "Copy"
         self.inputs = inputs
         self.outputs = outputs
         self.source = source
@@ -16517,7 +16566,9 @@ class CopyActivityLogSettings(_serialization.Model):
         "enable_reliable_logging": {"key": "enableReliableLogging", "type": "object"},
     }
 
-    def __init__(self, *, log_level: Optional[JSON] = None, enable_reliable_logging: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, log_level: Optional[JSON] = None, enable_reliable_logging: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword log_level: Gets or sets the log level, support: Info, Warning. Type: string (or
          Expression with resultType string).
@@ -16529,6 +16580,56 @@ class CopyActivityLogSettings(_serialization.Model):
         super().__init__(**kwargs)
         self.log_level = log_level
         self.enable_reliable_logging = enable_reliable_logging
+
+
+class CopyComputeScaleProperties(_serialization.Model):
+    """CopyComputeScale properties for managed integration runtime.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar data_integration_unit: DIU number setting reserved for copy activity execution. Supported
+     values are multiples of 4 in range 4-256.
+    :vartype data_integration_unit: int
+    :ivar time_to_live: Time to live (in minutes) setting of integration runtime which will execute
+     copy activity.
+    :vartype time_to_live: int
+    """
+
+    _validation = {
+        "data_integration_unit": {"minimum": 4},
+        "time_to_live": {"minimum": 5},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "data_integration_unit": {"key": "dataIntegrationUnit", "type": "int"},
+        "time_to_live": {"key": "timeToLive", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        data_integration_unit: Optional[int] = None,
+        time_to_live: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword data_integration_unit: DIU number setting reserved for copy activity execution.
+         Supported values are multiples of 4 in range 4-256.
+        :paramtype data_integration_unit: int
+        :keyword time_to_live: Time to live (in minutes) setting of integration runtime which will
+         execute copy activity.
+        :paramtype time_to_live: int
+        """
+        super().__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.data_integration_unit = data_integration_unit
+        self.time_to_live = time_to_live
 
 
 class CopyTranslator(_serialization.Model):
@@ -16557,7 +16658,7 @@ class CopyTranslator(_serialization.Model):
 
     _subtype_map = {"type": {"TabularTranslator": "TabularTranslator"}}
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16565,7 +16666,7 @@ class CopyTranslator(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
@@ -16677,8 +16778,8 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
         connection_mode: Optional[Union[str, "_models.CosmosDbConnectionMode"]] = None,
         encrypted_credential: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16743,7 +16844,7 @@ class CosmosDbLinkedService(LinkedService):  # pylint: disable=too-many-instance
             annotations=annotations,
             **kwargs
         )
-        self.type = "CosmosDb"  # type: str
+        self.type: str = "CosmosDb"
         self.connection_string = connection_string
         self.account_endpoint = account_endpoint
         self.database = database
@@ -16821,8 +16922,8 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16859,7 +16960,7 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "CosmosDbMongoDbApiCollection"  # type: str
+        self.type: str = "CosmosDbMongoDbApiCollection"
         self.collection = collection
 
 
@@ -16922,8 +17023,8 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         is_server_version_above32: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -16955,7 +17056,7 @@ class CosmosDbMongoDbApiLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "CosmosDbMongoDbApi"  # type: str
+        self.type: str = "CosmosDbMongoDbApi"
         self.is_server_version_above32 = is_server_version_above32
         self.connection_string = connection_string
         self.database = database
@@ -17022,8 +17123,8 @@ class CosmosDbMongoDbApiSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17061,7 +17162,7 @@ class CosmosDbMongoDbApiSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "CosmosDbMongoDbApiSink"  # type: str
+        self.type: str = "CosmosDbMongoDbApiSink"
         self.write_behavior = write_behavior
 
 
@@ -17137,8 +17238,8 @@ class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance
         batch_size: Optional[JSON] = None,
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17181,7 +17282,7 @@ class CosmosDbMongoDbApiSource(CopySource):  # pylint: disable=too-many-instance
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "CosmosDbMongoDbApiSource"  # type: str
+        self.type: str = "CosmosDbMongoDbApiSource"
         self.filter = filter
         self.cursor_methods = cursor_methods
         self.batch_size = batch_size
@@ -17252,8 +17353,8 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17290,7 +17391,7 @@ class CosmosDbSqlApiCollectionDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "CosmosDbSqlApiCollection"  # type: str
+        self.type: str = "CosmosDbSqlApiCollection"
         self.collection_name = collection_name
 
 
@@ -17354,8 +17455,8 @@ class CosmosDbSqlApiSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17392,7 +17493,7 @@ class CosmosDbSqlApiSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "CosmosDbSqlApiSink"  # type: str
+        self.type: str = "CosmosDbSqlApiSink"
         self.write_behavior = write_behavior
 
 
@@ -17465,8 +17566,8 @@ class CosmosDbSqlApiSource(CopySource):  # pylint: disable=too-many-instance-att
         preferred_regions: Optional[JSON] = None,
         detect_datetime: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17506,7 +17607,7 @@ class CosmosDbSqlApiSource(CopySource):  # pylint: disable=too-many-instance-att
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "CosmosDbSqlApiSource"  # type: str
+        self.type: str = "CosmosDbSqlApiSource"
         self.query = query
         self.page_size = page_size
         self.preferred_regions = preferred_regions
@@ -17570,8 +17671,8 @@ class CouchbaseLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         cred_string: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17602,7 +17703,7 @@ class CouchbaseLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Couchbase"  # type: str
+        self.type: str = "Couchbase"
         self.connection_string = connection_string
         self.cred_string = cred_string
         self.encrypted_credential = encrypted_credential
@@ -17668,8 +17769,8 @@ class CouchbaseSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17706,7 +17807,7 @@ class CouchbaseSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "CouchbaseSource"  # type: str
+        self.type: str = "CouchbaseSource"
         self.query = query
 
 
@@ -17771,8 +17872,8 @@ class CouchbaseTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -17808,7 +17909,7 @@ class CouchbaseTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "CouchbaseTable"  # type: str
+        self.type: str = "CouchbaseTable"
         self.table_name = table_name
 
 
@@ -17841,8 +17942,8 @@ class CreateDataFlowDebugSessionRequest(_serialization.Model):
         core_count: Optional[int] = None,
         time_to_live: Optional[int] = None,
         integration_runtime: Optional["_models.IntegrationRuntimeDebugResource"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword compute_type: Compute type of the cluster. The value will be overwritten by the same
          setting in integration runtime if provided.
@@ -17877,7 +17978,7 @@ class CreateDataFlowDebugSessionResponse(_serialization.Model):
         "session_id": {"key": "sessionId", "type": "str"},
     }
 
-    def __init__(self, *, status: Optional[str] = None, session_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, status: Optional[str] = None, session_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword status: The state of the debug session.
         :paramtype status: str
@@ -17919,8 +18020,8 @@ class CreateLinkedIntegrationRuntimeRequest(_serialization.Model):
         subscription_id: Optional[str] = None,
         data_factory_name: Optional[str] = None,
         data_factory_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the linked integration runtime.
         :paramtype name: str
@@ -17958,7 +18059,7 @@ class CreateRunResponse(_serialization.Model):
         "run_id": {"key": "runId", "type": "str"},
     }
 
-    def __init__(self, *, run_id: str, **kwargs):
+    def __init__(self, *, run_id: str, **kwargs: Any) -> None:
         """
         :keyword run_id: Identifier of a run. Required.
         :paramtype run_id: str
@@ -17968,7 +18069,8 @@ class CreateRunResponse(_serialization.Model):
 
 
 class Credential(_serialization.Model):
-    """The Azure Data Factory nested object which contains the information and credential which can be used to connect with related store or compute resource.
+    """The Azure Data Factory nested object which contains the information and credential which can be
+    used to connect with related store or compute resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ManagedIdentityCredential, ServicePrincipalCredential
@@ -18007,8 +18109,8 @@ class Credential(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18020,9 +18122,47 @@ class Credential(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.description = description
         self.annotations = annotations
+
+
+class CredentialListResponse(_serialization.Model):
+    """A list of credential resources.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: List of credentials. Required.
+    :vartype value: list[~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource]
+    :ivar next_link: The link to the next page of results, if any remaining results exist.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ManagedIdentityCredentialResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: List["_models.ManagedIdentityCredentialResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of credentials. Required.
+        :paramtype value: list[~azure.mgmt.datafactory.models.ManagedIdentityCredentialResource]
+        :keyword next_link: The link to the next page of results, if any remaining results exist.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class CredentialReference(_serialization.Model):
@@ -18056,8 +18196,8 @@ class CredentialReference(_serialization.Model):
         type: Union[str, "_models.CredentialReferenceType"],
         reference_name: str,
         additional_properties: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18102,7 +18242,7 @@ class SubResource(_serialization.Model):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -18146,7 +18286,7 @@ class CredentialResource(SubResource):
         "properties": {"key": "properties", "type": "Credential"},
     }
 
-    def __init__(self, *, properties: "_models.Credential", **kwargs):
+    def __init__(self, *, properties: "_models.Credential", **kwargs: Any) -> None:
         """
         :keyword properties: Properties of credentials. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.Credential
@@ -18240,8 +18380,8 @@ class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         extended_properties: Optional[Dict[str, JSON]] = None,
         retention_time_in_days: Optional[JSON] = None,
         auto_user_specification: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18289,7 +18429,7 @@ class CustomActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
             policy=policy,
             **kwargs
         )
-        self.type = "Custom"  # type: str
+        self.type: str = "Custom"
         self.command = command
         self.resource_linked_service = resource_linked_service
         self.folder_path = folder_path
@@ -18318,8 +18458,8 @@ class CustomActivityReferenceObject(_serialization.Model):
         *,
         linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         datasets: Optional[List["_models.DatasetReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword linked_services: Linked service references.
         :paramtype linked_services: list[~azure.mgmt.datafactory.models.LinkedServiceReference]
@@ -18392,8 +18532,8 @@ class CustomDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         type_properties: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18429,7 +18569,7 @@ class CustomDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "CustomDataset"  # type: str
+        self.type: str = "CustomDataset"
         self.type_properties = type_properties
 
 
@@ -18479,8 +18619,8 @@ class CustomDataSourceLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18504,7 +18644,7 @@ class CustomDataSourceLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "CustomDataSource"  # type: str
+        self.type: str = "CustomDataSource"
         self.type_properties = type_properties
 
 
@@ -18572,8 +18712,8 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
         pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
         subject_begins_with: Optional[str] = None,
         subject_ends_with: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18602,7 +18742,7 @@ class CustomEventsTrigger(MultiplePipelineTrigger):
             pipelines=pipelines,
             **kwargs
         )
-        self.type = "CustomEventsTrigger"  # type: str
+        self.type: str = "CustomEventsTrigger"
         self.subject_begins_with = subject_begins_with
         self.subject_ends_with = subject_ends_with
         self.events = events
@@ -18675,8 +18815,8 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
         policy: Optional["_models.ActivityPolicy"] = None,
         base_parameters: Optional[Dict[str, JSON]] = None,
         libraries: Optional[List[Dict[str, JSON]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18714,7 +18854,7 @@ class DatabricksNotebookActivity(ExecutionActivity):  # pylint: disable=too-many
             policy=policy,
             **kwargs
         )
-        self.type = "DatabricksNotebook"  # type: str
+        self.type: str = "DatabricksNotebook"
         self.notebook_path = notebook_path
         self.base_parameters = base_parameters
         self.libraries = libraries
@@ -18785,8 +18925,8 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
         policy: Optional["_models.ActivityPolicy"] = None,
         parameters: Optional[List[JSON]] = None,
         libraries: Optional[List[Dict[str, JSON]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18823,7 +18963,7 @@ class DatabricksSparkJarActivity(ExecutionActivity):  # pylint: disable=too-many
             policy=policy,
             **kwargs
         )
-        self.type = "DatabricksSparkJar"  # type: str
+        self.type: str = "DatabricksSparkJar"
         self.main_class_name = main_class_name
         self.parameters = parameters
         self.libraries = libraries
@@ -18893,8 +19033,8 @@ class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-m
         policy: Optional["_models.ActivityPolicy"] = None,
         parameters: Optional[List[JSON]] = None,
         libraries: Optional[List[Dict[str, JSON]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -18930,7 +19070,7 @@ class DatabricksSparkPythonActivity(ExecutionActivity):  # pylint: disable=too-m
             policy=policy,
             **kwargs
         )
-        self.type = "DatabricksSparkPython"  # type: str
+        self.type: str = "DatabricksSparkPython"
         self.python_file = python_file
         self.parameters = parameters
         self.libraries = libraries
@@ -18976,8 +19116,8 @@ class DataFlow(_serialization.Model):
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DataFlowFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the data flow.
         :paramtype description: str
@@ -18988,7 +19128,7 @@ class DataFlow(_serialization.Model):
         :paramtype folder: ~azure.mgmt.datafactory.models.DataFlowFolder
         """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.description = description
         self.annotations = annotations
         self.folder = folder
@@ -19027,8 +19167,8 @@ class DataFlowDebugCommandPayload(_serialization.Model):
         row_limits: Optional[int] = None,
         columns: Optional[List[str]] = None,
         expression: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword stream_name: The stream name which is used for preview. Required.
         :paramtype stream_name: str
@@ -19070,8 +19210,8 @@ class DataFlowDebugCommandRequest(_serialization.Model):
         session_id: Optional[str] = None,
         command: Optional[Union[str, "_models.DataFlowDebugCommandType"]] = None,
         command_payload: Optional["_models.DataFlowDebugCommandPayload"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword session_id: The ID of data flow debug session.
         :paramtype session_id: str
@@ -19101,7 +19241,7 @@ class DataFlowDebugCommandResponse(_serialization.Model):
         "data": {"key": "data", "type": "str"},
     }
 
-    def __init__(self, *, status: Optional[str] = None, data: Optional[str] = None, **kwargs):
+    def __init__(self, *, status: Optional[str] = None, data: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword status: The run status of data preview, statistics or expression preview.
         :paramtype status: str
@@ -19157,8 +19297,8 @@ class DataFlowDebugPackage(_serialization.Model):
         linked_services: Optional[List["_models.LinkedServiceDebugResource"]] = None,
         staging: Optional["_models.DataFlowStagingInfo"] = None,
         debug_settings: Optional["_models.DataFlowDebugPackageDebugSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -19212,8 +19352,8 @@ class DataFlowDebugPackageDebugSettings(_serialization.Model):
         source_settings: Optional[List["_models.DataFlowSourceSetting"]] = None,
         parameters: Optional[Dict[str, JSON]] = None,
         dataset_parameters: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_settings: Source setting for data flow debug.
         :paramtype source_settings: list[~azure.mgmt.datafactory.models.DataFlowSourceSetting]
@@ -19239,7 +19379,7 @@ class SubResourceDebugResource(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The resource name.
         :paramtype name: str
@@ -19268,7 +19408,7 @@ class DataFlowDebugResource(SubResourceDebugResource):
         "properties": {"key": "properties", "type": "DataFlow"},
     }
 
-    def __init__(self, *, properties: "_models.DataFlow", name: Optional[str] = None, **kwargs):
+    def __init__(self, *, properties: "_models.DataFlow", name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The resource name.
         :paramtype name: str
@@ -19331,8 +19471,8 @@ class DataFlowDebugSessionInfo(_serialization.Model):
         start_time: Optional[str] = None,
         time_to_live_in_minutes: Optional[int] = None,
         last_activity_time: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -19371,7 +19511,8 @@ class DataFlowDebugSessionInfo(_serialization.Model):
 
 
 class DataFlowFolder(_serialization.Model):
-    """The folder that this data flow is in. If not specified, Data flow will appear at the root level.
+    """The folder that this data flow is in. If not specified, Data flow will appear at the root
+    level.
 
     :ivar name: The name of the folder that this data flow is in.
     :vartype name: str
@@ -19381,7 +19522,7 @@ class DataFlowFolder(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the folder that this data flow is in.
         :paramtype name: str
@@ -19410,7 +19551,9 @@ class DataFlowListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DataFlowResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DataFlowResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of data flows. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.DataFlowResource]
@@ -19461,8 +19604,8 @@ class DataFlowReference(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         dataset_parameters: Optional[JSON] = None,
         parameters: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -19519,7 +19662,7 @@ class DataFlowResource(SubResource):
         "properties": {"key": "properties", "type": "DataFlow"},
     }
 
-    def __init__(self, *, properties: "_models.DataFlow", **kwargs):
+    def __init__(self, *, properties: "_models.DataFlow", **kwargs: Any) -> None:
         """
         :keyword properties: Data flow properties. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.DataFlow
@@ -19565,8 +19708,8 @@ class Transformation(_serialization.Model):
         dataset: Optional["_models.DatasetReference"] = None,
         linked_service: Optional["_models.LinkedServiceReference"] = None,
         flowlet: Optional["_models.DataFlowReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Transformation name. Required.
         :paramtype name: str
@@ -19632,8 +19775,8 @@ class DataFlowSink(Transformation):
         flowlet: Optional["_models.DataFlowReference"] = None,
         schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
         rejected_data_linked_service: Optional["_models.LinkedServiceReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Transformation name. Required.
         :paramtype name: str
@@ -19703,8 +19846,8 @@ class DataFlowSource(Transformation):
         linked_service: Optional["_models.LinkedServiceReference"] = None,
         flowlet: Optional["_models.DataFlowReference"] = None,
         schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Transformation name. Required.
         :paramtype name: str
@@ -19754,8 +19897,8 @@ class DataFlowSourceSetting(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         source_name: Optional[str] = None,
         row_limit: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -19791,8 +19934,8 @@ class DataFlowStagingInfo(_serialization.Model):
         *,
         linked_service: Optional["_models.LinkedServiceReference"] = None,
         folder_path: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword linked_service: Staging linked service reference.
         :paramtype linked_service: ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -19891,8 +20034,8 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-m
         parameters: Optional[Dict[str, JSON]] = None,
         runtime_version: Optional[JSON] = None,
         compilation_mode: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -19940,7 +20083,7 @@ class DataLakeAnalyticsUSQLActivity(ExecutionActivity):  # pylint: disable=too-m
             policy=policy,
             **kwargs
         )
-        self.type = "DataLakeAnalyticsU-SQL"  # type: str
+        self.type: str = "DataLakeAnalyticsU-SQL"
         self.script_path = script_path
         self.script_linked_service = script_linked_service
         self.degree_of_parallelism = degree_of_parallelism
@@ -19982,8 +20125,8 @@ class DatasetCompression(_serialization.Model):
         type: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         level: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20015,7 +20158,7 @@ class DatasetDataElement(_serialization.Model):
         "type": {"key": "type", "type": "object"},
     }
 
-    def __init__(self, *, name: Optional[JSON] = None, type: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, name: Optional[JSON] = None, type: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the column. Type: string (or Expression with resultType string).
         :paramtype name: JSON
@@ -20047,7 +20190,7 @@ class DatasetDebugResource(SubResourceDebugResource):
         "properties": {"key": "properties", "type": "Dataset"},
     }
 
-    def __init__(self, *, properties: "_models.Dataset", name: Optional[str] = None, **kwargs):
+    def __init__(self, *, properties: "_models.Dataset", name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The resource name.
         :paramtype name: str
@@ -20069,7 +20212,7 @@ class DatasetFolder(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the folder that this Dataset is in.
         :paramtype name: str
@@ -20098,7 +20241,9 @@ class DatasetListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.DatasetResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.DatasetResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of datasets. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.DatasetResource]
@@ -20140,8 +20285,8 @@ class DatasetReference(_serialization.Model):
         type: Union[str, "_models.DatasetReferenceType"],
         reference_name: str,
         parameters: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Dataset reference type. Required. "DatasetReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.DatasetReferenceType
@@ -20191,7 +20336,7 @@ class DatasetResource(SubResource):
         "properties": {"key": "properties", "type": "Dataset"},
     }
 
-    def __init__(self, *, properties: "_models.Dataset", **kwargs):
+    def __init__(self, *, properties: "_models.Dataset", **kwargs: Any) -> None:
         """
         :keyword properties: Dataset properties. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.Dataset
@@ -20224,8 +20369,8 @@ class DatasetSchemaDataElement(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         name: Optional[JSON] = None,
         type: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20293,8 +20438,8 @@ class DataworldLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20322,7 +20467,7 @@ class DataworldLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Dataworld"  # type: str
+        self.type: str = "Dataworld"
         self.api_token = api_token
         self.encrypted_credential = encrypted_credential
 
@@ -20415,8 +20560,8 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
         package_collection: Optional[JSON] = None,
         certificate_common_name: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20467,7 +20612,7 @@ class Db2LinkedService(LinkedService):  # pylint: disable=too-many-instance-attr
             annotations=annotations,
             **kwargs
         )
-        self.type = "Db2"  # type: str
+        self.type: str = "Db2"
         self.connection_string = connection_string
         self.server = server
         self.database = database
@@ -20538,8 +20683,8 @@ class Db2Source(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20575,7 +20720,7 @@ class Db2Source(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "Db2Source"  # type: str
+        self.type: str = "Db2Source"
         self.query = query
 
 
@@ -20650,8 +20795,8 @@ class Db2TableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20693,7 +20838,7 @@ class Db2TableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Db2Table"  # type: str
+        self.type: str = "Db2Table"
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -20779,8 +20924,8 @@ class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         enable_logging: Optional[JSON] = None,
         log_storage_settings: Optional["_models.LogStorageSettings"] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20824,7 +20969,7 @@ class DeleteActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
             policy=policy,
             **kwargs
         )
-        self.type = "Delete"  # type: str
+        self.type: str = "Delete"
         self.recursive = recursive
         self.max_concurrent_connections = max_concurrent_connections
         self.enable_logging = enable_logging
@@ -20844,7 +20989,7 @@ class DeleteDataFlowDebugSessionRequest(_serialization.Model):
         "session_id": {"key": "sessionId", "type": "str"},
     }
 
-    def __init__(self, *, session_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, session_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword session_id: The ID of data flow debug session.
         :paramtype session_id: str
@@ -20958,8 +21103,8 @@ class DelimitedTextDataset(Dataset):  # pylint: disable=too-many-instance-attrib
         escape_char: Optional[JSON] = None,
         first_row_as_header: Optional[JSON] = None,
         null_value: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21023,7 +21168,7 @@ class DelimitedTextDataset(Dataset):  # pylint: disable=too-many-instance-attrib
             folder=folder,
             **kwargs
         )
-        self.type = "DelimitedText"  # type: str
+        self.type: str = "DelimitedText"
         self.location = location
         self.column_delimiter = column_delimiter
         self.row_delimiter = row_delimiter
@@ -21070,8 +21215,8 @@ class DelimitedTextReadSettings(FormatReadSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         skip_line_count: Optional[JSON] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21083,7 +21228,7 @@ class DelimitedTextReadSettings(FormatReadSettings):
         :paramtype compression_properties: ~azure.mgmt.datafactory.models.CompressionReadSettings
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "DelimitedTextReadSettings"  # type: str
+        self.type: str = "DelimitedTextReadSettings"
         self.skip_line_count = skip_line_count
         self.compression_properties = compression_properties
 
@@ -21151,8 +21296,8 @@ class DelimitedTextSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreWriteSettings"] = None,
         format_settings: Optional["_models.DelimitedTextWriteSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21190,7 +21335,7 @@ class DelimitedTextSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DelimitedTextSink"  # type: str
+        self.type: str = "DelimitedTextSink"
         self.store_settings = store_settings
         self.format_settings = format_settings
 
@@ -21253,8 +21398,8 @@ class DelimitedTextSource(CopySource):
         store_settings: Optional["_models.StoreReadSettings"] = None,
         format_settings: Optional["_models.DelimitedTextReadSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21287,7 +21432,7 @@ class DelimitedTextSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DelimitedTextSource"  # type: str
+        self.type: str = "DelimitedTextSource"
         self.store_settings = store_settings
         self.format_settings = format_settings
         self.additional_columns = additional_columns
@@ -21340,8 +21485,8 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
         quote_all_text: Optional[JSON] = None,
         max_rows_per_file: Optional[JSON] = None,
         file_name_prefix: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21361,7 +21506,7 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
         :paramtype file_name_prefix: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "DelimitedTextWriteSettings"  # type: str
+        self.type: str = "DelimitedTextWriteSettings"
         self.quote_all_text = quote_all_text
         self.file_extension = file_extension
         self.max_rows_per_file = max_rows_per_file
@@ -21395,10 +21540,10 @@ class DependencyReference(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class DistcpSettings(_serialization.Model):
@@ -21435,8 +21580,8 @@ class DistcpSettings(_serialization.Model):
         resource_manager_endpoint: JSON,
         temp_script_path: JSON,
         distcp_options: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_manager_endpoint: Specifies the Yarn ResourceManager endpoint. Type: string
          (or Expression with resultType string). Required.
@@ -21518,8 +21663,8 @@ class DocumentDbCollectionDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21556,7 +21701,7 @@ class DocumentDbCollectionDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "DocumentDbCollection"  # type: str
+        self.type: str = "DocumentDbCollection"
         self.collection_name = collection_name
 
 
@@ -21625,8 +21770,8 @@ class DocumentDbCollectionSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         nesting_separator: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21666,7 +21811,7 @@ class DocumentDbCollectionSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DocumentDbCollectionSink"  # type: str
+        self.type: str = "DocumentDbCollectionSink"
         self.nesting_separator = nesting_separator
         self.write_behavior = write_behavior
 
@@ -21735,8 +21880,8 @@ class DocumentDbCollectionSource(CopySource):
         nesting_separator: Optional[JSON] = None,
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21773,7 +21918,7 @@ class DocumentDbCollectionSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DocumentDbCollectionSource"  # type: str
+        self.type: str = "DocumentDbCollectionSource"
         self.query = query
         self.nesting_separator = nesting_separator
         self.query_timeout = query_timeout
@@ -21836,8 +21981,8 @@ class DrillLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21868,7 +22013,7 @@ class DrillLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Drill"  # type: str
+        self.type: str = "Drill"
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -21934,8 +22079,8 @@ class DrillSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -21972,7 +22117,7 @@ class DrillSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "DrillSource"  # type: str
+        self.type: str = "DrillSource"
         self.query = query
 
 
@@ -22047,8 +22192,8 @@ class DrillTableDataset(Dataset):  # pylint: disable=too-many-instance-attribute
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -22091,7 +22236,7 @@ class DrillTableDataset(Dataset):  # pylint: disable=too-many-instance-attribute
             folder=folder,
             **kwargs
         )
-        self.type = "DrillTable"  # type: str
+        self.type: str = "DrillTable"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -22112,7 +22257,9 @@ class DWCopyCommandDefaultValue(_serialization.Model):
         "default_value": {"key": "defaultValue", "type": "object"},
     }
 
-    def __init__(self, *, column_name: Optional[JSON] = None, default_value: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, column_name: Optional[JSON] = None, default_value: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword column_name: Column name. Type: object (or Expression with resultType string).
         :paramtype column_name: JSON
@@ -22149,8 +22296,8 @@ class DWCopyCommandSettings(_serialization.Model):
         *,
         default_values: Optional[List["_models.DWCopyCommandDefaultValue"]] = None,
         additional_options: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_values: Specifies the default values for each target column in SQL DW. The
          default values in the property overwrite the DEFAULT constraint set in the DB, and identity
@@ -22246,8 +22393,8 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -22290,7 +22437,7 @@ class DynamicsAXLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "DynamicsAX"  # type: str
+        self.type: str = "DynamicsAX"
         self.url = url
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
@@ -22362,8 +22509,8 @@ class DynamicsAXResourceDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -22400,7 +22547,7 @@ class DynamicsAXResourceDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "DynamicsAXResource"  # type: str
+        self.type: str = "DynamicsAXResource"
         self.path = path
 
 
@@ -22471,8 +22618,8 @@ class DynamicsAXSource(TabularSource):
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
         http_request_timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -22514,7 +22661,7 @@ class DynamicsAXSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "DynamicsAXSource"  # type: str
+        self.type: str = "DynamicsAXSource"
         self.query = query
         self.http_request_timeout = http_request_timeout
 
@@ -22581,8 +22728,8 @@ class DynamicsCrmEntityDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -22619,7 +22766,7 @@ class DynamicsCrmEntityDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "DynamicsCrmEntity"  # type: str
+        self.type: str = "DynamicsCrmEntity"
         self.entity_name = entity_name
 
 
@@ -22735,8 +22882,8 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
         service_principal_credential_type: Optional[JSON] = None,
         service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -22804,7 +22951,7 @@ class DynamicsCrmLinkedService(LinkedService):  # pylint: disable=too-many-insta
             annotations=annotations,
             **kwargs
         )
-        self.type = "DynamicsCrm"  # type: str
+        self.type: str = "DynamicsCrm"
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
@@ -22890,8 +23037,8 @@ class DynamicsCrmSink(CopySink):  # pylint: disable=too-many-instance-attributes
         disable_metrics_collection: Optional[JSON] = None,
         ignore_null_values: Optional[JSON] = None,
         alternate_key_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -22934,7 +23081,7 @@ class DynamicsCrmSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DynamicsCrmSink"  # type: str
+        self.type: str = "DynamicsCrmSink"
         self.write_behavior = write_behavior
         self.ignore_null_values = ignore_null_values
         self.alternate_key_name = alternate_key_name
@@ -22995,8 +23142,8 @@ class DynamicsCrmSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23028,7 +23175,7 @@ class DynamicsCrmSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DynamicsCrmSource"  # type: str
+        self.type: str = "DynamicsCrmSource"
         self.query = query
         self.additional_columns = additional_columns
 
@@ -23095,8 +23242,8 @@ class DynamicsEntityDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         entity_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23133,7 +23280,7 @@ class DynamicsEntityDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "DynamicsEntity"  # type: str
+        self.type: str = "DynamicsEntity"
         self.entity_name = entity_name
 
 
@@ -23253,8 +23400,8 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
         service_principal_credential: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23323,7 +23470,7 @@ class DynamicsLinkedService(LinkedService):  # pylint: disable=too-many-instance
             annotations=annotations,
             **kwargs
         )
-        self.type = "Dynamics"  # type: str
+        self.type: str = "Dynamics"
         self.deployment_type = deployment_type
         self.host_name = host_name
         self.port = port
@@ -23410,8 +23557,8 @@ class DynamicsSink(CopySink):  # pylint: disable=too-many-instance-attributes
         disable_metrics_collection: Optional[JSON] = None,
         ignore_null_values: Optional[JSON] = None,
         alternate_key_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23454,7 +23601,7 @@ class DynamicsSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DynamicsSink"  # type: str
+        self.type: str = "DynamicsSink"
         self.write_behavior = write_behavior
         self.ignore_null_values = ignore_null_values
         self.alternate_key_name = alternate_key_name
@@ -23515,8 +23662,8 @@ class DynamicsSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23548,7 +23695,7 @@ class DynamicsSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "DynamicsSource"  # type: str
+        self.type: str = "DynamicsSource"
         self.query = query
         self.additional_columns = additional_columns
 
@@ -23631,8 +23778,8 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23675,7 +23822,7 @@ class EloquaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "Eloqua"  # type: str
+        self.type: str = "Eloqua"
         self.endpoint = endpoint
         self.username = username
         self.password = password
@@ -23746,8 +23893,8 @@ class EloquaObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23783,7 +23930,7 @@ class EloquaObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "EloquaObject"  # type: str
+        self.type: str = "EloquaObject"
         self.table_name = table_name
 
 
@@ -23847,8 +23994,8 @@ class EloquaSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -23885,7 +24032,7 @@ class EloquaSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "EloquaSource"  # type: str
+        self.type: str = "EloquaSource"
         self.query = query
 
 
@@ -23926,8 +24073,8 @@ class EncryptionConfiguration(_serialization.Model):
         vault_base_url: str,
         key_version: Optional[str] = None,
         identity: Optional["_models.CMKIdentityDefinition"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of the key in Azure Key Vault to use as Customer Managed Key.
          Required.
@@ -23968,8 +24115,8 @@ class EntityReference(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.IntegrationRuntimeEntityReferenceType"]] = None,
         reference_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of this referenced entity. Known values are:
          "IntegrationRuntimeReference" and "LinkedServiceReference".
@@ -24007,7 +24154,7 @@ class EnvironmentVariableSetup(CustomSetupBase):
         "variable_value": {"key": "typeProperties.variableValue", "type": "str"},
     }
 
-    def __init__(self, *, variable_name: str, variable_value: str, **kwargs):
+    def __init__(self, *, variable_name: str, variable_value: str, **kwargs: Any) -> None:
         """
         :keyword variable_name: The name of the environment variable. Required.
         :paramtype variable_name: str
@@ -24015,7 +24162,7 @@ class EnvironmentVariableSetup(CustomSetupBase):
         :paramtype variable_value: str
         """
         super().__init__(**kwargs)
-        self.type = "EnvironmentVariableSetup"  # type: str
+        self.type: str = "EnvironmentVariableSetup"
         self.variable_name = variable_name
         self.variable_value = variable_value
 
@@ -24110,8 +24257,8 @@ class ExcelDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         first_row_as_header: Optional[JSON] = None,
         compression: Optional["_models.DatasetCompression"] = None,
         null_value: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -24165,7 +24312,7 @@ class ExcelDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Excel"  # type: str
+        self.type: str = "Excel"
         self.location = location
         self.sheet_name = sheet_name
         self.sheet_index = sheet_index
@@ -24229,8 +24376,8 @@ class ExcelSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -24261,7 +24408,7 @@ class ExcelSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "ExcelSource"  # type: str
+        self.type: str = "ExcelSource"
         self.store_settings = store_settings
         self.additional_columns = additional_columns
 
@@ -24354,8 +24501,8 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
         continue_on_error: Optional[JSON] = None,
         run_concurrently: Optional[JSON] = None,
         source_staging_concurrency: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -24404,7 +24551,7 @@ class ExecuteDataFlowActivity(ExecutionActivity):  # pylint: disable=too-many-in
             policy=policy,
             **kwargs
         )
-        self.type = "ExecuteDataFlow"  # type: str
+        self.type: str = "ExecuteDataFlow"
         self.data_flow = data_flow
         self.staging = staging
         self.integration_runtime = integration_runtime
@@ -24469,8 +24616,8 @@ class ExecuteDataFlowActivityTypeProperties(_serialization.Model):
         continue_on_error: Optional[JSON] = None,
         run_concurrently: Optional[JSON] = None,
         source_staging_concurrency: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_flow: Data flow reference. Required.
         :paramtype data_flow: ~azure.mgmt.datafactory.models.DataFlowReference
@@ -24522,7 +24669,9 @@ class ExecuteDataFlowActivityTypePropertiesCompute(_serialization.Model):
         "core_count": {"key": "coreCount", "type": "object"},
     }
 
-    def __init__(self, *, compute_type: Optional[JSON] = None, core_count: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, compute_type: Optional[JSON] = None, core_count: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword compute_type: Compute type of the cluster which will execute data flow job. Possible
          values include: 'General', 'MemoryOptimized', 'ComputeOptimized'. Type: string (or Expression
@@ -24598,8 +24747,8 @@ class ExecutePipelineActivity(ControlActivity):
         policy: Optional["_models.ExecutePipelineActivityPolicy"] = None,
         parameters: Optional[Dict[str, JSON]] = None,
         wait_on_completion: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -24630,7 +24779,7 @@ class ExecutePipelineActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "ExecutePipeline"  # type: str
+        self.type: str = "ExecutePipeline"
         self.policy = policy
         self.pipeline = pipeline
         self.parameters = parameters
@@ -24654,8 +24803,12 @@ class ExecutePipelineActivityPolicy(_serialization.Model):
     }
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, JSON]] = None, secure_input: Optional[bool] = None, **kwargs
-    ):
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        secure_input: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -24732,8 +24885,8 @@ class ExecutePowerQueryActivityTypeProperties(ExecuteDataFlowActivityTypePropert
         source_staging_concurrency: Optional[JSON] = None,
         sinks: Optional[Dict[str, "_models.PowerQuerySink"]] = None,
         queries: Optional[List["_models.PowerQuerySinkMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_flow: Data flow reference. Required.
         :paramtype data_flow: ~azure.mgmt.datafactory.models.DataFlowReference
@@ -24890,8 +25043,8 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
         package_connection_managers: Optional[Dict[str, Dict[str, "_models.SSISExecutionParameter"]]] = None,
         property_overrides: Optional[Dict[str, "_models.SSISPropertyOverride"]] = None,
         log_location: Optional["_models.SSISLogLocation"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -24950,7 +25103,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):  # pylint: disable=too-many
             policy=policy,
             **kwargs
         )
-        self.type = "ExecuteSSISPackage"  # type: str
+        self.type: str = "ExecuteSSISPackage"
         self.package_location = package_location
         self.runtime = runtime
         self.logging_level = logging_level
@@ -25058,8 +25211,8 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
         source_staging_concurrency: Optional[JSON] = None,
         sinks: Optional[Dict[str, "_models.PowerQuerySink"]] = None,
         queries: Optional[List["_models.PowerQuerySinkMapping"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -25109,7 +25262,7 @@ class ExecuteWranglingDataflowActivity(Activity):  # pylint: disable=too-many-in
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "ExecuteWranglingDataflow"  # type: str
+        self.type: str = "ExecuteWranglingDataflow"
         self.policy = policy
         self.data_flow = data_flow
         self.staging = staging
@@ -25140,7 +25293,7 @@ class ExposureControlBatchRequest(_serialization.Model):
         "exposure_control_requests": {"key": "exposureControlRequests", "type": "[ExposureControlRequest]"},
     }
 
-    def __init__(self, *, exposure_control_requests: List["_models.ExposureControlRequest"], **kwargs):
+    def __init__(self, *, exposure_control_requests: List["_models.ExposureControlRequest"], **kwargs: Any) -> None:
         """
         :keyword exposure_control_requests: List of exposure control features. Required.
         :paramtype exposure_control_requests:
@@ -25168,7 +25321,7 @@ class ExposureControlBatchResponse(_serialization.Model):
         "exposure_control_responses": {"key": "exposureControlResponses", "type": "[ExposureControlResponse]"},
     }
 
-    def __init__(self, *, exposure_control_responses: List["_models.ExposureControlResponse"], **kwargs):
+    def __init__(self, *, exposure_control_responses: List["_models.ExposureControlResponse"], **kwargs: Any) -> None:
         """
         :keyword exposure_control_responses: List of exposure control feature values. Required.
         :paramtype exposure_control_responses:
@@ -25192,7 +25345,9 @@ class ExposureControlRequest(_serialization.Model):
         "feature_type": {"key": "featureType", "type": "str"},
     }
 
-    def __init__(self, *, feature_name: Optional[str] = None, feature_type: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, feature_name: Optional[str] = None, feature_type: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword feature_name: The feature name.
         :paramtype feature_name: str
@@ -25225,7 +25380,7 @@ class ExposureControlResponse(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.feature_name = None
@@ -25253,7 +25408,7 @@ class Expression(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.ExpressionType"], value: str, **kwargs):
+    def __init__(self, *, type: Union[str, "_models.ExpressionType"], value: str, **kwargs: Any) -> None:
         """
         :keyword type: Expression type. Required. "Expression"
         :paramtype type: str or ~azure.mgmt.datafactory.models.ExpressionType
@@ -25300,7 +25455,7 @@ class Resource(_serialization.Model):
         "e_tag": {"key": "eTag", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location.
         :paramtype location: str
@@ -25399,8 +25554,8 @@ class Factory(Resource):  # pylint: disable=too-many-instance-attributes
         global_parameters: Optional[Dict[str, "_models.GlobalParameterSpecification"]] = None,
         encryption: Optional["_models.EncryptionConfiguration"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location.
         :paramtype location: str
@@ -25496,8 +25651,8 @@ class FactoryRepoConfiguration(_serialization.Model):
         root_folder: str,
         last_commit_id: Optional[str] = None,
         disable_publish: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: Account name. Required.
         :paramtype account_name: str
@@ -25514,7 +25669,7 @@ class FactoryRepoConfiguration(_serialization.Model):
         :paramtype disable_publish: bool
         """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.account_name = account_name
         self.repository_name = repository_name
         self.collaboration_branch = collaboration_branch
@@ -25584,8 +25739,8 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         host_name: Optional[str] = None,
         client_id: Optional[str] = None,
         client_secret: Optional["_models.GitHubClientSecret"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: Account name. Required.
         :paramtype account_name: str
@@ -25616,7 +25771,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
             disable_publish=disable_publish,
             **kwargs
         )
-        self.type = "FactoryGitHubConfiguration"  # type: str
+        self.type: str = "FactoryGitHubConfiguration"
         self.host_name = host_name
         self.client_id = client_id
         self.client_secret = client_secret
@@ -25658,8 +25813,8 @@ class FactoryIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.FactoryIdentityType"],
         user_assigned_identities: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The identity type. Required. Known values are: "SystemAssigned", "UserAssigned",
          and "SystemAssigned,UserAssigned".
@@ -25694,7 +25849,7 @@ class FactoryListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Factory"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.Factory"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of factories. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.Factory]
@@ -25725,8 +25880,8 @@ class FactoryRepoUpdate(_serialization.Model):
         *,
         factory_resource_id: Optional[str] = None,
         repo_configuration: Optional["_models.FactoryRepoConfiguration"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword factory_resource_id: The factory resource id.
         :paramtype factory_resource_id: str
@@ -25762,8 +25917,8 @@ class FactoryUpdateParameters(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.FactoryIdentity"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
@@ -25837,8 +25992,8 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
         last_commit_id: Optional[str] = None,
         disable_publish: Optional[bool] = None,
         tenant_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword account_name: Account name. Required.
         :paramtype account_name: str
@@ -25867,13 +26022,16 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
             disable_publish=disable_publish,
             **kwargs
         )
-        self.type = "FactoryVSTSConfiguration"  # type: str
+        self.type: str = "FactoryVSTSConfiguration"
         self.project_name = project_name
         self.tenant_id = tenant_id
 
 
 class FailActivity(ControlActivity):
-    """This activity will fail within its own scope and output a custom error message and error code. The error message and code can provided either as a string literal or as an expression that can be evaluated to a string at runtime. The activity scope can be the whole pipeline or a control activity (e.g. foreach, switch, until), if the fail activity is contained in it.
+    """This activity will fail within its own scope and output a custom error message and error code.
+    The error message and code can provided either as a string literal or as an expression that can
+    be evaluated to a string at runtime. The activity scope can be the whole pipeline or a control
+    activity (e.g. foreach, switch, until), if the fail activity is contained in it.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -25928,8 +26086,8 @@ class FailActivity(ControlActivity):
         description: Optional[str] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -25959,7 +26117,7 @@ class FailActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Fail"  # type: str
+        self.type: str = "Fail"
         self.message = message
         self.error_code = error_code
 
@@ -26026,8 +26184,8 @@ class FileServerLinkedService(LinkedService):
         user_id: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26061,7 +26219,7 @@ class FileServerLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "FileServer"  # type: str
+        self.type: str = "FileServer"
         self.host = host
         self.user_id = user_id
         self.password = password
@@ -26103,8 +26261,8 @@ class FileServerLocation(DatasetLocation):
         additional_properties: Optional[Dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26119,7 +26277,7 @@ class FileServerLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "FileServerLocation"  # type: str
+        self.type: str = "FileServerLocation"
 
 
 class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
@@ -26207,8 +26365,8 @@ class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-ins
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
         file_filter: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26256,7 +26414,7 @@ class FileServerReadSettings(StoreReadSettings):  # pylint: disable=too-many-ins
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "FileServerReadSettings"  # type: str
+        self.type: str = "FileServerReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -26308,8 +26466,8 @@ class FileServerWriteSettings(StoreWriteSettings):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26330,7 +26488,7 @@ class FileServerWriteSettings(StoreWriteSettings):
             copy_behavior=copy_behavior,
             **kwargs
         )
-        self.type = "FileServerWriteSettings"  # type: str
+        self.type: str = "FileServerWriteSettings"
 
 
 class FileShareDataset(Dataset):  # pylint: disable=too-many-instance-attributes
@@ -26423,8 +26581,8 @@ class FileShareDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         format: Optional["_models.DatasetStorageFormat"] = None,
         file_filter: Optional[JSON] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26477,7 +26635,7 @@ class FileShareDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "FileShare"  # type: str
+        self.type: str = "FileShare"
         self.folder_path = folder_path
         self.file_name = file_name
         self.modified_datetime_start = modified_datetime_start
@@ -26546,8 +26704,8 @@ class FileSystemSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         copy_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26583,7 +26741,7 @@ class FileSystemSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "FileSystemSink"  # type: str
+        self.type: str = "FileSystemSink"
         self.copy_behavior = copy_behavior
 
 
@@ -26642,8 +26800,8 @@ class FileSystemSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26675,7 +26833,7 @@ class FileSystemSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "FileSystemSource"  # type: str
+        self.type: str = "FileSystemSource"
         self.recursive = recursive
         self.additional_columns = additional_columns
 
@@ -26732,8 +26890,8 @@ class FilterActivity(ControlActivity):
         description: Optional[str] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26759,7 +26917,7 @@ class FilterActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Filter"  # type: str
+        self.type: str = "Filter"
         self.items = items
         self.condition = condition
 
@@ -26817,8 +26975,8 @@ class Flowlet(DataFlow):
         transformations: Optional[List["_models.Transformation"]] = None,
         script: Optional[str] = None,
         script_lines: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the data flow.
         :paramtype description: str
@@ -26839,7 +26997,7 @@ class Flowlet(DataFlow):
         :paramtype script_lines: list[str]
         """
         super().__init__(description=description, annotations=annotations, folder=folder, **kwargs)
-        self.type = "Flowlet"  # type: str
+        self.type: str = "Flowlet"
         self.sources = sources
         self.sinks = sinks
         self.transformations = transformations
@@ -26909,8 +27067,8 @@ class ForEachActivity(ControlActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         is_sequential: Optional[bool] = None,
         batch_count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -26941,7 +27099,7 @@ class ForEachActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "ForEach"  # type: str
+        self.type: str = "ForEach"
         self.is_sequential = is_sequential
         self.batch_count = batch_count
         self.items = items
@@ -27027,8 +27185,8 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
         file_list_path: Optional[JSON] = None,
         use_binary_transfer: Optional[bool] = None,
         disable_chunking: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -27072,7 +27230,7 @@ class FtpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-a
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "FtpReadSettings"  # type: str
+        self.type: str = "FtpReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -27170,8 +27328,8 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         encrypted_credential: Optional[JSON] = None,
         enable_ssl: Optional[JSON] = None,
         enable_server_certificate_validation: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -27218,7 +27376,7 @@ class FtpServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             annotations=annotations,
             **kwargs
         )
-        self.type = "FtpServer"  # type: str
+        self.type: str = "FtpServer"
         self.host = host
         self.port = port
         self.authentication_type = authentication_type
@@ -27264,8 +27422,8 @@ class FtpServerLocation(DatasetLocation):
         additional_properties: Optional[Dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -27280,7 +27438,7 @@ class FtpServerLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "FtpServerLocation"  # type: str
+        self.type: str = "FtpServerLocation"
 
 
 class GetDataFactoryOperationStatusResponse(_serialization.Model):
@@ -27299,8 +27457,8 @@ class GetDataFactoryOperationStatusResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, JSON]] = None, status: Optional[str] = None, **kwargs
-    ):
+        self, *, additional_properties: Optional[Dict[str, JSON]] = None, status: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -27380,8 +27538,8 @@ class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instan
         field_list: Optional[List[JSON]] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
         format_settings: Optional["_models.FormatReadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -27417,7 +27575,7 @@ class GetMetadataActivity(ExecutionActivity):  # pylint: disable=too-many-instan
             policy=policy,
             **kwargs
         )
-        self.type = "GetMetadata"  # type: str
+        self.type: str = "GetMetadata"
         self.dataset = dataset
         self.field_list = field_list
         self.store_settings = store_settings
@@ -27435,7 +27593,7 @@ class GetSsisObjectMetadataRequest(_serialization.Model):
         "metadata_path": {"key": "metadataPath", "type": "str"},
     }
 
-    def __init__(self, *, metadata_path: Optional[str] = None, **kwargs):
+    def __init__(self, *, metadata_path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword metadata_path: Metadata path.
         :paramtype metadata_path: str
@@ -27478,8 +27636,8 @@ class GitHubAccessTokenRequest(_serialization.Model):
         git_hub_access_token_base_url: str,
         git_hub_client_id: Optional[str] = None,
         git_hub_client_secret: Optional["_models.GitHubClientSecret"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword git_hub_access_code: GitHub access code. Required.
         :paramtype git_hub_access_code: str
@@ -27508,7 +27666,7 @@ class GitHubAccessTokenResponse(_serialization.Model):
         "git_hub_access_token": {"key": "gitHubAccessToken", "type": "str"},
     }
 
-    def __init__(self, *, git_hub_access_token: Optional[str] = None, **kwargs):
+    def __init__(self, *, git_hub_access_token: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword git_hub_access_token: GitHub access token.
         :paramtype git_hub_access_token: str
@@ -27531,7 +27689,9 @@ class GitHubClientSecret(_serialization.Model):
         "byoa_secret_name": {"key": "byoaSecretName", "type": "str"},
     }
 
-    def __init__(self, *, byoa_secret_akv_url: Optional[str] = None, byoa_secret_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, byoa_secret_akv_url: Optional[str] = None, byoa_secret_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword byoa_secret_akv_url: Bring your own app client secret AKV URL.
         :paramtype byoa_secret_akv_url: str
@@ -27563,7 +27723,9 @@ class GlobalParameterListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.GlobalParameterResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.GlobalParameterResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of global parameters. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.GlobalParameterResource]
@@ -27610,7 +27772,7 @@ class GlobalParameterResource(SubResource):
         "properties": {"key": "properties", "type": "{GlobalParameterSpecification}"},
     }
 
-    def __init__(self, *, properties: Dict[str, "_models.GlobalParameterSpecification"], **kwargs):
+    def __init__(self, *, properties: Dict[str, "_models.GlobalParameterSpecification"], **kwargs: Any) -> None:
         """
         :keyword properties: Properties of the global parameter. Required.
         :paramtype properties: dict[str, ~azure.mgmt.datafactory.models.GlobalParameterSpecification]
@@ -27641,7 +27803,7 @@ class GlobalParameterSpecification(_serialization.Model):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.GlobalParameterType"], value: JSON, **kwargs):
+    def __init__(self, *, type: Union[str, "_models.GlobalParameterType"], value: JSON, **kwargs: Any) -> None:
         """
         :keyword type: Global Parameter type. Required. Known values are: "Object", "String", "Int",
          "Float", "Bool", and "Array".
@@ -27759,8 +27921,8 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
         trusted_cert_path: Optional[JSON] = None,
         use_system_trust_store: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -27822,7 +27984,7 @@ class GoogleAdWordsLinkedService(LinkedService):  # pylint: disable=too-many-ins
             annotations=annotations,
             **kwargs
         )
-        self.type = "GoogleAdWords"  # type: str
+        self.type: str = "GoogleAdWords"
         self.connection_properties = connection_properties
         self.client_customer_id = client_customer_id
         self.developer_token = developer_token
@@ -27898,8 +28060,8 @@ class GoogleAdWordsObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -27935,7 +28097,7 @@ class GoogleAdWordsObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "GoogleAdWordsObject"  # type: str
+        self.type: str = "GoogleAdWordsObject"
         self.table_name = table_name
 
 
@@ -27999,8 +28161,8 @@ class GoogleAdWordsSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28037,7 +28199,7 @@ class GoogleAdWordsSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "GoogleAdWordsSource"  # type: str
+        self.type: str = "GoogleAdWordsSource"
         self.query = query
 
 
@@ -28147,8 +28309,8 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
         trusted_cert_path: Optional[JSON] = None,
         use_system_trust_store: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28209,7 +28371,7 @@ class GoogleBigQueryLinkedService(LinkedService):  # pylint: disable=too-many-in
             annotations=annotations,
             **kwargs
         )
-        self.type = "GoogleBigQuery"  # type: str
+        self.type: str = "GoogleBigQuery"
         self.project = project
         self.additional_projects = additional_projects
         self.request_google_drive_scope = request_google_drive_scope
@@ -28296,8 +28458,8 @@ class GoogleBigQueryObjectDataset(Dataset):  # pylint: disable=too-many-instance
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         dataset: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28340,7 +28502,7 @@ class GoogleBigQueryObjectDataset(Dataset):  # pylint: disable=too-many-instance
             folder=folder,
             **kwargs
         )
-        self.type = "GoogleBigQueryObject"  # type: str
+        self.type: str = "GoogleBigQueryObject"
         self.table_name = table_name
         self.table = table
         self.dataset = dataset
@@ -28406,8 +28568,8 @@ class GoogleBigQuerySource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28444,7 +28606,7 @@ class GoogleBigQuerySource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "GoogleBigQuerySource"  # type: str
+        self.type: str = "GoogleBigQuerySource"
         self.query = query
 
 
@@ -28512,8 +28674,8 @@ class GoogleCloudStorageLinkedService(LinkedService):
         secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28550,7 +28712,7 @@ class GoogleCloudStorageLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "GoogleCloudStorage"  # type: str
+        self.type: str = "GoogleCloudStorage"
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
         self.service_url = service_url
@@ -28602,8 +28764,8 @@ class GoogleCloudStorageLocation(DatasetLocation):
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
         version: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28624,7 +28786,7 @@ class GoogleCloudStorageLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "GoogleCloudStorageLocation"  # type: str
+        self.type: str = "GoogleCloudStorageLocation"
         self.bucket_name = bucket_name
         self.version = version
 
@@ -28714,8 +28876,8 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28763,7 +28925,7 @@ class GoogleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "GoogleCloudStorageReadSettings"  # type: str
+        self.type: str = "GoogleCloudStorageReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -28828,8 +28990,8 @@ class GoogleSheetsLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28857,7 +29019,7 @@ class GoogleSheetsLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "GoogleSheets"  # type: str
+        self.type: str = "GoogleSheets"
         self.api_token = api_token
         self.encrypted_credential = encrypted_credential
 
@@ -28918,8 +29080,8 @@ class GreenplumLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -28950,7 +29112,7 @@ class GreenplumLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Greenplum"  # type: str
+        self.type: str = "Greenplum"
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -29016,8 +29178,8 @@ class GreenplumSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29054,7 +29216,7 @@ class GreenplumSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "GreenplumSource"  # type: str
+        self.type: str = "GreenplumSource"
         self.query = query
 
 
@@ -29129,8 +29291,8 @@ class GreenplumTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29173,7 +29335,7 @@ class GreenplumTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
             folder=folder,
             **kwargs
         )
-        self.type = "GreenplumTable"  # type: str
+        self.type: str = "GreenplumTable"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -29276,8 +29438,8 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         allow_host_name_cn_mismatch: Optional[JSON] = None,
         allow_self_signed_server_cert: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29332,7 +29494,7 @@ class HBaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
             annotations=annotations,
             **kwargs
         )
-        self.type = "HBase"  # type: str
+        self.type: str = "HBase"
         self.host = host
         self.port = port
         self.http_path = http_path
@@ -29407,8 +29569,8 @@ class HBaseObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29444,7 +29606,7 @@ class HBaseObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "HBaseObject"  # type: str
+        self.type: str = "HBaseObject"
         self.table_name = table_name
 
 
@@ -29508,8 +29670,8 @@ class HBaseSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29546,7 +29708,7 @@ class HBaseSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "HBaseSource"  # type: str
+        self.type: str = "HBaseSource"
         self.query = query
 
 
@@ -29617,8 +29779,8 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         encrypted_credential: Optional[JSON] = None,
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29655,7 +29817,7 @@ class HdfsLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
             annotations=annotations,
             **kwargs
         )
-        self.type = "Hdfs"  # type: str
+        self.type: str = "Hdfs"
         self.url = url
         self.authentication_type = authentication_type
         self.encrypted_credential = encrypted_credential
@@ -29698,8 +29860,8 @@ class HdfsLocation(DatasetLocation):
         additional_properties: Optional[Dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29714,7 +29876,7 @@ class HdfsLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "HdfsLocation"  # type: str
+        self.type: str = "HdfsLocation"
 
 
 class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
@@ -29801,8 +29963,8 @@ class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
         modified_datetime_end: Optional[JSON] = None,
         distcp_settings: Optional["_models.DistcpSettings"] = None,
         delete_files_after_completion: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29849,7 +30011,7 @@ class HdfsReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "HdfsReadSettings"  # type: str
+        self.type: str = "HdfsReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -29916,8 +30078,8 @@ class HdfsSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         recursive: Optional[JSON] = None,
         distcp_settings: Optional["_models.DistcpSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -29948,7 +30110,7 @@ class HdfsSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "HdfsSource"  # type: str
+        self.type: str = "HdfsSource"
         self.recursive = recursive
         self.distcp_settings = distcp_settings
 
@@ -30036,8 +30198,8 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
         defines: Optional[Dict[str, JSON]] = None,
         variables: Optional[List[JSON]] = None,
         query_timeout: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -30083,7 +30245,7 @@ class HDInsightHiveActivity(ExecutionActivity):  # pylint: disable=too-many-inst
             policy=policy,
             **kwargs
         )
-        self.type = "HDInsightHive"  # type: str
+        self.type: str = "HDInsightHive"
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -30178,8 +30340,8 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         encrypted_credential: Optional[JSON] = None,
         is_esp_enabled: Optional[JSON] = None,
         file_system: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -30224,7 +30386,7 @@ class HDInsightLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             annotations=annotations,
             **kwargs
         )
-        self.type = "HDInsight"  # type: str
+        self.type: str = "HDInsight"
         self.cluster_uri = cluster_uri
         self.user_name = user_name
         self.password = password
@@ -30319,8 +30481,8 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
         jar_linked_service: Optional["_models.LinkedServiceReference"] = None,
         jar_libs: Optional[List[JSON]] = None,
         defines: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -30366,7 +30528,7 @@ class HDInsightMapReduceActivity(ExecutionActivity):  # pylint: disable=too-many
             policy=policy,
             **kwargs
         )
-        self.type = "HDInsightMapReduce"  # type: str
+        self.type: str = "HDInsightMapReduce"
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -30599,8 +30761,8 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
         virtual_network_id: Optional[JSON] = None,
         subnet_name: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -30723,7 +30885,7 @@ class HDInsightOnDemandLinkedService(LinkedService):  # pylint: disable=too-many
             annotations=annotations,
             **kwargs
         )
-        self.type = "HDInsightOnDemand"  # type: str
+        self.type: str = "HDInsightOnDemand"
         self.cluster_size = cluster_size
         self.time_to_live = time_to_live
         self.version = version
@@ -30835,8 +30997,8 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
         script_path: Optional[JSON] = None,
         script_linked_service: Optional["_models.LinkedServiceReference"] = None,
         defines: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -30878,7 +31040,7 @@ class HDInsightPigActivity(ExecutionActivity):  # pylint: disable=too-many-insta
             policy=policy,
             **kwargs
         )
-        self.type = "HDInsightPig"  # type: str
+        self.type: str = "HDInsightPig"
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -30975,8 +31137,8 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
         class_name: Optional[str] = None,
         proxy_user: Optional[JSON] = None,
         spark_config: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -31025,7 +31187,7 @@ class HDInsightSparkActivity(ExecutionActivity):  # pylint: disable=too-many-ins
             policy=policy,
             **kwargs
         )
-        self.type = "HDInsightSpark"  # type: str
+        self.type: str = "HDInsightSpark"
         self.root_path = root_path
         self.entry_file_path = entry_file_path
         self.arguments = arguments
@@ -31141,8 +31303,8 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
         combiner: Optional[JSON] = None,
         command_environment: Optional[List[JSON]] = None,
         defines: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -31199,7 +31361,7 @@ class HDInsightStreamingActivity(ExecutionActivity):  # pylint: disable=too-many
             policy=policy,
             **kwargs
         )
-        self.type = "HDInsightStreaming"  # type: str
+        self.type: str = "HDInsightStreaming"
         self.storage_linked_services = storage_linked_services
         self.arguments = arguments
         self.get_debug_info = get_debug_info
@@ -31342,8 +31504,8 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         allow_host_name_cn_mismatch: Optional[JSON] = None,
         allow_self_signed_server_cert: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -31416,7 +31578,7 @@ class HiveLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
             annotations=annotations,
             **kwargs
         )
-        self.type = "Hive"  # type: str
+        self.type: str = "Hive"
         self.host = host
         self.port = port
         self.server_type = server_type
@@ -31507,8 +31669,8 @@ class HiveObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribute
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -31551,7 +31713,7 @@ class HiveObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribute
             folder=folder,
             **kwargs
         )
-        self.type = "HiveObject"  # type: str
+        self.type: str = "HiveObject"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -31617,8 +31779,8 @@ class HiveSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -31655,7 +31817,7 @@ class HiveSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "HiveSource"  # type: str
+        self.type: str = "HiveSource"
         self.query = query
 
 
@@ -31747,8 +31909,8 @@ class HttpDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         additional_headers: Optional[JSON] = None,
         format: Optional["_models.DatasetStorageFormat"] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -31801,7 +31963,7 @@ class HttpDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "HttpFile"  # type: str
+        self.type: str = "HttpFile"
         self.relative_url = relative_url
         self.request_method = request_method
         self.request_body = request_body
@@ -31905,8 +32067,8 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         cert_thumbprint: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
         enable_server_certificate_validation: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -31960,7 +32122,7 @@ class HttpLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
             annotations=annotations,
             **kwargs
         )
-        self.type = "HttpServer"  # type: str
+        self.type: str = "HttpServer"
         self.url = url
         self.authentication_type = authentication_type
         self.user_name = user_name
@@ -32036,8 +32198,8 @@ class HttpReadSettings(StoreReadSettings):
         request_timeout: Optional[JSON] = None,
         enable_partition_discovery: Optional[bool] = None,
         partition_root_path: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32072,7 +32234,7 @@ class HttpReadSettings(StoreReadSettings):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "HttpReadSettings"  # type: str
+        self.type: str = "HttpReadSettings"
         self.request_method = request_method
         self.request_body = request_body
         self.additional_headers = additional_headers
@@ -32121,8 +32283,8 @@ class HttpServerLocation(DatasetLocation):
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
         relative_url: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32140,7 +32302,7 @@ class HttpServerLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "HttpServerLocation"  # type: str
+        self.type: str = "HttpServerLocation"
         self.relative_url = relative_url
 
 
@@ -32196,8 +32358,8 @@ class HttpSource(CopySource):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         http_request_timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32228,7 +32390,7 @@ class HttpSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "HttpSource"  # type: str
+        self.type: str = "HttpSource"
         self.http_request_timeout = http_request_timeout
 
 
@@ -32314,8 +32476,8 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32361,7 +32523,7 @@ class HubspotLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "Hubspot"  # type: str
+        self.type: str = "Hubspot"
         self.client_id = client_id
         self.client_secret = client_secret
         self.access_token = access_token
@@ -32433,8 +32595,8 @@ class HubspotObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32470,7 +32632,7 @@ class HubspotObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "HubspotObject"  # type: str
+        self.type: str = "HubspotObject"
         self.table_name = table_name
 
 
@@ -32534,8 +32696,8 @@ class HubspotSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32572,12 +32734,14 @@ class HubspotSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "HubspotSource"  # type: str
+        self.type: str = "HubspotSource"
         self.query = query
 
 
 class IfConditionActivity(ControlActivity):
-    """This activity evaluates a boolean expression and executes either the activities under the ifTrueActivities property or the ifFalseActivities property depending on the result of the expression.
+    """This activity evaluates a boolean expression and executes either the activities under the
+    ifTrueActivities property or the ifFalseActivities property depending on the result of the
+    expression.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -32634,8 +32798,8 @@ class IfConditionActivity(ControlActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         if_true_activities: Optional[List["_models.Activity"]] = None,
         if_false_activities: Optional[List["_models.Activity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32668,7 +32832,7 @@ class IfConditionActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "IfCondition"  # type: str
+        self.type: str = "IfCondition"
         self.expression = expression
         self.if_true_activities = if_true_activities
         self.if_false_activities = if_false_activities
@@ -32772,8 +32936,8 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         allow_host_name_cn_mismatch: Optional[JSON] = None,
         allow_self_signed_server_cert: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32829,7 +32993,7 @@ class ImpalaLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "Impala"  # type: str
+        self.type: str = "Impala"
         self.host = host
         self.port = port
         self.authentication_type = authentication_type
@@ -32914,8 +33078,8 @@ class ImpalaObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribu
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -32958,7 +33122,7 @@ class ImpalaObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribu
             folder=folder,
             **kwargs
         )
-        self.type = "ImpalaObject"  # type: str
+        self.type: str = "ImpalaObject"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -33024,8 +33188,8 @@ class ImpalaSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33062,7 +33226,7 @@ class ImpalaSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "ImpalaSource"  # type: str
+        self.type: str = "ImpalaSource"
         self.query = query
 
 
@@ -33140,8 +33304,8 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33183,7 +33347,7 @@ class InformixLinkedService(LinkedService):  # pylint: disable=too-many-instance
             annotations=annotations,
             **kwargs
         )
-        self.type = "Informix"  # type: str
+        self.type: str = "Informix"
         self.connection_string = connection_string
         self.authentication_type = authentication_type
         self.credential = credential
@@ -33252,8 +33416,8 @@ class InformixSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33290,7 +33454,7 @@ class InformixSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "InformixSink"  # type: str
+        self.type: str = "InformixSink"
         self.pre_copy_script = pre_copy_script
 
 
@@ -33353,8 +33517,8 @@ class InformixSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33390,7 +33554,7 @@ class InformixSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "InformixSource"  # type: str
+        self.type: str = "InformixSource"
         self.query = query
 
 
@@ -33455,8 +33619,8 @@ class InformixTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33493,7 +33657,7 @@ class InformixTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "InformixTable"  # type: str
+        self.type: str = "InformixTable"
         self.table_name = table_name
 
 
@@ -33528,8 +33692,12 @@ class IntegrationRuntime(_serialization.Model):
     _subtype_map = {"type": {"Managed": "ManagedIntegrationRuntime", "SelfHosted": "SelfHostedIntegrationRuntime"}}
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, JSON]] = None, description: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33539,7 +33707,7 @@ class IntegrationRuntime(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.description = description
 
 
@@ -33557,7 +33725,7 @@ class IntegrationRuntimeAuthKeys(_serialization.Model):
         "auth_key2": {"key": "authKey2", "type": "str"},
     }
 
-    def __init__(self, *, auth_key1: Optional[str] = None, auth_key2: Optional[str] = None, **kwargs):
+    def __init__(self, *, auth_key1: Optional[str] = None, auth_key2: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword auth_key1: The primary integration runtime authentication key.
         :paramtype auth_key1: str
@@ -33591,6 +33759,14 @@ class IntegrationRuntimeComputeProperties(_serialization.Model):
      ~azure.mgmt.datafactory.models.IntegrationRuntimeDataFlowProperties
     :ivar v_net_properties: VNet properties for managed integration runtime.
     :vartype v_net_properties: ~azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties
+    :ivar copy_compute_scale_properties: CopyComputeScale properties for managed integration
+     runtime.
+    :vartype copy_compute_scale_properties:
+     ~azure.mgmt.datafactory.models.CopyComputeScaleProperties
+    :ivar pipeline_external_compute_scale_properties: PipelineExternalComputeScale properties for
+     managed integration runtime.
+    :vartype pipeline_external_compute_scale_properties:
+     ~azure.mgmt.datafactory.models.PipelineExternalComputeScaleProperties
     """
 
     _validation = {
@@ -33606,6 +33782,11 @@ class IntegrationRuntimeComputeProperties(_serialization.Model):
         "max_parallel_executions_per_node": {"key": "maxParallelExecutionsPerNode", "type": "int"},
         "data_flow_properties": {"key": "dataFlowProperties", "type": "IntegrationRuntimeDataFlowProperties"},
         "v_net_properties": {"key": "vNetProperties", "type": "IntegrationRuntimeVNetProperties"},
+        "copy_compute_scale_properties": {"key": "copyComputeScaleProperties", "type": "CopyComputeScaleProperties"},
+        "pipeline_external_compute_scale_properties": {
+            "key": "pipelineExternalComputeScaleProperties",
+            "type": "PipelineExternalComputeScaleProperties",
+        },
     }
 
     def __init__(
@@ -33618,8 +33799,10 @@ class IntegrationRuntimeComputeProperties(_serialization.Model):
         max_parallel_executions_per_node: Optional[int] = None,
         data_flow_properties: Optional["_models.IntegrationRuntimeDataFlowProperties"] = None,
         v_net_properties: Optional["_models.IntegrationRuntimeVNetProperties"] = None,
-        **kwargs
-    ):
+        copy_compute_scale_properties: Optional["_models.CopyComputeScaleProperties"] = None,
+        pipeline_external_compute_scale_properties: Optional["_models.PipelineExternalComputeScaleProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33640,6 +33823,14 @@ class IntegrationRuntimeComputeProperties(_serialization.Model):
          ~azure.mgmt.datafactory.models.IntegrationRuntimeDataFlowProperties
         :keyword v_net_properties: VNet properties for managed integration runtime.
         :paramtype v_net_properties: ~azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties
+        :keyword copy_compute_scale_properties: CopyComputeScale properties for managed integration
+         runtime.
+        :paramtype copy_compute_scale_properties:
+         ~azure.mgmt.datafactory.models.CopyComputeScaleProperties
+        :keyword pipeline_external_compute_scale_properties: PipelineExternalComputeScale properties
+         for managed integration runtime.
+        :paramtype pipeline_external_compute_scale_properties:
+         ~azure.mgmt.datafactory.models.PipelineExternalComputeScaleProperties
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
@@ -33649,6 +33840,8 @@ class IntegrationRuntimeComputeProperties(_serialization.Model):
         self.max_parallel_executions_per_node = max_parallel_executions_per_node
         self.data_flow_properties = data_flow_properties
         self.v_net_properties = v_net_properties
+        self.copy_compute_scale_properties = copy_compute_scale_properties
+        self.pipeline_external_compute_scale_properties = pipeline_external_compute_scale_properties
 
 
 class IntegrationRuntimeConnectionInfo(_serialization.Model):
@@ -33695,7 +33888,7 @@ class IntegrationRuntimeConnectionInfo(_serialization.Model):
         "is_identity_cert_exprired": {"key": "isIdentityCertExprired", "type": "bool"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33712,7 +33905,8 @@ class IntegrationRuntimeConnectionInfo(_serialization.Model):
 
 
 class IntegrationRuntimeCustomerVirtualNetwork(_serialization.Model):
-    """The definition and properties of virtual network to which Azure-SSIS integration runtime will join.
+    """The definition and properties of virtual network to which Azure-SSIS integration runtime will
+    join.
 
     :ivar subnet_id: The ID of subnet to which Azure-SSIS integration runtime will join.
     :vartype subnet_id: str
@@ -33722,7 +33916,7 @@ class IntegrationRuntimeCustomerVirtualNetwork(_serialization.Model):
         "subnet_id": {"key": "subnetId", "type": "str"},
     }
 
-    def __init__(self, *, subnet_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, subnet_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword subnet_id: The ID of subnet to which Azure-SSIS integration runtime will join.
         :paramtype subnet_id: str
@@ -33747,8 +33941,12 @@ class IntegrationRuntimeCustomSetupScriptProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, blob_container_uri: Optional[str] = None, sas_token: Optional["_models.SecureString"] = None, **kwargs
-    ):
+        self,
+        *,
+        blob_container_uri: Optional[str] = None,
+        sas_token: Optional["_models.SecureString"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob_container_uri: The URI of the Azure blob container that contains the custom setup
          script.
@@ -33801,8 +33999,8 @@ class IntegrationRuntimeDataFlowProperties(_serialization.Model):
         core_count: Optional[int] = None,
         time_to_live: Optional[int] = None,
         cleanup: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -33851,8 +34049,8 @@ class IntegrationRuntimeDataProxyProperties(_serialization.Model):
         connect_via: Optional["_models.EntityReference"] = None,
         staging_linked_service: Optional["_models.EntityReference"] = None,
         path: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword connect_via: The self-hosted integration runtime reference.
         :paramtype connect_via: ~azure.mgmt.datafactory.models.EntityReference
@@ -33887,7 +34085,7 @@ class IntegrationRuntimeDebugResource(SubResourceDebugResource):
         "properties": {"key": "properties", "type": "IntegrationRuntime"},
     }
 
-    def __init__(self, *, properties: "_models.IntegrationRuntime", name: Optional[str] = None, **kwargs):
+    def __init__(self, *, properties: "_models.IntegrationRuntime", name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The resource name.
         :paramtype name: str
@@ -33918,7 +34116,9 @@ class IntegrationRuntimeListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IntegrationRuntimeResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.IntegrationRuntimeResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of integration runtimes. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.IntegrationRuntimeResource]
@@ -33949,8 +34149,8 @@ class IntegrationRuntimeMonitoringData(_serialization.Model):
         *,
         name: Optional[str] = None,
         nodes: Optional[List["_models.IntegrationRuntimeNodeMonitoringData"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Integration runtime name.
         :paramtype name: str
@@ -33979,7 +34179,7 @@ class IntegrationRuntimeNodeIpAddress(_serialization.Model):
         "ip_address": {"key": "ipAddress", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.ip_address = None
@@ -34035,7 +34235,7 @@ class IntegrationRuntimeNodeMonitoringData(_serialization.Model):
         "received_bytes": {"key": "receivedBytes", "type": "float"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34073,8 +34273,8 @@ class IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint(_serializati
         *,
         category: Optional[str] = None,
         endpoints: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpoint"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: The category of outbound network dependency.
         :paramtype category: str
@@ -34110,8 +34310,8 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpoint(_serialization.Model
         *,
         domain_name: Optional[str] = None,
         endpoint_details: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword domain_name: The domain name of endpoint.
         :paramtype domain_name: str
@@ -34135,7 +34335,7 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails(_serializatio
         "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(self, *, port: Optional[int] = None, **kwargs):
+    def __init__(self, *, port: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword port: The port of endpoint.
         :paramtype port: int
@@ -34160,8 +34360,8 @@ class IntegrationRuntimeOutboundNetworkDependenciesEndpointsResponse(_serializat
         self,
         *,
         value: Optional[List["_models.IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of outbound network dependency endpoints.
         :paramtype value:
@@ -34201,8 +34401,8 @@ class IntegrationRuntimeReference(_serialization.Model):
         type: Union[str, "_models.IntegrationRuntimeReferenceType"],
         reference_name: str,
         parameters: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of integration runtime. Required. "IntegrationRuntimeReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.IntegrationRuntimeReferenceType
@@ -34229,7 +34429,9 @@ class IntegrationRuntimeRegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: Optional[Union[str, "_models.IntegrationRuntimeAuthKeyName"]] = None, **kwargs):
+    def __init__(
+        self, *, key_name: Optional[Union[str, "_models.IntegrationRuntimeAuthKeyName"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of the authentication key to regenerate. Known values are:
          "authKey1" and "authKey2".
@@ -34274,7 +34476,7 @@ class IntegrationRuntimeResource(SubResource):
         "properties": {"key": "properties", "type": "IntegrationRuntime"},
     }
 
-    def __init__(self, *, properties: "_models.IntegrationRuntime", **kwargs):
+    def __init__(self, *, properties: "_models.IntegrationRuntime", **kwargs: Any) -> None:
         """
         :keyword properties: Integration runtime properties. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
@@ -34328,8 +34530,8 @@ class IntegrationRuntimeSsisCatalogInfo(_serialization.Model):
         catalog_admin_password: Optional["_models.SecureString"] = None,
         catalog_pricing_tier: Optional[Union[str, "_models.IntegrationRuntimeSsisCatalogPricingTier"]] = None,
         dual_standby_pair_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34416,8 +34618,8 @@ class IntegrationRuntimeSsisProperties(_serialization.Model):
         express_custom_setup_properties: Optional[List["_models.CustomSetupBase"]] = None,
         package_stores: Optional[List["_models.PackageStore"]] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34500,7 +34702,7 @@ class IntegrationRuntimeStatus(_serialization.Model):
         "type": {"Managed": "ManagedIntegrationRuntimeStatus", "SelfHosted": "SelfHostedIntegrationRuntimeStatus"}
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34508,7 +34710,7 @@ class IntegrationRuntimeStatus(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.data_factory_name = None
         self.state = None
 
@@ -34534,8 +34736,8 @@ class IntegrationRuntimeStatusListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.IntegrationRuntimeStatusResponse"], next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: List["_models.IntegrationRuntimeStatusResponse"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of integration runtime status. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.IntegrationRuntimeStatusResponse]
@@ -34570,7 +34772,7 @@ class IntegrationRuntimeStatusResponse(_serialization.Model):
         "properties": {"key": "properties", "type": "IntegrationRuntimeStatus"},
     }
 
-    def __init__(self, *, properties: "_models.IntegrationRuntimeStatus", **kwargs):
+    def __init__(self, *, properties: "_models.IntegrationRuntimeStatus", **kwargs: Any) -> None:
         """
         :keyword properties: Integration runtime properties. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatus
@@ -34613,8 +34815,8 @@ class IntegrationRuntimeVNetProperties(_serialization.Model):
         subnet: Optional[str] = None,
         public_i_ps: Optional[List[str]] = None,
         subnet_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34721,8 +34923,8 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34769,7 +34971,7 @@ class JiraLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
             annotations=annotations,
             **kwargs
         )
-        self.type = "Jira"  # type: str
+        self.type: str = "Jira"
         self.host = host
         self.port = port
         self.username = username
@@ -34841,8 +35043,8 @@ class JiraObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34878,7 +35080,7 @@ class JiraObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "JiraObject"  # type: str
+        self.type: str = "JiraObject"
         self.table_name = table_name
 
 
@@ -34942,8 +35144,8 @@ class JiraSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -34980,7 +35182,7 @@ class JiraSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "JiraSource"  # type: str
+        self.type: str = "JiraSource"
         self.query = query
 
 
@@ -35057,8 +35259,8 @@ class JsonDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         location: Optional["_models.DatasetLocation"] = None,
         encoding_name: Optional[JSON] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -35102,7 +35304,7 @@ class JsonDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Json"  # type: str
+        self.type: str = "Json"
         self.location = location
         self.encoding_name = encoding_name
         self.compression = compression
@@ -35172,8 +35374,8 @@ class JsonFormat(DatasetStorageFormat):
         encoding_name: Optional[JSON] = None,
         json_node_reference: Optional[JSON] = None,
         json_path_definition: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -35207,7 +35409,7 @@ class JsonFormat(DatasetStorageFormat):
         super().__init__(
             additional_properties=additional_properties, serializer=serializer, deserializer=deserializer, **kwargs
         )
-        self.type = "JsonFormat"  # type: str
+        self.type: str = "JsonFormat"
         self.file_pattern = file_pattern
         self.nesting_separator = nesting_separator
         self.encoding_name = encoding_name
@@ -35244,8 +35446,8 @@ class JsonReadSettings(FormatReadSettings):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         compression_properties: Optional["_models.CompressionReadSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -35254,7 +35456,7 @@ class JsonReadSettings(FormatReadSettings):
         :paramtype compression_properties: ~azure.mgmt.datafactory.models.CompressionReadSettings
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "JsonReadSettings"  # type: str
+        self.type: str = "JsonReadSettings"
         self.compression_properties = compression_properties
 
 
@@ -35321,8 +35523,8 @@ class JsonSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreWriteSettings"] = None,
         format_settings: Optional["_models.JsonWriteSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -35360,7 +35562,7 @@ class JsonSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "JsonSink"  # type: str
+        self.type: str = "JsonSink"
         self.store_settings = store_settings
         self.format_settings = format_settings
 
@@ -35423,8 +35625,8 @@ class JsonSource(CopySource):
         store_settings: Optional["_models.StoreReadSettings"] = None,
         format_settings: Optional["_models.JsonReadSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -35457,7 +35659,7 @@ class JsonSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "JsonSource"  # type: str
+        self.type: str = "JsonSource"
         self.store_settings = store_settings
         self.format_settings = format_settings
         self.additional_columns = additional_columns
@@ -35489,8 +35691,12 @@ class JsonWriteSettings(FormatWriteSettings):
     }
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, JSON]] = None, file_pattern: Optional[JSON] = None, **kwargs
-    ):
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        file_pattern: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -35500,7 +35706,7 @@ class JsonWriteSettings(FormatWriteSettings):
         :paramtype file_pattern: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "JsonWriteSettings"  # type: str
+        self.type: str = "JsonWriteSettings"
         self.file_pattern = file_pattern
 
 
@@ -35539,7 +35745,7 @@ class LinkedIntegrationRuntime(_serialization.Model):
         "create_time": {"key": "createTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -35576,10 +35782,10 @@ class LinkedIntegrationRuntimeType(_serialization.Model):
         }
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.authorization_type = None  # type: Optional[str]
+        self.authorization_type: Optional[str] = None
 
 
 class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
@@ -35603,13 +35809,13 @@ class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
         "key": {"key": "key", "type": "SecureString"},
     }
 
-    def __init__(self, *, key: "_models.SecureString", **kwargs):
+    def __init__(self, *, key: "_models.SecureString", **kwargs: Any) -> None:
         """
         :keyword key: The key used for authorization. Required.
         :paramtype key: ~azure.mgmt.datafactory.models.SecureString
         """
         super().__init__(**kwargs)
-        self.authorization_type = "Key"  # type: str
+        self.authorization_type: str = "Key"
         self.key = key
 
 
@@ -35637,7 +35843,9 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
         "credential": {"key": "credential", "type": "CredentialReference"},
     }
 
-    def __init__(self, *, resource_id: str, credential: Optional["_models.CredentialReference"] = None, **kwargs):
+    def __init__(
+        self, *, resource_id: str, credential: Optional["_models.CredentialReference"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: The resource identifier of the integration runtime to be shared.
          Required.
@@ -35646,7 +35854,7 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
         :paramtype credential: ~azure.mgmt.datafactory.models.CredentialReference
         """
         super().__init__(**kwargs)
-        self.authorization_type = "RBAC"  # type: str
+        self.authorization_type: str = "RBAC"
         self.resource_id = resource_id
         self.credential = credential
 
@@ -35668,7 +35876,7 @@ class LinkedIntegrationRuntimeRequest(_serialization.Model):
         "linked_factory_name": {"key": "factoryName", "type": "str"},
     }
 
-    def __init__(self, *, linked_factory_name: str, **kwargs):
+    def __init__(self, *, linked_factory_name: str, **kwargs: Any) -> None:
         """
         :keyword linked_factory_name: The data factory name for linked integration runtime. Required.
         :paramtype linked_factory_name: str
@@ -35697,7 +35905,7 @@ class LinkedServiceDebugResource(SubResourceDebugResource):
         "properties": {"key": "properties", "type": "LinkedService"},
     }
 
-    def __init__(self, *, properties: "_models.LinkedService", name: Optional[str] = None, **kwargs):
+    def __init__(self, *, properties: "_models.LinkedService", name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The resource name.
         :paramtype name: str
@@ -35728,7 +35936,9 @@ class LinkedServiceListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.LinkedServiceResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.LinkedServiceResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of linked services. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.LinkedServiceResource]
@@ -35770,8 +35980,8 @@ class LinkedServiceReference(_serialization.Model):
         type: Union[str, "_models.Type"],
         reference_name: str,
         parameters: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Linked service reference type. Required. "LinkedServiceReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.Type
@@ -35821,7 +36031,7 @@ class LinkedServiceResource(SubResource):
         "properties": {"key": "properties", "type": "LinkedService"},
     }
 
-    def __init__(self, *, properties: "_models.LinkedService", **kwargs):
+    def __init__(self, *, properties: "_models.LinkedService", **kwargs: Any) -> None:
         """
         :keyword properties: Properties of linked service. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.LinkedService
@@ -35851,7 +36061,9 @@ class LogLocationSettings(_serialization.Model):
         "path": {"key": "path", "type": "object"},
     }
 
-    def __init__(self, *, linked_service_name: "_models.LinkedServiceReference", path: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, linked_service_name: "_models.LinkedServiceReference", path: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword linked_service_name: Log storage linked service reference. Required.
         :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
@@ -35895,8 +36107,8 @@ class LogSettings(_serialization.Model):
         log_location_settings: "_models.LogLocationSettings",
         enable_copy_activity_log: Optional[JSON] = None,
         copy_activity_log_settings: Optional["_models.CopyActivityLogSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enable_copy_activity_log: Specifies whether to enable copy activity log. Type: boolean
          (or Expression with resultType boolean).
@@ -35954,8 +36166,8 @@ class LogStorageSettings(_serialization.Model):
         path: Optional[JSON] = None,
         log_level: Optional[JSON] = None,
         enable_reliable_logging: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36045,8 +36257,8 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         first_row_only: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36081,7 +36293,7 @@ class LookupActivity(ExecutionActivity):  # pylint: disable=too-many-instance-at
             policy=policy,
             **kwargs
         )
-        self.type = "Lookup"  # type: str
+        self.type: str = "Lookup"
         self.source = source
         self.dataset = dataset
         self.first_row_only = first_row_only
@@ -36159,8 +36371,8 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36200,7 +36412,7 @@ class MagentoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "Magento"  # type: str
+        self.type: str = "Magento"
         self.host = host
         self.access_token = access_token
         self.use_encrypted_endpoints = use_encrypted_endpoints
@@ -36270,8 +36482,8 @@ class MagentoObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36307,7 +36519,7 @@ class MagentoObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MagentoObject"  # type: str
+        self.type: str = "MagentoObject"
         self.table_name = table_name
 
 
@@ -36371,8 +36583,8 @@ class MagentoSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36409,7 +36621,7 @@ class MagentoSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "MagentoSource"  # type: str
+        self.type: str = "MagentoSource"
         self.query = query
 
 
@@ -36450,8 +36662,8 @@ class ManagedIdentityCredential(Credential):
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
         resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36466,12 +36678,57 @@ class ManagedIdentityCredential(Credential):
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
-        self.type = "ManagedIdentity"  # type: str
+        self.type: str = "ManagedIdentity"
         self.resource_id = resource_id
 
 
+class ManagedIdentityCredentialResource(SubResource):
+    """Credential resource type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource identifier.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar etag: Etag identifies change in the resource.
+    :vartype etag: str
+    :ivar properties: Managed Identity Credential properties. Required.
+    :vartype properties: ~azure.mgmt.datafactory.models.ManagedIdentityCredential
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "properties": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "properties": {"key": "properties", "type": "ManagedIdentityCredential"},
+    }
+
+    def __init__(self, *, properties: "_models.ManagedIdentityCredential", **kwargs: Any) -> None:
+        """
+        :keyword properties: Managed Identity Credential properties. Required.
+        :paramtype properties: ~azure.mgmt.datafactory.models.ManagedIdentityCredential
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
 class ManagedIntegrationRuntime(IntegrationRuntime):
-    """Managed integration runtime, including managed elastic and managed dedicated integration runtimes.
+    """Managed integration runtime, including managed elastic and managed dedicated integration
+    runtimes.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -36532,8 +36789,8 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
         compute_properties: Optional["_models.IntegrationRuntimeComputeProperties"] = None,
         ssis_properties: Optional["_models.IntegrationRuntimeSsisProperties"] = None,
         customer_virtual_network: Optional["_models.IntegrationRuntimeCustomerVirtualNetwork"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36554,7 +36811,7 @@ class ManagedIntegrationRuntime(IntegrationRuntime):
          ~azure.mgmt.datafactory.models.IntegrationRuntimeCustomerVirtualNetwork
         """
         super().__init__(additional_properties=additional_properties, description=description, **kwargs)
-        self.type = "Managed"  # type: str
+        self.type: str = "Managed"
         self.state = None
         self.managed_virtual_network = managed_virtual_network
         self.compute_properties = compute_properties
@@ -36595,7 +36852,7 @@ class ManagedIntegrationRuntimeError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36643,8 +36900,8 @@ class ManagedIntegrationRuntimeNode(_serialization.Model):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         errors: Optional[List["_models.ManagedIntegrationRuntimeError"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36700,7 +36957,7 @@ class ManagedIntegrationRuntimeOperationResult(_serialization.Model):
         "activity_id": {"key": "activityId", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36767,14 +37024,14 @@ class ManagedIntegrationRuntimeStatus(IntegrationRuntimeStatus):
         "last_operation": {"key": "typeProperties.lastOperation", "type": "ManagedIntegrationRuntimeOperationResult"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "Managed"  # type: str
+        self.type: str = "Managed"
         self.create_time = None
         self.nodes = None
         self.other_errors = None
@@ -36827,8 +37084,8 @@ class ManagedPrivateEndpoint(_serialization.Model):
         fqdns: Optional[List[str]] = None,
         group_id: Optional[str] = None,
         private_link_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36874,8 +37131,8 @@ class ManagedPrivateEndpointListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.ManagedPrivateEndpointResource"], next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: List["_models.ManagedPrivateEndpointResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of managed private endpoints. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.ManagedPrivateEndpointResource]
@@ -36922,7 +37179,7 @@ class ManagedPrivateEndpointResource(SubResource):
         "properties": {"key": "properties", "type": "ManagedPrivateEndpoint"},
     }
 
-    def __init__(self, *, properties: "_models.ManagedPrivateEndpoint", **kwargs):
+    def __init__(self, *, properties: "_models.ManagedPrivateEndpoint", **kwargs: Any) -> None:
         """
         :keyword properties: Managed private endpoint properties. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.ManagedPrivateEndpoint
@@ -36956,7 +37213,7 @@ class ManagedVirtualNetwork(_serialization.Model):
         "alias": {"key": "alias", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -36989,8 +37246,8 @@ class ManagedVirtualNetworkListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.ManagedVirtualNetworkResource"], next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: List["_models.ManagedVirtualNetworkResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of managed Virtual Networks. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.ManagedVirtualNetworkResource]
@@ -37024,8 +37281,8 @@ class ManagedVirtualNetworkReference(_serialization.Model):
     }
 
     def __init__(
-        self, *, type: Union[str, "_models.ManagedVirtualNetworkReferenceType"], reference_name: str, **kwargs
-    ):
+        self, *, type: Union[str, "_models.ManagedVirtualNetworkReferenceType"], reference_name: str, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Managed Virtual Network reference type. Required.
          "ManagedVirtualNetworkReference"
@@ -37073,7 +37330,7 @@ class ManagedVirtualNetworkResource(SubResource):
         "properties": {"key": "properties", "type": "ManagedVirtualNetwork"},
     }
 
-    def __init__(self, *, properties: "_models.ManagedVirtualNetwork", **kwargs):
+    def __init__(self, *, properties: "_models.ManagedVirtualNetwork", **kwargs: Any) -> None:
         """
         :keyword properties: Managed Virtual Network properties. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.ManagedVirtualNetwork
@@ -37135,8 +37392,8 @@ class MappingDataFlow(DataFlow):
         transformations: Optional[List["_models.Transformation"]] = None,
         script: Optional[str] = None,
         script_lines: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the data flow.
         :paramtype description: str
@@ -37157,7 +37414,7 @@ class MappingDataFlow(DataFlow):
         :paramtype script_lines: list[str]
         """
         super().__init__(description=description, annotations=annotations, folder=folder, **kwargs)
-        self.type = "MappingDataFlow"  # type: str
+        self.type: str = "MappingDataFlow"
         self.sources = sources
         self.sinks = sinks
         self.transformations = transformations
@@ -37221,8 +37478,8 @@ class MariaDBLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37253,7 +37510,7 @@ class MariaDBLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "MariaDB"  # type: str
+        self.type: str = "MariaDB"
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -37319,8 +37576,8 @@ class MariaDBSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37357,7 +37614,7 @@ class MariaDBSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "MariaDBSource"  # type: str
+        self.type: str = "MariaDBSource"
         self.query = query
 
 
@@ -37422,8 +37679,8 @@ class MariaDBTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37459,7 +37716,7 @@ class MariaDBTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MariaDBTable"  # type: str
+        self.type: str = "MariaDBTable"
         self.table_name = table_name
 
 
@@ -37540,8 +37797,8 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37584,7 +37841,7 @@ class MarketoLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "Marketo"  # type: str
+        self.type: str = "Marketo"
         self.endpoint = endpoint
         self.client_id = client_id
         self.client_secret = client_secret
@@ -37655,8 +37912,8 @@ class MarketoObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37692,7 +37949,7 @@ class MarketoObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MarketoObject"  # type: str
+        self.type: str = "MarketoObject"
         self.table_name = table_name
 
 
@@ -37756,8 +38013,8 @@ class MarketoSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37794,7 +38051,7 @@ class MarketoSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "MarketoSource"  # type: str
+        self.type: str = "MarketoSource"
         self.query = query
 
 
@@ -37812,7 +38069,7 @@ class MetadataItem(_serialization.Model):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, name: Optional[JSON] = None, value: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, name: Optional[JSON] = None, value: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword name: Metadata item key name. Type: string (or Expression with resultType string).
         :paramtype name: JSON
@@ -37898,8 +38155,8 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -37941,7 +38198,7 @@ class MicrosoftAccessLinkedService(LinkedService):  # pylint: disable=too-many-i
             annotations=annotations,
             **kwargs
         )
-        self.type = "MicrosoftAccess"  # type: str
+        self.type: str = "MicrosoftAccess"
         self.connection_string = connection_string
         self.authentication_type = authentication_type
         self.credential = credential
@@ -38010,8 +38267,8 @@ class MicrosoftAccessSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38048,7 +38305,7 @@ class MicrosoftAccessSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "MicrosoftAccessSink"  # type: str
+        self.type: str = "MicrosoftAccessSink"
         self.pre_copy_script = pre_copy_script
 
 
@@ -38106,8 +38363,8 @@ class MicrosoftAccessSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38138,7 +38395,7 @@ class MicrosoftAccessSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "MicrosoftAccessSource"  # type: str
+        self.type: str = "MicrosoftAccessSource"
         self.query = query
         self.additional_columns = additional_columns
 
@@ -38205,8 +38462,8 @@ class MicrosoftAccessTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38243,7 +38500,7 @@ class MicrosoftAccessTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MicrosoftAccessTable"  # type: str
+        self.type: str = "MicrosoftAccessTable"
         self.table_name = table_name
 
 
@@ -38310,8 +38567,8 @@ class MongoDbAtlasCollectionDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38348,7 +38605,7 @@ class MongoDbAtlasCollectionDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MongoDbAtlasCollection"  # type: str
+        self.type: str = "MongoDbAtlasCollection"
         self.collection = collection
 
 
@@ -38406,8 +38663,8 @@ class MongoDbAtlasLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38436,7 +38693,7 @@ class MongoDbAtlasLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "MongoDbAtlas"  # type: str
+        self.type: str = "MongoDbAtlas"
         self.connection_string = connection_string
         self.database = database
 
@@ -38502,8 +38759,8 @@ class MongoDbAtlasSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38541,7 +38798,7 @@ class MongoDbAtlasSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "MongoDbAtlasSink"  # type: str
+        self.type: str = "MongoDbAtlasSink"
         self.write_behavior = write_behavior
 
 
@@ -38617,8 +38874,8 @@ class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attri
         batch_size: Optional[JSON] = None,
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38661,7 +38918,7 @@ class MongoDbAtlasSource(CopySource):  # pylint: disable=too-many-instance-attri
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "MongoDbAtlasSource"  # type: str
+        self.type: str = "MongoDbAtlasSource"
         self.filter = filter
         self.cursor_methods = cursor_methods
         self.batch_size = batch_size
@@ -38732,8 +38989,8 @@ class MongoDbCollectionDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38770,7 +39027,7 @@ class MongoDbCollectionDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MongoDbCollection"  # type: str
+        self.type: str = "MongoDbCollection"
         self.collection_name = collection_name
 
 
@@ -38813,8 +39070,8 @@ class MongoDbCursorMethodsProperties(_serialization.Model):
         sort: Optional[JSON] = None,
         skip: Optional[JSON] = None,
         limit: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38936,8 +39193,8 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         enable_ssl: Optional[JSON] = None,
         allow_self_signed_server_cert: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -38991,7 +39248,7 @@ class MongoDbLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "MongoDb"  # type: str
+        self.type: str = "MongoDb"
         self.server = server
         self.authentication_type = authentication_type
         self.database_name = database_name
@@ -39059,8 +39316,8 @@ class MongoDbSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39092,7 +39349,7 @@ class MongoDbSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "MongoDbSource"  # type: str
+        self.type: str = "MongoDbSource"
         self.query = query
         self.additional_columns = additional_columns
 
@@ -39160,8 +39417,8 @@ class MongoDbV2CollectionDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39198,7 +39455,7 @@ class MongoDbV2CollectionDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MongoDbV2Collection"  # type: str
+        self.type: str = "MongoDbV2Collection"
         self.collection = collection
 
 
@@ -39256,8 +39513,8 @@ class MongoDbV2LinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39286,7 +39543,7 @@ class MongoDbV2LinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "MongoDbV2"  # type: str
+        self.type: str = "MongoDbV2"
         self.connection_string = connection_string
         self.database = database
 
@@ -39352,8 +39609,8 @@ class MongoDbV2Sink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39391,7 +39648,7 @@ class MongoDbV2Sink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "MongoDbV2Sink"  # type: str
+        self.type: str = "MongoDbV2Sink"
         self.write_behavior = write_behavior
 
 
@@ -39467,8 +39724,8 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
         batch_size: Optional[JSON] = None,
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39511,7 +39768,7 @@ class MongoDbV2Source(CopySource):  # pylint: disable=too-many-instance-attribut
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "MongoDbV2Source"  # type: str
+        self.type: str = "MongoDbV2Source"
         self.filter = filter
         self.cursor_methods = cursor_methods
         self.batch_size = batch_size
@@ -39575,8 +39832,8 @@ class MySqlLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39606,7 +39863,7 @@ class MySqlLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "MySql"  # type: str
+        self.type: str = "MySql"
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -39671,8 +39928,8 @@ class MySqlSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39708,7 +39965,7 @@ class MySqlSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "MySqlSource"  # type: str
+        self.type: str = "MySqlSource"
         self.query = query
 
 
@@ -39773,8 +40030,8 @@ class MySqlTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39810,7 +40067,7 @@ class MySqlTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "MySqlTable"  # type: str
+        self.type: str = "MySqlTable"
         self.table_name = table_name
 
 
@@ -39870,8 +40127,8 @@ class NetezzaLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -39902,7 +40159,7 @@ class NetezzaLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Netezza"  # type: str
+        self.type: str = "Netezza"
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -39936,8 +40193,8 @@ class NetezzaPartitionSettings(_serialization.Model):
         partition_column_name: Optional[JSON] = None,
         partition_upper_bound: Optional[JSON] = None,
         partition_lower_bound: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partition_column_name: The name of the column in integer type that will be used for
          proceeding range partitioning. Type: string (or Expression with resultType string).
@@ -40026,8 +40283,8 @@ class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
         query: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.NetezzaPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40070,7 +40327,7 @@ class NetezzaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "NetezzaSource"  # type: str
+        self.type: str = "NetezzaSource"
         self.query = query
         self.partition_option = partition_option
         self.partition_settings = partition_settings
@@ -40148,8 +40405,8 @@ class NetezzaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40192,7 +40449,7 @@ class NetezzaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
             folder=folder,
             **kwargs
         )
-        self.type = "NetezzaTable"  # type: str
+        self.type: str = "NetezzaTable"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -40217,8 +40474,8 @@ class NotebookParameter(_serialization.Model):
         *,
         value: Optional[JSON] = None,
         type: Optional[Union[str, "_models.NotebookParameterType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Notebook parameter value. Type: string (or Expression with resultType string).
         :paramtype value: JSON
@@ -40355,8 +40612,8 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         service_principal_embedded_cert: Optional["_models.SecretBase"] = None,
         service_principal_embedded_cert_password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40425,7 +40682,7 @@ class ODataLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
             annotations=annotations,
             **kwargs
         )
-        self.type = "OData"  # type: str
+        self.type: str = "OData"
         self.url = url
         self.authentication_type = authentication_type
         self.user_name = user_name
@@ -40503,8 +40760,8 @@ class ODataResourceDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         path: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40540,7 +40797,7 @@ class ODataResourceDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "ODataResource"  # type: str
+        self.type: str = "ODataResource"
         self.path = path
 
 
@@ -40606,8 +40863,8 @@ class ODataSource(CopySource):
         query: Optional[JSON] = None,
         http_request_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40644,7 +40901,7 @@ class ODataSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "ODataSource"  # type: str
+        self.type: str = "ODataSource"
         self.query = query
         self.http_request_timeout = http_request_timeout
         self.additional_columns = additional_columns
@@ -40723,8 +40980,8 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40765,7 +41022,7 @@ class OdbcLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
             annotations=annotations,
             **kwargs
         )
-        self.type = "Odbc"  # type: str
+        self.type: str = "Odbc"
         self.connection_string = connection_string
         self.authentication_type = authentication_type
         self.credential = credential
@@ -40834,8 +41091,8 @@ class OdbcSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40872,7 +41129,7 @@ class OdbcSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "OdbcSink"  # type: str
+        self.type: str = "OdbcSink"
         self.pre_copy_script = pre_copy_script
 
 
@@ -40935,8 +41192,8 @@ class OdbcSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -40972,7 +41229,7 @@ class OdbcSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "OdbcSource"  # type: str
+        self.type: str = "OdbcSource"
         self.query = query
 
 
@@ -41037,8 +41294,8 @@ class OdbcTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -41074,7 +41331,7 @@ class OdbcTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "OdbcTable"  # type: str
+        self.type: str = "OdbcTable"
         self.table_name = table_name
 
 
@@ -41146,8 +41403,8 @@ class Office365Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         predicate: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -41187,7 +41444,7 @@ class Office365Dataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Office365Table"  # type: str
+        self.type: str = "Office365Table"
         self.table_name = table_name
         self.predicate = predicate
 
@@ -41262,8 +41519,8 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -41300,7 +41557,7 @@ class Office365LinkedService(LinkedService):  # pylint: disable=too-many-instanc
             annotations=annotations,
             **kwargs
         )
-        self.type = "Office365"  # type: str
+        self.type: str = "Office365"
         self.office365_tenant_id = office365_tenant_id
         self.service_principal_tenant_id = service_principal_tenant_id
         self.service_principal_id = service_principal_id
@@ -41384,8 +41641,8 @@ class Office365Source(CopySource):  # pylint: disable=too-many-instance-attribut
         start_time: Optional[JSON] = None,
         end_time: Optional[JSON] = None,
         output_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -41430,7 +41687,7 @@ class Office365Source(CopySource):  # pylint: disable=too-many-instance-attribut
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "Office365Source"  # type: str
+        self.type: str = "Office365Source"
         self.allowed_groups = allowed_groups
         self.user_scope_filter_uri = user_scope_filter_uri
         self.date_filter_column = date_filter_column
@@ -41466,8 +41723,8 @@ class Operation(_serialization.Model):
         origin: Optional[str] = None,
         display: Optional["_models.OperationDisplay"] = None,
         service_specification: Optional["_models.OperationServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -41512,8 +41769,8 @@ class OperationDisplay(_serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the operation.
         :paramtype description: str
@@ -41545,7 +41802,9 @@ class OperationListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Data Factory operations supported by the Data Factory resource
          provider.
@@ -41581,8 +41840,8 @@ class OperationLogSpecification(_serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         blob_duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the log category.
         :paramtype name: str
@@ -41611,7 +41870,7 @@ class OperationMetricAvailability(_serialization.Model):
         "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(self, *, time_grain: Optional[str] = None, blob_duration: Optional[str] = None, **kwargs):
+    def __init__(self, *, time_grain: Optional[str] = None, blob_duration: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword time_grain: The granularity for the metric.
         :paramtype time_grain: str
@@ -41646,8 +41905,8 @@ class OperationMetricDimension(_serialization.Model):
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         to_be_exported_for_shoebox: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the dimension for the metric.
         :paramtype name: str
@@ -41713,8 +41972,8 @@ class OperationMetricSpecification(_serialization.Model):
         source_mdm_namespace: Optional[str] = None,
         availabilities: Optional[List["_models.OperationMetricAvailability"]] = None,
         dimensions: Optional[List["_models.OperationMetricDimension"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the metric.
         :paramtype name: str
@@ -41771,8 +42030,8 @@ class OperationServiceSpecification(_serialization.Model):
         *,
         log_specifications: Optional[List["_models.OperationLogSpecification"]] = None,
         metric_specifications: Optional[List["_models.OperationMetricSpecification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_specifications: Details about operations related to logs.
         :paramtype log_specifications: list[~azure.mgmt.datafactory.models.OperationLogSpecification]
@@ -41849,8 +42108,8 @@ class OracleCloudStorageLinkedService(LinkedService):
         secret_access_key: Optional["_models.SecretBase"] = None,
         service_url: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -41887,7 +42146,7 @@ class OracleCloudStorageLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "OracleCloudStorage"  # type: str
+        self.type: str = "OracleCloudStorage"
         self.access_key_id = access_key_id
         self.secret_access_key = secret_access_key
         self.service_url = service_url
@@ -41939,8 +42198,8 @@ class OracleCloudStorageLocation(DatasetLocation):
         file_name: Optional[JSON] = None,
         bucket_name: Optional[JSON] = None,
         version: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -41961,7 +42220,7 @@ class OracleCloudStorageLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "OracleCloudStorageLocation"  # type: str
+        self.type: str = "OracleCloudStorageLocation"
         self.bucket_name = bucket_name
         self.version = version
 
@@ -42051,8 +42310,8 @@ class OracleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
         delete_files_after_completion: Optional[JSON] = None,
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42100,7 +42359,7 @@ class OracleCloudStorageReadSettings(StoreReadSettings):  # pylint: disable=too-
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "OracleCloudStorageReadSettings"  # type: str
+        self.type: str = "OracleCloudStorageReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -42170,8 +42429,8 @@ class OracleLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42202,7 +42461,7 @@ class OracleLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Oracle"  # type: str
+        self.type: str = "Oracle"
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -42240,8 +42499,8 @@ class OraclePartitionSettings(_serialization.Model):
         partition_column_name: Optional[JSON] = None,
         partition_upper_bound: Optional[JSON] = None,
         partition_lower_bound: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partition_names: Names of the physical partitions of Oracle table.
         :paramtype partition_names: JSON
@@ -42344,8 +42603,8 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42389,7 +42648,7 @@ class OracleServiceCloudLinkedService(LinkedService):  # pylint: disable=too-man
             annotations=annotations,
             **kwargs
         )
-        self.type = "OracleServiceCloud"  # type: str
+        self.type: str = "OracleServiceCloud"
         self.host = host
         self.username = username
         self.password = password
@@ -42460,8 +42719,8 @@ class OracleServiceCloudObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42497,7 +42756,7 @@ class OracleServiceCloudObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "OracleServiceCloudObject"  # type: str
+        self.type: str = "OracleServiceCloudObject"
         self.table_name = table_name
 
 
@@ -42561,8 +42820,8 @@ class OracleServiceCloudSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42599,7 +42858,7 @@ class OracleServiceCloudSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "OracleServiceCloudSource"  # type: str
+        self.type: str = "OracleServiceCloudSource"
         self.query = query
 
 
@@ -42663,8 +42922,8 @@ class OracleSink(CopySink):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42701,7 +42960,7 @@ class OracleSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "OracleSink"  # type: str
+        self.type: str = "OracleSink"
         self.pre_copy_script = pre_copy_script
 
 
@@ -42774,8 +43033,8 @@ class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.OraclePartitionSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42816,7 +43075,7 @@ class OracleSource(CopySource):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "OracleSource"  # type: str
+        self.type: str = "OracleSource"
         self.oracle_reader_query = oracle_reader_query
         self.query_timeout = query_timeout
         self.partition_option = partition_option
@@ -42896,8 +43155,8 @@ class OracleTableDataset(Dataset):  # pylint: disable=too-many-instance-attribut
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -42940,7 +43199,7 @@ class OracleTableDataset(Dataset):  # pylint: disable=too-many-instance-attribut
             folder=folder,
             **kwargs
         )
-        self.type = "OracleTable"  # type: str
+        self.type: str = "OracleTable"
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -43012,8 +43271,8 @@ class OrcDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         orc_compression_codec: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43052,7 +43311,7 @@ class OrcDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Orc"  # type: str
+        self.type: str = "Orc"
         self.location = location
         self.orc_compression_codec = orc_compression_codec
 
@@ -43090,8 +43349,8 @@ class OrcFormat(DatasetStorageFormat):
         additional_properties: Optional[Dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43104,7 +43363,7 @@ class OrcFormat(DatasetStorageFormat):
         super().__init__(
             additional_properties=additional_properties, serializer=serializer, deserializer=deserializer, **kwargs
         )
-        self.type = "OrcFormat"  # type: str
+        self.type: str = "OrcFormat"
 
 
 class OrcSink(CopySink):
@@ -43170,8 +43429,8 @@ class OrcSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreWriteSettings"] = None,
         format_settings: Optional["_models.OrcWriteSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43209,7 +43468,7 @@ class OrcSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "OrcSink"  # type: str
+        self.type: str = "OrcSink"
         self.store_settings = store_settings
         self.format_settings = format_settings
 
@@ -43268,8 +43527,8 @@ class OrcSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43300,7 +43559,7 @@ class OrcSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "OrcSource"  # type: str
+        self.type: str = "OrcSource"
         self.store_settings = store_settings
         self.additional_columns = additional_columns
 
@@ -43341,8 +43600,8 @@ class OrcWriteSettings(FormatWriteSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         max_rows_per_file: Optional[JSON] = None,
         file_name_prefix: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43356,7 +43615,7 @@ class OrcWriteSettings(FormatWriteSettings):
         :paramtype file_name_prefix: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "OrcWriteSettings"  # type: str
+        self.type: str = "OrcWriteSettings"
         self.max_rows_per_file = max_rows_per_file
         self.file_name_prefix = file_name_prefix
 
@@ -43382,7 +43641,7 @@ class PackageStore(_serialization.Model):
         "package_store_linked_service": {"key": "packageStoreLinkedService", "type": "EntityReference"},
     }
 
-    def __init__(self, *, name: str, package_store_linked_service: "_models.EntityReference", **kwargs):
+    def __init__(self, *, name: str, package_store_linked_service: "_models.EntityReference", **kwargs: Any) -> None:
         """
         :keyword name: The name of the package store. Required.
         :paramtype name: str
@@ -43415,7 +43674,9 @@ class ParameterSpecification(_serialization.Model):
         "default_value": {"key": "defaultValue", "type": "object"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.ParameterType"], default_value: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, type: Union[str, "_models.ParameterType"], default_value: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Parameter type. Required. Known values are: "Object", "String", "Int", "Float",
          "Bool", "Array", and "SecureString".
@@ -43494,8 +43755,8 @@ class ParquetDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         folder: Optional["_models.DatasetFolder"] = None,
         location: Optional["_models.DatasetLocation"] = None,
         compression_codec: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43534,7 +43795,7 @@ class ParquetDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Parquet"  # type: str
+        self.type: str = "Parquet"
         self.location = location
         self.compression_codec = compression_codec
 
@@ -43572,8 +43833,8 @@ class ParquetFormat(DatasetStorageFormat):
         additional_properties: Optional[Dict[str, JSON]] = None,
         serializer: Optional[JSON] = None,
         deserializer: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43586,7 +43847,7 @@ class ParquetFormat(DatasetStorageFormat):
         super().__init__(
             additional_properties=additional_properties, serializer=serializer, deserializer=deserializer, **kwargs
         )
-        self.type = "ParquetFormat"  # type: str
+        self.type: str = "ParquetFormat"
 
 
 class ParquetSink(CopySink):
@@ -43652,8 +43913,8 @@ class ParquetSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreWriteSettings"] = None,
         format_settings: Optional["_models.ParquetWriteSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43691,7 +43952,7 @@ class ParquetSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "ParquetSink"  # type: str
+        self.type: str = "ParquetSink"
         self.store_settings = store_settings
         self.format_settings = format_settings
 
@@ -43750,8 +44011,8 @@ class ParquetSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         store_settings: Optional["_models.StoreReadSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43782,7 +44043,7 @@ class ParquetSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "ParquetSource"  # type: str
+        self.type: str = "ParquetSource"
         self.store_settings = store_settings
         self.additional_columns = additional_columns
 
@@ -43823,8 +44084,8 @@ class ParquetWriteSettings(FormatWriteSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         max_rows_per_file: Optional[JSON] = None,
         file_name_prefix: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43838,7 +44099,7 @@ class ParquetWriteSettings(FormatWriteSettings):
         :paramtype file_name_prefix: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "ParquetWriteSettings"  # type: str
+        self.type: str = "ParquetWriteSettings"
         self.max_rows_per_file = max_rows_per_file
         self.file_name_prefix = file_name_prefix
 
@@ -43920,8 +44181,8 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -43963,7 +44224,7 @@ class PaypalLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "Paypal"  # type: str
+        self.type: str = "Paypal"
         self.host = host
         self.client_id = client_id
         self.client_secret = client_secret
@@ -44034,8 +44295,8 @@ class PaypalObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -44071,7 +44332,7 @@ class PaypalObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "PaypalObject"  # type: str
+        self.type: str = "PaypalObject"
         self.table_name = table_name
 
 
@@ -44135,8 +44396,8 @@ class PaypalSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -44173,7 +44434,7 @@ class PaypalSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "PaypalSource"  # type: str
+        self.type: str = "PaypalSource"
         self.query = query
 
 
@@ -44282,8 +44543,8 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         allow_host_name_cn_mismatch: Optional[JSON] = None,
         allow_self_signed_server_cert: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -44343,7 +44604,7 @@ class PhoenixLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "Phoenix"  # type: str
+        self.type: str = "Phoenix"
         self.host = host
         self.port = port
         self.http_path = http_path
@@ -44430,8 +44691,8 @@ class PhoenixObjectDataset(Dataset):  # pylint: disable=too-many-instance-attrib
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -44474,7 +44735,7 @@ class PhoenixObjectDataset(Dataset):  # pylint: disable=too-many-instance-attrib
             folder=folder,
             **kwargs
         )
-        self.type = "PhoenixObject"  # type: str
+        self.type: str = "PhoenixObject"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -44540,8 +44801,8 @@ class PhoenixSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -44578,7 +44839,7 @@ class PhoenixSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "PhoenixSource"  # type: str
+        self.type: str = "PhoenixSource"
         self.query = query
 
 
@@ -44593,13 +44854,53 @@ class PipelineElapsedTimeMetricPolicy(_serialization.Model):
         "duration": {"key": "duration", "type": "object"},
     }
 
-    def __init__(self, *, duration: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, duration: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword duration: TimeSpan value, after which an Azure Monitoring Metric is fired.
         :paramtype duration: JSON
         """
         super().__init__(**kwargs)
         self.duration = duration
+
+
+class PipelineExternalComputeScaleProperties(_serialization.Model):
+    """PipelineExternalComputeScale properties for managed integration runtime.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, JSON]
+    :ivar time_to_live: Time to live (in minutes) setting of integration runtime which will execute
+     pipeline and external activity.
+    :vartype time_to_live: int
+    """
+
+    _validation = {
+        "time_to_live": {"minimum": 5},
+    }
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "time_to_live": {"key": "timeToLive", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[Dict[str, JSON]] = None,
+        time_to_live: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword time_to_live: Time to live (in minutes) setting of integration runtime which will
+         execute pipeline and external activity.
+        :paramtype time_to_live: int
+        """
+        super().__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.time_to_live = time_to_live
 
 
 class PipelineFolder(_serialization.Model):
@@ -44613,7 +44914,7 @@ class PipelineFolder(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the folder that this Pipeline is in.
         :paramtype name: str
@@ -44642,7 +44943,9 @@ class PipelineListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.PipelineResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.PipelineResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of pipelines. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.PipelineResource]
@@ -44665,7 +44968,9 @@ class PipelinePolicy(_serialization.Model):
         "elapsed_time_metric": {"key": "elapsedTimeMetric", "type": "PipelineElapsedTimeMetricPolicy"},
     }
 
-    def __init__(self, *, elapsed_time_metric: Optional["_models.PipelineElapsedTimeMetricPolicy"] = None, **kwargs):
+    def __init__(
+        self, *, elapsed_time_metric: Optional["_models.PipelineElapsedTimeMetricPolicy"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword elapsed_time_metric: Pipeline ElapsedTime Metric Policy.
         :paramtype elapsed_time_metric: ~azure.mgmt.datafactory.models.PipelineElapsedTimeMetricPolicy
@@ -44704,8 +45009,8 @@ class PipelineReference(_serialization.Model):
         type: Union[str, "_models.PipelineReferenceType"],
         reference_name: str,
         name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Pipeline reference type. Required. "PipelineReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.PipelineReferenceType
@@ -44795,8 +45100,8 @@ class PipelineResource(SubResource):  # pylint: disable=too-many-instance-attrib
         run_dimensions: Optional[Dict[str, JSON]] = None,
         folder: Optional["_models.PipelineFolder"] = None,
         policy: Optional["_models.PipelinePolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -44905,7 +45210,7 @@ class PipelineRun(_serialization.Model):  # pylint: disable=too-many-instance-at
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -44961,7 +45266,7 @@ class PipelineRunInvokedBy(_serialization.Model):
         "pipeline_run_id": {"key": "pipelineRunId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -44992,7 +45297,9 @@ class PipelineRunsQueryResponse(_serialization.Model):
         "continuation_token": {"key": "continuationToken", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.PipelineRun"], continuation_token: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.PipelineRun"], continuation_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of pipeline runs. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.PipelineRun]
@@ -45042,8 +45349,8 @@ class PolybaseSettings(_serialization.Model):
         reject_value: Optional[JSON] = None,
         reject_sample_value: Optional[JSON] = None,
         use_type_default: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -45126,8 +45433,8 @@ class PostgreSqlLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -45157,7 +45464,7 @@ class PostgreSqlLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "PostgreSql"  # type: str
+        self.type: str = "PostgreSql"
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -45222,8 +45529,8 @@ class PostgreSqlSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -45259,7 +45566,7 @@ class PostgreSqlSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "PostgreSqlSource"  # type: str
+        self.type: str = "PostgreSqlSource"
         self.query = query
 
 
@@ -45334,8 +45641,8 @@ class PostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -45377,7 +45684,7 @@ class PostgreSqlTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
             folder=folder,
             **kwargs
         )
-        self.type = "PostgreSqlTable"  # type: str
+        self.type: str = "PostgreSqlTable"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -45432,8 +45739,8 @@ class PowerQuerySink(DataFlowSink):
         schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
         rejected_data_linked_service: Optional["_models.LinkedServiceReference"] = None,
         script: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Transformation name. Required.
         :paramtype name: str
@@ -45484,8 +45791,8 @@ class PowerQuerySinkMapping(_serialization.Model):
         *,
         query_name: Optional[str] = None,
         dataflow_sinks: Optional[List["_models.PowerQuerySink"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword query_name: Name of the query in Power Query mashup document.
         :paramtype query_name: str
@@ -45542,8 +45849,8 @@ class PowerQuerySource(DataFlowSource):
         flowlet: Optional["_models.DataFlowReference"] = None,
         schema_linked_service: Optional["_models.LinkedServiceReference"] = None,
         script: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Transformation name. Required.
         :paramtype name: str
@@ -45684,8 +45991,8 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         allow_self_signed_server_cert: Optional[JSON] = None,
         time_zone_id: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -45747,7 +46054,7 @@ class PrestoLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "Presto"  # type: str
+        self.type: str = "Presto"
         self.host = host
         self.server_version = server_version
         self.catalog = catalog
@@ -45835,8 +46142,8 @@ class PrestoObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribu
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -45879,7 +46186,7 @@ class PrestoObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribu
             folder=folder,
             **kwargs
         )
-        self.type = "PrestoObject"  # type: str
+        self.type: str = "PrestoObject"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -45945,8 +46252,8 @@ class PrestoSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -45983,7 +46290,7 @@ class PrestoSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "PrestoSource"  # type: str
+        self.type: str = "PrestoSource"
         self.query = query
 
 
@@ -45998,7 +46305,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The resource Id for private endpoint.
         :paramtype id: str
@@ -46028,8 +46335,12 @@ class PrivateEndpointConnectionListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.PrivateEndpointConnectionResource"], next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: List["_models.PrivateEndpointConnectionResource"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Private Endpoint Connections. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.PrivateEndpointConnectionResource]
@@ -46073,7 +46384,9 @@ class PrivateEndpointConnectionResource(SubResource):
         "properties": {"key": "properties", "type": "RemotePrivateEndpointConnection"},
     }
 
-    def __init__(self, *, properties: Optional["_models.RemotePrivateEndpointConnection"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.RemotePrivateEndpointConnection"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Core resource properties.
         :paramtype properties: ~azure.mgmt.datafactory.models.RemotePrivateEndpointConnection
@@ -46105,8 +46418,8 @@ class PrivateLinkConnectionApprovalRequest(_serialization.Model):
         *,
         private_link_service_connection_state: Optional["_models.PrivateLinkConnectionState"] = None,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_link_service_connection_state: The state of a private link connection.
         :paramtype private_link_service_connection_state:
@@ -46151,7 +46464,9 @@ class PrivateLinkConnectionApprovalRequestResource(SubResource):
         "properties": {"key": "properties", "type": "PrivateLinkConnectionApprovalRequest"},
     }
 
-    def __init__(self, *, properties: Optional["_models.PrivateLinkConnectionApprovalRequest"] = None, **kwargs):
+    def __init__(
+        self, *, properties: Optional["_models.PrivateLinkConnectionApprovalRequest"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Core resource properties.
         :paramtype properties: ~azure.mgmt.datafactory.models.PrivateLinkConnectionApprovalRequest
@@ -46183,8 +46498,8 @@ class PrivateLinkConnectionState(_serialization.Model):
         status: Optional[str] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of a private link connection.
         :paramtype status: str
@@ -46231,7 +46546,7 @@ class PrivateLinkResource(SubResource):
         "properties": {"key": "properties", "type": "PrivateLinkResourceProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.PrivateLinkResourceProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.PrivateLinkResourceProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Core resource properties.
         :paramtype properties: ~azure.mgmt.datafactory.models.PrivateLinkResourceProperties
@@ -46265,7 +46580,7 @@ class PrivateLinkResourceProperties(_serialization.Model):
         "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.group_id = None
@@ -46290,7 +46605,7 @@ class PrivateLinkResourcesWrapper(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: List["_models.PrivateLinkResource"], **kwargs):
+    def __init__(self, *, value: List["_models.PrivateLinkResource"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.PrivateLinkResource]
@@ -46310,7 +46625,7 @@ class PurviewConfiguration(_serialization.Model):
         "purview_resource_id": {"key": "purviewResourceId", "type": "str"},
     }
 
-    def __init__(self, *, purview_resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, purview_resource_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword purview_resource_id: Purview resource id.
         :paramtype purview_resource_id: str
@@ -46338,8 +46653,8 @@ class QueryDataFlowDebugSessionsResponse(_serialization.Model):
         *,
         value: Optional[List["_models.DataFlowDebugSessionInfo"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Array with all active debug sessions.
         :paramtype value: list[~azure.mgmt.datafactory.models.DataFlowDebugSessionInfo]
@@ -46409,8 +46724,8 @@ class QuickbaseLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -46441,7 +46756,7 @@ class QuickbaseLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Quickbase"  # type: str
+        self.type: str = "Quickbase"
         self.url = url
         self.user_token = user_token
         self.encrypted_credential = encrypted_credential
@@ -46528,8 +46843,8 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
         access_token_secret: Optional["_models.SecretBase"] = None,
         use_encrypted_endpoints: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -46573,7 +46888,7 @@ class QuickBooksLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "QuickBooks"  # type: str
+        self.type: str = "QuickBooks"
         self.connection_properties = connection_properties
         self.endpoint = endpoint
         self.company_id = company_id
@@ -46646,8 +46961,8 @@ class QuickBooksObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -46683,7 +46998,7 @@ class QuickBooksObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "QuickBooksObject"  # type: str
+        self.type: str = "QuickBooksObject"
         self.table_name = table_name
 
 
@@ -46747,8 +47062,8 @@ class QuickBooksSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -46785,7 +47100,7 @@ class QuickBooksSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "QuickBooksSource"  # type: str
+        self.type: str = "QuickBooksSource"
         self.query = query
 
 
@@ -46825,8 +47140,8 @@ class RecurrenceSchedule(_serialization.Model):
         week_days: Optional[List[Union[str, "_models.DaysOfWeek"]]] = None,
         month_days: Optional[List[int]] = None,
         monthly_occurrences: Optional[List["_models.RecurrenceScheduleOccurrence"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -46877,8 +47192,8 @@ class RecurrenceScheduleOccurrence(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         day: Optional[Union[str, "_models.DayOfWeek"]] = None,
         occurrence: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -46929,8 +47244,8 @@ class RedirectIncompatibleRowSettings(_serialization.Model):
         linked_service_name: JSON,
         additional_properties: Optional[Dict[str, JSON]] = None,
         path: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -46951,7 +47266,9 @@ class RedirectIncompatibleRowSettings(_serialization.Model):
 
 
 class RedshiftUnloadSettings(_serialization.Model):
-    """The Amazon S3 settings needed for the interim Amazon S3 when copying from Amazon Redshift with unload. With this, data from Amazon Redshift source will be unloaded into S3 first and then copied into the targeted sink from the interim S3.
+    """The Amazon S3 settings needed for the interim Amazon S3 when copying from Amazon Redshift with
+    unload. With this, data from Amazon Redshift source will be unloaded into S3 first and then
+    copied into the targeted sink from the interim S3.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -46974,7 +47291,9 @@ class RedshiftUnloadSettings(_serialization.Model):
         "bucket_name": {"key": "bucketName", "type": "object"},
     }
 
-    def __init__(self, *, s3_linked_service_name: "_models.LinkedServiceReference", bucket_name: JSON, **kwargs):
+    def __init__(
+        self, *, s3_linked_service_name: "_models.LinkedServiceReference", bucket_name: JSON, **kwargs: Any
+    ) -> None:
         """
         :keyword s3_linked_service_name: The name of the Amazon S3 linked service which will be used
          for the unload operation when copying from the Amazon Redshift source. Required.
@@ -47043,8 +47362,8 @@ class RelationalSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -47075,7 +47394,7 @@ class RelationalSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "RelationalSource"  # type: str
+        self.type: str = "RelationalSource"
         self.query = query
         self.additional_columns = additional_columns
 
@@ -47142,8 +47461,8 @@ class RelationalTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -47180,7 +47499,7 @@ class RelationalTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "RelationalTable"  # type: str
+        self.type: str = "RelationalTable"
         self.table_name = table_name
 
 
@@ -47216,8 +47535,8 @@ class RemotePrivateEndpointConnection(_serialization.Model):
         *,
         private_endpoint: Optional["_models.ArmIdWrapper"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: PrivateEndpoint of a remote private endpoint connection.
         :paramtype private_endpoint: ~azure.mgmt.datafactory.models.ArmIdWrapper
@@ -47232,7 +47551,8 @@ class RemotePrivateEndpointConnection(_serialization.Model):
 
 
 class RerunTumblingWindowTrigger(Trigger):
-    """Trigger that schedules pipeline reruns for all fixed time interval windows from a requested start time to requested end time.
+    """Trigger that schedules pipeline reruns for all fixed time interval windows from a requested
+    start time to requested end time.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -47294,8 +47614,8 @@ class RerunTumblingWindowTrigger(Trigger):
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -47319,7 +47639,7 @@ class RerunTumblingWindowTrigger(Trigger):
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
-        self.type = "RerunTumblingWindowTrigger"  # type: str
+        self.type: str = "RerunTumblingWindowTrigger"
         self.parent_trigger = parent_trigger
         self.requested_start_time = requested_start_time
         self.requested_end_time = requested_end_time
@@ -47406,8 +47726,8 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -47452,7 +47772,7 @@ class ResponsysLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             annotations=annotations,
             **kwargs
         )
-        self.type = "Responsys"  # type: str
+        self.type: str = "Responsys"
         self.endpoint = endpoint
         self.client_id = client_id
         self.client_secret = client_secret
@@ -47523,8 +47843,8 @@ class ResponsysObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -47560,7 +47880,7 @@ class ResponsysObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "ResponsysObject"  # type: str
+        self.type: str = "ResponsysObject"
         self.table_name = table_name
 
 
@@ -47624,8 +47944,8 @@ class ResponsysSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -47662,7 +47982,7 @@ class ResponsysSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "ResponsysSource"  # type: str
+        self.type: str = "ResponsysSource"
         self.query = query
 
 
@@ -47748,8 +48068,8 @@ class RestResourceDataset(Dataset):  # pylint: disable=too-many-instance-attribu
         request_body: Optional[JSON] = None,
         additional_headers: Optional[JSON] = None,
         pagination_rules: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -47798,7 +48118,7 @@ class RestResourceDataset(Dataset):  # pylint: disable=too-many-instance-attribu
             folder=folder,
             **kwargs
         )
-        self.type = "RestResource"  # type: str
+        self.type: str = "RestResource"
         self.relative_url = relative_url
         self.request_method = request_method
         self.request_body = request_body
@@ -47941,8 +48261,8 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
         token_endpoint: Optional[JSON] = None,
         resource: Optional[JSON] = None,
         scope: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -48017,7 +48337,7 @@ class RestServiceLinkedService(LinkedService):  # pylint: disable=too-many-insta
             annotations=annotations,
             **kwargs
         )
-        self.type = "RestService"  # type: str
+        self.type: str = "RestService"
         self.url = url
         self.enable_server_certificate_validation = enable_server_certificate_validation
         self.authentication_type = authentication_type
@@ -48119,8 +48439,8 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
         http_request_timeout: Optional[JSON] = None,
         request_interval: Optional[JSON] = None,
         http_compression_type: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -48170,7 +48490,7 @@ class RestSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "RestSink"  # type: str
+        self.type: str = "RestSink"
         self.request_method = request_method
         self.additional_headers = additional_headers
         self.http_request_timeout = http_request_timeout
@@ -48259,8 +48579,8 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
         http_request_timeout: Optional[JSON] = None,
         request_interval: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -48308,7 +48628,7 @@ class RestSource(CopySource):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "RestSource"  # type: str
+        self.type: str = "RestSource"
         self.request_method = request_method
         self.request_body = request_body
         self.additional_headers = additional_headers
@@ -48337,7 +48657,9 @@ class RetryPolicy(_serialization.Model):
         "interval_in_seconds": {"key": "intervalInSeconds", "type": "int"},
     }
 
-    def __init__(self, *, count: Optional[JSON] = None, interval_in_seconds: Optional[int] = None, **kwargs):
+    def __init__(
+        self, *, count: Optional[JSON] = None, interval_in_seconds: Optional[int] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword count: Maximum ordinary retry attempts. Default is 0. Type: integer (or Expression
          with resultType integer), minimum: 0.
@@ -48391,8 +48713,8 @@ class RunFilterParameters(_serialization.Model):
         continuation_token: Optional[str] = None,
         filters: Optional[List["_models.RunQueryFilter"]] = None,
         order_by: Optional[List["_models.RunQueryOrderBy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword continuation_token: The continuation token for getting the next page of results. Null
          for first page.
@@ -48453,8 +48775,8 @@ class RunQueryFilter(_serialization.Model):
         operand: Union[str, "_models.RunQueryFilterOperand"],
         operator: Union[str, "_models.RunQueryFilterOperator"],
         values: List[str],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword operand: Parameter name to be used for filter. The allowed operands to query pipeline
          runs are PipelineName, RunStart, RunEnd and Status; to query activity runs are ActivityName,
@@ -48506,8 +48828,8 @@ class RunQueryOrderBy(_serialization.Model):
         *,
         order_by: Union[str, "_models.RunQueryOrderByField"],
         order: Union[str, "_models.RunQueryOrder"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword order_by: Parameter name to be used for order by. The allowed parameters to order by
          for pipeline runs are PipelineName, RunStart, RunEnd and Status; for activity runs are
@@ -48596,8 +48918,8 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
         security_token: Optional["_models.SecretBase"] = None,
         api_version: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -48638,7 +48960,7 @@ class SalesforceLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "Salesforce"  # type: str
+        self.type: str = "Salesforce"
         self.environment_url = environment_url
         self.username = username
         self.password = password
@@ -48726,8 +49048,8 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -48773,7 +49095,7 @@ class SalesforceMarketingCloudLinkedService(LinkedService):  # pylint: disable=t
             annotations=annotations,
             **kwargs
         )
-        self.type = "SalesforceMarketingCloud"  # type: str
+        self.type: str = "SalesforceMarketingCloud"
         self.connection_properties = connection_properties
         self.client_id = client_id
         self.client_secret = client_secret
@@ -48844,8 +49166,8 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -48881,7 +49203,7 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SalesforceMarketingCloudObject"  # type: str
+        self.type: str = "SalesforceMarketingCloudObject"
         self.table_name = table_name
 
 
@@ -48945,8 +49267,8 @@ class SalesforceMarketingCloudSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -48983,7 +49305,7 @@ class SalesforceMarketingCloudSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SalesforceMarketingCloudSource"  # type: str
+        self.type: str = "SalesforceMarketingCloudSource"
         self.query = query
 
 
@@ -49049,8 +49371,8 @@ class SalesforceObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49087,7 +49409,7 @@ class SalesforceObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SalesforceObject"  # type: str
+        self.type: str = "SalesforceObject"
         self.object_api_name = object_api_name
 
 
@@ -49168,8 +49490,8 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
         api_version: Optional[JSON] = None,
         extended_properties: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49213,7 +49535,7 @@ class SalesforceServiceCloudLinkedService(LinkedService):  # pylint: disable=too
             annotations=annotations,
             **kwargs
         )
-        self.type = "SalesforceServiceCloud"  # type: str
+        self.type: str = "SalesforceServiceCloud"
         self.environment_url = environment_url
         self.username = username
         self.password = password
@@ -49285,8 +49607,8 @@ class SalesforceServiceCloudObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         object_api_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49323,7 +49645,7 @@ class SalesforceServiceCloudObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SalesforceServiceCloudObject"  # type: str
+        self.type: str = "SalesforceServiceCloudObject"
         self.object_api_name = object_api_name
 
 
@@ -49401,8 +49723,8 @@ class SalesforceServiceCloudSink(CopySink):  # pylint: disable=too-many-instance
         write_behavior: Optional[Union[str, "_models.SalesforceSinkWriteBehavior"]] = None,
         external_id_field_name: Optional[JSON] = None,
         ignore_null_values: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49450,7 +49772,7 @@ class SalesforceServiceCloudSink(CopySink):  # pylint: disable=too-many-instance
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SalesforceServiceCloudSink"  # type: str
+        self.type: str = "SalesforceServiceCloudSink"
         self.write_behavior = write_behavior
         self.external_id_field_name = external_id_field_name
         self.ignore_null_values = ignore_null_values
@@ -49515,8 +49837,8 @@ class SalesforceServiceCloudSource(CopySource):
         query: Optional[JSON] = None,
         read_behavior: Optional[Union[str, "_models.SalesforceSourceReadBehavior"]] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49550,7 +49872,7 @@ class SalesforceServiceCloudSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SalesforceServiceCloudSource"  # type: str
+        self.type: str = "SalesforceServiceCloudSource"
         self.query = query
         self.read_behavior = read_behavior
         self.additional_columns = additional_columns
@@ -49630,8 +49952,8 @@ class SalesforceSink(CopySink):  # pylint: disable=too-many-instance-attributes
         write_behavior: Optional[Union[str, "_models.SalesforceSinkWriteBehavior"]] = None,
         external_id_field_name: Optional[JSON] = None,
         ignore_null_values: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49679,7 +50001,7 @@ class SalesforceSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SalesforceSink"  # type: str
+        self.type: str = "SalesforceSink"
         self.write_behavior = write_behavior
         self.external_id_field_name = external_id_field_name
         self.ignore_null_values = ignore_null_values
@@ -49749,8 +50071,8 @@ class SalesforceSource(TabularSource):
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
         read_behavior: Optional[Union[str, "_models.SalesforceSourceReadBehavior"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49789,7 +50111,7 @@ class SalesforceSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SalesforceSource"  # type: str
+        self.type: str = "SalesforceSource"
         self.query = query
         self.read_behavior = read_behavior
 
@@ -49851,8 +50173,8 @@ class SapBwCubeDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -49886,7 +50208,7 @@ class SapBwCubeDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SapBwCube"  # type: str
+        self.type: str = "SapBwCube"
 
 
 class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
@@ -49963,8 +50285,8 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50004,7 +50326,7 @@ class SapBWLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
             annotations=annotations,
             **kwargs
         )
-        self.type = "SapBW"  # type: str
+        self.type: str = "SapBW"
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
@@ -50072,8 +50394,8 @@ class SapBwSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50109,7 +50431,7 @@ class SapBwSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SapBwSource"  # type: str
+        self.type: str = "SapBwSource"
         self.query = query
 
 
@@ -50176,8 +50498,8 @@ class SapCloudForCustomerLinkedService(LinkedService):
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50212,7 +50534,7 @@ class SapCloudForCustomerLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "SapCloudForCustomer"  # type: str
+        self.type: str = "SapCloudForCustomer"
         self.url = url
         self.username = username
         self.password = password
@@ -50282,8 +50604,8 @@ class SapCloudForCustomerResourceDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50320,7 +50642,7 @@ class SapCloudForCustomerResourceDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SapCloudForCustomerResource"  # type: str
+        self.type: str = "SapCloudForCustomerResource"
         self.path = path
 
 
@@ -50392,8 +50714,8 @@ class SapCloudForCustomerSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         write_behavior: Optional[Union[str, "_models.SapCloudForCustomerSinkWriteBehavior"]] = None,
         http_request_timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50436,7 +50758,7 @@ class SapCloudForCustomerSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SapCloudForCustomerSink"  # type: str
+        self.type: str = "SapCloudForCustomerSink"
         self.write_behavior = write_behavior
         self.http_request_timeout = http_request_timeout
 
@@ -50508,8 +50830,8 @@ class SapCloudForCustomerSource(TabularSource):
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
         http_request_timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50551,7 +50873,7 @@ class SapCloudForCustomerSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SapCloudForCustomerSource"  # type: str
+        self.type: str = "SapCloudForCustomerSource"
         self.query = query
         self.http_request_timeout = http_request_timeout
 
@@ -50619,8 +50941,8 @@ class SapEccLinkedService(LinkedService):
         username: Optional[str] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50655,7 +50977,7 @@ class SapEccLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "SapEcc"  # type: str
+        self.type: str = "SapEcc"
         self.url = url
         self.username = username
         self.password = password
@@ -50725,8 +51047,8 @@ class SapEccResourceDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50763,7 +51085,7 @@ class SapEccResourceDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SapEccResource"  # type: str
+        self.type: str = "SapEccResource"
         self.path = path
 
 
@@ -50834,8 +51156,8 @@ class SapEccSource(TabularSource):
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
         http_request_timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50877,7 +51199,7 @@ class SapEccSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SapEccSource"  # type: str
+        self.type: str = "SapEccSource"
         self.query = query
         self.http_request_timeout = http_request_timeout
 
@@ -50953,8 +51275,8 @@ class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         user_name: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -50994,7 +51316,7 @@ class SapHanaLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "SapHana"  # type: str
+        self.type: str = "SapHana"
         self.connection_string = connection_string
         self.server = server
         self.authentication_type = authentication_type
@@ -51015,7 +51337,7 @@ class SapHanaPartitionSettings(_serialization.Model):
         "partition_column_name": {"key": "partitionColumnName", "type": "object"},
     }
 
-    def __init__(self, *, partition_column_name: Optional[JSON] = None, **kwargs):
+    def __init__(self, *, partition_column_name: Optional[JSON] = None, **kwargs: Any) -> None:
         """
         :keyword partition_column_name: The name of the column that will be used for proceeding range
          partitioning. Type: string (or Expression with resultType string).
@@ -51098,8 +51420,8 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
         packet_size: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SapHanaPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -51144,7 +51466,7 @@ class SapHanaSource(TabularSource):  # pylint: disable=too-many-instance-attribu
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SapHanaSource"  # type: str
+        self.type: str = "SapHanaSource"
         self.query = query
         self.packet_size = packet_size
         self.partition_option = partition_option
@@ -51217,8 +51539,8 @@ class SapHanaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -51258,7 +51580,7 @@ class SapHanaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
             folder=folder,
             **kwargs
         )
-        self.type = "SapHanaTable"  # type: str
+        self.type: str = "SapHanaTable"
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
 
@@ -51396,8 +51718,8 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         logon_group: Optional[JSON] = None,
         subscriber_name: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -51475,7 +51797,7 @@ class SapOdpLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "SapOdp"  # type: str
+        self.type: str = "SapOdp"
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
@@ -51565,8 +51887,8 @@ class SapOdpResourceDataset(Dataset):  # pylint: disable=too-many-instance-attri
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -51606,7 +51928,7 @@ class SapOdpResourceDataset(Dataset):  # pylint: disable=too-many-instance-attri
             folder=folder,
             **kwargs
         )
-        self.type = "SapOdpResource"  # type: str
+        self.type: str = "SapOdpResource"
         self.context = context
         self.object_name = object_name
 
@@ -51686,8 +52008,8 @@ class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attribut
         subscriber_process: Optional[JSON] = None,
         selection: Optional[JSON] = None,
         projection: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -51733,7 +52055,7 @@ class SapOdpSource(TabularSource):  # pylint: disable=too-many-instance-attribut
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SapOdpSource"  # type: str
+        self.type: str = "SapOdpSource"
         self.extraction_mode = extraction_mode
         self.subscriber_process = subscriber_process
         self.selection = selection
@@ -51838,8 +52160,8 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
         message_server_service: Optional[JSON] = None,
         logon_group: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -51897,7 +52219,7 @@ class SapOpenHubLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "SapOpenHub"  # type: str
+        self.type: str = "SapOpenHub"
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
@@ -51988,8 +52310,8 @@ class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attr
         base_request_id: Optional[JSON] = None,
         custom_rfc_read_table_function_module: Optional[JSON] = None,
         sap_data_column_delimiter: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52037,7 +52359,7 @@ class SapOpenHubSource(TabularSource):  # pylint: disable=too-many-instance-attr
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SapOpenHubSource"  # type: str
+        self.type: str = "SapOpenHubSource"
         self.exclude_last_request = exclude_last_request
         self.base_request_id = base_request_id
         self.custom_rfc_read_table_function_module = custom_rfc_read_table_function_module
@@ -52118,8 +52440,8 @@ class SapOpenHubTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
         folder: Optional["_models.DatasetFolder"] = None,
         exclude_last_request: Optional[JSON] = None,
         base_request_id: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52163,7 +52485,7 @@ class SapOpenHubTableDataset(Dataset):  # pylint: disable=too-many-instance-attr
             folder=folder,
             **kwargs
         )
-        self.type = "SapOpenHubTable"  # type: str
+        self.type: str = "SapOpenHubTable"
         self.open_hub_destination_name = open_hub_destination_name
         self.exclude_last_request = exclude_last_request
         self.base_request_id = base_request_id
@@ -52292,8 +52614,8 @@ class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance
         snc_qop: Optional[JSON] = None,
         logon_group: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52365,7 +52687,7 @@ class SapTableLinkedService(LinkedService):  # pylint: disable=too-many-instance
             annotations=annotations,
             **kwargs
         )
-        self.type = "SapTable"  # type: str
+        self.type: str = "SapTable"
         self.server = server
         self.system_number = system_number
         self.client_id = client_id
@@ -52417,8 +52739,8 @@ class SapTablePartitionSettings(_serialization.Model):
         partition_upper_bound: Optional[JSON] = None,
         partition_lower_bound: Optional[JSON] = None,
         max_partitions_number: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partition_column_name: The name of the column that will be used for proceeding range
          partitioning. Type: string (or Expression with resultType string).
@@ -52505,8 +52827,8 @@ class SapTableResourceDataset(Dataset):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52543,7 +52865,7 @@ class SapTableResourceDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SapTableResource"  # type: str
+        self.type: str = "SapTableResource"
         self.table_name = table_name
 
 
@@ -52649,8 +52971,8 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         sap_data_column_delimiter: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SapTablePartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52713,7 +53035,7 @@ class SapTableSource(TabularSource):  # pylint: disable=too-many-instance-attrib
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SapTableSource"  # type: str
+        self.type: str = "SapTableSource"
         self.row_count = row_count
         self.row_skips = row_skips
         self.rfc_table_fields = rfc_table_fields
@@ -52774,8 +53096,8 @@ class ScheduleTrigger(MultiplePipelineTrigger):
         description: Optional[str] = None,
         annotations: Optional[List[JSON]] = None,
         pipelines: Optional[List["_models.TriggerPipelineReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52796,7 +53118,7 @@ class ScheduleTrigger(MultiplePipelineTrigger):
             pipelines=pipelines,
             **kwargs
         )
-        self.type = "ScheduleTrigger"  # type: str
+        self.type: str = "ScheduleTrigger"
         self.recurrence = recurrence
 
 
@@ -52841,8 +53163,8 @@ class ScheduleTriggerRecurrence(_serialization.Model):
         end_time: Optional[datetime.datetime] = None,
         time_zone: Optional[str] = None,
         schedule: Optional["_models.RecurrenceSchedule"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52899,7 +53221,7 @@ class ScriptAction(_serialization.Model):
         "parameters": {"key": "parameters", "type": "str"},
     }
 
-    def __init__(self, *, name: str, uri: str, roles: JSON, parameters: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: str, uri: str, roles: JSON, parameters: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The user provided name of the script action. Required.
         :paramtype name: str
@@ -52917,7 +53239,7 @@ class ScriptAction(_serialization.Model):
         self.parameters = parameters
 
 
-class ScriptActivity(ExecutionActivity):
+class ScriptActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attributes
     """Script activity type.
 
     All required parameters must be populated in order to send to Azure.
@@ -52939,6 +53261,10 @@ class ScriptActivity(ExecutionActivity):
     :vartype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
     :ivar policy: Activity policy.
     :vartype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :ivar script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :vartype script_block_execution_timeout: JSON
     :ivar scripts: Array of script blocks. Type: array.
     :vartype scripts: list[~azure.mgmt.datafactory.models.ScriptActivityScriptBlock]
     :ivar log_settings: Log settings of script activity.
@@ -52959,6 +53285,7 @@ class ScriptActivity(ExecutionActivity):
         "user_properties": {"key": "userProperties", "type": "[UserProperty]"},
         "linked_service_name": {"key": "linkedServiceName", "type": "LinkedServiceReference"},
         "policy": {"key": "policy", "type": "ActivityPolicy"},
+        "script_block_execution_timeout": {"key": "typeProperties.scriptBlockExecutionTimeout", "type": "object"},
         "scripts": {"key": "typeProperties.scripts", "type": "[ScriptActivityScriptBlock]"},
         "log_settings": {"key": "typeProperties.logSettings", "type": "ScriptActivityTypePropertiesLogSettings"},
     }
@@ -52973,10 +53300,11 @@ class ScriptActivity(ExecutionActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
+        script_block_execution_timeout: Optional[JSON] = None,
         scripts: Optional[List["_models.ScriptActivityScriptBlock"]] = None,
         log_settings: Optional["_models.ScriptActivityTypePropertiesLogSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -52993,6 +53321,10 @@ class ScriptActivity(ExecutionActivity):
         :paramtype linked_service_name: ~azure.mgmt.datafactory.models.LinkedServiceReference
         :keyword policy: Activity policy.
         :paramtype policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+        :keyword script_block_execution_timeout: ScriptBlock execution timeout. Type: string (or
+         Expression with resultType string), pattern:
+         ((\d+).)?(\d\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+        :paramtype script_block_execution_timeout: JSON
         :keyword scripts: Array of script blocks. Type: array.
         :paramtype scripts: list[~azure.mgmt.datafactory.models.ScriptActivityScriptBlock]
         :keyword log_settings: Log settings of script activity.
@@ -53008,7 +53340,8 @@ class ScriptActivity(ExecutionActivity):
             policy=policy,
             **kwargs
         )
-        self.type = "Script"  # type: str
+        self.type: str = "Script"
+        self.script_block_execution_timeout = script_block_execution_timeout
         self.scripts = scripts
         self.log_settings = log_settings
 
@@ -53047,8 +53380,8 @@ class ScriptActivityParameter(_serialization.Model):
         value: Optional[JSON] = None,
         direction: Optional[Union[str, "_models.ScriptActivityParameterDirection"]] = None,
         size: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the parameter. Type: string (or Expression with resultType string).
         :paramtype name: JSON
@@ -53103,8 +53436,8 @@ class ScriptActivityScriptBlock(_serialization.Model):
         text: JSON,
         type: Union[str, "_models.ScriptType"],
         parameters: Optional[List["_models.ScriptActivityParameter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword text: The query text. Type: string (or Expression with resultType string). Required.
         :paramtype text: JSON
@@ -53146,8 +53479,8 @@ class ScriptActivityTypePropertiesLogSettings(_serialization.Model):
         *,
         log_destination: Union[str, "_models.ScriptActivityLogDestination"],
         log_location_settings: Optional["_models.LogLocationSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_destination: The destination of logs. Type: string. Required. Known values are:
          "ActivityOutput" and "ExternalStore".
@@ -53162,7 +53495,8 @@ class ScriptActivityTypePropertiesLogSettings(_serialization.Model):
 
 
 class SecureString(SecretBase):
-    """Azure Data Factory secure string definition. The string value will be masked with asterisks '*' during Get or List API calls.
+    """Azure Data Factory secure string definition. The string value will be masked with asterisks '*'
+    during Get or List API calls.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -53182,13 +53516,13 @@ class SecureString(SecretBase):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: str, **kwargs):
+    def __init__(self, *, value: str, **kwargs: Any) -> None:
         """
         :keyword value: Value of secure string. Required.
         :paramtype value: str
         """
         super().__init__(**kwargs)
-        self.type = "SecureString"  # type: str
+        self.type: str = "SecureString"
         self.value = value
 
 
@@ -53224,7 +53558,7 @@ class SelfDependencyTumblingWindowTriggerReference(DependencyReference):
         "size": {"key": "size", "type": "str"},
     }
 
-    def __init__(self, *, offset: str, size: Optional[str] = None, **kwargs):
+    def __init__(self, *, offset: str, size: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword offset: Timespan applied to the start time of a tumbling window when evaluating
          dependency. Required.
@@ -53234,7 +53568,7 @@ class SelfDependencyTumblingWindowTriggerReference(DependencyReference):
         :paramtype size: str
         """
         super().__init__(**kwargs)
-        self.type = "SelfDependencyTumblingWindowTriggerReference"  # type: str
+        self.type: str = "SelfDependencyTumblingWindowTriggerReference"
         self.offset = offset
         self.size = size
 
@@ -53273,8 +53607,8 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
         additional_properties: Optional[Dict[str, JSON]] = None,
         description: Optional[str] = None,
         linked_info: Optional["_models.LinkedIntegrationRuntimeType"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -53285,7 +53619,7 @@ class SelfHostedIntegrationRuntime(IntegrationRuntime):
         :paramtype linked_info: ~azure.mgmt.datafactory.models.LinkedIntegrationRuntimeType
         """
         super().__init__(additional_properties=additional_properties, description=description, **kwargs)
-        self.type = "SelfHosted"  # type: str
+        self.type: str = "SelfHosted"
         self.linked_info = linked_info
 
 
@@ -53384,7 +53718,7 @@ class SelfHostedIntegrationRuntimeNode(_serialization.Model):  # pylint: disable
         "max_concurrent_jobs": {"key": "maxConcurrentJobs", "type": "int"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -53522,8 +53856,8 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):  # pylint: d
         additional_properties: Optional[Dict[str, JSON]] = None,
         nodes: Optional[List["_models.SelfHostedIntegrationRuntimeNode"]] = None,
         links: Optional[List["_models.LinkedIntegrationRuntime"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -53535,7 +53869,7 @@ class SelfHostedIntegrationRuntimeStatus(IntegrationRuntimeStatus):  # pylint: d
         :paramtype links: list[~azure.mgmt.datafactory.models.LinkedIntegrationRuntime]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "SelfHosted"  # type: str
+        self.type: str = "SelfHosted"
         self.create_time = None
         self.task_queue_id = None
         self.internal_channel_encryption = None
@@ -53648,8 +53982,8 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -53702,7 +54036,7 @@ class ServiceNowLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "ServiceNow"  # type: str
+        self.type: str = "ServiceNow"
         self.endpoint = endpoint
         self.authentication_type = authentication_type
         self.username = username
@@ -53776,8 +54110,8 @@ class ServiceNowObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -53813,7 +54147,7 @@ class ServiceNowObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "ServiceNowObject"  # type: str
+        self.type: str = "ServiceNowObject"
         self.table_name = table_name
 
 
@@ -53877,8 +54211,8 @@ class ServiceNowSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -53915,7 +54249,7 @@ class ServiceNowSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "ServiceNowSource"  # type: str
+        self.type: str = "ServiceNowSource"
         self.query = query
 
 
@@ -53964,8 +54298,8 @@ class ServicePrincipalCredential(Credential):
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.AzureKeyVaultSecretReference"] = None,
         tenant: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -53984,7 +54318,7 @@ class ServicePrincipalCredential(Credential):
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
-        self.type = "ServicePrincipal"  # type: str
+        self.type: str = "ServicePrincipal"
         self.service_principal_id = service_principal_id
         self.service_principal_key = service_principal_key
         self.tenant = tenant
@@ -54040,8 +54374,8 @@ class SetVariableActivity(ControlActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         variable_name: Optional[str] = None,
         value: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54067,7 +54401,7 @@ class SetVariableActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "SetVariable"  # type: str
+        self.type: str = "SetVariable"
         self.variable_name = variable_name
         self.value = value
 
@@ -54107,8 +54441,8 @@ class SftpLocation(DatasetLocation):
         additional_properties: Optional[Dict[str, JSON]] = None,
         folder_path: Optional[JSON] = None,
         file_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54123,7 +54457,7 @@ class SftpLocation(DatasetLocation):
         super().__init__(
             additional_properties=additional_properties, folder_path=folder_path, file_name=file_name, **kwargs
         )
-        self.type = "SftpLocation"  # type: str
+        self.type: str = "SftpLocation"
 
 
 class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-attributes
@@ -54211,8 +54545,8 @@ class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
         modified_datetime_start: Optional[JSON] = None,
         modified_datetime_end: Optional[JSON] = None,
         disable_chunking: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54260,7 +54594,7 @@ class SftpReadSettings(StoreReadSettings):  # pylint: disable=too-many-instance-
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SftpReadSettings"  # type: str
+        self.type: str = "SftpReadSettings"
         self.recursive = recursive
         self.wildcard_folder_path = wildcard_folder_path
         self.wildcard_file_name = wildcard_file_name
@@ -54374,8 +54708,8 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
         pass_phrase: Optional["_models.SecretBase"] = None,
         skip_host_key_validation: Optional[JSON] = None,
         host_key_fingerprint: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54434,7 +54768,7 @@ class SftpServerLinkedService(LinkedService):  # pylint: disable=too-many-instan
             annotations=annotations,
             **kwargs
         )
-        self.type = "Sftp"  # type: str
+        self.type: str = "Sftp"
         self.host = host
         self.port = port
         self.authentication_type = authentication_type
@@ -54498,8 +54832,8 @@ class SftpWriteSettings(StoreWriteSettings):
         copy_behavior: Optional[JSON] = None,
         operation_timeout: Optional[JSON] = None,
         use_temp_file_rename: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54527,7 +54861,7 @@ class SftpWriteSettings(StoreWriteSettings):
             copy_behavior=copy_behavior,
             **kwargs
         )
-        self.type = "SftpWriteSettings"  # type: str
+        self.type: str = "SftpWriteSettings"
         self.operation_timeout = operation_timeout
         self.use_temp_file_rename = use_temp_file_rename
 
@@ -54606,8 +54940,8 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54648,7 +54982,7 @@ class SharePointOnlineListLinkedService(LinkedService):  # pylint: disable=too-m
             annotations=annotations,
             **kwargs
         )
-        self.type = "SharePointOnlineList"  # type: str
+        self.type: str = "SharePointOnlineList"
         self.site_url = site_url
         self.tenant_id = tenant_id
         self.service_principal_id = service_principal_id
@@ -54718,8 +55052,8 @@ class SharePointOnlineListResourceDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         list_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54756,7 +55090,7 @@ class SharePointOnlineListResourceDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SharePointOnlineListResource"  # type: str
+        self.type: str = "SharePointOnlineListResource"
         self.list_name = list_name
 
 
@@ -54816,8 +55150,8 @@ class SharePointOnlineListSource(CopySource):
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
         http_request_timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54850,7 +55184,7 @@ class SharePointOnlineListSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SharePointOnlineListSource"  # type: str
+        self.type: str = "SharePointOnlineListSource"
         self.query = query
         self.http_request_timeout = http_request_timeout
 
@@ -54928,8 +55262,8 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -54970,7 +55304,7 @@ class ShopifyLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "Shopify"  # type: str
+        self.type: str = "Shopify"
         self.host = host
         self.access_token = access_token
         self.use_encrypted_endpoints = use_encrypted_endpoints
@@ -55040,8 +55374,8 @@ class ShopifyObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55077,7 +55411,7 @@ class ShopifyObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "ShopifyObject"  # type: str
+        self.type: str = "ShopifyObject"
         self.table_name = table_name
 
 
@@ -55141,8 +55475,8 @@ class ShopifySource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55179,7 +55513,7 @@ class ShopifySource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "ShopifySource"  # type: str
+        self.type: str = "ShopifySource"
         self.query = query
 
 
@@ -55199,7 +55533,9 @@ class SkipErrorFile(_serialization.Model):
         "data_inconsistency": {"key": "dataInconsistency", "type": "object"},
     }
 
-    def __init__(self, *, file_missing: Optional[JSON] = None, data_inconsistency: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, file_missing: Optional[JSON] = None, data_inconsistency: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword file_missing: Skip if file is deleted by other client during copy. Default is true.
          Type: boolean (or Expression with resultType boolean).
@@ -55265,8 +55601,8 @@ class SmartsheetLinkedService(LinkedService):
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55294,7 +55630,7 @@ class SmartsheetLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Smartsheet"  # type: str
+        self.type: str = "Smartsheet"
         self.api_token = api_token
         self.encrypted_credential = encrypted_credential
 
@@ -55366,8 +55702,8 @@ class SnowflakeDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         folder: Optional["_models.DatasetFolder"] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55407,7 +55743,7 @@ class SnowflakeDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "SnowflakeTable"  # type: str
+        self.type: str = "SnowflakeTable"
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
 
@@ -55451,8 +55787,8 @@ class SnowflakeExportCopyCommand(ExportSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         additional_copy_options: Optional[Dict[str, JSON]] = None,
         additional_format_options: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55469,7 +55805,7 @@ class SnowflakeExportCopyCommand(ExportSettings):
         :paramtype additional_format_options: dict[str, JSON]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "SnowflakeExportCopyCommand"  # type: str
+        self.type: str = "SnowflakeExportCopyCommand"
         self.additional_copy_options = additional_copy_options
         self.additional_format_options = additional_format_options
 
@@ -55513,8 +55849,8 @@ class SnowflakeImportCopyCommand(ImportSettings):
         additional_properties: Optional[Dict[str, JSON]] = None,
         additional_copy_options: Optional[Dict[str, JSON]] = None,
         additional_format_options: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55531,7 +55867,7 @@ class SnowflakeImportCopyCommand(ImportSettings):
         :paramtype additional_format_options: dict[str, JSON]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "SnowflakeImportCopyCommand"  # type: str
+        self.type: str = "SnowflakeImportCopyCommand"
         self.additional_copy_options = additional_copy_options
         self.additional_format_options = additional_format_options
 
@@ -55593,8 +55929,8 @@ class SnowflakeLinkedService(LinkedService):
         annotations: Optional[List[JSON]] = None,
         password: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55625,7 +55961,7 @@ class SnowflakeLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Snowflake"  # type: str
+        self.type: str = "Snowflake"
         self.connection_string = connection_string
         self.password = password
         self.encrypted_credential = encrypted_credential
@@ -55695,8 +56031,8 @@ class SnowflakeSink(CopySink):
         disable_metrics_collection: Optional[JSON] = None,
         pre_copy_script: Optional[JSON] = None,
         import_settings: Optional["_models.SnowflakeImportCopyCommand"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55735,7 +56071,7 @@ class SnowflakeSink(CopySink):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SnowflakeSink"  # type: str
+        self.type: str = "SnowflakeSink"
         self.pre_copy_script = pre_copy_script
         self.import_settings = import_settings
 
@@ -55764,12 +56100,13 @@ class SnowflakeSource(CopySource):
     :vartype disable_metrics_collection: JSON
     :ivar query: Snowflake Sql query. Type: string (or Expression with resultType string).
     :vartype query: JSON
-    :ivar export_settings: Snowflake export settings.
+    :ivar export_settings: Snowflake export settings. Required.
     :vartype export_settings: ~azure.mgmt.datafactory.models.SnowflakeExportCopyCommand
     """
 
     _validation = {
         "type": {"required": True},
+        "export_settings": {"required": True},
     }
 
     _attribute_map = {
@@ -55786,15 +56123,15 @@ class SnowflakeSource(CopySource):
     def __init__(
         self,
         *,
+        export_settings: "_models.SnowflakeExportCopyCommand",
         additional_properties: Optional[Dict[str, JSON]] = None,
         source_retry_count: Optional[JSON] = None,
         source_retry_wait: Optional[JSON] = None,
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        export_settings: Optional["_models.SnowflakeExportCopyCommand"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -55813,7 +56150,7 @@ class SnowflakeSource(CopySource):
         :paramtype disable_metrics_collection: JSON
         :keyword query: Snowflake Sql query. Type: string (or Expression with resultType string).
         :paramtype query: JSON
-        :keyword export_settings: Snowflake export settings.
+        :keyword export_settings: Snowflake export settings. Required.
         :paramtype export_settings: ~azure.mgmt.datafactory.models.SnowflakeExportCopyCommand
         """
         super().__init__(
@@ -55824,9 +56161,46 @@ class SnowflakeSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SnowflakeSource"  # type: str
+        self.type: str = "SnowflakeSource"
         self.query = query
         self.export_settings = export_settings
+
+
+class SparkConfigurationParametrizationReference(_serialization.Model):
+    """Spark configuration reference.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Spark configuration reference type. Required. "SparkConfigurationReference"
+    :vartype type: str or ~azure.mgmt.datafactory.models.SparkConfigurationReferenceType
+    :ivar reference_name: Reference spark configuration name. Type: string (or Expression with
+     resultType string). Required.
+    :vartype reference_name: JSON
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "reference_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "reference_name": {"key": "referenceName", "type": "object"},
+    }
+
+    def __init__(
+        self, *, type: Union[str, "_models.SparkConfigurationReferenceType"], reference_name: JSON, **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Spark configuration reference type. Required. "SparkConfigurationReference"
+        :paramtype type: str or ~azure.mgmt.datafactory.models.SparkConfigurationReferenceType
+        :keyword reference_name: Reference spark configuration name. Type: string (or Expression with
+         resultType string). Required.
+        :paramtype reference_name: JSON
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.reference_name = reference_name
 
 
 class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-attributes
@@ -55943,8 +56317,8 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
         allow_host_name_cn_mismatch: Optional[JSON] = None,
         allow_self_signed_server_cert: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -56009,7 +56383,7 @@ class SparkLinkedService(LinkedService):  # pylint: disable=too-many-instance-at
             annotations=annotations,
             **kwargs
         )
-        self.type = "Spark"  # type: str
+        self.type: str = "Spark"
         self.host = host
         self.port = port
         self.server_type = server_type
@@ -56097,8 +56471,8 @@ class SparkObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribut
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -56141,7 +56515,7 @@ class SparkObjectDataset(Dataset):  # pylint: disable=too-many-instance-attribut
             folder=folder,
             **kwargs
         )
-        self.type = "SparkObject"  # type: str
+        self.type: str = "SparkObject"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -56207,8 +56581,8 @@ class SparkSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -56245,7 +56619,7 @@ class SparkSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SparkSource"  # type: str
+        self.type: str = "SparkSource"
         self.query = query
 
 
@@ -56287,8 +56661,8 @@ class SqlAlwaysEncryptedProperties(_serialization.Model):
         service_principal_id: Optional[JSON] = None,
         service_principal_key: Optional["_models.SecretBase"] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword always_encrypted_akv_auth_type: Sql always encrypted AKV authentication type. Type:
          string (or Expression with resultType string). Required. Known values are: "ServicePrincipal",
@@ -56409,8 +56783,8 @@ class SqlDWSink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_use_table_lock: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
         upsert_settings: Optional["_models.SqlDWUpsertSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -56469,7 +56843,7 @@ class SqlDWSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SqlDWSink"  # type: str
+        self.type: str = "SqlDWSink"
         self.pre_copy_script = pre_copy_script
         self.allow_poly_base = allow_poly_base
         self.poly_base_settings = poly_base_settings
@@ -56562,8 +56936,8 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
         stored_procedure_parameters: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -56613,7 +56987,7 @@ class SqlDWSource(TabularSource):  # pylint: disable=too-many-instance-attribute
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SqlDWSource"  # type: str
+        self.type: str = "SqlDWSource"
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -56637,7 +57011,9 @@ class SqlDWUpsertSettings(_serialization.Model):
         "keys": {"key": "keys", "type": "object"},
     }
 
-    def __init__(self, *, interim_schema_name: Optional[JSON] = None, keys: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, interim_schema_name: Optional[JSON] = None, keys: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword interim_schema_name: Schema name for interim table. Type: string (or Expression with
          resultType string).
@@ -56752,8 +57128,8 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_use_table_lock: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
         upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -56812,7 +57188,7 @@ class SqlMISink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SqlMISink"  # type: str
+        self.type: str = "SqlMISink"
         self.sql_writer_stored_procedure_name = sql_writer_stored_procedure_name
         self.sql_writer_table_type = sql_writer_table_type
         self.pre_copy_script = pre_copy_script
@@ -56907,8 +57283,8 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -56959,7 +57335,7 @@ class SqlMISource(TabularSource):  # pylint: disable=too-many-instance-attribute
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SqlMISource"  # type: str
+        self.type: str = "SqlMISource"
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -57000,8 +57376,8 @@ class SqlPartitionSettings(_serialization.Model):
         partition_column_name: Optional[JSON] = None,
         partition_upper_bound: Optional[JSON] = None,
         partition_lower_bound: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partition_column_name: The name of the column in integer or datetime type that will be
          used for proceeding partitioning. If not specified, the primary key of the table is
@@ -57094,8 +57470,8 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
         always_encrypted_settings: Optional["_models.SqlAlwaysEncryptedProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -57132,7 +57508,7 @@ class SqlServerLinkedService(LinkedService):  # pylint: disable=too-many-instanc
             annotations=annotations,
             **kwargs
         )
-        self.type = "SqlServer"  # type: str
+        self.type: str = "SqlServer"
         self.connection_string = connection_string
         self.user_name = user_name
         self.password = password
@@ -57241,8 +57617,8 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_use_table_lock: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
         upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -57301,7 +57677,7 @@ class SqlServerSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SqlServerSink"  # type: str
+        self.type: str = "SqlServerSink"
         self.sql_writer_stored_procedure_name = sql_writer_stored_procedure_name
         self.sql_writer_table_type = sql_writer_table_type
         self.pre_copy_script = pre_copy_script
@@ -57396,8 +57772,8 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
         produce_additional_types: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -57448,7 +57824,7 @@ class SqlServerSource(TabularSource):  # pylint: disable=too-many-instance-attri
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SqlServerSource"  # type: str
+        self.type: str = "SqlServerSource"
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -57518,8 +57894,8 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
         linked_service_name: Optional["_models.LinkedServiceReference"] = None,
         policy: Optional["_models.ActivityPolicy"] = None,
         stored_procedure_parameters: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -57553,7 +57929,7 @@ class SqlServerStoredProcedureActivity(ExecutionActivity):
             policy=policy,
             **kwargs
         )
-        self.type = "SqlServerStoredProcedure"  # type: str
+        self.type: str = "SqlServerStoredProcedure"
         self.stored_procedure_name = stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
 
@@ -57630,8 +58006,8 @@ class SqlServerTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
         table_name: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -57674,7 +58050,7 @@ class SqlServerTableDataset(Dataset):  # pylint: disable=too-many-instance-attri
             folder=folder,
             **kwargs
         )
-        self.type = "SqlServerTable"  # type: str
+        self.type: str = "SqlServerTable"
         self.table_name = table_name
         self.schema_type_properties_schema = schema_type_properties_schema
         self.table = table
@@ -57781,8 +58157,8 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
         sql_writer_use_table_lock: Optional[JSON] = None,
         write_behavior: Optional[JSON] = None,
         upsert_settings: Optional["_models.SqlUpsertSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -57841,7 +58217,7 @@ class SqlSink(CopySink):  # pylint: disable=too-many-instance-attributes
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "SqlSink"  # type: str
+        self.type: str = "SqlSink"
         self.sql_writer_stored_procedure_name = sql_writer_stored_procedure_name
         self.sql_writer_table_type = sql_writer_table_type
         self.pre_copy_script = pre_copy_script
@@ -57938,8 +58314,8 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
         isolation_level: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.SqlPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -57992,7 +58368,7 @@ class SqlSource(TabularSource):  # pylint: disable=too-many-instance-attributes
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SqlSource"  # type: str
+        self.type: str = "SqlSource"
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -58027,8 +58403,8 @@ class SqlUpsertSettings(_serialization.Model):
         use_temp_db: Optional[JSON] = None,
         interim_schema_name: Optional[JSON] = None,
         keys: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword use_temp_db: Specifies whether to use temp db for upsert interim table. Type: boolean
          (or Expression with resultType boolean).
@@ -58131,8 +58507,8 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -58180,7 +58556,7 @@ class SquareLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "Square"  # type: str
+        self.type: str = "Square"
         self.connection_properties = connection_properties
         self.host = host
         self.client_id = client_id
@@ -58253,8 +58629,8 @@ class SquareObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -58290,7 +58666,7 @@ class SquareObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SquareObject"  # type: str
+        self.type: str = "SquareObject"
         self.table_name = table_name
 
 
@@ -58354,8 +58730,8 @@ class SquareSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -58392,7 +58768,7 @@ class SquareSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SquareSource"  # type: str
+        self.type: str = "SquareSource"
         self.query = query
 
 
@@ -58421,7 +58797,7 @@ class SSISAccessCredential(_serialization.Model):
         "password": {"key": "password", "type": "SecretBase"},
     }
 
-    def __init__(self, *, domain: JSON, user_name: JSON, password: "_models.SecretBase", **kwargs):
+    def __init__(self, *, domain: JSON, user_name: JSON, password: "_models.SecretBase", **kwargs: Any) -> None:
         """
         :keyword domain: Domain for windows authentication. Required.
         :paramtype domain: JSON
@@ -58472,8 +58848,8 @@ class SSISChildPackage(_serialization.Model):
         package_content: JSON,
         package_name: Optional[str] = None,
         package_last_modified_date: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword package_path: Path for embedded child package. Type: string (or Expression with
          resultType string). Required.
@@ -58538,8 +58914,8 @@ class SsisObjectMetadata(_serialization.Model):
         id: Optional[int] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Metadata id.
         :paramtype id: int
@@ -58549,7 +58925,7 @@ class SsisObjectMetadata(_serialization.Model):
         :paramtype description: str
         """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.id = id
         self.name = name
         self.description = description
@@ -58596,8 +58972,8 @@ class SsisEnvironment(SsisObjectMetadata):
         description: Optional[str] = None,
         folder_id: Optional[int] = None,
         variables: Optional[List["_models.SsisVariable"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Metadata id.
         :paramtype id: int
@@ -58611,7 +58987,7 @@ class SsisEnvironment(SsisObjectMetadata):
         :paramtype variables: list[~azure.mgmt.datafactory.models.SsisVariable]
         """
         super().__init__(id=id, name=name, description=description, **kwargs)
-        self.type = "Environment"  # type: str
+        self.type: str = "Environment"
         self.folder_id = folder_id
         self.variables = variables
 
@@ -58643,8 +59019,8 @@ class SsisEnvironmentReference(_serialization.Model):
         environment_folder_name: Optional[str] = None,
         environment_name: Optional[str] = None,
         reference_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Environment reference id.
         :paramtype id: int
@@ -58687,7 +59063,7 @@ class SSISExecutionCredential(_serialization.Model):
         "password": {"key": "password", "type": "SecureString"},
     }
 
-    def __init__(self, *, domain: JSON, user_name: JSON, password: "_models.SecureString", **kwargs):
+    def __init__(self, *, domain: JSON, user_name: JSON, password: "_models.SecureString", **kwargs: Any) -> None:
         """
         :keyword domain: Domain for windows authentication. Required.
         :paramtype domain: JSON
@@ -58720,7 +59096,7 @@ class SSISExecutionParameter(_serialization.Model):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, value: JSON, **kwargs):
+    def __init__(self, *, value: JSON, **kwargs: Any) -> None:
         """
         :keyword value: SSIS package execution parameter value. Type: string (or Expression with
          resultType string). Required.
@@ -58763,8 +59139,8 @@ class SsisFolder(SsisObjectMetadata):
         id: Optional[int] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Metadata id.
         :paramtype id: int
@@ -58774,7 +59150,7 @@ class SsisFolder(SsisObjectMetadata):
         :paramtype description: str
         """
         super().__init__(id=id, name=name, description=description, **kwargs)
-        self.type = "Folder"  # type: str
+        self.type: str = "Folder"
 
 
 class SSISLogLocation(_serialization.Model):
@@ -58814,8 +59190,8 @@ class SSISLogLocation(_serialization.Model):
         type: Union[str, "_models.SsisLogLocationType"],
         access_credential: Optional["_models.SSISAccessCredential"] = None,
         log_refresh_interval: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword log_path: The SSIS package execution log path. Type: string (or Expression with
          resultType string). Required.
@@ -58851,8 +59227,12 @@ class SsisObjectMetadataListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SsisObjectMetadata"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.SsisObjectMetadata"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of SSIS object metadata.
         :paramtype value: list[~azure.mgmt.datafactory.models.SsisObjectMetadata]
@@ -58891,8 +59271,8 @@ class SsisObjectMetadataStatusResponse(_serialization.Model):
         name: Optional[str] = None,
         properties: Optional[str] = None,
         error: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: The status of the operation.
         :paramtype status: str
@@ -58959,8 +59339,8 @@ class SsisPackage(SsisObjectMetadata):
         project_version: Optional[int] = None,
         project_id: Optional[int] = None,
         parameters: Optional[List["_models.SsisParameter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Metadata id.
         :paramtype id: int
@@ -58978,7 +59358,7 @@ class SsisPackage(SsisObjectMetadata):
         :paramtype parameters: list[~azure.mgmt.datafactory.models.SsisParameter]
         """
         super().__init__(id=id, name=name, description=description, **kwargs)
-        self.type = "Package"  # type: str
+        self.type: str = "Package"
         self.folder_id = folder_id
         self.project_version = project_version
         self.project_id = project_id
@@ -59042,8 +59422,8 @@ class SSISPackageLocation(_serialization.Model):
         package_content: Optional[JSON] = None,
         package_last_modified_date: Optional[str] = None,
         child_packages: Optional[List["_models.SSISChildPackage"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword package_path: The SSIS package path. Type: string (or Expression with resultType
          string).
@@ -59142,8 +59522,8 @@ class SsisParameter(_serialization.Model):  # pylint: disable=too-many-instance-
         value_type: Optional[str] = None,
         value_set: Optional[bool] = None,
         variable: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Parameter id.
         :paramtype id: int
@@ -59234,8 +59614,8 @@ class SsisProject(SsisObjectMetadata):
         version: Optional[int] = None,
         environment_refs: Optional[List["_models.SsisEnvironmentReference"]] = None,
         parameters: Optional[List["_models.SsisParameter"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Metadata id.
         :paramtype id: int
@@ -59253,7 +59633,7 @@ class SsisProject(SsisObjectMetadata):
         :paramtype parameters: list[~azure.mgmt.datafactory.models.SsisParameter]
         """
         super().__init__(id=id, name=name, description=description, **kwargs)
-        self.type = "Project"  # type: str
+        self.type: str = "Project"
         self.folder_id = folder_id
         self.version = version
         self.environment_refs = environment_refs
@@ -59282,7 +59662,7 @@ class SSISPropertyOverride(_serialization.Model):
         "is_sensitive": {"key": "isSensitive", "type": "bool"},
     }
 
-    def __init__(self, *, value: JSON, is_sensitive: Optional[bool] = None, **kwargs):
+    def __init__(self, *, value: JSON, is_sensitive: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword value: SSIS package property override value. Type: string (or Expression with
          resultType string). Required.
@@ -59335,8 +59715,8 @@ class SsisVariable(_serialization.Model):
         sensitive: Optional[bool] = None,
         value: Optional[str] = None,
         sensitive_value: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Variable id.
         :paramtype id: int
@@ -59399,8 +59779,8 @@ class StagingSettings(_serialization.Model):
         additional_properties: Optional[Dict[str, JSON]] = None,
         path: Optional[JSON] = None,
         enable_compression: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -59442,8 +59822,8 @@ class StoredProcedureParameter(_serialization.Model):
         *,
         value: Optional[JSON] = None,
         type: Optional[Union[str, "_models.StoredProcedureParameterType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Stored procedure parameter value. Type: string (or Expression with resultType
          string).
@@ -59458,7 +59838,8 @@ class StoredProcedureParameter(_serialization.Model):
 
 
 class SwitchActivity(ControlActivity):
-    """This activity evaluates an expression and executes activities under the cases property that correspond to the expression evaluation expected in the equals property.
+    """This activity evaluates an expression and executes activities under the cases property that
+    correspond to the expression evaluation expected in the equals property.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -59516,8 +59897,8 @@ class SwitchActivity(ControlActivity):
         user_properties: Optional[List["_models.UserProperty"]] = None,
         cases: Optional[List["_models.SwitchCase"]] = None,
         default_activities: Optional[List["_models.Activity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -59549,7 +59930,7 @@ class SwitchActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Switch"  # type: str
+        self.type: str = "Switch"
         self.on = on
         self.cases = cases
         self.default_activities = default_activities
@@ -59569,7 +59950,9 @@ class SwitchCase(_serialization.Model):
         "activities": {"key": "activities", "type": "[Activity]"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, activities: Optional[List["_models.Activity"]] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[str] = None, activities: Optional[List["_models.Activity"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Expected value that satisfies the expression result of the 'on' property.
         :paramtype value: str
@@ -59658,8 +60041,8 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -59702,7 +60085,7 @@ class SybaseLinkedService(LinkedService):  # pylint: disable=too-many-instance-a
             annotations=annotations,
             **kwargs
         )
-        self.type = "Sybase"  # type: str
+        self.type: str = "Sybase"
         self.server = server
         self.database = database
         self.schema = schema
@@ -59771,8 +60154,8 @@ class SybaseSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -59808,7 +60191,7 @@ class SybaseSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "SybaseSource"  # type: str
+        self.type: str = "SybaseSource"
         self.query = query
 
 
@@ -59873,8 +60256,8 @@ class SybaseTableDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -59911,7 +60294,7 @@ class SybaseTableDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "SybaseTable"  # type: str
+        self.type: str = "SybaseTable"
         self.table_name = table_name
 
 
@@ -60001,8 +60384,8 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
         conf: Optional[JSON] = None,
         driver_size: Optional[JSON] = None,
         num_executors: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60052,7 +60435,7 @@ class SynapseNotebookActivity(ExecutionActivity):  # pylint: disable=too-many-in
             policy=policy,
             **kwargs
         )
-        self.type = "SynapseNotebook"  # type: str
+        self.type: str = "SynapseNotebook"
         self.notebook = notebook
         self.spark_pool = spark_pool
         self.parameters = parameters
@@ -60084,7 +60467,9 @@ class SynapseNotebookReference(_serialization.Model):
         "reference_name": {"key": "referenceName", "type": "object"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.NotebookReferenceType"], reference_name: JSON, **kwargs):
+    def __init__(
+        self, *, type: Union[str, "_models.NotebookReferenceType"], reference_name: JSON, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Synapse notebook reference type. Required. "NotebookReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.NotebookReferenceType
@@ -60126,6 +60511,11 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
     :ivar file: The main file used for the job, which will override the 'file' of the spark job
      definition you provide. Type: string (or Expression with resultType string).
     :vartype file: JSON
+    :ivar scan_folder: Scanning subfolders from the root folder of the main definition file, these
+     files will be added as reference files. The folders named 'jars', 'pyFiles', 'files' or
+     'archives' will be scanned, and the folders name are case sensitive. Type: boolean (or
+     Expression with resultType boolean).
+    :vartype scan_folder: JSON
     :ivar class_name: The fully-qualified identifier or the main class that is in the main
      definition file, which will override the 'className' of the spark job definition you provide.
      Type: string (or Expression with resultType string).
@@ -60158,8 +60548,17 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
      the spark job definition you provide. Type: string (or Expression with resultType string).
     :vartype driver_size: JSON
     :ivar num_executors: Number of executors to launch for this job, which will override the
-     'numExecutors' of the spark job definition you provide.
-    :vartype num_executors: int
+     'numExecutors' of the spark job definition you provide. Type: integer (or Expression with
+     resultType integer).
+    :vartype num_executors: JSON
+    :ivar configuration_type: The type of the spark config. Known values are: "Default",
+     "Customized", and "Artifact".
+    :vartype configuration_type: str or ~azure.mgmt.datafactory.models.ConfigurationType
+    :ivar target_spark_configuration: The spark configuration of the spark job.
+    :vartype target_spark_configuration:
+     ~azure.mgmt.datafactory.models.SparkConfigurationParametrizationReference
+    :ivar spark_config: Spark configuration property.
+    :vartype spark_config: dict[str, JSON]
     """
 
     _validation = {
@@ -60180,6 +60579,7 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         "spark_job": {"key": "typeProperties.sparkJob", "type": "SynapseSparkJobReference"},
         "arguments": {"key": "typeProperties.args", "type": "[object]"},
         "file": {"key": "typeProperties.file", "type": "object"},
+        "scan_folder": {"key": "typeProperties.scanFolder", "type": "object"},
         "class_name": {"key": "typeProperties.className", "type": "object"},
         "files": {"key": "typeProperties.files", "type": "[object]"},
         "python_code_reference": {"key": "typeProperties.pythonCodeReference", "type": "[object]"},
@@ -60191,10 +60591,16 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         "executor_size": {"key": "typeProperties.executorSize", "type": "object"},
         "conf": {"key": "typeProperties.conf", "type": "object"},
         "driver_size": {"key": "typeProperties.driverSize", "type": "object"},
-        "num_executors": {"key": "typeProperties.numExecutors", "type": "int"},
+        "num_executors": {"key": "typeProperties.numExecutors", "type": "object"},
+        "configuration_type": {"key": "typeProperties.configurationType", "type": "str"},
+        "target_spark_configuration": {
+            "key": "typeProperties.targetSparkConfiguration",
+            "type": "SparkConfigurationParametrizationReference",
+        },
+        "spark_config": {"key": "typeProperties.sparkConfig", "type": "{object}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: str,
@@ -60207,6 +60613,7 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         policy: Optional["_models.ActivityPolicy"] = None,
         arguments: Optional[List[Any]] = None,
         file: Optional[JSON] = None,
+        scan_folder: Optional[JSON] = None,
         class_name: Optional[JSON] = None,
         files: Optional[List[JSON]] = None,
         python_code_reference: Optional[List[JSON]] = None,
@@ -60215,9 +60622,12 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         executor_size: Optional[JSON] = None,
         conf: Optional[JSON] = None,
         driver_size: Optional[JSON] = None,
-        num_executors: Optional[int] = None,
-        **kwargs
-    ):
+        num_executors: Optional[JSON] = None,
+        configuration_type: Optional[Union[str, "_models.ConfigurationType"]] = None,
+        target_spark_configuration: Optional["_models.SparkConfigurationParametrizationReference"] = None,
+        spark_config: Optional[Dict[str, JSON]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60241,6 +60651,11 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         :keyword file: The main file used for the job, which will override the 'file' of the spark job
          definition you provide. Type: string (or Expression with resultType string).
         :paramtype file: JSON
+        :keyword scan_folder: Scanning subfolders from the root folder of the main definition file,
+         these files will be added as reference files. The folders named 'jars', 'pyFiles', 'files' or
+         'archives' will be scanned, and the folders name are case sensitive. Type: boolean (or
+         Expression with resultType boolean).
+        :paramtype scan_folder: JSON
         :keyword class_name: The fully-qualified identifier or the main class that is in the main
          definition file, which will override the 'className' of the spark job definition you provide.
          Type: string (or Expression with resultType string).
@@ -60274,8 +60689,17 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
          resultType string).
         :paramtype driver_size: JSON
         :keyword num_executors: Number of executors to launch for this job, which will override the
-         'numExecutors' of the spark job definition you provide.
-        :paramtype num_executors: int
+         'numExecutors' of the spark job definition you provide. Type: integer (or Expression with
+         resultType integer).
+        :paramtype num_executors: JSON
+        :keyword configuration_type: The type of the spark config. Known values are: "Default",
+         "Customized", and "Artifact".
+        :paramtype configuration_type: str or ~azure.mgmt.datafactory.models.ConfigurationType
+        :keyword target_spark_configuration: The spark configuration of the spark job.
+        :paramtype target_spark_configuration:
+         ~azure.mgmt.datafactory.models.SparkConfigurationParametrizationReference
+        :keyword spark_config: Spark configuration property.
+        :paramtype spark_config: dict[str, JSON]
         """
         super().__init__(
             additional_properties=additional_properties,
@@ -60287,10 +60711,11 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
             policy=policy,
             **kwargs
         )
-        self.type = "SparkJob"  # type: str
+        self.type: str = "SparkJob"
         self.spark_job = spark_job
         self.arguments = arguments
         self.file = file
+        self.scan_folder = scan_folder
         self.class_name = class_name
         self.files = files
         self.python_code_reference = python_code_reference
@@ -60300,6 +60725,9 @@ class SynapseSparkJobDefinitionActivity(ExecutionActivity):  # pylint: disable=t
         self.conf = conf
         self.driver_size = driver_size
         self.num_executors = num_executors
+        self.configuration_type = configuration_type
+        self.target_spark_configuration = target_spark_configuration
+        self.spark_config = spark_config
 
 
 class SynapseSparkJobReference(_serialization.Model):
@@ -60323,7 +60751,9 @@ class SynapseSparkJobReference(_serialization.Model):
         "reference_name": {"key": "referenceName", "type": "object"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.SparkJobReferenceType"], reference_name: JSON, **kwargs):
+    def __init__(
+        self, *, type: Union[str, "_models.SparkJobReferenceType"], reference_name: JSON, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Synapse spark job reference type. Required. "SparkJobDefinitionReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.SparkJobReferenceType
@@ -60400,8 +60830,8 @@ class TabularTranslator(CopyTranslator):
         mappings: Optional[JSON] = None,
         type_conversion: Optional[JSON] = None,
         type_conversion_settings: Optional["_models.TypeConversionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60434,7 +60864,7 @@ class TabularTranslator(CopyTranslator):
         :paramtype type_conversion_settings: ~azure.mgmt.datafactory.models.TypeConversionSettings
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "TabularTranslator"  # type: str
+        self.type: str = "TabularTranslator"
         self.column_mappings = column_mappings
         self.schema_mapping = schema_mapping
         self.collection_reference = collection_reference
@@ -60474,8 +60904,8 @@ class TarGZipReadSettings(CompressionReadSettings):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         preserve_compression_file_name_as_folder: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60485,7 +60915,7 @@ class TarGZipReadSettings(CompressionReadSettings):
         :paramtype preserve_compression_file_name_as_folder: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "TarGZipReadSettings"  # type: str
+        self.type: str = "TarGZipReadSettings"
         self.preserve_compression_file_name_as_folder = preserve_compression_file_name_as_folder
 
 
@@ -60519,8 +60949,8 @@ class TarReadSettings(CompressionReadSettings):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         preserve_compression_file_name_as_folder: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60530,7 +60960,7 @@ class TarReadSettings(CompressionReadSettings):
         :paramtype preserve_compression_file_name_as_folder: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "TarReadSettings"  # type: str
+        self.type: str = "TarReadSettings"
         self.preserve_compression_file_name_as_folder = preserve_compression_file_name_as_folder
 
 
@@ -60606,8 +61036,8 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
         password: Optional["_models.SecretBase"] = None,
         api_token: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60647,7 +61077,7 @@ class TeamDeskLinkedService(LinkedService):  # pylint: disable=too-many-instance
             annotations=annotations,
             **kwargs
         )
-        self.type = "TeamDesk"  # type: str
+        self.type: str = "TeamDesk"
         self.authentication_type = authentication_type
         self.url = url
         self.user_name = user_name
@@ -60726,8 +61156,8 @@ class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance
         username: Optional[JSON] = None,
         password: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60768,7 +61198,7 @@ class TeradataLinkedService(LinkedService):  # pylint: disable=too-many-instance
             annotations=annotations,
             **kwargs
         )
-        self.type = "Teradata"  # type: str
+        self.type: str = "Teradata"
         self.connection_string = connection_string
         self.server = server
         self.authentication_type = authentication_type
@@ -60805,8 +61235,8 @@ class TeradataPartitionSettings(_serialization.Model):
         partition_column_name: Optional[JSON] = None,
         partition_upper_bound: Optional[JSON] = None,
         partition_lower_bound: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword partition_column_name: The name of the column that will be used for proceeding range
          or hash partitioning. Type: string (or Expression with resultType string).
@@ -60894,8 +61324,8 @@ class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attrib
         query: Optional[JSON] = None,
         partition_option: Optional[JSON] = None,
         partition_settings: Optional["_models.TeradataPartitionSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -60937,7 +61367,7 @@ class TeradataSource(TabularSource):  # pylint: disable=too-many-instance-attrib
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "TeradataSource"  # type: str
+        self.type: str = "TeradataSource"
         self.query = query
         self.partition_option = partition_option
         self.partition_settings = partition_settings
@@ -61009,8 +61439,8 @@ class TeradataTableDataset(Dataset):  # pylint: disable=too-many-instance-attrib
         folder: Optional["_models.DatasetFolder"] = None,
         database: Optional[JSON] = None,
         table: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -61050,7 +61480,7 @@ class TeradataTableDataset(Dataset):  # pylint: disable=too-many-instance-attrib
             folder=folder,
             **kwargs
         )
-        self.type = "TeradataTable"  # type: str
+        self.type: str = "TeradataTable"
         self.database = database
         self.table = table
 
@@ -61133,8 +61563,8 @@ class TextFormat(DatasetStorageFormat):  # pylint: disable=too-many-instance-att
         treat_empty_as_null: Optional[JSON] = None,
         skip_line_count: Optional[JSON] = None,
         first_row_as_header: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -61176,7 +61606,7 @@ class TextFormat(DatasetStorageFormat):  # pylint: disable=too-many-instance-att
         super().__init__(
             additional_properties=additional_properties, serializer=serializer, deserializer=deserializer, **kwargs
         )
-        self.type = "TextFormat"  # type: str
+        self.type: str = "TextFormat"
         self.column_delimiter = column_delimiter
         self.row_delimiter = row_delimiter
         self.escape_char = escape_char
@@ -61214,13 +61644,13 @@ class TriggerDependencyReference(DependencyReference):
 
     _subtype_map = {"type": {"TumblingWindowTriggerDependencyReference": "TumblingWindowTriggerDependencyReference"}}
 
-    def __init__(self, *, reference_trigger: "_models.TriggerReference", **kwargs):
+    def __init__(self, *, reference_trigger: "_models.TriggerReference", **kwargs: Any) -> None:
         """
         :keyword reference_trigger: Referenced trigger. Required.
         :paramtype reference_trigger: ~azure.mgmt.datafactory.models.TriggerReference
         """
         super().__init__(**kwargs)
-        self.type = "TriggerDependencyReference"  # type: str
+        self.type: str = "TriggerDependencyReference"
         self.reference_trigger = reference_trigger
 
 
@@ -61241,8 +61671,8 @@ class TriggerFilterParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, continuation_token: Optional[str] = None, parent_trigger_name: Optional[str] = None, **kwargs
-    ):
+        self, *, continuation_token: Optional[str] = None, parent_trigger_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword continuation_token: The continuation token for getting the next page of results. Null
          for first page.
@@ -61276,7 +61706,9 @@ class TriggerListResponse(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TriggerResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.TriggerResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of triggers. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.TriggerResource]
@@ -61307,8 +61739,8 @@ class TriggerPipelineReference(_serialization.Model):
         *,
         pipeline_reference: Optional["_models.PipelineReference"] = None,
         parameters: Optional[Dict[str, JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword pipeline_reference: Pipeline reference.
         :paramtype pipeline_reference: ~azure.mgmt.datafactory.models.PipelineReference
@@ -61341,7 +61773,9 @@ class TriggerQueryResponse(_serialization.Model):
         "continuation_token": {"key": "continuationToken", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TriggerResource"], continuation_token: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.TriggerResource"], continuation_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of triggers. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.TriggerResource]
@@ -61375,7 +61809,7 @@ class TriggerReference(_serialization.Model):
         "reference_name": {"key": "referenceName", "type": "str"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.TriggerReferenceType"], reference_name: str, **kwargs):
+    def __init__(self, *, type: Union[str, "_models.TriggerReferenceType"], reference_name: str, **kwargs: Any) -> None:
         """
         :keyword type: Trigger reference type. Required. "TriggerReference"
         :paramtype type: str or ~azure.mgmt.datafactory.models.TriggerReferenceType
@@ -61422,7 +61856,7 @@ class TriggerResource(SubResource):
         "properties": {"key": "properties", "type": "Trigger"},
     }
 
-    def __init__(self, *, properties: "_models.Trigger", **kwargs):
+    def __init__(self, *, properties: "_models.Trigger", **kwargs: Any) -> None:
         """
         :keyword properties: Properties of the trigger. Required.
         :paramtype properties: ~azure.mgmt.datafactory.models.Trigger
@@ -61489,7 +61923,7 @@ class TriggerRun(_serialization.Model):  # pylint: disable=too-many-instance-att
         "dependency_status": {"key": "dependencyStatus", "type": "{object}"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs):
+    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -61530,7 +61964,9 @@ class TriggerRunsQueryResponse(_serialization.Model):
         "continuation_token": {"key": "continuationToken", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.TriggerRun"], continuation_token: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.TriggerRun"], continuation_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of trigger runs. Required.
         :paramtype value: list[~azure.mgmt.datafactory.models.TriggerRun]
@@ -61565,7 +62001,7 @@ class TriggerSubscriptionOperationStatus(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.trigger_name = None
@@ -61573,7 +62009,8 @@ class TriggerSubscriptionOperationStatus(_serialization.Model):
 
 
 class TumblingWindowTrigger(Trigger):  # pylint: disable=too-many-instance-attributes
-    """Trigger that schedules pipeline runs for all fixed time interval windows from a start time without gaps and also supports backfill scenarios (when start time is in the past).
+    """Trigger that schedules pipeline runs for all fixed time interval windows from a start time
+    without gaps and also supports backfill scenarios (when start time is in the past).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -61662,8 +62099,8 @@ class TumblingWindowTrigger(Trigger):  # pylint: disable=too-many-instance-attri
         delay: Optional[JSON] = None,
         retry_policy: Optional["_models.RetryPolicy"] = None,
         depends_on: Optional[List["_models.DependencyReference"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -61703,7 +62140,7 @@ class TumblingWindowTrigger(Trigger):  # pylint: disable=too-many-instance-attri
         super().__init__(
             additional_properties=additional_properties, description=description, annotations=annotations, **kwargs
         )
-        self.type = "TumblingWindowTrigger"  # type: str
+        self.type: str = "TumblingWindowTrigger"
         self.pipeline = pipeline
         self.frequency = frequency
         self.interval = interval
@@ -61756,8 +62193,8 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
         reference_trigger: "_models.TriggerReference",
         offset: Optional[str] = None,
         size: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword reference_trigger: Referenced trigger. Required.
         :paramtype reference_trigger: ~azure.mgmt.datafactory.models.TriggerReference
@@ -61769,7 +62206,7 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
         :paramtype size: str
         """
         super().__init__(reference_trigger=reference_trigger, **kwargs)
-        self.type = "TumblingWindowTriggerDependencyReference"  # type: str
+        self.type: str = "TumblingWindowTriggerDependencyReference"
         self.offset = offset
         self.size = size
 
@@ -61825,8 +62262,8 @@ class TwilioLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -61852,7 +62289,7 @@ class TwilioLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Twilio"  # type: str
+        self.type: str = "Twilio"
         self.user_name = user_name
         self.password = password
 
@@ -61898,8 +62335,8 @@ class TypeConversionSettings(_serialization.Model):
         date_time_offset_format: Optional[JSON] = None,
         time_span_format: Optional[JSON] = None,
         culture: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow_data_truncation: Whether to allow data truncation when converting the data.
          Type: boolean (or Expression with resultType boolean).
@@ -61930,7 +62367,8 @@ class TypeConversionSettings(_serialization.Model):
 
 
 class UntilActivity(ControlActivity):
-    """This activity executes inner activities until the specified boolean expression results to true or timeout is reached, whichever is earlier.
+    """This activity executes inner activities until the specified boolean expression results to true
+    or timeout is reached, whichever is earlier.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -61990,8 +62428,8 @@ class UntilActivity(ControlActivity):
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
         timeout: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62024,7 +62462,7 @@ class UntilActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Until"  # type: str
+        self.type: str = "Until"
         self.expression = expression
         self.timeout = timeout
         self.activities = activities
@@ -62046,7 +62484,7 @@ class UpdateIntegrationRuntimeNodeRequest(_serialization.Model):
         "concurrent_jobs_limit": {"key": "concurrentJobsLimit", "type": "int"},
     }
 
-    def __init__(self, *, concurrent_jobs_limit: Optional[int] = None, **kwargs):
+    def __init__(self, *, concurrent_jobs_limit: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword concurrent_jobs_limit: The number of concurrent jobs permitted to run on the
          integration runtime node. Values between 1 and maxConcurrentJobs(inclusive) are allowed.
@@ -62077,8 +62515,8 @@ class UpdateIntegrationRuntimeRequest(_serialization.Model):
         *,
         auto_update: Optional[Union[str, "_models.IntegrationRuntimeAutoUpdate"]] = None,
         update_delay_offset: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword auto_update: Enables or disables the auto-update feature of the self-hosted
          integration runtime. See https://go.microsoft.com/fwlink/?linkid=854189. Known values are: "On"
@@ -62128,8 +62566,8 @@ class UserAccessPolicy(_serialization.Model):
         profile_name: Optional[str] = None,
         start_time: Optional[str] = None,
         expire_time: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword permissions: The string with permissions for Data Plane access. Currently only 'r' is
          supported which grants read only access.
@@ -62176,7 +62614,7 @@ class UserProperty(_serialization.Model):
         "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(self, *, name: str, value: JSON, **kwargs):
+    def __init__(self, *, name: str, value: JSON, **kwargs: Any) -> None:
         """
         :keyword name: User property name. Required.
         :paramtype name: str
@@ -62259,8 +62697,8 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
         sleep: Optional[JSON] = None,
         minimum_size: Optional[JSON] = None,
         child_items: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62299,7 +62737,7 @@ class ValidationActivity(ControlActivity):  # pylint: disable=too-many-instance-
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Validation"  # type: str
+        self.type: str = "Validation"
         self.timeout = timeout
         self.sleep = sleep
         self.minimum_size = minimum_size
@@ -62327,7 +62765,9 @@ class VariableSpecification(_serialization.Model):
         "default_value": {"key": "defaultValue", "type": "object"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.VariableType"], default_value: Optional[JSON] = None, **kwargs):
+    def __init__(
+        self, *, type: Union[str, "_models.VariableType"], default_value: Optional[JSON] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Variable type. Required. Known values are: "String", "Bool", and "Array".
         :paramtype type: str or ~azure.mgmt.datafactory.models.VariableType
@@ -62395,8 +62835,8 @@ class VerticaLinkedService(LinkedService):
         connection_string: Optional[JSON] = None,
         pwd: Optional["_models.AzureKeyVaultSecretReference"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62427,7 +62867,7 @@ class VerticaLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Vertica"  # type: str
+        self.type: str = "Vertica"
         self.connection_string = connection_string
         self.pwd = pwd
         self.encrypted_credential = encrypted_credential
@@ -62493,8 +62933,8 @@ class VerticaSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62531,7 +62971,7 @@ class VerticaSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "VerticaSource"  # type: str
+        self.type: str = "VerticaSource"
         self.query = query
 
 
@@ -62607,8 +63047,8 @@ class VerticaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
         table_name: Optional[JSON] = None,
         table: Optional[JSON] = None,
         schema_type_properties_schema: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62651,7 +63091,7 @@ class VerticaTableDataset(Dataset):  # pylint: disable=too-many-instance-attribu
             folder=folder,
             **kwargs
         )
-        self.type = "VerticaTable"  # type: str
+        self.type: str = "VerticaTable"
         self.table_name = table_name
         self.table = table
         self.schema_type_properties_schema = schema_type_properties_schema
@@ -62704,8 +63144,8 @@ class WaitActivity(ControlActivity):
         description: Optional[str] = None,
         depends_on: Optional[List["_models.ActivityDependency"]] = None,
         user_properties: Optional[List["_models.UserProperty"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62729,7 +63169,7 @@ class WaitActivity(ControlActivity):
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "Wait"  # type: str
+        self.type: str = "Wait"
         self.wait_time_in_seconds = wait_time_in_seconds
 
 
@@ -62826,8 +63266,8 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
         datasets: Optional[List["_models.DatasetReference"]] = None,
         linked_services: Optional[List["_models.LinkedServiceReference"]] = None,
         connect_via: Optional["_models.IntegrationRuntimeReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -62878,7 +63318,7 @@ class WebActivity(ExecutionActivity):  # pylint: disable=too-many-instance-attri
             policy=policy,
             **kwargs
         )
-        self.type = "WebActivity"  # type: str
+        self.type: str = "WebActivity"
         self.method = method
         self.url = url
         self.headers = headers
@@ -62933,8 +63373,8 @@ class WebActivityAuthentication(_serialization.Model):
         resource: Optional[JSON] = None,
         user_tenant: Optional[JSON] = None,
         credential: Optional["_models.CredentialReference"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Web activity authentication (Basic/ClientCertificate/MSI/ServicePrincipal).
         :paramtype type: str
@@ -62967,7 +63407,8 @@ class WebActivityAuthentication(_serialization.Model):
 
 
 class WebLinkedServiceTypeProperties(_serialization.Model):
-    """Base definition of WebLinkedServiceTypeProperties, this typeProperties is polymorphic based on authenticationType, so not flattened in SDK models.
+    """Base definition of WebLinkedServiceTypeProperties, this typeProperties is polymorphic based on
+    authenticationType, so not flattened in SDK models.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     WebAnonymousAuthentication, WebBasicAuthentication, WebClientCertificateAuthentication
@@ -63000,7 +63441,7 @@ class WebLinkedServiceTypeProperties(_serialization.Model):
         }
     }
 
-    def __init__(self, *, url: JSON, **kwargs):
+    def __init__(self, *, url: JSON, **kwargs: Any) -> None:
         """
         :keyword url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type:
          string (or Expression with resultType string). Required.
@@ -63008,7 +63449,7 @@ class WebLinkedServiceTypeProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.url = url
-        self.authentication_type = None  # type: Optional[str]
+        self.authentication_type: Optional[str] = None
 
 
 class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
@@ -63034,14 +63475,14 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
         "authentication_type": {"key": "authenticationType", "type": "str"},
     }
 
-    def __init__(self, *, url: JSON, **kwargs):
+    def __init__(self, *, url: JSON, **kwargs: Any) -> None:
         """
         :keyword url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type:
          string (or Expression with resultType string). Required.
         :paramtype url: JSON
         """
         super().__init__(url=url, **kwargs)
-        self.authentication_type = "Anonymous"  # type: str
+        self.authentication_type: str = "Anonymous"
 
 
 class WebBasicAuthentication(WebLinkedServiceTypeProperties):
@@ -63076,7 +63517,7 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
         "password": {"key": "password", "type": "SecretBase"},
     }
 
-    def __init__(self, *, url: JSON, username: JSON, password: "_models.SecretBase", **kwargs):
+    def __init__(self, *, url: JSON, username: JSON, password: "_models.SecretBase", **kwargs: Any) -> None:
         """
         :keyword url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type:
          string (or Expression with resultType string). Required.
@@ -63088,13 +63529,15 @@ class WebBasicAuthentication(WebLinkedServiceTypeProperties):
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
         """
         super().__init__(url=url, **kwargs)
-        self.authentication_type = "Basic"  # type: str
+        self.authentication_type: str = "Basic"
         self.username = username
         self.password = password
 
 
 class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
-    """A WebLinkedService that uses client certificate based authentication to communicate with an HTTP endpoint. This scheme follows mutual authentication; the server must also provide valid credentials to the client.
+    """A WebLinkedService that uses client certificate based authentication to communicate with an
+    HTTP endpoint. This scheme follows mutual authentication; the server must also provide valid
+    credentials to the client.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -63124,7 +63567,7 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
         "password": {"key": "password", "type": "SecretBase"},
     }
 
-    def __init__(self, *, url: JSON, pfx: "_models.SecretBase", password: "_models.SecretBase", **kwargs):
+    def __init__(self, *, url: JSON, pfx: "_models.SecretBase", password: "_models.SecretBase", **kwargs: Any) -> None:
         """
         :keyword url: The URL of the web service endpoint, e.g. https://www.microsoft.com . Type:
          string (or Expression with resultType string). Required.
@@ -63135,7 +63578,7 @@ class WebClientCertificateAuthentication(WebLinkedServiceTypeProperties):
         :paramtype password: ~azure.mgmt.datafactory.models.SecretBase
         """
         super().__init__(url=url, **kwargs)
-        self.authentication_type = "ClientCertificate"  # type: str
+        self.authentication_type: str = "ClientCertificate"
         self.pfx = pfx
         self.password = password
 
@@ -63221,8 +63664,8 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
         body: Optional[JSON] = None,
         authentication: Optional["_models.WebActivityAuthentication"] = None,
         report_status_on_call_back: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -63267,7 +63710,7 @@ class WebHookActivity(ControlActivity):  # pylint: disable=too-many-instance-att
             user_properties=user_properties,
             **kwargs
         )
-        self.type = "WebHook"  # type: str
+        self.type: str = "WebHook"
         self.method = method
         self.url = url
         self.timeout = timeout
@@ -63323,8 +63766,8 @@ class WebLinkedService(LinkedService):
         description: Optional[str] = None,
         parameters: Optional[Dict[str, "_models.ParameterSpecification"]] = None,
         annotations: Optional[List[JSON]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -63348,7 +63791,7 @@ class WebLinkedService(LinkedService):
             annotations=annotations,
             **kwargs
         )
-        self.type = "Web"  # type: str
+        self.type: str = "Web"
         self.type_properties = type_properties
 
 
@@ -63402,8 +63845,8 @@ class WebSource(CopySource):
         max_concurrent_connections: Optional[JSON] = None,
         disable_metrics_collection: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -63432,7 +63875,7 @@ class WebSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "WebSource"  # type: str
+        self.type: str = "WebSource"
         self.additional_columns = additional_columns
 
 
@@ -63504,8 +63947,8 @@ class WebTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         path: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -63545,7 +63988,7 @@ class WebTableDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "WebTable"  # type: str
+        self.type: str = "WebTable"
         self.index = index
         self.path = path
 
@@ -63595,8 +64038,8 @@ class WranglingDataFlow(DataFlow):
         sources: Optional[List["_models.PowerQuerySource"]] = None,
         script: Optional[str] = None,
         document_locale: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the data flow.
         :paramtype description: str
@@ -63613,7 +64056,7 @@ class WranglingDataFlow(DataFlow):
         :paramtype document_locale: str
         """
         super().__init__(description=description, annotations=annotations, folder=folder, **kwargs)
-        self.type = "WranglingDataFlow"  # type: str
+        self.type: str = "WranglingDataFlow"
         self.sources = sources
         self.script = script
         self.document_locale = document_locale
@@ -63701,8 +64144,8 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -63750,7 +64193,7 @@ class XeroLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
             annotations=annotations,
             **kwargs
         )
-        self.type = "Xero"  # type: str
+        self.type: str = "Xero"
         self.connection_properties = connection_properties
         self.host = host
         self.consumer_key = consumer_key
@@ -63822,8 +64265,8 @@ class XeroObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -63859,7 +64302,7 @@ class XeroObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "XeroObject"  # type: str
+        self.type: str = "XeroObject"
         self.table_name = table_name
 
 
@@ -63923,8 +64366,8 @@ class XeroSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -63961,7 +64404,7 @@ class XeroSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "XeroSource"  # type: str
+        self.type: str = "XeroSource"
         self.query = query
 
 
@@ -64042,8 +64485,8 @@ class XmlDataset(Dataset):  # pylint: disable=too-many-instance-attributes
         encoding_name: Optional[JSON] = None,
         null_value: Optional[JSON] = None,
         compression: Optional["_models.DatasetCompression"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64090,7 +64533,7 @@ class XmlDataset(Dataset):  # pylint: disable=too-many-instance-attributes
             folder=folder,
             **kwargs
         )
-        self.type = "Xml"  # type: str
+        self.type: str = "Xml"
         self.location = location
         self.encoding_name = encoding_name
         self.null_value = null_value
@@ -64148,8 +64591,8 @@ class XmlReadSettings(FormatReadSettings):
         detect_data_type: Optional[JSON] = None,
         namespaces: Optional[JSON] = None,
         namespace_prefixes: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64172,7 +64615,7 @@ class XmlReadSettings(FormatReadSettings):
         :paramtype namespace_prefixes: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "XmlReadSettings"  # type: str
+        self.type: str = "XmlReadSettings"
         self.compression_properties = compression_properties
         self.validation_mode = validation_mode
         self.detect_data_type = detect_data_type
@@ -64238,8 +64681,8 @@ class XmlSource(CopySource):
         store_settings: Optional["_models.StoreReadSettings"] = None,
         format_settings: Optional["_models.XmlReadSettings"] = None,
         additional_columns: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64272,7 +64715,7 @@ class XmlSource(CopySource):
             disable_metrics_collection=disable_metrics_collection,
             **kwargs
         )
-        self.type = "XmlSource"  # type: str
+        self.type: str = "XmlSource"
         self.store_settings = store_settings
         self.format_settings = format_settings
         self.additional_columns = additional_columns
@@ -64350,8 +64793,8 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
         password: Optional["_models.SecretBase"] = None,
         api_token: Optional["_models.SecretBase"] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64390,7 +64833,7 @@ class ZendeskLinkedService(LinkedService):  # pylint: disable=too-many-instance-
             annotations=annotations,
             **kwargs
         )
-        self.type = "Zendesk"  # type: str
+        self.type: str = "Zendesk"
         self.authentication_type = authentication_type
         self.url = url
         self.user_name = user_name
@@ -64429,8 +64872,8 @@ class ZipDeflateReadSettings(CompressionReadSettings):
         *,
         additional_properties: Optional[Dict[str, JSON]] = None,
         preserve_zip_file_name_as_folder: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64440,7 +64883,7 @@ class ZipDeflateReadSettings(CompressionReadSettings):
         :paramtype preserve_zip_file_name_as_folder: JSON
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
-        self.type = "ZipDeflateReadSettings"  # type: str
+        self.type: str = "ZipDeflateReadSettings"
         self.preserve_zip_file_name_as_folder = preserve_zip_file_name_as_folder
 
 
@@ -64520,8 +64963,8 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
         use_host_verification: Optional[JSON] = None,
         use_peer_verification: Optional[JSON] = None,
         encrypted_credential: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64564,7 +65007,7 @@ class ZohoLinkedService(LinkedService):  # pylint: disable=too-many-instance-att
             annotations=annotations,
             **kwargs
         )
-        self.type = "Zoho"  # type: str
+        self.type: str = "Zoho"
         self.connection_properties = connection_properties
         self.endpoint = endpoint
         self.access_token = access_token
@@ -64635,8 +65078,8 @@ class ZohoObjectDataset(Dataset):
         annotations: Optional[List[JSON]] = None,
         folder: Optional["_models.DatasetFolder"] = None,
         table_name: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64672,7 +65115,7 @@ class ZohoObjectDataset(Dataset):
             folder=folder,
             **kwargs
         )
-        self.type = "ZohoObject"  # type: str
+        self.type: str = "ZohoObject"
         self.table_name = table_name
 
 
@@ -64736,8 +65179,8 @@ class ZohoSource(TabularSource):
         query_timeout: Optional[JSON] = None,
         additional_columns: Optional[JSON] = None,
         query: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -64774,5 +65217,5 @@ class ZohoSource(TabularSource):
             additional_columns=additional_columns,
             **kwargs
         )
-        self.type = "ZohoSource"  # type: str
+        self.type: str = "ZohoSource"
         self.query = query

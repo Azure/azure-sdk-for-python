@@ -5,7 +5,20 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Iterable,
+    Iterator,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+    Dict,
+)
+from datetime import timezone
+
+TZ_UTC = timezone.utc
 
 
 class _FixedOffset(datetime.tzinfo):
@@ -32,14 +45,6 @@ class _FixedOffset(datetime.tzinfo):
         return datetime.timedelta(0)
 
 
-try:
-    from datetime import timezone
-
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = _FixedOffset(0)  # type: ignore
-
-
 def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
     Check https://tools.ietf.org/html/rfc3339#section-5.8 for examples.
@@ -54,7 +59,7 @@ def _convert_to_isoformat(date_time):
         sign, offset = date_time[-6], date_time[-5:]
         delta = int(sign + offset[:1]) * 60 + int(sign + offset[-2:])
 
-    check_decimal = timestamp.split('.')
+    check_decimal = timestamp.split(".")
     if len(check_decimal) > 1:
         decimal_str = ""
         for digit in check_decimal[1]:
@@ -68,10 +73,7 @@ def _convert_to_isoformat(date_time):
     if delta == 0:
         tzinfo = TZ_UTC
     else:
-        try:
-            tzinfo = datetime.timezone(datetime.timedelta(minutes=delta))
-        except AttributeError:
-            tzinfo = _FixedOffset(delta)
+        tzinfo = timezone(datetime.timedelta(minutes=delta))
 
     try:
         deserialized = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f")
@@ -81,6 +83,7 @@ def _convert_to_isoformat(date_time):
     deserialized = deserialized.replace(tzinfo=tzinfo)
     return deserialized
 
+
 def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     """Return a case-insensitive mutable mapping from an inputted mapping structure.
 
@@ -88,6 +91,7 @@ def case_insensitive_dict(*args: Any, **kwargs: Any) -> MutableMapping:
     :rtype: ~collections.abc.MutableMapping
     """
     return CaseInsensitiveDict(*args, **kwargs)
+
 
 class CaseInsensitiveDict(MutableMapping[str, Any]):
     """
@@ -101,9 +105,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
     """
 
     def __init__(
-        self,
-        data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None,
-        **kwargs: Any
+        self, data: Optional[Union[Mapping[str, Any], Iterable[Tuple[str, Any]]]] = None, **kwargs: Any
     ) -> None:
         self._store: Dict[str, Any] = {}
         if data is None:
@@ -133,9 +135,7 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
         return len(self._store)
 
     def lowerkey_items(self):
-        return (
-            (lower_case_key, pair[1]) for lower_case_key, pair in self._store.items()
-        )
+        return ((lower_case_key, pair[1]) for lower_case_key, pair in self._store.items())
 
     def __eq__(self, other: Any) -> bool:
         if isinstance(other, Mapping):

@@ -18,14 +18,14 @@ parameters:
   type: boolean
   default: false
 
-stages:
-  - template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      # Skip emulator tests in the CI run
-      TestMarkArgument: not cosmosEmulator
-      InjectedPackages: ${{parameters.InjectedPackages}}
-      Artifacts: ${{parameters.Artifacts}}
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: ${{ parameters.ServiceDirectory }}
+    # Skip emulator tests in the CI run
+    TestMarkArgument: not cosmosEmulator
+    InjectedPackages: ${{parameters.InjectedPackages}}
+    Artifacts: ${{parameters.Artifacts}}
 
 #  - stage: Test_Emulator
 #    dependsOn: []
@@ -34,7 +34,7 @@ stages:
 #      strategy:
 #        matrix:
 #          Windows_Python36:
-#            OSVmImage: 'windows-2019'
+#            OSVmImage: 'windows-2022'
 #            PythonVersion: '3.6'
 #      pool:
 #        vmImage: $(OSVmImage)

@@ -2,12 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Dict
 
 from .._internal import InteractiveCredential, wrap_exceptions
-
-if TYPE_CHECKING:
-    from typing import Any, List
 
 
 class UsernamePasswordCredential(InteractiveCredential):
@@ -37,14 +34,22 @@ class UsernamePasswordCredential(InteractiveCredential):
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
+    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
+        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
+        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam
+        for more WAM information.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, client_id, username, password, **kwargs):
-        # type: (str, str, str, Any) -> None
-
+    def __init__(
+            self,
+            client_id: str,
+            username: str,
+            password: str,
+            **kwargs: Any
+    ) -> None:
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
@@ -55,8 +60,7 @@ class UsernamePasswordCredential(InteractiveCredential):
         self._password = password
 
     @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> dict
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
         app = self._get_app(**kwargs)
         return app.acquire_token_by_username_password(
             username=self._username,

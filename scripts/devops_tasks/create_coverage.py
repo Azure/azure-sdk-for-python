@@ -18,7 +18,7 @@ from common_tasks import run_check_call
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-coverage_dir = os.path.join(root_dir, "_all_coverage_files/")
+coverage_dir = os.path.join(root_dir, "_coverage/")
 
 
 def collect_tox_coverage_files():
@@ -26,7 +26,6 @@ def collect_tox_coverage_files():
     run(coverage_version_cmd, cwd=root_dir)
 
     logging.info("Running collect tox coverage files...")
-    root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
     coverage_files = []
     for root, _, files in os.walk(coverage_dir):

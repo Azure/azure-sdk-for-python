@@ -6,45 +6,34 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccumulatedType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Show costs accumulated over time.
-    """
+class AccumulatedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Show costs accumulated over time."""
 
     TRUE = "true"
     FALSE = "false"
 
-class AlertCategory(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Alert category
-    """
+
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
+class AlertCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Alert category."""
 
     COST = "Cost"
     USAGE = "Usage"
     BILLING = "Billing"
     SYSTEM = "System"
 
-class AlertCriteria(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Criteria that triggered alert
-    """
+
+class AlertCriteria(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Criteria that triggered alert."""
 
     COST_THRESHOLD_EXCEEDED = "CostThresholdExceeded"
     USAGE_THRESHOLD_EXCEEDED = "UsageThresholdExceeded"
@@ -61,9 +50,9 @@ class AlertCriteria(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CROSS_CLOUD_COLLECTION_ERROR = "CrossCloudCollectionError"
     GENERAL_THRESHOLD_ERROR = "GeneralThresholdError"
 
-class AlertOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """operator used to compare currentSpend with amount
-    """
+
+class AlertOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """operator used to compare currentSpend with amount."""
 
     NONE = "None"
     EQUAL_TO = "EqualTo"
@@ -72,16 +61,16 @@ class AlertOperator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL_TO = "LessThanOrEqualTo"
 
-class AlertSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Source of alert
-    """
+
+class AlertSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source of alert."""
 
     PRESET = "Preset"
     USER = "User"
 
-class AlertStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """alert status
-    """
+
+class AlertStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """alert status."""
 
     NONE = "None"
     ACTIVE = "Active"
@@ -89,9 +78,9 @@ class AlertStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESOLVED = "Resolved"
     DISMISSED = "Dismissed"
 
-class AlertTimeGrainType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of timegrain cadence
-    """
+
+class AlertTimeGrainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of timegrain cadence."""
 
     NONE = "None"
     MONTHLY = "Monthly"
@@ -101,9 +90,9 @@ class AlertTimeGrainType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     BILLING_QUARTER = "BillingQuarter"
     BILLING_ANNUAL = "BillingAnnual"
 
-class AlertType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """type of alert
-    """
+
+class AlertType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """type of alert."""
 
     BUDGET = "Budget"
     INVOICE = "Invoice"
@@ -113,9 +102,20 @@ class AlertType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     X_CLOUD = "xCloud"
     BUDGET_FORECAST = "BudgetForecast"
 
-class ChartType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Chart type of the main view in Cost Analysis. Required.
-    """
+
+class BenefitKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind/type of the benefit."""
+
+    #: Benefit is IncludedQuantity.
+    INCLUDED_QUANTITY = "IncludedQuantity"
+    #: Benefit is Reservation.
+    RESERVATION = "Reservation"
+    #: Benefit is SavingsPlan.
+    SAVINGS_PLAN = "SavingsPlan"
+
+
+class ChartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Chart type of the main view in Cost Analysis. Required."""
 
     AREA = "Area"
     LINE = "Line"
@@ -123,9 +123,64 @@ class ChartType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GROUPED_COLUMN = "GroupedColumn"
     TABLE = "Table"
 
-class ExecutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the export execution.
-    """
+
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+
+class CostDetailsDataFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The data format of the report."""
+
+    #: Csv data format.
+    CSV_COST_DETAILS_DATA_FORMAT = "Csv"
+
+
+class CostDetailsMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the detailed report. By default ActualCost is provided."""
+
+    #: Actual cost data.
+    ACTUAL_COST_COST_DETAILS_METRIC_TYPE = "ActualCost"
+    #: Amortized cost data.
+    AMORTIZED_COST_COST_DETAILS_METRIC_TYPE = "AmortizedCost"
+
+
+class CostDetailsStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the cost details operation."""
+
+    #: Operation is Completed.
+    COMPLETED_COST_DETAILS_STATUS_TYPE = "Completed"
+    #: Operation is Completed and no cost data found.
+    NO_DATA_FOUND_COST_DETAILS_STATUS_TYPE = "NoDataFound"
+    #: Operation Failed.
+    FAILED_COST_DETAILS_STATUS_TYPE = "Failed"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Days of Week."""
+
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+    SUNDAY = "Sunday"
+
+
+class ExecutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The last known status of the export run."""
 
     QUEUED = "Queued"
     IN_PROGRESS = "InProgress"
@@ -135,142 +190,225 @@ class ExecutionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     NEW_DATA_NOT_AVAILABLE = "NewDataNotAvailable"
     DATA_NOT_AVAILABLE = "DataNotAvailable"
 
-class ExecutionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the export execution.
-    """
+
+class ExecutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the export run."""
 
     ON_DEMAND = "OnDemand"
     SCHEDULED = "Scheduled"
 
-class ExportType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the query.
-    """
+
+class ExportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the query."""
 
     USAGE = "Usage"
     ACTUAL_COST = "ActualCost"
     AMORTIZED_COST = "AmortizedCost"
 
-class ExternalCloudProviderType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ExternalCloudProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ExternalCloudProviderType."""
 
     EXTERNAL_SUBSCRIPTIONS = "externalSubscriptions"
     EXTERNAL_BILLING_ACCOUNTS = "externalBillingAccounts"
 
-class ForecastTimeframeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The time frame for pulling data for the forecast. If custom, then a specific time period must
-    be provided.
-    """
 
-    MONTH_TO_DATE = "MonthToDate"
-    BILLING_MONTH_TO_DATE = "BillingMonthToDate"
-    THE_LAST_MONTH = "TheLastMonth"
-    THE_LAST_BILLING_MONTH = "TheLastBillingMonth"
-    WEEK_TO_DATE = "WeekToDate"
+class FileFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Destination of the view data. Currently only CSV format is supported."""
+
+    CSV = "Csv"
+
+
+class ForecastOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operator to use for comparison."""
+
+    IN = "In"
+
+
+class ForecastTimeframe(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The time frame for pulling data for the forecast."""
+
     CUSTOM = "Custom"
 
-class ForecastType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the forecast.
-    """
+
+class ForecastType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the forecast."""
 
     USAGE = "Usage"
     ACTUAL_COST = "ActualCost"
     AMORTIZED_COST = "AmortizedCost"
 
-class FormatType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The format of the export being delivered.
-    """
+
+class FormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of the export being delivered. Currently only 'Csv' is supported."""
 
     CSV = "Csv"
 
-class FunctionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the aggregation function to use.
-    """
 
-    AVG = "Avg"
-    MAX = "Max"
-    MIN = "Min"
+class FunctionName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the column to aggregate."""
+
+    PRE_TAX_COST_USD = "PreTaxCostUSD"
+    COST = "Cost"
+    COST_USD = "CostUSD"
+    PRE_TAX_COST = "PreTaxCost"
+
+
+class FunctionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the aggregation function to use."""
+
     SUM = "Sum"
 
-class GranularityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The granularity of rows in the query.
-    """
+
+class GenerateDetailedCostReportMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the detailed report. By default ActualCost is provided."""
+
+    ACTUAL_COST = "ActualCost"
+    AMORTIZED_COST = "AmortizedCost"
+
+
+class Grain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Grain which corresponds to value."""
+
+    #: Hourly grain corresponds to value per hour.
+    HOURLY = "Hourly"
+    #: Hourly grain corresponds to value per day.
+    DAILY = "Daily"
+    #: Hourly grain corresponds to value per month.
+    MONTHLY = "Monthly"
+
+
+class GrainParameter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """GrainParameter."""
+
+    #: Hourly grain corresponds to value per hour.
+    HOURLY = "Hourly"
+    #: Hourly grain corresponds to value per day.
+    DAILY = "Daily"
+    #: Hourly grain corresponds to value per month.
+    MONTHLY = "Monthly"
+
+
+class GranularityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The granularity of rows in the forecast."""
 
     DAILY = "Daily"
 
-class KpiType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """KPI type (Forecast, Budget).
-    """
+
+class KpiType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KPI type (Forecast, Budget)."""
 
     FORECAST = "Forecast"
     BUDGET = "Budget"
 
-class MetricType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Metric to use when displaying costs.
-    """
+
+class LookBackPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The number of days used to look back."""
+
+    #: 7 days used to look back.
+    LAST7_DAYS = "Last7Days"
+    #: 30 days used to look back.
+    LAST30_DAYS = "Last30Days"
+    #: 60 days used to look back.
+    LAST60_DAYS = "Last60Days"
+
+
+class MetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Metric to use when displaying costs."""
 
     ACTUAL_COST = "ActualCost"
     AMORTIZED_COST = "AmortizedCost"
     AHUB = "AHUB"
 
-class OperationStatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the long running operation.
-    """
+
+class OperationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the long running operation."""
 
     RUNNING = "Running"
     COMPLETED = "Completed"
     FAILED = "Failed"
 
-class OperatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operator to use for comparison.
-    """
 
-    IN_ENUM = "In"
+class OperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operator to use for comparison."""
+
+    IN = "In"
     CONTAINS = "Contains"
 
-class PivotType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Data type to show in view.
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
     """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
+class PivotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Data type to show in view."""
 
     DIMENSION = "Dimension"
     TAG_KEY = "TagKey"
 
-class QueryColumnType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the column in the export.
-    """
+
+class QueryColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the column in the export."""
 
     TAG = "Tag"
     DIMENSION = "Dimension"
 
-class RecurrenceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The schedule recurrence.
-    """
+
+class QueryOperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operator to use for comparison."""
+
+    IN = "In"
+
+
+class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The schedule recurrence."""
 
     DAILY = "Daily"
     WEEKLY = "Weekly"
     MONTHLY = "Monthly"
     ANNUALLY = "Annually"
 
-class ReportConfigColumnType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the column in the report.
-    """
+
+class ReportConfigColumnType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the column in the report."""
 
     TAG = "Tag"
     DIMENSION = "Dimension"
 
-class ReportConfigSortingDirection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Direction of sort.
-    """
+
+class ReportConfigSortingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of sort."""
 
     ASCENDING = "Ascending"
     DESCENDING = "Descending"
 
-class ReportGranularityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The granularity of rows in the report.
-    """
+
+class ReportGranularityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The granularity of rows in the report."""
 
     DAILY = "Daily"
     MONTHLY = "Monthly"
 
-class ReportTimeframeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReportOperationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the long running operation."""
+
+    IN_PROGRESS = "InProgress"
+    COMPLETED = "Completed"
+    FAILED = "Failed"
+    QUEUED = "Queued"
+    NO_DATA_FOUND = "NoDataFound"
+    READY_TO_DOWNLOAD = "ReadyToDownload"
+    TIMED_OUT = "TimedOut"
+
+
+class ReportTimeframeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The time frame for pulling data for the report. If custom, then a specific time period must be
     provided.
     """
@@ -280,7 +418,8 @@ class ReportTimeframeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     YEAR_TO_DATE = "YearToDate"
     CUSTOM = "Custom"
 
-class ReportType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReportType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the report. Usage represents actual usage, forecast represents forecasted data and
     UsageAndForecast represents both usage and forecasted data. Actual usage and forecasted data
     can be differentiated based on dates.
@@ -288,24 +427,83 @@ class ReportType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
     USAGE = "Usage"
 
-class SettingsPropertiesStartOn(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates what scope Cost Management in the Azure portal should default to. Allowed values:
-    LastUsed.
+
+class ReservationReportSchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The CSV file from the reportUrl blob link consists of reservation usage data with the following
+    schema at daily granularity.
     """
 
-    LAST_USED = "LastUsed"
-    SCOPE_PICKER = "ScopePicker"
-    SPECIFIC_SCOPE = "SpecificScope"
+    INSTANCE_FLEXIBILITY_GROUP = "InstanceFlexibilityGroup"
+    INSTANCE_FLEXIBILITY_RATIO = "InstanceFlexibilityRatio"
+    INSTANCE_ID = "InstanceId"
+    KIND = "Kind"
+    RESERVATION_ID = "ReservationId"
+    RESERVATION_ORDER_ID = "ReservationOrderId"
+    RESERVED_HOURS = "ReservedHours"
+    SKU_NAME = "SkuName"
+    TOTAL_RESERVED_QUANTITY = "TotalReservedQuantity"
+    USAGE_DATE = "UsageDate"
+    USED_HOURS = "UsedHours"
 
-class StatusType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the schedule. Whether active or not. If inactive, the export's scheduled
-    execution is paused.
-    """
+
+class ScheduledActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the scheduled action."""
+
+    #: Cost analysis data will be emailed.
+    EMAIL = "Email"
+    #: Cost anomaly information will be emailed. Available only on subscription scope at daily
+    #: frequency. If no anomaly is detected on the resource, an email won't be sent.
+    INSIGHT_ALERT = "InsightAlert"
+
+
+class ScheduledActionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the scheduled action."""
+
+    #: Scheduled action is saved but will not be run.
+    DISABLED = "Disabled"
+    #: Scheduled action is saved and will be run.
+    ENABLED = "Enabled"
+    #: Scheduled action is expired.
+    EXPIRED = "Expired"
+
+
+class ScheduleFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Frequency of the schedule."""
+
+    #: Cost analysis data will be emailed every day.
+    DAILY = "Daily"
+    #: Cost analysis data will be emailed every week.
+    WEEKLY = "Weekly"
+    #: Cost analysis data will be emailed every month.
+    MONTHLY = "Monthly"
+
+
+class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the recommendation scope."""
+
+    #: Single scope recommendation.
+    SINGLE = "Single"
+    #: Shared scope recommendation.
+    SHARED = "Shared"
+
+
+class StatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the export's schedule. If 'Inactive', the export's schedule is paused."""
 
     ACTIVE = "Active"
     INACTIVE = "Inactive"
 
-class TimeframeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class Term(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Grain which corresponds to value."""
+
+    #: Benefit term is 1 year.
+    P1_Y = "P1Y"
+    #: Benefit term is 3 years.
+    P3_Y = "P3Y"
+
+
+class TimeframeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The time frame for pulling data for the query. If custom, then a specific time period must be
     provided.
     """
@@ -316,3 +514,13 @@ class TimeframeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     THE_LAST_BILLING_MONTH = "TheLastBillingMonth"
     WEEK_TO_DATE = "WeekToDate"
     CUSTOM = "Custom"
+
+
+class WeeksOfMonth(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Weeks of month."""
+
+    FIRST = "First"
+    SECOND = "Second"
+    THIRD = "Third"
+    FOURTH = "Fourth"
+    LAST = "Last"

@@ -1,12 +1,36 @@
 # Release History
-## 1.1.0b3 (Unreleased)
-- Users can now manage SIP configuration for Direct routing.
+
+## 1.1.0 (2023-03-28)
 
 ### Features Added
-- Added new SIP routing client for handling Direct routing numbers.
+- API version `2022-12-01` is now the default for Phone Numbers clients.
+- Added support for SIP routing API version `2023-03-01`, releasing SIP routing functionality from public preview to GA.
+- Added environment variable `AZURE_TEST_DOMAIN` for SIP routing tests to support domain verification.
+
+### Bugs Fixed
+- Adds missing API version `2022-12-01` to the list of supported API versions.
 
 ### Other Changes
-Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+- Changed list_routes and list_trunks functions on SIP routing client to return (Async)ItemPaged object.
+
+## 1.1.0b3 (2023-01-10)
+- Users can now manage SIP configuration for Direct routing.
+- Adds support for Azure Communication Services Phone Numbers Browse API Methods.
+
+### Features Added
+- Added support for API version `2022-12-01`, giving users the ability to:
+  - Get all supported countries
+  - Get all supported localities given a country code.
+  - Get all area codes from a given country code / locality.
+  - Get all offerings from a given country code.
+- Added new SIP routing client for handling Direct routing numbers.
+- Added the ability specify the API version by an optional `api_version` keyword parameter.
+
+### Other Changes
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+- Updated the default polling interval to 2 seconds, it can still be overwritten by using the keyword argument "polling_interval".
+- Trying to update capabilities with empty phone number will throw `ValueError`. Prior to this change, the client would make an HTTP request that would always fail.
+- Migrated tests from vcrpy to test proxy.
 
 ## 1.1.0b2 (2022-03-30)
 

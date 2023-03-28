@@ -23,29 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-try:
-    from ._rest_py3 import (
-        HttpRequest,
-        HttpResponse,
-    )
-except (SyntaxError, ImportError):
-    from ._rest import (  # type: ignore
-        HttpRequest,
-        HttpResponse,
-    )
+from ._rest_py3 import (
+    HttpRequest,
+    HttpResponse,
+    AsyncHttpResponse,
+)
 
 __all__ = [
     "HttpRequest",
     "HttpResponse",
+    "AsyncHttpResponse",
 ]
-
-try:
-    from ._rest_py3 import (  # pylint: disable=unused-import
-        AsyncHttpResponse,
-    )
-    __all__.extend([
-        "AsyncHttpResponse",
-    ])
-
-except (SyntaxError, ImportError):
-    pass

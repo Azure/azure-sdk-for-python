@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0b1 (2022-11-22)
+
+### Features Added
+
+  - Added operation PoliciesOperations.begin_update
+  - Model FrontDoor has a new parameter extended_properties
+  - Model FrontDoorProperties has a new parameter extended_properties
+
 ## 1.0.1 (2022-03-29)
 
 **Fixes**

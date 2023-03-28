@@ -1,0 +1,12 @@
+display_name: valid_pipeline
+type: pipeline
+jobs:
+  body:
+    type: command
+    component: ../../../components/helloworld_component.yml
+  parallelfor:
+    type: parallel_for
+    items: '[{"component_in_number": ]'
+    body: ${{parent.jobs.body}}
+settings:
+  default_compute: azureml:cpu-cluster

@@ -60,14 +60,12 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
     :keyword callback raw_response_hook: Callback function. Will be invoked on response.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=unused-argument
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
         self._sync_tokens = {}  # type: Dict[str, Any]
         self._lock = Lock()
 
-    def on_request(self, request):  # type: ignore # pylint: disable=arguments-differ
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:  # type: ignore # pylint: disable=arguments-differ
         """This is executed before sending the request to the next policy.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
@@ -79,8 +77,7 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
                     {self._sync_token_header: sync_token_header}
                 )
 
-    def on_response(self, request, response):  # type: ignore # pylint: disable=arguments-differ
-        # type: (PipelineRequest, PipelineResponse) -> None
+    def on_response(self, request: PipelineRequest, response: PipelineResponse) -> None:  # type: ignore # pylint: disable=arguments-differ
         """This is executed after the request comes back from the policy.
         :param request: The PipelineRequest object.
         :type request: ~azure.core.pipeline.PipelineRequest
@@ -97,15 +94,13 @@ class SyncTokenPolicy(SansIOHTTPPolicy):
             sync_token = SyncToken.from_sync_token_string(sync_token_string)
             self._update_sync_token(sync_token)
 
-    def add_token(self, full_raw_tokens):
-        # type: (str) -> None
+    def add_token(self, full_raw_tokens: str) -> None:
         raw_tokens = full_raw_tokens.split(",")
         for raw_token in raw_tokens:
             sync_token = SyncToken.from_sync_token_string(raw_token)
             self._update_sync_token(sync_token)
 
-    def _update_sync_token(self, sync_token):
-        # type: (SyncToken) -> None
+    def _update_sync_token(self, sync_token: SyncToken) -> None:
         if not sync_token:
             return
         with self._lock:

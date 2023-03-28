@@ -4,7 +4,7 @@
 # ------------------------------------
 import abc
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from msal import TokenCache
 import six
@@ -12,28 +12,21 @@ import six
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
+from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpRequest
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, Union
-    from azure.core.pipeline import PipelineResponse
-    from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
-    from azure.core.pipeline.transport import HttpRequest
-
-    PolicyType = Union[HTTPPolicy, SansIOHTTPPolicy]
-
-
-class ManagedIdentityClientBase(ABC):
+class ManagedIdentityClientBase(abc.ABC):
     # pylint:disable=missing-client-constructor-parameter-credential
-    def __init__(self, request_factory, client_id=None, identity_config=None, **kwargs):
-        # type: (Callable[[str, dict], HttpRequest], Optional[str], Optional[Dict], **Any) -> None
+    def __init__(
+        self,
+        request_factory: Callable[[str, dict], HttpRequest],
+        client_id: Optional[str] = None,
+        identity_config: Optional[Dict] = None,
+        **kwargs: Any
+    ) -> None:
         self._cache = kwargs.pop("_cache", None) or TokenCache()
         self._content_callback = kwargs.pop("_content_callback", None)
         self._identity_config = identity_config or {}
@@ -42,9 +35,7 @@ class ManagedIdentityClientBase(ABC):
         self._pipeline = self._build_pipeline(**kwargs)
         self._request_factory = request_factory
 
-    def _process_response(self, response, request_time):
-        # type: (PipelineResponse, int) -> AccessToken
-
+    def _process_response(self, response: PipelineResponse, request_time: int) -> AccessToken:
         content = response.context.get(ContentDecodePolicy.CONTEXT_NAME)
         if not content:
             try:
@@ -73,6 +64,11 @@ class ManagedIdentityClientBase(ABC):
 
         expires_on = int(content.get("expires_on") or int(content["expires_in"]) + request_time)
         content["expires_on"] = expires_on
+        if "refresh_in" not in content:
+            refresh_in = expires_on - request_time
+            if refresh_in >= 60 * 60 * 2:  # 2 hours
+                refresh_in = int(refresh_in / 2)
+            content["refresh_in"] = refresh_in
 
         token = AccessToken(content["access_token"], content["expires_on"])
 
@@ -84,15 +80,22 @@ class ManagedIdentityClientBase(ABC):
 
         return token
 
-    def get_cached_token(self, *scopes):
-        # type: (*str) -> Optional[AccessToken]
+    def get_cached_token(
+        self, *scopes: str
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         resource = _scopes_to_resource(*scopes)
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=[resource])
+        tokens = self._cache.find(
+            TokenCache.CredentialType.ACCESS_TOKEN, target=[resource]
+        )
         for token in tokens:
             expires_on = int(token["expires_on"])
+            if "refresh_on" in token:
+                refresh_on = int(token["refresh_on"])
+            else:
+                refresh_on = expires_on
             if expires_on > time.time():
-                return AccessToken(token["secret"], expires_on)
-        return None
+                return AccessToken(token["secret"], expires_on), refresh_on
+        return None, None
 
     @abc.abstractmethod
     def request_token(self, *scopes, **kwargs):
@@ -111,12 +114,10 @@ class ManagedIdentityClient(ManagedIdentityClientBase):
     def __exit__(self, *args):
         self._pipeline.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
-    def request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         resource = _scopes_to_resource(*scopes)
         request = self._request_factory(resource, self._identity_config)
         kwargs.pop("tenant_id", None)

@@ -11,16 +11,15 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AadConnectivityStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The connectivity state of the external AAD solution.
-    """
+    """The connectivity state of the external AAD solution."""
 
     DISCOVERED = "Discovered"
     NOT_LICENSED = "NotLicensed"
     CONNECTED = "Connected"
 
+
 class AdaptiveApplicationControlIssue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An alert that machines within a group can have.
-    """
+    """An alert that machines within a group can have."""
 
     VIOLATIONS_AUDITED = "ViolationsAudited"
     VIOLATIONS_BLOCKED = "ViolationsBlocked"
@@ -29,36 +28,37 @@ class AdaptiveApplicationControlIssue(str, Enum, metaclass=CaseInsensitiveEnumMe
     EXECUTABLE_VIOLATIONS_AUDITED = "ExecutableViolationsAudited"
     RULES_VIOLATED_MANUALLY = "RulesViolatedManually"
 
-class AssessmentStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Programmatic code for the status of the assessment.
-    """
 
-    #: The resource is healthy
+class AssessmentStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Programmatic code for the status of the assessment."""
+
     HEALTHY = "Healthy"
-    #: The resource has a security issue that needs to be addressed
+    """The resource is healthy"""
     UNHEALTHY = "Unhealthy"
-    #: Assessment for this resource did not happen
+    """The resource has a security issue that needs to be addressed"""
     NOT_APPLICABLE = "NotApplicable"
+    """Assessment for this resource did not happen"""
+
 
 class AssessmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BuiltIn if the assessment based on built-in Azure Policy definition, Custom if the assessment
     based on custom Azure Policy definition.
     """
 
-    #: Microsoft Defender for Cloud managed assessments
     BUILT_IN = "BuiltIn"
-    #: User defined policies that are automatically ingested from Azure Policy to Microsoft Defender
-    #: for Cloud
+    """Microsoft Defender for Cloud managed assessments"""
     CUSTOM_POLICY = "CustomPolicy"
-    #: User assessments pushed directly by the user or other third party to Microsoft Defender for
-    #: Cloud
+    """User defined policies that are automatically ingested from Azure Policy to Microsoft Defender
+    #: for Cloud"""
     CUSTOMER_MANAGED = "CustomerManaged"
-    #: An assessment that was created by a verified 3rd party if the user connected it to ASC
+    """User assessments pushed directly by the user or other third party to Microsoft Defender for
+    #: Cloud"""
     VERIFIED_PARTNER = "VerifiedPartner"
+    """An assessment that was created by a verified 3rd party if the user connected it to ASC"""
+
 
 class Categories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The categories of resource that is at risk when the assessment is unhealthy.
-    """
+    """The categories of resource that is at risk when the assessment is unhealthy."""
 
     COMPUTE = "Compute"
     NETWORKING = "Networking"
@@ -66,9 +66,9 @@ class Categories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IDENTITY_AND_ACCESS = "IdentityAndAccess"
     IO_T = "IoT"
 
+
 class ConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The configuration status of the machines group or machine or rule.
-    """
+    """The configuration status of the machines group or machine or rule."""
 
     CONFIGURED = "Configured"
     NOT_CONFIGURED = "NotConfigured"
@@ -76,72 +76,72 @@ class ConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     NO_STATUS = "NoStatus"
 
+
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ConnectionType.
-    """
+    """ConnectionType."""
 
     INTERNAL = "Internal"
     EXTERNAL = "External"
 
-class ControlType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of security control (for example, BuiltIn).
-    """
 
-    #: Microsoft Defender for Cloud managed assessments
+class ControlType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of security control (for example, BuiltIn)."""
+
     BUILT_IN = "BuiltIn"
-    #: Non Microsoft Defender for Cloud managed assessments
+    """Microsoft Defender for Cloud managed assessments"""
     CUSTOM = "Custom"
+    """Non Microsoft Defender for Cloud managed assessments"""
+
 
 class Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The rule's direction.
-    """
+    """The rule's direction."""
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
+
 class EnforcementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The application control policy enforcement/protection mode of the machine group.
-    """
+    """The application control policy enforcement/protection mode of the machine group."""
 
     AUDIT = "Audit"
     ENFORCE = "Enforce"
     NONE = "None"
 
+
 class EnforcementSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The machine supportability of Enforce feature.
-    """
+    """The machine supportability of Enforce feature."""
 
     SUPPORTED = "Supported"
     NOT_SUPPORTED = "NotSupported"
     UNKNOWN = "Unknown"
 
-class ExpandControlsEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ExpandControlsEnum.
-    """
 
-    #: Add definition object for each control
+class ExpandControlsEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ExpandControlsEnum."""
+
     DEFINITION = "definition"
+    """Add definition object for each control"""
+
 
 class ExpandEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ExpandEnum.
-    """
+    """ExpandEnum."""
 
-    #: All links associated with an assessment
     LINKS = "links"
-    #: Assessment metadata
+    """All links associated with an assessment"""
     METADATA = "metadata"
+    """Assessment metadata"""
+
 
 class ExternalSecuritySolutionKindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the external solution.
-    """
+    """The kind of the external solution."""
 
     CEF = "CEF"
     ATA = "ATA"
     AAD = "AAD"
 
+
 class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the file (for Linux files - Executable is used).
-    """
+    """The type of the file (for Linux files - Executable is used)."""
 
     EXE = "Exe"
     DLL = "Dll"
@@ -150,50 +150,50 @@ class FileType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EXECUTABLE = "Executable"
     UNKNOWN = "Unknown"
 
+
 class ImplementationEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The implementation effort required to remediate this assessment.
-    """
+    """The implementation effort required to remediate this assessment."""
 
     LOW = "Low"
     MODERATE = "Moderate"
     HIGH = "High"
 
+
 class ProtocolEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ProtocolEnum.
-    """
+    """ProtocolEnum."""
 
     TCP = "TCP"
     UDP = "UDP"
     ALL = "*"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The security family provisioning State.
-    """
+    """The security family provisioning State."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     UPDATING = "Updating"
 
+
 class RecommendationAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The recommendation action of the machine or rule.
-    """
+    """The recommendation action of the machine or rule."""
 
     RECOMMENDED = "Recommended"
     ADD = "Add"
     REMOVE = "Remove"
 
+
 class RecommendationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The initial recommendation status of the machine group or machine.
-    """
+    """The initial recommendation status of the machine group or machine."""
 
     RECOMMENDED = "Recommended"
     NOT_RECOMMENDED = "NotRecommended"
     NOT_AVAILABLE = "NotAvailable"
     NO_STATUS = "NoStatus"
 
+
 class RecommendationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the rule to be allowed.
-    """
+    """The type of the rule to be allowed."""
 
     FILE = "File"
     FILE_HASH = "FileHash"
@@ -202,18 +202,18 @@ class RecommendationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BINARY_SIGNATURE = "BinarySignature"
     VERSION_AND_ABOVE_SIGNATURE = "VersionAndAboveSignature"
 
+
 class SecurityFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The security family of the discovered solution.
-    """
+    """The security family of the discovered solution."""
 
     WAF = "Waf"
     NGFW = "Ngfw"
     SAAS_WAF = "SaasWaf"
     VA = "Va"
 
+
 class ServerVulnerabilityAssessmentPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioningState of the vulnerability assessment capability on the VM.
-    """
+    """The provisioningState of the vulnerability assessment capability on the VM."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -221,28 +221,28 @@ class ServerVulnerabilityAssessmentPropertiesProvisioningState(str, Enum, metacl
     PROVISIONING = "Provisioning"
     DEPROVISIONING = "Deprovisioning"
 
+
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The severity level of the assessment.
-    """
+    """The severity level of the assessment."""
 
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
 
-class Source(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The platform where the assessed resource resides.
-    """
 
-    #: Resource is in Azure
+class Source(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The platform where the assessed resource resides."""
+
     AZURE = "Azure"
-    #: Resource in an on premise machine connected to Azure cloud
+    """Resource is in Azure"""
     ON_PREMISE = "OnPremise"
-    #: SQL Resource in an on premise machine connected to Azure cloud
+    """Resource in an on premise machine connected to Azure cloud"""
     ON_PREMISE_SQL = "OnPremiseSql"
+    """SQL Resource in an on premise machine connected to Azure cloud"""
+
 
 class SourceSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The source type of the machine group.
-    """
+    """The source type of the machine group."""
 
     AZURE_APP_LOCKER = "Azure_AppLocker"
     AZURE_AUDIT_D = "Azure_AuditD"
@@ -250,24 +250,24 @@ class SourceSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NON_AZURE_AUDIT_D = "NonAzure_AuditD"
     NONE = "None"
 
+
 class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the port.
-    """
+    """The status of the port."""
 
     REVOKED = "Revoked"
     INITIATED = "Initiated"
 
+
 class StatusReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A description of why the ``status`` has its value.
-    """
+    """A description of why the ``status`` has its value."""
 
     EXPIRED = "Expired"
     USER_REQUESTED = "UserRequested"
     NEWER_REQUEST_INITIATED = "NewerRequestInitiated"
 
+
 class Threats(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Threats impact of the assessment.
-    """
+    """Threats impact of the assessment."""
 
     ACCOUNT_BREACH = "accountBreach"
     DATA_EXFILTRATION = "dataExfiltration"
@@ -278,16 +278,16 @@ class Threats(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MISSING_COVERAGE = "missingCoverage"
     DENIAL_OF_SERVICE = "denialOfService"
 
+
 class TransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """TransportProtocol.
-    """
+    """TransportProtocol."""
 
     TCP = "TCP"
     UDP = "UDP"
 
+
 class UserImpact(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The user impact of the assessment.
-    """
+    """The user impact of the assessment."""
 
     LOW = "Low"
     MODERATE = "Moderate"

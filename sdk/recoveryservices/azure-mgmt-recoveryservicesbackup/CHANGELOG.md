@@ -1,5 +1,35 @@
 # Release History
 
+## 5.2.0 (2023-03-20)
+
+### Features Added
+
+  - Model BMSRPQueryObject has a new parameter include_soft_deleted_rp
+  - Model IaasVMRecoveryPoint has a new parameter is_private_access_enabled_on_any_disk
+  - Model IaasVMRecoveryPoint has a new parameter security_type
+  - Model IaasVMRestoreRequest has a new parameter extended_location
+  - Model IaasVMRestoreRequest has a new parameter secured_vm_details
+  - Model IaasVMRestoreRequest has a new parameter target_disk_network_access_settings
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter extended_location
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter secured_vm_details
+  - Model IaasVMRestoreWithRehydrationRequest has a new parameter target_disk_network_access_settings
+  - Model RecoveryPointProperties has a new parameter is_soft_deleted
+
+## 5.1.0 (2023-01-30)
+
+### Features Added
+
+  - Added operation group DeletedProtectionContainersOperations
+  - Model AzureIaaSVMProtectionPolicy has a new parameter tiering_policy
+  - Model SubProtectionPolicy has a new parameter tiering_policy
+
+## 5.1.0b3 (2023-01-03)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 5.1.0b2 (2022-10-19)
 
 ### Features Added

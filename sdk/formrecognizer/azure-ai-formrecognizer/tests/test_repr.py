@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import sys
 import pytest
 import datetime
 from azure.ai.formrecognizer import _models
@@ -89,7 +90,7 @@ def page_range():
 
 @pytest.fixture
 def form_page(form_table, form_line):
-    model = _models.FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=_models.LengthUnit.PIXEL, tables=[form_table[0]], lines=[form_line[0]])
+    model = _models.FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit="pixel", tables=[form_table[0]], lines=[form_line[0]])
     model_repr = "FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=pixel, tables=[{}], lines=[{}])".format(
             form_table[1], form_line[1]
         )[:1024]
@@ -119,7 +120,7 @@ def form_recognizer_error():
 
 @pytest.fixture
 def training_document_info(form_recognizer_error):
-    model = _models.TrainingDocumentInfo(name="name", status=_models.TrainingStatus.PARTIALLY_SUCCEEDED, page_count=5, errors=[form_recognizer_error[0]], model_id=1)
+    model = _models.TrainingDocumentInfo(name="name", status="partiallySucceeded", page_count=5, errors=[form_recognizer_error[0]], model_id=1)
     model_repr = "TrainingDocumentInfo(name=name, status=partiallySucceeded, page_count=5, errors=[{}], model_id=1)".format(form_recognizer_error[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
@@ -312,12 +313,27 @@ def document_page(document_span, document_word, document_selection_mark, documen
 
 @pytest.fixture
 def document_style(document_span):
-    model = _models.DocumentStyle(is_handwritten=True, spans=[document_span[0]], confidence=0.98)
-    model_repr = "DocumentStyle(is_handwritten={}, spans=[{}], confidence={})".format(
-            True,
-            document_span[1],
-            0.98,
-        )
+    model = _models.DocumentStyle(
+        is_handwritten=True,
+        spans=[document_span[0]],
+        confidence=0.98,
+        similar_font_family="Arial",
+        font_style="italic",
+        font_weight="bold",
+        color="#FF0000",
+        background_color="#FFFFFF"
+    )
+    model_repr = "DocumentStyle(is_handwritten={}, spans=[{}], confidence={}, similar_font_family={}, font_style={}, " \
+                 "font_weight={}, color={}, background_color={})".format(
+                    True,
+                    document_span[1],
+                    0.98,
+                    "Arial",
+                    "italic",
+                    "bold",
+                    "#FF0000",
+                    "#FFFFFF"
+                )
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -451,7 +467,7 @@ class TestRepr():
     def test_custom_form_model(self, custom_form_sub_model, custom_form_model_properties, form_recognizer_error, training_document_info):
         model = _models.CustomFormModel(
             model_id=1,
-            status=_models.CustomFormModelStatus.CREATING,
+            status="creating",
             training_started_on=datetime.datetime(1, 1, 1),
             training_completed_on=datetime.datetime(1, 1, 1),
             submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
@@ -472,7 +488,7 @@ class TestRepr():
 
     def test_custom_form_model_info(self, custom_form_model_properties):
         model = _models.CustomFormModelInfo(
-            model_id=1, status=_models.CustomFormModelStatus.READY, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1),
+            model_id=1, status="ready", training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1),
             properties=custom_form_model_properties[0], model_name="my model"
         )
         model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00, properties={}, model_name=my model)".format(custom_form_model_properties[1])[:1024]

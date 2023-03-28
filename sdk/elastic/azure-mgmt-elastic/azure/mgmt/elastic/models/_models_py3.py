@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,43 +8,44 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._microsoft_elastic_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class CompanyInfo(msrest.serialization.Model):
+class CompanyInfo(_serialization.Model):
     """Company information of the user to be passed to partners.
 
-    :param domain: Domain of the company.
-    :type domain: str
-    :param business: Business of the company.
-    :type business: str
-    :param employees_number: Number of employees in the company.
-    :type employees_number: str
-    :param state: State of the company location.
-    :type state: str
-    :param country: Country of the company location.
-    :type country: str
+    :ivar domain: Domain of the company.
+    :vartype domain: str
+    :ivar business: Business of the company.
+    :vartype business: str
+    :ivar employees_number: Number of employees in the company.
+    :vartype employees_number: str
+    :ivar state: State of the company location.
+    :vartype state: str
+    :ivar country: Country of the company location.
+    :vartype country: str
     """
 
     _validation = {
-        'domain': {'max_length': 250, 'min_length': 0},
-        'business': {'max_length': 50, 'min_length': 0},
-        'employees_number': {'max_length': 20, 'min_length': 0},
-        'state': {'max_length': 50, 'min_length': 0},
-        'country': {'max_length': 50, 'min_length': 0},
+        "domain": {"max_length": 250},
+        "business": {"max_length": 50},
+        "employees_number": {"max_length": 20},
+        "state": {"max_length": 50},
+        "country": {"max_length": 50},
     }
 
     _attribute_map = {
-        'domain': {'key': 'domain', 'type': 'str'},
-        'business': {'key': 'business', 'type': 'str'},
-        'employees_number': {'key': 'employeesNumber', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
+        "domain": {"key": "domain", "type": "str"},
+        "business": {"key": "business", "type": "str"},
+        "employees_number": {"key": "employeesNumber", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "country": {"key": "country", "type": "str"},
     }
 
     def __init__(
@@ -56,7 +58,19 @@ class CompanyInfo(msrest.serialization.Model):
         country: Optional[str] = None,
         **kwargs
     ):
-        super(CompanyInfo, self).__init__(**kwargs)
+        """
+        :keyword domain: Domain of the company.
+        :paramtype domain: str
+        :keyword business: Business of the company.
+        :paramtype business: str
+        :keyword employees_number: Number of employees in the company.
+        :paramtype employees_number: str
+        :keyword state: State of the company location.
+        :paramtype state: str
+        :keyword country: Country of the company location.
+        :paramtype country: str
+        """
+        super().__init__(**kwargs)
         self.domain = domain
         self.business = business
         self.employees_number = employees_number
@@ -64,12 +78,12 @@ class CompanyInfo(msrest.serialization.Model):
         self.country = country
 
 
-class DeploymentInfoResponse(msrest.serialization.Model):
+class DeploymentInfoResponse(_serialization.Model):
     """The properties of deployment in Elastic cloud corresponding to the Elastic monitor resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar status: The Elastic deployment status. Possible values include: "Healthy", "Unhealthy".
+    :ivar status: The Elastic deployment status. Known values are: "Healthy" and "Unhealthy".
     :vartype status: str or ~azure.mgmt.elastic.models.ElasticDeploymentStatus
     :ivar version: Version of the elasticsearch in Elastic cloud deployment.
     :vartype version: str
@@ -80,31 +94,29 @@ class DeploymentInfoResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'status': {'readonly': True},
-        'version': {'readonly': True},
-        'memory_capacity': {'readonly': True},
-        'disk_capacity': {'readonly': True},
+        "status": {"readonly": True},
+        "version": {"readonly": True},
+        "memory_capacity": {"readonly": True},
+        "disk_capacity": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-        'memory_capacity': {'key': 'memoryCapacity', 'type': 'str'},
-        'disk_capacity': {'key': 'diskCapacity', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "memory_capacity": {"key": "memoryCapacity", "type": "str"},
+        "disk_capacity": {"key": "diskCapacity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DeploymentInfoResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.status = None
         self.version = None
         self.memory_capacity = None
         self.disk_capacity = None
 
 
-class ElasticCloudDeployment(msrest.serialization.Model):
+class ElasticCloudDeployment(_serialization.Model):
     """Details of the user's elastic deployment associated with the monitor resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -126,30 +138,28 @@ class ElasticCloudDeployment(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'deployment_id': {'readonly': True},
-        'azure_subscription_id': {'readonly': True},
-        'elasticsearch_region': {'readonly': True},
-        'elasticsearch_service_url': {'readonly': True},
-        'kibana_service_url': {'readonly': True},
-        'kibana_sso_url': {'readonly': True},
+        "name": {"readonly": True},
+        "deployment_id": {"readonly": True},
+        "azure_subscription_id": {"readonly": True},
+        "elasticsearch_region": {"readonly": True},
+        "elasticsearch_service_url": {"readonly": True},
+        "kibana_service_url": {"readonly": True},
+        "kibana_sso_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'deployment_id': {'key': 'deploymentId', 'type': 'str'},
-        'azure_subscription_id': {'key': 'azureSubscriptionId', 'type': 'str'},
-        'elasticsearch_region': {'key': 'elasticsearchRegion', 'type': 'str'},
-        'elasticsearch_service_url': {'key': 'elasticsearchServiceUrl', 'type': 'str'},
-        'kibana_service_url': {'key': 'kibanaServiceUrl', 'type': 'str'},
-        'kibana_sso_url': {'key': 'kibanaSsoUrl', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "deployment_id": {"key": "deploymentId", "type": "str"},
+        "azure_subscription_id": {"key": "azureSubscriptionId", "type": "str"},
+        "elasticsearch_region": {"key": "elasticsearchRegion", "type": "str"},
+        "elasticsearch_service_url": {"key": "elasticsearchServiceUrl", "type": "str"},
+        "kibana_service_url": {"key": "kibanaServiceUrl", "type": "str"},
+        "kibana_sso_url": {"key": "kibanaSsoUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ElasticCloudDeployment, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.deployment_id = None
         self.azure_subscription_id = None
@@ -159,7 +169,7 @@ class ElasticCloudDeployment(msrest.serialization.Model):
         self.kibana_sso_url = None
 
 
-class ElasticCloudUser(msrest.serialization.Model):
+class ElasticCloudUser(_serialization.Model):
     """Details of the user's elastic account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -174,28 +184,26 @@ class ElasticCloudUser(msrest.serialization.Model):
     """
 
     _validation = {
-        'email_address': {'readonly': True},
-        'id': {'readonly': True},
-        'elastic_cloud_sso_default_url': {'readonly': True},
+        "email_address": {"readonly": True},
+        "id": {"readonly": True},
+        "elastic_cloud_sso_default_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'elastic_cloud_sso_default_url': {'key': 'elasticCloudSsoDefaultUrl', 'type': 'str'},
+        "email_address": {"key": "emailAddress", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "elastic_cloud_sso_default_url": {"key": "elasticCloudSsoDefaultUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ElasticCloudUser, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.email_address = None
         self.id = None
         self.elastic_cloud_sso_default_url = None
 
 
-class ElasticMonitorResource(msrest.serialization.Model):
+class ElasticMonitorResource(_serialization.Model):
     """Monitor resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -208,51 +216,63 @@ class ElasticMonitorResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the monitor resource.
     :vartype type: str
-    :param sku: SKU of the monitor resource.
-    :type sku: ~azure.mgmt.elastic.models.ResourceSku
-    :param properties: Properties of the monitor resource.
-    :type properties: ~azure.mgmt.elastic.models.MonitorProperties
-    :param identity: Identity properties of the monitor resource.
-    :type identity: ~azure.mgmt.elastic.models.IdentityProperties
-    :param tags: A set of tags. The tags of the monitor resource.
-    :type tags: dict[str, str]
-    :param location: Required. The location of the monitor resource.
-    :type location: str
+    :ivar sku: SKU of the monitor resource.
+    :vartype sku: ~azure.mgmt.elastic.models.ResourceSku
+    :ivar properties: Properties of the monitor resource.
+    :vartype properties: ~azure.mgmt.elastic.models.MonitorProperties
+    :ivar identity: Identity properties of the monitor resource.
+    :vartype identity: ~azure.mgmt.elastic.models.IdentityProperties
+    :ivar tags: The tags of the monitor resource.
+    :vartype tags: dict[str, str]
+    :ivar location: The location of the monitor resource. Required.
+    :vartype location: str
     :ivar system_data: The system metadata relating to this resource.
     :vartype system_data: ~azure.mgmt.elastic.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'properties': {'key': 'properties', 'type': 'MonitorProperties'},
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "properties": {"key": "properties", "type": "MonitorProperties"},
+        "identity": {"key": "identity", "type": "IdentityProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        sku: Optional["ResourceSku"] = None,
-        properties: Optional["MonitorProperties"] = None,
-        identity: Optional["IdentityProperties"] = None,
+        sku: Optional["_models.ResourceSku"] = None,
+        properties: Optional["_models.MonitorProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(ElasticMonitorResource, self).__init__(**kwargs)
+        """
+        :keyword sku: SKU of the monitor resource.
+        :paramtype sku: ~azure.mgmt.elastic.models.ResourceSku
+        :keyword properties: Properties of the monitor resource.
+        :paramtype properties: ~azure.mgmt.elastic.models.MonitorProperties
+        :keyword identity: Identity properties of the monitor resource.
+        :paramtype identity: ~azure.mgmt.elastic.models.IdentityProperties
+        :keyword tags: The tags of the monitor resource.
+        :paramtype tags: dict[str, str]
+        :keyword location: The location of the monitor resource. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -264,97 +284,268 @@ class ElasticMonitorResource(msrest.serialization.Model):
         self.system_data = None
 
 
-class ElasticMonitorResourceListResponse(msrest.serialization.Model):
+class ElasticMonitorResourceListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~azure.mgmt.elastic.models.ElasticMonitorResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.elastic.models.ElasticMonitorResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ElasticMonitorResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ElasticMonitorResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ElasticMonitorResource"]] = None,
+        value: Optional[List["_models.ElasticMonitorResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(ElasticMonitorResourceListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.elastic.models.ElasticMonitorResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ElasticMonitorResourceUpdateParameters(msrest.serialization.Model):
+class ElasticMonitorResourceUpdateParameters(_serialization.Model):
     """Monitor resource update parameters.
 
-    :param tags: A set of tags. elastic monitor resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: elastic monitor resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ElasticMonitorResourceUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: elastic monitor resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class ElasticProperties(msrest.serialization.Model):
-    """Elastic Resource Properties.
+class ElasticMonitorUpgrade(_serialization.Model):
+    """Upgrade elastic monitor version.
 
-    :param elastic_cloud_user: Details of the user's elastic account.
-    :type elastic_cloud_user: ~azure.mgmt.elastic.models.ElasticCloudUser
-    :param elastic_cloud_deployment: Details of the elastic cloud deployment.
-    :type elastic_cloud_deployment: ~azure.mgmt.elastic.models.ElasticCloudDeployment
+    :ivar version: Version to which the elastic monitor should be upgraded to.
+    :vartype version: str
     """
 
     _attribute_map = {
-        'elastic_cloud_user': {'key': 'elasticCloudUser', 'type': 'ElasticCloudUser'},
-        'elastic_cloud_deployment': {'key': 'elasticCloudDeployment', 'type': 'ElasticCloudDeployment'},
+        "version": {"key": "version", "type": "str"},
+    }
+
+    def __init__(self, *, version: Optional[str] = None, **kwargs):
+        """
+        :keyword version: Version to which the elastic monitor should be upgraded to.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
+        self.version = version
+
+
+class ElasticProperties(_serialization.Model):
+    """Elastic Resource Properties.
+
+    :ivar elastic_cloud_user: Details of the user's elastic account.
+    :vartype elastic_cloud_user: ~azure.mgmt.elastic.models.ElasticCloudUser
+    :ivar elastic_cloud_deployment: Details of the elastic cloud deployment.
+    :vartype elastic_cloud_deployment: ~azure.mgmt.elastic.models.ElasticCloudDeployment
+    """
+
+    _attribute_map = {
+        "elastic_cloud_user": {"key": "elasticCloudUser", "type": "ElasticCloudUser"},
+        "elastic_cloud_deployment": {"key": "elasticCloudDeployment", "type": "ElasticCloudDeployment"},
     }
 
     def __init__(
         self,
         *,
-        elastic_cloud_user: Optional["ElasticCloudUser"] = None,
-        elastic_cloud_deployment: Optional["ElasticCloudDeployment"] = None,
+        elastic_cloud_user: Optional["_models.ElasticCloudUser"] = None,
+        elastic_cloud_deployment: Optional["_models.ElasticCloudDeployment"] = None,
         **kwargs
     ):
-        super(ElasticProperties, self).__init__(**kwargs)
+        """
+        :keyword elastic_cloud_user: Details of the user's elastic account.
+        :paramtype elastic_cloud_user: ~azure.mgmt.elastic.models.ElasticCloudUser
+        :keyword elastic_cloud_deployment: Details of the elastic cloud deployment.
+        :paramtype elastic_cloud_deployment: ~azure.mgmt.elastic.models.ElasticCloudDeployment
+        """
+        super().__init__(**kwargs)
         self.elastic_cloud_user = elastic_cloud_user
         self.elastic_cloud_deployment = elastic_cloud_deployment
 
 
-class ErrorResponseBody(msrest.serialization.Model):
-    """Error response body.
+class ElasticTrafficFilter(_serialization.Model):
+    """Elastic traffic filter object.
 
-    :param code: Error code.
-    :type code: str
-    :param message: Error message.
-    :type message: str
-    :param target: Error target.
-    :type target: str
-    :param details: Error details.
-    :type details: list[~azure.mgmt.elastic.models.ErrorResponseBody]
+    :ivar id: Id of the elastic filter.
+    :vartype id: str
+    :ivar name: Name of the elastic filter.
+    :vartype name: str
+    :ivar description: Description of the elastic filter.
+    :vartype description: str
+    :ivar region: Region of the elastic filter.
+    :vartype region: str
+    :ivar type: Type of the elastic filter. Known values are: "ip" and "azure_private_endpoint".
+    :vartype type: str or ~azure.mgmt.elastic.models.Type
+    :ivar include_by_default: IncludeByDefault for the elastic filter.
+    :vartype include_by_default: bool
+    :ivar rules: Rules in the elastic filter.
+    :vartype rules: list[~azure.mgmt.elastic.models.ElasticTrafficFilterRule]
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseBody]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "region": {"key": "region", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "include_by_default": {"key": "includeByDefault", "type": "bool"},
+        "rules": {"key": "rules", "type": "[ElasticTrafficFilterRule]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        region: Optional[str] = None,
+        type: Optional[Union[str, "_models.Type"]] = None,
+        include_by_default: Optional[bool] = None,
+        rules: Optional[List["_models.ElasticTrafficFilterRule"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Id of the elastic filter.
+        :paramtype id: str
+        :keyword name: Name of the elastic filter.
+        :paramtype name: str
+        :keyword description: Description of the elastic filter.
+        :paramtype description: str
+        :keyword region: Region of the elastic filter.
+        :paramtype region: str
+        :keyword type: Type of the elastic filter. Known values are: "ip" and "azure_private_endpoint".
+        :paramtype type: str or ~azure.mgmt.elastic.models.Type
+        :keyword include_by_default: IncludeByDefault for the elastic filter.
+        :paramtype include_by_default: bool
+        :keyword rules: Rules in the elastic filter.
+        :paramtype rules: list[~azure.mgmt.elastic.models.ElasticTrafficFilterRule]
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.description = description
+        self.region = region
+        self.type = type
+        self.include_by_default = include_by_default
+        self.rules = rules
+
+
+class ElasticTrafficFilterResponse(_serialization.Model):
+    """List of elastic traffic filters in the account.
+
+    :ivar rulesets: List of elastic traffic filters in the account.
+    :vartype rulesets: list[~azure.mgmt.elastic.models.ElasticTrafficFilter]
+    """
+
+    _attribute_map = {
+        "rulesets": {"key": "rulesets", "type": "[ElasticTrafficFilter]"},
+    }
+
+    def __init__(self, *, rulesets: Optional[List["_models.ElasticTrafficFilter"]] = None, **kwargs):
+        """
+        :keyword rulesets: List of elastic traffic filters in the account.
+        :paramtype rulesets: list[~azure.mgmt.elastic.models.ElasticTrafficFilter]
+        """
+        super().__init__(**kwargs)
+        self.rulesets = rulesets
+
+
+class ElasticTrafficFilterRule(_serialization.Model):
+    """Elastic traffic filter rule object.
+
+    :ivar source: IP of the elastic filter rule.
+    :vartype source: str
+    :ivar description: Description of the elastic filter rule.
+    :vartype description: str
+    :ivar azure_endpoint_guid: Guid of Private Endpoint in the elastic filter rule.
+    :vartype azure_endpoint_guid: str
+    :ivar azure_endpoint_name: Name of the Private Endpoint in the elastic filter rule.
+    :vartype azure_endpoint_name: str
+    :ivar id: Id of the elastic filter rule.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "source": {"key": "source", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "azure_endpoint_guid": {"key": "azureEndpointGuid", "type": "str"},
+        "azure_endpoint_name": {"key": "azureEndpointName", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source: Optional[str] = None,
+        description: Optional[str] = None,
+        azure_endpoint_guid: Optional[str] = None,
+        azure_endpoint_name: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        **kwargs
+    ):
+        """
+        :keyword source: IP of the elastic filter rule.
+        :paramtype source: str
+        :keyword description: Description of the elastic filter rule.
+        :paramtype description: str
+        :keyword azure_endpoint_guid: Guid of Private Endpoint in the elastic filter rule.
+        :paramtype azure_endpoint_guid: str
+        :keyword azure_endpoint_name: Name of the Private Endpoint in the elastic filter rule.
+        :paramtype azure_endpoint_name: str
+        :keyword id: Id of the elastic filter rule.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.source = source
+        self.description = description
+        self.azure_endpoint_guid = azure_endpoint_guid
+        self.azure_endpoint_name = azure_endpoint_name
+        self.id = id
+
+
+class ErrorResponseBody(_serialization.Model):
+    """Error response body.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar target: Error target.
+    :vartype target: str
+    :ivar details: Error details.
+    :vartype details: list[~azure.mgmt.elastic.models.ErrorResponseBody]
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponseBody]"},
     }
 
     def __init__(
@@ -363,32 +554,117 @@ class ErrorResponseBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["ErrorResponseBody"]] = None,
+        details: Optional[List["_models.ErrorResponseBody"]] = None,
         **kwargs
     ):
-        super(ErrorResponseBody, self).__init__(**kwargs)
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message.
+        :paramtype message: str
+        :keyword target: Error target.
+        :paramtype target: str
+        :keyword details: Error details.
+        :paramtype details: list[~azure.mgmt.elastic.models.ErrorResponseBody]
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class FilteringTag(msrest.serialization.Model):
-    """The definition of a filtering tag. Filtering tags are used for capturing resources and include/exclude them from being monitored.
+class ExternalUserCreationResponse(_serialization.Model):
+    """The properties of the response we got from elastic while creating external user.
 
-    :param name: The name (also known as the key) of the tag.
-    :type name: str
-    :param value: The value of the tag.
-    :type value: str
-    :param action: Valid actions for a filtering tag. Possible values include: "Include",
-     "Exclude".
-    :type action: str or ~azure.mgmt.elastic.models.TagAction
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created: Shows if user is created or updated.
+    :vartype created: bool
+    """
+
+    _validation = {
+        "created": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "created": {"key": "created", "type": "bool"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.created = None
+
+
+class ExternalUserInfo(_serialization.Model):
+    """The properties of the request required for creating user on elastic side.
+
+    :ivar user_name: Username of the user to be created or updated.
+    :vartype user_name: str
+    :ivar full_name: Full name of the user to be created or updated.
+    :vartype full_name: str
+    :ivar password: Password of the user to be created or updated.
+    :vartype password: str
+    :ivar email_id: Email id of the user to be created or updated.
+    :vartype email_id: str
+    :ivar roles: Roles to be assigned for  created or updated user.
+    :vartype roles: list[str]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
+        "user_name": {"key": "userName", "type": "str"},
+        "full_name": {"key": "fullName", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "email_id": {"key": "emailId", "type": "str"},
+        "roles": {"key": "roles", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        user_name: Optional[str] = None,
+        full_name: Optional[str] = None,
+        password: Optional[str] = None,
+        email_id: Optional[str] = None,
+        roles: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword user_name: Username of the user to be created or updated.
+        :paramtype user_name: str
+        :keyword full_name: Full name of the user to be created or updated.
+        :paramtype full_name: str
+        :keyword password: Password of the user to be created or updated.
+        :paramtype password: str
+        :keyword email_id: Email id of the user to be created or updated.
+        :paramtype email_id: str
+        :keyword roles: Roles to be assigned for  created or updated user.
+        :paramtype roles: list[str]
+        """
+        super().__init__(**kwargs)
+        self.user_name = user_name
+        self.full_name = full_name
+        self.password = password
+        self.email_id = email_id
+        self.roles = roles
+
+
+class FilteringTag(_serialization.Model):
+    """The definition of a filtering tag. Filtering tags are used for capturing resources and include/exclude them from being monitored.
+
+    :ivar name: The name (also known as the key) of the tag.
+    :vartype name: str
+    :ivar value: The value of the tag.
+    :vartype value: str
+    :ivar action: Valid actions for a filtering tag. Known values are: "Include" and "Exclude".
+    :vartype action: str or ~azure.mgmt.elastic.models.TagAction
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "action": {"key": "action", "type": "str"},
     }
 
     def __init__(
@@ -396,16 +672,24 @@ class FilteringTag(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         value: Optional[str] = None,
-        action: Optional[Union[str, "TagAction"]] = None,
+        action: Optional[Union[str, "_models.TagAction"]] = None,
         **kwargs
     ):
-        super(FilteringTag, self).__init__(**kwargs)
+        """
+        :keyword name: The name (also known as the key) of the tag.
+        :paramtype name: str
+        :keyword value: The value of the tag.
+        :paramtype value: str
+        :keyword action: Valid actions for a filtering tag. Known values are: "Include" and "Exclude".
+        :paramtype action: str or ~azure.mgmt.elastic.models.TagAction
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.action = action
 
 
-class IdentityProperties(msrest.serialization.Model):
+class IdentityProperties(_serialization.Model):
     """Identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -414,56 +698,55 @@ class IdentityProperties(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type: Managed identity type. Possible values include: "SystemAssigned".
-    :type type: str or ~azure.mgmt.elastic.models.ManagedIdentityTypes
+    :ivar type: Managed identity type. "SystemAssigned"
+    :vartype type: str or ~azure.mgmt.elastic.models.ManagedIdentityTypes
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "ManagedIdentityTypes"]] = None,
-        **kwargs
-    ):
-        super(IdentityProperties, self).__init__(**kwargs)
+    def __init__(self, *, type: Optional[Union[str, "_models.ManagedIdentityTypes"]] = None, **kwargs):
+        """
+        :keyword type: Managed identity type. "SystemAssigned"
+        :paramtype type: str or ~azure.mgmt.elastic.models.ManagedIdentityTypes
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class LogRules(msrest.serialization.Model):
+class LogRules(_serialization.Model):
     """Set of rules for sending logs for the Monitor resource.
 
-    :param send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
-    :type send_aad_logs: bool
-    :param send_subscription_logs: Flag specifying if subscription logs should be sent for the
+    :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
+    :vartype send_aad_logs: bool
+    :ivar send_subscription_logs: Flag specifying if subscription logs should be sent for the
      Monitor resource.
-    :type send_subscription_logs: bool
-    :param send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
+    :vartype send_subscription_logs: bool
+    :ivar send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
      for the Monitor resource.
-    :type send_activity_logs: bool
-    :param filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+    :vartype send_activity_logs: bool
+    :ivar filtering_tags: List of filtering tags to be used for capturing logs. This only takes
      effect if SendActivityLogs flag is enabled. If empty, all resources will be captured. If only
      Exclude action is specified, the rules will apply to the list of all available resources. If
      Include actions are specified, the rules will only include resources with the associated tags.
-    :type filtering_tags: list[~azure.mgmt.elastic.models.FilteringTag]
+    :vartype filtering_tags: list[~azure.mgmt.elastic.models.FilteringTag]
     """
 
     _attribute_map = {
-        'send_aad_logs': {'key': 'sendAadLogs', 'type': 'bool'},
-        'send_subscription_logs': {'key': 'sendSubscriptionLogs', 'type': 'bool'},
-        'send_activity_logs': {'key': 'sendActivityLogs', 'type': 'bool'},
-        'filtering_tags': {'key': 'filteringTags', 'type': '[FilteringTag]'},
+        "send_aad_logs": {"key": "sendAadLogs", "type": "bool"},
+        "send_subscription_logs": {"key": "sendSubscriptionLogs", "type": "bool"},
+        "send_activity_logs": {"key": "sendActivityLogs", "type": "bool"},
+        "filtering_tags": {"key": "filteringTags", "type": "[FilteringTag]"},
     }
 
     def __init__(
@@ -472,76 +755,103 @@ class LogRules(msrest.serialization.Model):
         send_aad_logs: Optional[bool] = None,
         send_subscription_logs: Optional[bool] = None,
         send_activity_logs: Optional[bool] = None,
-        filtering_tags: Optional[List["FilteringTag"]] = None,
+        filtering_tags: Optional[List["_models.FilteringTag"]] = None,
         **kwargs
     ):
-        super(LogRules, self).__init__(**kwargs)
+        """
+        :keyword send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
+        :paramtype send_aad_logs: bool
+        :keyword send_subscription_logs: Flag specifying if subscription logs should be sent for the
+         Monitor resource.
+        :paramtype send_subscription_logs: bool
+        :keyword send_activity_logs: Flag specifying if activity logs from Azure resources should be
+         sent for the Monitor resource.
+        :paramtype send_activity_logs: bool
+        :keyword filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+         effect if SendActivityLogs flag is enabled. If empty, all resources will be captured. If only
+         Exclude action is specified, the rules will apply to the list of all available resources. If
+         Include actions are specified, the rules will only include resources with the associated tags.
+        :paramtype filtering_tags: list[~azure.mgmt.elastic.models.FilteringTag]
+        """
+        super().__init__(**kwargs)
         self.send_aad_logs = send_aad_logs
         self.send_subscription_logs = send_subscription_logs
         self.send_activity_logs = send_activity_logs
         self.filtering_tags = filtering_tags
 
 
-class MonitoredResource(msrest.serialization.Model):
+class MonitoredResource(_serialization.Model):
     """The properties of a resource currently being monitored by the Elastic monitor resource.
 
-    :param id: The ARM id of the resource.
-    :type id: str
-    :param sending_logs: Flag indicating the status of the resource for sending logs operation to
-     Elastic. Possible values include: "True", "False".
-    :type sending_logs: str or ~azure.mgmt.elastic.models.SendingLogs
-    :param reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
+    :ivar id: The ARM id of the resource.
+    :vartype id: str
+    :ivar sending_logs: Flag indicating the status of the resource for sending logs operation to
+     Elastic. Known values are: "True" and "False".
+    :vartype sending_logs: str or ~azure.mgmt.elastic.models.SendingLogs
+    :ivar reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
      sending).
-    :type reason_for_logs_status: str
+    :vartype reason_for_logs_status: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'sending_logs': {'key': 'sendingLogs', 'type': 'str'},
-        'reason_for_logs_status': {'key': 'reasonForLogsStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "sending_logs": {"key": "sendingLogs", "type": "str"},
+        "reason_for_logs_status": {"key": "reasonForLogsStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        sending_logs: Optional[Union[str, "SendingLogs"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        sending_logs: Optional[Union[str, "_models.SendingLogs"]] = None,
         reason_for_logs_status: Optional[str] = None,
         **kwargs
     ):
-        super(MonitoredResource, self).__init__(**kwargs)
+        """
+        :keyword id: The ARM id of the resource.
+        :paramtype id: str
+        :keyword sending_logs: Flag indicating the status of the resource for sending logs operation to
+         Elastic. Known values are: "True" and "False".
+        :paramtype sending_logs: str or ~azure.mgmt.elastic.models.SendingLogs
+        :keyword reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
+         sending).
+        :paramtype reason_for_logs_status: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.sending_logs = sending_logs
         self.reason_for_logs_status = reason_for_logs_status
 
 
-class MonitoredResourceListResponse(msrest.serialization.Model):
+class MonitoredResourceListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~azure.mgmt.elastic.models.MonitoredResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.elastic.models.MonitoredResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MonitoredResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MonitoredResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["MonitoredResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.MonitoredResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(MonitoredResourceListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.elastic.models.MonitoredResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class MonitoringTagRules(msrest.serialization.Model):
+class MonitoringTagRules(_serialization.Model):
     """Capture logs and metrics of Azure resources based on ARM tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -552,34 +862,33 @@ class MonitoringTagRules(msrest.serialization.Model):
     :vartype id: str
     :ivar type: The type of the rule set.
     :vartype type: str
-    :param properties: Properties of the monitoring tag rules.
-    :type properties: ~azure.mgmt.elastic.models.MonitoringTagRulesProperties
+    :ivar properties: Properties of the monitoring tag rules.
+    :vartype properties: ~azure.mgmt.elastic.models.MonitoringTagRulesProperties
     :ivar system_data: The system metadata relating to this resource.
     :vartype system_data: ~azure.mgmt.elastic.models.SystemData
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MonitoringTagRulesProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "MonitoringTagRulesProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["MonitoringTagRulesProperties"] = None,
-        **kwargs
-    ):
-        super(MonitoringTagRules, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.MonitoringTagRulesProperties"] = None, **kwargs):
+        """
+        :keyword properties: Properties of the monitoring tag rules.
+        :paramtype properties: ~azure.mgmt.elastic.models.MonitoringTagRulesProperties
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.type = None
@@ -587,132 +896,162 @@ class MonitoringTagRules(msrest.serialization.Model):
         self.system_data = None
 
 
-class MonitoringTagRulesListResponse(msrest.serialization.Model):
+class MonitoringTagRulesListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~azure.mgmt.elastic.models.MonitoringTagRules]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.elastic.models.MonitoringTagRules]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MonitoringTagRules]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MonitoringTagRules]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["MonitoringTagRules"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.MonitoringTagRules"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(MonitoringTagRulesListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.elastic.models.MonitoringTagRules]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class MonitoringTagRulesProperties(msrest.serialization.Model):
+class MonitoringTagRulesProperties(_serialization.Model):
     """Definition of the properties for a TagRules resource.
 
-    :param provisioning_state: Provisioning state of the monitoring tag rules. Possible values
-     include: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled",
-     "Deleted", "NotSpecified".
-    :type provisioning_state: str or ~azure.mgmt.elastic.models.ProvisioningState
-    :param log_rules: Rules for sending logs.
-    :type log_rules: ~azure.mgmt.elastic.models.LogRules
+    :ivar provisioning_state: Provisioning state of the monitoring tag rules. Known values are:
+     "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
+     and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.elastic.models.ProvisioningState
+    :ivar log_rules: Rules for sending logs.
+    :vartype log_rules: ~azure.mgmt.elastic.models.LogRules
     """
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'log_rules': {'key': 'logRules', 'type': 'LogRules'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "log_rules": {"key": "logRules", "type": "LogRules"},
     }
 
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
-        log_rules: Optional["LogRules"] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        log_rules: Optional["_models.LogRules"] = None,
         **kwargs
     ):
-        super(MonitoringTagRulesProperties, self).__init__(**kwargs)
+        """
+        :keyword provisioning_state: Provisioning state of the monitoring tag rules. Known values are:
+         "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
+         and "NotSpecified".
+        :paramtype provisioning_state: str or ~azure.mgmt.elastic.models.ProvisioningState
+        :keyword log_rules: Rules for sending logs.
+        :paramtype log_rules: ~azure.mgmt.elastic.models.LogRules
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.log_rules = log_rules
 
 
-class MonitorProperties(msrest.serialization.Model):
+class MonitorProperties(_serialization.Model):
     """Properties specific to the monitor resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param provisioning_state: Provisioning state of the monitor resource. Possible values include:
+    :ivar provisioning_state: Provisioning state of the monitor resource. Known values are:
      "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
-     "NotSpecified".
-    :type provisioning_state: str or ~azure.mgmt.elastic.models.ProvisioningState
-    :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
-     Possible values include: "Enabled", "Disabled".
-    :type monitoring_status: str or ~azure.mgmt.elastic.models.MonitoringStatus
-    :param elastic_properties: Elastic cloud properties.
-    :type elastic_properties: ~azure.mgmt.elastic.models.ElasticProperties
-    :param user_info: User information.
-    :type user_info: ~azure.mgmt.elastic.models.UserInfo
-    :ivar liftr_resource_category:  Possible values include: "Unknown", "MonitorLogs".
+     and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.elastic.models.ProvisioningState
+    :ivar monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+     Known values are: "Enabled" and "Disabled".
+    :vartype monitoring_status: str or ~azure.mgmt.elastic.models.MonitoringStatus
+    :ivar elastic_properties: Elastic cloud properties.
+    :vartype elastic_properties: ~azure.mgmt.elastic.models.ElasticProperties
+    :ivar user_info: User information.
+    :vartype user_info: ~azure.mgmt.elastic.models.UserInfo
+    :ivar version: Version of elastic of the monitor resource.
+    :vartype version: str
+    :ivar liftr_resource_category: Known values are: "Unknown" and "MonitorLogs".
     :vartype liftr_resource_category: str or ~azure.mgmt.elastic.models.LiftrResourceCategories
     :ivar liftr_resource_preference: The priority of the resource.
     :vartype liftr_resource_preference: int
     """
 
     _validation = {
-        'liftr_resource_category': {'readonly': True},
-        'liftr_resource_preference': {'readonly': True},
+        "liftr_resource_category": {"readonly": True},
+        "liftr_resource_preference": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'monitoring_status': {'key': 'monitoringStatus', 'type': 'str'},
-        'elastic_properties': {'key': 'elasticProperties', 'type': 'ElasticProperties'},
-        'user_info': {'key': 'userInfo', 'type': 'UserInfo'},
-        'liftr_resource_category': {'key': 'liftrResourceCategory', 'type': 'str'},
-        'liftr_resource_preference': {'key': 'liftrResourcePreference', 'type': 'int'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "monitoring_status": {"key": "monitoringStatus", "type": "str"},
+        "elastic_properties": {"key": "elasticProperties", "type": "ElasticProperties"},
+        "user_info": {"key": "userInfo", "type": "UserInfo"},
+        "version": {"key": "version", "type": "str"},
+        "liftr_resource_category": {"key": "liftrResourceCategory", "type": "str"},
+        "liftr_resource_preference": {"key": "liftrResourcePreference", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
-        monitoring_status: Optional[Union[str, "MonitoringStatus"]] = None,
-        elastic_properties: Optional["ElasticProperties"] = None,
-        user_info: Optional["UserInfo"] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        monitoring_status: Optional[Union[str, "_models.MonitoringStatus"]] = None,
+        elastic_properties: Optional["_models.ElasticProperties"] = None,
+        user_info: Optional["_models.UserInfo"] = None,
+        version: Optional[str] = None,
         **kwargs
     ):
-        super(MonitorProperties, self).__init__(**kwargs)
+        """
+        :keyword provisioning_state: Provisioning state of the monitor resource. Known values are:
+         "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
+         and "NotSpecified".
+        :paramtype provisioning_state: str or ~azure.mgmt.elastic.models.ProvisioningState
+        :keyword monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype monitoring_status: str or ~azure.mgmt.elastic.models.MonitoringStatus
+        :keyword elastic_properties: Elastic cloud properties.
+        :paramtype elastic_properties: ~azure.mgmt.elastic.models.ElasticProperties
+        :keyword user_info: User information.
+        :paramtype user_info: ~azure.mgmt.elastic.models.UserInfo
+        :keyword version: Version of elastic of the monitor resource.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = provisioning_state
         self.monitoring_status = monitoring_status
         self.elastic_properties = elastic_properties
         self.user_info = user_info
+        self.version = version
         self.liftr_resource_category = None
         self.liftr_resource_preference = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider, i.e., Microsoft.Elastic.
-    :type provider: str
-    :param resource: Type on which the operation is performed, e.g., 'monitors'.
-    :type resource: str
-    :param operation: Operation type, e.g., read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation, e.g., 'Write monitors'.
-    :type description: str
+    :ivar provider: Service provider, i.e., Microsoft.Elastic.
+    :vartype provider: str
+    :ivar resource: Type on which the operation is performed, e.g., 'monitors'.
+    :vartype resource: str
+    :ivar operation: Operation type, e.g., read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation, e.g., 'Write monitors'.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -724,57 +1063,69 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: Service provider, i.e., Microsoft.Elastic.
+        :paramtype provider: str
+        :keyword resource: Type on which the operation is performed, e.g., 'monitors'.
+        :paramtype resource: str
+        :keyword operation: Operation type, e.g., read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation, e.g., 'Write monitors'.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of GET request to list the Microsoft.Elastic operations.
 
-    :param value: List of operations supported by the Microsoft.Elastic provider.
-    :type value: list[~azure.mgmt.elastic.models.OperationResult]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of operations supported by the Microsoft.Elastic provider.
+    :vartype value: list[~azure.mgmt.elastic.models.OperationResult]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OperationResult"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.OperationResult"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(OperationListResult, self).__init__(**kwargs)
+        """
+        :keyword value: List of operations supported by the Microsoft.Elastic provider.
+        :paramtype value: list[~azure.mgmt.elastic.models.OperationResult]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationResult(msrest.serialization.Model):
+class OperationResult(_serialization.Model):
     """A Microsoft.Elastic REST API operation.
 
-    :param name: Operation name, i.e., {provider}/{resource}/{operation}.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.elastic.models.OperationDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
+    :ivar name: Operation name, i.e., {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.elastic.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
@@ -782,18 +1133,28 @@ class OperationResult(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         **kwargs
     ):
-        super(OperationResult, self).__init__(**kwargs)
+        """
+        :keyword name: Operation name, i.e., {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.elastic.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.display = display
         self.origin = origin
 
 
-class ResourceProviderDefaultErrorResponse(msrest.serialization.Model):
+class ResourceProviderDefaultErrorResponse(_serialization.Model):
     """RP default error response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -803,88 +1164,101 @@ class ResourceProviderDefaultErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
+        "error": {"key": "error", "type": "ErrorResponseBody"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ResourceProviderDefaultErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.error = None
 
 
-class ResourceSku(msrest.serialization.Model):
+class ResourceSku(_serialization.Model):
     """Microsoft.Elastic SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the SKU.
-    :type name: str
+    :ivar name: Name of the SKU. Required.
+    :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(ResourceSku, self).__init__(**kwargs)
+    def __init__(self, *, name: str, **kwargs):
+        """
+        :keyword name: Name of the SKU. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.elastic.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.elastic.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.elastic.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.elastic.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.elastic.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.elastic.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -893,34 +1267,64 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UserInfo(msrest.serialization.Model):
+class UpgradableVersionsList(_serialization.Model):
+    """Stack Versions that this version can upgrade to.
+
+    :ivar current_version: Current version of the elastic monitor.
+    :vartype current_version: str
+    :ivar upgradable_versions: Stack Versions that this version can upgrade to.
+    :vartype upgradable_versions: list[str]
+    """
+
+    _attribute_map = {
+        "current_version": {"key": "currentVersion", "type": "str"},
+        "upgradable_versions": {"key": "upgradableVersions", "type": "[str]"},
+    }
+
+    def __init__(
+        self, *, current_version: Optional[str] = None, upgradable_versions: Optional[List[str]] = None, **kwargs
+    ):
+        """
+        :keyword current_version: Current version of the elastic monitor.
+        :paramtype current_version: str
+        :keyword upgradable_versions: Stack Versions that this version can upgrade to.
+        :paramtype upgradable_versions: list[str]
+        """
+        super().__init__(**kwargs)
+        self.current_version = current_version
+        self.upgradable_versions = upgradable_versions
+
+
+class UserInfo(_serialization.Model):
     """User Information to be passed to partners.
 
-    :param first_name: First name of the user.
-    :type first_name: str
-    :param last_name: Last name of the user.
-    :type last_name: str
-    :param company_name: Company name of the user.
-    :type company_name: str
-    :param email_address: Email of the user used by Elastic for contacting them if needed.
-    :type email_address: str
-    :param company_info: Company information of the user to be passed to partners.
-    :type company_info: ~azure.mgmt.elastic.models.CompanyInfo
+    :ivar first_name: First name of the user.
+    :vartype first_name: str
+    :ivar last_name: Last name of the user.
+    :vartype last_name: str
+    :ivar company_name: Company name of the user.
+    :vartype company_name: str
+    :ivar email_address: Email of the user used by Elastic for contacting them if needed.
+    :vartype email_address: str
+    :ivar company_info: Company information of the user to be passed to partners.
+    :vartype company_info: ~azure.mgmt.elastic.models.CompanyInfo
     """
 
     _validation = {
-        'first_name': {'max_length': 50, 'min_length': 0},
-        'last_name': {'max_length': 50, 'min_length': 0},
-        'company_name': {'max_length': 50, 'min_length': 0},
-        'email_address': {'pattern': r'^([^<>()\[\]\.,;:\s@"]+(\.[^<>()\[\]\.,;:\s@"]+)*)@(([a-zA-Z-_0-9]+\.)+[a-zA-Z]{2,})$'},
+        "first_name": {"max_length": 50},
+        "last_name": {"max_length": 50},
+        "company_name": {"max_length": 50},
+        "email_address": {
+            "pattern": r'^([^<>()\[\]\.,;:\s@"]+(\.[^<>()\[\]\.,;:\s@"]+)*)@(([a-zA-Z-_0-9]+\.)+[a-zA-Z]{2,})$'
+        },
     }
 
     _attribute_map = {
-        'first_name': {'key': 'firstName', 'type': 'str'},
-        'last_name': {'key': 'lastName', 'type': 'str'},
-        'company_name': {'key': 'companyName', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'company_info': {'key': 'companyInfo', 'type': 'CompanyInfo'},
+        "first_name": {"key": "firstName", "type": "str"},
+        "last_name": {"key": "lastName", "type": "str"},
+        "company_name": {"key": "companyName", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
+        "company_info": {"key": "companyInfo", "type": "CompanyInfo"},
     }
 
     def __init__(
@@ -930,10 +1334,22 @@ class UserInfo(msrest.serialization.Model):
         last_name: Optional[str] = None,
         company_name: Optional[str] = None,
         email_address: Optional[str] = None,
-        company_info: Optional["CompanyInfo"] = None,
+        company_info: Optional["_models.CompanyInfo"] = None,
         **kwargs
     ):
-        super(UserInfo, self).__init__(**kwargs)
+        """
+        :keyword first_name: First name of the user.
+        :paramtype first_name: str
+        :keyword last_name: Last name of the user.
+        :paramtype last_name: str
+        :keyword company_name: Company name of the user.
+        :paramtype company_name: str
+        :keyword email_address: Email of the user used by Elastic for contacting them if needed.
+        :paramtype email_address: str
+        :keyword company_info: Company information of the user to be passed to partners.
+        :paramtype company_info: ~azure.mgmt.elastic.models.CompanyInfo
+        """
+        super().__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
         self.company_name = company_name
@@ -941,101 +1357,109 @@ class UserInfo(msrest.serialization.Model):
         self.company_info = company_info
 
 
-class VMCollectionUpdate(msrest.serialization.Model):
+class VMCollectionUpdate(_serialization.Model):
     """Update VM resource collection.
 
-    :param vm_resource_id: ARM id of the VM resource.
-    :type vm_resource_id: str
-    :param operation_name: Operation to be performed for given VM. Possible values include: "Add",
+    :ivar vm_resource_id: ARM id of the VM resource.
+    :vartype vm_resource_id: str
+    :ivar operation_name: Operation to be performed for given VM. Known values are: "Add" and
      "Delete".
-    :type operation_name: str or ~azure.mgmt.elastic.models.OperationName
+    :vartype operation_name: str or ~azure.mgmt.elastic.models.OperationName
     """
 
     _attribute_map = {
-        'vm_resource_id': {'key': 'vmResourceId', 'type': 'str'},
-        'operation_name': {'key': 'operationName', 'type': 'str'},
+        "vm_resource_id": {"key": "vmResourceId", "type": "str"},
+        "operation_name": {"key": "operationName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         vm_resource_id: Optional[str] = None,
-        operation_name: Optional[Union[str, "OperationName"]] = None,
+        operation_name: Optional[Union[str, "_models.OperationName"]] = None,
         **kwargs
     ):
-        super(VMCollectionUpdate, self).__init__(**kwargs)
+        """
+        :keyword vm_resource_id: ARM id of the VM resource.
+        :paramtype vm_resource_id: str
+        :keyword operation_name: Operation to be performed for given VM. Known values are: "Add" and
+         "Delete".
+        :paramtype operation_name: str or ~azure.mgmt.elastic.models.OperationName
+        """
+        super().__init__(**kwargs)
         self.vm_resource_id = vm_resource_id
         self.operation_name = operation_name
 
 
-class VMHostListResponse(msrest.serialization.Model):
+class VMHostListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~azure.mgmt.elastic.models.VMResources]
-    :param next_link: Link to the next Vm resource Id, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.elastic.models.VMResources]
+    :ivar next_link: Link to the next Vm resource Id, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VMResources]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VMResources]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VMResources"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.VMResources"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(VMHostListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.elastic.models.VMResources]
+        :keyword next_link: Link to the next Vm resource Id, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VMIngestionDetailsResponse(msrest.serialization.Model):
+class VMIngestionDetailsResponse(_serialization.Model):
     """The vm ingestion details to install an agent.
 
-    :param cloud_id: The cloudId of given Elastic monitor resource.
-    :type cloud_id: str
-    :param ingestion_key: Ingestion details to install agent on given VM.
-    :type ingestion_key: str
+    :ivar cloud_id: The cloudId of given Elastic monitor resource.
+    :vartype cloud_id: str
+    :ivar ingestion_key: Ingestion details to install agent on given VM.
+    :vartype ingestion_key: str
     """
 
     _attribute_map = {
-        'cloud_id': {'key': 'cloudId', 'type': 'str'},
-        'ingestion_key': {'key': 'ingestionKey', 'type': 'str'},
+        "cloud_id": {"key": "cloudId", "type": "str"},
+        "ingestion_key": {"key": "ingestionKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        cloud_id: Optional[str] = None,
-        ingestion_key: Optional[str] = None,
-        **kwargs
-    ):
-        super(VMIngestionDetailsResponse, self).__init__(**kwargs)
+    def __init__(self, *, cloud_id: Optional[str] = None, ingestion_key: Optional[str] = None, **kwargs):
+        """
+        :keyword cloud_id: The cloudId of given Elastic monitor resource.
+        :paramtype cloud_id: str
+        :keyword ingestion_key: Ingestion details to install agent on given VM.
+        :paramtype ingestion_key: str
+        """
+        super().__init__(**kwargs)
         self.cloud_id = cloud_id
         self.ingestion_key = ingestion_key
 
 
-class VMResources(msrest.serialization.Model):
+class VMResources(_serialization.Model):
     """The vm resource properties that is currently being monitored by the Elastic monitor resource.
 
-    :param vm_resource_id: The ARM id of the VM resource.
-    :type vm_resource_id: str
+    :ivar vm_resource_id: The ARM id of the VM resource.
+    :vartype vm_resource_id: str
     """
 
     _attribute_map = {
-        'vm_resource_id': {'key': 'vmResourceId', 'type': 'str'},
+        "vm_resource_id": {"key": "vmResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        vm_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(VMResources, self).__init__(**kwargs)
+    def __init__(self, *, vm_resource_id: Optional[str] = None, **kwargs):
+        """
+        :keyword vm_resource_id: The ARM id of the VM resource.
+        :paramtype vm_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.vm_resource_id = vm_resource_id

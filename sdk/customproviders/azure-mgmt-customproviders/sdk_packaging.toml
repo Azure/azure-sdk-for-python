@@ -3,3 +3,4 @@ package_name = "azure-mgmt-customproviders"
 package_pprint_name = "Custom Providers Management"
 package_doc_id = ""
 is_stable = false
+title = "Customproviders"

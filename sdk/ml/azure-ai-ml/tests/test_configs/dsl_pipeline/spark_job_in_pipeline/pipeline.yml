@@ -21,7 +21,9 @@ jobs:
     inputs:
       file_input: ${{parent.inputs.iris_data}}
 
-    compute: azureml:spark31
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.1.0
 
   count_by_row:
     type: spark
@@ -31,4 +33,7 @@ jobs:
 
     outputs:
       output: ${{parent.outputs.output}}
-    compute: azureml:spark31
+
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.1.0

@@ -4,24 +4,28 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 import pydash
 from marshmallow import EXCLUDE, Schema
 
+from azure.ai.ml._schema._sweep.sweep_fields_provider import EarlyTerminationField
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
     UserIdentityConfiguration,
-    ManagedIdentityConfiguration
 )
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
+from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
+    EarlyTerminationPolicy,
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
 )
@@ -94,27 +98,33 @@ class Sweep(ParameterizedSweep, BaseNode):
         ManagedIdentityConfiguration,
         AmlTokenConfiguration,
         UserIdentityConfiguration]
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     """
 
     def __init__(
         self,
         *,
-        trial: Union[CommandComponent, str] = None,
-        compute: str = None,
-        limits: SweepJobLimits = None,
-        sampling_algorithm: Union[str, SamplingAlgorithm] = None,
-        objective: Objective = None,
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
-        search_space: Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        trial: Optional[Union[CommandComponent, str]] = None,
+        compute: Optional[str] = None,
+        limits: Optional[SweepJobLimits] = None,
+        sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
+        objective: Optional[Objective] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
         ] = None,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Union[str, Output]] = None,
-        identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Union[str, Output]]] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs,
     ):
         # TODO: get rid of self._job_inputs, self._job_outputs once we have general Input
@@ -139,6 +149,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             limits=limits,
             early_termination=early_termination,
             search_space=search_space,
+            queue_settings=queue_settings,
         )
 
         self.identity = identity
@@ -148,6 +159,38 @@ class Sweep(ParameterizedSweep, BaseNode):
     def trial(self):
         """Id or instance of the command component/job to be run for the step."""
         return self._component
+
+    @property
+    def search_space(self):
+        """Dictionary of the hyperparameter search space.
+        The key is the name of the hyperparameter and the value is the parameter expression.
+        """
+        return self._search_space
+
+    @search_space.setter
+    def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]):
+        search_space = {}
+        for name, value in values.items():
+            # If value is a SearchSpace object, directly pass it to job.search_space[name]
+            search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
+        self._search_space = search_space
+
+    @classmethod
+    def _value_type_to_class(cls, value):
+        value_type = value["type"]
+        search_space_dict = {
+            SearchSpace.CHOICE: Choice,
+            SearchSpace.RANDINT: Randint,
+            SearchSpace.LOGNORMAL: LogNormal,
+            SearchSpace.NORMAL: Normal,
+            SearchSpace.LOGUNIFORM: LogUniform,
+            SearchSpace.UNIFORM: Uniform,
+            SearchSpace.QLOGNORMAL: QLogNormal,
+            SearchSpace.QNORMAL: QNormal,
+            SearchSpace.QLOGUNIFORM: QLogUniform,
+            SearchSpace.QUNIFORM: QUniform,
+        }
+        return search_space_dict[value_type](**value)
 
     @classmethod
     def _get_supported_inputs_types(cls):
@@ -169,6 +212,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             "objective",
             "early_termination",
             "search_space",
+            "queue_settings",
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
@@ -192,8 +236,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         return rest_obj
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Sweep":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = super()._from_rest_object_to_init_params(obj)
 
         # hack: only early termination policy does not follow yaml schema now, should be removed after server-side made
         # the change
@@ -215,7 +259,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         trial_component_id = pydash.get(obj, "trial.componentId", None)
         obj["trial"] = trial_component_id  # check this
 
-        return Sweep(**obj)
+        return obj
 
     def _get_trial_component_rest_obj(self):
         # trial component to rest object is different from usual component
@@ -255,11 +299,22 @@ class Sweep(ParameterizedSweep, BaseNode):
             inputs=self._job_inputs,
             outputs=self._job_outputs,
             identity=self.identity,
+            queue_settings=self.queue_settings,
         )
 
     @classmethod
     def _get_component_attr_name(cls):
         return "trial"
+
+    def _build_inputs(self):
+        inputs = super(Sweep, self)._build_inputs()
+        built_inputs = {}
+        # Validate and remove non-specified inputs
+        for key, value in inputs.items():
+            if value is not None:
+                built_inputs[key] = value
+
+        return built_inputs
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -310,3 +365,14 @@ class Sweep(ParameterizedSweep, BaseNode):
                 self.early_termination.slack_amount = None
             if self.early_termination.slack_factor == 0.0:
                 self.early_termination.slack_factor = None
+
+    @property
+    def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+        return self._early_termination
+
+    @early_termination.setter
+    def early_termination(self, value: Union[EarlyTerminationPolicy, Dict[str, Union[str, float, int, bool]]]):
+        if isinstance(value, dict):
+            early_termination_schema = EarlyTerminationField()
+            value = early_termination_schema._deserialize(value=value, attr=None, data=None)
+        self._early_termination = value

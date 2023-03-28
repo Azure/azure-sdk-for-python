@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,135 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._hybrid_compute_management_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ConnectionDetail(msrest.serialization.Model):
+class AgentConfiguration(_serialization.Model):
+    """Configurable properties that the user can set locally via the azcmagent config command, or
+    remotely via ARM.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar proxy_url: Specifies the URL of the proxy to be used.
+    :vartype proxy_url: str
+    :ivar incoming_connections_ports: Specifies the list of ports that the agent will be able to
+     listen on.
+    :vartype incoming_connections_ports: list[str]
+    :ivar extensions_allow_list: Array of extensions that are allowed to be installed or updated.
+    :vartype extensions_allow_list: list[~azure.mgmt.hybridcompute.models.ConfigurationExtension]
+    :ivar extensions_block_list: Array of extensions that are blocked (cannot be installed or
+     updated).
+    :vartype extensions_block_list: list[~azure.mgmt.hybridcompute.models.ConfigurationExtension]
+    :ivar proxy_bypass: List of service names which should not use the specified proxy server.
+    :vartype proxy_bypass: list[str]
+    :ivar extensions_enabled: Specifies whether the extension service is enabled or disabled.
+    :vartype extensions_enabled: str
+    :ivar guest_configuration_enabled: Specified whether the guest configuration service is enabled
+     or disabled.
+    :vartype guest_configuration_enabled: str
+    """
+
+    _validation = {
+        "proxy_url": {"readonly": True},
+        "incoming_connections_ports": {"readonly": True},
+        "extensions_allow_list": {"readonly": True},
+        "extensions_block_list": {"readonly": True},
+        "proxy_bypass": {"readonly": True},
+        "extensions_enabled": {"readonly": True},
+        "guest_configuration_enabled": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "proxy_url": {"key": "proxyUrl", "type": "str"},
+        "incoming_connections_ports": {"key": "incomingConnectionsPorts", "type": "[str]"},
+        "extensions_allow_list": {"key": "extensionsAllowList", "type": "[ConfigurationExtension]"},
+        "extensions_block_list": {"key": "extensionsBlockList", "type": "[ConfigurationExtension]"},
+        "proxy_bypass": {"key": "proxyBypass", "type": "[str]"},
+        "extensions_enabled": {"key": "extensionsEnabled", "type": "str"},
+        "guest_configuration_enabled": {"key": "guestConfigurationEnabled", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.proxy_url = None
+        self.incoming_connections_ports = None
+        self.extensions_allow_list = None
+        self.extensions_block_list = None
+        self.proxy_bypass = None
+        self.extensions_enabled = None
+        self.guest_configuration_enabled = None
+
+
+class CloudMetadata(_serialization.Model):
+    """The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: Specifies the cloud provider (Azure/AWS/GCP...).
+    :vartype provider: str
+    """
+
+    _validation = {
+        "provider": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "provider": {"key": "provider", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.provider = None
+
+
+class ConfigurationExtension(_serialization.Model):
+    """Describes properties that can identify extensions.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar publisher: Publisher of the extension.
+    :vartype publisher: str
+    :ivar type: Type of the extension.
+    :vartype type: str
+    """
+
+    _validation = {
+        "publisher": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "publisher": {"key": "publisher", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.publisher = None
+        self.type = None
+
+
+class ConnectionDetail(_serialization.Model):
     """ConnectionDetail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -33,26 +154,24 @@ class ConnectionDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'private_ip_address': {'readonly': True},
-        'link_identifier': {'readonly': True},
-        'group_id': {'readonly': True},
-        'member_name': {'readonly': True},
+        "id": {"readonly": True},
+        "private_ip_address": {"readonly": True},
+        "link_identifier": {"readonly": True},
+        "group_id": {"readonly": True},
+        "member_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'link_identifier': {'key': 'linkIdentifier', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'member_name': {'key': 'memberName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "private_ip_address": {"key": "privateIpAddress", "type": "str"},
+        "link_identifier": {"key": "linkIdentifier", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
+        "member_name": {"key": "memberName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ConnectionDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.private_ip_address = None
         self.link_identifier = None
@@ -60,7 +179,7 @@ class ConnectionDetail(msrest.serialization.Model):
         self.member_name = None
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -68,29 +187,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -108,26 +225,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -135,28 +250,48 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.hybridcompute.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.hybridcompute.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.hybridcompute.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class PrivateLinkScopesResource(msrest.serialization.Model):
+class ExtensionTargetProperties(_serialization.Model):
+    """Describes the Machine Extension Target Version Properties.
+
+    :ivar target_version: Properties for the specified Extension to Upgrade.
+    :vartype target_version: str
+    """
+
+    _attribute_map = {
+        "target_version": {"key": "targetVersion", "type": "str"},
+    }
+
+    def __init__(self, *, target_version: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword target_version: Properties for the specified Extension to Upgrade.
+        :paramtype target_version: str
+        """
+        super().__init__(**kwargs)
+        self.target_version = target_version
+
+
+class PrivateLinkScopesResource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -169,35 +304,35 @@ class PrivateLinkScopesResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(PrivateLinkScopesResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -218,32 +353,32 @@ class HybridComputePrivateLinkScope(PrivateLinkScopesResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Resource location.
-    :type location: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param properties: Properties that define a Azure Arc PrivateLinkScope resource.
-    :type properties: ~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScopeProperties
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties that define a Azure Arc PrivateLinkScope resource.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScopeProperties
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'HybridComputePrivateLinkScopeProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "HybridComputePrivateLinkScopeProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -251,88 +386,111 @@ class HybridComputePrivateLinkScope(PrivateLinkScopesResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["HybridComputePrivateLinkScopeProperties"] = None,
-        **kwargs
-    ):
-        super(HybridComputePrivateLinkScope, self).__init__(location=location, tags=tags, **kwargs)
+        properties: Optional["_models.HybridComputePrivateLinkScopeProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Properties that define a Azure Arc PrivateLinkScope resource.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScopeProperties
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
         self.system_data = None
 
 
-class HybridComputePrivateLinkScopeListResult(msrest.serialization.Model):
+class HybridComputePrivateLinkScopeListResult(_serialization.Model):
     """Describes the list of Azure Arc PrivateLinkScope resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of Azure Arc PrivateLinkScope definitions.
-    :type value: list[~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope]
-    :param next_link: The URI to get the next set of Azure Arc PrivateLinkScope definitions if too
+    :ivar value: List of Azure Arc PrivateLinkScope definitions. Required.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope]
+    :ivar next_link: The URI to get the next set of Azure Arc PrivateLinkScope definitions if too
      many PrivateLinkScopes where returned in the result set.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HybridComputePrivateLinkScope]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HybridComputePrivateLinkScope]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["HybridComputePrivateLinkScope"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(HybridComputePrivateLinkScopeListResult, self).__init__(**kwargs)
+        self, *, value: List["_models.HybridComputePrivateLinkScope"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of Azure Arc PrivateLinkScope definitions. Required.
+        :paramtype value: list[~azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope]
+        :keyword next_link: The URI to get the next set of Azure Arc PrivateLinkScope definitions if
+         too many PrivateLinkScopes where returned in the result set.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class HybridComputePrivateLinkScopeProperties(msrest.serialization.Model):
+class HybridComputePrivateLinkScopeProperties(_serialization.Model):
     """Properties that define a Azure Arc PrivateLinkScope resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param public_network_access: Indicates whether machines associated with the private link scope
-     can also use public Azure Arc service endpoints. Possible values include: "Enabled",
-     "Disabled". Default value: "Disabled".
-    :type public_network_access: str or ~azure.mgmt.hybridcompute.models.PublicNetworkAccessType
+    :ivar public_network_access: Indicates whether machines associated with the private link scope
+     can also use public Azure Arc service endpoints. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.hybridcompute.models.PublicNetworkAccessType
     :ivar provisioning_state: Current state of this PrivateLinkScope: whether or not is has been
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Provisioning ,Succeeded, Canceled and Failed.
     :vartype provisioning_state: str
     :ivar private_link_scope_id: The Guid id of the private link scope.
     :vartype private_link_scope_id: str
+    :ivar private_endpoint_connections: The collection of associated Private Endpoint Connections.
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.hybridcompute.models.PrivateEndpointConnectionDataModel]
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'private_link_scope_id': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "private_link_scope_id": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'private_link_scope_id': {'key': 'privateLinkScopeId', 'type': 'str'},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "private_link_scope_id": {"key": "privateLinkScopeId", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "privateEndpointConnections",
+            "type": "[PrivateEndpointConnectionDataModel]",
+        },
     }
 
     def __init__(
-        self,
-        *,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = "Disabled",
-        **kwargs
-    ):
-        super(HybridComputePrivateLinkScopeProperties, self).__init__(**kwargs)
+        self, *, public_network_access: Union[str, "_models.PublicNetworkAccessType"] = "Disabled", **kwargs: Any
+    ) -> None:
+        """
+        :keyword public_network_access: Indicates whether machines associated with the private link
+         scope can also use public Azure Arc service endpoints. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.hybridcompute.models.PublicNetworkAccessType
+        """
+        super().__init__(**kwargs)
         self.public_network_access = public_network_access
         self.provisioning_state = None
         self.private_link_scope_id = None
+        self.private_endpoint_connections = None
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -341,57 +499,56 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Default value: "SystemAssigned".
+    :ivar type: The identity type. Default value is "SystemAssigned".
     :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'constant': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    type = "SystemAssigned"
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Identity, self).__init__(**kwargs)
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: The identity type. Default value is "SystemAssigned".
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
+        self.type = type
 
 
-class LocationData(msrest.serialization.Model):
+class LocationData(_serialization.Model):
     """Metadata pertaining to the geographic location of the resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. A canonical name for the geographic or physical location.
-    :type name: str
-    :param city: The city or locality where the resource is located.
-    :type city: str
-    :param district: The district, state, or province where the resource is located.
-    :type district: str
-    :param country_or_region: The country or region where the resource is located.
-    :type country_or_region: str
+    :ivar name: A canonical name for the geographic or physical location. Required.
+    :vartype name: str
+    :ivar city: The city or locality where the resource is located.
+    :vartype city: str
+    :ivar district: The district, state, or province where the resource is located.
+    :vartype district: str
+    :ivar country_or_region: The country or region where the resource is located.
+    :vartype country_or_region: str
     """
 
     _validation = {
-        'name': {'required': True, 'max_length': 256, 'min_length': 0},
+        "name": {"required": True, "max_length": 256},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'district': {'key': 'district', 'type': 'str'},
-        'country_or_region': {'key': 'countryOrRegion', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "district": {"key": "district", "type": "str"},
+        "country_or_region": {"key": "countryOrRegion", "type": "str"},
     }
 
     def __init__(
@@ -401,16 +558,26 @@ class LocationData(msrest.serialization.Model):
         city: Optional[str] = None,
         district: Optional[str] = None,
         country_or_region: Optional[str] = None,
-        **kwargs
-    ):
-        super(LocationData, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: A canonical name for the geographic or physical location. Required.
+        :paramtype name: str
+        :keyword city: The city or locality where the resource is located.
+        :paramtype city: str
+        :keyword district: The district, state, or province where the resource is located.
+        :paramtype district: str
+        :keyword country_or_region: The country or region where the resource is located.
+        :paramtype country_or_region: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.city = city
         self.district = district
         self.country_or_region = country_or_region
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -426,29 +593,28 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -462,35 +628,35 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
@@ -510,35 +676,35 @@ class Machine(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param properties: Hybrid Compute Machine properties.
-    :type properties: ~azure.mgmt.hybridcompute.models.MachineProperties
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.hybridcompute.models.Identity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Hybrid Compute Machine properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.MachineProperties
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.hybridcompute.models.Identity
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MachineProperties'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "MachineProperties"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -546,11 +712,21 @@ class Machine(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["MachineProperties"] = None,
-        identity: Optional["Identity"] = None,
-        **kwargs
-    ):
-        super(Machine, self).__init__(tags=tags, location=location, **kwargs)
+        properties: Optional["_models.MachineProperties"] = None,
+        identity: Optional["_models.Identity"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Hybrid Compute Machine properties.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.MachineProperties
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.hybridcompute.models.Identity
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
         self.identity = identity
         self.system_data = None
@@ -571,32 +747,32 @@ class MachineExtension(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param properties: Describes Machine Extension Properties.
-    :type properties: ~azure.mgmt.hybridcompute.models.MachineExtensionProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Describes Machine Extension Properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.MachineExtensionProperties
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MachineExtensionProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "MachineExtensionProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
@@ -604,32 +780,40 @@ class MachineExtension(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["MachineExtensionProperties"] = None,
-        **kwargs
-    ):
-        super(MachineExtension, self).__init__(tags=tags, location=location, **kwargs)
+        properties: Optional["_models.MachineExtensionProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword properties: Describes Machine Extension Properties.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.MachineExtensionProperties
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
         self.system_data = None
 
 
-class MachineExtensionInstanceView(msrest.serialization.Model):
+class MachineExtensionInstanceView(_serialization.Model):
     """Describes the Machine Extension Instance View.
 
-    :param name: The machine extension name.
-    :type name: str
-    :param type: Specifies the type of the extension; an example is "CustomScriptExtension".
-    :type type: str
-    :param type_handler_version: Specifies the version of the script handler.
-    :type type_handler_version: str
-    :param status: Instance view status.
-    :type status: ~azure.mgmt.hybridcompute.models.MachineExtensionInstanceViewStatus
+    :ivar name: The machine extension name.
+    :vartype name: str
+    :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
+    :vartype type: str
+    :ivar type_handler_version: Specifies the version of the script handler.
+    :vartype type_handler_version: str
+    :ivar status: Instance view status.
+    :vartype status: ~azure.mgmt.hybridcompute.models.MachineExtensionInstanceViewStatus
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'MachineExtensionInstanceViewStatus'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "status": {"key": "status", "type": "MachineExtensionInstanceViewStatus"},
     }
 
     def __init__(
@@ -638,50 +822,72 @@ class MachineExtensionInstanceView(msrest.serialization.Model):
         name: Optional[str] = None,
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
-        status: Optional["MachineExtensionInstanceViewStatus"] = None,
-        **kwargs
-    ):
-        super(MachineExtensionInstanceView, self).__init__(**kwargs)
+        status: Optional["_models.MachineExtensionInstanceViewStatus"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The machine extension name.
+        :paramtype name: str
+        :keyword type: Specifies the type of the extension; an example is "CustomScriptExtension".
+        :paramtype type: str
+        :keyword type_handler_version: Specifies the version of the script handler.
+        :paramtype type_handler_version: str
+        :keyword status: Instance view status.
+        :paramtype status: ~azure.mgmt.hybridcompute.models.MachineExtensionInstanceViewStatus
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
         self.type_handler_version = type_handler_version
         self.status = status
 
 
-class MachineExtensionInstanceViewStatus(msrest.serialization.Model):
+class MachineExtensionInstanceViewStatus(_serialization.Model):
     """Instance view status.
 
-    :param code: The status code.
-    :type code: str
-    :param level: The level code. Possible values include: "Info", "Warning", "Error".
-    :type level: str or ~azure.mgmt.hybridcompute.models.StatusLevelTypes
-    :param display_status: The short localizable label for the status.
-    :type display_status: str
-    :param message: The detailed status message, including for alerts and error messages.
-    :type message: str
-    :param time: The time of the status.
-    :type time: ~datetime.datetime
+    :ivar code: The status code.
+    :vartype code: str
+    :ivar level: The level code. Known values are: "Info", "Warning", and "Error".
+    :vartype level: str or ~azure.mgmt.hybridcompute.models.StatusLevelTypes
+    :ivar display_status: The short localizable label for the status.
+    :vartype display_status: str
+    :ivar message: The detailed status message, including for alerts and error messages.
+    :vartype message: str
+    :ivar time: The time of the status.
+    :vartype time: ~datetime.datetime
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
+        "code": {"key": "code", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         code: Optional[str] = None,
-        level: Optional[Union[str, "StatusLevelTypes"]] = None,
+        level: Optional[Union[str, "_models.StatusLevelTypes"]] = None,
         display_status: Optional[str] = None,
         message: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(MachineExtensionInstanceViewStatus, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword code: The status code.
+        :paramtype code: str
+        :keyword level: The level code. Known values are: "Info", "Warning", and "Error".
+        :paramtype level: str or ~azure.mgmt.hybridcompute.models.StatusLevelTypes
+        :keyword display_status: The short localizable label for the status.
+        :paramtype display_status: str
+        :keyword message: The detailed status message, including for alerts and error messages.
+        :paramtype message: str
+        :keyword time: The time of the status.
+        :paramtype time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.level = level
         self.display_status = display_status
@@ -689,49 +895,53 @@ class MachineExtensionInstanceViewStatus(msrest.serialization.Model):
         self.time = time
 
 
-class MachineExtensionProperties(msrest.serialization.Model):
+class MachineExtensionProperties(_serialization.Model):
     """Describes the properties of a Machine Extension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param force_update_tag: How the extension handler should be forced to update even if the
+    :ivar force_update_tag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
-    :type force_update_tag: str
-    :param publisher: The name of the extension handler publisher.
-    :type publisher: str
-    :param type: Specifies the type of the extension; an example is "CustomScriptExtension".
-    :type type: str
-    :param type_handler_version: Specifies the version of the script handler.
-    :type type_handler_version: str
-    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+    :vartype force_update_tag: str
+    :ivar publisher: The name of the extension handler publisher.
+    :vartype publisher: str
+    :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
+    :vartype type: str
+    :ivar type_handler_version: Specifies the version of the script handler.
+    :vartype type_handler_version: str
+    :ivar enable_automatic_upgrade: Indicates whether the extension should be automatically
+     upgraded by the platform if there is a newer version available.
+    :vartype enable_automatic_upgrade: bool
+    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
      version if one is available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true.
-    :type auto_upgrade_minor_version: bool
-    :param settings: Json formatted public settings for the extension.
-    :type settings: object
-    :param protected_settings: The extension can contain either protectedSettings or
+    :vartype auto_upgrade_minor_version: bool
+    :ivar settings: Json formatted public settings for the extension.
+    :vartype settings: JSON
+    :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :type protected_settings: object
+    :vartype protected_settings: JSON
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
-    :param instance_view: The machine extension instance view.
-    :type instance_view: ~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView
+    :ivar instance_view: The machine extension instance view.
+    :vartype instance_view: ~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'force_update_tag': {'key': 'forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'settings', 'type': 'object'},
-        'protected_settings': {'key': 'protectedSettings', 'type': 'object'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'instance_view': {'key': 'instanceView', 'type': 'MachineExtensionInstanceView'},
+        "force_update_tag": {"key": "forceUpdateTag", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "enable_automatic_upgrade": {"key": "enableAutomaticUpgrade", "type": "bool"},
+        "auto_upgrade_minor_version": {"key": "autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "settings", "type": "object"},
+        "protected_settings": {"key": "protectedSettings", "type": "object"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "instance_view": {"key": "instanceView", "type": "MachineExtensionInstanceView"},
     }
 
     def __init__(
@@ -741,17 +951,44 @@ class MachineExtensionProperties(msrest.serialization.Model):
         publisher: Optional[str] = None,
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
+        enable_automatic_upgrade: Optional[bool] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
-        settings: Optional[object] = None,
-        protected_settings: Optional[object] = None,
-        instance_view: Optional["MachineExtensionInstanceView"] = None,
-        **kwargs
-    ):
-        super(MachineExtensionProperties, self).__init__(**kwargs)
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
+        instance_view: Optional["_models.MachineExtensionInstanceView"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword force_update_tag: How the extension handler should be forced to update even if the
+         extension configuration has not changed.
+        :paramtype force_update_tag: str
+        :keyword publisher: The name of the extension handler publisher.
+        :paramtype publisher: str
+        :keyword type: Specifies the type of the extension; an example is "CustomScriptExtension".
+        :paramtype type: str
+        :keyword type_handler_version: Specifies the version of the script handler.
+        :paramtype type_handler_version: str
+        :keyword enable_automatic_upgrade: Indicates whether the extension should be automatically
+         upgraded by the platform if there is a newer version available.
+        :paramtype enable_automatic_upgrade: bool
+        :keyword auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+         version if one is available at deployment time. Once deployed, however, the extension will not
+         upgrade minor versions unless redeployed, even with this property set to true.
+        :paramtype auto_upgrade_minor_version: bool
+        :keyword settings: Json formatted public settings for the extension.
+        :paramtype settings: JSON
+        :keyword protected_settings: The extension can contain either protectedSettings or
+         protectedSettingsFromKeyVault or no protected settings at all.
+        :paramtype protected_settings: JSON
+        :keyword instance_view: The machine extension instance view.
+        :paramtype instance_view: ~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView
+        """
+        super().__init__(**kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type = type
         self.type_handler_version = type_handler_version
+        self.enable_automatic_upgrade = enable_automatic_upgrade
         self.auto_upgrade_minor_version = auto_upgrade_minor_version
         self.settings = settings
         self.protected_settings = protected_settings
@@ -759,110 +996,122 @@ class MachineExtensionProperties(msrest.serialization.Model):
         self.instance_view = instance_view
 
 
-class MachineExtensionsListResult(msrest.serialization.Model):
+class MachineExtensionsListResult(_serialization.Model):
     """Describes the Machine Extensions List Result.
 
-    :param value: The list of extensions.
-    :type value: list[~azure.mgmt.hybridcompute.models.MachineExtension]
-    :param next_link: The uri to fetch the next page of machine extensions. Call ListNext() with
+    :ivar value: The list of extensions.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.MachineExtension]
+    :ivar next_link: The uri to fetch the next page of machine extensions. Call ListNext() with
      this to fetch the next page of extensions.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MachineExtension]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MachineExtension]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["MachineExtension"]] = None,
+        value: Optional[List["_models.MachineExtension"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(MachineExtensionsListResult, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of extensions.
+        :paramtype value: list[~azure.mgmt.hybridcompute.models.MachineExtension]
+        :keyword next_link: The uri to fetch the next page of machine extensions. Call ListNext() with
+         this to fetch the next page of extensions.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ResourceUpdate(msrest.serialization.Model):
+class ResourceUpdate(_serialization.Model):
     """The Update Resource model definition.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ResourceUpdate, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
 class MachineExtensionUpdate(ResourceUpdate):
     """Describes a Machine Extension Update.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param properties: Describes Machine Extension Update Properties.
-    :type properties: ~azure.mgmt.hybridcompute.models.MachineExtensionUpdateProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Describes Machine Extension Update Properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.MachineExtensionUpdateProperties
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'MachineExtensionUpdateProperties'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "MachineExtensionUpdateProperties"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["MachineExtensionUpdateProperties"] = None,
-        **kwargs
-    ):
-        super(MachineExtensionUpdate, self).__init__(tags=tags, **kwargs)
+        properties: Optional["_models.MachineExtensionUpdateProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Describes Machine Extension Update Properties.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.MachineExtensionUpdateProperties
+        """
+        super().__init__(tags=tags, **kwargs)
         self.properties = properties
 
 
-class MachineExtensionUpdateProperties(msrest.serialization.Model):
+class MachineExtensionUpdateProperties(_serialization.Model):
     """Describes the properties of a Machine Extension.
 
-    :param force_update_tag: How the extension handler should be forced to update even if the
+    :ivar force_update_tag: How the extension handler should be forced to update even if the
      extension configuration has not changed.
-    :type force_update_tag: str
-    :param publisher: The name of the extension handler publisher.
-    :type publisher: str
-    :param type: Specifies the type of the extension; an example is "CustomScriptExtension".
-    :type type: str
-    :param type_handler_version: Specifies the version of the script handler.
-    :type type_handler_version: str
-    :param auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+    :vartype force_update_tag: str
+    :ivar publisher: The name of the extension handler publisher.
+    :vartype publisher: str
+    :ivar type: Specifies the type of the extension; an example is "CustomScriptExtension".
+    :vartype type: str
+    :ivar type_handler_version: Specifies the version of the script handler.
+    :vartype type_handler_version: str
+    :ivar auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
      version if one is available at deployment time. Once deployed, however, the extension will not
      upgrade minor versions unless redeployed, even with this property set to true.
-    :type auto_upgrade_minor_version: bool
-    :param settings: Json formatted public settings for the extension.
-    :type settings: object
-    :param protected_settings: The extension can contain either protectedSettings or
+    :vartype auto_upgrade_minor_version: bool
+    :ivar settings: Json formatted public settings for the extension.
+    :vartype settings: JSON
+    :ivar protected_settings: The extension can contain either protectedSettings or
      protectedSettingsFromKeyVault or no protected settings at all.
-    :type protected_settings: object
+    :vartype protected_settings: JSON
     """
 
     _attribute_map = {
-        'force_update_tag': {'key': 'forceUpdateTag', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_handler_version': {'key': 'typeHandlerVersion', 'type': 'str'},
-        'auto_upgrade_minor_version': {'key': 'autoUpgradeMinorVersion', 'type': 'bool'},
-        'settings': {'key': 'settings', 'type': 'object'},
-        'protected_settings': {'key': 'protectedSettings', 'type': 'object'},
+        "force_update_tag": {"key": "forceUpdateTag", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_handler_version": {"key": "typeHandlerVersion", "type": "str"},
+        "auto_upgrade_minor_version": {"key": "autoUpgradeMinorVersion", "type": "bool"},
+        "settings": {"key": "settings", "type": "object"},
+        "protected_settings": {"key": "protectedSettings", "type": "object"},
     }
 
     def __init__(
@@ -873,11 +1122,31 @@ class MachineExtensionUpdateProperties(msrest.serialization.Model):
         type: Optional[str] = None,
         type_handler_version: Optional[str] = None,
         auto_upgrade_minor_version: Optional[bool] = None,
-        settings: Optional[object] = None,
-        protected_settings: Optional[object] = None,
-        **kwargs
-    ):
-        super(MachineExtensionUpdateProperties, self).__init__(**kwargs)
+        settings: Optional[JSON] = None,
+        protected_settings: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword force_update_tag: How the extension handler should be forced to update even if the
+         extension configuration has not changed.
+        :paramtype force_update_tag: str
+        :keyword publisher: The name of the extension handler publisher.
+        :paramtype publisher: str
+        :keyword type: Specifies the type of the extension; an example is "CustomScriptExtension".
+        :paramtype type: str
+        :keyword type_handler_version: Specifies the version of the script handler.
+        :paramtype type_handler_version: str
+        :keyword auto_upgrade_minor_version: Indicates whether the extension should use a newer minor
+         version if one is available at deployment time. Once deployed, however, the extension will not
+         upgrade minor versions unless redeployed, even with this property set to true.
+        :paramtype auto_upgrade_minor_version: bool
+        :keyword settings: Json formatted public settings for the extension.
+        :paramtype settings: JSON
+        :keyword protected_settings: The extension can contain either protectedSettings or
+         protectedSettingsFromKeyVault or no protected settings at all.
+        :paramtype protected_settings: JSON
+        """
+        super().__init__(**kwargs)
         self.force_update_tag = force_update_tag
         self.publisher = publisher
         self.type = type
@@ -887,52 +1156,84 @@ class MachineExtensionUpdateProperties(msrest.serialization.Model):
         self.protected_settings = protected_settings
 
 
-class MachineListResult(msrest.serialization.Model):
+class MachineExtensionUpgrade(_serialization.Model):
+    """Describes the Machine Extension Upgrade Properties.
+
+    :ivar extension_targets: Describes the Extension Target Properties.
+    :vartype extension_targets: dict[str,
+     ~azure.mgmt.hybridcompute.models.ExtensionTargetProperties]
+    """
+
+    _attribute_map = {
+        "extension_targets": {"key": "extensionTargets", "type": "{ExtensionTargetProperties}"},
+    }
+
+    def __init__(
+        self, *, extension_targets: Optional[Dict[str, "_models.ExtensionTargetProperties"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword extension_targets: Describes the Extension Target Properties.
+        :paramtype extension_targets: dict[str,
+         ~azure.mgmt.hybridcompute.models.ExtensionTargetProperties]
+        """
+        super().__init__(**kwargs)
+        self.extension_targets = extension_targets
+
+
+class MachineListResult(_serialization.Model):
     """The List hybrid machine operation response.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. The list of hybrid machines.
-    :type value: list[~azure.mgmt.hybridcompute.models.Machine]
-    :param next_link: The URI to fetch the next page of Machines. Call ListNext() with this URI to
+    :ivar value: The list of hybrid machines. Required.
+    :vartype value: list[~azure.mgmt.hybridcompute.models.Machine]
+    :ivar next_link: The URI to fetch the next page of Machines. Call ListNext() with this URI to
      fetch the next page of hybrid machines.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Machine]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Machine]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Machine"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(MachineListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: List["_models.Machine"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The list of hybrid machines. Required.
+        :paramtype value: list[~azure.mgmt.hybridcompute.models.Machine]
+        :keyword next_link: The URI to fetch the next page of Machines. Call ListNext() with this URI
+         to fetch the next page of hybrid machines.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class MachineProperties(msrest.serialization.Model):
+class MachineProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes the properties of a hybrid machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param location_data: Metadata pertaining to the geographic location of the resource.
-    :type location_data: ~azure.mgmt.hybridcompute.models.LocationData
+    :ivar location_data: Metadata pertaining to the geographic location of the resource.
+    :vartype location_data: ~azure.mgmt.hybridcompute.models.LocationData
+    :ivar agent_configuration: Configurable properties that the user can set locally via the
+     azcmagent config command, or remotely via ARM.
+    :vartype agent_configuration: ~azure.mgmt.hybridcompute.models.AgentConfiguration
+    :ivar service_statuses: Statuses of dependent services that are reported back to ARM.
+    :vartype service_statuses: ~azure.mgmt.hybridcompute.models.ServiceStatuses
+    :ivar cloud_metadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
+    :vartype cloud_metadata: ~azure.mgmt.hybridcompute.models.CloudMetadata
     :ivar os_profile: Specifies the operating system settings for the hybrid machine.
     :vartype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
-    :ivar status: The status of the hybrid machine agent. Possible values include: "Connected",
-     "Disconnected", "Error".
+    :ivar status: The status of the hybrid machine agent. Known values are: "Connected",
+     "Disconnected", and "Error".
     :vartype status: str or ~azure.mgmt.hybridcompute.models.StatusTypes
     :ivar last_status_change: The time of the last status change.
     :vartype last_status_change: ~datetime.datetime
@@ -940,23 +1241,25 @@ class MachineProperties(msrest.serialization.Model):
     :vartype error_details: list[~azure.mgmt.hybridcompute.models.ErrorDetail]
     :ivar agent_version: The hybrid machine agent full version.
     :vartype agent_version: str
-    :param vm_id: Specifies the hybrid machine unique ID.
-    :type vm_id: str
+    :ivar vm_id: Specifies the hybrid machine unique ID.
+    :vartype vm_id: str
     :ivar display_name: Specifies the hybrid machine display name.
     :vartype display_name: str
     :ivar machine_fqdn: Specifies the hybrid machine FQDN.
     :vartype machine_fqdn: str
-    :param client_public_key: Public Key that the client provides to be used during initial
-     resource onboarding.
-    :type client_public_key: str
+    :ivar client_public_key: Public Key that the client provides to be used during initial resource
+     onboarding.
+    :vartype client_public_key: str
     :ivar os_name: The Operating System running on the hybrid machine.
     :vartype os_name: str
     :ivar os_version: The version of Operating System running on the hybrid machine.
     :vartype os_version: str
+    :ivar os_type: The type of Operating System (windows/linux).
+    :vartype os_type: str
     :ivar vm_uuid: Specifies the Arc Machine's unique SMBIOS ID.
     :vartype vm_uuid: str
-    :param extensions: Machine Extensions information.
-    :type extensions: list[~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView]
+    :ivar extensions: Machine Extensions information.
+    :vartype extensions: list[~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView]
     :ivar os_sku: Specifies the Operating System product SKU.
     :vartype os_sku: str
     :ivar domain_name: Specifies the Windows domain name.
@@ -965,74 +1268,116 @@ class MachineProperties(msrest.serialization.Model):
     :vartype ad_fqdn: str
     :ivar dns_fqdn: Specifies the DNS fully qualified display name.
     :vartype dns_fqdn: str
-    :param private_link_scope_resource_id: The resource id of the private link scope this machine
-     is assigned to, if any.
-    :type private_link_scope_resource_id: str
-    :param parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
+    :ivar private_link_scope_resource_id: The resource id of the private link scope this machine is
+     assigned to, if any.
+    :vartype private_link_scope_resource_id: str
+    :ivar parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
      machine is assigned to, if any.
-    :type parent_cluster_resource_id: str
+    :vartype parent_cluster_resource_id: str
+    :ivar mssql_discovered: Specifies whether any MS SQL instance is discovered on the machine.
+    :vartype mssql_discovered: str
     :ivar detected_properties: Detected properties from the machine.
     :vartype detected_properties: dict[str, str]
     """
 
     _validation = {
-        'os_profile': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'last_status_change': {'readonly': True},
-        'error_details': {'readonly': True},
-        'agent_version': {'readonly': True},
-        'display_name': {'readonly': True},
-        'machine_fqdn': {'readonly': True},
-        'os_name': {'readonly': True},
-        'os_version': {'readonly': True},
-        'vm_uuid': {'readonly': True},
-        'os_sku': {'readonly': True},
-        'domain_name': {'readonly': True},
-        'ad_fqdn': {'readonly': True},
-        'dns_fqdn': {'readonly': True},
-        'detected_properties': {'readonly': True},
+        "agent_configuration": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "last_status_change": {"readonly": True},
+        "error_details": {"readonly": True},
+        "agent_version": {"readonly": True},
+        "display_name": {"readonly": True},
+        "machine_fqdn": {"readonly": True},
+        "os_name": {"readonly": True},
+        "os_version": {"readonly": True},
+        "vm_uuid": {"readonly": True},
+        "os_sku": {"readonly": True},
+        "domain_name": {"readonly": True},
+        "ad_fqdn": {"readonly": True},
+        "dns_fqdn": {"readonly": True},
+        "detected_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'location_data': {'key': 'locationData', 'type': 'LocationData'},
-        'os_profile': {'key': 'osProfile', 'type': 'OSProfile'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'last_status_change': {'key': 'lastStatusChange', 'type': 'iso-8601'},
-        'error_details': {'key': 'errorDetails', 'type': '[ErrorDetail]'},
-        'agent_version': {'key': 'agentVersion', 'type': 'str'},
-        'vm_id': {'key': 'vmId', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'machine_fqdn': {'key': 'machineFqdn', 'type': 'str'},
-        'client_public_key': {'key': 'clientPublicKey', 'type': 'str'},
-        'os_name': {'key': 'osName', 'type': 'str'},
-        'os_version': {'key': 'osVersion', 'type': 'str'},
-        'vm_uuid': {'key': 'vmUuid', 'type': 'str'},
-        'extensions': {'key': 'extensions', 'type': '[MachineExtensionInstanceView]'},
-        'os_sku': {'key': 'osSku', 'type': 'str'},
-        'domain_name': {'key': 'domainName', 'type': 'str'},
-        'ad_fqdn': {'key': 'adFqdn', 'type': 'str'},
-        'dns_fqdn': {'key': 'dnsFqdn', 'type': 'str'},
-        'private_link_scope_resource_id': {'key': 'privateLinkScopeResourceId', 'type': 'str'},
-        'parent_cluster_resource_id': {'key': 'parentClusterResourceId', 'type': 'str'},
-        'detected_properties': {'key': 'detectedProperties', 'type': '{str}'},
+        "location_data": {"key": "locationData", "type": "LocationData"},
+        "agent_configuration": {"key": "agentConfiguration", "type": "AgentConfiguration"},
+        "service_statuses": {"key": "serviceStatuses", "type": "ServiceStatuses"},
+        "cloud_metadata": {"key": "cloudMetadata", "type": "CloudMetadata"},
+        "os_profile": {"key": "osProfile", "type": "OSProfile"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "last_status_change": {"key": "lastStatusChange", "type": "iso-8601"},
+        "error_details": {"key": "errorDetails", "type": "[ErrorDetail]"},
+        "agent_version": {"key": "agentVersion", "type": "str"},
+        "vm_id": {"key": "vmId", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "machine_fqdn": {"key": "machineFqdn", "type": "str"},
+        "client_public_key": {"key": "clientPublicKey", "type": "str"},
+        "os_name": {"key": "osName", "type": "str"},
+        "os_version": {"key": "osVersion", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "vm_uuid": {"key": "vmUuid", "type": "str"},
+        "extensions": {"key": "extensions", "type": "[MachineExtensionInstanceView]"},
+        "os_sku": {"key": "osSku", "type": "str"},
+        "domain_name": {"key": "domainName", "type": "str"},
+        "ad_fqdn": {"key": "adFqdn", "type": "str"},
+        "dns_fqdn": {"key": "dnsFqdn", "type": "str"},
+        "private_link_scope_resource_id": {"key": "privateLinkScopeResourceId", "type": "str"},
+        "parent_cluster_resource_id": {"key": "parentClusterResourceId", "type": "str"},
+        "mssql_discovered": {"key": "mssqlDiscovered", "type": "str"},
+        "detected_properties": {"key": "detectedProperties", "type": "{str}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        location_data: Optional["LocationData"] = None,
+        location_data: Optional["_models.LocationData"] = None,
+        service_statuses: Optional["_models.ServiceStatuses"] = None,
+        cloud_metadata: Optional["_models.CloudMetadata"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
         vm_id: Optional[str] = None,
         client_public_key: Optional[str] = None,
-        extensions: Optional[List["MachineExtensionInstanceView"]] = None,
+        os_type: Optional[str] = None,
+        extensions: Optional[List["_models.MachineExtensionInstanceView"]] = None,
         private_link_scope_resource_id: Optional[str] = None,
         parent_cluster_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(MachineProperties, self).__init__(**kwargs)
+        mssql_discovered: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location_data: Metadata pertaining to the geographic location of the resource.
+        :paramtype location_data: ~azure.mgmt.hybridcompute.models.LocationData
+        :keyword service_statuses: Statuses of dependent services that are reported back to ARM.
+        :paramtype service_statuses: ~azure.mgmt.hybridcompute.models.ServiceStatuses
+        :keyword cloud_metadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
+        :paramtype cloud_metadata: ~azure.mgmt.hybridcompute.models.CloudMetadata
+        :keyword os_profile: Specifies the operating system settings for the hybrid machine.
+        :paramtype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
+        :keyword vm_id: Specifies the hybrid machine unique ID.
+        :paramtype vm_id: str
+        :keyword client_public_key: Public Key that the client provides to be used during initial
+         resource onboarding.
+        :paramtype client_public_key: str
+        :keyword os_type: The type of Operating System (windows/linux).
+        :paramtype os_type: str
+        :keyword extensions: Machine Extensions information.
+        :paramtype extensions: list[~azure.mgmt.hybridcompute.models.MachineExtensionInstanceView]
+        :keyword private_link_scope_resource_id: The resource id of the private link scope this machine
+         is assigned to, if any.
+        :paramtype private_link_scope_resource_id: str
+        :keyword parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
+         machine is assigned to, if any.
+        :paramtype parent_cluster_resource_id: str
+        :keyword mssql_discovered: Specifies whether any MS SQL instance is discovered on the machine.
+        :paramtype mssql_discovered: str
+        """
+        super().__init__(**kwargs)
         self.location_data = location_data
-        self.os_profile = None
+        self.agent_configuration = None
+        self.service_statuses = service_statuses
+        self.cloud_metadata = cloud_metadata
+        self.os_profile = os_profile
         self.provisioning_state = None
         self.status = None
         self.last_status_change = None
@@ -1044,6 +1389,7 @@ class MachineProperties(msrest.serialization.Model):
         self.client_public_key = client_public_key
         self.os_name = None
         self.os_version = None
+        self.os_type = os_type
         self.vm_uuid = None
         self.extensions = extensions
         self.os_sku = None
@@ -1052,73 +1398,106 @@ class MachineProperties(msrest.serialization.Model):
         self.dns_fqdn = None
         self.private_link_scope_resource_id = private_link_scope_resource_id
         self.parent_cluster_resource_id = parent_cluster_resource_id
+        self.mssql_discovered = mssql_discovered
         self.detected_properties = None
 
 
 class MachineUpdate(ResourceUpdate):
     """Describes a hybrid machine Update.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: Identity for the resource.
-    :type identity: ~azure.mgmt.hybridcompute.models.Identity
-    :param properties: Hybrid Compute Machine properties.
-    :type properties: ~azure.mgmt.hybridcompute.models.MachineUpdateProperties
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: Identity for the resource.
+    :vartype identity: ~azure.mgmt.hybridcompute.models.Identity
+    :ivar properties: Hybrid Compute Machine properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.MachineUpdateProperties
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'properties': {'key': 'properties', 'type': 'MachineUpdateProperties'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "properties": {"key": "properties", "type": "MachineUpdateProperties"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["Identity"] = None,
-        properties: Optional["MachineUpdateProperties"] = None,
-        **kwargs
-    ):
-        super(MachineUpdate, self).__init__(tags=tags, **kwargs)
+        identity: Optional["_models.Identity"] = None,
+        properties: Optional["_models.MachineUpdateProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Identity for the resource.
+        :paramtype identity: ~azure.mgmt.hybridcompute.models.Identity
+        :keyword properties: Hybrid Compute Machine properties.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.MachineUpdateProperties
+        """
+        super().__init__(tags=tags, **kwargs)
         self.identity = identity
         self.properties = properties
 
 
-class MachineUpdateProperties(msrest.serialization.Model):
+class MachineUpdateProperties(_serialization.Model):
     """Describes the ARM updatable properties of a hybrid machine.
 
-    :param location_data: Metadata pertaining to the geographic location of the resource.
-    :type location_data: ~azure.mgmt.hybridcompute.models.LocationData
-    :param parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
+    :ivar location_data: Metadata pertaining to the geographic location of the resource.
+    :vartype location_data: ~azure.mgmt.hybridcompute.models.LocationData
+    :ivar os_profile: Specifies the operating system settings for the hybrid machine.
+    :vartype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
+    :ivar cloud_metadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
+    :vartype cloud_metadata: ~azure.mgmt.hybridcompute.models.CloudMetadata
+    :ivar parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
      machine is assigned to, if any.
-    :type parent_cluster_resource_id: str
-    :param private_link_scope_resource_id: The resource id of the private link scope this machine
-     is assigned to, if any.
-    :type private_link_scope_resource_id: str
+    :vartype parent_cluster_resource_id: str
+    :ivar private_link_scope_resource_id: The resource id of the private link scope this machine is
+     assigned to, if any.
+    :vartype private_link_scope_resource_id: str
     """
 
     _attribute_map = {
-        'location_data': {'key': 'locationData', 'type': 'LocationData'},
-        'parent_cluster_resource_id': {'key': 'parentClusterResourceId', 'type': 'str'},
-        'private_link_scope_resource_id': {'key': 'privateLinkScopeResourceId', 'type': 'str'},
+        "location_data": {"key": "locationData", "type": "LocationData"},
+        "os_profile": {"key": "osProfile", "type": "OSProfile"},
+        "cloud_metadata": {"key": "cloudMetadata", "type": "CloudMetadata"},
+        "parent_cluster_resource_id": {"key": "parentClusterResourceId", "type": "str"},
+        "private_link_scope_resource_id": {"key": "privateLinkScopeResourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        location_data: Optional["LocationData"] = None,
+        location_data: Optional["_models.LocationData"] = None,
+        os_profile: Optional["_models.OSProfile"] = None,
+        cloud_metadata: Optional["_models.CloudMetadata"] = None,
         parent_cluster_resource_id: Optional[str] = None,
         private_link_scope_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(MachineUpdateProperties, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location_data: Metadata pertaining to the geographic location of the resource.
+        :paramtype location_data: ~azure.mgmt.hybridcompute.models.LocationData
+        :keyword os_profile: Specifies the operating system settings for the hybrid machine.
+        :paramtype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
+        :keyword cloud_metadata: The metadata of the cloud environment (Azure/GCP/AWS/OCI...).
+        :paramtype cloud_metadata: ~azure.mgmt.hybridcompute.models.CloudMetadata
+        :keyword parent_cluster_resource_id: The resource id of the parent cluster (Azure HCI) this
+         machine is assigned to, if any.
+        :paramtype parent_cluster_resource_id: str
+        :keyword private_link_scope_resource_id: The resource id of the private link scope this machine
+         is assigned to, if any.
+        :paramtype private_link_scope_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.location_data = location_data
+        self.os_profile = os_profile
+        self.cloud_metadata = cloud_metadata
         self.parent_cluster_resource_id = parent_cluster_resource_id
         self.private_link_scope_resource_id = private_link_scope_resource_id
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """The List Compute Operation operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1128,22 +1507,20 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationValue]'},
+        "value": {"key": "value", "type": "[OperationValue]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class OperationValue(msrest.serialization.Model):
+class OperationValue(_serialization.Model):
     """Describes the properties of a Compute Operation value.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1152,34 +1529,38 @@ class OperationValue(msrest.serialization.Model):
     :vartype origin: str
     :ivar name: The name of the compute operation.
     :vartype name: str
-    :param display: Display properties.
-    :type display: ~azure.mgmt.hybridcompute.models.OperationValueDisplay
+    :ivar display: Display properties.
+    :vartype display: ~azure.mgmt.hybridcompute.models.OperationValueDisplay
+    :ivar is_data_action: This property indicates if the operation is an action or a data action.
+    :vartype is_data_action: bool
     """
 
     _validation = {
-        'origin': {'readonly': True},
-        'name': {'readonly': True},
+        "origin": {"readonly": True},
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
     }
 
     _attribute_map = {
-        'origin': {'key': 'origin', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationValueDisplay'},
+        "origin": {"key": "origin", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationValueDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationValueDisplay"] = None,
-        **kwargs
-    ):
-        super(OperationValue, self).__init__(**kwargs)
+    def __init__(self, *, display: Optional["_models.OperationValueDisplay"] = None, **kwargs: Any) -> None:
+        """
+        :keyword display: Display properties.
+        :paramtype display: ~azure.mgmt.hybridcompute.models.OperationValueDisplay
+        """
+        super().__init__(**kwargs)
         self.origin = None
         self.name = None
         self.display = display
+        self.is_data_action = None
 
 
-class OperationValueDisplay(msrest.serialization.Model):
+class OperationValueDisplay(_serialization.Model):
     """Describes the properties of a Hybrid Compute Operation Value Display.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1195,57 +1576,146 @@ class OperationValueDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'operation': {'readonly': True},
-        'resource': {'readonly': True},
-        'description': {'readonly': True},
-        'provider': {'readonly': True},
+        "operation": {"readonly": True},
+        "resource": {"readonly": True},
+        "description": {"readonly": True},
+        "provider": {"readonly": True},
     }
 
     _attribute_map = {
-        'operation': {'key': 'operation', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
+        "operation": {"key": "operation", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "provider": {"key": "provider", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationValueDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.operation = None
         self.resource = None
         self.description = None
         self.provider = None
 
 
-class OSProfile(msrest.serialization.Model):
+class OSProfile(_serialization.Model):
     """Specifies the operating system settings for the hybrid machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar computer_name: Specifies the host OS name of the hybrid machine.
     :vartype computer_name: str
+    :ivar windows_configuration: Specifies the windows configuration for update management.
+    :vartype windows_configuration: ~azure.mgmt.hybridcompute.models.OSProfileWindowsConfiguration
+    :ivar linux_configuration: Specifies the linux configuration for update management.
+    :vartype linux_configuration: ~azure.mgmt.hybridcompute.models.OSProfileLinuxConfiguration
     """
 
     _validation = {
-        'computer_name': {'readonly': True},
+        "computer_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'computer_name': {'key': 'computerName', 'type': 'str'},
+        "computer_name": {"key": "computerName", "type": "str"},
+        "windows_configuration": {"key": "windowsConfiguration", "type": "OSProfileWindowsConfiguration"},
+        "linux_configuration": {"key": "linuxConfiguration", "type": "OSProfileLinuxConfiguration"},
     }
 
     def __init__(
         self,
-        **kwargs
-    ):
-        super(OSProfile, self).__init__(**kwargs)
+        *,
+        windows_configuration: Optional["_models.OSProfileWindowsConfiguration"] = None,
+        linux_configuration: Optional["_models.OSProfileLinuxConfiguration"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword windows_configuration: Specifies the windows configuration for update management.
+        :paramtype windows_configuration:
+         ~azure.mgmt.hybridcompute.models.OSProfileWindowsConfiguration
+        :keyword linux_configuration: Specifies the linux configuration for update management.
+        :paramtype linux_configuration: ~azure.mgmt.hybridcompute.models.OSProfileLinuxConfiguration
+        """
+        super().__init__(**kwargs)
         self.computer_name = None
+        self.windows_configuration = windows_configuration
+        self.linux_configuration = linux_configuration
+
+
+class OSProfileLinuxConfiguration(_serialization.Model):
+    """Specifies the linux configuration for update management.
+
+    :ivar assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
+     "AutomaticByPlatform".
+    :vartype assessment_mode: str or ~azure.mgmt.hybridcompute.models.AssessmentModeTypes
+    :ivar patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
+     "AutomaticByPlatform", "AutomaticByOS", and "Manual".
+    :vartype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+    """
+
+    _attribute_map = {
+        "assessment_mode": {"key": "patchSettings.assessmentMode", "type": "str"},
+        "patch_mode": {"key": "patchSettings.patchMode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        assessment_mode: Optional[Union[str, "_models.AssessmentModeTypes"]] = None,
+        patch_mode: Optional[Union[str, "_models.PatchModeTypes"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
+         "AutomaticByPlatform".
+        :paramtype assessment_mode: str or ~azure.mgmt.hybridcompute.models.AssessmentModeTypes
+        :keyword patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
+         "AutomaticByPlatform", "AutomaticByOS", and "Manual".
+        :paramtype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+        """
+        super().__init__(**kwargs)
+        self.assessment_mode = assessment_mode
+        self.patch_mode = patch_mode
+
+
+class OSProfileWindowsConfiguration(_serialization.Model):
+    """Specifies the windows configuration for update management.
+
+    :ivar assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
+     "AutomaticByPlatform".
+    :vartype assessment_mode: str or ~azure.mgmt.hybridcompute.models.AssessmentModeTypes
+    :ivar patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
+     "AutomaticByPlatform", "AutomaticByOS", and "Manual".
+    :vartype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+    """
+
+    _attribute_map = {
+        "assessment_mode": {"key": "patchSettings.assessmentMode", "type": "str"},
+        "patch_mode": {"key": "patchSettings.patchMode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        assessment_mode: Optional[Union[str, "_models.AssessmentModeTypes"]] = None,
+        patch_mode: Optional[Union[str, "_models.PatchModeTypes"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword assessment_mode: Specifies the assessment mode. Known values are: "ImageDefault" and
+         "AutomaticByPlatform".
+        :paramtype assessment_mode: str or ~azure.mgmt.hybridcompute.models.AssessmentModeTypes
+        :keyword patch_mode: Specifies the patch mode. Known values are: "ImageDefault",
+         "AutomaticByPlatform", "AutomaticByOS", and "Manual".
+        :paramtype patch_mode: str or ~azure.mgmt.hybridcompute.models.PatchModeTypes
+        """
+        super().__init__(**kwargs)
+        self.assessment_mode = assessment_mode
+        self.patch_mode = patch_mode
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1260,22 +1730,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -1291,39 +1759,82 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param properties: Resource properties.
-    :type properties: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnectionProperties
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnectionProperties
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "PrivateEndpointConnectionProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
-        self,
-        *,
-        properties: Optional["PrivateEndpointConnectionProperties"] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self, *, properties: Optional["_models.PrivateEndpointConnectionProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Resource properties.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnectionProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.system_data = None
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionDataModel(_serialization.Model):
+    """The Data Model for a Private Endpoint Connection associated with a Private Link Scope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The ARM Resource Id of the Private Endpoint.
+    :vartype id: str
+    :ivar name: The Name of the Private Endpoint.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar properties: The Private Endpoint Connection properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnectionProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "PrivateEndpointConnectionProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.PrivateEndpointConnectionProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: The Private Endpoint Connection properties.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.PrivateEndpointConnectionProperties
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.properties = properties
+
+
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """A list of private endpoint connections.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1335,80 +1846,93 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PrivateEndpointConnectionProperties(msrest.serialization.Model):
+class PrivateEndpointConnectionProperties(_serialization.Model):
     """Properties of a private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param private_endpoint: Private endpoint which the connection belongs to.
-    :type private_endpoint: ~azure.mgmt.hybridcompute.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection state of the private endpoint
+    :ivar private_endpoint: Private endpoint which the connection belongs to.
+    :vartype private_endpoint: ~azure.mgmt.hybridcompute.models.PrivateEndpointProperty
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
-    :type private_link_service_connection_state:
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.hybridcompute.models.PrivateLinkServiceConnectionStateProperty
     :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
+    :ivar group_ids: List of group IDs.
+    :vartype group_ids: list[str]
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "group_ids": {"readonly": True},
     }
 
     _attribute_map = {
-        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "private_endpoint": {"key": "privateEndpoint", "type": "PrivateEndpointProperty"},
+        "private_link_service_connection_state": {
+            "key": "privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionStateProperty",
+        },
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "group_ids": {"key": "groupIds", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: Private endpoint which the connection belongs to.
+        :paramtype private_endpoint: ~azure.mgmt.hybridcompute.models.PrivateEndpointProperty
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.hybridcompute.models.PrivateLinkServiceConnectionStateProperty
+        """
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
+        self.group_ids = None
 
 
-class PrivateEndpointProperty(msrest.serialization.Model):
+class PrivateEndpointProperty(_serialization.Model):
     """Private endpoint which the connection belongs to.
 
-    :param id: Resource id of the private endpoint.
-    :type id: str
+    :ivar id: Resource id of the private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointProperty, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource id of the private endpoint.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -1425,39 +1949,38 @@ class PrivateLinkResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param properties: Resource properties.
-    :type properties: ~azure.mgmt.hybridcompute.models.PrivateLinkResourceProperties
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.hybridcompute.models.PrivateLinkResourceProperties
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.hybridcompute.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "PrivateLinkResourceProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["PrivateLinkResourceProperties"] = None,
-        **kwargs
-    ):
-        super(PrivateLinkResource, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.PrivateLinkResourceProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: Resource properties.
+        :paramtype properties: ~azure.mgmt.hybridcompute.models.PrivateLinkResourceProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.system_data = None
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
+class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1469,25 +1992,23 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PrivateLinkResourceProperties(msrest.serialization.Model):
+class PrivateLinkResourceProperties(_serialization.Model):
     """Properties of a private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1501,145 +2022,227 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
-        'required_zone_names': {'readonly': True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
+        "required_zone_names": {"readonly": True},
     }
 
     _attribute_map = {
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+        "group_id": {"key": "groupId", "type": "str"},
+        "required_members": {"key": "requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.group_id = None
         self.required_members = None
         self.required_zone_names = None
 
 
-class PrivateLinkScopeValidationDetails(msrest.serialization.Model):
+class PrivateLinkScopeValidationDetails(_serialization.Model):
     """PrivateLinkScopeValidationDetails.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Azure resource Id.
     :vartype id: str
-    :param public_network_access: Indicates whether machines associated with the private link scope
-     can also use public Azure Arc service endpoints. Possible values include: "Enabled",
-     "Disabled". Default value: "Disabled".
-    :type public_network_access: str or ~azure.mgmt.hybridcompute.models.PublicNetworkAccessType
-    :param connection_details: List of Private Endpoint Connection details.
-    :type connection_details: list[~azure.mgmt.hybridcompute.models.ConnectionDetail]
+    :ivar public_network_access: Indicates whether machines associated with the private link scope
+     can also use public Azure Arc service endpoints. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.hybridcompute.models.PublicNetworkAccessType
+    :ivar connection_details: List of Private Endpoint Connection details.
+    :vartype connection_details: list[~azure.mgmt.hybridcompute.models.ConnectionDetail]
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'connection_details': {'key': 'connectionDetails', 'type': '[ConnectionDetail]'},
+        "id": {"key": "id", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "connection_details": {"key": "connectionDetails", "type": "[ConnectionDetail]"},
     }
 
     def __init__(
         self,
         *,
-        public_network_access: Optional[Union[str, "PublicNetworkAccessType"]] = "Disabled",
-        connection_details: Optional[List["ConnectionDetail"]] = None,
-        **kwargs
-    ):
-        super(PrivateLinkScopeValidationDetails, self).__init__(**kwargs)
+        public_network_access: Union[str, "_models.PublicNetworkAccessType"] = "Disabled",
+        connection_details: Optional[List["_models.ConnectionDetail"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword public_network_access: Indicates whether machines associated with the private link
+         scope can also use public Azure Arc service endpoints. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype public_network_access: str or
+         ~azure.mgmt.hybridcompute.models.PublicNetworkAccessType
+        :keyword connection_details: List of Private Endpoint Connection details.
+        :paramtype connection_details: list[~azure.mgmt.hybridcompute.models.ConnectionDetail]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.public_network_access = public_network_access
         self.connection_details = connection_details
 
 
-class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
+class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
     """State of the private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param status: Required. The private link service connection status.
-    :type status: str
-    :param description: Required. The private link service connection description.
-    :type description: str
+    :ivar status: The private link service connection status. Required.
+    :vartype status: str
+    :ivar description: The private link service connection description. Required.
+    :vartype description: str
     :ivar actions_required: The actions required for private link service connection.
     :vartype actions_required: str
     """
 
     _validation = {
-        'status': {'required': True},
-        'description': {'required': True},
-        'actions_required': {'readonly': True},
+        "status": {"required": True},
+        "description": {"required": True},
+        "actions_required": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: str,
-        description: str,
-        **kwargs
-    ):
-        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+    def __init__(self, *, status: str, description: str, **kwargs: Any) -> None:
+        """
+        :keyword status: The private link service connection status. Required.
+        :paramtype status: str
+        :keyword description: The private link service connection description. Required.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = None
 
 
-class SystemData(msrest.serialization.Model):
-    """Metadata pertaining to creation and last modification of the resource.
+class ServiceStatus(_serialization.Model):
+    """Describes the status and behavior of a service.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.hybridcompute.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.hybridcompute.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar status: The current status of the service.
+    :vartype status: str
+    :ivar startup_type: The behavior of the service when the Arc-enabled machine starts up.
+    :vartype startup_type: str
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "status": {"key": "status", "type": "str"},
+        "startup_type": {"key": "startupType", "type": "str"},
+    }
+
+    def __init__(self, *, status: Optional[str] = None, startup_type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword status: The current status of the service.
+        :paramtype status: str
+        :keyword startup_type: The behavior of the service when the Arc-enabled machine starts up.
+        :paramtype startup_type: str
+        """
+        super().__init__(**kwargs)
+        self.status = status
+        self.startup_type = startup_type
+
+
+class ServiceStatuses(_serialization.Model):
+    """Reports the state and behavior of dependent services.
+
+    :ivar extension_service: The state of the extension service on the Arc-enabled machine.
+    :vartype extension_service: ~azure.mgmt.hybridcompute.models.ServiceStatus
+    :ivar guest_configuration_service: The state of the guest configuration service on the
+     Arc-enabled machine.
+    :vartype guest_configuration_service: ~azure.mgmt.hybridcompute.models.ServiceStatus
+    """
+
+    _attribute_map = {
+        "extension_service": {"key": "extensionService", "type": "ServiceStatus"},
+        "guest_configuration_service": {"key": "guestConfigurationService", "type": "ServiceStatus"},
+    }
+
+    def __init__(
+        self,
+        *,
+        extension_service: Optional["_models.ServiceStatus"] = None,
+        guest_configuration_service: Optional["_models.ServiceStatus"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword extension_service: The state of the extension service on the Arc-enabled machine.
+        :paramtype extension_service: ~azure.mgmt.hybridcompute.models.ServiceStatus
+        :keyword guest_configuration_service: The state of the guest configuration service on the
+         Arc-enabled machine.
+        :paramtype guest_configuration_service: ~azure.mgmt.hybridcompute.models.ServiceStatus
+        """
+        super().__init__(**kwargs)
+        self.extension_service = extension_service
+        self.guest_configuration_service = guest_configuration_service
+
+
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
+
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.hybridcompute.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.hybridcompute.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(SystemData, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.hybridcompute.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.hybridcompute.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1648,22 +2251,22 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TagsResource(msrest.serialization.Model):
-    """A container holding only the Tags for a resource, allowing the user to update the tags on a PrivateLinkScope instance.
+class TagsResource(_serialization.Model):
+    """A container holding only the Tags for a resource, allowing the user to update the tags on a
+    PrivateLinkScope instance.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TagsResource, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags

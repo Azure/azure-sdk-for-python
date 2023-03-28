@@ -53,6 +53,7 @@ _azci_*.log
 .artifacts
 .tmp_whl_dir
 .logs
+.proxy
 
 # tox environment folders
 .tox/
@@ -109,6 +110,7 @@ sdk/storage/azure-storage-blob/tests/settings/settings_real.py
 sdk/storage/azure-storage-queue/tests/settings/settings_real.py
 sdk/storage/azure-storage-file-share/tests/settings/settings_real.py
 sdk/storage/azure-storage-file-datalake/tests/settings/settings_real.py
+sdk/storage/azure-storage-blob-changefeed/tests/settings/settings_real.py
 
 # azure-ai-ml test configs
 !sdk/ml/azure-ai-ml/tests/test_configs/environment/*
@@ -137,3 +139,13 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # local SSL certificate folder
 .certificate
+
+# ignore pre-commit config to avoid adding hooks in this repo as
+# package specific hooks will bring delay and in some cases errors to all developers
+.pre-commit-config.yaml
+
+# api stub files
+*_python.json
+
+# temporary folder to refresh SDK with cadl
+TempTypeSpecFiles/

@@ -20,10 +20,11 @@ Please refer to the [troubleshooting guide][troubleshooting] if you have any iss
   - [Fetch environment variables](#fetch-environment-variables)
   - [Record test variables](#record-test-variables)
 - [Migrate management-plane tests](#migrate-management-plane-tests)
+- [Next steps](#next-steps)
 - [Advanced details](#advanced-details)
   - [What does the test proxy do?](#what-does-the-test-proxy-do)
   - [How does the test proxy know when and what to record or play back?](#how-does-the-test-proxy-know-when-and-what-to-record-or-play-back)
-  - [Start the proxy manually](#start-the-proxy-manually)
+  - [Use pytest.mark.parametrize with migrated tests](#use-pytestmarkparametrize-with-migrated-tests)
 
 ## Update existing tests
 
@@ -95,10 +96,7 @@ Resource preparers need a management client to function, so test classes that us
 
 ### Perform one-time setup
 
-1. Docker is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install].
-2. After installing, make sure Docker is running and is using Linux containers before running tests.
-3. Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
-order to communicate with the test proxy over a secure connection.
+The test proxy uses a self-signed certificate to communicate with HTTPS. Follow the general setup instructions [here][proxy_cert_docs] to trust this certificate locally.
 
 ### Start the proxy server
 
@@ -110,6 +108,7 @@ In a `conftest.py` file for your package's tests, add a session-level fixture th
 `devtools_testutils.test_proxy` as a parameter (and has `autouse` set to `True`):
 
 ```python
+import pytest
 from devtools_testutils import test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -118,10 +117,8 @@ def start_proxy(test_proxy):
     return
 ```
 
-The `test_proxy` fixture will fetch the test proxy Docker image and create a new container called
-`ambitious_azsdk_test_proxy` if one doesn't exist already. If the container already exists, the fixture will start the
-container if it's currently stopped. The container will be stopped after tests finish running, but will stay running if
-test execution is interrupted.
+The `test_proxy` fixture will download a test proxy executable if one isn't available locally, start the tool, and stop
+it after tests complete.
 
 If your tests already use an `autouse`d, session-level fixture for tests, you can accept the `test_proxy` parameter in
 that existing fixture instead of adding a new one. For an example, see the [Register sanitizers](#register-sanitizers)
@@ -141,12 +138,11 @@ Recordings for a given package will end up in that package's `/tests/recordings`
 do. Recordings that use the test proxy are `.json` files instead of `.yml` files, so migrated test suites no longer
 need old `.yml` recordings.
 
+After migrating to use the test proxy, libraries can and are encouraged to use out-of-repo recordings. For more
+information, refer to the [recording migration guide][recording_migration].
+
 > **Note:** support for configuring live or playback tests with a `testsettings_local.cfg` file has been
 > deprecated in favor of using just `AZURE_TEST_RUN_LIVE`.
-
-> **Note:** the recording storage location is determined when the proxy Docker container is created. If there are
-> multiple local copies of the `azure-sdk-for-python` repo on your machine, you will need to delete any existing
-> `ambitious_azsdk_test_proxy` container before recordings can be stored in a different repo copy.
 
 ### Register sanitizers
 
@@ -154,16 +150,16 @@ Since the test proxy doesn't use [`vcrpy`][vcrpy], tests don't use a scrubber to
 Instead, sanitizers (as well as matchers and transforms) can be registered on the proxy as detailed in
 [this][sanitizers] section of the proxy documentation. Sanitizers can be registered via `add_*_sanitizer` methods in
 `devtools_testutils`. For example, the general-use method for sanitizing recording bodies, headers, and URIs is
-`add_general_regex_sanitizer`. Other sanitizers are available for more specific scenarios and can be found at
+`add_general_string_sanitizer`. Other sanitizers are available for more specific scenarios and can be found at
 [devtools_testutils/sanitizers.py][py_sanitizers].
 
-Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so for any sanitizers that
+Sanitizers, matchers, and transforms remain registered until the proxy tool is stopped, so for any sanitizers that
 are shared by different tests, using a session fixture declared in a `conftest.py` file is recommended. Please refer to
 [pytest's scoped fixture documentation][pytest_fixtures] for more details.
 
 As a simple example, to emulate the effect registering a name pair with a `vcrpy` scrubber, you can provide the exact
-value you want to sanitize from recordings as the `regex` in the general regex sanitizer. With `vcrpy`, you would likely
-do something like the following:
+value you want to sanitize from recordings as the `target` in the general string sanitizer. With `vcrpy`, you would
+likely do something like the following:
 
 ```python
 import os
@@ -180,19 +176,21 @@ To do the same sanitization with the test proxy, you could add something like th
 
 ```python
 import os
-from devtools_testutils import add_general_regex_sanitizer, test_proxy
+from devtools_testutils import add_general_string_sanitizer, test_proxy
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    add_general_regex_sanitizer(regex=os.getenv("AZURE_KEYVAULT_NAME"), value="fake-vault")
+    # The default value for the environment variable should be the value you use in playback
+    vault_name = os.getenv("AZURE_KEYVAULT_NAME", "fake-vault")
+    add_general_string_sanitizer(target=vault_name, value="fake-vault")
 ```
 
 Note that the sanitizer fixture accepts the `test_proxy` fixture as a parameter to ensure the proxy is started
 beforehand.
 
 For a more advanced scenario, where we want to sanitize the account names of all Tables endpoints in recordings, we
-could instead call
+could instead use the `add_general_regex_sanitizer` method:
 
 ```python
 add_general_regex_sanitizer(
@@ -267,31 +265,39 @@ This loader is meant to be paired with the PowerShell test resource management c
 [/eng/common/TestResources][test_resources]. It's recommended that all test suites use these scripts for live test
 resource management.
 
-For an example of using the EnvironmentVariableLoader with the test proxy, you can refer to the Tables SDK. The
-CosmosPreparer and TablesPreparer defined in this [preparers.py][tables_preparers] file each define an instance of the
-EnvironmentVariableLoader, which are used to fetch environment variables for Cosmos and Tables, respectively. These
-preparers can be used to decorate test methods directly; for example:
+The EnvironmentVariableLoader accepts a positional `directory` argument and arbitrary keyword-only arguments:
+- `directory` is the name of your package's service as it appears in the Python repository; i.e. `service` in `azure-sdk-for-python/sdk/service/azure-service-package`.
+  - For example, for `azure-keyvault-keys`, the value of `directory` is `keyvault`.
+- For each environment variable you want to provide to tests, pass in a keyword argument with the pattern `environment_variable_name="sanitized-value"`.
+  - For example, to fetch the value of `STORAGE_ENDPOINT` and sanitize this value in recordings as `fake-endpoint`, provide `storage_endpoint="fake-endpoint"` to the EnvironmentVariableLoader constructor.
+
+Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
+values will automatically have sanitizers registered with the test proxy. More specifically, the true values of
+requested variables will be provided to tests in live mode, and the sanitized values of these variables will be provided
+in playback mode.
+
+The most common way to use the EnvironmentVariableLoader is to declare a callable specifying arguments by using
+`functools.partial` and then decorate test methods with that callable. For example:
 
 ```python
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from .preparers import TablesPreparer
+import functools
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+
+ServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "service",
+    service_endpoint="fake-endpoint",
+    service_account_name="fake-account-name",
+)
 
 class TestExample(AzureRecordedTestCase):
 
-    @TablesPreparer()
+    @ServicePreparer()
     @recorded_by_proxy
     def test_example_with_preparer(self, **kwargs):
-        tables_storage_account_name = kwargs.pop("tables_storage_account_name")
-        tables_primary_storage_account_key = kwargs.pop("tables_primary_storage_account_key")
+        service_endpoint = kwargs.pop("service_endpoint")
         ...
 ```
-
-Or, they can be used in a custom decorator, as they are in the `cosmos_decorator` and `tables_decorator` defined in
-[preparers.py][tables_preparers]. `@tables_decorator`, for instance, is then used in place of `@TablesPreparer()` for
-the example above (note that the method-style `tables_decorator` is used without parentheses).
-
-Decorated test methods will have the values of environment variables passed to them as keyword arguments, and these
-values will automatically have sanitizers registered with the test proxy.
 
 ### Record test variables
 
@@ -343,6 +349,13 @@ instead of AzureRecordedTestCase.
 The rest of the information in this guide applies to management-plane packages as well, except for possible specifics
 regarding test resource deployment.
 
+## Next steps
+
+Once your tests have been migrated to the test proxy, they can also have their recordings moved out of the
+`azure-sdk-for-python` repo. Refer to the [recording migration guide][recording_migration] for more details.
+
+After recordings are moved, you can refer to the instructions in [`tests.md`][tests_md] to manage them.
+
 ## Advanced details
 
 ### What does the test proxy do?
@@ -390,47 +403,76 @@ Running tests in playback follows the same pattern, except that requests will be
 The `recorded_by_proxy` and `recorded_by_proxy_async` decorators send the appropriate requests at the start and end of
 each test case.
 
-### Start the proxy manually
+### Use `pytest.mark.parametrize` with migrated tests
 
-There are two options for manually starting and stopping the test proxy: one uses a PowerShell command, and one uses
-methods from `devtools_testutils`.
+Migrating tests to use basic `pytest` tools allows us to take advantage of helpful features such as
+[parametrization][parametrize]. Parametrization allows you to share test code by re-running the same test with varying
+inputs. For example, [`azure-keyvault-keys` tests][parametrize_example] are parametrized to run with multiple API
+versions and multiple Key Vault configurations.
 
-#### PowerShell
+Because of how the `pytest.mark.parametrize` mechanism works, the `recorded_by_proxy(_async)` decorators aren't
+compatible without an additional decorator that handles the arguments we want to parametrize. The callable that
+`pytest.mark.parametrize` decorates needs to have positional parameters that match the arguments we're parametrizing;
+for example:
 
-There is a [PowerShell script][docker_start_proxy] in `eng/common/testproxy` that will fetch the proxy Docker image if
-you don't already have it, and will start or stop a container running the image for you. You can run the following
-command from the root of the `azure-sdk-for-python` directory to start the container whenever you want to make the test
-proxy available for running tests:
+```python
+import pytest
+from devtools_testutils import recorded_by_proxy
 
-```powershell
-.\eng\common\testproxy\docker-start-proxy.ps1 "start"
+test_values = [
+    ("first_value_a", "first_value_b"),
+    ("second_value_a", "second_value_b"),
+]
+
+# Works because `parametrize` decorates a method with positional `a` and `b` parameters
+@pytest.mark.parameterize("a, b", test_values)
+def test_function(a, b, **kwargs):
+    ...
+
+# Doesn't work; raises collection error
+# `recorded_by_proxy`'s wrapping function doesn't accept positional `a` and `b` parameters
+@pytest.mark.parameterize("a, b", test_values)
+@recorded_by_proxy
+def test_recorded_function(a, b, **kwargs):
+    ...
 ```
 
-Note that the proxy is available as long as the container is running. In other words, you don't need to start and
-stop the container for each test run or between tests for different SDKs. You can run the above command in the morning
-and just stop the container whenever you'd like. To stop the container, run the same command but with `"stop"` in place
-of `"start"`.
+To parametrize recorded tests, we need a decorator between `pytest.mark.parametrize` and `recorded_by_proxy` that
+accepts the expected arguments. We can do this by declaring a class with a custom `__call__` method:
 
-#### Python
+```python
+class ArgumentPasser:
+    def __call__(self, fn):
+        # _wrapper accepts the `a` and `b` arguments we want to parametrize with
+        def _wrapper(test_class, a, b, **kwargs):
+            fn(test_class, a, b, **kwargs)
+        return _wrapper
 
-There are two methods in `devtools_testutils`, [start_test_proxy][start_test_proxy] and
-[stop_test_proxy][stop_test_proxy], that can be used to manually start and stop the test proxy. Like
-`docker-start-proxy.ps1`, `start_test_proxy` will automatically fetch the proxy Docker image for you and start the
-container if it's not already running.
+# Works because `ArgumentPasser.__call__`'s return value has the expected parameters
+@pytest.mark.parameterize("a, b", test_values)
+@ArgumentPasser()
+@recorded_by_proxy
+def test_recorded_function(a, b, **kwargs):
+    ...
+```
 
-For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
+You can also introduce additional logic into the `__call__` method of your intermediate decorator. In the aforementioned
+[`azure-keyvault-keys` test example][parametrize_example], the decorator between `parametrize` and `recorded_by_proxy`
+is actually a [client preparer][parametrize_class] that creates a client based on the parametrized input and passes this
+client to the test.
 
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
-[docker_install]: https://docs.docker.com/get-docker/
-[docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
 
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
-[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 
+[parametrize]: https://docs.pytest.org/latest/example/parametrize.html
+[parametrize_example]: https://github.com/Azure/azure-sdk-for-python/blob/d92b63b9976b0025b274016c49a250fb7c4d7333/sdk/keyvault/azure-keyvault-keys/tests/test_key_client.py#L182
+[parametrize_class]: https://github.com/Azure/azure-sdk-for-python/blob/d92b63b9976b0025b274016c49a250fb7c4d7333/sdk/keyvault/azure-keyvault-keys/tests/_test_case.py#L59
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md
@@ -440,6 +482,7 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 [pytest_setup]: https://docs.pytest.org/xunit_setup.html
 [pytest_using_fixtures]: https://docs.pytest.org/latest/how-to/fixtures.html#how-to-fixtures
 
+[recording_migration]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md
 [rg_preparer]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/resource_testcase.py
 
 [sanitizers]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md#session-and-test-level-transforms-sanitiziers-and-matchers
@@ -448,6 +491,7 @@ For more details on proxy startup, please refer to the [proxy documentation][det
 
 [tables_preparers]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/tests/preparers.py
 [test_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/common/TestResources#readme
+[tests_md]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#run-tests-with-out-of-repo-recordings
 [troubleshooting]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/test_proxy_troubleshooting.md
 
 [variables_api]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy#storing-variables

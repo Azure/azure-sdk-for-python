@@ -1,5 +1,31 @@
 # Release History
 
+## 1.0.0b2 (2022-11-02)
+
+### Features Added
+
+  - Model Export has a new parameter blob_list_blob_path
+  - Model JobDetails has a new parameter encryption_key
+  - Model JobResponse has a new parameter identity
+  - Model JobResponse has a new parameter system_data
+  - Model Location has a new parameter additional_shipping_information
+  - Model ShippingInformation has a new parameter additional_information
+
+### Breaking Changes
+
+  - Client name is changed from `StorageImportExport` to `StorageImportExport`
+  - Model Export no longer has parameter blob_listblob_path
+  - Operation BitLockerKeysOperations.list has a new parameter kwargs
+  - Operation JobsOperations.create has a new parameter kwargs
+  - Operation JobsOperations.delete has a new parameter kwargs
+  - Operation JobsOperations.get has a new parameter kwargs
+  - Operation JobsOperations.list_by_resource_group has a new parameter kwargs
+  - Operation JobsOperations.list_by_subscription has a new parameter kwargs
+  - Operation JobsOperations.update has a new parameter kwargs
+  - Operation LocationsOperations.get has a new parameter kwargs
+  - Operation LocationsOperations.list has a new parameter kwargs
+  - Operation Operations.list has a new parameter kwargs
+
 ## 1.0.0b1 (2021-05-27)
 
 This is beta preview version.

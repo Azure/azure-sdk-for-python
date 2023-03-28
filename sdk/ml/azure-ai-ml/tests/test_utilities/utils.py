@@ -1,20 +1,29 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 import copy
 import os
+import shutil
 import signal
 import tempfile
 import time
+from contextlib import contextmanager
 from io import StringIO
-from typing import Dict
+from pathlib import Path
+from typing import Callable, Dict, List, Optional, Union
 from zipfile import ZipFile
-from io import StringIO
 
 import pydash
 import urllib3
+from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
+from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
@@ -63,8 +72,7 @@ def omit_single_with_wildcard(obj, omit_field: str):
                 new_obj[key] = omit_single_with_wildcard(value, next_omit_field)
             pydash.set_(obj, prefix, new_obj)
         return obj
-    else:
-        return pydash.omit(obj, omit_field)
+    return pydash.omit(obj, omit_field)
 
 
 def omit_with_wildcard(obj, *properties: str):
@@ -84,8 +92,8 @@ def prepare_dsl_curated(
         omit_fields = []
     pipeline_from_yaml = load_job(source=job_yaml)
     if in_rest:
-        dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
-        pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()
+        dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()  # pylint: disable=protected-access
+        pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()  # pylint: disable=protected-access
 
         if enable_default_omit_fields:
             omit_fields.extend(
@@ -103,8 +111,8 @@ def prepare_dsl_curated(
                 ]
             )
     else:
-        dsl_pipeline_job_dict = pipeline._to_dict()
-        pipeline_job_dict = pipeline_from_yaml._to_dict()
+        dsl_pipeline_job_dict = pipeline._to_dict()  # pylint: disable=protected-access
+        pipeline_job_dict = pipeline_from_yaml._to_dict()  # pylint: disable=protected-access
         if enable_default_omit_fields:
             omit_fields.extend(
                 [
@@ -129,15 +137,14 @@ def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = 
     assert expected_state in terminal_states
 
     while created_job.status not in terminal_states:
-        time.sleep(30)
+        sleep_if_live(30)
         created_job = ml_client.jobs.get(created_job.name)
         print("Latest status : {0}".format(created_job.status))
     if created_job.status != expected_state:
         raise Exception(
             f"Job finished with unexpected status. Got {created_job.status!r} while expecting {expected_state!r}"
         )
-    else:
-        print(f"Job finished: {expected_state!r}")
+    print(f"Job finished: {expected_state!r}")
     assert created_job.status == expected_state
     return created_job
 
@@ -149,7 +156,7 @@ def assert_final_job_status(
 
     poll_start_time = time.time()
     while job.status not in RunHistoryConstants.TERMINAL_STATUSES and time.time() < (poll_start_time + deadline):
-        time.sleep(THREAD_WAIT_TIME_BEFORE_POLL)
+        sleep_if_live(THREAD_WAIT_TIME_BEFORE_POLL)
         job = client.jobs.get(job.name)
 
     if job.status not in RunHistoryConstants.TERMINAL_STATUSES:
@@ -174,9 +181,9 @@ def download_dataset(download_url: str, data_file: str, retries=3) -> None:
     resp.release_conn()
 
     # extract files
-    with ZipFile(data_file, "r") as zip:
+    with ZipFile(data_file, "r") as _zip:
         print("extracting files...")
-        zip.extractall()
+        _zip.extractall()
         print("done")
     # delete zip file
     os.remove(data_file)
@@ -267,3 +274,142 @@ def get_file_contents(file_path: str):
 def delete_file_if_exists(file_path: str):
     if file_path is not None and os.path.exists(file_path):
         os.remove(file_path)
+
+
+def cancel_job(client: MLClient, job: Job) -> None:
+    try:
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
+    except HttpResponseError:
+        pass
+
+
+def assert_job_cancel(
+    job: Job,
+    client: MLClient,
+    *,
+    experiment_name=None,
+    check_before_cancelled: Callable[[Job], bool] = None,
+    skip_cancel=False,
+) -> Job:
+    created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
+    if check_before_cancelled is not None:
+        assert check_before_cancelled(created_job)
+    if skip_cancel is False:
+        cancel_job(client, created_job)
+    return created_job
+
+
+def submit_and_cancel_new_dsl_pipeline(pipeline_func, client, default_compute="cpu-cluster", **kwargs):
+    pipeline_job: PipelineJob = pipeline_func(**kwargs)
+    pipeline_job.settings.default_compute = default_compute
+    return assert_job_cancel(pipeline_job, client)
+
+
+def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
+    poll_start_time = time.time()
+    while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
+        sleep_if_live(_wait_before_polling(time.time() - poll_start_time))
+        job = client.jobs.get(job.name)
+        if timeout is not None and time.time() - poll_start_time > timeout:
+            # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
+            cancel_job(client, job)
+            return JobStatus.CANCELED
+    return job.status
+
+
+def sleep_if_live(seconds):
+    """Sleeps for the given number of seconds if the test is live.
+    In playback mode, this function does nothing.
+    Please use this function instead of time.sleep() in tests if you want to wait for some remote operations.
+
+    Not necessary actually when fixture skip_sleep_for_playback has not been disabled explicitly.
+    Unify the behavior in case the fixture is disabled, like switch to skip_sleep_in_lro_polling.
+    """
+    if is_live():
+        time.sleep(seconds)
+
+
+def parse_local_path(origin_path, base_path=None):
+    """Relative path in LocalPathField will be dumped to absolute path in _to_dict.
+    In e2e tests, it will be uploaded and resolved into an uri before _to_rest_object.
+    However, developers usually directly compare the result of _to_dict/_to_rest_object with a fixed dict.
+    So we provide this function to parse the original value in the same way as LocalPathField serialization
+    to avoid updating test cases after updating LocalPathField serialization logic.
+
+    :param origin_path: The original value filled in LocalPathField
+    :param base_path: The base path of the original value, usually from resource.base_path.
+    Will use current working directory if not provided.
+    """
+    if base_path is None:
+        base_path = Path.cwd()
+    else:
+        base_path = Path(base_path)
+    return (base_path / origin_path).resolve().absolute().as_posix()
+
+
+@contextmanager
+def build_temp_folder(
+    *,
+    source_base_dir: Union[str, os.PathLike],
+    relative_dirs_to_copy: List[str] = None,
+    relative_files_to_copy: List[str] = None,
+    extra_files_to_create: Dict[str, Optional[str]] = None,
+) -> str:
+    """Build a temporary folder with files and subfolders copied from source_base_dir.
+
+    :param source_base_dir: The base directory to copy files from.
+    :type source_base_dir: Union[str, os.PathLike]
+    :param relative_dirs_to_copy: The relative paths of subfolders to copy from source_base_dir.
+    :type relative_dirs_to_copy: List[str]
+    :param relative_files_to_copy: The relative paths of files to copy from source_base_dir.
+    :type relative_files_to_copy: List[str]
+    :param extra_files_to_create: The relative paths of files to create in the temporary folder.
+    The value of each key-value pair is the content of the file.
+    If the value is None, the file will be empty.
+    :type extra_files_to_create: Dict[str, Optional[str]]
+    :return: The path of the temporary folder.
+    :rtype: str
+    """
+    source_base_dir = Path(source_base_dir)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        if relative_dirs_to_copy:
+            for dir_name in relative_dirs_to_copy:
+                shutil.copytree(source_base_dir / dir_name, Path(temp_dir) / dir_name)
+        if relative_files_to_copy:
+            for file_name in relative_files_to_copy:
+                shutil.copy(source_base_dir / file_name, Path(temp_dir) / file_name)
+        if extra_files_to_create:
+            for file_name, content in extra_files_to_create.items():
+                target_file = Path(temp_dir) / file_name
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                if content is None:
+                    target_file.touch()
+                    continue
+                with open(target_file, "w") as f:
+                    if content:
+                        f.write(content)
+
+        yield temp_dir
+
+
+@contextmanager
+def reload_schema_for_nodes_in_pipeline_job(*, revert_after_yield: bool = True):
+    """Reload schema for nodes in pipeline job. This is needed when we want to test private preview features or
+    unregister internal components.
+
+    This method should be called after environment variable is set, so we make it a method instead of a fixture.
+    """
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    declared_fields = pipeline_job.PipelineJobSchema._declared_fields  # pylint: disable=protected-access, no-member
+    original_jobs = declared_fields["jobs"]
+    declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        if revert_after_yield:
+            declared_fields["jobs"] = original_jobs

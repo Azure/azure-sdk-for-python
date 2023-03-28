@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._microsoft_logz_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23,29 +25,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -57,32 +57,30 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~microsoft_logz.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.logz.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~microsoft_logz.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.logz.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -90,43 +88,42 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~microsoft_logz.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.logz.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.logz.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class FilteringTag(msrest.serialization.Model):
+class FilteringTag(_serialization.Model):
     """The definition of a filtering tag. Filtering tags are used for capturing resources and include/exclude them from being monitored.
 
-    :param name: The name (also known as the key) of the tag.
-    :type name: str
-    :param value: The value of the tag.
-    :type value: str
-    :param action: Valid actions for a filtering tag. Exclusion takes priority over inclusion.
-     Possible values include: "Include", "Exclude".
-    :type action: str or ~microsoft_logz.models.TagAction
+    :ivar name: The name (also known as the key) of the tag.
+    :vartype name: str
+    :ivar value: The value of the tag.
+    :vartype value: str
+    :ivar action: Valid actions for a filtering tag. Exclusion takes priority over inclusion. Known
+     values are: "Include" and "Exclude".
+    :vartype action: str or ~azure.mgmt.logz.models.TagAction
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "action": {"key": "action", "type": "str"},
     }
 
     def __init__(
@@ -134,16 +131,25 @@ class FilteringTag(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         value: Optional[str] = None,
-        action: Optional[Union[str, "TagAction"]] = None,
+        action: Optional[Union[str, "_models.TagAction"]] = None,
         **kwargs
     ):
-        super(FilteringTag, self).__init__(**kwargs)
+        """
+        :keyword name: The name (also known as the key) of the tag.
+        :paramtype name: str
+        :keyword value: The value of the tag.
+        :paramtype value: str
+        :keyword action: Valid actions for a filtering tag. Exclusion takes priority over inclusion.
+         Known values are: "Include" and "Exclude".
+        :paramtype action: str or ~azure.mgmt.logz.models.TagAction
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.action = action
 
 
-class IdentityProperties(msrest.serialization.Model):
+class IdentityProperties(_serialization.Model):
     """IdentityProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -152,56 +158,55 @@ class IdentityProperties(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :param type:  Possible values include: "SystemAssigned", "UserAssigned".
-    :type type: str or ~microsoft_logz.models.ManagedIdentityTypes
+    :ivar type: Known values are: "SystemAssigned" and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.logz.models.ManagedIdentityTypes
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "ManagedIdentityTypes"]] = None,
-        **kwargs
-    ):
-        super(IdentityProperties, self).__init__(**kwargs)
+    def __init__(self, *, type: Optional[Union[str, "_models.ManagedIdentityTypes"]] = None, **kwargs):
+        """
+        :keyword type: Known values are: "SystemAssigned" and "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.logz.models.ManagedIdentityTypes
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
 
 
-class LogRules(msrest.serialization.Model):
+class LogRules(_serialization.Model):
     """Set of rules for sending logs for the Monitor resource.
 
-    :param send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
-    :type send_aad_logs: bool
-    :param send_subscription_logs: Flag specifying if subscription logs should be sent for the
+    :ivar send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
+    :vartype send_aad_logs: bool
+    :ivar send_subscription_logs: Flag specifying if subscription logs should be sent for the
      Monitor resource.
-    :type send_subscription_logs: bool
-    :param send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
+    :vartype send_subscription_logs: bool
+    :ivar send_activity_logs: Flag specifying if activity logs from Azure resources should be sent
      for the Monitor resource.
-    :type send_activity_logs: bool
-    :param filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+    :vartype send_activity_logs: bool
+    :ivar filtering_tags: List of filtering tags to be used for capturing logs. This only takes
      effect if SendActivityLogs flag is enabled. If empty, all resources will be captured. If only
      Exclude action is specified, the rules will apply to the list of all available resources. If
      Include actions are specified, the rules will only include resources with the associated tags.
-    :type filtering_tags: list[~microsoft_logz.models.FilteringTag]
+    :vartype filtering_tags: list[~azure.mgmt.logz.models.FilteringTag]
     """
 
     _attribute_map = {
-        'send_aad_logs': {'key': 'sendAadLogs', 'type': 'bool'},
-        'send_subscription_logs': {'key': 'sendSubscriptionLogs', 'type': 'bool'},
-        'send_activity_logs': {'key': 'sendActivityLogs', 'type': 'bool'},
-        'filtering_tags': {'key': 'filteringTags', 'type': '[FilteringTag]'},
+        "send_aad_logs": {"key": "sendAadLogs", "type": "bool"},
+        "send_subscription_logs": {"key": "sendSubscriptionLogs", "type": "bool"},
+        "send_activity_logs": {"key": "sendActivityLogs", "type": "bool"},
+        "filtering_tags": {"key": "filteringTags", "type": "[FilteringTag]"},
     }
 
     def __init__(
@@ -210,17 +215,32 @@ class LogRules(msrest.serialization.Model):
         send_aad_logs: Optional[bool] = None,
         send_subscription_logs: Optional[bool] = None,
         send_activity_logs: Optional[bool] = None,
-        filtering_tags: Optional[List["FilteringTag"]] = None,
+        filtering_tags: Optional[List["_models.FilteringTag"]] = None,
         **kwargs
     ):
-        super(LogRules, self).__init__(**kwargs)
+        """
+        :keyword send_aad_logs: Flag specifying if AAD logs should be sent for the Monitor resource.
+        :paramtype send_aad_logs: bool
+        :keyword send_subscription_logs: Flag specifying if subscription logs should be sent for the
+         Monitor resource.
+        :paramtype send_subscription_logs: bool
+        :keyword send_activity_logs: Flag specifying if activity logs from Azure resources should be
+         sent for the Monitor resource.
+        :paramtype send_activity_logs: bool
+        :keyword filtering_tags: List of filtering tags to be used for capturing logs. This only takes
+         effect if SendActivityLogs flag is enabled. If empty, all resources will be captured. If only
+         Exclude action is specified, the rules will apply to the list of all available resources. If
+         Include actions are specified, the rules will only include resources with the associated tags.
+        :paramtype filtering_tags: list[~azure.mgmt.logz.models.FilteringTag]
+        """
+        super().__init__(**kwargs)
         self.send_aad_logs = send_aad_logs
         self.send_subscription_logs = send_subscription_logs
         self.send_activity_logs = send_activity_logs
         self.filtering_tags = filtering_tags
 
 
-class LogzMonitorResource(msrest.serialization.Model):
+class LogzMonitorResource(_serialization.Model):
     """LogzMonitorResource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -230,50 +250,60 @@ class LogzMonitorResource(msrest.serialization.Model):
     :ivar id: ARM id of the monitor resource.
     :vartype id: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~microsoft_logz.models.SystemData
+    :vartype system_data: ~azure.mgmt.logz.models.SystemData
     :ivar name: Name of the monitor resource.
     :vartype name: str
     :ivar type: The type of the monitor resource.
     :vartype type: str
-    :param properties: Properties specific to the monitor resource.
-    :type properties: ~microsoft_logz.models.MonitorProperties
-    :param identity:
-    :type identity: ~microsoft_logz.models.IdentityProperties
-    :param tags: A set of tags. Dictionary of :code:`<string>`.
-    :type tags: dict[str, str]
-    :param location: Required.
-    :type location: str
+    :ivar properties: Properties specific to the monitor resource.
+    :vartype properties: ~azure.mgmt.logz.models.MonitorProperties
+    :ivar identity:
+    :vartype identity: ~azure.mgmt.logz.models.IdentityProperties
+    :ivar tags: Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar location: Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'system_data': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "system_data": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'MonitorProperties'},
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "MonitorProperties"},
+        "identity": {"key": "identity", "type": "IdentityProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        properties: Optional["MonitorProperties"] = None,
-        identity: Optional["IdentityProperties"] = None,
+        properties: Optional["_models.MonitorProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(LogzMonitorResource, self).__init__(**kwargs)
+        """
+        :keyword properties: Properties specific to the monitor resource.
+        :paramtype properties: ~azure.mgmt.logz.models.MonitorProperties
+        :keyword identity:
+        :paramtype identity: ~azure.mgmt.logz.models.IdentityProperties
+        :keyword tags: Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword location: Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.system_data = None
         self.name = None
@@ -284,83 +314,92 @@ class LogzMonitorResource(msrest.serialization.Model):
         self.location = location
 
 
-class LogzMonitorResourceListResponse(msrest.serialization.Model):
+class LogzMonitorResourceListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_logz.models.LogzMonitorResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.logz.models.LogzMonitorResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LogzMonitorResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LogzMonitorResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["LogzMonitorResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.LogzMonitorResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(LogzMonitorResourceListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.logz.models.LogzMonitorResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LogzMonitorResourceUpdateParameters(msrest.serialization.Model):
+class LogzMonitorResourceUpdateParameters(_serialization.Model):
     """The parameters for a PATCH request to a monitor resource.
 
-    :param properties: The set of properties that can be update in a PATCH request to a monitor
+    :ivar properties: The set of properties that can be update in a PATCH request to a monitor
      resource.
-    :type properties: ~microsoft_logz.models.MonitorUpdateProperties
-    :param tags: A set of tags. The new tags of the monitor resource.
-    :type tags: dict[str, str]
+    :vartype properties: ~azure.mgmt.logz.models.MonitorUpdateProperties
+    :ivar tags: The new tags of the monitor resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'MonitorUpdateProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "properties": {"key": "properties", "type": "MonitorUpdateProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["MonitorUpdateProperties"] = None,
+        properties: Optional["_models.MonitorUpdateProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(LogzMonitorResourceUpdateParameters, self).__init__(**kwargs)
+        """
+        :keyword properties: The set of properties that can be update in a PATCH request to a monitor
+         resource.
+        :paramtype properties: ~azure.mgmt.logz.models.MonitorUpdateProperties
+        :keyword tags: The new tags of the monitor resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.properties = properties
         self.tags = tags
 
 
-class LogzOrganizationProperties(msrest.serialization.Model):
+class LogzOrganizationProperties(_serialization.Model):
     """LogzOrganizationProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param company_name: Name of the Logz organization.
-    :type company_name: str
+    :ivar company_name: Name of the Logz organization.
+    :vartype company_name: str
     :ivar id: Id of the Logz organization.
     :vartype id: str
-    :param enterprise_app_id: The Id of the Enterprise App used for Single sign on.
-    :type enterprise_app_id: str
-    :param single_sign_on_url: The login URL specific to this Logz Organization.
-    :type single_sign_on_url: str
+    :ivar enterprise_app_id: The Id of the Enterprise App used for Single sign on.
+    :vartype enterprise_app_id: str
+    :ivar single_sign_on_url: The login URL specific to this Logz Organization.
+    :vartype single_sign_on_url: str
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'company_name': {'key': 'companyName', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'enterprise_app_id': {'key': 'enterpriseAppId', 'type': 'str'},
-        'single_sign_on_url': {'key': 'singleSignOnUrl', 'type': 'str'},
+        "company_name": {"key": "companyName", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "enterprise_app_id": {"key": "enterpriseAppId", "type": "str"},
+        "single_sign_on_url": {"key": "singleSignOnUrl", "type": "str"},
     }
 
     def __init__(
@@ -371,58 +410,75 @@ class LogzOrganizationProperties(msrest.serialization.Model):
         single_sign_on_url: Optional[str] = None,
         **kwargs
     ):
-        super(LogzOrganizationProperties, self).__init__(**kwargs)
+        """
+        :keyword company_name: Name of the Logz organization.
+        :paramtype company_name: str
+        :keyword enterprise_app_id: The Id of the Enterprise App used for Single sign on.
+        :paramtype enterprise_app_id: str
+        :keyword single_sign_on_url: The login URL specific to this Logz Organization.
+        :paramtype single_sign_on_url: str
+        """
+        super().__init__(**kwargs)
         self.company_name = company_name
         self.id = None
         self.enterprise_app_id = enterprise_app_id
         self.single_sign_on_url = single_sign_on_url
 
 
-class LogzSingleSignOnProperties(msrest.serialization.Model):
+class LogzSingleSignOnProperties(_serialization.Model):
     """LogzSingleSignOnProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param single_sign_on_state: Various states of the SSO resource. Possible values include:
-     "Initial", "Enable", "Disable", "Existing".
-    :type single_sign_on_state: str or ~microsoft_logz.models.SingleSignOnStates
-    :param enterprise_app_id: The Id of the Enterprise App used for Single sign-on.
-    :type enterprise_app_id: str
-    :param single_sign_on_url: The login URL specific to this Logz Organization.
-    :type single_sign_on_url: str
+    :ivar single_sign_on_state: Various states of the SSO resource. Known values are: "Initial",
+     "Enable", "Disable", and "Existing".
+    :vartype single_sign_on_state: str or ~azure.mgmt.logz.models.SingleSignOnStates
+    :ivar enterprise_app_id: The Id of the Enterprise App used for Single sign-on.
+    :vartype enterprise_app_id: str
+    :ivar single_sign_on_url: The login URL specific to this Logz Organization.
+    :vartype single_sign_on_url: str
     :ivar provisioning_state: Flag specifying if the resource provisioning state as tracked by ARM.
-     Possible values include: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
-     "Canceled", "Deleted", "NotSpecified".
-    :vartype provisioning_state: str or ~microsoft_logz.models.ProvisioningState
+     Known values are: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
+     "Canceled", "Deleted", and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.logz.models.ProvisioningState
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'single_sign_on_state': {'key': 'singleSignOnState', 'type': 'str'},
-        'enterprise_app_id': {'key': 'enterpriseAppId', 'type': 'str'},
-        'single_sign_on_url': {'key': 'singleSignOnUrl', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "single_sign_on_state": {"key": "singleSignOnState", "type": "str"},
+        "enterprise_app_id": {"key": "enterpriseAppId", "type": "str"},
+        "single_sign_on_url": {"key": "singleSignOnUrl", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        single_sign_on_state: Optional[Union[str, "SingleSignOnStates"]] = None,
+        single_sign_on_state: Optional[Union[str, "_models.SingleSignOnStates"]] = None,
         enterprise_app_id: Optional[str] = None,
         single_sign_on_url: Optional[str] = None,
         **kwargs
     ):
-        super(LogzSingleSignOnProperties, self).__init__(**kwargs)
+        """
+        :keyword single_sign_on_state: Various states of the SSO resource. Known values are: "Initial",
+         "Enable", "Disable", and "Existing".
+        :paramtype single_sign_on_state: str or ~azure.mgmt.logz.models.SingleSignOnStates
+        :keyword enterprise_app_id: The Id of the Enterprise App used for Single sign-on.
+        :paramtype enterprise_app_id: str
+        :keyword single_sign_on_url: The login URL specific to this Logz Organization.
+        :paramtype single_sign_on_url: str
+        """
+        super().__init__(**kwargs)
         self.single_sign_on_state = single_sign_on_state
         self.enterprise_app_id = enterprise_app_id
         self.single_sign_on_url = single_sign_on_url
         self.provisioning_state = None
 
 
-class LogzSingleSignOnResource(msrest.serialization.Model):
+class LogzSingleSignOnResource(_serialization.Model):
     """LogzSingleSignOnResource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -434,33 +490,32 @@ class LogzSingleSignOnResource(msrest.serialization.Model):
     :ivar type: The type of the resource.
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~microsoft_logz.models.SystemData
-    :param properties:
-    :type properties: ~microsoft_logz.models.LogzSingleSignOnProperties
+    :vartype system_data: ~azure.mgmt.logz.models.SystemData
+    :ivar properties:
+    :vartype properties: ~azure.mgmt.logz.models.LogzSingleSignOnProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'LogzSingleSignOnProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "LogzSingleSignOnProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["LogzSingleSignOnProperties"] = None,
-        **kwargs
-    ):
-        super(LogzSingleSignOnResource, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.LogzSingleSignOnProperties"] = None, **kwargs):
+        """
+        :keyword properties:
+        :paramtype properties: ~azure.mgmt.logz.models.LogzSingleSignOnProperties
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -468,77 +523,97 @@ class LogzSingleSignOnResource(msrest.serialization.Model):
         self.properties = properties
 
 
-class LogzSingleSignOnResourceListResponse(msrest.serialization.Model):
+class LogzSingleSignOnResourceListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_logz.models.LogzSingleSignOnResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.logz.models.LogzSingleSignOnResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LogzSingleSignOnResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LogzSingleSignOnResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["LogzSingleSignOnResource"]] = None,
+        value: Optional[List["_models.LogzSingleSignOnResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(LogzSingleSignOnResourceListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.logz.models.LogzSingleSignOnResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class MonitoredResource(msrest.serialization.Model):
+class MonitoredResource(_serialization.Model):
     """The properties of a resource currently being monitored by the Logz monitor resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The ARM id of the resource.
-    :type id: str
-    :param sending_metrics: Flag indicating if resource is sending metrics to Logz.
-    :type sending_metrics: bool
-    :param reason_for_metrics_status: Reason for why the resource is sending metrics (or why it is
+    :ivar id: The ARM id of the resource.
+    :vartype id: str
+    :ivar sending_metrics: Flag indicating if resource is sending metrics to Logz.
+    :vartype sending_metrics: bool
+    :ivar reason_for_metrics_status: Reason for why the resource is sending metrics (or why it is
      not sending).
-    :type reason_for_metrics_status: str
-    :param sending_logs: Flag indicating if resource is sending logs to Logz.
-    :type sending_logs: bool
+    :vartype reason_for_metrics_status: str
+    :ivar sending_logs: Flag indicating if resource is sending logs to Logz.
+    :vartype sending_logs: bool
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~microsoft_logz.models.SystemData
-    :param reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
+    :vartype system_data: ~azure.mgmt.logz.models.SystemData
+    :ivar reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
      sending).
-    :type reason_for_logs_status: str
+    :vartype reason_for_logs_status: str
     """
 
     _validation = {
-        'system_data': {'readonly': True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'sending_metrics': {'key': 'sendingMetrics', 'type': 'bool'},
-        'reason_for_metrics_status': {'key': 'reasonForMetricsStatus', 'type': 'str'},
-        'sending_logs': {'key': 'sendingLogs', 'type': 'bool'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'reason_for_logs_status': {'key': 'reasonForLogsStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "sending_metrics": {"key": "sendingMetrics", "type": "bool"},
+        "reason_for_metrics_status": {"key": "reasonForMetricsStatus", "type": "str"},
+        "sending_logs": {"key": "sendingLogs", "type": "bool"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "reason_for_logs_status": {"key": "reasonForLogsStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         sending_metrics: Optional[bool] = None,
         reason_for_metrics_status: Optional[str] = None,
         sending_logs: Optional[bool] = None,
         reason_for_logs_status: Optional[str] = None,
         **kwargs
     ):
-        super(MonitoredResource, self).__init__(**kwargs)
+        """
+        :keyword id: The ARM id of the resource.
+        :paramtype id: str
+        :keyword sending_metrics: Flag indicating if resource is sending metrics to Logz.
+        :paramtype sending_metrics: bool
+        :keyword reason_for_metrics_status: Reason for why the resource is sending metrics (or why it
+         is not sending).
+        :paramtype reason_for_metrics_status: str
+        :keyword sending_logs: Flag indicating if resource is sending logs to Logz.
+        :paramtype sending_logs: bool
+        :keyword reason_for_logs_status: Reason for why the resource is sending logs (or why it is not
+         sending).
+        :paramtype reason_for_logs_status: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.sending_metrics = sending_metrics
         self.reason_for_metrics_status = reason_for_metrics_status
@@ -547,33 +622,35 @@ class MonitoredResource(msrest.serialization.Model):
         self.reason_for_logs_status = reason_for_logs_status
 
 
-class MonitoredResourceListResponse(msrest.serialization.Model):
+class MonitoredResourceListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_logz.models.MonitoredResource]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.logz.models.MonitoredResource]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MonitoredResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MonitoredResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["MonitoredResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.MonitoredResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(MonitoredResourceListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.logz.models.MonitoredResource]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class MonitoringTagRules(msrest.serialization.Model):
+class MonitoringTagRules(_serialization.Model):
     """Capture logs and metrics of Azure resources based on ARM tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -585,33 +662,32 @@ class MonitoringTagRules(msrest.serialization.Model):
     :ivar type: The type of the rule set.
     :vartype type: str
     :ivar system_data: The system metadata relating to this resource.
-    :vartype system_data: ~microsoft_logz.models.SystemData
-    :param properties: Definition of the properties for a TagRules resource.
-    :type properties: ~microsoft_logz.models.MonitoringTagRulesProperties
+    :vartype system_data: ~azure.mgmt.logz.models.SystemData
+    :ivar properties: Definition of the properties for a TagRules resource.
+    :vartype properties: ~azure.mgmt.logz.models.MonitoringTagRulesProperties
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'MonitoringTagRulesProperties'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "MonitoringTagRulesProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["MonitoringTagRulesProperties"] = None,
-        **kwargs
-    ):
-        super(MonitoringTagRules, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.MonitoringTagRulesProperties"] = None, **kwargs):
+        """
+        :keyword properties: Definition of the properties for a TagRules resource.
+        :paramtype properties: ~azure.mgmt.logz.models.MonitoringTagRulesProperties
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.type = None
@@ -619,127 +695,144 @@ class MonitoringTagRules(msrest.serialization.Model):
         self.properties = properties
 
 
-class MonitoringTagRulesListResponse(msrest.serialization.Model):
+class MonitoringTagRulesListResponse(_serialization.Model):
     """Response of a list operation.
 
-    :param value: Results of a list operation.
-    :type value: list[~microsoft_logz.models.MonitoringTagRules]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Results of a list operation.
+    :vartype value: list[~azure.mgmt.logz.models.MonitoringTagRules]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MonitoringTagRules]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MonitoringTagRules]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["MonitoringTagRules"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.MonitoringTagRules"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(MonitoringTagRulesListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Results of a list operation.
+        :paramtype value: list[~azure.mgmt.logz.models.MonitoringTagRules]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class MonitoringTagRulesProperties(msrest.serialization.Model):
+class MonitoringTagRulesProperties(_serialization.Model):
     """Definition of the properties for a TagRules resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provisioning_state: Flag specifying if the resource provisioning state as tracked by ARM.
-     Possible values include: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
-     "Canceled", "Deleted", "NotSpecified".
-    :vartype provisioning_state: str or ~microsoft_logz.models.ProvisioningState
-    :param log_rules: Set of rules for sending logs for the Monitor resource.
-    :type log_rules: ~microsoft_logz.models.LogRules
+     Known values are: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
+     "Canceled", "Deleted", and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.logz.models.ProvisioningState
+    :ivar log_rules: Set of rules for sending logs for the Monitor resource.
+    :vartype log_rules: ~azure.mgmt.logz.models.LogRules
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~microsoft_logz.models.SystemData
+    :vartype system_data: ~azure.mgmt.logz.models.SystemData
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'system_data': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'log_rules': {'key': 'logRules', 'type': 'LogRules'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "log_rules": {"key": "logRules", "type": "LogRules"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        log_rules: Optional["LogRules"] = None,
-        **kwargs
-    ):
-        super(MonitoringTagRulesProperties, self).__init__(**kwargs)
+    def __init__(self, *, log_rules: Optional["_models.LogRules"] = None, **kwargs):
+        """
+        :keyword log_rules: Set of rules for sending logs for the Monitor resource.
+        :paramtype log_rules: ~azure.mgmt.logz.models.LogRules
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.log_rules = log_rules
         self.system_data = None
 
 
-class MonitorProperties(msrest.serialization.Model):
+class MonitorProperties(_serialization.Model):
     """Properties specific to the monitor resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provisioning_state: Flag specifying if the resource provisioning state as tracked by ARM.
-     Possible values include: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
-     "Canceled", "Deleted", "NotSpecified".
-    :vartype provisioning_state: str or ~microsoft_logz.models.ProvisioningState
-    :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
-     Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type monitoring_status: str or ~microsoft_logz.models.MonitoringStatus
-    :param marketplace_subscription_status: Flag specifying the Marketplace Subscription Status of
-     the resource. If payment is not made in time, the resource will go in Suspended state. Possible
-     values include: "Active", "Suspended". Default value: "Active".
-    :type marketplace_subscription_status: str or
-     ~microsoft_logz.models.MarketplaceSubscriptionStatus
-    :param logz_organization_properties:
-    :type logz_organization_properties: ~microsoft_logz.models.LogzOrganizationProperties
-    :param user_info:
-    :type user_info: ~microsoft_logz.models.UserInfo
-    :param plan_data:
-    :type plan_data: ~microsoft_logz.models.PlanData
-    :ivar liftr_resource_category:  Possible values include: "Unknown", "MonitorLogs".
-    :vartype liftr_resource_category: str or ~microsoft_logz.models.LiftrResourceCategories
+     Known values are: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
+     "Canceled", "Deleted", and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.logz.models.ProvisioningState
+    :ivar monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+     Known values are: "Enabled" and "Disabled".
+    :vartype monitoring_status: str or ~azure.mgmt.logz.models.MonitoringStatus
+    :ivar marketplace_subscription_status: Flag specifying the Marketplace Subscription Status of
+     the resource. If payment is not made in time, the resource will go in Suspended state. Known
+     values are: "Active" and "Suspended".
+    :vartype marketplace_subscription_status: str or
+     ~azure.mgmt.logz.models.MarketplaceSubscriptionStatus
+    :ivar logz_organization_properties:
+    :vartype logz_organization_properties: ~azure.mgmt.logz.models.LogzOrganizationProperties
+    :ivar user_info:
+    :vartype user_info: ~azure.mgmt.logz.models.UserInfo
+    :ivar plan_data:
+    :vartype plan_data: ~azure.mgmt.logz.models.PlanData
+    :ivar liftr_resource_category: Known values are: "Unknown" and "MonitorLogs".
+    :vartype liftr_resource_category: str or ~azure.mgmt.logz.models.LiftrResourceCategories
     :ivar liftr_resource_preference: The priority of the resource.
     :vartype liftr_resource_preference: int
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'liftr_resource_category': {'readonly': True},
-        'liftr_resource_preference': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "liftr_resource_category": {"readonly": True},
+        "liftr_resource_preference": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'monitoring_status': {'key': 'monitoringStatus', 'type': 'str'},
-        'marketplace_subscription_status': {'key': 'marketplaceSubscriptionStatus', 'type': 'str'},
-        'logz_organization_properties': {'key': 'logzOrganizationProperties', 'type': 'LogzOrganizationProperties'},
-        'user_info': {'key': 'userInfo', 'type': 'UserInfo'},
-        'plan_data': {'key': 'planData', 'type': 'PlanData'},
-        'liftr_resource_category': {'key': 'liftrResourceCategory', 'type': 'str'},
-        'liftr_resource_preference': {'key': 'liftrResourcePreference', 'type': 'int'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "monitoring_status": {"key": "monitoringStatus", "type": "str"},
+        "marketplace_subscription_status": {"key": "marketplaceSubscriptionStatus", "type": "str"},
+        "logz_organization_properties": {"key": "logzOrganizationProperties", "type": "LogzOrganizationProperties"},
+        "user_info": {"key": "userInfo", "type": "UserInfo"},
+        "plan_data": {"key": "planData", "type": "PlanData"},
+        "liftr_resource_category": {"key": "liftrResourceCategory", "type": "str"},
+        "liftr_resource_preference": {"key": "liftrResourcePreference", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        monitoring_status: Optional[Union[str, "MonitoringStatus"]] = "Enabled",
-        marketplace_subscription_status: Optional[Union[str, "MarketplaceSubscriptionStatus"]] = "Active",
-        logz_organization_properties: Optional["LogzOrganizationProperties"] = None,
-        user_info: Optional["UserInfo"] = None,
-        plan_data: Optional["PlanData"] = None,
+        monitoring_status: Union[str, "_models.MonitoringStatus"] = "Enabled",
+        marketplace_subscription_status: Union[str, "_models.MarketplaceSubscriptionStatus"] = "Active",
+        logz_organization_properties: Optional["_models.LogzOrganizationProperties"] = None,
+        user_info: Optional["_models.UserInfo"] = None,
+        plan_data: Optional["_models.PlanData"] = None,
         **kwargs
     ):
-        super(MonitorProperties, self).__init__(**kwargs)
+        """
+        :keyword monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype monitoring_status: str or ~azure.mgmt.logz.models.MonitoringStatus
+        :keyword marketplace_subscription_status: Flag specifying the Marketplace Subscription Status
+         of the resource. If payment is not made in time, the resource will go in Suspended state. Known
+         values are: "Active" and "Suspended".
+        :paramtype marketplace_subscription_status: str or
+         ~azure.mgmt.logz.models.MarketplaceSubscriptionStatus
+        :keyword logz_organization_properties:
+        :paramtype logz_organization_properties: ~azure.mgmt.logz.models.LogzOrganizationProperties
+        :keyword user_info:
+        :paramtype user_info: ~azure.mgmt.logz.models.UserInfo
+        :keyword plan_data:
+        :paramtype plan_data: ~azure.mgmt.logz.models.PlanData
+        """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.monitoring_status = monitoring_status
         self.marketplace_subscription_status = marketplace_subscription_status
@@ -750,46 +843,46 @@ class MonitorProperties(msrest.serialization.Model):
         self.liftr_resource_preference = None
 
 
-class MonitorUpdateProperties(msrest.serialization.Model):
+class MonitorUpdateProperties(_serialization.Model):
     """The set of properties that can be update in a PATCH request to a monitor resource.
 
-    :param monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
-     Possible values include: "Enabled", "Disabled". Default value: "Enabled".
-    :type monitoring_status: str or ~microsoft_logz.models.MonitoringStatus
+    :ivar monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+     Known values are: "Enabled" and "Disabled".
+    :vartype monitoring_status: str or ~azure.mgmt.logz.models.MonitoringStatus
     """
 
     _attribute_map = {
-        'monitoring_status': {'key': 'monitoringStatus', 'type': 'str'},
+        "monitoring_status": {"key": "monitoringStatus", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        monitoring_status: Optional[Union[str, "MonitoringStatus"]] = "Enabled",
-        **kwargs
-    ):
-        super(MonitorUpdateProperties, self).__init__(**kwargs)
+    def __init__(self, *, monitoring_status: Union[str, "_models.MonitoringStatus"] = "Enabled", **kwargs):
+        """
+        :keyword monitoring_status: Flag specifying if the resource monitoring is enabled or disabled.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype monitoring_status: str or ~azure.mgmt.logz.models.MonitoringStatus
+        """
+        super().__init__(**kwargs)
         self.monitoring_status = monitoring_status
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
-    :param provider: Service provider, i.e., Microsoft.Logz.
-    :type provider: str
-    :param resource: Type on which the operation is performed, e.g., 'monitors'.
-    :type resource: str
-    :param operation: Operation type, e.g., read, write, delete, etc.
-    :type operation: str
-    :param description: Description of the operation, e.g., 'Write monitors'.
-    :type description: str
+    :ivar provider: Service provider, i.e., Microsoft.Logz.
+    :vartype provider: str
+    :ivar resource: Type on which the operation is performed, e.g., 'monitors'.
+    :vartype resource: str
+    :ivar operation: Operation type, e.g., read, write, delete, etc.
+    :vartype operation: str
+    :ivar description: Description of the operation, e.g., 'Write monitors'.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -801,57 +894,69 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: Service provider, i.e., Microsoft.Logz.
+        :paramtype provider: str
+        :keyword resource: Type on which the operation is performed, e.g., 'monitors'.
+        :paramtype resource: str
+        :keyword operation: Operation type, e.g., read, write, delete, etc.
+        :paramtype operation: str
+        :keyword description: Description of the operation, e.g., 'Write monitors'.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of GET request to list the Microsoft.Logz operations.
 
-    :param value: List of operations supported by the Microsoft.Logz provider.
-    :type value: list[~microsoft_logz.models.OperationResult]
-    :param next_link: URL to get the next set of operation list results if there are any.
-    :type next_link: str
+    :ivar value: List of operations supported by the Microsoft.Logz provider.
+    :vartype value: list[~azure.mgmt.logz.models.OperationResult]
+    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OperationResult"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.OperationResult"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(OperationListResult, self).__init__(**kwargs)
+        """
+        :keyword value: List of operations supported by the Microsoft.Logz provider.
+        :paramtype value: list[~azure.mgmt.logz.models.OperationResult]
+        :keyword next_link: URL to get the next set of operation list results if there are any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationResult(msrest.serialization.Model):
+class OperationResult(_serialization.Model):
     """A Microsoft.Logz REST API operation.
 
-    :param name: Operation name, i.e., {provider}/{resource}/{operation}.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: The object that represents the operation.
-    :type display: ~microsoft_logz.models.OperationDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
+    :ivar name: Operation name, i.e., {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.logz.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
@@ -859,41 +964,51 @@ class OperationResult(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         **kwargs
     ):
-        super(OperationResult, self).__init__(**kwargs)
+        """
+        :keyword name: Operation name, i.e., {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.logz.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.display = display
         self.origin = origin
 
 
-class PlanData(msrest.serialization.Model):
+class PlanData(_serialization.Model):
     """PlanData.
 
-    :param usage_type: different usage type like PAYG/COMMITTED. this could be enum.
-    :type usage_type: str
-    :param billing_cycle: different billing cycles like MONTHLY/WEEKLY. this could be enum.
-    :type billing_cycle: str
-    :param plan_details: plan id as published by Logz.
-    :type plan_details: str
-    :param effective_date: date when plan was applied.
-    :type effective_date: ~datetime.datetime
+    :ivar usage_type: different usage type like PAYG/COMMITTED. this could be enum.
+    :vartype usage_type: str
+    :ivar billing_cycle: different billing cycles like MONTHLY/WEEKLY. this could be enum.
+    :vartype billing_cycle: str
+    :ivar plan_details: plan id as published by Logz.
+    :vartype plan_details: str
+    :ivar effective_date: date when plan was applied.
+    :vartype effective_date: ~datetime.datetime
     """
 
     _validation = {
-        'usage_type': {'max_length': 50, 'min_length': 0},
-        'billing_cycle': {'max_length': 50, 'min_length': 0},
-        'plan_details': {'max_length': 50, 'min_length': 0},
+        "usage_type": {"max_length": 50},
+        "billing_cycle": {"max_length": 50},
+        "plan_details": {"max_length": 50},
     }
 
     _attribute_map = {
-        'usage_type': {'key': 'usageType', 'type': 'str'},
-        'billing_cycle': {'key': 'billingCycle', 'type': 'str'},
-        'plan_details': {'key': 'planDetails', 'type': 'str'},
-        'effective_date': {'key': 'effectiveDate', 'type': 'iso-8601'},
+        "usage_type": {"key": "usageType", "type": "str"},
+        "billing_cycle": {"key": "billingCycle", "type": "str"},
+        "plan_details": {"key": "planDetails", "type": "str"},
+        "effective_date": {"key": "effectiveDate", "type": "iso-8601"},
     }
 
     def __init__(
@@ -905,53 +1020,79 @@ class PlanData(msrest.serialization.Model):
         effective_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(PlanData, self).__init__(**kwargs)
+        """
+        :keyword usage_type: different usage type like PAYG/COMMITTED. this could be enum.
+        :paramtype usage_type: str
+        :keyword billing_cycle: different billing cycles like MONTHLY/WEEKLY. this could be enum.
+        :paramtype billing_cycle: str
+        :keyword plan_details: plan id as published by Logz.
+        :paramtype plan_details: str
+        :keyword effective_date: date when plan was applied.
+        :paramtype effective_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.usage_type = usage_type
         self.billing_cycle = billing_cycle
         self.plan_details = plan_details
         self.effective_date = effective_date
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~microsoft_logz.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~microsoft_logz.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.logz.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.logz.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.logz.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.logz.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -960,31 +1101,31 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UserInfo(msrest.serialization.Model):
+class UserInfo(_serialization.Model):
     """UserInfo.
 
-    :param first_name: First Name of the user.
-    :type first_name: str
-    :param last_name: Last Name of the user.
-    :type last_name: str
-    :param email_address: Email of the user used by Logz for contacting them if needed.
-    :type email_address: str
-    :param phone_number: Phone number of the user used by Logz for contacting them if needed.
-    :type phone_number: str
+    :ivar first_name: First Name of the user.
+    :vartype first_name: str
+    :ivar last_name: Last Name of the user.
+    :vartype last_name: str
+    :ivar email_address: Email of the user used by Logz for contacting them if needed.
+    :vartype email_address: str
+    :ivar phone_number: Phone number of the user used by Logz for contacting them if needed.
+    :vartype phone_number: str
     """
 
     _validation = {
-        'first_name': {'max_length': 50, 'min_length': 0},
-        'last_name': {'max_length': 50, 'min_length': 0},
-        'email_address': {'pattern': r'^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$'},
-        'phone_number': {'max_length': 40, 'min_length': 0},
+        "first_name": {"max_length": 50},
+        "last_name": {"max_length": 50},
+        "email_address": {"pattern": r"^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$"},
+        "phone_number": {"max_length": 40},
     }
 
     _attribute_map = {
-        'first_name': {'key': 'firstName', 'type': 'str'},
-        'last_name': {'key': 'lastName', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
+        "first_name": {"key": "firstName", "type": "str"},
+        "last_name": {"key": "lastName", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
     }
 
     def __init__(
@@ -996,186 +1137,212 @@ class UserInfo(msrest.serialization.Model):
         phone_number: Optional[str] = None,
         **kwargs
     ):
-        super(UserInfo, self).__init__(**kwargs)
+        """
+        :keyword first_name: First Name of the user.
+        :paramtype first_name: str
+        :keyword last_name: Last Name of the user.
+        :paramtype last_name: str
+        :keyword email_address: Email of the user used by Logz for contacting them if needed.
+        :paramtype email_address: str
+        :keyword phone_number: Phone number of the user used by Logz for contacting them if needed.
+        :paramtype phone_number: str
+        """
+        super().__init__(**kwargs)
         self.first_name = first_name
         self.last_name = last_name
         self.email_address = email_address
         self.phone_number = phone_number
 
 
-class UserRoleListResponse(msrest.serialization.Model):
+class UserRoleListResponse(_serialization.Model):
     """Response for list of user's role for Logz.io account.
 
-    :param value: List of user roles for Logz.io account.
-    :type value: list[~microsoft_logz.models.UserRoleResponse]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: List of user roles for Logz.io account.
+    :vartype value: list[~azure.mgmt.logz.models.UserRoleResponse]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UserRoleResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UserRoleResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["UserRoleResponse"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.UserRoleResponse"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(UserRoleListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: List of user roles for Logz.io account.
+        :paramtype value: list[~azure.mgmt.logz.models.UserRoleResponse]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class UserRoleRequest(msrest.serialization.Model):
+class UserRoleRequest(_serialization.Model):
     """Request for checking user's role for Logz.io account.
 
-    :param email_address: Email of the user used by Logz for contacting them if needed.
-    :type email_address: str
+    :ivar email_address: Email of the user used by Logz for contacting them if needed.
+    :vartype email_address: str
     """
 
     _validation = {
-        'email_address': {'pattern': r'^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$'},
+        "email_address": {"pattern": r"^[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}$"},
     }
 
     _attribute_map = {
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        email_address: Optional[str] = None,
-        **kwargs
-    ):
-        super(UserRoleRequest, self).__init__(**kwargs)
+    def __init__(self, *, email_address: Optional[str] = None, **kwargs):
+        """
+        :keyword email_address: Email of the user used by Logz for contacting them if needed.
+        :paramtype email_address: str
+        """
+        super().__init__(**kwargs)
         self.email_address = email_address
 
 
-class UserRoleResponse(msrest.serialization.Model):
+class UserRoleResponse(_serialization.Model):
     """Response for checking user's role for Logz.io account.
 
-    :param role: User roles on configured in Logz.io account. Possible values include: "None",
-     "User", "Admin".
-    :type role: str or ~microsoft_logz.models.UserRole
+    :ivar role: User roles on configured in Logz.io account. Known values are: "None", "User", and
+     "Admin".
+    :vartype role: str or ~azure.mgmt.logz.models.UserRole
     """
 
     _attribute_map = {
-        'role': {'key': 'role', 'type': 'str'},
+        "role": {"key": "role", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        role: Optional[Union[str, "UserRole"]] = None,
-        **kwargs
-    ):
-        super(UserRoleResponse, self).__init__(**kwargs)
+    def __init__(self, *, role: Optional[Union[str, "_models.UserRole"]] = None, **kwargs):
+        """
+        :keyword role: User roles on configured in Logz.io account. Known values are: "None", "User",
+         and "Admin".
+        :paramtype role: str or ~azure.mgmt.logz.models.UserRole
+        """
+        super().__init__(**kwargs)
         self.role = role
 
 
-class VMExtensionPayload(msrest.serialization.Model):
+class VMExtensionPayload(_serialization.Model):
     """Response of payload to be passed while installing VM agent.
 
-    :param api_key: API Key corresponding to the resource.
-    :type api_key: str
-    :param region: Logz.io region where the resource has been created.
-    :type region: str
+    :ivar api_key: API Key corresponding to the resource.
+    :vartype api_key: str
+    :ivar region: Logz.io region where the resource has been created.
+    :vartype region: str
     """
 
     _attribute_map = {
-        'api_key': {'key': 'apiKey', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
+        "api_key": {"key": "apiKey", "type": "str"},
+        "region": {"key": "region", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        api_key: Optional[str] = None,
-        region: Optional[str] = None,
-        **kwargs
-    ):
-        super(VMExtensionPayload, self).__init__(**kwargs)
+    def __init__(self, *, api_key: Optional[str] = None, region: Optional[str] = None, **kwargs):
+        """
+        :keyword api_key: API Key corresponding to the resource.
+        :paramtype api_key: str
+        :keyword region: Logz.io region where the resource has been created.
+        :paramtype region: str
+        """
+        super().__init__(**kwargs)
         self.api_key = api_key
         self.region = region
 
 
-class VMHostUpdateRequest(msrest.serialization.Model):
+class VMHostUpdateRequest(_serialization.Model):
     """Request of a list VM Host Update Operation.
 
-    :param vm_resource_ids: Request of a list vm host update operation.
-    :type vm_resource_ids: list[~microsoft_logz.models.VMResources]
-    :param state: Specifies the state of the operation - install/ delete. Possible values include:
-     "Install", "Delete".
-    :type state: str or ~microsoft_logz.models.VMHostUpdateStates
+    :ivar vm_resource_ids: Request of a list vm host update operation.
+    :vartype vm_resource_ids: list[~azure.mgmt.logz.models.VMResources]
+    :ivar state: Specifies the state of the operation - install/ delete. Known values are:
+     "Install" and "Delete".
+    :vartype state: str or ~azure.mgmt.logz.models.VMHostUpdateStates
     """
 
     _attribute_map = {
-        'vm_resource_ids': {'key': 'vmResourceIds', 'type': '[VMResources]'},
-        'state': {'key': 'state', 'type': 'str'},
+        "vm_resource_ids": {"key": "vmResourceIds", "type": "[VMResources]"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        vm_resource_ids: Optional[List["VMResources"]] = None,
-        state: Optional[Union[str, "VMHostUpdateStates"]] = None,
+        vm_resource_ids: Optional[List["_models.VMResources"]] = None,
+        state: Optional[Union[str, "_models.VMHostUpdateStates"]] = None,
         **kwargs
     ):
-        super(VMHostUpdateRequest, self).__init__(**kwargs)
+        """
+        :keyword vm_resource_ids: Request of a list vm host update operation.
+        :paramtype vm_resource_ids: list[~azure.mgmt.logz.models.VMResources]
+        :keyword state: Specifies the state of the operation - install/ delete. Known values are:
+         "Install" and "Delete".
+        :paramtype state: str or ~azure.mgmt.logz.models.VMHostUpdateStates
+        """
+        super().__init__(**kwargs)
         self.vm_resource_ids = vm_resource_ids
         self.state = state
 
 
-class VMResources(msrest.serialization.Model):
+class VMResources(_serialization.Model):
     """VM Resource Ids.
 
-    :param id: Request of a list vm host update operation.
-    :type id: str
-    :param agent_version: Version of the Logz agent installed on the VM.
-    :type agent_version: str
+    :ivar id: Request of a list vm host update operation.
+    :vartype id: str
+    :ivar agent_version: Version of the Logz agent installed on the VM.
+    :vartype agent_version: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'agent_version': {'key': 'agentVersion', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "agent_version": {"key": "agentVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         agent_version: Optional[str] = None,
         **kwargs
     ):
-        super(VMResources, self).__init__(**kwargs)
+        """
+        :keyword id: Request of a list vm host update operation.
+        :paramtype id: str
+        :keyword agent_version: Version of the Logz agent installed on the VM.
+        :paramtype agent_version: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.agent_version = agent_version
 
 
-class VMResourcesListResponse(msrest.serialization.Model):
+class VMResourcesListResponse(_serialization.Model):
     """Response of a list VM Host Update Operation.
 
-    :param value: Response of a list vm host update operation.
-    :type value: list[~microsoft_logz.models.VMResources]
-    :param next_link: Link to the next set of results, if any.
-    :type next_link: str
+    :ivar value: Response of a list vm host update operation.
+    :vartype value: list[~azure.mgmt.logz.models.VMResources]
+    :ivar next_link: Link to the next set of results, if any.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VMResources]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VMResources]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VMResources"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.VMResources"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(VMResourcesListResponse, self).__init__(**kwargs)
+        """
+        :keyword value: Response of a list vm host update operation.
+        :paramtype value: list[~azure.mgmt.logz.models.VMResources]
+        :keyword next_link: Link to the next set of results, if any.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link

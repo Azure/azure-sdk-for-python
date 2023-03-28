@@ -220,13 +220,6 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--tparallel",
-        default=False,
-        help=("Flag that enables parallel tox invocation."),
-        action="store_true",
-    )
-
-    parser.add_argument(
         "--tenvparallel",
         default=False,
         help=("Run individual tox env for each package in parallel."),

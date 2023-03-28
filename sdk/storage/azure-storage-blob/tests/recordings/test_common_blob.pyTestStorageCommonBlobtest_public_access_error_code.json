@@ -8,22 +8,22 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:39:28 GMT",
-        "x-ms-version": "2021-08-06"
+        "User-Agent": "azsdk-python-storage-blob/12.16.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Tue, 28 Mar 2023 21:42:19 GMT",
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 24 Oct 2022 23:39:28 GMT",
-        "ETag": "\u00220x8DAB618FE679C14\u0022",
-        "Last-Modified": "Mon, 24 Oct 2022 23:39:29 GMT",
+        "Date": "Tue, 28 Mar 2023 21:42:19 GMT",
+        "ETag": "\u00220x8DB2FD54EA50173\u0022",
+        "Last-Modified": "Tue, 28 Mar 2023 21:42:19 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-version": "2021-08-06"
+        "x-ms-version": "2022-11-02"
       },
       "ResponseBody": null
     },
@@ -35,22 +35,22 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:39:28 GMT",
-        "x-ms-version": "2021-08-06"
+        "User-Agent": "azsdk-python-storage-blob/12.16.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Tue, 28 Mar 2023 21:42:20 GMT",
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 24 Oct 2022 23:39:28 GMT",
-        "ETag": "\u00220x8DAB618FE77EE5C\u0022",
-        "Last-Modified": "Mon, 24 Oct 2022 23:39:29 GMT",
+        "Date": "Tue, 28 Mar 2023 21:42:19 GMT",
+        "ETag": "\u00220x8DB2FD54EC3F889\u0022",
+        "Last-Modified": "Tue, 28 Mar 2023 21:42:19 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-version": "2021-08-06"
+        "x-ms-version": "2022-11-02"
       },
       "ResponseBody": null
     },
@@ -64,24 +64,29 @@
         "Content-Length": "8",
         "Content-Type": "application/octet-stream",
         "If-None-Match": "*",
-        "User-Agent": "azsdk-python-storage-blob/12.14.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "User-Agent": "azsdk-python-storage-blob/12.16.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-date": "Mon, 24 Oct 2022 23:39:28 GMT",
-        "x-ms-version": "2021-08-06"
+        "x-ms-date": "Tue, 28 Mar 2023 21:42:20 GMT",
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": "MTIzNDU2Nzg=",
-      "StatusCode": 409,
+      "StatusCode": 401,
       "ResponseHeaders": {
-        "Content-Length": "248",
+        "Content-Length": "302",
         "Content-Type": "application/xml",
-        "Date": "Mon, 24 Oct 2022 23:39:28 GMT",
-        "Server": "Microsoft-HTTPAPI/2.0",
-        "x-ms-error-code": "PublicAccessNotPermitted"
+        "Date": "Tue, 28 Mar 2023 21:42:19 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "WWW-Authenticate": "Bearer authorization_uri=https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/authorize resource_id=https://storage.azure.com",
+        "x-ms-error-code": "NoAuthenticationInformation",
+        "x-ms-version": "2022-11-02"
       },
       "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EPublicAccessNotPermitted\u003C/Code\u003E\u003CMessage\u003EPublic access is not permitted on this storage account.\n",
-        "RequestId:23687549-801e-009e-3301-e8e5ff000000\n",
-        "Time:2022-10-24T23:39:29.2179134Z\u003C/Message\u003E\u003C/Error\u003E"
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003ENoAuthenticationInformation\u003C/Code\u003E\u003CMessage\u003EServer failed to authenticate the request. Please refer to the information in the www-authenticate header.\n",
+        "RequestId:cbd47bba-e01e-00a7-20be-611ee3000000\n",
+        "Time:2023-03-28T21:42:20.0942048Z\u003C/Message\u003E\u003C/Error\u003E"
       ]
     }
   ],

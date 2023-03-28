@@ -4,7 +4,7 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -29,8 +29,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class Import(BaseNode):
-    """Base class for import node, used for import component version
-    consumption.
+    """Base class for import node, used for import component version consumption.
 
     You should not instantiate this class directly. Instead, you should
     create from a builder function.
@@ -56,8 +55,8 @@ class Import(BaseNode):
         self,
         *,
         component: Union[str, ImportComponent],
-        inputs: Dict[str, str] = None,
-        outputs: Dict[str, Output] = None,
+        inputs: Optional[Dict[str, str]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -133,16 +132,6 @@ class Import(BaseNode):
         import_job = import_job(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         return import_job
-
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Import":
-        obj = BaseNode._rest_object_to_init_params(obj)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        return Import(**obj)
 
     @classmethod
     def _load_from_rest_job(cls, obj: JobBaseData) -> "Import":

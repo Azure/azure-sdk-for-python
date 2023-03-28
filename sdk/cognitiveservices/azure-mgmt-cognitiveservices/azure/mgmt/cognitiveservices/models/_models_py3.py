@@ -13,13 +13,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -50,7 +51,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -89,14 +90,15 @@ class AzureEntityResource(Resource):
         "etag": {"key": "etag", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.etag = None
 
 
 class Account(AzureEntityResource):  # pylint: disable=too-many-instance-attributes
-    """Cognitive Services account is an Azure resource representing the provisioned account, it's type, location and SKU.
+    """Cognitive Services account is an Azure resource representing the provisioned account, it's
+    type, location and SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -157,8 +159,8 @@ class Account(AzureEntityResource):  # pylint: disable=too-many-instance-attribu
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         properties: Optional["_models.AccountProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The Kind of the resource.
         :paramtype kind: str
@@ -203,7 +205,7 @@ class AccountListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Account]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of accounts.
         :paramtype next_link: str
@@ -240,8 +242,8 @@ class DeploymentModel(_serialization.Model):
     }
 
     def __init__(
-        self, *, format: Optional[str] = None, name: Optional[str] = None, version: Optional[str] = None, **kwargs
-    ):
+        self, *, format: Optional[str] = None, name: Optional[str] = None, version: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword format: Deployment model format.
         :paramtype format: str
@@ -257,7 +259,7 @@ class DeploymentModel(_serialization.Model):
         self.call_rate_limit = None
 
 
-class AccountModel(DeploymentModel):
+class AccountModel(DeploymentModel):  # pylint: disable=too-many-instance-attributes
     """Cognitive Services account Model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -276,8 +278,13 @@ class AccountModel(DeploymentModel):
     :vartype max_capacity: int
     :ivar capabilities: The capabilities.
     :vartype capabilities: dict[str, str]
+    :ivar finetune_capabilities: The capabilities for finetune models.
+    :vartype finetune_capabilities: dict[str, str]
     :ivar deprecation: Cognitive Services account ModelDeprecationInfo.
     :vartype deprecation: ~azure.mgmt.cognitiveservices.models.ModelDeprecationInfo
+    :ivar lifecycle_status: Model lifecycle status. Known values are: "GenerallyAvailable" and
+     "Preview".
+    :vartype lifecycle_status: str or ~azure.mgmt.cognitiveservices.models.ModelLifecycleStatus
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
     """
@@ -295,7 +302,9 @@ class AccountModel(DeploymentModel):
         "base_model": {"key": "baseModel", "type": "DeploymentModel"},
         "max_capacity": {"key": "maxCapacity", "type": "int"},
         "capabilities": {"key": "capabilities", "type": "{str}"},
+        "finetune_capabilities": {"key": "finetuneCapabilities", "type": "{str}"},
         "deprecation": {"key": "deprecation", "type": "ModelDeprecationInfo"},
+        "lifecycle_status": {"key": "lifecycleStatus", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
@@ -308,9 +317,11 @@ class AccountModel(DeploymentModel):
         base_model: Optional["_models.DeploymentModel"] = None,
         max_capacity: Optional[int] = None,
         capabilities: Optional[Dict[str, str]] = None,
+        finetune_capabilities: Optional[Dict[str, str]] = None,
         deprecation: Optional["_models.ModelDeprecationInfo"] = None,
-        **kwargs
-    ):
+        lifecycle_status: Optional[Union[str, "_models.ModelLifecycleStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword format: Deployment model format.
         :paramtype format: str
@@ -324,14 +335,21 @@ class AccountModel(DeploymentModel):
         :paramtype max_capacity: int
         :keyword capabilities: The capabilities.
         :paramtype capabilities: dict[str, str]
+        :keyword finetune_capabilities: The capabilities for finetune models.
+        :paramtype finetune_capabilities: dict[str, str]
         :keyword deprecation: Cognitive Services account ModelDeprecationInfo.
         :paramtype deprecation: ~azure.mgmt.cognitiveservices.models.ModelDeprecationInfo
+        :keyword lifecycle_status: Model lifecycle status. Known values are: "GenerallyAvailable" and
+         "Preview".
+        :paramtype lifecycle_status: str or ~azure.mgmt.cognitiveservices.models.ModelLifecycleStatus
         """
         super().__init__(format=format, name=name, version=version, **kwargs)
         self.base_model = base_model
         self.max_capacity = max_capacity
         self.capabilities = capabilities
+        self.finetune_capabilities = finetune_capabilities
         self.deprecation = deprecation
+        self.lifecycle_status = lifecycle_status
         self.system_data = None
 
 
@@ -350,8 +368,8 @@ class AccountModelListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.AccountModel"]] = None, **kwargs
-    ):
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.AccountModel"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of Model.
         :paramtype next_link: str
@@ -426,6 +444,12 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
     :vartype deletion_date: str
     :ivar scheduled_purge_date: The scheduled purge date, only available for deleted account.
     :vartype scheduled_purge_date: str
+    :ivar locations: The multiregion settings of Cognitive Services account.
+    :vartype locations: ~azure.mgmt.cognitiveservices.models.MultiRegionSettings
+    :ivar commitment_plan_associations: The commitment plan associations of Cognitive Services
+     account.
+    :vartype commitment_plan_associations:
+     list[~azure.mgmt.cognitiveservices.models.CommitmentPlanAssociation]
     """
 
     _validation = {
@@ -442,6 +466,7 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         "endpoints": {"readonly": True},
         "deletion_date": {"readonly": True},
         "scheduled_purge_date": {"readonly": True},
+        "commitment_plan_associations": {"readonly": True},
     }
 
     _attribute_map = {
@@ -470,6 +495,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         "restore": {"key": "restore", "type": "bool"},
         "deletion_date": {"key": "deletionDate", "type": "str"},
         "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "str"},
+        "locations": {"key": "locations", "type": "MultiRegionSettings"},
+        "commitment_plan_associations": {"key": "commitmentPlanAssociations", "type": "[CommitmentPlanAssociation]"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -487,8 +514,9 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         allowed_fqdn_list: Optional[List[str]] = None,
         disable_local_auth: Optional[bool] = None,
         restore: Optional[bool] = None,
-        **kwargs
-    ):
+        locations: Optional["_models.MultiRegionSettings"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword migration_token: Resource migration token.
         :paramtype migration_token: str
@@ -517,6 +545,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         :paramtype disable_local_auth: bool
         :keyword restore:
         :paramtype restore: bool
+        :keyword locations: The multiregion settings of Cognitive Services account.
+        :paramtype locations: ~azure.mgmt.cognitiveservices.models.MultiRegionSettings
         """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -544,6 +574,8 @@ class AccountProperties(_serialization.Model):  # pylint: disable=too-many-insta
         self.restore = restore
         self.deletion_date = None
         self.scheduled_purge_date = None
+        self.locations = locations
+        self.commitment_plan_associations = None
 
 
 class AccountSku(_serialization.Model):
@@ -560,7 +592,9 @@ class AccountSku(_serialization.Model):
         "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(self, *, resource_type: Optional[str] = None, sku: Optional["_models.Sku"] = None, **kwargs):
+    def __init__(
+        self, *, resource_type: Optional[str] = None, sku: Optional["_models.Sku"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword resource_type: Resource Namespace and Type.
         :paramtype resource_type: str
@@ -583,7 +617,7 @@ class AccountSkuListResult(_serialization.Model):
         "value": {"key": "value", "type": "[AccountSku]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AccountSku"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.AccountSku"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets the list of Cognitive Services accounts and their properties.
         :paramtype value: list[~azure.mgmt.cognitiveservices.models.AccountSku]
@@ -606,7 +640,7 @@ class ApiKeys(_serialization.Model):
         "key2": {"key": "key2", "type": "str"},
     }
 
-    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs):
+    def __init__(self, *, key1: Optional[str] = None, key2: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key1: Gets the value of key 1.
         :paramtype key1: str
@@ -691,8 +725,8 @@ class ApiProperties(_serialization.Model):  # pylint: disable=too-many-instance-
         aad_tenant_id: Optional[str] = None,
         super_user: Optional[str] = None,
         website_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -759,8 +793,8 @@ class CallRateLimit(_serialization.Model):
         count: Optional[float] = None,
         renewal_period: Optional[float] = None,
         rules: Optional[List["_models.ThrottlingRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count: The count value of Call Rate Limit.
         :paramtype count: float
@@ -799,7 +833,7 @@ class CheckDomainAvailabilityParameter(_serialization.Model):
         "kind": {"key": "kind", "type": "str"},
     }
 
-    def __init__(self, *, subdomain_name: str, type: str, kind: Optional[str] = None, **kwargs):
+    def __init__(self, *, subdomain_name: str, type: str, kind: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword subdomain_name: The subdomain name to use. Required.
         :paramtype subdomain_name: str
@@ -839,7 +873,7 @@ class CheckSkuAvailabilityParameter(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, skus: List[str], kind: str, type: str, **kwargs):
+    def __init__(self, *, skus: List[str], kind: str, type: str, **kwargs: Any) -> None:
         """
         :keyword skus: The SKU of the resource. Required.
         :paramtype skus: list[str]
@@ -868,7 +902,9 @@ class CommitmentCost(_serialization.Model):
         "overage_meter_id": {"key": "overageMeterId", "type": "str"},
     }
 
-    def __init__(self, *, commitment_meter_id: Optional[str] = None, overage_meter_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, commitment_meter_id: Optional[str] = None, overage_meter_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword commitment_meter_id: Commitment meter Id.
         :paramtype commitment_meter_id: str
@@ -911,7 +947,7 @@ class CommitmentPeriod(_serialization.Model):
         "end_date": {"key": "endDate", "type": "str"},
     }
 
-    def __init__(self, *, tier: Optional[str] = None, count: Optional[int] = None, **kwargs):
+    def __init__(self, *, tier: Optional[str] = None, count: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword tier: Commitment period commitment tier.
         :paramtype tier: str
@@ -927,7 +963,8 @@ class CommitmentPeriod(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -953,7 +990,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -975,6 +1012,14 @@ class CommitmentPlan(ProxyResource):
     :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
     :ivar etag: Resource Etag.
     :vartype etag: str
+    :ivar kind: The Kind of the resource.
+    :vartype kind: str
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
     :ivar properties: Properties of Cognitive Services account commitment plan.
     :vartype properties: ~azure.mgmt.cognitiveservices.models.CommitmentPlanProperties
     """
@@ -993,18 +1038,151 @@ class CommitmentPlan(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "properties": {"key": "properties", "type": "CommitmentPlanProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.CommitmentPlanProperties"] = None, **kwargs):
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        sku: Optional["_models.Sku"] = None,
+        tags: Optional[Dict[str, str]] = None,
+        location: Optional[str] = None,
+        properties: Optional["_models.CommitmentPlanProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
+        :keyword kind: The Kind of the resource.
+        :paramtype kind: str
+        :keyword sku: The resource model definition representing SKU.
+        :paramtype sku: ~azure.mgmt.cognitiveservices.models.Sku
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives.
+        :paramtype location: str
         :keyword properties: Properties of Cognitive Services account commitment plan.
         :paramtype properties: ~azure.mgmt.cognitiveservices.models.CommitmentPlanProperties
         """
         super().__init__(**kwargs)
         self.system_data = None
         self.etag = None
+        self.kind = kind
+        self.sku = sku
+        self.tags = tags
+        self.location = location
         self.properties = properties
+
+
+class CommitmentPlanAccountAssociation(ProxyResource):
+    """The commitment plan association.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar account_id: The Azure resource id of the account.
+    :vartype account_id: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "etag": {"key": "etag", "type": "str"},
+        "account_id": {"key": "properties.accountId", "type": "str"},
+    }
+
+    def __init__(self, *, account_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword account_id: The Azure resource id of the account.
+        :paramtype account_id: str
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.etag = None
+        self.account_id = account_id
+
+
+class CommitmentPlanAccountAssociationListResult(_serialization.Model):
+    """The list of cognitive services Commitment Plan Account Association operation response.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar next_link: The link used to get the next page of Commitment Plan Account Association.
+    :vartype next_link: str
+    :ivar value: Gets the list of Cognitive Services Commitment Plan Account Association and their
+     properties.
+    :vartype value: list[~azure.mgmt.cognitiveservices.models.CommitmentPlanAccountAssociation]
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[CommitmentPlanAccountAssociation]"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: The link used to get the next page of Commitment Plan Account Association.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = None
+
+
+class CommitmentPlanAssociation(_serialization.Model):
+    """The commitment plan association.
+
+    :ivar commitment_plan_id: The Azure resource id of the commitment plan.
+    :vartype commitment_plan_id: str
+    :ivar commitment_plan_location: The location of of the commitment plan.
+    :vartype commitment_plan_location: str
+    """
+
+    _attribute_map = {
+        "commitment_plan_id": {"key": "commitmentPlanId", "type": "str"},
+        "commitment_plan_location": {"key": "commitmentPlanLocation", "type": "str"},
+    }
+
+    def __init__(
+        self, *, commitment_plan_id: Optional[str] = None, commitment_plan_location: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword commitment_plan_id: The Azure resource id of the commitment plan.
+        :paramtype commitment_plan_id: str
+        :keyword commitment_plan_location: The location of of the commitment plan.
+        :paramtype commitment_plan_location: str
+        """
+        super().__init__(**kwargs)
+        self.commitment_plan_id = commitment_plan_id
+        self.commitment_plan_location = commitment_plan_location
 
 
 class CommitmentPlanListResult(_serialization.Model):
@@ -1027,7 +1205,7 @@ class CommitmentPlanListResult(_serialization.Model):
         "value": {"key": "value", "type": "[CommitmentPlan]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of CommitmentPlan.
         :paramtype next_link: str
@@ -1042,6 +1220,13 @@ class CommitmentPlanProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar provisioning_state: Gets the status of the resource at the time the operation was called.
+     Known values are: "Accepted", "Creating", "Deleting", "Moving", "Failed", "Succeeded", and
+     "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.cognitiveservices.models.CommitmentPlanProvisioningState
+    :ivar commitment_plan_guid: Commitment plan guid.
+    :vartype commitment_plan_guid: str
     :ivar hosting_model: Account hosting model. Known values are: "Web", "ConnectedContainer", and
      "DisconnectedContainer".
     :vartype hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
@@ -1058,10 +1243,13 @@ class CommitmentPlanProperties(_serialization.Model):
     """
 
     _validation = {
+        "provisioning_state": {"readonly": True},
         "last": {"readonly": True},
     }
 
     _attribute_map = {
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "commitment_plan_guid": {"key": "commitmentPlanGuid", "type": "str"},
         "hosting_model": {"key": "hostingModel", "type": "str"},
         "plan_type": {"key": "planType", "type": "str"},
         "current": {"key": "current", "type": "CommitmentPeriod"},
@@ -1073,14 +1261,17 @@ class CommitmentPlanProperties(_serialization.Model):
     def __init__(
         self,
         *,
+        commitment_plan_guid: Optional[str] = None,
         hosting_model: Optional[Union[str, "_models.HostingModel"]] = None,
         plan_type: Optional[str] = None,
         current: Optional["_models.CommitmentPeriod"] = None,
         auto_renew: Optional[bool] = None,
         next: Optional["_models.CommitmentPeriod"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
+        :keyword commitment_plan_guid: Commitment plan guid.
+        :paramtype commitment_plan_guid: str
         :keyword hosting_model: Account hosting model. Known values are: "Web", "ConnectedContainer",
          and "DisconnectedContainer".
         :paramtype hosting_model: str or ~azure.mgmt.cognitiveservices.models.HostingModel
@@ -1094,6 +1285,8 @@ class CommitmentPlanProperties(_serialization.Model):
         :paramtype next: ~azure.mgmt.cognitiveservices.models.CommitmentPeriod
         """
         super().__init__(**kwargs)
+        self.provisioning_state = None
+        self.commitment_plan_guid = commitment_plan_guid
         self.hosting_model = hosting_model
         self.plan_type = plan_type
         self.current = current
@@ -1116,7 +1309,7 @@ class CommitmentQuota(_serialization.Model):
         "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(self, *, quantity: Optional[int] = None, unit: Optional[str] = None, **kwargs):
+    def __init__(self, *, quantity: Optional[int] = None, unit: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword quantity: Commitment quota quantity.
         :paramtype quantity: int
@@ -1172,8 +1365,8 @@ class CommitmentTier(_serialization.Model):
         max_count: Optional[int] = None,
         quota: Optional["_models.CommitmentQuota"] = None,
         cost: Optional["_models.CommitmentCost"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The Kind of the resource.
         :paramtype kind: str
@@ -1224,7 +1417,7 @@ class CommitmentTierListResult(_serialization.Model):
         "value": {"key": "value", "type": "[CommitmentTier]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of CommitmentTier.
         :paramtype next_link: str
@@ -1272,7 +1465,7 @@ class Deployment(ProxyResource):
         "properties": {"key": "properties", "type": "DeploymentProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.DeploymentProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.DeploymentProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Properties of Cognitive Services account deployment.
         :paramtype properties: ~azure.mgmt.cognitiveservices.models.DeploymentProperties
@@ -1303,7 +1496,7 @@ class DeploymentListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Deployment]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of Deployment.
         :paramtype next_link: str
@@ -1355,8 +1548,8 @@ class DeploymentProperties(_serialization.Model):
         model: Optional["_models.DeploymentModel"] = None,
         scale_settings: Optional["_models.DeploymentScaleSettings"] = None,
         rai_policy_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword model: Properties of Cognitive Services account deployment model.
         :paramtype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
@@ -1403,8 +1596,8 @@ class DeploymentScaleSettings(_serialization.Model):
         *,
         scale_type: Optional[Union[str, "_models.DeploymentScaleType"]] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scale_type: Deployment scale type. Known values are: "Standard" and "Manual".
         :paramtype scale_type: str or ~azure.mgmt.cognitiveservices.models.DeploymentScaleType
@@ -1448,8 +1641,8 @@ class DomainAvailability(_serialization.Model):
         subdomain_name: Optional[str] = None,
         type: Optional[str] = None,
         kind: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_subdomain_available: Indicates the given SKU is available or not.
         :paramtype is_subdomain_available: bool
@@ -1490,8 +1683,8 @@ class Encryption(_serialization.Model):
         *,
         key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
         key_source: Union[str, "_models.KeySource"] = "Microsoft.KeyVault",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_properties: Properties of KeyVault.
         :paramtype key_vault_properties: ~azure.mgmt.cognitiveservices.models.KeyVaultProperties
@@ -1525,7 +1718,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -1565,7 +1758,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1576,7 +1769,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.cognitiveservices.models.ErrorDetail
@@ -1586,7 +1780,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.cognitiveservices.models.ErrorDetail
@@ -1631,8 +1825,8 @@ class Identity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The identity type. Known values are: "None", "SystemAssigned", "UserAssigned",
          and "SystemAssigned, UserAssigned".
@@ -1668,7 +1862,7 @@ class IpRule(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, value: str, **kwargs):
+    def __init__(self, *, value: str, **kwargs: Any) -> None:
         """
         :keyword value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP
          address) or '124.56.78.0/24' (all addresses that start with 124.56.78). Required.
@@ -1705,8 +1899,8 @@ class KeyVaultProperties(_serialization.Model):
         key_version: Optional[str] = None,
         key_vault_uri: Optional[str] = None,
         identity_client_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: Name of the Key from KeyVault.
         :paramtype key_name: str
@@ -1738,7 +1932,7 @@ class MetricName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The name of the metric.
         :paramtype value: str
@@ -1764,7 +1958,7 @@ class ModelDeprecationInfo(_serialization.Model):
         "inference": {"key": "inference", "type": "str"},
     }
 
-    def __init__(self, *, fine_tune: Optional[str] = None, inference: Optional[str] = None, **kwargs):
+    def __init__(self, *, fine_tune: Optional[str] = None, inference: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword fine_tune: The datetime of deprecation of the fineTune Model.
         :paramtype fine_tune: str
@@ -1774,6 +1968,40 @@ class ModelDeprecationInfo(_serialization.Model):
         super().__init__(**kwargs)
         self.fine_tune = fine_tune
         self.inference = inference
+
+
+class MultiRegionSettings(_serialization.Model):
+    """The multiregion settings Cognitive Services account.
+
+    :ivar routing_method: Multiregion routing methods. Known values are: "Priority", "Weighted",
+     and "Performance".
+    :vartype routing_method: str or ~azure.mgmt.cognitiveservices.models.RoutingMethods
+    :ivar regions:
+    :vartype regions: list[~azure.mgmt.cognitiveservices.models.RegionSetting]
+    """
+
+    _attribute_map = {
+        "routing_method": {"key": "routingMethod", "type": "str"},
+        "regions": {"key": "regions", "type": "[RegionSetting]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        routing_method: Optional[Union[str, "_models.RoutingMethods"]] = None,
+        regions: Optional[List["_models.RegionSetting"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword routing_method: Multiregion routing methods. Known values are: "Priority", "Weighted",
+         and "Performance".
+        :paramtype routing_method: str or ~azure.mgmt.cognitiveservices.models.RoutingMethods
+        :keyword regions:
+        :paramtype regions: list[~azure.mgmt.cognitiveservices.models.RegionSetting]
+        """
+        super().__init__(**kwargs)
+        self.routing_method = routing_method
+        self.regions = regions
 
 
 class NetworkRuleSet(_serialization.Model):
@@ -1801,8 +2029,8 @@ class NetworkRuleSet(_serialization.Model):
         default_action: Optional[Union[str, "_models.NetworkRuleAction"]] = None,
         ip_rules: Optional[List["_models.IpRule"]] = None,
         virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_action: The default action when no rule from ipRules and from
          virtualNetworkRules match. This is only used after the bypass property has been evaluated.
@@ -1856,7 +2084,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.cognitiveservices.models.OperationDisplay
@@ -1902,7 +2130,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -1912,7 +2140,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1932,11 +2161,59 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class PatchResourceTags(_serialization.Model):
+    """The object being used to update tags of a resource, in general used for PATCH operations.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+
+
+class PatchResourceTagsAndSku(PatchResourceTags):
+    """The object being used to update tags and sku of a resource, in general used for PATCH
+    operations.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+    }
+
+    def __init__(
+        self, *, tags: Optional[Dict[str, str]] = None, sku: Optional["_models.Sku"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The resource model definition representing SKU.
+        :paramtype sku: ~azure.mgmt.cognitiveservices.models.Sku
+        """
+        super().__init__(tags=tags, **kwargs)
+        self.sku = sku
 
 
 class PrivateEndpoint(_serialization.Model):
@@ -1956,7 +2233,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -2008,8 +2285,8 @@ class PrivateEndpointConnection(AzureEntityResource):
         *,
         properties: Optional["_models.PrivateEndpointConnectionProperties"] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: Resource properties.
         :paramtype properties: ~azure.mgmt.cognitiveservices.models.PrivateEndpointConnectionProperties
@@ -2033,7 +2310,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.cognitiveservices.models.PrivateEndpointConnection]
@@ -2084,8 +2361,8 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
         private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         group_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.cognitiveservices.models.PrivateEndpoint
@@ -2133,7 +2410,7 @@ class PrivateLinkResource(Resource):
         "properties": {"key": "properties", "type": "PrivateLinkResourceProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.PrivateLinkResourceProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.PrivateLinkResourceProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: Resource properties.
         :paramtype properties: ~azure.mgmt.cognitiveservices.models.PrivateLinkResourceProperties
@@ -2153,7 +2430,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.cognitiveservices.models.PrivateLinkResource]
@@ -2190,7 +2467,7 @@ class PrivateLinkResourceProperties(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
@@ -2203,7 +2480,8 @@ class PrivateLinkResourceProperties(_serialization.Model):
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
-    """A collection of information about the state of the connection between service consumer and provider.
+    """A collection of information about the state of the connection between service consumer and
+    provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
      of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -2228,8 +2506,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", and "Rejected".
@@ -2270,8 +2548,8 @@ class QuotaLimit(_serialization.Model):
         count: Optional[float] = None,
         renewal_period: Optional[float] = None,
         rules: Optional[List["_models.ThrottlingRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count:
         :paramtype count: float
@@ -2304,7 +2582,7 @@ class RegenerateKeyParameters(_serialization.Model):
         "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(self, *, key_name: Union[str, "_models.KeyName"], **kwargs):
+    def __init__(self, *, key_name: Union[str, "_models.KeyName"], **kwargs: Any) -> None:
         """
         :keyword key_name: key name to generate (Key1|Key2). Required. Known values are: "Key1" and
          "Key2".
@@ -2312,6 +2590,45 @@ class RegenerateKeyParameters(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.key_name = key_name
+
+
+class RegionSetting(_serialization.Model):
+    """The call rate limit Cognitive Services account.
+
+    :ivar name: Name of the region.
+    :vartype name: str
+    :ivar value: A value for priority or weighted routing methods.
+    :vartype value: float
+    :ivar customsubdomain: Maps the region to the regional custom subdomain.
+    :vartype customsubdomain: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "float"},
+        "customsubdomain": {"key": "customsubdomain", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        value: Optional[float] = None,
+        customsubdomain: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the region.
+        :paramtype name: str
+        :keyword value: A value for priority or weighted routing methods.
+        :paramtype value: float
+        :keyword customsubdomain: Maps the region to the regional custom subdomain.
+        :paramtype customsubdomain: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+        self.customsubdomain = customsubdomain
 
 
 class RequestMatchPattern(_serialization.Model):
@@ -2328,7 +2645,7 @@ class RequestMatchPattern(_serialization.Model):
         "method": {"key": "method", "type": "str"},
     }
 
-    def __init__(self, *, path: Optional[str] = None, method: Optional[str] = None, **kwargs):
+    def __init__(self, *, path: Optional[str] = None, method: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword path:
         :paramtype path: str
@@ -2376,8 +2693,8 @@ class ResourceSku(_serialization.Model):
         kind: Optional[str] = None,
         locations: Optional[List[str]] = None,
         restrictions: Optional[List["_models.ResourceSkuRestrictions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_type: The type of resource the SKU applies to.
         :paramtype resource_type: str
@@ -2422,7 +2739,7 @@ class ResourceSkuListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: List["_models.ResourceSku"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of skus available for the subscription. Required.
         :paramtype value: list[~azure.mgmt.cognitiveservices.models.ResourceSku]
@@ -2448,7 +2765,9 @@ class ResourceSkuRestrictionInfo(_serialization.Model):
         "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(self, *, locations: Optional[List[str]] = None, zones: Optional[List[str]] = None, **kwargs):
+    def __init__(
+        self, *, locations: Optional[List[str]] = None, zones: Optional[List[str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword locations: Locations where the SKU is restricted.
         :paramtype locations: list[str]
@@ -2490,8 +2809,8 @@ class ResourceSkuRestrictions(_serialization.Model):
         values: Optional[List[str]] = None,
         restriction_info: Optional["_models.ResourceSkuRestrictionInfo"] = None,
         reason_code: Optional[Union[str, "_models.ResourceSkuRestrictionsReasonCode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of restrictions. Known values are: "Location" and "Zone".
         :paramtype type: str or ~azure.mgmt.cognitiveservices.models.ResourceSkuRestrictionsType
@@ -2554,8 +2873,8 @@ class Sku(_serialization.Model):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU. Ex - P3. It is typically a letter+number code. Required.
         :paramtype name: str
@@ -2616,8 +2935,8 @@ class SkuAvailability(_serialization.Model):
         sku_available: Optional[bool] = None,
         reason: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword kind: The Kind of the resource.
         :paramtype kind: str
@@ -2652,7 +2971,7 @@ class SkuAvailabilityListResult(_serialization.Model):
         "value": {"key": "value", "type": "[SkuAvailability]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SkuAvailability"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.SkuAvailability"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Check SKU availability result list.
         :paramtype value: list[~azure.mgmt.cognitiveservices.models.SkuAvailability]
@@ -2675,7 +2994,7 @@ class SkuCapability(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SkuCapability.
         :paramtype name: str
@@ -2710,8 +3029,8 @@ class SkuChangeInfo(_serialization.Model):
         count_of_downgrades: Optional[float] = None,
         count_of_upgrades_after_downgrades: Optional[float] = None,
         last_change_date: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword count_of_downgrades: Gets the count of downgrades.
         :paramtype count_of_downgrades: float
@@ -2763,8 +3082,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2825,8 +3144,8 @@ class ThrottlingRule(_serialization.Model):
         min_count: Optional[float] = None,
         dynamic_throttling_enabled: Optional[bool] = None,
         match_patterns: Optional[List["_models.RequestMatchPattern"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key:
         :paramtype key: str
@@ -2891,8 +3210,8 @@ class Usage(_serialization.Model):
         current_value: Optional[float] = None,
         next_reset_time: Optional[str] = None,
         status: Optional[Union[str, "_models.QuotaUsageStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword unit: The unit of the metric. Known values are: "Count", "Bytes", "Seconds",
          "Percent", "CountPerSecond", "BytesPerSecond", and "Milliseconds".
@@ -2932,7 +3251,7 @@ class UsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of usages for Cognitive Service account.
         :paramtype value: list[~azure.mgmt.cognitiveservices.models.Usage]
@@ -2962,7 +3281,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -2983,7 +3302,9 @@ class UserOwnedStorage(_serialization.Model):
         "identity_client_id": {"key": "identityClientId", "type": "str"},
     }
 
-    def __init__(self, *, resource_id: Optional[str] = None, identity_client_id: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, resource_id: Optional[str] = None, identity_client_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: Full resource id of a Microsoft.Storage resource.
         :paramtype resource_id: str
@@ -3026,8 +3347,8 @@ class VirtualNetworkRule(_serialization.Model):
         id: str,  # pylint: disable=redefined-builtin
         state: Optional[str] = None,
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Full resource id of a vnet subnet, such as
          '/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.

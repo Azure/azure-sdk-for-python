@@ -12,8 +12,6 @@ import datetime
 import warnings
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-import six
-
 from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
@@ -728,7 +726,7 @@ class ServiceBusReceiver(
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(sequence_numbers, six.integer_types):
+        if isinstance(sequence_numbers, int):
             sequence_numbers = [sequence_numbers]
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
@@ -785,8 +783,10 @@ class ServiceBusReceiver(
         Peeked messages are not removed from queue, nor are they locked. They cannot be completed,
         deferred or dead-lettered.
 
-        :param int max_message_count: The maximum number of messages to try and peek. The default
-         value is 1.
+        For more information about message browsing see https://aka.ms/azsdk/servicebus/message-browsing
+
+        :param int max_message_count: The maximum number of messages to try and peek. The actual number of messages
+         returned may be fewer and are subject to service limits. The default value is 1.
         :keyword int sequence_number: A message sequence number from which to start browsing messages.
         :keyword Optional[float] timeout: The total operation timeout in seconds including all the retries.
          The value must be greater than 0 if specified. The default value is None, meaning no timeout.

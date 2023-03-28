@@ -1,19 +1,36 @@
 # Release History
 
-## 12.14.1 (Unreleased)
+## 12.16.0b1 (2023-03-28)
 
 ### Features Added
+- Added support for service version 2022-11-02.
 
-### Breaking Changes
+## 12.15.0 (2023-02-22)
+
+### Features Added
+- Stable release of features from 12.15.0b1
+- The `download_blob` API now returns `creation_time` on the download response.
+
+## 12.15.0b1 (2023-02-02)
+
+### Features Added
+- Added support for service version 2021-12-02.
+- Added support for new blob tier, `Cold`.
+- Added support for `AsyncIterable` as data type for async blob upload.
 
 ### Bugs Fixed
-- Fixed possible invalid content range exception that gets raised when downloading empty blobs through Azurite.
+- Changed how async streams are detected on async `upload_blob` to increase compatiblity with different types.
 
 ### Other Changes
 - Removed `msrest` dependency.
 - Added `typing-extensions>=4.0.1` as a dependency.
 - Added `isodate>=0.6.1` as a dependency.
 - Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-blob[aio]` to install.
+
+## 12.14.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty blobs through Azurite.
 
 ## 12.14.0 (2022-10-11)
 

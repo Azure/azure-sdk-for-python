@@ -4,18 +4,25 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import PublicNetworkAccess
+from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
+from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._workspace.diagnose import DiagnoseResponseResultValue
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
+from azure.ai.ml.entities._workspace.networking import (
+    FqdnDestination,
+    PrivateEndpointDestination,
+    ServiceTagDestination,
+)
 from azure.core.paging import ItemPaged
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 from azure.core.polling import LROPoller
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.e2etest
@@ -66,28 +73,34 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace = client.workspaces.get(wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
-        assert workspace.container_registry is None
 
+        static_acr = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/acrmhetest2"
+        static_appinsights = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/aimhetest2"
+        param_image_build_compute = "compute"
+        param_display_name = "Test display name"
+        param_description = "Test description"
+        param_tags = {"k1": "v1", "k2": "v2"}
         workspace_poller = client.workspaces.begin_update(
             workspace,
-            image_build_compute="compute",
+            display_name=param_display_name,
+            description=param_description,
+            image_build_compute=param_image_build_compute,
             public_network_access=PublicNetworkAccess.DISABLED,
-            container_regristry=workspace.container_registry,
-            application_insights=workspace.application_insights,
+            container_registry=static_acr,
+            application_insights=static_appinsights,
             update_dependent_resources=True,
+            tags=param_tags,
         )
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
-        assert workspace.image_build_compute == "compute"
+        assert workspace.display_name == param_display_name
+        assert workspace.description == param_description
+        assert workspace.image_build_compute == param_image_build_compute
         assert workspace.public_network_access == PublicNetworkAccess.DISABLED
-        # verify updating acr
-        # TODO (1412559): Disabling this logic as it is deleting the main test workspace container registry
-        # static_acr: str = client.workspaces.get(client._operation_scope.workspace_name).container_registry
-        # workspace = client.workspaces.begin_update_dependencies(
-        #     workspace_name=workspace.name, container_registry=static_acr, force=True
-        # )
-        # assert workspace.container_registry.lower() == static_acr.lower()
+        assert workspace.container_registry.lower() == static_acr.lower()
+        assert workspace.application_insights.lower() == static_appinsights.lower()
+        assert workspace.tags == param_tags
 
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
@@ -142,18 +155,18 @@ class TestWorkspace(AzureRecordedTestCase):
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
         # resource name key word
-        wps_name = f"e2etest_{randstr()}"
+        wps_name = f"e2etest_{randstr('wps_name')}"
 
-        # uai creation
+        # get the pre-created UAIs
         msi_client = ManagedServiceIdentityClient(
             credential=client._credential, subscription_id=client._operation_scope.subscription_id
         )
         user_assigned_identity = msi_client.user_assigned_identities.get(
-            resource_group_name="rg-mhe-e2e-test-dont-remove",
+            resource_group_name=client._operation_scope.resource_group_name,
             resource_name="uai-mhe",
         )
         user_assigned_identity2 = msi_client.user_assigned_identities.get(
-            resource_group_name="rg-mhe-e2e-test-dont-remove",
+            resource_group_name=client._operation_scope.resource_group_name,
             resource_name="uai-mhe2",
         )
 
@@ -169,12 +182,12 @@ class TestWorkspace(AzureRecordedTestCase):
                     "type": "user_assigned",
                     "user_assigned_identities": {
                         user_assigned_identity.id: {
-                            "principal_id": user_assigned_identity.principal_id,
                             "client_id": user_assigned_identity.client_id,
+                            "principal_id": user_assigned_identity.principal_id,
                         },
                         user_assigned_identity2.id: {
-                            "principal_id": user_assigned_identity2.principal_id,
                             "client_id": user_assigned_identity2.client_id,
+                            "principal_id": user_assigned_identity2.principal_id,
                         },
                     },
                 }
@@ -182,6 +195,8 @@ class TestWorkspace(AzureRecordedTestCase):
             {"primary_user_assigned_identity": user_assigned_identity.id},
         ]
         wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+
+        # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
@@ -191,20 +206,26 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
         assert workspace.public_network_access == PublicNetworkAccess.ENABLED
-        assert workspace.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED)
         assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity.id
 
+        # test list
         workspace_list = client.workspaces.list()
         assert isinstance(workspace_list, ItemPaged)
 
+        # test get
         workspace = client.workspaces.get(name=wps_name)
+        assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
-        assert workspace.container_registry is None
-        assert workspace.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
+        assert isinstance(workspace.identity, IdentityConfiguration)
+        assert isinstance(workspace.identity.user_assigned_identities, list)
+        assert isinstance(workspace.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED)
         assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity.id
 
+        # test update
         workspace_poller = client.workspaces.begin_update(
             workspace,
             primary_user_assigned_identity=user_assigned_identity2.id,
@@ -212,7 +233,160 @@ class TestWorkspace(AzureRecordedTestCase):
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
+        assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity2.id
+
+        # test uai workspace deletion
+        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
+        # verify that request was accepted by checking if poller is returned
+        assert poller
+        assert isinstance(poller, LROPoller)
+
+    @pytest.mark.e2etest
+    @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    def test_update_sai_to_sai_and_uai_workspace_with_uai_deletion(
+        self, client: MLClient, randstr: Callable[[], str], location: str
+    ) -> None:
+        # resource name key word
+        wps_name = f"e2etest_{randstr('wps_name')}"
+        wps_description = f"{wps_name} description"
+        wps_display_name = f"{wps_name} display name"
+        params_override = [
+            {"name": wps_name},
+            {"location": location},
+            {"description": wps_description},
+            {"display_name": wps_display_name},
+        ]
+        wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+
+        # test creating default system_assigned workspace
+        workspace_poller = client.workspaces.begin_create(workspace=wps)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+        assert workspace.name == wps_name
+        assert workspace.location == location
+        assert workspace.description == wps_description
+        assert workspace.display_name == wps_display_name
+        assert workspace.public_network_access == PublicNetworkAccess.ENABLED
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
+        assert workspace.identity.user_assigned_identities == None
+        assert workspace.primary_user_assigned_identity == None
+
+        # test updating identity type from system_assgined to system_assigned and user_assigned
+        msi_client = ManagedServiceIdentityClient(
+            credential=client._credential, subscription_id=client._operation_scope.subscription_id
+        )
+        user_assigned_identity = msi_client.user_assigned_identities.get(
+            resource_group_name=client._operation_scope.resource_group_name,
+            resource_name="uai-mhe",
+        )
+        user_assigned_identity2 = msi_client.user_assigned_identities.get(
+            resource_group_name=client._operation_scope.resource_group_name,
+            resource_name="uai-mhe2",
+        )
+
+        params_override = [
+            {"name": wps_name},
+            {
+                "identity": {
+                    "type": "system_assigned, user_assigned",
+                    "user_assigned_identities": {
+                        user_assigned_identity.id: {
+                            "client_id": user_assigned_identity.client_id,
+                            "principal_id": user_assigned_identity.principal_id,
+                        },
+                        user_assigned_identity2.id: {
+                            "client_id": user_assigned_identity2.client_id,
+                            "principal_id": user_assigned_identity2.principal_id,
+                        },
+                    },
+                }
+            },
+        ]
+        wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+        workspace_poller = client.workspaces.begin_update(
+            wps,
+            # primary_user_assigned_identity=user_assigned_identity.id, # uncomment this when sai to sai|uai fixing pr released.
+        )
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+        assert len(workspace.identity.user_assigned_identities) == 2
+        # assert workspace.primary_user_assigned_identity == user_assigned_identity.id # uncomment this when sai to sai|uai fixing pr released.
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
+
+        ## test uai removal. not supported yet, service returning "Code: FailedIdentityOperation, Removal of all user-assigned identities assigned to resource '...' with type 'SystemAssigned, UserAssigned' is invalid."
+        # new_UAIs = [x for x in wps.identity.user_assigned_identities if x.resource_id == user_assigned_identity.id]
+        # wps.identity.user_assigned_identities = new_UAIs
+        # workspace.identity = wps.identity
+        # workspace_poller = client.workspaces.begin_update(workspace=workspace)
+        # assert isinstance(workspace_poller, LROPoller)
+        # workspace = workspace_poller.result()
+        # assert isinstance(workspace, Workspace)
+        # assert len(workspace.identity.user_assigned_identities) == 1
+        # assert workspace.identity.user_assigned_identities[0].resource_id == user_assigned_identity.id
+
+        # test sai|uai workspace deletion
+        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
+        # verify that request was accepted by checking if poller is returned
+        assert poller
+        assert isinstance(poller, LROPoller)
+
+    @pytest.mark.e2etest
+    @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    def test_workspace_create_delete_with_managed_network(
+        self, client: MLClient, randstr: Callable[[], str], location: str
+    ) -> None:
+        # resource name key word
+        wps_name = f"e2etest_{randstr('wps_name')}_mvnet"
+
+        wps_description = f"{wps_name} description"
+        wps_display_name = f"{wps_name} display name"
+        params_override = [
+            {"name": wps_name},
+            # {"location": location}, # using master for now
+            {"description": wps_description},
+            {"display_name": wps_display_name},
+        ]
+        wps = load_workspace("./tests/test_configs/workspace/workspace_mvnet.yaml", params_override=params_override)
+
+        wps.managed_network.outbound_rules.pop("my-storage")
+
+        # test creation
+        workspace_poller = client.workspaces.begin_create(workspace=wps)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+        assert workspace.name == wps_name
+        # assert workspace.location == location # using master for now
+        assert workspace.description == wps_description
+        assert workspace.display_name == wps_display_name
+        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        assert "my-service" in workspace.managed_network.outbound_rules.keys()
+        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
+        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
+        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
+
+        # test get
+        workspace = client.workspaces.get(name=wps_name)
+        assert isinstance(workspace, Workspace)
+        assert workspace.name == wps_name
+        assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
+        assert "my-service" in workspace.managed_network.outbound_rules.keys()
+        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
+        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
+        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
+
+        # test workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
         assert poller

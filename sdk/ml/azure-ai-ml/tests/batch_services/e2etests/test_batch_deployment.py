@@ -1,20 +1,18 @@
-import time
 import uuid
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase
 import pytest
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import wait_until_done
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import BatchDeployment, BatchEndpoint, Job
+from azure.ai.ml.entities import BatchDeployment, BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from azure.core.polling import LROPoller
+from azure.ai.ml.operations._run_history_constants import JobStatus
 
 
 @contextmanager
@@ -36,13 +34,10 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
     client.batch_endpoints.begin_delete(name=endpoint.name)
 
 
-@pytest.mark.skip(
-    reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
-)
+@pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchDeployment(AzureRecordedTestCase):
-    @pytest.mark.e2etest
     @pytest.mark.skip(reason="TODO (1546262): Test failing constantly, so disabling it")
     def test_batch_deployment(self, client: MLClient, data_with_2_versions: str) -> None:
         endpoint_yaml = "tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
@@ -77,14 +72,19 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
-    @pytest.mark.e2etest
-    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_batch_deployment_dependency_label_resolution(
+        self,
+        client: MLClient,
+        randstr: Callable[[], str],
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
-        name = "batch-ept-" + uuid.uuid4().hex[:15]
+        name = rand_batch_name("name")
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"
-        deployment_name = "batch-dpm-" + uuid.uuid4().hex[:15]
+        deployment_name = rand_batch_deployment_name("deployment_name")
 
-        environment_name = randstr()
+        environment_name = randstr("environment_name")
         environment_versions = ["foo", "bar"]
 
         for version in environment_versions:
@@ -95,7 +95,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
                 )
             )
 
-        model_name = randstr()
+        model_name = randstr("model_name")
         model_versions = ["1", "2"]
 
         for version in model_versions:
@@ -135,28 +135,22 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    @pytest.mark.e2etest
-    def test_batch_job_download(self, client: MLClient, tmp_path: Path) -> str:
-        def wait_until_done(job: Job, timeout: int = None) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-                if timeout is not None and time.time() - poll_start_time > timeout:
-                    # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
-                    cancel_poller = client.jobs.begin_cancel(job.name)
-                    assert isinstance(cancel_poller, LROPoller)
-                    assert cancel_poller.result() is None
-                    return JobStatus.CANCELED
-            return job.status
-
+    def test_batch_job_download(
+        self,
+        client: MLClient,
+        tmp_path: Path,
+        rand_batch_name: Callable[[], str],
+        rand_batch_deployment_name: Callable[[], str],
+    ) -> str:
+        endpoint_name = rand_batch_name("name")
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",
-            params_override=[{"name": "batch-ept-" + uuid.uuid4().hex[:15]}],
+            params_override=[{"name": endpoint_name}],
         )
+        deployment_name = rand_batch_deployment_name("deployment_name")
         deployment = load_batch_deployment(
             "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml",
-            params_override=[{"endpoint_name": endpoint.name}, {"name": "batch-dpm-" + uuid.uuid4().hex[:15]}],
+            params_override=[{"endpoint_name": endpoint.name}, {"name": deployment_name}],
         )
         endpoint.traffic = {deployment.name: 100}
 
@@ -174,7 +168,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
             # Adding a timeout value of 5 minutes to avoid future scenarios where wait
             # long periods for the test to finish. Instead if the job takes longer
             # than 5 minutes to finish we will make the test fail
-            job_status = wait_until_done(batchjob, 300)
+            job_status = wait_until_done(job=batchjob, client=client, timeout=300)
 
             # Check if the job was canceled due to a timeout.
             # If the job's status is CANCELED, we will make the test fail

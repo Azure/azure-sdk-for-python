@@ -696,10 +696,6 @@
             },
             "applications": [
               {
-                "displayName": "Jupyter",
-                "endpointUri": "https://test322425765248.eastus2euap.instances.azureml.ms/tree/"
-              },
-              {
                 "displayName": "Jupyter Lab",
                 "endpointUri": "https://test322425765248.eastus2euap.instances.azureml.ms/lab"
               }
@@ -948,10 +944,6 @@
               "privateIpAddress": "10.0.0.4"
             },
             "applications": [
-              {
-                "displayName": "Jupyter",
-                "endpointUri": "https://test322425765248.eastus2euap.instances.azureml.ms/tree/"
-              },
               {
                 "displayName": "Jupyter Lab",
                 "endpointUri": "https://test322425765248.eastus2euap.instances.azureml.ms/lab"
@@ -1237,7 +1229,7 @@
             },
             "applications": [
               {
-                "displayName": "Jupyter",
+                "displayName": "ssh",
                 "endpointUri": "https://test322425765248.eastus2euap.instances.azureml.ms/tree/"
               },
               {

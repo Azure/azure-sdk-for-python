@@ -4,11 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.aio import (
-    AzureAppConfigurationClient,
-)
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.appconfiguration.aio import AzureAppConfigurationClient
+from azure.core.async_paging import AsyncItemPaged
 from testcase import AppConfigTestCase
+from typing import List
 
 
 class AsyncAppConfigTestCase(AppConfigTestCase):
@@ -28,7 +27,7 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
             await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
         return await client.add_configuration_setting(config_setting)
         
-    async def convert_to_list(self, config_settings): # type: (AsyncItemPaged) -> list
+    async def convert_to_list(self, config_settings: AsyncItemPaged) -> List:
         list = []
         async for item in config_settings:
             list.append(item)
@@ -47,5 +46,6 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
             config_settings = self.client.list_configuration_settings()
             async for config_setting in config_settings:
                 await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
+            await self.client.close()
         else:
             raise ValueError("Client is None!")

@@ -2,17 +2,15 @@ $schema: https://azuremlschemas.azureedge.net/latest/commandComponent.schema.jso
 type: command
 
 name: expression_component
-display_name:
 version: 1
 
-inputs:
 outputs:
+  output:
+    is_control: true
 
 code: ./src
 
-environment:
-  conda_file: ./conda.yml
-  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest
+environment: azureml://registries/azureml/environments/mldesigner/labels/latest
 
 command: >-
-  mldesigner execute --source expression_component.py --name expression_func --inputs {inputs_placeholder} --outputs output=DatasetOutputConfig:output
+  {command_placeholder}

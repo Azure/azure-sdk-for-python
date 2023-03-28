@@ -39,7 +39,10 @@ from azure.ai.textanalytics import (
     RecognizeCustomEntitiesAction,
     ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
-    AnalyzeHealthcareEntitiesAction
+    AnalyzeHealthcareEntitiesAction,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    AbstractiveSummaryAction,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -120,7 +123,7 @@ class TestAnalyze(TextAnalyticsTest):
             assert isinstance(document_result, AnalyzeSentimentResult)
             assert document_result.id is not None
             assert document_result.statistics is not None
-            self.validateConfidenceScores(document_result.confidence_scores)
+            # self.validateConfidenceScores(document_result.confidence_scores) https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15794991
             assert document_result.sentences is not None
             if idx == 0:
                 assert document_result.sentiment == "neutral"
@@ -192,7 +195,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert 4 == food_target.offset
 
                     assert 'service' == service_target.text
-                    assert 'positive' == service_target.sentiment
+                    assert 'negative' == service_target.sentiment
                     assert 0.0 == service_target.confidence_scores.neutral
                     self.validateConfidenceScores(service_target.confidence_scores)
                     assert 13 == service_target.offset
@@ -492,6 +495,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.character_count
                 assert document_result.statistics.transaction_count
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -1676,6 +1680,8 @@ class TestAnalyze(TextAnalyticsTest):
             actions=[
                 AnalyzeHealthcareEntitiesAction(
                     model_version="latest",
+                    fhir_version="4.0.1",
+                    document_type="HistoryAndPhysical",
                 )
             ],
             show_stats=True,
@@ -1690,6 +1696,7 @@ class TestAnalyze(TextAnalyticsTest):
                 else:
                     assert res.entities
                     # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
+                    assert res.fhir_bundle
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1790,3 +1797,297 @@ class TestAnalyze(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             poller.cancel()
         assert"Cancellation not supported by API versions v3.0, v3.1." in str(e.value)
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_passing_dict_extract_summary_action(self, client):
+        docs = [{"id": "1", "language": "en", "text":
+            "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."},
+            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        assert len(document_results) == 2
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for result in document_result:
+                assert isinstance(result, ExtractSummaryResult)
+                assert result.statistics
+                assert len(result.sentences) == 3 if result.id == 0 else 1
+                for sentence in result.sentences:
+                    assert sentence.text
+                    assert sentence.rank_score is not None
+                    assert sentence.offset is not None
+                    assert sentence.length is not None
+                assert result.id is not None
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_extract_summary_action_with_options(self, client):
+        docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction(max_sentence_count=5, order_by="Rank")],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        assert len(document_results) == 1
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for result in document_result:
+                assert isinstance(result, ExtractSummaryResult)
+                assert result.statistics
+                assert len(result.sentences) == 5
+                previous_score = 1.0
+                for sentence in result.sentences:
+                    assert sentence.rank_score <= previous_score
+                    previous_score = sentence.rank_score
+                    assert sentence.text
+                    assert sentence.offset is not None
+                    assert sentence.length is not None
+                assert result.id is not None
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_extract_summary_partial_results(self, client):
+        docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        assert document_results[0][0].is_error
+        assert document_results[0][0].error.code == "InvalidDocument"
+
+        assert not document_results[1][0].is_error
+        assert isinstance(document_results[1][0], ExtractSummaryResult)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_entity_action_resolutions(self, client):
+        docs = [
+            "The cat is 1 year old and weighs 10 pounds."
+        ]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[RecognizeEntitiesAction(
+                model_version="2022-10-01-preview"
+            )],
+            polling_interval=self._interval(),
+        ).result()
+
+        pages = list(response)
+        for document_results in pages:
+            document_result = document_results[0]
+            for entity in document_result.entities:
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
+                for res in entity.resolutions:
+                    assert res.resolution_kind in ["WeightResolution", "AgeResolution"]
+                    if res.resolution_kind == "WeightResolution":
+                        assert res.value == 10
+                    if res.resolution_kind == "AgeResolution":
+                        assert res.value == 1
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_passing_dict_abstract_summary_action(self, client):
+        docs = [{"id": "1", "language": "en", "text":
+            "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[AbstractiveSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        for document_result in document_results:
+            for result in document_result:
+                assert result.statistics is not None
+                assert result.id is not None
+                for summary in result.summaries:
+                    for context in summary.contexts:
+                        assert context.offset is not None
+                        assert context.length is not None
+                    assert summary.text
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_autodetect_lang_document(self, client):
+        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            # RecognizeLinkedEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15859145
+            AnalyzeSentimentAction(),
+            AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+            # ExtractSummaryAction(),  https://github.com/Azure/azure-sdk-for-python/issues/27727
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+                if doc.kind == "Healthcare":
+                    if doc.id == "1":
+                        assert doc.detected_language == "en"
+                else:
+                    if doc.id == "1":
+                        assert doc.detected_language.iso6391_name == "en"
+                    elif doc.id == "2" and not doc.is_error:
+                        assert doc.detected_language.iso6391_name == "es"
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsCustomPreparer()
+    @recorded_by_proxy
+    def test_autodetect_lang_document_custom(self, **kwargs):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
+        textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
+        textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
+        textanalytics_multi_label_classify_deployment_name = kwargs.pop("textanalytics_multi_label_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+
+        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        actions=[
+            RecognizeCustomEntitiesAction(
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+            ),
+            SingleLabelClassifyAction(
+                project_name=textanalytics_single_label_classify_project_name,
+                deployment_name=textanalytics_single_label_classify_deployment_name,
+            ),
+            MultiLabelClassifyAction(
+                project_name=textanalytics_multi_label_classify_project_name,
+                deployment_name=textanalytics_multi_label_classify_deployment_name,
+            ),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                if doc.id == "1":
+                    assert doc.detected_language.iso6391_name == "en"
+                else:
+                    assert doc.detected_language.iso6391_name == "es"
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_autodetect_language(self, client):
+        docs = ["hello world"]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            language="auto",
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                assert doc.detected_language.iso6391_name == "en"

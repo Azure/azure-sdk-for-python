@@ -7,10 +7,15 @@ from typing import Union
 
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
-from azure.ai.ml.entities._job.pipeline._io.base import NodeInput, NodeOutput, PipelineInput
-from azure.ai.ml.exceptions import ValidationException, ErrorTarget, ErrorCategory, UnexpectedAttributeError, \
-    UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._attr_dict import K, V
+from azure.ai.ml.entities._job.pipeline._io.base import NodeInput, NodeOutput, PipelineInput
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    UnexpectedAttributeError,
+    UnexpectedKeywordError,
+    ValidationException,
+)
 
 
 class InputsAttrDict(dict):
@@ -155,7 +160,7 @@ class OutputsAttrDict(dict):
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):
             mode = value.mode
-            value = Output(type=value.type, path=value.path, mode=mode)
+            value = Output(type=value.type, path=value.path, mode=mode, name=value.name, version=value.version)
         original_output = self.__getattr__(key)  # Note that an exception will be raised if the keyword is invalid.
         original_output._data = original_output._build_data(value)
 

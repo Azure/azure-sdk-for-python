@@ -5,12 +5,11 @@
 # --------------------------------------------------------------------------
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
 
-import six
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError
@@ -19,11 +18,12 @@ from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
+from ._shared.uploads_async import AsyncIterStreamer
 from ._upload_helper import upload_datalake_file
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
 from ._serialize import get_mod_conditions, get_path_http_headers, get_access_conditions, add_metadata_headers, \
-    convert_datetime_to_rfc1123, get_cpk_info
+    convert_datetime_to_rfc1123, get_cpk_info, get_lease_action_properties
 from ._deserialize import process_storage_error, deserialize_file_properties
 from ._models import FileProperties, DataLakeFileQueryError
 
@@ -196,8 +196,14 @@ class DataLakeFileClient(PathClient):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: response dict (Etag and last modified).
+        :keyword str encryption_context:
+            Specifies the encryption context to set on the file.
 
         .. admonition:: Example:
 
@@ -237,7 +243,11 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
 
         .. admonition:: Example:
@@ -282,7 +292,11 @@ class DataLakeFileClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a customer-provided key.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: FileProperties
 
         .. admonition:: Example:
@@ -310,7 +324,11 @@ class DataLakeFileClient(PathClient):
             When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
             If the type of expires_on is datetime, it should be in UTC time.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: None
         """
         try:
@@ -321,15 +339,14 @@ class DataLakeFileClient(PathClient):
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
+            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
             **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        ) -> Dict[str, Any]:
 
         encoding = kwargs.pop('encoding', 'UTF-8')
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
+        if isinstance(data, str):
+            data = data.encode(encoding)
         if length is None:
             length = get_length(data)
         if isinstance(data, bytes):
@@ -341,6 +358,8 @@ class DataLakeFileClient(PathClient):
             stream = data
         elif hasattr(data, '__iter__'):
             stream = IterStreamer(data, encoding=encoding)
+        elif hasattr(data, '__aiter__'):
+            stream = AsyncIterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
@@ -366,11 +385,12 @@ class DataLakeFileClient(PathClient):
 
         return kwargs
 
-    def upload_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                    length=None,  # type: Optional[int]
-                    overwrite=False,  # type: Optional[bool]
-                    **kwargs):
-        # type: (...) -> Dict[str, Any]
+    def upload_data(
+            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
+            overwrite: Optional[bool] = False,
+            **kwargs
+        ) -> Dict[str, Any]:
         """
         Upload data to a file.
 
@@ -428,7 +448,12 @@ class DataLakeFileClient(PathClient):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
         :keyword int chunk_size:
             The maximum chunk size for uploading a file in chunks.
             Defaults to 100*1024*1024, or 100MB.
@@ -451,7 +476,7 @@ class DataLakeFileClient(PathClient):
         ):
         # type: (...) -> Dict[str, Any]
 
-        if isinstance(data, six.text_type):
+        if isinstance(data, str):
             data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
         if length is None:
             length = get_length(data)
@@ -460,14 +485,13 @@ class DataLakeFileClient(PathClient):
         if isinstance(data, bytes):
             data = data[:length]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         cpk_info = get_cpk_info(scheme, kwargs)
+        kwargs.update(get_lease_action_properties(kwargs))
 
         options = {
             'body': data,
             'position': offset,
             'content_length': length,
-            'lease_access_conditions': access_conditions,
             'validate_content': kwargs.pop('validate_content', False),
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
@@ -494,9 +518,26 @@ class DataLakeFileClient(PathClient):
             bitflips on the wire if using http instead of https as https (the default)
             will already validate. Note that this MD5 hash is not stored with the
             file.
+        :keyword lease_action:
+            Used to perform lease operations along with appending data.
+
+            "acquire" - Acquire a lease.
+            "auto-renew" - Re-new an existing lease.
+            "release" - Release the lease once the operation is complete. Requires `flush=True`.
+            "acquire-release" - Acquire a lease and release it once the operations is complete. Requires `flush=True`.
+        :paramtype lease_action: Literal["acquire", "auto-renew", "release", "acquire-release"]
+        :keyword int lease_duration:
+            Valid if `lease_action` is set to "acquire" or "acquire-release".
+
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
         :keyword lease:
-            Required if the file has an active lease. Value can be a DataLakeLeaseClient object
-            or the lease ID as a string.
+            Required if the file has an active lease or if `lease_action` is set to "acquire" or "acquire-release".
+            If the file has an existing lease, this will be used to access the file. If acquiring a new lease,
+            this will be used as the new lease id.
+            Value can be a DataLakeLeaseClient object or the lease ID as a string.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
@@ -533,7 +574,6 @@ class DataLakeFileClient(PathClient):
         ):
         # type: (...) -> Dict[str, Any]
 
-        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = get_mod_conditions(kwargs)
 
         path_http_headers = None
@@ -541,6 +581,7 @@ class DataLakeFileClient(PathClient):
             path_http_headers = get_path_http_headers(content_settings)
 
         cpk_info = get_cpk_info(scheme, kwargs)
+        kwargs.update(get_lease_action_properties(kwargs))
 
         options = {
             'position': offset,
@@ -548,7 +589,6 @@ class DataLakeFileClient(PathClient):
             'path_http_headers': path_http_headers,
             'retain_uncommitted_data': retain_uncommitted_data,
             'close': kwargs.pop('close', False),
-            'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
@@ -604,6 +644,27 @@ class DataLakeFileClient(PathClient):
             and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
+        :keyword lease_action:
+            Used to perform lease operations along with appending data.
+
+            "acquire" - Acquire a lease.
+            "auto-renew" - Re-new an existing lease.
+            "release" - Release the lease once the operation is complete.
+            "acquire-release" - Acquire a lease and release it once the operations is complete.
+        :paramtype lease_action: Literal["acquire", "auto-renew", "release", "acquire-release"]
+        :keyword int lease_duration:
+            Valid if `lease_action` is set to "acquire" or "acquire-release".
+
+            Specifies the duration of the lease, in seconds, or negative one
+            (-1) for a lease that never expires. A non-infinite lease can be
+            between 15 and 60 seconds. A lease duration cannot be changed
+            using renew or change. Default is -1 (infinite lease).
+        :keyword lease:
+            Required if the file has an active lease or if `lease_action` is set to "acquire" or "acquire-release".
+            If the file has an existing lease, this will be used to access the file. If acquiring a new lease,
+            this will be used as the new lease id.
+            Value can be a DataLakeLeaseClient object or the lease ID as a string.
+        :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -667,9 +728,12 @@ class DataLakeFileClient(PathClient):
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds. This method may make
-            multiple calls to the Azure service and the timeout will apply to
-            each call individually.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
         :returns: A streaming object (StorageStreamDownloader)
         :rtype: ~azure.storage.filedatalake.StorageStreamDownloader
 
@@ -691,7 +755,11 @@ class DataLakeFileClient(PathClient):
         Returns True if a file exists and returns False otherwise.
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
         return self._exists(**kwargs)
@@ -748,7 +816,11 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: the renamed file client
         :rtype: DataLakeFileClient
 
@@ -761,17 +833,7 @@ class DataLakeFileClient(PathClient):
                 :dedent: 4
                 :caption: Rename the source file.
         """
-        new_name = new_name.strip('/')
-        new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
-        new_path = new_path_and_token[0]
-        try:
-            new_file_sas = new_path_and_token[1] or self._query_str.strip('?')
-        except IndexError:
-            if not self._raw_credential and new_file_system != self.file_system_name:
-                raise ValueError("please provide the sas token for the new file")
-            if not self._raw_credential and new_file_system == self.file_system_name:
-                new_file_sas = self._query_str.strip('?')
+        new_file_system, new_path, new_file_sas = self._parse_rename_path(new_name)
 
         new_file_client = DataLakeFileClient(
             "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, file_path=new_path,
@@ -840,7 +902,11 @@ class DataLakeFileClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a Customer-Provided Key.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: A streaming object (DataLakeFileQueryReader)
         :rtype: ~azure.storage.filedatalake.DataLakeFileQueryReader
 

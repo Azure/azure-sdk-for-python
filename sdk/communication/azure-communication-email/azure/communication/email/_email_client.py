@@ -4,18 +4,25 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Union
-from uuid import uuid4
+import sys
+from typing import Any, Union, IO
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials import TokenCredential
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.utils import parse_connection_str, get_current_utc_time
-from ._shared.policy import HMACCredentialsPolicy
-from ._generated._azure_communication_email_service import AzureCommunicationEmailService
+from ._shared.utils import parse_connection_str, get_authentication_policy
+from ._generated._client import AzureCommunicationEmailService
 from ._version import SDK_MONIKER
-from ._generated.models import SendEmailResult, SendStatusResult, EmailMessage
+from ._api_versions import DEFAULT_VERSION
 
-class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
+
+class EmailClient(object):
     """A client to interact with the AzureCommunicationService Email gateway.
 
     This client provides operations to send an email and monitor its status.
@@ -24,6 +31,10 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+    :keyword api_version: Azure Communication Email API version.
+        Default value is "2023-03-31".
+        Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
             self,
@@ -40,7 +51,9 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
 
-        authentication_policy = HMACCredentialsPolicy(endpoint, credential)
+        self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+
+        authentication_policy = get_authentication_policy(endpoint, credential)
 
         self._generated_client = AzureCommunicationEmailService(
             endpoint,
@@ -67,44 +80,103 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         return cls(endpoint, AzureKeyCredential(access_key), **kwargs)
 
     @distributed_trace
-    def send(
+    def begin_send(
         self,
-        email_message: EmailMessage,
-        **kwargs
-    ) -> SendEmailResult:
+        message: Union[JSON, IO],
+        **kwargs: Any
+    ) -> LROPoller[JSON]:
+        # cSpell:disable
         """Queues an email message to be sent to one or more recipients.
 
-        :param email_message: The message payload for sending an email.
-        :type email_message: ~azure.communication.email.models.EmailMessage
-        :return: SendEmailResult
-        :rtype: ~azure.communication.email.models.SendEmailResult
+        Queues an email message to be sent to one or more recipients.
+
+        :param message: Message payload for sending an email. Required.
+        :type message: JSON
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+         Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                message = {
+                    "content": {
+                        "subject": "str",  # Subject of the email message. Required.
+                        "html": "str",  # Optional. Html version of the email message.
+                        "plainText": "str"  # Optional. Plain text version of the email
+                          message.
+                    },
+                    "recipients": {
+                        "to": [
+                            {
+                                "address": "str",  # Email address. Required.
+                                "displayName": "str"  # Optional. Email display name.
+                            }
+                        ],
+                        "bcc": [
+                            {
+                                "address": "str",  # Email address. Required.
+                                "displayName": "str"  # Optional. Email display name.
+                            }
+                        ],
+                        "cc": [
+                            {
+                                "address": "str",  # Email address. Required.
+                                "displayName": "str"  # Optional. Email display name.
+                            }
+                        ]
+                    },
+                    "senderAddress": "str",  # Sender email address from a verified domain.
+                      Required.
+                    "attachments": [
+                        {
+                            "contentInBase64": "str",  # Base64 encoded contents of the
+                              attachment. Required.
+                            "contentType": "str",  # MIME type of the content being
+                              attached. Required.
+                            "name": "str"  # Name of the attachment. Required.
+                        }
+                    ],
+                    "userEngagementTrackingDisabled": bool,  # Optional. Indicates whether user
+                      engagement tracking should be disabled for this request if the resource-level
+                      user engagement tracking setting was already enabled in the control plane.
+                    "headers": {
+                        "str": "str"  # Optional. Custom email headers to be passed.
+                    },
+                    "replyTo": [
+                        {
+                            "address": "str",  # Email address. Required.
+                            "displayName": "str"  # Optional. Email display name.
+                        }
+                    ]
+                }
+
+                # response body for status code(s): 202
+                response == {
+                    "id": "str",  # The unique id of the operation. Use a UUID. Required.
+                    "status": "str",  # Status of operation. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
+                    "error": {
+                        "additionalInfo": [
+                            {
+                                "info": {},  # Optional. The additional info.
+                                "type": "str"  # Optional. The additional info type.
+                            }
+                        ],
+                        "code": "str",  # Optional. The error code.
+                        "details": [
+                            ...
+                        ],
+                        "message": "str",  # Optional. The error message.
+                        "target": "str"  # Optional. The error target.
+                    }
+                }
         """
+        # cSpell:enable
 
-        return self._generated_client.email.send(
-            repeatability_request_id=uuid4(),
-            repeatability_first_sent=get_current_utc_time(),
-            email_message=email_message,
-            **kwargs
-        )
-
-    @distributed_trace
-    def get_send_status(
-        self,
-        message_id: str,
-        **kwargs
-    ) -> SendStatusResult:
-        """Gets the status of a message sent previously.
-
-        :param message_id: System generated message id (GUID) returned from a previous call to send email
-        :type message_id: str
-        :return: SendStatusResult
-        :rtype: ~azure.communication.email.models.SendStatusResult
-        """
-
-        return self._generated_client.email.get_send_status(
-            message_id=message_id,
-            **kwargs
-        )
+        return self._generated_client.email.begin_send(message=message, **kwargs)
 
     def __enter__(self) -> "EmailClient":
         self._generated_client.__enter__()

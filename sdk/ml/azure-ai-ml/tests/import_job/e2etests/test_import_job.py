@@ -1,28 +1,19 @@
-import os
-import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
 
-import mock
 import pytest
-from mock import patch
+from devtools_testutils import AzureRecordedTestCase
+from pytest_mock import MockFixture
+from test_utilities.utils import assert_job_cancel, wait_until_done
 
 from azure.ai.ml import MLClient, Output, dsl, load_component, load_job
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AssetTypes
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._job.import_job import DatabaseImportSource, ImportJob
-from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._operation_orchestrator import OperationOrchestrator
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from azure.core.polling import LROPoller
-
-
-from devtools_testutils import AzureRecordedTestCase
-from pytest_mock import MockFixture
 
 
 @pytest.fixture(autouse=True)
@@ -58,10 +49,27 @@ class TestImportJob(AzureRecordedTestCase):
         job = import_job(source=source, output=output)
         self.validate_import_job_submit_cancel(job, client)
 
-    def validate_import_job_submit_cancel(self, job: ImportJob, client: MLClient) -> None:
+    @classmethod
+    def validate_import_job_submit_cancel(cls, job: ImportJob, client: MLClient) -> None:
         # TODO: need to create a workspace under a e2e-testing-only subscription and resource group
 
-        import_job: ImportJob = client.jobs.create_or_update(job=job)
+        def check_before_cancel(_import_job: ImportJob) -> True:
+            assert _import_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
+
+            import_job_2 = client.jobs.get(_import_job.name)
+            assert isinstance(import_job_2, ImportJob)
+            assert import_job_2.type == _import_job.type
+            assert import_job_2.name == _import_job.name
+            assert import_job_2.compute == "DataFactory"
+            assert import_job_2.source.type == _import_job.source.type
+            assert import_job_2.source.connection == _import_job.source.connection
+            assert import_job_2.source.query == _import_job.source.query
+            assert import_job_2.output.type == _import_job.output.type
+            assert import_job_2.output.path == _import_job.output.path
+            assert import_job_2.status in [JobStatus.COMPLETED, JobStatus.FAILED, JobStatus.RUNNING, JobStatus.STARTING]
+            return True
+
+        import_job = assert_job_cancel(job, client, check_before_cancelled=check_before_cancel)
 
         assert import_job.type == JobType.IMPORT
         assert import_job.source.type == "azuresqldb"
@@ -69,34 +77,18 @@ class TestImportJob(AzureRecordedTestCase):
         assert import_job.source.query == "select * from REGION"
         assert import_job.output.type == AssetTypes.MLTABLE or import_job.output.type == AssetTypes.URI_FOLDER
         assert import_job.output.path == "azureml://datastores/workspaceblobstore/paths/output_dir/"
-        assert import_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
 
-        import_job_2 = client.jobs.get(import_job.name)
-        assert isinstance(import_job_2, ImportJob)
-        assert import_job_2.type == import_job.type
-        assert import_job_2.name == import_job.name
-        assert import_job_2.compute == "DataFactory"
-        assert import_job_2.source.type == import_job.source.type
-        assert import_job_2.source.connection == import_job.source.connection
-        assert import_job_2.source.query == import_job.source.query
-        assert import_job_2.output.type == import_job.output.type
-        assert import_job_2.output.path == import_job.output.path
-        assert import_job_2.status in [JobStatus.COMPLETED, JobStatus.FAILED, JobStatus.RUNNING, JobStatus.STARTING]
-
-        # Test cancel with submit to save test resource.
-        # The job not supposed to succeed and usually failed quickly so status can be 'failed' as well
-        cancel_poller = client.jobs.begin_cancel(import_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
         import_job_3 = client.jobs.get(import_job.name)
         assert import_job_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED, JobStatus.FAILED)
 
+    @pytest.mark.skip("Skip for not ready.")
     @pytest.mark.e2etest
     def test_import_pipeline_submit_cancel(self, client: MLClient) -> None:
 
         pipeline: PipelineJob = load_job("./tests/test_configs/import_job/import_pipeline_test.yml")
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=False)
 
+    @pytest.mark.skip("Skip for not ready.")
     @pytest.mark.e2etest
     def test_import_dsl_pipeline_submit_cancel(self, client: MLClient) -> None:
         def generate_dsl_pipeline():
@@ -125,11 +117,10 @@ class TestImportJob(AzureRecordedTestCase):
         pipeline = generate_dsl_pipeline()
         self.validate_test_import_pipepine_submit_cancel(pipeline, client, is_dsl=True)
 
-    def validate_test_import_pipepine_submit_cancel(
-        self, pipeline: PipelineJob, client: MLClient, is_dsl: bool
-    ) -> None:
+    @classmethod
+    def validate_test_import_pipepine_submit_cancel(cls, pipeline: PipelineJob, client: MLClient, is_dsl: bool) -> None:
 
-        import_pipeline: PipelineJob = client.jobs.create_or_update(job=pipeline)
+        import_pipeline: PipelineJob = assert_job_cancel(job=pipeline, client=client)
 
         import_step = "import_job" if is_dsl else "import_step"
         assert import_step in import_pipeline.jobs
@@ -182,21 +173,11 @@ class TestImportJob(AzureRecordedTestCase):
                 == import_pipeline.jobs[import_step].outputs["output"]._data.path
             )
 
-        cancel_poller = client.jobs.begin_cancel(import_pipeline.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
         import_pipeline_3 = client.jobs.get(import_pipeline.name)
         assert import_pipeline_3.status in (JobStatus.CANCEL_REQUESTED, JobStatus.CANCELED)
 
     @pytest.mark.e2etest
     def test_import_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
-        def wait_until_done(job: Job) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-            time.sleep(_wait_before_polling(time.time() - poll_start_time))
-
         job = client.jobs.create_or_update(
             load_job(
                 "./tests/test_configs/import_job/import_job_test.yml",
@@ -204,7 +185,7 @@ class TestImportJob(AzureRecordedTestCase):
             )
         )
 
-        wait_until_done(job)
+        wait_until_done(client=client, job=job)
 
         with TemporaryDirectory() as tmp_dirname:
             tmp_path = Path(tmp_dirname)

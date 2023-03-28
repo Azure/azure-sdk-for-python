@@ -34,6 +34,8 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_multi_label_classify.py][multi_label_classify_sample] and [sample_multi_label_classify_async.py][multi_label_classify_sample_async]|Use a custom model to classify documents into multiple categories|
 |[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
 |[sample_analyze_healthcare_action.py][sample_analyze_healthcare_action] and [sample_analyze_healthcare_action_async.py][sample_analyze_healthcare_action_async]|Run a healthcare and PII analysis together|
+|[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|As part of the analyze API, run extractive text summarization on documents|
+|[sample_abstractive_summary.py][abstractive_summary_sample] and [sample_abstractive_summary_async.py][abstractive_summary_sample_async]|As part of the analyze API, run abstractive text summarization on documents|
 
 ## Prerequisites
 * Python 3.7 or later is required to use this package
@@ -45,7 +47,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 1. Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
 For more information about how the versioning story of the SDK corresponds to the versioning story of the service's API, see [here][versioning_story_readme].
 
@@ -73,6 +75,8 @@ what you can do with the Azure Text Analytics client library.
 |[sample_analyze_sentiment_with_opinion_mining.py][sample_analyze_sentiment_with_opinion_mining] and [sample_analyze_sentiment_with_opinion_mining_async.py][sample_analyze_sentiment_with_opinion_mining_async]|Analyze sentiment in documents with granular analysis into individual opinions present in a sentence. Only available with API version v3.1 and up.|
 |[sample_get_detailed_diagnostics_information.py][get_detailed_diagnostics_information] and [sample_get_detailed_diagnostics_information_async.py][get_detailed_diagnostics_information_async]|Get the request batch statistics, model version, and raw response in JSON format through a callback|
 |[sample_analyze_healthcare_entities_with_cancellation.py][sample_analyze_healthcare_entities_with_cancellation] and [sample_analyze_healthcare_entities_with_cancellation_async.py][sample_analyze_healthcare_entities_with_cancellation_async]|Cancel an analyze healthcare entities operation after it's started.|
+|[sample_recognize_entity_resolutions.py][recognize_entity_resolutions_sample] and [sample_recognize_entity_resolutions_async.py][recognize_entity_resolutions_sample_async]|Use NER with resolutions to normalize entities to standard formats.|
+
 
 [versioning_story_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics#install-the-package
 [azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
@@ -112,6 +116,12 @@ what you can do with the Azure Text Analytics client library.
 [sample_model_version_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_model_version_async.py
 [sample_analyze_healthcare_action]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
 [sample_analyze_healthcare_action_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_action_async.py
+[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
+[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
+[abstractive_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstractive_summary.py
+[abstractive_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstractive_summary_async.py
+[recognize_entity_resolutions_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entity_resolutions.py
+[recognize_entity_resolutions_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entity_resolutions_async.py
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/
 [azure_language_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows

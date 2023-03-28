@@ -6,24 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, Awaitable, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
+
+from .. import models
+from .._serialization import Deserializer, Serializer
+from ._configuration import ACEProvisioningManagementPartnerAPIConfiguration
+from .operations import OperationOperations, PartnerOperations, PartnersOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import ACEProvisioningManagementPartnerAPIConfiguration
-from .operations import PartnerOperations
-from .operations import OperationOperations
-from .operations import PartnersOperations
-from .. import models
 
-
-class ACEProvisioningManagementPartnerAPI(object):
+class ACEProvisioningManagementPartnerAPI:  # pylint: disable=client-accepts-api-version-keyword
     """This API describe ACE Provisioning ManagementPartner.
 
     :ivar partner: PartnerOperations operations
@@ -32,47 +31,50 @@ class ACEProvisioningManagementPartnerAPI(object):
     :vartype operation: azure.mgmt.managementpartner.aio.operations.OperationOperations
     :ivar partners: PartnersOperations operations
     :vartype partners: azure.mgmt.managementpartner.aio.operations.PartnersOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param str base_url: Service URL
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2018-02-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        base_url: Optional[str] = None,
-        **kwargs: Any
+        self, credential: "AsyncTokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = ACEProvisioningManagementPartnerAPIConfiguration(credential, **kwargs)
+        self._config = ACEProvisioningManagementPartnerAPIConfiguration(credential=credential, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.partner = PartnerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation = OperationOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.partners = PartnersOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.partner = PartnerOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operation = OperationOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.partners = PartnersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        http_request.url = self._client.format_url(http_request.url)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

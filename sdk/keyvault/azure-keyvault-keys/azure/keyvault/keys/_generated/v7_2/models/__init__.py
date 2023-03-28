@@ -6,89 +6,68 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Attributes
-    from ._models_py3 import BackupKeyResult
-    from ._models_py3 import DeletedKeyBundle
-    from ._models_py3 import DeletedKeyItem
-    from ._models_py3 import DeletedKeyListResult
-    from ._models_py3 import Error
-    from ._models_py3 import JsonWebKey
-    from ._models_py3 import KeyAttributes
-    from ._models_py3 import KeyBundle
-    from ._models_py3 import KeyCreateParameters
-    from ._models_py3 import KeyImportParameters
-    from ._models_py3 import KeyItem
-    from ._models_py3 import KeyListResult
-    from ._models_py3 import KeyOperationResult
-    from ._models_py3 import KeyOperationsParameters
-    from ._models_py3 import KeyProperties
-    from ._models_py3 import KeyRestoreParameters
-    from ._models_py3 import KeySignParameters
-    from ._models_py3 import KeyUpdateParameters
-    from ._models_py3 import KeyVaultError
-    from ._models_py3 import KeyVerifyParameters
-    from ._models_py3 import KeyVerifyResult
-except (SyntaxError, ImportError):
-    from ._models import Attributes  # type: ignore
-    from ._models import BackupKeyResult  # type: ignore
-    from ._models import DeletedKeyBundle  # type: ignore
-    from ._models import DeletedKeyItem  # type: ignore
-    from ._models import DeletedKeyListResult  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import JsonWebKey  # type: ignore
-    from ._models import KeyAttributes  # type: ignore
-    from ._models import KeyBundle  # type: ignore
-    from ._models import KeyCreateParameters  # type: ignore
-    from ._models import KeyImportParameters  # type: ignore
-    from ._models import KeyItem  # type: ignore
-    from ._models import KeyListResult  # type: ignore
-    from ._models import KeyOperationResult  # type: ignore
-    from ._models import KeyOperationsParameters  # type: ignore
-    from ._models import KeyProperties  # type: ignore
-    from ._models import KeyRestoreParameters  # type: ignore
-    from ._models import KeySignParameters  # type: ignore
-    from ._models import KeyUpdateParameters  # type: ignore
-    from ._models import KeyVaultError  # type: ignore
-    from ._models import KeyVerifyParameters  # type: ignore
-    from ._models import KeyVerifyResult  # type: ignore
+from ._models_py3 import Attributes
+from ._models_py3 import BackupKeyResult
+from ._models_py3 import DeletedKeyBundle
+from ._models_py3 import DeletedKeyItem
+from ._models_py3 import DeletedKeyListResult
+from ._models_py3 import Error
+from ._models_py3 import JsonWebKey
+from ._models_py3 import KeyAttributes
+from ._models_py3 import KeyBundle
+from ._models_py3 import KeyCreateParameters
+from ._models_py3 import KeyImportParameters
+from ._models_py3 import KeyItem
+from ._models_py3 import KeyListResult
+from ._models_py3 import KeyOperationResult
+from ._models_py3 import KeyOperationsParameters
+from ._models_py3 import KeyProperties
+from ._models_py3 import KeyRestoreParameters
+from ._models_py3 import KeySignParameters
+from ._models_py3 import KeyUpdateParameters
+from ._models_py3 import KeyVaultError
+from ._models_py3 import KeyVerifyParameters
+from ._models_py3 import KeyVerifyResult
 
-from ._key_vault_client_enums import (
-    DeletionRecoveryLevel,
-    JsonWebKeyCurveName,
-    JsonWebKeyEncryptionAlgorithm,
-    JsonWebKeyOperation,
-    JsonWebKeySignatureAlgorithm,
-    JsonWebKeyType,
-)
+from ._key_vault_client_enums import DeletionRecoveryLevel
+from ._key_vault_client_enums import JsonWebKeyCurveName
+from ._key_vault_client_enums import JsonWebKeyEncryptionAlgorithm
+from ._key_vault_client_enums import JsonWebKeyOperation
+from ._key_vault_client_enums import JsonWebKeySignatureAlgorithm
+from ._key_vault_client_enums import JsonWebKeyType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Attributes',
-    'BackupKeyResult',
-    'DeletedKeyBundle',
-    'DeletedKeyItem',
-    'DeletedKeyListResult',
-    'Error',
-    'JsonWebKey',
-    'KeyAttributes',
-    'KeyBundle',
-    'KeyCreateParameters',
-    'KeyImportParameters',
-    'KeyItem',
-    'KeyListResult',
-    'KeyOperationResult',
-    'KeyOperationsParameters',
-    'KeyProperties',
-    'KeyRestoreParameters',
-    'KeySignParameters',
-    'KeyUpdateParameters',
-    'KeyVaultError',
-    'KeyVerifyParameters',
-    'KeyVerifyResult',
-    'DeletionRecoveryLevel',
-    'JsonWebKeyCurveName',
-    'JsonWebKeyEncryptionAlgorithm',
-    'JsonWebKeyOperation',
-    'JsonWebKeySignatureAlgorithm',
-    'JsonWebKeyType',
+    "Attributes",
+    "BackupKeyResult",
+    "DeletedKeyBundle",
+    "DeletedKeyItem",
+    "DeletedKeyListResult",
+    "Error",
+    "JsonWebKey",
+    "KeyAttributes",
+    "KeyBundle",
+    "KeyCreateParameters",
+    "KeyImportParameters",
+    "KeyItem",
+    "KeyListResult",
+    "KeyOperationResult",
+    "KeyOperationsParameters",
+    "KeyProperties",
+    "KeyRestoreParameters",
+    "KeySignParameters",
+    "KeyUpdateParameters",
+    "KeyVaultError",
+    "KeyVerifyParameters",
+    "KeyVerifyResult",
+    "DeletionRecoveryLevel",
+    "JsonWebKeyCurveName",
+    "JsonWebKeyEncryptionAlgorithm",
+    "JsonWebKeyOperation",
+    "JsonWebKeySignatureAlgorithm",
+    "JsonWebKeyType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

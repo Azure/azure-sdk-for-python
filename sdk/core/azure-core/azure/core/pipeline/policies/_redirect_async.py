@@ -23,8 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Callable, Optional
-
 from azure.core.exceptions import TooManyRedirectsError
 from . import AsyncHTTPPolicy
 from ._redirect import RedirectPolicyBase
@@ -63,10 +61,10 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
         while redirects_remaining:
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
-            if redirect_location and redirect_settings['allow']:
+            if redirect_location and redirect_settings["allow"]:
                 redirects_remaining = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 continue
             return response
 
-        raise TooManyRedirectsError(redirect_settings['history'])
+        raise TooManyRedirectsError(redirect_settings["history"])

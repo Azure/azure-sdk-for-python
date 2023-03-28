@@ -9,40 +9,40 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import AutoNCrossValidations
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import Classification as RestClassification
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ClassificationPrimaryMetrics
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import AutoNCrossValidations
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import Classification as RestClassification
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import ClassificationPrimaryMetrics
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     ClassificationTrainingSettings as RestClassificationTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ColumnTransformer as RestColumnTransformer
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import CustomNCrossValidations
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ForecastingPrimaryMetrics
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import ColumnTransformer as RestColumnTransformer
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import CustomNCrossValidations
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import ForecastingPrimaryMetrics
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     ForecastingSettings as RestForecastingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     ForecastingTrainingSettings as RestForecastingTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import Regression as RestRegression
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import RegressionPrimaryMetrics
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import JobBase, LogVerbosity, MLTableJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import Regression as RestRegression
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import RegressionPrimaryMetrics
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     RegressionTrainingSettings as RestRegressionTrainingSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     TableVerticalFeaturizationSettings as RestTableFeaturizationSettings,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models._models_py3 import (
     TableVerticalLimitSettings as RestTableVerticalLimitSettings,
 )
 from azure.ai.ml._schema.automl.table_vertical.regression import AutoMLRegressionSchema
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils.utils import camel_to_snake, to_iso_duration_format_mins
-from azure.ai.ml.constants._job.automl import AutoMLConstants, AutoMLTransformerParameterKeys
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._job.automl import AutoMLConstants, AutoMLTransformerParameterKeys
 from azure.ai.ml.entities import Job
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -163,7 +163,7 @@ def expected_validation_data_size() -> int:
 
 @pytest.fixture
 def expected_forecasting_settings(mock_workspace_scope: OperationScope) -> RestForecastingSettings:
-    from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    from azure.ai.ml._restclient.v2023_02_01_preview.models import (
         CustomForecastHorizon,
         CustomTargetLags,
         CustomTargetRollingWindowSize,

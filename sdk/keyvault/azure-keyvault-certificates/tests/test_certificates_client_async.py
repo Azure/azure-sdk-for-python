@@ -258,7 +258,7 @@ class TestCertificateClient(KeyVaultTestCase):
 
         # import some certificates
         for x in range(max_certificates):
-            cert_name = self.get_resource_name("cert{}".format(x))
+            cert_name = self.get_resource_name(f"cert{x}")
             error_count = 0
             try:
                 cert_bundle = await self._import_common_certificate(client=client, cert_name=cert_name)
@@ -351,12 +351,12 @@ class TestCertificateClient(KeyVaultTestCase):
         certs = {}
         # create certificates to recover
         for i in range(LIST_TEST_SIZE):
-            cert_name = self.get_resource_name("certrec{}".format(str(i)))
+            cert_name = self.get_resource_name(f"certrec{str(i)}")
             certs[cert_name] = await self._import_common_certificate(client=client, cert_name=cert_name)
 
         # create certificates to purge
         for i in range(LIST_TEST_SIZE):
-            cert_name = self.get_resource_name("certprg{}".format(str(i)))
+            cert_name = self.get_resource_name(f"certprg{str(i)}")
             certs[cert_name] = await self._import_common_certificate(client=client, cert_name=cert_name)
 
         # delete all certificates

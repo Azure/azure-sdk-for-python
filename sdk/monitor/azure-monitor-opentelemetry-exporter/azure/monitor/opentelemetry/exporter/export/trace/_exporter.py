@@ -11,7 +11,12 @@ from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.trace import SpanKind
 
-from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
+from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_SDK_NAMESPACE_NAME,
+    _AZURE_SDK_OPENTELEMETRY_NAME,
+    _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
+    _SAMPLE_RATE_KEY,
+)
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
@@ -141,7 +146,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         envelope.tags["ai.operation.name"] = span.name
         if SpanAttributes.NET_PEER_IP in span.attributes:
             envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
-        if "az.namespace" in span.attributes:  # Azure specific resources
+        if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
             # Currently only eventhub and servicebus are supported (kind CONSUMER)
             data.source = _get_azure_sdk_target_source(span.attributes)
             if span.links:
@@ -214,6 +219,7 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
             if SpanAttributes.HTTP_STATUS_CODE in span.attributes:
                 status_code = span.attributes[SpanAttributes.HTTP_STATUS_CODE]
                 data.response_code = str(status_code)
+                data.success = span.status.is_ok and int(status_code) not in range(400, 500)
         elif SpanAttributes.MESSAGING_SYSTEM in span.attributes:  # Messaging
             if SpanAttributes.NET_PEER_IP in span.attributes:
                 envelope.tags["ai.location.ip"] = span.attributes[SpanAttributes.NET_PEER_IP]
@@ -270,10 +276,10 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                     port != _get_default_port_db(span.attributes.get(SpanAttributes.DB_SYSTEM)):
                     target = "{}:{}".format(target, port)
         if span.kind is SpanKind.CLIENT:
-            if "az.namespace" in span.attributes:  # Azure specific resources
+            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:  # Azure specific resources
                 # Currently only eventhub and servicebus are supported
                 # https://github.com/Azure/azure-sdk-for-python/issues/9256
-                data.type = span.attributes["az.namespace"]
+                data.type = span.attributes[_AZURE_SDK_NAMESPACE_NAME]
                 data.target = _get_azure_sdk_target_source(span.attributes)
             elif SpanAttributes.HTTP_METHOD in span.attributes:  # HTTP
                 data.type = "HTTP"
@@ -395,8 +401,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                 data.type = "N/A"
         elif span.kind is SpanKind.PRODUCER:  # Messaging
             # Currently only eventhub and servicebus are supported that produce PRODUCER spans
-            if "az.namespace" in span.attributes:
-                data.type = "Queue Message | {}".format(span.attributes["az.namespace"])
+            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
+                data.type = "Queue Message | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
                 data.target = _get_azure_sdk_target_source(span.attributes)
             else:
                 data.type = "Queue Message"
@@ -410,8 +416,8 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
                         target = msg_system
         else:  # SpanKind.INTERNAL
             data.type = "InProc"
-            if "az.namespace" in span.attributes:
-                data.type += " | {}".format(span.attributes["az.namespace"])
+            if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
+                data.type += " | {}".format(span.attributes[_AZURE_SDK_NAMESPACE_NAME])
         # Apply truncation
         # See https://github.com/MohanGsk/ApplicationInsights-Home/tree/master/EndpointSpecs/Schemas/Bond
         if data.name:
@@ -433,6 +439,13 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         span.attributes,
         lambda key, val: not _is_standard_attribute(key)
     )
+
+    # Standard metrics special properties
+    # Only add the property if span was generated from instrumentation that supports metrics collection
+    if span.instrumentation_scope is not None and \
+        span.instrumentation_scope.name in _INSTRUMENTATION_SUPPORTING_METRICS_LIST:
+        data.properties["_MS.ProcessedByMetricExtractors"] = "True"
+
     if span.links:
         # Max length for value is 8192
         # Since links are a fixed length (80) in json, max number of links would be 102
@@ -457,6 +470,11 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             envelope.tags["ai.operation.parentId"] = "{:016x}".format(
                 span.context.span_id
             )
+
+        # sampleRate
+        if _SAMPLE_RATE_KEY in span.attributes:
+            envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
+
         properties = _utils._filter_custom_properties(
             event.attributes,
             lambda key, val: not _is_standard_attribute(key)
@@ -543,6 +561,11 @@ def _is_sql_db(db_system: str) -> bool:
 
 
 def _check_instrumentation_span(span: ReadableSpan) -> None:
+    # Special use-case for spans generated from azure-sdk services
+    # Identified by having az.namespace as a span attribute
+    if _AZURE_SDK_NAMESPACE_NAME in span.attributes:
+        _utils.add_instrumentation(_AZURE_SDK_OPENTELEMETRY_NAME)
+        return
     if span.instrumentation_scope is None:
         return
     # All instrumentation scope names from OpenTelemetry instrumentations have

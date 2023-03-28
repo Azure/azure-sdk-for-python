@@ -1,5 +1,22 @@
 # Release History
 
+## 7.0.0b1 (2022-10-31)
+
+### Features Added
+
+  - Added operation group OperationsWithScopeOperations
+  - Model JustInTimeAccessPolicy has a new parameter managed_by_tenant_approvers
+  - Model RegistrationAssignment has a new parameter system_data
+  - Model RegistrationAssignmentPropertiesRegistrationDefinition has a new parameter system_data
+  - Model RegistrationDefinition has a new parameter system_data
+  - Model RegistrationDefinitionProperties has a new parameter managee_tenant_id
+  - Model RegistrationDefinitionProperties has a new parameter managee_tenant_name
+
+### Breaking Changes
+
+  - Operation RegistrationAssignmentsOperations.list has a new parameter filter
+  - Operation RegistrationDefinitionsOperations.list has a new parameter filter
+
 ## 6.0.0 (2021-04-22)
 
 **Features**

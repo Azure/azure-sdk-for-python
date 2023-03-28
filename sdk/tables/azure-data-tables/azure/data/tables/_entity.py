@@ -6,6 +6,7 @@
 from enum import Enum
 from typing import Any, Dict, Union, NamedTuple
 
+from azure.core import CaseInsensitiveEnumMeta
 
 class TableEntity(dict):
     """
@@ -15,8 +16,7 @@ class TableEntity(dict):
     _metadata = {}  # type: Dict[str, Any]
 
     @property
-    def metadata(self):
-        # type: () -> Dict[str, Any]
+    def metadata(self) -> Dict[str, Any]:
         """Resets metadata to be a part of the entity
         :return Dict of entity metadata
         :rtype: Dict[str, Any]
@@ -24,7 +24,7 @@ class TableEntity(dict):
         return self._metadata
 
 
-class EdmType(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class EdmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Used by :class:`~.EntityProperty` to represent the type of the entity property
     to be stored by the Table service.

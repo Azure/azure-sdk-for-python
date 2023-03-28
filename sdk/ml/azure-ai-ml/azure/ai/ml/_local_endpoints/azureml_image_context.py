@@ -102,12 +102,11 @@ class AzureMlImageContext(object):
 
         :return: str
         """
-        return self._docker_conda_file_name # pylint: disable=no-member
+        return self._docker_conda_file_name  # pylint: disable=no-member
 
     @property
     def volumes(self) -> dict:
-        """Returns the volumes to mount when running the Azure ML Image
-        locally.
+        """Returns the volumes to mount when running the Azure ML Image locally.
 
         :return: dict
         """
@@ -115,8 +114,7 @@ class AzureMlImageContext(object):
 
     @property
     def environment(self) -> dict:
-        """Returns the environment variables to set when running the Azure ML
-        Image locally.
+        """Returns the environment variables to set when running the Azure ML Image locally.
 
         :return: dict
         """

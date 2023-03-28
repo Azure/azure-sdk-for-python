@@ -4,9 +4,12 @@
 from pathlib import Path
 from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
-from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachine as VMResource
-from azure.ai.ml._restclient.v2022_01_01_preview.models import VirtualMachineProperties, VirtualMachineSshCredentials
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import VirtualMachine as VMResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    VirtualMachineSchemaProperties,
+    VirtualMachineSshCredentials,
+)
 from azure.ai.ml._schema.compute.virtual_machine_compute import VirtualMachineComputeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
@@ -19,9 +22,9 @@ class VirtualMachineSshSettings:
         self,
         *,
         admin_username: str,
-        admin_password: str = None,
+        admin_password: Optional[str] = None,
         ssh_port: int = 22,
-        ssh_private_key_file: str = None,
+        ssh_private_key_file: Optional[str] = None,
     ):
         """SSH settings for a virtual machine.
 
@@ -52,6 +55,8 @@ class VirtualMachineCompute(Compute):
     :type description: Optional[str], optional
     :param resource_id: ARM resource id of the underlying compute
     :type resource_id: str
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param ssh_settings: SSH settings.
     :type ssh_settings: VirtualMachineSshSettings, optional
     """
@@ -62,7 +67,8 @@ class VirtualMachineCompute(Compute):
         name: str,
         description: Optional[str] = None,
         resource_id: str,
-        ssh_settings: VirtualMachineSshSettings = None,
+        tags: Optional[dict] = None,
+        ssh_settings: Optional[VirtualMachineSshSettings] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.VIRTUALMACHINE
@@ -72,6 +78,7 @@ class VirtualMachineCompute(Compute):
             location=kwargs.pop("location", None),
             description=description,
             resource_id=resource_id,
+            tags=tags,
             **kwargs,
         )
         self.ssh_settings = ssh_settings
@@ -102,6 +109,7 @@ class VirtualMachineCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             public_key_data=credentials.public_key_data if credentials else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
@@ -130,11 +138,13 @@ class VirtualMachineCompute(Compute):
             public_key_data=self.public_key_data,
             private_key_data=ssh_key_value,
         )
-        properties = VirtualMachineProperties(ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials)
+        properties = VirtualMachineSchemaProperties(
+            ssh_port=self.ssh_settings.ssh_port, administrator_account=credentials
+        )
         vm_compute = VMResource(
             properties=properties,
             resource_id=self.resource_id,
             description=self.description,
         )
-        resource = ComputeResource(name=self.name, location=self.location, properties=vm_compute)
+        resource = ComputeResource(name=self.name, location=self.location, tags=self.tags, properties=vm_compute)
         return resource

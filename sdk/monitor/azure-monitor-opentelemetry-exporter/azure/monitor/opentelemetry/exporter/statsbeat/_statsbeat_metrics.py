@@ -30,6 +30,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter import _utils
 
+# cSpell:disable
 
 _AIMS_URI = "http://169.254.169.254/metadata/instance/compute"
 _AIMS_API_VERSION = "api-version=2017-12-01"
@@ -51,8 +52,6 @@ class _StatsbeatFeature:
     DISK_RETRY = 1
     AAD = 2
 
-
-# cSpell:disable
 
 # pylint: disable=R0902
 class _StatsbeatMetrics:
@@ -87,14 +86,16 @@ class _StatsbeatMetrics:
         meter_provider: MeterProvider,
         instrumentation_key: str,
         endpoint: str,
-        enable_local_storage: bool,
+        disable_offline_storage: bool,
         long_interval_threshold: int,
+        has_credential: bool,
     ) -> None:
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE
-        if enable_local_storage:
+        if not disable_offline_storage:
             self._feature |= _StatsbeatFeature.DISK_RETRY
-        # TODO: AAD
+        if has_credential:
+            self._feature |= _StatsbeatFeature.AAD
         self._ikey = instrumentation_key
         self._meter = meter_provider.get_meter(__name__)
         self._long_interval_threshold = long_interval_threshold

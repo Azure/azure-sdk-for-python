@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cSpell:disable
 
 # Network
 
@@ -54,8 +55,12 @@ _STATSBEAT_METRIC_NAME_MAPPINGS = dict(
 
 # Instrumentations
 
+# Special constant for azure-sdk opentelemetry instrumentation
+_AZURE_SDK_OPENTELEMETRY_NAME = "azure-sdk-opentelemetry"
+_AZURE_SDK_NAMESPACE_NAME = "az.namespace"
+
 _BASE = 2
-# cSpell:disable
+
 _INSTRUMENTATIONS_LIST = [
     "django",
     "flask",
@@ -95,10 +100,43 @@ _INSTRUMENTATIONS_LIST = [
     "tornado",
     "urllib",
     "urllib3",
+    _AZURE_SDK_OPENTELEMETRY_NAME,
 ]
-# cSpell:enable
+
 _INSTRUMENTATIONS_BIT_MAP = {_INSTRUMENTATIONS_LIST[i]: _BASE**i for i in range(len(_INSTRUMENTATIONS_LIST))}
+
+# Standard metrics
+
+# List of metric instrument names that are autocollected from instrumentations
+# TODO: switch to semconv constants
+_AUTOCOLLECTED_INSTRUMENT_NAMES = (
+    "http.server.duration",
+    "http.server.request.size",
+    "http.server.response.size",
+    "http.server.active_requests",
+    "http.client.duration",
+    "http.client.request.size",
+    "http.client.response.size",
+)
+
+# Temporary solution for checking which instrumentations support metric collection
+_INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
+    "opentelemetry.instrumentation.django",
+    "opentelemetry.instrumentation.falcon",
+    "opentelemetry.instrumentation.fastapi",
+    "opentelemetry.instrumentation.flask",
+    "opentelemetry.instrumentation.pyramid",
+    "opentelemetry.instrumentation.requests",
+    "opentelemetry-instrumentation-sqlalchemy",
+    "opentelemetry.instrumentation.starlette",
+    "opentelemetry-instrumentation-tornado",
+    "opentelemetry-instrumentation-urllib",
+    "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.wsgi",
+)
 
 # sampleRate
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+
+# cSpell:disable

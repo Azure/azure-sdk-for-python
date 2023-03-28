@@ -10,12 +10,22 @@ from ._guest_configuration_assignments_operations import GuestConfigurationAssig
 from ._guest_configuration_assignment_reports_operations import GuestConfigurationAssignmentReportsOperations
 from ._guest_configuration_hcrp_assignments_operations import GuestConfigurationHCRPAssignmentsOperations
 from ._guest_configuration_hcrp_assignment_reports_operations import GuestConfigurationHCRPAssignmentReportsOperations
+from ._guest_configuration_assignments_vmss_operations import GuestConfigurationAssignmentsVMSSOperations
+from ._guest_configuration_assignment_reports_vmss_operations import GuestConfigurationAssignmentReportsVMSSOperations
 from ._operations import Operations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'GuestConfigurationAssignmentsOperations',
-    'GuestConfigurationAssignmentReportsOperations',
-    'GuestConfigurationHCRPAssignmentsOperations',
-    'GuestConfigurationHCRPAssignmentReportsOperations',
-    'Operations',
+    "GuestConfigurationAssignmentsOperations",
+    "GuestConfigurationAssignmentReportsOperations",
+    "GuestConfigurationHCRPAssignmentsOperations",
+    "GuestConfigurationHCRPAssignmentReportsOperations",
+    "GuestConfigurationAssignmentsVMSSOperations",
+    "GuestConfigurationAssignmentReportsVMSSOperations",
+    "Operations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

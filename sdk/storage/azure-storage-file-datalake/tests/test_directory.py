@@ -1142,15 +1142,15 @@ class TestDirectory(StorageRecordedTestCase):
         assert properties is not None
         assert properties.get('content_settings') is None
 
-    @pytest.mark.skip(reason="Investigate why renaming from shorter path to longer path does not work")
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_rename_from_a_shorter_directory_to_longer_directory(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
-        self._create_directory_and_get_directory_client(directory_name="old")
+        self._create_directory_and_get_directory_client(directory_name=directory_name)
 
         new_name = "newname"
         new_directory_client = self._create_directory_and_get_directory_client(directory_name=new_name)
@@ -1323,15 +1323,16 @@ class TestDirectory(StorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             dir2.get_directory_properties()
 
-    @pytest.mark.live_test_only
     @DataLakePreparer()
+    @recorded_by_proxy
     def test_rename_dir_with_file_system_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
 
-        token = generate_file_system_sas(
+        token = self.generate_sas(
+            generate_file_system_sas,
             self.dsc.account_name,
             self.file_system_name,
             self.dsc.credential.account_key,
@@ -1340,12 +1341,26 @@ class TestDirectory(StorageRecordedTestCase):
         )
 
         # read the created file which is under root directory
-        dir_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, "olddirectory", credential=token)
+        dir_client = DataLakeDirectoryClient(self.dsc.url, self.file_system_name, "olddir", credential=token)
         dir_client.create_directory()
-        new_client = dir_client.rename_directory(dir_client.file_system_name+'/'+'newdirectory')
+        new_client = dir_client.rename_directory(dir_client.file_system_name + '/' + 'newdir')
 
         new_client.get_directory_properties()
-        assert new_client.path_name == "newdirectory"
+        assert new_client.path_name == "newdir"
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_rename_directory_special_chars(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        dir_client = self._create_directory_and_get_directory_client('olddir')
+        new_client = dir_client.rename_directory(dir_client.file_system_name + '/' + '?!@#$%^&*.?test')
+        new_props = new_client.get_directory_properties()
+
+        assert new_props.name == '?!@#$%^&*.?test'
 
     @DataLakePreparer()
     @recorded_by_proxy

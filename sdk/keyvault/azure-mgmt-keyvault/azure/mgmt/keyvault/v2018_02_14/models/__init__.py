@@ -40,72 +40,74 @@ from ._models_py3 import VaultPatchProperties
 from ._models_py3 import VaultProperties
 from ._models_py3 import VirtualNetworkRule
 
-
-from ._key_vault_management_client_enums import (
-    AccessPolicyUpdateKind,
-    CertificatePermissions,
-    CreateMode,
-    KeyPermissions,
-    NetworkRuleAction,
-    NetworkRuleBypassOptions,
-    PrivateEndpointConnectionProvisioningState,
-    PrivateEndpointServiceConnectionStatus,
-    Reason,
-    SecretPermissions,
-    SkuFamily,
-    SkuName,
-    StoragePermissions,
-)
+from ._key_vault_management_client_enums import AccessPolicyUpdateKind
+from ._key_vault_management_client_enums import CertificatePermissions
+from ._key_vault_management_client_enums import CreateMode
+from ._key_vault_management_client_enums import Enum10
+from ._key_vault_management_client_enums import Enum9
+from ._key_vault_management_client_enums import KeyPermissions
+from ._key_vault_management_client_enums import NetworkRuleAction
+from ._key_vault_management_client_enums import NetworkRuleBypassOptions
+from ._key_vault_management_client_enums import PrivateEndpointConnectionProvisioningState
+from ._key_vault_management_client_enums import PrivateEndpointServiceConnectionStatus
+from ._key_vault_management_client_enums import Reason
+from ._key_vault_management_client_enums import SecretPermissions
+from ._key_vault_management_client_enums import SkuFamily
+from ._key_vault_management_client_enums import SkuName
+from ._key_vault_management_client_enums import StoragePermissions
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccessPolicyEntry',
-    'CheckNameAvailabilityResult',
-    'CloudErrorBody',
-    'DeletedVault',
-    'DeletedVaultListResult',
-    'DeletedVaultProperties',
-    'IPRule',
-    'LogSpecification',
-    'NetworkRuleSet',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'Permissions',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionItem',
-    'PrivateLinkResource',
-    'PrivateLinkResourceListResult',
-    'PrivateLinkServiceConnectionState',
-    'Resource',
-    'ResourceListResult',
-    'ServiceSpecification',
-    'Sku',
-    'Vault',
-    'VaultAccessPolicyParameters',
-    'VaultAccessPolicyProperties',
-    'VaultCheckNameAvailabilityParameters',
-    'VaultCreateOrUpdateParameters',
-    'VaultListResult',
-    'VaultPatchParameters',
-    'VaultPatchProperties',
-    'VaultProperties',
-    'VirtualNetworkRule',
-    'AccessPolicyUpdateKind',
-    'CertificatePermissions',
-    'CreateMode',
-    'KeyPermissions',
-    'NetworkRuleAction',
-    'NetworkRuleBypassOptions',
-    'PrivateEndpointConnectionProvisioningState',
-    'PrivateEndpointServiceConnectionStatus',
-    'Reason',
-    'SecretPermissions',
-    'SkuFamily',
-    'SkuName',
-    'StoragePermissions',
+    "AccessPolicyEntry",
+    "CheckNameAvailabilityResult",
+    "CloudErrorBody",
+    "DeletedVault",
+    "DeletedVaultListResult",
+    "DeletedVaultProperties",
+    "IPRule",
+    "LogSpecification",
+    "NetworkRuleSet",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "Permissions",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionItem",
+    "PrivateLinkResource",
+    "PrivateLinkResourceListResult",
+    "PrivateLinkServiceConnectionState",
+    "Resource",
+    "ResourceListResult",
+    "ServiceSpecification",
+    "Sku",
+    "Vault",
+    "VaultAccessPolicyParameters",
+    "VaultAccessPolicyProperties",
+    "VaultCheckNameAvailabilityParameters",
+    "VaultCreateOrUpdateParameters",
+    "VaultListResult",
+    "VaultPatchParameters",
+    "VaultPatchProperties",
+    "VaultProperties",
+    "VirtualNetworkRule",
+    "AccessPolicyUpdateKind",
+    "CertificatePermissions",
+    "CreateMode",
+    "Enum10",
+    "Enum9",
+    "KeyPermissions",
+    "NetworkRuleAction",
+    "NetworkRuleBypassOptions",
+    "PrivateEndpointConnectionProvisioningState",
+    "PrivateEndpointServiceConnectionStatus",
+    "Reason",
+    "SecretPermissions",
+    "SkuFamily",
+    "SkuName",
+    "StoragePermissions",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

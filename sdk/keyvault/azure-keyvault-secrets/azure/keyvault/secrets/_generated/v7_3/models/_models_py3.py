@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,13 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, Optional
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Attributes(msrest.serialization.Model):
+class Attributes(_serialization.Model):
     """The object attributes managed by the KeyVault service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -31,16 +35,16 @@ class Attributes(msrest.serialization.Model):
     """
 
     _validation = {
-        'created': {'readonly': True},
-        'updated': {'readonly': True},
+        "created": {"readonly": True},
+        "updated": {"readonly": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'not_before': {'key': 'nbf', 'type': 'unix-time'},
-        'expires': {'key': 'exp', 'type': 'unix-time'},
-        'created': {'key': 'created', 'type': 'unix-time'},
-        'updated': {'key': 'updated', 'type': 'unix-time'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "not_before": {"key": "nbf", "type": "unix-time"},
+        "expires": {"key": "exp", "type": "unix-time"},
+        "created": {"key": "created", "type": "unix-time"},
+        "updated": {"key": "updated", "type": "unix-time"},
     }
 
     def __init__(
@@ -49,8 +53,8 @@ class Attributes(msrest.serialization.Model):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -59,7 +63,7 @@ class Attributes(msrest.serialization.Model):
         :keyword expires: Expiry date in UTC.
         :paramtype expires: ~datetime.datetime
         """
-        super(Attributes, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.not_before = not_before
         self.expires = expires
@@ -67,7 +71,7 @@ class Attributes(msrest.serialization.Model):
         self.updated = None
 
 
-class BackupSecretResult(msrest.serialization.Model):
+class BackupSecretResult(_serialization.Model):
     """The backup secret result, containing the backup blob.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -77,24 +81,20 @@ class BackupSecretResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'base64'},
+        "value": {"key": "value", "type": "base64"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BackupSecretResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class SecretBundle(msrest.serialization.Model):
+class SecretBundle(_serialization.Model):
     """A secret consisting of a value, id and its attributes.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -107,7 +107,7 @@ class SecretBundle(msrest.serialization.Model):
     :vartype content_type: str
     :ivar attributes: The secret management attributes.
     :vartype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
      corresponding key backing the KV certificate.
@@ -118,30 +118,30 @@ class SecretBundle(msrest.serialization.Model):
     """
 
     _validation = {
-        'kid': {'readonly': True},
-        'managed': {'readonly': True},
+        "kid": {"readonly": True},
+        "managed": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kid': {'key': 'kid', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
+        "value": {"key": "value", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "attributes": {"key": "attributes", "type": "SecretAttributes"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kid": {"key": "kid", "type": "str"},
+        "managed": {"key": "managed", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         value: Optional[str] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         content_type: Optional[str] = None,
-        attributes: Optional["SecretAttributes"] = None,
+        attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -151,10 +151,10 @@ class SecretBundle(msrest.serialization.Model):
         :paramtype content_type: str
         :keyword attributes: The secret management attributes.
         :paramtype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
-        super(SecretBundle, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.id = id
         self.content_type = content_type
@@ -165,7 +165,8 @@ class SecretBundle(msrest.serialization.Model):
 
 
 class DeletedSecretBundle(SecretBundle):
-    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information on when it will be purged.
+    """A Deleted Secret consisting of its previous id, attributes and its tags, as well as information
+    on when it will be purged.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -177,7 +178,7 @@ class DeletedSecretBundle(SecretBundle):
     :vartype content_type: str
     :ivar attributes: The secret management attributes.
     :vartype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar kid: If this is a secret backing a KV certificate, then this field specifies the
      corresponding key backing the KV certificate.
@@ -195,36 +196,36 @@ class DeletedSecretBundle(SecretBundle):
     """
 
     _validation = {
-        'kid': {'readonly': True},
-        'managed': {'readonly': True},
-        'scheduled_purge_date': {'readonly': True},
-        'deleted_date': {'readonly': True},
+        "kid": {"readonly": True},
+        "managed": {"readonly": True},
+        "scheduled_purge_date": {"readonly": True},
+        "deleted_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kid': {'key': 'kid', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
-        'recovery_id': {'key': 'recoveryId', 'type': 'str'},
-        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'unix-time'},
-        'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
+        "value": {"key": "value", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "attributes": {"key": "attributes", "type": "SecretAttributes"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "kid": {"key": "kid", "type": "str"},
+        "managed": {"key": "managed", "type": "bool"},
+        "recovery_id": {"key": "recoveryId", "type": "str"},
+        "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
+        "deleted_date": {"key": "deletedDate", "type": "unix-time"},
     }
 
     def __init__(
         self,
         *,
         value: Optional[str] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         content_type: Optional[str] = None,
-        attributes: Optional["SecretAttributes"] = None,
+        attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The secret value.
         :paramtype value: str
@@ -234,19 +235,19 @@ class DeletedSecretBundle(SecretBundle):
         :paramtype content_type: str
         :keyword attributes: The secret management attributes.
         :paramtype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword recovery_id: The url of the recovery object, used to identify and recover the deleted
          secret.
         :paramtype recovery_id: str
         """
-        super(DeletedSecretBundle, self).__init__(value=value, id=id, content_type=content_type, attributes=attributes, tags=tags, **kwargs)
+        super().__init__(value=value, id=id, content_type=content_type, attributes=attributes, tags=tags, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None
 
 
-class SecretItem(msrest.serialization.Model):
+class SecretItem(_serialization.Model):
     """The secret item containing secret metadata.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -255,7 +256,7 @@ class SecretItem(msrest.serialization.Model):
     :vartype id: str
     :ivar attributes: The secret management attributes.
     :vartype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
@@ -265,37 +266,37 @@ class SecretItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'managed': {'readonly': True},
+        "managed": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "attributes": {"key": "attributes", "type": "SecretAttributes"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "managed": {"key": "managed", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        attributes: Optional["SecretAttributes"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
         :keyword attributes: The secret management attributes.
         :paramtype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
         """
-        super(SecretItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.attributes = attributes
         self.tags = tags
@@ -312,7 +313,7 @@ class DeletedSecretItem(SecretItem):
     :vartype id: str
     :ivar attributes: The secret management attributes.
     :vartype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
@@ -329,38 +330,38 @@ class DeletedSecretItem(SecretItem):
     """
 
     _validation = {
-        'managed': {'readonly': True},
-        'scheduled_purge_date': {'readonly': True},
-        'deleted_date': {'readonly': True},
+        "managed": {"readonly": True},
+        "scheduled_purge_date": {"readonly": True},
+        "deleted_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'managed': {'key': 'managed', 'type': 'bool'},
-        'recovery_id': {'key': 'recoveryId', 'type': 'str'},
-        'scheduled_purge_date': {'key': 'scheduledPurgeDate', 'type': 'unix-time'},
-        'deleted_date': {'key': 'deletedDate', 'type': 'unix-time'},
+        "id": {"key": "id", "type": "str"},
+        "attributes": {"key": "attributes", "type": "SecretAttributes"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "managed": {"key": "managed", "type": "bool"},
+        "recovery_id": {"key": "recoveryId", "type": "str"},
+        "scheduled_purge_date": {"key": "scheduledPurgeDate", "type": "unix-time"},
+        "deleted_date": {"key": "deletedDate", "type": "unix-time"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        attributes: Optional["SecretAttributes"] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
         recovery_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Secret identifier.
         :paramtype id: str
         :keyword attributes: The secret management attributes.
         :paramtype attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
@@ -368,13 +369,13 @@ class DeletedSecretItem(SecretItem):
          secret.
         :paramtype recovery_id: str
         """
-        super(DeletedSecretItem, self).__init__(id=id, attributes=attributes, tags=tags, content_type=content_type, **kwargs)
+        super().__init__(id=id, attributes=attributes, tags=tags, content_type=content_type, **kwargs)
         self.recovery_id = recovery_id
         self.scheduled_purge_date = None
         self.deleted_date = None
 
 
-class DeletedSecretListResult(msrest.serialization.Model):
+class DeletedSecretListResult(_serialization.Model):
     """The deleted secret list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -387,27 +388,23 @@ class DeletedSecretListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DeletedSecretItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DeletedSecretItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DeletedSecretListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """The key vault server error.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -421,30 +418,26 @@ class Error(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'inner_error': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "inner_error": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'inner_error': {'key': 'innererror', 'type': 'Error'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "inner_error": {"key": "innererror", "type": "Error"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Error, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.inner_error = None
 
 
-class KeyVaultError(msrest.serialization.Model):
+class KeyVaultError(_serialization.Model):
     """The key vault error exception.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -454,20 +447,16 @@ class KeyVaultError(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'Error'},
+        "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(KeyVaultError, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.error = None
 
 
@@ -492,27 +481,27 @@ class SecretAttributes(Attributes):
     :ivar recovery_level: Reflects the deletion recovery level currently in effect for secrets in
      the current vault. If it contains 'Purgeable', the secret can be permanently deleted by a
      privileged user; otherwise, only the system can purge the secret, at the end of the retention
-     interval. Possible values include: "Purgeable", "Recoverable+Purgeable", "Recoverable",
+     interval. Known values are: "Purgeable", "Recoverable+Purgeable", "Recoverable",
      "Recoverable+ProtectedSubscription", "CustomizedRecoverable+Purgeable",
-     "CustomizedRecoverable", "CustomizedRecoverable+ProtectedSubscription".
+     "CustomizedRecoverable", and "CustomizedRecoverable+ProtectedSubscription".
     :vartype recovery_level: str or ~azure.keyvault.v7_3.models.DeletionRecoveryLevel
     """
 
     _validation = {
-        'created': {'readonly': True},
-        'updated': {'readonly': True},
-        'recoverable_days': {'readonly': True},
-        'recovery_level': {'readonly': True},
+        "created": {"readonly": True},
+        "updated": {"readonly": True},
+        "recoverable_days": {"readonly": True},
+        "recovery_level": {"readonly": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'not_before': {'key': 'nbf', 'type': 'unix-time'},
-        'expires': {'key': 'exp', 'type': 'unix-time'},
-        'created': {'key': 'created', 'type': 'unix-time'},
-        'updated': {'key': 'updated', 'type': 'unix-time'},
-        'recoverable_days': {'key': 'recoverableDays', 'type': 'int'},
-        'recovery_level': {'key': 'recoveryLevel', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "not_before": {"key": "nbf", "type": "unix-time"},
+        "expires": {"key": "exp", "type": "unix-time"},
+        "created": {"key": "created", "type": "unix-time"},
+        "updated": {"key": "updated", "type": "unix-time"},
+        "recoverable_days": {"key": "recoverableDays", "type": "int"},
+        "recovery_level": {"key": "recoveryLevel", "type": "str"},
     }
 
     def __init__(
@@ -521,8 +510,8 @@ class SecretAttributes(Attributes):
         enabled: Optional[bool] = None,
         not_before: Optional[datetime.datetime] = None,
         expires: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Determines whether the object is enabled.
         :paramtype enabled: bool
@@ -531,12 +520,12 @@ class SecretAttributes(Attributes):
         :keyword expires: Expiry date in UTC.
         :paramtype expires: ~datetime.datetime
         """
-        super(SecretAttributes, self).__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
+        super().__init__(enabled=enabled, not_before=not_before, expires=expires, **kwargs)
         self.recoverable_days = None
         self.recovery_level = None
 
 
-class SecretListResult(msrest.serialization.Model):
+class SecretListResult(_serialization.Model):
     """The secret list result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -549,27 +538,23 @@ class SecretListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecretItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SecretItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SecretListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SecretProperties(msrest.serialization.Model):
+class SecretProperties(_serialization.Model):
     """Properties of the key backing a certificate.
 
     :ivar content_type: The media type (MIME type).
@@ -577,62 +562,52 @@ class SecretProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        "content_type": {"key": "contentType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        content_type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, content_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword content_type: The media type (MIME type).
         :paramtype content_type: str
         """
-        super(SecretProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_type = content_type
 
 
-class SecretRestoreParameters(msrest.serialization.Model):
+class SecretRestoreParameters(_serialization.Model):
     """The secret restore parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar secret_bundle_backup: Required. The backup blob associated with a secret bundle.
+    :ivar secret_bundle_backup: The backup blob associated with a secret bundle. Required.
     :vartype secret_bundle_backup: bytes
     """
 
     _validation = {
-        'secret_bundle_backup': {'required': True},
+        "secret_bundle_backup": {"required": True},
     }
 
     _attribute_map = {
-        'secret_bundle_backup': {'key': 'value', 'type': 'base64'},
+        "secret_bundle_backup": {"key": "value", "type": "base64"},
     }
 
-    def __init__(
-        self,
-        *,
-        secret_bundle_backup: bytes,
-        **kwargs
-    ):
+    def __init__(self, *, secret_bundle_backup: bytes, **kwargs: Any) -> None:
         """
-        :keyword secret_bundle_backup: Required. The backup blob associated with a secret bundle.
+        :keyword secret_bundle_backup: The backup blob associated with a secret bundle. Required.
         :paramtype secret_bundle_backup: bytes
         """
-        super(SecretRestoreParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.secret_bundle_backup = secret_bundle_backup
 
 
-class SecretSetParameters(msrest.serialization.Model):
+class SecretSetParameters(_serialization.Model):
     """The secret set parameters.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar value: Required. The value of the secret.
+    :ivar value: The value of the secret. Required.
     :vartype value: str
-    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
@@ -641,14 +616,14 @@ class SecretSetParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'secret_attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
+        "value": {"key": "value", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "secret_attributes": {"key": "attributes", "type": "SecretAttributes"},
     }
 
     def __init__(
@@ -657,60 +632,60 @@ class SecretSetParameters(msrest.serialization.Model):
         value: str,
         tags: Optional[Dict[str, str]] = None,
         content_type: Optional[str] = None,
-        secret_attributes: Optional["SecretAttributes"] = None,
-        **kwargs
-    ):
+        secret_attributes: Optional["_models.SecretAttributes"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword value: Required. The value of the secret.
+        :keyword value: The value of the secret. Required.
         :paramtype value: str
-        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
         :keyword secret_attributes: The secret management attributes.
         :paramtype secret_attributes: ~azure.keyvault.v7_3.models.SecretAttributes
         """
-        super(SecretSetParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.tags = tags
         self.content_type = content_type
         self.secret_attributes = secret_attributes
 
 
-class SecretUpdateParameters(msrest.serialization.Model):
+class SecretUpdateParameters(_serialization.Model):
     """The secret update parameters.
 
     :ivar content_type: Type of the secret value such as a password.
     :vartype content_type: str
     :ivar secret_attributes: The secret management attributes.
     :vartype secret_attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-    :ivar tags: A set of tags. Application specific metadata in the form of key-value pairs.
+    :ivar tags: Application specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'secret_attributes': {'key': 'attributes', 'type': 'SecretAttributes'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "content_type": {"key": "contentType", "type": "str"},
+        "secret_attributes": {"key": "attributes", "type": "SecretAttributes"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         content_type: Optional[str] = None,
-        secret_attributes: Optional["SecretAttributes"] = None,
+        secret_attributes: Optional["_models.SecretAttributes"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_type: Type of the secret value such as a password.
         :paramtype content_type: str
         :keyword secret_attributes: The secret management attributes.
         :paramtype secret_attributes: ~azure.keyvault.v7_3.models.SecretAttributes
-        :keyword tags: A set of tags. Application specific metadata in the form of key-value pairs.
+        :keyword tags: Application specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
         """
-        super(SecretUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_type = content_type
         self.secret_attributes = secret_attributes
         self.tags = tags

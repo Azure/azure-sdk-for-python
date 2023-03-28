@@ -32,8 +32,8 @@ from azure.ai.ml._artifacts._constants import (
     PROCESSES_PER_CORE,
     UPLOAD_CONFIRMATION,
 )
-from azure.ai.ml._restclient.v2021_10_01.models import (
-    DatasetVersionData,
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    DataVersionBaseData,
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
@@ -63,7 +63,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
-hash_type = type(hashlib.md5()) # nosec
+hash_type = type(hashlib.md5())  # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -82,40 +82,62 @@ class IgnoreFile(object):
         self._path = path
         self._path_spec = None
 
-    def _create_pathspec(self) -> Optional[List[GitWildMatchPattern]]:
-        """Creates path specification based on ignore file contents."""
-        if not self.exists():
-            return None
-        with open(self._path, "r") as fh:
-            return [GitWildMatchPattern(line) for line in fh if line]
-
     def exists(self) -> bool:
         """Checks if ignore file exists."""
+        return self._file_exists()
+
+    def _file_exists(self) -> bool:
         return self._path and self._path.exists()
+
+    @property
+    def base_path(self) -> Path:
+        return self._path.parent
+
+    def _get_ignore_list(self) -> List[str]:
+        """Get ignore list from ignore file contents."""
+        if not self.exists():
+            return []
+        if self._file_exists():
+            with open(self._path, "r") as fh:
+                return [line.rstrip() for line in fh if line]
+        return []
+
+    def _create_pathspec(self) -> List[GitWildMatchPattern]:
+        """Creates path specification based on ignore list."""
+        return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
+
+    def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
+        """Get relative path of given file_path."""
+        file_path = Path(file_path).absolute()
+        try:
+            # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
+            return os.path.relpath(file_path, self.base_path)
+        except ValueError:
+            # 2 paths are on different drives
+            return None
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
         """
-        if not self.exists():
-            return False
-        if not self._path_spec:
+        # TODO: current design of ignore file can't distinguish between files and directories of the same name
+        if self._path_spec is None:
             self._path_spec = self._create_pathspec()
-        file_path = Path(file_path)
-        if file_path.is_absolute():
-            ignore_dirname = self._path.parent
-            if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
-                return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
+        if not self._path_spec:
+            return False
+        file_path = self._get_rel_path(file_path)
+        if file_path is None:
+            return True
 
-        file_path = str(file_path)
         norm_file = normalize_file(file_path)
+        matched = False
         for pattern in self._path_spec:
             if pattern.include is not None:
-                if norm_file in pattern.match((norm_file,)):
-                    return bool(pattern.include)
-        return False
+                if pattern.match_file(norm_file) is not None:
+                    matched = pattern.include
+
+        return matched
 
     @property
     def path(self) -> Union[Path, str]:
@@ -135,8 +157,7 @@ class GitIgnoreFile(IgnoreFile):
 
 
 def get_ignore_file(directory_path: Union[Path, str]) -> Optional[IgnoreFile]:
-    """Finds and returns IgnoreFile object based on ignore file found in
-    directory_path.
+    """Finds and returns IgnoreFile object based on ignore file found in directory_path.
 
     .amlignore takes precedence over .gitignore and if no file is found, an empty
     IgnoreFile object will be returned.
@@ -168,7 +189,7 @@ def _validate_path(path: Union[str, os.PathLike], _type: str) -> None:
 
 
 def _parse_name_version(
-    name: str = None, version_as_int: bool = True
+    name: Optional[str] = None, version_as_int: bool = True
 ) -> Tuple[Optional[str], Optional[Union[str, int]]]:
     if not name:
         return None, None
@@ -208,9 +229,8 @@ def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: Ig
 def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     """Build metadata dictionary to attach to uploaded data.
 
-    Metadata includes an upload confirmation field, and for code uploads
-    only, the name and version of the code asset being created for that
-    data.
+    Metadata includes an upload confirmation field, and for code uploads only, the name and version of the code asset
+    being created for that data.
     """
     if name:
         linked_asset_arm_id = {"name": name, "version": version}
@@ -229,7 +249,7 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
 
 def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version") # nosec
+    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
         object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
     else:
@@ -311,8 +331,9 @@ def traverse_directory(
     prefix: str,
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """Enumerate all files in the given directory and compose paths for them to
-    be uploaded to in the remote storage. e.g.
+    """Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage.
+    e.g.
+
     [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
     /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
 
@@ -396,20 +417,27 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
     return asset_id
 
 
-def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
-    """Returns total size of a directory and a dictionary itemizing each sub-
-    path and its size."""
+def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
+    """Returns total size of a directory and a dictionary itemizing each sub- path and its size.
+
+    If an optional ignore_file argument is provided, then files specified in the ignore file are not included in the
+    directory size calculation.
+    """
     total_size = 0
     size_list = {}
     for dirpath, _, filenames in os.walk(root, followlinks=True):
         for name in filenames:
             full_path = os.path.join(dirpath, name)
+            # Don't count files that are excluded by an ignore file
+            if ignore_file.is_file_excluded(full_path):
+                continue
             if not os.path.islink(full_path):
                 path_size = os.path.getsize(full_path)
             else:
-                path_size = os.path.getsize(
-                    os.readlink(convert_windows_path_to_unix(full_path))
-                )  # ensure we're counting the size of the linked file
+                # ensure we're counting the size of the linked file
+                # os.readlink returns a file path relative to dirpath, and must be
+                # re-joined to get a workable result
+                path_size = os.path.getsize(os.path.join(dirpath, os.readlink(convert_windows_path_to_unix(full_path))))
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list
@@ -418,12 +446,12 @@ def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
 def upload_file(
     storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
     source: str,
-    dest: str = None,
+    dest: Optional[str] = None,
     msg: Optional[str] = None,
     size: int = 0,
     show_progress: Optional[bool] = None,
     in_directory: bool = False,
-    callback: Any = None,
+    callback: Optional[Any] = None,
 ) -> None:
     """Upload a single file to remote storage.
 
@@ -648,19 +676,96 @@ def _create_or_update_autoincrement(
     return result
 
 
+def _get_next_version_from_container(
+    name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: str,
+    registry_name: str,
+    **kwargs,
+) -> str:
+    try:
+        container = (
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
+        )
+        version = container.properties.next_version
+
+    except ResourceNotFoundError:
+        version = "1"
+    return version
+
+
+def _get_latest_version_from_container(
+    asset_name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: Optional[str] = None,
+    registry_name: Optional[str] = None,
+    **kwargs,
+) -> str:
+    try:
+        container = (
+            container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
+        )
+        version = container.properties.latest_version
+
+    except ResourceNotFoundError:
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+        )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+        )
+        raise ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
+        )
+    return version
+
+
 def _get_latest(
     asset_name: str,
     version_operation: Any,
     resource_group_name: str,
-    workspace_name: str = None,
-    registry_name: str = None,
+    workspace_name: Optional[str] = None,
+    registry_name: Optional[str] = None,
     order_by: str = OrderString.CREATED_AT_DESC,
     **kwargs,
-) -> Union[ModelVersionData, DatasetVersionData]:
+) -> Union[ModelVersionData, DataVersionBaseData]:
     """Returns the latest version of the asset with the given name.
 
-    Latest is defined as the most recently created, not the most
-    recently updated.
+    Latest is defined as the most recently created, not the most recently updated.
     """
     result = (
         version_operation.list(
@@ -690,8 +795,16 @@ def _get_latest(
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:
-        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
-        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+        )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+        )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,
@@ -723,11 +836,12 @@ def _archive_or_restore(
     ],
     is_archived: bool,
     name: str,
-    version: str = None,
-    label: str = None,
+    version: Optional[str] = None,
+    label: Optional[str] = None,
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
+    registry_name = asset_operations._registry_name
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
@@ -741,14 +855,29 @@ def _archive_or_restore(
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
-        version_resource = version_operation.get(
+        version_resource = (
+            version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+            )
+            if registry_name
+            else version_operation.get(
+                name=name,
+                version=version,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+            )
+        )
+        version_resource.properties.is_archived = is_archived
+        version_operation.begin_create_or_update(  # pylint: disable=expression-not-assigned
             name=name,
             version=version,
             resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-        )
-        version_resource.properties.is_archived = is_archived
-        version_operation.create_or_update(
+            registry_name=registry_name,
+            body=version_resource,
+        ) if registry_name else version_operation.create_or_update(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
@@ -756,13 +885,26 @@ def _archive_or_restore(
             body=version_resource,
         )
     else:
-        container_resource = container_operation.get(
-            name=name,
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
+        container_resource = (
+            container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+            )
+            if registry_name
+            else container_operation.get(
+                name=name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+            )
         )
         container_resource.properties.is_archived = is_archived
-        container_operation.create_or_update(
+        container_operation.create_or_update(  # pylint: disable=expression-not-assigned
+            name=name,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            body=container_resource,
+        ) if registry_name else container_operation.create_or_update(
             name=name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
@@ -787,10 +929,11 @@ def _resolve_label_to_asset(
 
     resolver = assetOperations._managed_label_resolver.get(label, None)
     if not resolver:
-        msg = "Asset {} with version label {} does not exist in workspace."
+        scope = "registry" if assetOperations._registry_name else "workspace"
+        msg = "Asset {} with version label {} does not exist in {}."
         raise ValidationException(
-            message=msg.format(name, label),
-            no_personal_data_message=msg.format("[name]", "[label]"),
+            message=msg.format(name, label, scope),
+            no_personal_data_message=msg.format("[name]", "[label]", "[scope]"),
             target=ErrorTarget.ASSET,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
@@ -798,7 +941,7 @@ def _resolve_label_to_asset(
 
 
 class FileUploadProgressBar(tqdm):
-    def __init__(self, msg: str = None):
+    def __init__(self, msg: Optional[str] = None):
         warnings.simplefilter("ignore", category=TqdmWarning)
         is_windows = system() == "Windows"  # Default unicode progress bar doesn't display well on Windows
         super().__init__(unit="B", unit_scale=True, desc=msg, ascii=is_windows)
@@ -811,7 +954,7 @@ class FileUploadProgressBar(tqdm):
 
 
 class DirectoryUploadProgressBar(tqdm):
-    def __init__(self, dir_size: int, msg: str = None):
+    def __init__(self, dir_size: int, msg: Optional[str] = None):
         super().__init__(unit="B", unit_scale=True, desc=msg, colour="green")
         self.total = dir_size
         self.completed = 0

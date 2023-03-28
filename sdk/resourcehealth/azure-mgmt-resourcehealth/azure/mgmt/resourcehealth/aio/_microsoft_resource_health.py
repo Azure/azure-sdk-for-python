@@ -11,12 +11,11 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import MicrosoftResourceHealthConfiguration
 
 if TYPE_CHECKING:
@@ -41,9 +40,9 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -53,11 +52,13 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
     :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2015-01-01'
+    DEFAULT_API_VERSION = '2018-07-01'
     _PROFILE_TAG = "azure.mgmt.resourcehealth.MicrosoftResourceHealth"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
+            'child_availability_statuses': '2015-01-01',
+            'child_resources': '2015-01-01',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -67,12 +68,10 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
         credential: "AsyncTokenCredential",
         subscription_id: str,
         api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = MicrosoftResourceHealthConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(MicrosoftResourceHealth, self).__init__(
@@ -89,9 +88,13 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
         """Module depends on the API version:
 
            * 2015-01-01: :mod:`v2015_01_01.models<azure.mgmt.resourcehealth.v2015_01_01.models>`
+           * 2018-07-01: :mod:`v2018_07_01.models<azure.mgmt.resourcehealth.v2018_07_01.models>`
         """
         if api_version == '2015-01-01':
             from ..v2015_01_01 import models
+            return models
+        elif api_version == '2018-07-01':
+            from ..v2018_07_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -100,12 +103,16 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2015-01-01: :class:`AvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2015_01_01.aio.operations.AvailabilityStatusesOperations>`
+           * 2018-07-01: :class:`AvailabilityStatusesOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.AvailabilityStatusesOperations>`
         """
         api_version = self._get_api_version('availability_statuses')
         if api_version == '2015-01-01':
             from ..v2015_01_01.aio.operations import AvailabilityStatusesOperations as OperationClass
+        elif api_version == '2018-07-01':
+            from ..v2018_07_01.aio.operations import AvailabilityStatusesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'availability_statuses'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -119,6 +126,7 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
             from ..v2015_01_01.aio.operations import ChildAvailabilityStatusesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'child_availability_statuses'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -132,6 +140,49 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
             from ..v2015_01_01.aio.operations import ChildResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'child_resources'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def emerging_issues(self):
+        """Instance depends on the API version:
+
+           * 2018-07-01: :class:`EmergingIssuesOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.EmergingIssuesOperations>`
+        """
+        api_version = self._get_api_version('emerging_issues')
+        if api_version == '2018-07-01':
+            from ..v2018_07_01.aio.operations import EmergingIssuesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'emerging_issues'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def events(self):
+        """Instance depends on the API version:
+
+           * 2018-07-01: :class:`EventsOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.EventsOperations>`
+        """
+        api_version = self._get_api_version('events')
+        if api_version == '2018-07-01':
+            from ..v2018_07_01.aio.operations import EventsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'events'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def metadata(self):
+        """Instance depends on the API version:
+
+           * 2018-07-01: :class:`MetadataOperations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.MetadataOperations>`
+        """
+        api_version = self._get_api_version('metadata')
+        if api_version == '2018-07-01':
+            from ..v2018_07_01.aio.operations import MetadataOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'metadata'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -139,12 +190,16 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2015-01-01: :class:`Operations<azure.mgmt.resourcehealth.v2015_01_01.aio.operations.Operations>`
+           * 2018-07-01: :class:`Operations<azure.mgmt.resourcehealth.v2018_07_01.aio.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2015-01-01':
             from ..v2015_01_01.aio.operations import Operations as OperationClass
+        elif api_version == '2018-07-01':
+            from ..v2018_07_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

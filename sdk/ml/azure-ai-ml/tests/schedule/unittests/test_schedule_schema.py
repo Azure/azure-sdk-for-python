@@ -18,7 +18,6 @@ class TestScheduleSchema:
         expected_dict = {
             "name": "weekly_retrain_2022_cron_file",
             "description": "a weekly retrain schedule",
-            "tags": {},
             "display_name": "weekly retrain schedule",
             "trigger": {
                 "start_time": "2022-03-10T10:15:00",
@@ -28,66 +27,46 @@ class TestScheduleSchema:
                 "expression": "15 10 * * 1",
             },
             "create_job": {
-                "tags": {},
                 "display_name": "hello_pipeline_abc",
-                "properties": {},
                 "compute": "azureml:cpu-cluster",
                 "type": "pipeline",
-                "settings": {},
                 "inputs": {"hello_string_top_level_input": {"path": "${{name}}"}},
-                "outputs": {},
                 "jobs": {
                     "a": {
-                        "properties": {},
-                        "environment_variables": {},
                         "inputs": {"hello_string": {"path": "${{parent.inputs.hello_string_top_level_input}}"}},
-                        "outputs": {},
                         "component": {
                             "name": "azureml_anonymous",
-                            "tags": {},
                             "version": "1",
                             "is_deterministic": True,
                             "inputs": {"hello_string": {"type": "string"}},
-                            "outputs": {},
                             "type": "command",
                             "command": "echo hello ${{inputs.hello_string}}",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest",
                         },
                         "type": "command",
                     },
                     "b": {
-                        "properties": {},
-                        "environment_variables": {},
-                        "inputs": {},
-                        "outputs": {},
                         "component": {
                             "name": "azureml_anonymous",
-                            "tags": {},
                             "version": "1",
                             "is_deterministic": True,
-                            "inputs": {},
                             "outputs": {"world_output": {"type": "uri_folder"}},
                             "type": "command",
                             "command": 'echo "world" >> ${{outputs.world_output}}/world.txt',
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest",
                         },
                         "type": "command",
                     },
                     "c": {
-                        "properties": {},
-                        "environment_variables": {},
                         "inputs": {"world_input": {"path": "${{parent.jobs.b.outputs.world_output}}"}},
-                        "outputs": {},
                         "component": {
                             "name": "azureml_anonymous",
-                            "tags": {},
                             "version": "1",
                             "is_deterministic": True,
                             "inputs": {"world_input": {"type": "uri_folder"}},
-                            "outputs": {},
                             "type": "command",
                             "command": "echo ${{inputs.world_input}}/world.txt",
-                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest",
+                            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest",
                         },
                         "type": "command",
                     },
@@ -114,7 +93,6 @@ class TestScheduleSchema:
         expected_dict = {
             "name": "weekly_retrain_2022_cron_arm",
             "description": "a weekly retrain schedule",
-            "tags": {},
             "display_name": "weekly retrain schedule",
             "trigger": {"time_zone": "UTC", "type": "cron", "expression": "15 10 * * 1"},
             "create_job": "azureml:/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
@@ -129,15 +107,10 @@ class TestScheduleSchema:
                 "experiment_name": "schedule_test_exp",
                 "id": "azureml:/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
                 "inputs": {"hello_string_top_level_input": {"path": "${{name}}"}},
-                "jobs": {},
-                "outputs": {},
-                "properties": {},
                 "settings": {"continue_on_step_failure": True, "default_compute": "azureml:cpu-cluster"},
-                "tags": {},
                 "type": "pipeline",
             },
             "name": "weekly_retrain_2022_cron_arm_updates",
-            "tags": {},
             "trigger": {
                 "expression": "15 10 * * 1",
                 "start_time": "2022-03-10T10:15:00",
@@ -153,8 +126,11 @@ class TestScheduleSchema:
         yaml_obj = load_yaml(test_path)
         expected_trigger_dict = yaml_obj["trigger"]
         # Append empty pattern
-        expected_trigger_dict["schedule"] = {"hours": [], "minutes": []}
-        assert schedule._to_dict()["trigger"] == expected_trigger_dict
+        assert schedule not in expected_trigger_dict
+        actual_trigger_dict = schedule._to_dict()["trigger"]
+        # Remove emtpy key 'schedule': {'hours': [], 'minutes': []}
+        actual_trigger_dict = pydash.omit(actual_trigger_dict, ["schedule"])
+        assert actual_trigger_dict == expected_trigger_dict
 
     def test_load_recurrence_schedule_with_pattern(self):
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_with_pattern.yml"

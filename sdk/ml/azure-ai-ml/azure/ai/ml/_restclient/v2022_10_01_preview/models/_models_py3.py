@@ -4118,18 +4118,18 @@ class BuildContext(msrest.serialization.Model):
 
     :ivar context_uri: Required. [Required] URI of the Docker build context used to build the
      image. Supports blob URIs on environment creation and may return blob or Git URIs.
-    
-    
+
+
      .. raw:: html
-    
+
         <seealso
      href="https://docs.docker.com/engine/reference/commandline/build/#extended-description" />.
     :vartype context_uri: str
     :ivar dockerfile_path: Path to the Dockerfile in the build context.
-    
-    
+
+
      .. raw:: html
-    
+
         <seealso href="https://docs.docker.com/engine/reference/builder/" />.
     :vartype dockerfile_path: str
     """
@@ -4153,18 +4153,18 @@ class BuildContext(msrest.serialization.Model):
         """
         :keyword context_uri: Required. [Required] URI of the Docker build context used to build the
          image. Supports blob URIs on environment creation and may return blob or Git URIs.
-        
-        
+
+
          .. raw:: html
-        
+
             <seealso
          href="https://docs.docker.com/engine/reference/commandline/build/#extended-description" />.
         :paramtype context_uri: str
         :keyword dockerfile_path: Path to the Dockerfile in the build context.
-        
-        
+
+
          .. raw:: html
-        
+
             <seealso href="https://docs.docker.com/engine/reference/builder/" />.
         :paramtype dockerfile_path: str
         """
@@ -5769,10 +5769,10 @@ class ComponentVersionProperties(AssetBase):
     :ivar is_archived: Is the asset archived?.
     :vartype is_archived: bool
     :ivar component_spec: Defines Component definition details.
-    
-    
+
+
      .. raw:: html
-    
+
         <see
      href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
      />.
@@ -5820,10 +5820,10 @@ class ComponentVersionProperties(AssetBase):
         :keyword is_archived: Is the asset archived?.
         :paramtype is_archived: bool
         :keyword component_spec: Defines Component definition details.
-        
-        
+
+
          .. raw:: html
-        
+
             <see
          href="https://docs.microsoft.com/en-us/azure/machine-learning/reference-yaml-component-command"
          />.
@@ -6485,7 +6485,6 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'errors': {'readonly': True},
         'state': {'readonly': True},
         'last_operation': {'readonly': True},
-        'schedules': {'readonly': True},
         'containers': {'readonly': True},
         'data_disks': {'readonly': True},
         'data_mounts': {'readonly': True},
@@ -6532,6 +6531,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         setup_scripts: Optional["SetupScripts"] = None,
         idle_time_before_shutdown: Optional[str] = None,
         enable_node_public_ip: Optional[bool] = None,
+        schedules: Optional["ComputeSchedules"] = None,
         **kwargs
     ):
         """
@@ -6589,7 +6589,7 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         self.personal_compute_instance_settings = personal_compute_instance_settings
         self.setup_scripts = setup_scripts
         self.last_operation = None
-        self.schedules = None
+        self.schedules = schedules
         self.idle_time_before_shutdown = idle_time_before_shutdown
         self.enable_node_public_ip = enable_node_public_ip
         self.containers = None
@@ -9489,10 +9489,10 @@ class EndpointScheduleAction(ScheduleActionBase):
     :vartype action_type: str or ~azure.mgmt.machinelearningservices.models.ScheduleActionType
     :ivar endpoint_invocation_definition: Required. [Required] Defines Schedule action definition
      details.
-    
-    
+
+
      .. raw:: html
-    
+
         <see href="TBD" />.
     :vartype endpoint_invocation_definition: any
     """
@@ -9516,10 +9516,10 @@ class EndpointScheduleAction(ScheduleActionBase):
         """
         :keyword endpoint_invocation_definition: Required. [Required] Defines Schedule action
          definition details.
-        
-        
+
+
          .. raw:: html
-        
+
             <see href="TBD" />.
         :paramtype endpoint_invocation_definition: any
         """
@@ -9791,29 +9791,29 @@ class EnvironmentVersionProperties(AssetBase):
     :vartype build: ~azure.mgmt.machinelearningservices.models.BuildContext
     :ivar conda_file: Standard configuration file used by Conda that lets you install any kind of
      package, including Python, R, and C/C++ packages.
-    
-    
+
+
      .. raw:: html
-    
+
         <see
      href="https://repo2docker.readthedocs.io/en/latest/config_files.html#environment-yml-install-a-conda-environment"
      />.
     :vartype conda_file: str
     :ivar environment_type: Environment type is either user managed or curated by the Azure ML
      service
-    
-    
+
+
      .. raw:: html
-    
+
         <see
      href="https://docs.microsoft.com/en-us/azure/machine-learning/resource-curated-environments"
      />. Possible values include: "Curated", "UserCreated".
     :vartype environment_type: str or ~azure.mgmt.machinelearningservices.models.EnvironmentType
     :ivar image: Name of the image that will be used for the environment.
-    
-    
+
+
      .. raw:: html
-    
+
         <seealso
      href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
      />.
@@ -9879,19 +9879,19 @@ class EnvironmentVersionProperties(AssetBase):
         :paramtype build: ~azure.mgmt.machinelearningservices.models.BuildContext
         :keyword conda_file: Standard configuration file used by Conda that lets you install any kind
          of package, including Python, R, and C/C++ packages.
-        
-        
+
+
          .. raw:: html
-        
+
             <see
          href="https://repo2docker.readthedocs.io/en/latest/config_files.html#environment-yml-install-a-conda-environment"
          />.
         :paramtype conda_file: str
         :keyword image: Name of the image that will be used for the environment.
-        
-        
+
+
          .. raw:: html
-        
+
             <seealso
          href="https://docs.microsoft.com/en-us/azure/machine-learning/how-to-deploy-custom-docker-image#use-a-custom-base-image"
          />.
@@ -19634,6 +19634,9 @@ class RegistryProperties(ResourceBase):
     :ivar region_details: Details of each region the registry is in.
     :vartype region_details:
      list[~azure.mgmt.machinelearningservices.models.RegistryRegionArmDetails]
+    :ivar managed_resource_group_tags: Tags to be applied to the managed resource group associated
+     with this registry.
+    :vartype managed_resource_group_tags: dict[str, str]
     """
 
     _attribute_map = {
@@ -19647,6 +19650,7 @@ class RegistryProperties(ResourceBase):
         'ml_flow_registry_uri': {'key': 'mlFlowRegistryUri', 'type': 'str'},
         'private_link_count': {'key': 'privateLinkCount', 'type': 'int'},
         'region_details': {'key': 'regionDetails', 'type': '[RegistryRegionArmDetails]'},
+        'managed_resource_group_tags': {'key': 'managedResourceGroupTags', 'type': '{str}'},
     }
 
     def __init__(
@@ -19662,6 +19666,7 @@ class RegistryProperties(ResourceBase):
         ml_flow_registry_uri: Optional[str] = None,
         private_link_count: Optional[int] = None,
         region_details: Optional[List["RegistryRegionArmDetails"]] = None,
+        managed_resource_group_tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """
@@ -19686,6 +19691,9 @@ class RegistryProperties(ResourceBase):
         :keyword region_details: Details of each region the registry is in.
         :paramtype region_details:
          list[~azure.mgmt.machinelearningservices.models.RegistryRegionArmDetails]
+        :keyword managed_resource_group_tags: Tags to be applied to the managed resource group
+         associated with this registry.
+        :paramtype managed_resource_group_tags: dict[str, str]
         """
         super(RegistryProperties, self).__init__(description=description, properties=properties, tags=tags, **kwargs)
         self.public_network_access = public_network_access
@@ -19695,6 +19703,7 @@ class RegistryProperties(ResourceBase):
         self.ml_flow_registry_uri = ml_flow_registry_uri
         self.private_link_count = private_link_count
         self.region_details = region_details
+        self.managed_resource_group_tags = managed_resource_group_tags
 
 
 class RegistryRegionArmDetails(msrest.serialization.Model):

@@ -15,6 +15,7 @@ from azure.communication.rooms._models import (
 )
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
+from azure.communication.rooms._utils import verify_datetime_format
 from ._generated._client import AzureCommunicationRoomsService
 from ._generated.models import (
     CreateRoomRequest,
@@ -25,11 +26,11 @@ from ._generated.models import (
     RoomJoinPolicy
 )
 
-from ._shared.utils import parse_connection_str, verify_datetime_format
+from ._shared.utils import parse_connection_str
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 
-class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
+class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
     This client provides operations to manage rooms.
@@ -38,6 +39,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         The endpoint url for Azure Communication Service resource.
     :param ~azure.core.credentials.AzureKeyCredential credential:
         The access key we use to authenticate against the service.
+    :keyword api_version: Azure Communication Rooms API version.
+        Default value is "2022-02-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
             self, endpoint: str,
@@ -64,7 +68,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
         self._rooms_service_client = AzureCommunicationRoomsService(
             self._endpoint,
-            api_version = self._api_version,
+            api_version=self._api_version,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)

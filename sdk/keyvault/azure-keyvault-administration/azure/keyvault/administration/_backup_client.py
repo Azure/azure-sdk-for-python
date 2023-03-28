@@ -7,8 +7,7 @@ import functools
 import pickle
 from typing import TYPE_CHECKING
 
-from six import raise_from
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from ._models import KeyVaultBackupResult
 from ._internal import KeyVaultClientBase, parse_folder_url
@@ -43,14 +42,17 @@ class KeyVaultBackupClient(KeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
-    def begin_backup(self, blob_storage_url, sas_token, **kwargs):
-        # type: (str, str, **Any) -> LROPoller[KeyVaultBackupResult]
+    def begin_backup(
+        self, blob_storage_url: str, sas_token: str, **kwargs
+    ) -> "LROPoller[KeyVaultBackupResult]":
         """Begin a full backup of the Key Vault.
 
         :param str blob_storage_url: URL of the blob storage container in which the backup will be stored, for example
             https://<account>.blob.core.windows.net/backup
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
+
         :keyword str continuation_token: a continuation token to restart polling from a saved state
+
         :returns: An :class:`~azure.core.polling.LROPoller` instance. Call `result()` on this object to wait for the
             operation to complete and get a :class:`KeyVaultBackupResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.administration.KeyVaultBackupResult]
@@ -73,13 +75,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             try:
                 job_id = _parse_status_url(status_url)
             except Exception as ex:  # pylint: disable=broad-except
-                raise_from(
-                    ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the "
-                        + "operation poller's continuation_token() method"
-                    ),
-                    ex,
-                )
+                raise ValueError(
+                    "The provided continuation_token is malformed. A valid token can be obtained from the "
+                    + "operation poller's continuation_token() method"
+                ) from ex
 
             pipeline_response = self._client.full_backup_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
@@ -99,8 +98,7 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             **kwargs
         )
 
-    def begin_restore(self, folder_url, sas_token, **kwargs):
-        # type: (str, str, **Any) -> LROPoller
+    def begin_restore(self, folder_url: str, sas_token: str, **kwargs) -> "LROPoller":
         """Restore a Key Vault backup.
 
         This method restores either a complete Key Vault backup or when ``key_name`` has a value, a single key.
@@ -109,8 +107,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             :class:`KeyVaultBackupResult` returned by :func:`begin_backup`, for example
             https://<account>.blob.core.windows.net/backup/mhsm-account-2020090117323313
         :param str sas_token: a Shared Access Signature (SAS) token authorizing access to the blob storage resource
+
         :keyword str continuation_token: a continuation token to restart polling from a saved state
         :keyword str key_name: name of a single key in the backup. When set, only this key will be restored.
+
         :rtype: ~azure.core.polling.LROPoller
 
         Examples:
@@ -138,13 +138,10 @@ class KeyVaultBackupClient(KeyVaultClientBase):
             try:
                 job_id = _parse_status_url(status_url)
             except Exception as ex:  # pylint: disable=broad-except
-                raise_from(
-                    ValueError(
-                        "The provided continuation_token is malformed. A valid token can be obtained from the "
-                        + "operation poller's continuation_token() method"
-                    ),
-                    ex,
-                )
+                raise ValueError(
+                    "The provided continuation_token is malformed. A valid token can be obtained from the "
+                    + "operation poller's continuation_token() method"
+                ) from ex
 
             pipeline_response = self._client.restore_status(
                 vault_base_url=self._vault_url, job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response

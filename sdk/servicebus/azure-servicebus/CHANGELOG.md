@@ -1,14 +1,37 @@
 # Release History
 
-## 7.8.2 (Unreleased)
-
-### Features Added
+## 7.9.0 (Unreleased)
 
 ### Breaking Changes
 
+- Client side validation of input is now disabled by default for the sync and async `ServiceBusAdministrationClient`. This means there will be no `msrest.exceptions.ValidationError` raised by the `ServiceBusAdministrationClient` in the case of malformed input. An `azure.core.exceptions.HttpResponseError` may now be raised if the server refuses the request.
+
 ### Bugs Fixed
 
+- Fixed a bug where enum members in `azure.servicebus.management` were not following uppercase convention.
+
 ### Other Changes
+
+- Updated minimum `azure-core` version to 1.24.0.
+- Removed `msrest` dependency.
+- Removed `azure-common` dependency.
+
+## 7.8.3 (2023-03-09)
+
+### Bugs Fixed
+
+- Fixed a bug where asynchronous method to add distributed tracing attributes was not being awaited (Issue #28738).
+
+## 7.8.2 (2023-01-10)
+
+### Bugs Fixed
+
+- Fixed a bug that would cause an exception when `None` was sent to `set_state` instead of clearing session state (Issue #27582).
+
+### Other Changes
+
+- Updated uAMQP dependency to 1.6.3.
+  - Added support for Python 3.11.
 
 ## 7.8.1 (2022-10-11)
 

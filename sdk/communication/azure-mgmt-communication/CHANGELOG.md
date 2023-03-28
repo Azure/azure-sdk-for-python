@@ -1,5 +1,27 @@
 # Release History
 
+## 2.0.0b3 (2023-03-23)
+
+### Features Added
+
+  - Added operation CommunicationServicesOperations.regenerate_key
+  - Added operation CommunicationServicesOperations.update
+  - Added operation group SenderUsernamesOperations
+
+### Breaking Changes
+
+  - Model DomainResource no longer has parameter valid_sender_usernames
+  - Model UpdateDomainRequestParameters no longer has parameter valid_sender_usernames
+  - Removed operation CommunicationServicesOperations.begin_regenerate_key
+  - Removed operation CommunicationServicesOperations.begin_update
+
+## 2.0.0b2 (2022-11-28)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 2.0.0b1 (2022-06-07)
 
 **Features**

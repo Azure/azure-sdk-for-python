@@ -9,6 +9,7 @@ from base64 import b64encode
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import uuid
+import os
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
@@ -25,6 +26,7 @@ from azure.data.tables import (
     TableServiceClient,
     _error
 )
+from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX, DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from azure.data.tables._error import _decode_error
 from azure.identity import DefaultAzureCredential
 
@@ -54,13 +56,26 @@ class FakeTokenCredential(object):
 
 
 class TableTestCase(object):
-    def connection_string(self, account, key):
+    def storage_connection_string(self, account, key):
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         return (
             "DefaultEndpointsProtocol=https;AccountName="
             + account
             + ";AccountKey="
             + str(key)
-            + ";EndpointSuffix=core.windows.net"
+            + ";EndpointSuffix="
+            + endpoint_suffix
+        )
+    
+    def cosmos_connection_string(self, account, key):
+        endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+        return (
+            "DefaultEndpointsProtocol=https;AccountName="
+            + account
+            + ";AccountKey="
+            + str(key)
+            + ";EndpointSuffix="
+            + endpoint_suffix
         )
 
     def account_url(self, account, endpoint_type):
@@ -73,12 +88,12 @@ class TableTestCase(object):
             if endpoint_type == "table":
                 return account.primary_endpoints.table.rstrip("/")
             if endpoint_type == "cosmos":
-                return "https://{}.table.cosmos.azure.com".format(account.name)
+                return "https://{}.table.{}".format(account.name, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX))
         except AttributeError:  # Didn't find "primary_endpoints"
             if endpoint_type == "table":
-                return "https://{}.{}.core.windows.net".format(account, endpoint_type)
+                return "https://{}.table.{}".format(account, os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX))
             if endpoint_type == "cosmos":
-                return "https://{}.table.cosmos.azure.com".format(account)
+                return "https://{}.table.{}".format(account, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX))
 
     def generate_sas_token(self):
         fake_key = "a" * 30 + "b" * 30
@@ -94,9 +109,9 @@ class TableTestCase(object):
     def get_token_credential(self):
         if is_live():
             return DefaultAzureCredential()
-        return self.generate_fake_token()
+        return self.generate_fake_token_credential()
 
-    def generate_fake_token(self):
+    def generate_fake_token_credential(self):
         return FakeTokenCredential()
 
     def _get_table_reference(self, prefix=TEST_TABLE_PREFIX):

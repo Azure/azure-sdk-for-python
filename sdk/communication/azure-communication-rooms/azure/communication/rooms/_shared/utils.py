@@ -12,9 +12,8 @@ from typing import (cast,
                     Union,
                     )
 from datetime import datetime
-import isodate
 from msrest.serialization import TZ_UTC
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureKeyCredential
 
 
 def _convert_datetime_to_utc_int(input_datetime):
@@ -68,20 +67,6 @@ def get_current_utc_as_int():
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 
-def verify_datetime_format(input_datetime):
-    #type: (datetime) -> bool
-    if input_datetime is None:
-        return True
-    try:
-        if isinstance(input_datetime, str):
-            input_datetime = isodate.parse_datetime(input_datetime)
-        if isinstance(input_datetime, datetime):
-            return True
-    except:
-        raise ValueError("{} is not a valid ISO-8601 datetime format".format(input_datetime)) from None
-    return True
-
-
 def create_access_token(token):
     # type: (str) -> AccessToken
     """Creates an instance of azure.core.credentials.AccessToken from a
@@ -114,7 +99,7 @@ def create_access_token(token):
 
 def get_authentication_policy(
         endpoint,  # type: str
-        credential,  # type: Union[TokenCredential, str]
+        credential,  # type: Union[TokenCredential, AzureKeyCredential, str]
         decode_url=False,  # type: bool
         is_async=False,  # type: bool
 ):
@@ -124,7 +109,7 @@ def get_authentication_policy(
     :param endpoint: The endpoint to which we are authenticating to.
     :type endpoint: str
     :param credential: The credential we use to authenticate to the service
-    :type credential: Union[TokenCredential, str]
+    :type credential: Union[TokenCredential, AzureKeyCredential, str]
     :param isAsync: For async clients there is a need to decode the url
     :type bool: isAsync or str
     :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
@@ -141,7 +126,7 @@ def get_authentication_policy(
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
-    if isinstance(credential, str):
+    if isinstance(credential, (AzureKeyCredential, str)):
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 

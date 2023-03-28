@@ -6,56 +6,44 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import ConfluentAgreementResource
-    from ._models_py3 import ConfluentAgreementResourceListResponse
-    from ._models_py3 import ErrorResponseBody
-    from ._models_py3 import OfferDetail
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import OperationResult
-    from ._models_py3 import OrganizationResource
-    from ._models_py3 import OrganizationResourceListResult
-    from ._models_py3 import OrganizationResourceUpdate
-    from ._models_py3 import ResourceProviderDefaultErrorResponse
-    from ._models_py3 import SystemData
-    from ._models_py3 import UserDetail
-except (SyntaxError, ImportError):
-    from ._models import ConfluentAgreementResource  # type: ignore
-    from ._models import ConfluentAgreementResourceListResponse  # type: ignore
-    from ._models import ErrorResponseBody  # type: ignore
-    from ._models import OfferDetail  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import OperationResult  # type: ignore
-    from ._models import OrganizationResource  # type: ignore
-    from ._models import OrganizationResourceListResult  # type: ignore
-    from ._models import OrganizationResourceUpdate  # type: ignore
-    from ._models import ResourceProviderDefaultErrorResponse  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import UserDetail  # type: ignore
+from ._models_py3 import ConfluentAgreementResource
+from ._models_py3 import ConfluentAgreementResourceListResponse
+from ._models_py3 import ErrorResponseBody
+from ._models_py3 import OfferDetail
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import OperationResult
+from ._models_py3 import OrganizationResource
+from ._models_py3 import OrganizationResourceListResult
+from ._models_py3 import OrganizationResourceUpdate
+from ._models_py3 import ResourceProviderDefaultErrorResponse
+from ._models_py3 import SystemData
+from ._models_py3 import UserDetail
 
-from ._confluent_management_client_enums import (
-    CreatedByType,
-    ProvisionState,
-    SaaSOfferStatus,
-)
+from ._confluent_management_client_enums import CreatedByType
+from ._confluent_management_client_enums import ProvisionState
+from ._confluent_management_client_enums import SaaSOfferStatus
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ConfluentAgreementResource',
-    'ConfluentAgreementResourceListResponse',
-    'ErrorResponseBody',
-    'OfferDetail',
-    'OperationDisplay',
-    'OperationListResult',
-    'OperationResult',
-    'OrganizationResource',
-    'OrganizationResourceListResult',
-    'OrganizationResourceUpdate',
-    'ResourceProviderDefaultErrorResponse',
-    'SystemData',
-    'UserDetail',
-    'CreatedByType',
-    'ProvisionState',
-    'SaaSOfferStatus',
+    "ConfluentAgreementResource",
+    "ConfluentAgreementResourceListResponse",
+    "ErrorResponseBody",
+    "OfferDetail",
+    "OperationDisplay",
+    "OperationListResult",
+    "OperationResult",
+    "OrganizationResource",
+    "OrganizationResourceListResult",
+    "OrganizationResourceUpdate",
+    "ResourceProviderDefaultErrorResponse",
+    "SystemData",
+    "UserDetail",
+    "CreatedByType",
+    "ProvisionState",
+    "SaaSOfferStatus",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -94,6 +94,7 @@ from ._network_management_client_enums import EffectiveUserRuleKind
 from ._network_management_client_enums import GroupConnectivity
 from ._network_management_client_enums import IsGlobal
 from ._network_management_client_enums import MembershipType
+from ._network_management_client_enums import NspLinkProvisioningState
 from ._network_management_client_enums import NspLinkStatus
 from ._network_management_client_enums import NspProvisioningState
 from ._network_management_client_enums import ProvisioningState
@@ -104,7 +105,7 @@ from ._network_management_client_enums import SecurityType
 from ._network_management_client_enums import UseHubGateway
 from ._network_management_client_enums import UserRuleKind
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -195,6 +196,7 @@ __all__ = [
     "GroupConnectivity",
     "IsGlobal",
     "MembershipType",
+    "NspLinkProvisioningState",
     "NspLinkStatus",
     "NspProvisioningState",
     "ProvisioningState",

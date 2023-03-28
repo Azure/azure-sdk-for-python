@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, Union
+import sys
+from typing import List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._management_groups_api_enums import *
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AzureAsyncOperationResults(msrest.serialization.Model):
+class AzureAsyncOperationResults(_serialization.Model):
     """The results of Azure-AsyncOperation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -31,37 +39,38 @@ class AzureAsyncOperationResults(msrest.serialization.Model):
     :ivar status: The current status of the asynchronous operation performed . For example,
      Running, Succeeded, Failed.
     :vartype status: str
-    :param tenant_id: The AAD Tenant ID associated with the management group. For example,
+    :ivar tenant_id: The AAD Tenant ID associated with the management group. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant_id: str
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
+    :vartype tenant_id: str
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'status': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tenant_id: Optional[str] = None,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(AzureAsyncOperationResults, self).__init__(**kwargs)
+    def __init__(self, *, tenant_id: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword tenant_id: The AAD Tenant ID associated with the management group. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant_id: str
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -70,40 +79,41 @@ class AzureAsyncOperationResults(msrest.serialization.Model):
         self.display_name = display_name
 
 
-class CheckNameAvailabilityRequest(msrest.serialization.Model):
+class CheckNameAvailabilityRequest(_serialization.Model):
     """Management group name availability check parameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param name: the name to check for availability.
-    :type name: str
-    :ivar type: fully qualified resource type which includes provider namespace. Default value:
+    :ivar name: the name to check for availability.
+    :vartype name: str
+    :ivar type: fully qualified resource type which includes provider namespace. Default value is
      "Microsoft.Management/managementGroups".
     :vartype type: str
     """
 
-    _validation = {
-        'type': {'constant': True},
-    }
-
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
-
-    type = "Microsoft.Management/managementGroups"
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
+        type: Optional[Literal["Microsoft.Management/managementGroups"]] = None,
         **kwargs
     ):
-        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+        """
+        :keyword name: the name to check for availability.
+        :paramtype name: str
+        :keyword type: fully qualified resource type which includes provider namespace. Default value
+         is "Microsoft.Management/managementGroups".
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.name = name
+        self.type = type
 
 
-class CheckNameAvailabilityResult(msrest.serialization.Model):
+class CheckNameAvailabilityResult(_serialization.Model):
     """Describes the result of the request to check management group name availability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -114,7 +124,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
     :ivar reason: Required if nameAvailable == false. Invalid indicates the name provided does not
      match the resource provider's naming requirements (incorrect length, unsupported characters,
      etc.) AlreadyExists indicates that the name is already in use and is therefore unavailable.
-     Possible values include: "Invalid", "AlreadyExists".
+     Known values are: "Invalid" and "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.managementgroups.models.Reason
     :ivar message: Required if nameAvailable == false. Localized. If reason == invalid, provide the
      user with the reason why the given name is invalid, and provide the resource naming
@@ -124,35 +134,33 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_available': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "name_available": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name_available = None
         self.reason = None
         self.message = None
 
 
-class CreateManagementGroupChildInfo(msrest.serialization.Model):
+class CreateManagementGroupChildInfo(_serialization.Model):
     """The child information of a management group used during creation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar type: The fully qualified resource type which includes provider namespace (e.g.
-     Microsoft.Management/managementGroups). Possible values include:
-     "Microsoft.Management/managementGroups", "/subscriptions".
+     Microsoft.Management/managementGroups). Known values are:
+     "Microsoft.Management/managementGroups" and "/subscriptions".
     :vartype type: str or ~azure.mgmt.managementgroups.models.ManagementGroupChildType
     :ivar id: The fully qualified ID for the child resource (management group or subscription).
      For example,
@@ -167,26 +175,24 @@ class CreateManagementGroupChildInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'children': {'readonly': True},
+        "type": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "children": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'children': {'key': 'children', 'type': '[CreateManagementGroupChildInfo]'},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "children": {"key": "children", "type": "[CreateManagementGroupChildInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CreateManagementGroupChildInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.id = None
         self.name = None
@@ -194,7 +200,7 @@ class CreateManagementGroupChildInfo(msrest.serialization.Model):
         self.children = None
 
 
-class CreateManagementGroupDetails(msrest.serialization.Model):
+class CreateManagementGroupDetails(_serialization.Model):
     """The details of a management group used during creation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -205,37 +211,36 @@ class CreateManagementGroupDetails(msrest.serialization.Model):
     :vartype updated_time: ~datetime.datetime
     :ivar updated_by: The identity of the principal or process that updated the object.
     :vartype updated_by: str
-    :param parent: (Optional) The ID of the parent management group used during creation.
-    :type parent: ~azure.mgmt.managementgroups.models.CreateParentGroupInfo
+    :ivar parent: (Optional) The ID of the parent management group used during creation.
+    :vartype parent: ~azure.mgmt.managementgroups.models.CreateParentGroupInfo
     """
 
     _validation = {
-        'version': {'readonly': True},
-        'updated_time': {'readonly': True},
-        'updated_by': {'readonly': True},
+        "version": {"readonly": True},
+        "updated_time": {"readonly": True},
+        "updated_by": {"readonly": True},
     }
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'int'},
-        'updated_time': {'key': 'updatedTime', 'type': 'iso-8601'},
-        'updated_by': {'key': 'updatedBy', 'type': 'str'},
-        'parent': {'key': 'parent', 'type': 'CreateParentGroupInfo'},
+        "version": {"key": "version", "type": "int"},
+        "updated_time": {"key": "updatedTime", "type": "iso-8601"},
+        "updated_by": {"key": "updatedBy", "type": "str"},
+        "parent": {"key": "parent", "type": "CreateParentGroupInfo"},
     }
 
-    def __init__(
-        self,
-        *,
-        parent: Optional["CreateParentGroupInfo"] = None,
-        **kwargs
-    ):
-        super(CreateManagementGroupDetails, self).__init__(**kwargs)
+    def __init__(self, *, parent: Optional["_models.CreateParentGroupInfo"] = None, **kwargs):
+        """
+        :keyword parent: (Optional) The ID of the parent management group used during creation.
+        :paramtype parent: ~azure.mgmt.managementgroups.models.CreateParentGroupInfo
+        """
+        super().__init__(**kwargs)
         self.version = None
         self.updated_time = None
         self.updated_by = None
         self.parent = parent
 
 
-class CreateManagementGroupRequest(msrest.serialization.Model):
+class CreateManagementGroupRequest(_serialization.Model):
     """Management group creation parameters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -245,36 +250,36 @@ class CreateManagementGroupRequest(msrest.serialization.Model):
     :vartype id: str
     :ivar type: The type of the resource.  For example, Microsoft.Management/managementGroups.
     :vartype type: str
-    :param name: The name of the management group. For example,
+    :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000.
-    :type name: str
+    :vartype name: str
     :ivar tenant_id: The AAD Tenant ID associated with the management group. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
-    :param display_name: The friendly name of the management group. If no value is passed then this
+    :ivar display_name: The friendly name of the management group. If no value is passed then this
      field will be set to the groupId.
-    :type display_name: str
-    :param details: The details of a management group used during creation.
-    :type details: ~azure.mgmt.managementgroups.models.CreateManagementGroupDetails
+    :vartype display_name: str
+    :ivar details: The details of a management group used during creation.
+    :vartype details: ~azure.mgmt.managementgroups.models.CreateManagementGroupDetails
     :ivar children: The list of children.
     :vartype children: list[~azure.mgmt.managementgroups.models.CreateManagementGroupChildInfo]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'children': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "children": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'details': {'key': 'properties.details', 'type': 'CreateManagementGroupDetails'},
-        'children': {'key': 'properties.children', 'type': '[CreateManagementGroupChildInfo]'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "details": {"key": "properties.details", "type": "CreateManagementGroupDetails"},
+        "children": {"key": "properties.children", "type": "[CreateManagementGroupChildInfo]"},
     }
 
     def __init__(
@@ -282,10 +287,20 @@ class CreateManagementGroupRequest(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         display_name: Optional[str] = None,
-        details: Optional["CreateManagementGroupDetails"] = None,
+        details: Optional["_models.CreateManagementGroupDetails"] = None,
         **kwargs
     ):
-        super(CreateManagementGroupRequest, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the management group. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype name: str
+        :keyword display_name: The friendly name of the management group. If no value is passed then
+         this  field will be set to the groupId.
+        :paramtype display_name: str
+        :keyword details: The details of a management group used during creation.
+        :paramtype details: ~azure.mgmt.managementgroups.models.CreateManagementGroupDetails
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = name
@@ -295,24 +310,27 @@ class CreateManagementGroupRequest(msrest.serialization.Model):
         self.children = None
 
 
-class CreateOrUpdateSettingsRequest(msrest.serialization.Model):
+class CreateOrUpdateSettingsRequest(_serialization.Model):
     """Parameters for creating or updating Management Group settings.
 
-    :param require_authorization_for_group_creation: Indicates whether RBAC access is required upon
+    :ivar require_authorization_for_group_creation: Indicates whether RBAC access is required upon
      group creation under the root Management Group. If set to true, user will require
      Microsoft.Management/managementGroups/write action on the root Management Group scope in order
      to create new Groups directly under the root. This will prevent new users from creating new
      Management Groups, unless they are given access.
-    :type require_authorization_for_group_creation: bool
-    :param default_management_group: Settings that sets the default Management Group under which
-     new subscriptions get added in this tenant. For example,
+    :vartype require_authorization_for_group_creation: bool
+    :ivar default_management_group: Settings that sets the default Management Group under which new
+     subscriptions get added in this tenant. For example,
      /providers/Microsoft.Management/managementGroups/defaultGroup.
-    :type default_management_group: str
+    :vartype default_management_group: str
     """
 
     _attribute_map = {
-        'require_authorization_for_group_creation': {'key': 'properties.requireAuthorizationForGroupCreation', 'type': 'bool'},
-        'default_management_group': {'key': 'properties.defaultManagementGroup', 'type': 'str'},
+        "require_authorization_for_group_creation": {
+            "key": "properties.requireAuthorizationForGroupCreation",
+            "type": "bool",
+        },
+        "default_management_group": {"key": "properties.defaultManagementGroup", "type": "str"},
     }
 
     def __init__(
@@ -322,19 +340,31 @@ class CreateOrUpdateSettingsRequest(msrest.serialization.Model):
         default_management_group: Optional[str] = None,
         **kwargs
     ):
-        super(CreateOrUpdateSettingsRequest, self).__init__(**kwargs)
+        """
+        :keyword require_authorization_for_group_creation: Indicates whether RBAC access is required
+         upon group creation under the root Management Group. If set to true, user will require
+         Microsoft.Management/managementGroups/write action on the root Management Group scope in order
+         to create new Groups directly under the root. This will prevent new users from creating new
+         Management Groups, unless they are given access.
+        :paramtype require_authorization_for_group_creation: bool
+        :keyword default_management_group: Settings that sets the default Management Group under which
+         new subscriptions get added in this tenant. For example,
+         /providers/Microsoft.Management/managementGroups/defaultGroup.
+        :paramtype default_management_group: str
+        """
+        super().__init__(**kwargs)
         self.require_authorization_for_group_creation = require_authorization_for_group_creation
         self.default_management_group = default_management_group
 
 
-class CreateParentGroupInfo(msrest.serialization.Model):
+class CreateParentGroupInfo(_serialization.Model):
     """(Optional) The ID of the parent management group used during creation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: The fully qualified ID for the parent management group.  For example,
+    :ivar id: The fully qualified ID for the parent management group.  For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
-    :type id: str
+    :vartype id: str
     :ivar name: The name of the parent management group.
     :vartype name: str
     :ivar display_name: The friendly name of the parent management group.
@@ -342,29 +372,29 @@ class CreateParentGroupInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(CreateParentGroupInfo, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The fully qualified ID for the parent management group.  For example,
+         /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.name = None
         self.display_name = None
 
 
-class DescendantInfo(msrest.serialization.Model):
+class DescendantInfo(_serialization.Model):
     """The descendant.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -378,34 +408,40 @@ class DescendantInfo(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the descendant. For example, 00000000-0000-0000-0000-000000000000.
     :vartype name: str
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
-    :param parent: The ID of the parent management group.
-    :type parent: ~azure.mgmt.managementgroups.models.DescendantParentGroupInfo
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
+    :ivar parent: The ID of the parent management group.
+    :vartype parent: ~azure.mgmt.managementgroups.models.DescendantParentGroupInfo
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'parent': {'key': 'properties.parent', 'type': 'DescendantParentGroupInfo'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "parent": {"key": "properties.parent", "type": "DescendantParentGroupInfo"},
     }
 
     def __init__(
         self,
         *,
         display_name: Optional[str] = None,
-        parent: Optional["DescendantParentGroupInfo"] = None,
+        parent: Optional["_models.DescendantParentGroupInfo"] = None,
         **kwargs
     ):
-        super(DescendantInfo, self).__init__(**kwargs)
+        """
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        :keyword parent: The ID of the parent management group.
+        :paramtype parent: ~azure.mgmt.managementgroups.models.DescendantParentGroupInfo
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -413,60 +449,59 @@ class DescendantInfo(msrest.serialization.Model):
         self.parent = parent
 
 
-class DescendantListResult(msrest.serialization.Model):
+class DescendantListResult(_serialization.Model):
     """Describes the result of the request to view descendants.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of descendants.
-    :type value: list[~azure.mgmt.managementgroups.models.DescendantInfo]
+    :ivar value: The list of descendants.
+    :vartype value: list[~azure.mgmt.managementgroups.models.DescendantInfo]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DescendantInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DescendantInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["DescendantInfo"]] = None,
-        **kwargs
-    ):
-        super(DescendantListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.DescendantInfo"]] = None, **kwargs):
+        """
+        :keyword value: The list of descendants.
+        :paramtype value: list[~azure.mgmt.managementgroups.models.DescendantInfo]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class DescendantParentGroupInfo(msrest.serialization.Model):
+class DescendantParentGroupInfo(_serialization.Model):
     """The ID of the parent management group.
 
-    :param id: The fully qualified ID for the parent management group.  For example,
+    :ivar id: The fully qualified ID for the parent management group.  For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
-    :type id: str
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DescendantParentGroupInfo, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The fully qualified ID for the parent management group.  For example,
+         /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class EntityHierarchyItem(msrest.serialization.Model):
+class EntityHierarchyItem(_serialization.Model):
     """The management group details for the hierarchy view.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -479,39 +514,48 @@ class EntityHierarchyItem(msrest.serialization.Model):
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype name: str
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
-    :param permissions: The users specific permissions to this item. Possible values include:
-     "noaccess", "view", "edit", "delete".
-    :type permissions: str or ~azure.mgmt.managementgroups.models.Permissions
-    :param children: The list of children.
-    :type children: list[~azure.mgmt.managementgroups.models.EntityHierarchyItem]
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
+    :ivar permissions: The users specific permissions to this item. Known values are: "noaccess",
+     "view", "edit", and "delete".
+    :vartype permissions: str or ~azure.mgmt.managementgroups.models.Permissions
+    :ivar children: The list of children.
+    :vartype children: list[~azure.mgmt.managementgroups.models.EntityHierarchyItem]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'permissions': {'key': 'properties.permissions', 'type': 'str'},
-        'children': {'key': 'properties.children', 'type': '[EntityHierarchyItem]'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "permissions": {"key": "properties.permissions", "type": "str"},
+        "children": {"key": "properties.children", "type": "[EntityHierarchyItem]"},
     }
 
     def __init__(
         self,
         *,
         display_name: Optional[str] = None,
-        permissions: Optional[Union[str, "Permissions"]] = None,
-        children: Optional[List["EntityHierarchyItem"]] = None,
+        permissions: Optional[Union[str, "_models.Permissions"]] = None,
+        children: Optional[List["_models.EntityHierarchyItem"]] = None,
         **kwargs
     ):
-        super(EntityHierarchyItem, self).__init__(**kwargs)
+        """
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        :keyword permissions: The users specific permissions to this item. Known values are:
+         "noaccess", "view", "edit", and "delete".
+        :paramtype permissions: str or ~azure.mgmt.managementgroups.models.Permissions
+        :keyword children: The list of children.
+        :paramtype children: list[~azure.mgmt.managementgroups.models.EntityHierarchyItem]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -520,7 +564,7 @@ class EntityHierarchyItem(msrest.serialization.Model):
         self.children = children
 
 
-class EntityInfo(msrest.serialization.Model):
+class EntityInfo(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The entity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -532,54 +576,54 @@ class EntityInfo(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the entity. For example, 00000000-0000-0000-0000-000000000000.
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the entity. For example,
+    :ivar tenant_id: The AAD Tenant ID associated with the entity. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant_id: str
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
-    :param parent: (Optional) The ID of the parent management group.
-    :type parent: ~azure.mgmt.managementgroups.models.EntityParentGroupInfo
-    :param permissions: The users specific permissions to this item. Possible values include:
-     "noaccess", "view", "edit", "delete".
-    :type permissions: str or ~azure.mgmt.managementgroups.models.Permissions
-    :param inherited_permissions: The users specific permissions to this item. Possible values
-     include: "noaccess", "view", "edit", "delete".
-    :type inherited_permissions: str or ~azure.mgmt.managementgroups.models.Permissions
-    :param number_of_descendants: Number of Descendants.
-    :type number_of_descendants: int
-    :param number_of_children: Number of children is the number of Groups and Subscriptions that
-     are exactly one level underneath the current Group.
-    :type number_of_children: int
-    :param number_of_child_groups: Number of children is the number of Groups that are exactly one
+    :vartype tenant_id: str
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
+    :ivar parent: (Optional) The ID of the parent management group.
+    :vartype parent: ~azure.mgmt.managementgroups.models.EntityParentGroupInfo
+    :ivar permissions: The users specific permissions to this item. Known values are: "noaccess",
+     "view", "edit", and "delete".
+    :vartype permissions: str or ~azure.mgmt.managementgroups.models.Permissions
+    :ivar inherited_permissions: The users specific permissions to this item. Known values are:
+     "noaccess", "view", "edit", and "delete".
+    :vartype inherited_permissions: str or ~azure.mgmt.managementgroups.models.Permissions
+    :ivar number_of_descendants: Number of Descendants.
+    :vartype number_of_descendants: int
+    :ivar number_of_children: Number of children is the number of Groups and Subscriptions that are
+     exactly one level underneath the current Group.
+    :vartype number_of_children: int
+    :ivar number_of_child_groups: Number of children is the number of Groups that are exactly one
      level underneath the current Group.
-    :type number_of_child_groups: int
-    :param parent_display_name_chain: The parent display name chain from the root group to the
+    :vartype number_of_child_groups: int
+    :ivar parent_display_name_chain: The parent display name chain from the root group to the
      immediate parent.
-    :type parent_display_name_chain: list[str]
-    :param parent_name_chain: The parent name chain from the root group to the immediate parent.
-    :type parent_name_chain: list[str]
+    :vartype parent_display_name_chain: list[str]
+    :ivar parent_name_chain: The parent name chain from the root group to the immediate parent.
+    :vartype parent_name_chain: list[str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'parent': {'key': 'properties.parent', 'type': 'EntityParentGroupInfo'},
-        'permissions': {'key': 'properties.permissions', 'type': 'str'},
-        'inherited_permissions': {'key': 'properties.inheritedPermissions', 'type': 'str'},
-        'number_of_descendants': {'key': 'properties.numberOfDescendants', 'type': 'int'},
-        'number_of_children': {'key': 'properties.numberOfChildren', 'type': 'int'},
-        'number_of_child_groups': {'key': 'properties.numberOfChildGroups', 'type': 'int'},
-        'parent_display_name_chain': {'key': 'properties.parentDisplayNameChain', 'type': '[str]'},
-        'parent_name_chain': {'key': 'properties.parentNameChain', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "parent": {"key": "properties.parent", "type": "EntityParentGroupInfo"},
+        "permissions": {"key": "properties.permissions", "type": "str"},
+        "inherited_permissions": {"key": "properties.inheritedPermissions", "type": "str"},
+        "number_of_descendants": {"key": "properties.numberOfDescendants", "type": "int"},
+        "number_of_children": {"key": "properties.numberOfChildren", "type": "int"},
+        "number_of_child_groups": {"key": "properties.numberOfChildGroups", "type": "int"},
+        "parent_display_name_chain": {"key": "properties.parentDisplayNameChain", "type": "[str]"},
+        "parent_name_chain": {"key": "properties.parentNameChain", "type": "[str]"},
     }
 
     def __init__(
@@ -587,9 +631,9 @@ class EntityInfo(msrest.serialization.Model):
         *,
         tenant_id: Optional[str] = None,
         display_name: Optional[str] = None,
-        parent: Optional["EntityParentGroupInfo"] = None,
-        permissions: Optional[Union[str, "Permissions"]] = None,
-        inherited_permissions: Optional[Union[str, "Permissions"]] = None,
+        parent: Optional["_models.EntityParentGroupInfo"] = None,
+        permissions: Optional[Union[str, "_models.Permissions"]] = None,
+        inherited_permissions: Optional[Union[str, "_models.Permissions"]] = None,
         number_of_descendants: Optional[int] = None,
         number_of_children: Optional[int] = None,
         number_of_child_groups: Optional[int] = None,
@@ -597,7 +641,35 @@ class EntityInfo(msrest.serialization.Model):
         parent_name_chain: Optional[List[str]] = None,
         **kwargs
     ):
-        super(EntityInfo, self).__init__(**kwargs)
+        """
+        :keyword tenant_id: The AAD Tenant ID associated with the entity. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant_id: str
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        :keyword parent: (Optional) The ID of the parent management group.
+        :paramtype parent: ~azure.mgmt.managementgroups.models.EntityParentGroupInfo
+        :keyword permissions: The users specific permissions to this item. Known values are:
+         "noaccess", "view", "edit", and "delete".
+        :paramtype permissions: str or ~azure.mgmt.managementgroups.models.Permissions
+        :keyword inherited_permissions: The users specific permissions to this item. Known values are:
+         "noaccess", "view", "edit", and "delete".
+        :paramtype inherited_permissions: str or ~azure.mgmt.managementgroups.models.Permissions
+        :keyword number_of_descendants: Number of Descendants.
+        :paramtype number_of_descendants: int
+        :keyword number_of_children: Number of children is the number of Groups and Subscriptions that
+         are exactly one level underneath the current Group.
+        :paramtype number_of_children: int
+        :keyword number_of_child_groups: Number of children is the number of Groups that are exactly
+         one level underneath the current Group.
+        :paramtype number_of_child_groups: int
+        :keyword parent_display_name_chain: The parent display name chain from the root group to the
+         immediate parent.
+        :paramtype parent_display_name_chain: list[str]
+        :keyword parent_name_chain: The parent name chain from the root group to the immediate parent.
+        :paramtype parent_name_chain: list[str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -613,13 +685,13 @@ class EntityInfo(msrest.serialization.Model):
         self.parent_name_chain = parent_name_chain
 
 
-class EntityListResult(msrest.serialization.Model):
+class EntityListResult(_serialization.Model):
     """Describes the result of the request to view entities.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of entities.
-    :type value: list[~azure.mgmt.managementgroups.models.EntityInfo]
+    :ivar value: The list of entities.
+    :vartype value: list[~azure.mgmt.managementgroups.models.EntityInfo]
     :ivar count: Total count of records that match the filter.
     :vartype count: int
     :ivar next_link: The URL to use for getting the next set of results.
@@ -627,103 +699,104 @@ class EntityListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'count': {'readonly': True},
-        'next_link': {'readonly': True},
+        "count": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EntityInfo]'},
-        'count': {'key': 'count', 'type': 'int'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EntityInfo]"},
+        "count": {"key": "count", "type": "int"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["EntityInfo"]] = None,
-        **kwargs
-    ):
-        super(EntityListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.EntityInfo"]] = None, **kwargs):
+        """
+        :keyword value: The list of entities.
+        :paramtype value: list[~azure.mgmt.managementgroups.models.EntityInfo]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.count = None
         self.next_link = None
 
 
-class EntityParentGroupInfo(msrest.serialization.Model):
+class EntityParentGroupInfo(_serialization.Model):
     """(Optional) The ID of the parent management group.
 
-    :param id: The fully qualified ID for the parent management group.  For example,
+    :ivar id: The fully qualified ID for the parent management group.  For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
-    :type id: str
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(EntityParentGroupInfo, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The fully qualified ID for the parent management group.  For example,
+         /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class ErrorDetails(msrest.serialization.Model):
+class ErrorDetails(_serialization.Model):
     """The details of the error.
 
-    :param code: One of a server-defined set of error codes.
-    :type code: str
-    :param message: A human-readable representation of the error.
-    :type message: str
-    :param details: A human-readable representation of the error's details.
-    :type details: str
+    :ivar code: One of a server-defined set of error codes.
+    :vartype code: str
+    :ivar message: A human-readable representation of the error.
+    :vartype message: str
+    :ivar details: A human-readable representation of the error's details.
+    :vartype details: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        details: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, message: Optional[str] = None, details: Optional[str] = None, **kwargs
     ):
-        super(ErrorDetails, self).__init__(**kwargs)
+        """
+        :keyword code: One of a server-defined set of error codes.
+        :paramtype code: str
+        :keyword message: A human-readable representation of the error.
+        :paramtype message: str
+        :keyword details: A human-readable representation of the error's details.
+        :paramtype details: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """The error object.
 
-    :param error: The details of the error.
-    :type error: ~azure.mgmt.managementgroups.models.ErrorDetails
+    :ivar error: The details of the error.
+    :vartype error: ~azure.mgmt.managementgroups.models.ErrorDetails
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetails'},
+        "error": {"key": "error", "type": "ErrorDetails"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetails"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+        """
+        :keyword error: The details of the error.
+        :paramtype error: ~azure.mgmt.managementgroups.models.ErrorDetails
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class HierarchySettings(msrest.serialization.Model):
+class HierarchySettings(_serialization.Model):
     """Settings defined at the Management Group scope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -736,34 +809,37 @@ class HierarchySettings(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the object. In this case, default.
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the hierarchy settings. For example,
+    :ivar tenant_id: The AAD Tenant ID associated with the hierarchy settings. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant_id: str
-    :param require_authorization_for_group_creation: Indicates whether RBAC access is required upon
+    :vartype tenant_id: str
+    :ivar require_authorization_for_group_creation: Indicates whether RBAC access is required upon
      group creation under the root Management Group. If set to true, user will require
      Microsoft.Management/managementGroups/write action on the root Management Group scope in order
      to create new Groups directly under the root. This will prevent new users from creating new
      Management Groups, unless they are given access.
-    :type require_authorization_for_group_creation: bool
-    :param default_management_group: Settings that sets the default Management Group under which
-     new subscriptions get added in this tenant. For example,
+    :vartype require_authorization_for_group_creation: bool
+    :ivar default_management_group: Settings that sets the default Management Group under which new
+     subscriptions get added in this tenant. For example,
      /providers/Microsoft.Management/managementGroups/defaultGroup.
-    :type default_management_group: str
+    :vartype default_management_group: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'require_authorization_for_group_creation': {'key': 'properties.requireAuthorizationForGroupCreation', 'type': 'bool'},
-        'default_management_group': {'key': 'properties.defaultManagementGroup', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "require_authorization_for_group_creation": {
+            "key": "properties.requireAuthorizationForGroupCreation",
+            "type": "bool",
+        },
+        "default_management_group": {"key": "properties.defaultManagementGroup", "type": "str"},
     }
 
     def __init__(
@@ -774,7 +850,22 @@ class HierarchySettings(msrest.serialization.Model):
         default_management_group: Optional[str] = None,
         **kwargs
     ):
-        super(HierarchySettings, self).__init__(**kwargs)
+        """
+        :keyword tenant_id: The AAD Tenant ID associated with the hierarchy settings. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant_id: str
+        :keyword require_authorization_for_group_creation: Indicates whether RBAC access is required
+         upon group creation under the root Management Group. If set to true, user will require
+         Microsoft.Management/managementGroups/write action on the root Management Group scope in order
+         to create new Groups directly under the root. This will prevent new users from creating new
+         Management Groups, unless they are given access.
+        :paramtype require_authorization_for_group_creation: bool
+        :keyword default_management_group: Settings that sets the default Management Group under which
+         new subscriptions get added in this tenant. For example,
+         /providers/Microsoft.Management/managementGroups/defaultGroup.
+        :paramtype default_management_group: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -783,7 +874,7 @@ class HierarchySettings(msrest.serialization.Model):
         self.default_management_group = default_management_group
 
 
-class HierarchySettingsInfo(msrest.serialization.Model):
+class HierarchySettingsInfo(_serialization.Model):
     """The hierarchy settings resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -796,34 +887,37 @@ class HierarchySettingsInfo(msrest.serialization.Model):
     :vartype type: str
     :ivar name: The name of the object. In this case, default.
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the hierarchy settings. For example,
+    :ivar tenant_id: The AAD Tenant ID associated with the hierarchy settings. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant_id: str
-    :param require_authorization_for_group_creation: Indicates whether RBAC access is required upon
+    :vartype tenant_id: str
+    :ivar require_authorization_for_group_creation: Indicates whether RBAC access is required upon
      group creation under the root Management Group. If set to true, user will require
      Microsoft.Management/managementGroups/write action on the root Management Group scope in order
      to create new Groups directly under the root. This will prevent new users from creating new
      Management Groups, unless they are given access.
-    :type require_authorization_for_group_creation: bool
-    :param default_management_group: Settings that sets the default Management Group under which
-     new subscriptions get added in this tenant. For example,
+    :vartype require_authorization_for_group_creation: bool
+    :ivar default_management_group: Settings that sets the default Management Group under which new
+     subscriptions get added in this tenant. For example,
      /providers/Microsoft.Management/managementGroups/defaultGroup.
-    :type default_management_group: str
+    :vartype default_management_group: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'require_authorization_for_group_creation': {'key': 'properties.requireAuthorizationForGroupCreation', 'type': 'bool'},
-        'default_management_group': {'key': 'properties.defaultManagementGroup', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "require_authorization_for_group_creation": {
+            "key": "properties.requireAuthorizationForGroupCreation",
+            "type": "bool",
+        },
+        "default_management_group": {"key": "properties.defaultManagementGroup", "type": "str"},
     }
 
     def __init__(
@@ -834,7 +928,22 @@ class HierarchySettingsInfo(msrest.serialization.Model):
         default_management_group: Optional[str] = None,
         **kwargs
     ):
-        super(HierarchySettingsInfo, self).__init__(**kwargs)
+        """
+        :keyword tenant_id: The AAD Tenant ID associated with the hierarchy settings. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant_id: str
+        :keyword require_authorization_for_group_creation: Indicates whether RBAC access is required
+         upon group creation under the root Management Group. If set to true, user will require
+         Microsoft.Management/managementGroups/write action on the root Management Group scope in order
+         to create new Groups directly under the root. This will prevent new users from creating new
+         Management Groups, unless they are given access.
+        :paramtype require_authorization_for_group_creation: bool
+        :keyword default_management_group: Settings that sets the default Management Group under which
+         new subscriptions get added in this tenant. For example,
+         /providers/Microsoft.Management/managementGroups/defaultGroup.
+        :paramtype default_management_group: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -843,69 +952,67 @@ class HierarchySettingsInfo(msrest.serialization.Model):
         self.default_management_group = default_management_group
 
 
-class HierarchySettingsList(msrest.serialization.Model):
+class HierarchySettingsList(_serialization.Model):
     """Lists all hierarchy settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of hierarchy settings.
-    :type value: list[~azure.mgmt.managementgroups.models.HierarchySettingsInfo]
+    :ivar value: The list of hierarchy settings.
+    :vartype value: list[~azure.mgmt.managementgroups.models.HierarchySettingsInfo]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HierarchySettingsInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HierarchySettingsInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["HierarchySettingsInfo"]] = None,
-        **kwargs
-    ):
-        super(HierarchySettingsList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.HierarchySettingsInfo"]] = None, **kwargs):
+        """
+        :keyword value: The list of hierarchy settings.
+        :paramtype value: list[~azure.mgmt.managementgroups.models.HierarchySettingsInfo]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ListSubscriptionUnderManagementGroup(msrest.serialization.Model):
+class ListSubscriptionUnderManagementGroup(_serialization.Model):
     """The details of all subscriptions under management group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of subscriptions.
-    :type value: list[~azure.mgmt.managementgroups.models.SubscriptionUnderManagementGroup]
+    :ivar value: The list of subscriptions.
+    :vartype value: list[~azure.mgmt.managementgroups.models.SubscriptionUnderManagementGroup]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SubscriptionUnderManagementGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SubscriptionUnderManagementGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["SubscriptionUnderManagementGroup"]] = None,
-        **kwargs
-    ):
-        super(ListSubscriptionUnderManagementGroup, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.SubscriptionUnderManagementGroup"]] = None, **kwargs):
+        """
+        :keyword value: The list of subscriptions.
+        :paramtype value: list[~azure.mgmt.managementgroups.models.SubscriptionUnderManagementGroup]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ManagementGroup(msrest.serialization.Model):
+class ManagementGroup(_serialization.Model):
     """The management group details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -918,31 +1025,31 @@ class ManagementGroup(msrest.serialization.Model):
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the management group. For example,
+    :ivar tenant_id: The AAD Tenant ID associated with the management group. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant_id: str
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
-    :param details: The details of a management group.
-    :type details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
-    :param children: The list of children.
-    :type children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
+    :vartype tenant_id: str
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
+    :ivar details: The details of a management group.
+    :vartype details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
+    :ivar children: The list of children.
+    :vartype children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'details': {'key': 'properties.details', 'type': 'ManagementGroupDetails'},
-        'children': {'key': 'properties.children', 'type': '[ManagementGroupChildInfo]'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "details": {"key": "properties.details", "type": "ManagementGroupDetails"},
+        "children": {"key": "properties.children", "type": "[ManagementGroupChildInfo]"},
     }
 
     def __init__(
@@ -950,11 +1057,22 @@ class ManagementGroup(msrest.serialization.Model):
         *,
         tenant_id: Optional[str] = None,
         display_name: Optional[str] = None,
-        details: Optional["ManagementGroupDetails"] = None,
-        children: Optional[List["ManagementGroupChildInfo"]] = None,
+        details: Optional["_models.ManagementGroupDetails"] = None,
+        children: Optional[List["_models.ManagementGroupChildInfo"]] = None,
         **kwargs
     ):
-        super(ManagementGroup, self).__init__(**kwargs)
+        """
+        :keyword tenant_id: The AAD Tenant ID associated with the management group. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant_id: str
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        :keyword details: The details of a management group.
+        :paramtype details: ~azure.mgmt.managementgroups.models.ManagementGroupDetails
+        :keyword children: The list of children.
+        :paramtype children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -964,44 +1082,60 @@ class ManagementGroup(msrest.serialization.Model):
         self.children = children
 
 
-class ManagementGroupChildInfo(msrest.serialization.Model):
+class ManagementGroupChildInfo(_serialization.Model):
     """The child information of a management group.
 
-    :param type: The fully qualified resource type which includes provider namespace (e.g.
-     Microsoft.Management/managementGroups). Possible values include:
-     "Microsoft.Management/managementGroups", "/subscriptions".
-    :type type: str or ~azure.mgmt.managementgroups.models.ManagementGroupChildType
-    :param id: The fully qualified ID for the child resource (management group or subscription).
+    :ivar type: The fully qualified resource type which includes provider namespace (e.g.
+     Microsoft.Management/managementGroups). Known values are:
+     "Microsoft.Management/managementGroups" and "/subscriptions".
+    :vartype type: str or ~azure.mgmt.managementgroups.models.ManagementGroupChildType
+    :ivar id: The fully qualified ID for the child resource (management group or subscription).
      For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
-    :type id: str
-    :param name: The name of the child entity.
-    :type name: str
-    :param display_name: The friendly name of the child resource.
-    :type display_name: str
-    :param children: The list of children.
-    :type children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
+    :vartype id: str
+    :ivar name: The name of the child entity.
+    :vartype name: str
+    :ivar display_name: The friendly name of the child resource.
+    :vartype display_name: str
+    :ivar children: The list of children.
+    :vartype children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'children': {'key': 'children', 'type': '[ManagementGroupChildInfo]'},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "children": {"key": "children", "type": "[ManagementGroupChildInfo]"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ManagementGroupChildType"]] = None,
-        id: Optional[str] = None,
+        type: Optional[Union[str, "_models.ManagementGroupChildType"]] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         display_name: Optional[str] = None,
-        children: Optional[List["ManagementGroupChildInfo"]] = None,
+        children: Optional[List["_models.ManagementGroupChildInfo"]] = None,
         **kwargs
     ):
-        super(ManagementGroupChildInfo, self).__init__(**kwargs)
+        """
+        :keyword type: The fully qualified resource type which includes provider namespace (e.g.
+         Microsoft.Management/managementGroups). Known values are:
+         "Microsoft.Management/managementGroups" and "/subscriptions".
+        :paramtype type: str or ~azure.mgmt.managementgroups.models.ManagementGroupChildType
+        :keyword id: The fully qualified ID for the child resource (management group or subscription).
+         For example,
+         /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+        :paramtype id: str
+        :keyword name: The name of the child entity.
+        :paramtype name: str
+        :keyword display_name: The friendly name of the child resource.
+        :paramtype display_name: str
+        :keyword children: The list of children.
+        :paramtype children: list[~azure.mgmt.managementgroups.models.ManagementGroupChildInfo]
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.id = id
         self.name = name
@@ -1009,35 +1143,38 @@ class ManagementGroupChildInfo(msrest.serialization.Model):
         self.children = children
 
 
-class ManagementGroupDetails(msrest.serialization.Model):
+class ManagementGroupDetails(_serialization.Model):
     """The details of a management group.
 
-    :param version: The version number of the object.
-    :type version: int
-    :param updated_time: The date and time when this object was last updated.
-    :type updated_time: ~datetime.datetime
-    :param updated_by: The identity of the principal or process that updated the object.
-    :type updated_by: str
-    :param parent: (Optional) The ID of the parent management group.
-    :type parent: ~azure.mgmt.managementgroups.models.ParentGroupInfo
-    :param path: The path from the root to the current group.
-    :type path: list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
-    :param management_group_ancestors: The ancestors of the management group.
-    :type management_group_ancestors: list[str]
-    :param management_group_ancestors_chain: The ancestors of the management group displayed in
+    :ivar version: The version number of the object.
+    :vartype version: int
+    :ivar updated_time: The date and time when this object was last updated.
+    :vartype updated_time: ~datetime.datetime
+    :ivar updated_by: The identity of the principal or process that updated the object.
+    :vartype updated_by: str
+    :ivar parent: (Optional) The ID of the parent management group.
+    :vartype parent: ~azure.mgmt.managementgroups.models.ParentGroupInfo
+    :ivar path: The path from the root to the current group.
+    :vartype path: list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
+    :ivar management_group_ancestors: The ancestors of the management group.
+    :vartype management_group_ancestors: list[str]
+    :ivar management_group_ancestors_chain: The ancestors of the management group displayed in
      reversed order, from immediate parent to the root.
-    :type management_group_ancestors_chain:
+    :vartype management_group_ancestors_chain:
      list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
     """
 
     _attribute_map = {
-        'version': {'key': 'version', 'type': 'int'},
-        'updated_time': {'key': 'updatedTime', 'type': 'iso-8601'},
-        'updated_by': {'key': 'updatedBy', 'type': 'str'},
-        'parent': {'key': 'parent', 'type': 'ParentGroupInfo'},
-        'path': {'key': 'path', 'type': '[ManagementGroupPathElement]'},
-        'management_group_ancestors': {'key': 'managementGroupAncestors', 'type': '[str]'},
-        'management_group_ancestors_chain': {'key': 'managementGroupAncestorsChain', 'type': '[ManagementGroupPathElement]'},
+        "version": {"key": "version", "type": "int"},
+        "updated_time": {"key": "updatedTime", "type": "iso-8601"},
+        "updated_by": {"key": "updatedBy", "type": "str"},
+        "parent": {"key": "parent", "type": "ParentGroupInfo"},
+        "path": {"key": "path", "type": "[ManagementGroupPathElement]"},
+        "management_group_ancestors": {"key": "managementGroupAncestors", "type": "[str]"},
+        "management_group_ancestors_chain": {
+            "key": "managementGroupAncestorsChain",
+            "type": "[ManagementGroupPathElement]",
+        },
     }
 
     def __init__(
@@ -1046,13 +1183,31 @@ class ManagementGroupDetails(msrest.serialization.Model):
         version: Optional[int] = None,
         updated_time: Optional[datetime.datetime] = None,
         updated_by: Optional[str] = None,
-        parent: Optional["ParentGroupInfo"] = None,
-        path: Optional[List["ManagementGroupPathElement"]] = None,
+        parent: Optional["_models.ParentGroupInfo"] = None,
+        path: Optional[List["_models.ManagementGroupPathElement"]] = None,
         management_group_ancestors: Optional[List[str]] = None,
-        management_group_ancestors_chain: Optional[List["ManagementGroupPathElement"]] = None,
+        management_group_ancestors_chain: Optional[List["_models.ManagementGroupPathElement"]] = None,
         **kwargs
     ):
-        super(ManagementGroupDetails, self).__init__(**kwargs)
+        """
+        :keyword version: The version number of the object.
+        :paramtype version: int
+        :keyword updated_time: The date and time when this object was last updated.
+        :paramtype updated_time: ~datetime.datetime
+        :keyword updated_by: The identity of the principal or process that updated the object.
+        :paramtype updated_by: str
+        :keyword parent: (Optional) The ID of the parent management group.
+        :paramtype parent: ~azure.mgmt.managementgroups.models.ParentGroupInfo
+        :keyword path: The path from the root to the current group.
+        :paramtype path: list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
+        :keyword management_group_ancestors: The ancestors of the management group.
+        :paramtype management_group_ancestors: list[str]
+        :keyword management_group_ancestors_chain: The ancestors of the management group displayed in
+         reversed order, from immediate parent to the root.
+        :paramtype management_group_ancestors_chain:
+         list[~azure.mgmt.managementgroups.models.ManagementGroupPathElement]
+        """
+        super().__init__(**kwargs)
         self.version = version
         self.updated_time = updated_time
         self.updated_by = updated_by
@@ -1062,7 +1217,7 @@ class ManagementGroupDetails(msrest.serialization.Model):
         self.management_group_ancestors_chain = management_group_ancestors_chain
 
 
-class ManagementGroupInfo(msrest.serialization.Model):
+class ManagementGroupInfo(_serialization.Model):
     """The management group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1075,35 +1230,36 @@ class ManagementGroupInfo(msrest.serialization.Model):
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the management group. For example,
+    :ivar tenant_id: The AAD Tenant ID associated with the management group. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant_id: str
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
+    :vartype tenant_id: str
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tenant_id: Optional[str] = None,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(ManagementGroupInfo, self).__init__(**kwargs)
+    def __init__(self, *, tenant_id: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword tenant_id: The AAD Tenant ID associated with the management group. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant_id: str
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -1111,95 +1267,93 @@ class ManagementGroupInfo(msrest.serialization.Model):
         self.display_name = display_name
 
 
-class ManagementGroupListResult(msrest.serialization.Model):
+class ManagementGroupListResult(_serialization.Model):
     """Describes the result of the request to list management groups.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: The list of management groups.
-    :type value: list[~azure.mgmt.managementgroups.models.ManagementGroupInfo]
+    :ivar value: The list of management groups.
+    :vartype value: list[~azure.mgmt.managementgroups.models.ManagementGroupInfo]
     :ivar next_link: The URL to use for getting the next set of results.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagementGroupInfo]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ManagementGroupInfo]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ManagementGroupInfo"]] = None,
-        **kwargs
-    ):
-        super(ManagementGroupListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ManagementGroupInfo"]] = None, **kwargs):
+        """
+        :keyword value: The list of management groups.
+        :paramtype value: list[~azure.mgmt.managementgroups.models.ManagementGroupInfo]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ManagementGroupPathElement(msrest.serialization.Model):
+class ManagementGroupPathElement(_serialization.Model):
     """A path element of a management group ancestors.
 
-    :param name: The name of the group.
-    :type name: str
-    :param display_name: The friendly name of the group.
-    :type display_name: str
+    :ivar name: The name of the group.
+    :vartype name: str
+    :ivar display_name: The friendly name of the group.
+    :vartype display_name: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(ManagementGroupPathElement, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the group.
+        :paramtype name: str
+        :keyword display_name: The friendly name of the group.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Operation supported by the Microsoft.Management resource provider.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.managementgroups.models.OperationDisplayProperties
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.managementgroups.models.OperationDisplayProperties
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplayProperties'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplayProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplayProperties"] = None,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, *, display: Optional["_models.OperationDisplayProperties"] = None, **kwargs):
+        """
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.managementgroups.models.OperationDisplayProperties
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.display = display
 
 
-class OperationDisplayProperties(msrest.serialization.Model):
+class OperationDisplayProperties(_serialization.Model):
     """The object that represents the operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1215,31 +1369,29 @@ class OperationDisplayProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationDisplayProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Describes the result of the request to list Microsoft.Management operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1251,25 +1403,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class OperationResults(msrest.serialization.Model):
+class OperationResults(_serialization.Model):
     """The results of an asynchronous operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1282,35 +1432,36 @@ class OperationResults(msrest.serialization.Model):
     :ivar name: The name of the management group. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype name: str
-    :param tenant_id: The AAD Tenant ID associated with the management group. For example,
+    :ivar tenant_id: The AAD Tenant ID associated with the management group. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant_id: str
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
+    :vartype tenant_id: str
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tenant_id: Optional[str] = None,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationResults, self).__init__(**kwargs)
+    def __init__(self, *, tenant_id: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword tenant_id: The AAD Tenant ID associated with the management group. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant_id: str
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -1318,66 +1469,120 @@ class OperationResults(msrest.serialization.Model):
         self.display_name = display_name
 
 
-class ParentGroupInfo(msrest.serialization.Model):
-    """(Optional) The ID of the parent management group.
+class ParentGroupBagInfo(_serialization.Model):
+    """The ID, name and displayName of the parent management group.
 
-    :param id: The fully qualified ID for the parent management group.  For example,
+    :ivar id: The fully qualified ID for the parent management group.  For example,
      /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
-    :type id: str
-    :param name: The name of the parent management group.
-    :type name: str
-    :param display_name: The friendly name of the parent management group.
-    :type display_name: str
+    :vartype id: str
+    :ivar name: The name of the parent management group. For example,
+     00000000-0000-0000-0000-000000000000.
+    :vartype name: str
+    :ivar display_name: The friendly name of the parent management group.
+    :vartype display_name: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         display_name: Optional[str] = None,
         **kwargs
     ):
-        super(ParentGroupInfo, self).__init__(**kwargs)
+        """
+        :keyword id: The fully qualified ID for the parent management group.  For example,
+         /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+        :paramtype id: str
+        :keyword name: The name of the parent management group. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype name: str
+        :keyword display_name: The friendly name of the parent management group.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.display_name = display_name
 
 
-class PatchManagementGroupRequest(msrest.serialization.Model):
-    """Management group patch parameters.
+class ParentGroupInfo(_serialization.Model):
+    """(Optional) The ID of the parent management group.
 
-    :param display_name: The friendly name of the management group.
-    :type display_name: str
-    :param parent_group_id: (Optional) The fully qualified ID for the parent management group.  For
-     example, /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
-    :type parent_group_id: str
+    :ivar id: The fully qualified ID for the parent management group.  For example,
+     /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+    :vartype id: str
+    :ivar name: The name of the parent management group.
+    :vartype name: str
+    :ivar display_name: The friendly name of the parent management group.
+    :vartype display_name: str
     """
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'parent_group_id': {'key': 'parentGroupId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
         display_name: Optional[str] = None,
-        parent_group_id: Optional[str] = None,
         **kwargs
     ):
-        super(PatchManagementGroupRequest, self).__init__(**kwargs)
+        """
+        :keyword id: The fully qualified ID for the parent management group.  For example,
+         /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+        :paramtype id: str
+        :keyword name: The name of the parent management group.
+        :paramtype name: str
+        :keyword display_name: The friendly name of the parent management group.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.display_name = display_name
+
+
+class PatchManagementGroupRequest(_serialization.Model):
+    """Management group patch parameters.
+
+    :ivar display_name: The friendly name of the management group.
+    :vartype display_name: str
+    :ivar parent_group_id: (Optional) The fully qualified ID for the parent management group.  For
+     example, /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+    :vartype parent_group_id: str
+    """
+
+    _attribute_map = {
+        "display_name": {"key": "displayName", "type": "str"},
+        "parent_group_id": {"key": "parentGroupId", "type": "str"},
+    }
+
+    def __init__(self, *, display_name: Optional[str] = None, parent_group_id: Optional[str] = None, **kwargs):
+        """
+        :keyword display_name: The friendly name of the management group.
+        :paramtype display_name: str
+        :keyword parent_group_id: (Optional) The fully qualified ID for the parent management group.
+         For example,
+         /providers/Microsoft.Management/managementGroups/0000000-0000-0000-0000-000000000000.
+        :paramtype parent_group_id: str
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.parent_group_id = parent_group_id
 
 
-class SubscriptionUnderManagementGroup(msrest.serialization.Model):
+class SubscriptionUnderManagementGroup(_serialization.Model):
     """The details of subscription under management group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1391,31 +1596,31 @@ class SubscriptionUnderManagementGroup(msrest.serialization.Model):
     :ivar name: The stringified id of the subscription. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype name: str
-    :param tenant: The AAD Tenant ID associated with the subscription. For example,
+    :ivar tenant: The AAD Tenant ID associated with the subscription. For example,
      00000000-0000-0000-0000-000000000000.
-    :type tenant: str
-    :param display_name: The friendly name of the subscription.
-    :type display_name: str
-    :param parent: The ID of the parent management group.
-    :type parent: ~azure.mgmt.managementgroups.models.DescendantParentGroupInfo
-    :param state: The state of the subscription.
-    :type state: str
+    :vartype tenant: str
+    :ivar display_name: The friendly name of the subscription.
+    :vartype display_name: str
+    :ivar parent: The ID, name and displayName of the parent management group.
+    :vartype parent: ~azure.mgmt.managementgroups.models.ParentGroupBagInfo
+    :ivar state: The state of the subscription.
+    :vartype state: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tenant': {'key': 'properties.tenant', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'parent': {'key': 'properties.parent', 'type': 'DescendantParentGroupInfo'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tenant": {"key": "properties.tenant", "type": "str"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "parent": {"key": "properties.parent", "type": "ParentGroupBagInfo"},
+        "state": {"key": "properties.state", "type": "str"},
     }
 
     def __init__(
@@ -1423,11 +1628,22 @@ class SubscriptionUnderManagementGroup(msrest.serialization.Model):
         *,
         tenant: Optional[str] = None,
         display_name: Optional[str] = None,
-        parent: Optional["DescendantParentGroupInfo"] = None,
+        parent: Optional["_models.ParentGroupBagInfo"] = None,
         state: Optional[str] = None,
         **kwargs
     ):
-        super(SubscriptionUnderManagementGroup, self).__init__(**kwargs)
+        """
+        :keyword tenant: The AAD Tenant ID associated with the subscription. For example,
+         00000000-0000-0000-0000-000000000000.
+        :paramtype tenant: str
+        :keyword display_name: The friendly name of the subscription.
+        :paramtype display_name: str
+        :keyword parent: The ID, name and displayName of the parent management group.
+        :paramtype parent: ~azure.mgmt.managementgroups.models.ParentGroupBagInfo
+        :keyword state: The state of the subscription.
+        :paramtype state: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
@@ -1437,7 +1653,7 @@ class SubscriptionUnderManagementGroup(msrest.serialization.Model):
         self.state = state
 
 
-class TenantBackfillStatusResult(msrest.serialization.Model):
+class TenantBackfillStatusResult(_serialization.Model):
     """The tenant backfill status.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1445,25 +1661,23 @@ class TenantBackfillStatusResult(msrest.serialization.Model):
     :ivar tenant_id: The AAD Tenant ID associated with the management group. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
-    :ivar status: The status of the Tenant Backfill. Possible values include: "NotStarted",
-     "NotStartedButGroupsExist", "Started", "Failed", "Cancelled", "Completed".
+    :ivar status: The status of the Tenant Backfill. Known values are: "NotStarted",
+     "NotStartedButGroupsExist", "Started", "Failed", "Cancelled", and "Completed".
     :vartype status: str or ~azure.mgmt.managementgroups.models.Status
     """
 
     _validation = {
-        'tenant_id': {'readonly': True},
-        'status': {'readonly': True},
+        "tenant_id": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TenantBackfillStatusResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.tenant_id = None
         self.status = None

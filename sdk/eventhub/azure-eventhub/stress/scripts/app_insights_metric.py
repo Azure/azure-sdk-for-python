@@ -22,13 +22,13 @@ class AzureMonitorMetric:
         self.name = test_name
         self.desc = test_description
 
-        events_measure_name = "The number of events handled by " + self.name
+        events_measure_name = "NumEvents" + self.name
         events_measure_desc = "The number of events handled by" + self.desc if self.desc else None
-        memory_measure_name = "memory usage percentage for " + self.name
-        memory_measure_desc = "memory usage percentage for " + self.desc if self.desc else None
-        cpu_measure_name = "cpu usage percentage for " + self.name
-        cpu_measure_desc = "cpu usage percentage for " + self.desc if self.desc else None
-        error_measure_name = "error count for " + self.name
+        memory_measure_name = "Memory " + self.name
+        memory_measure_desc = "Memory usage percentage for " + self.desc if self.desc else None
+        cpu_measure_name = "Cpu " + self.name
+        cpu_measure_desc = "Cpu usage percentage for " + self.desc if self.desc else None
+        error_measure_name = "Errors " + self.name
         error_measure_desc = "The number of errors happened while running the test for " + self.desc if self.desc else None
 
         self.events_measure = measure_module.MeasureInt(events_measure_name, events_measure_desc, "events")

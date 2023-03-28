@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,50 +8,75 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+import sys
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._vmware_cloud_simple_enums import *
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AvailableOperation(msrest.serialization.Model):
+class AvailableOperation(_serialization.Model):
     """Resource provider available operation model.
 
-    :param display: The list of operations.
-    :type display: ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplay
-    :param is_data_action: Indicating whether the operation is a data action or not.
-    :type is_data_action: bool
-    :param name: {resourceProviderNamespace}/{resourceType}/{read|write|delete|action}.
-    :type name: str
-    :param origin: The origin of operation. Possible values include: "user", "system",
-     "user,system".
-    :type origin: str or ~azure.mgmt.vmwarecloudsimple.models.OperationOrigin
-    :param service_specification: The list of specification's service metrics.
-    :type service_specification:
+    :ivar display: The list of operations.
+    :vartype display: ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplay
+    :ivar is_data_action: Indicating whether the operation is a data action or not.
+    :vartype is_data_action: bool
+    :ivar name: {resourceProviderNamespace}/{resourceType}/{read|write|delete|action}.
+    :vartype name: str
+    :ivar origin: The origin of operation. Known values are: "user", "system", and "user,system".
+    :vartype origin: str or ~azure.mgmt.vmwarecloudsimple.models.OperationOrigin
+    :ivar service_specification: The list of specification's service metrics.
+    :vartype service_specification:
      ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsList
     """
 
     _attribute_map = {
-        'display': {'key': 'display', 'type': 'AvailableOperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'AvailableOperationDisplayPropertyServiceSpecificationMetricsList'},
+        "display": {"key": "display", "type": "AvailableOperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
+        "service_specification": {
+            "key": "properties.serviceSpecification",
+            "type": "AvailableOperationDisplayPropertyServiceSpecificationMetricsList",
+        },
     }
 
     def __init__(
         self,
         *,
-        display: Optional["AvailableOperationDisplay"] = None,
-        is_data_action: Optional[bool] = False,
+        display: Optional["_models.AvailableOperationDisplay"] = None,
+        is_data_action: bool = False,
         name: Optional[str] = None,
-        origin: Optional[Union[str, "OperationOrigin"]] = None,
-        service_specification: Optional["AvailableOperationDisplayPropertyServiceSpecificationMetricsList"] = None,
+        origin: Optional[Union[str, "_models.OperationOrigin"]] = None,
+        service_specification: Optional[
+            "_models.AvailableOperationDisplayPropertyServiceSpecificationMetricsList"
+        ] = None,
         **kwargs
     ):
-        super(AvailableOperation, self).__init__(**kwargs)
+        """
+        :keyword display: The list of operations.
+        :paramtype display: ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplay
+        :keyword is_data_action: Indicating whether the operation is a data action or not.
+        :paramtype is_data_action: bool
+        :keyword name: {resourceProviderNamespace}/{resourceType}/{read|write|delete|action}.
+        :paramtype name: str
+        :keyword origin: The origin of operation. Known values are: "user", "system", and
+         "user,system".
+        :paramtype origin: str or ~azure.mgmt.vmwarecloudsimple.models.OperationOrigin
+        :keyword service_specification: The list of specification's service metrics.
+        :paramtype service_specification:
+         ~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsList
+        """
+        super().__init__(**kwargs)
         self.display = display
         self.is_data_action = is_data_action
         self.name = name
@@ -58,24 +84,24 @@ class AvailableOperation(msrest.serialization.Model):
         self.service_specification = service_specification
 
 
-class AvailableOperationDisplay(msrest.serialization.Model):
+class AvailableOperationDisplay(_serialization.Model):
     """Resource provider available operation display model.
 
-    :param description: Description of the operation for display purposes.
-    :type description: str
-    :param operation: Name of the operation for display purposes.
-    :type operation: str
-    :param provider: Name of the provider for display purposes.
-    :type provider: str
-    :param resource: Name of the resource type for display purposes.
-    :type resource: str
+    :ivar description: Description of the operation for display purposes.
+    :vartype description: str
+    :ivar operation: Name of the operation for display purposes.
+    :vartype operation: str
+    :ivar provider: Name of the provider for display purposes.
+    :vartype provider: str
+    :ivar resource: Name of the resource type for display purposes.
+    :vartype resource: str
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
     }
 
     def __init__(
@@ -87,58 +113,81 @@ class AvailableOperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         **kwargs
     ):
-        super(AvailableOperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword description: Description of the operation for display purposes.
+        :paramtype description: str
+        :keyword operation: Name of the operation for display purposes.
+        :paramtype operation: str
+        :keyword provider: Name of the provider for display purposes.
+        :paramtype provider: str
+        :keyword resource: Name of the resource type for display purposes.
+        :paramtype resource: str
+        """
+        super().__init__(**kwargs)
         self.description = description
         self.operation = operation
         self.provider = provider
         self.resource = resource
 
 
-class AvailableOperationDisplayPropertyServiceSpecificationMetricsItem(msrest.serialization.Model):
+class AvailableOperationDisplayPropertyServiceSpecificationMetricsItem(_serialization.Model):
     """Available operation display property service specification metrics item.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param aggregation_type: Required. Metric's aggregation type for e.g. (Average, Total).
-     Possible values include: "Average", "Total".
-    :type aggregation_type: str or ~azure.mgmt.vmwarecloudsimple.models.AggregationType
-    :param display_description: Required. Metric's description.
-    :type display_description: str
-    :param display_name: Required. Human readable metric's name.
-    :type display_name: str
-    :param name: Required. Metric's name/id.
-    :type name: str
-    :param unit: Required. Metric's unit.
-    :type unit: str
+    :ivar aggregation_type: Metric's aggregation type for e.g. (Average, Total). Required. Known
+     values are: "Average" and "Total".
+    :vartype aggregation_type: str or ~azure.mgmt.vmwarecloudsimple.models.AggregationType
+    :ivar display_description: Metric's description. Required.
+    :vartype display_description: str
+    :ivar display_name: Human readable metric's name. Required.
+    :vartype display_name: str
+    :ivar name: Metric's name/id. Required.
+    :vartype name: str
+    :ivar unit: Metric's unit. Required.
+    :vartype unit: str
     """
 
     _validation = {
-        'aggregation_type': {'required': True},
-        'display_description': {'required': True},
-        'display_name': {'required': True},
-        'name': {'required': True},
-        'unit': {'required': True},
+        "aggregation_type": {"required": True},
+        "display_description": {"required": True},
+        "display_name": {"required": True},
+        "name": {"required": True},
+        "unit": {"required": True},
     }
 
     _attribute_map = {
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        aggregation_type: Union[str, "AggregationType"],
+        aggregation_type: Union[str, "_models.AggregationType"],
         display_description: str,
         display_name: str,
         name: str,
         unit: str,
         **kwargs
     ):
-        super(AvailableOperationDisplayPropertyServiceSpecificationMetricsItem, self).__init__(**kwargs)
+        """
+        :keyword aggregation_type: Metric's aggregation type for e.g. (Average, Total). Required. Known
+         values are: "Average" and "Total".
+        :paramtype aggregation_type: str or ~azure.mgmt.vmwarecloudsimple.models.AggregationType
+        :keyword display_description: Metric's description. Required.
+        :paramtype display_description: str
+        :keyword display_name: Human readable metric's name. Required.
+        :paramtype display_name: str
+        :keyword name: Metric's name/id. Required.
+        :paramtype name: str
+        :keyword unit: Metric's unit. Required.
+        :paramtype unit: str
+        """
+        super().__init__(**kwargs)
         self.aggregation_type = aggregation_type
         self.display_description = display_description
         self.display_name = display_name
@@ -146,76 +195,87 @@ class AvailableOperationDisplayPropertyServiceSpecificationMetricsItem(msrest.se
         self.unit = unit
 
 
-class AvailableOperationDisplayPropertyServiceSpecificationMetricsList(msrest.serialization.Model):
+class AvailableOperationDisplayPropertyServiceSpecificationMetricsList(_serialization.Model):
     """List of available operation display property service specification metrics.
 
-    :param metric_specifications: Metric specifications of operation.
-    :type metric_specifications:
+    :ivar metric_specifications: Metric specifications of operation.
+    :vartype metric_specifications:
      list[~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsItem]
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[AvailableOperationDisplayPropertyServiceSpecificationMetricsItem]'},
+        "metric_specifications": {
+            "key": "metricSpecifications",
+            "type": "[AvailableOperationDisplayPropertyServiceSpecificationMetricsItem]",
+        },
     }
 
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["AvailableOperationDisplayPropertyServiceSpecificationMetricsItem"]] = None,
+        metric_specifications: Optional[
+            List["_models.AvailableOperationDisplayPropertyServiceSpecificationMetricsItem"]
+        ] = None,
         **kwargs
     ):
-        super(AvailableOperationDisplayPropertyServiceSpecificationMetricsList, self).__init__(**kwargs)
+        """
+        :keyword metric_specifications: Metric specifications of operation.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.vmwarecloudsimple.models.AvailableOperationDisplayPropertyServiceSpecificationMetricsItem]
+        """
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
 
 
-class AvailableOperationsListResponse(msrest.serialization.Model):
+class AvailableOperationsListResponse(_serialization.Model):
     """List of available operations.
 
-    :param next_link: Link for next list of available operations.
-    :type next_link: str
-    :param value: Returns a list of available operations.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.AvailableOperation]
+    :ivar next_link: Link for next list of available operations.
+    :vartype next_link: str
+    :ivar value: Returns a list of available operations.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.AvailableOperation]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[AvailableOperation]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[AvailableOperation]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["AvailableOperation"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.AvailableOperation"]] = None, **kwargs
     ):
-        super(AvailableOperationsListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of available operations.
+        :paramtype next_link: str
+        :keyword value: Returns a list of available operations.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.AvailableOperation]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class CSRPError(msrest.serialization.Model):
+class CSRPError(_serialization.Model):
     """General error model.
 
-    :param error: Error's body.
-    :type error: ~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody
+    :ivar error: Error's body.
+    :vartype error: ~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'CSRPErrorBody'},
+        "error": {"key": "error", "type": "CSRPErrorBody"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["CSRPErrorBody"] = None,
-        **kwargs
-    ):
-        super(CSRPError, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.CSRPErrorBody"] = None, **kwargs):
+        """
+        :keyword error: Error's body.
+        :paramtype error: ~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class CSRPErrorBody(msrest.serialization.Model):
+class CSRPErrorBody(_serialization.Model):
     """Error properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -226,136 +286,151 @@ class CSRPErrorBody(msrest.serialization.Model):
     :vartype details: list[~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody]
     :ivar message: Error's message.
     :vartype message: str
-    :param target: Error's target.
-    :type target: str
+    :ivar target: Error's target.
+    :vartype target: str
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'details': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "details": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CSRPErrorBody]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[CSRPErrorBody]"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target: Optional[str] = None,
-        **kwargs
-    ):
-        super(CSRPErrorBody, self).__init__(**kwargs)
+    def __init__(self, *, target: Optional[str] = None, **kwargs):
+        """
+        :keyword target: Error's target.
+        :paramtype target: str
+        """
+        super().__init__(**kwargs)
         self.code = None
         self.details = None
         self.message = None
         self.target = target
 
 
-class CustomizationHostName(msrest.serialization.Model):
+class CustomizationHostName(_serialization.Model):
     """Host name model.
 
-    :param name: Hostname.
-    :type name: str
-    :param type: Type of host name. Possible values include: "USER_DEFINED", "PREFIX_BASED",
-     "FIXED", "VIRTUAL_MACHINE_NAME", "CUSTOM_NAME".
-    :type type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationHostNameType
+    :ivar name: Hostname.
+    :vartype name: str
+    :ivar type: Type of host name. Known values are: "USER_DEFINED", "PREFIX_BASED", "FIXED",
+     "VIRTUAL_MACHINE_NAME", and "CUSTOM_NAME".
+    :vartype type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationHostNameType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        type: Optional[Union[str, "CustomizationHostNameType"]] = None,
+        type: Optional[Union[str, "_models.CustomizationHostNameType"]] = None,
         **kwargs
     ):
-        super(CustomizationHostName, self).__init__(**kwargs)
+        """
+        :keyword name: Hostname.
+        :paramtype name: str
+        :keyword type: Type of host name. Known values are: "USER_DEFINED", "PREFIX_BASED", "FIXED",
+         "VIRTUAL_MACHINE_NAME", and "CUSTOM_NAME".
+        :paramtype type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationHostNameType
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CustomizationIdentity(msrest.serialization.Model):
+class CustomizationIdentity(_serialization.Model):
     """CustomizationIdentity.
 
-    :param data: Windows Text Identity. Prepared data.
-    :type data: str
-    :param host_name: Virtual machine host name settings.
-    :type host_name: ~azure.mgmt.vmwarecloudsimple.models.CustomizationHostName
-    :param type: Identity type. Possible values include: "WINDOWS_TEXT", "WINDOWS", "LINUX".
-    :type type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentityType
-    :param user_data: Windows Identity. User data customization.
-    :type user_data: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentityUserData
+    :ivar data: Windows Text Identity. Prepared data.
+    :vartype data: str
+    :ivar host_name: Virtual machine host name settings.
+    :vartype host_name: ~azure.mgmt.vmwarecloudsimple.models.CustomizationHostName
+    :ivar type: Identity type. Known values are: "WINDOWS_TEXT", "WINDOWS", and "LINUX".
+    :vartype type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentityType
+    :ivar user_data: Windows Identity. User data customization.
+    :vartype user_data: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentityUserData
     """
 
     _attribute_map = {
-        'data': {'key': 'data', 'type': 'str'},
-        'host_name': {'key': 'hostName', 'type': 'CustomizationHostName'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_data': {'key': 'userData', 'type': 'CustomizationIdentityUserData'},
+        "data": {"key": "data", "type": "str"},
+        "host_name": {"key": "hostName", "type": "CustomizationHostName"},
+        "type": {"key": "type", "type": "str"},
+        "user_data": {"key": "userData", "type": "CustomizationIdentityUserData"},
     }
 
     def __init__(
         self,
         *,
         data: Optional[str] = None,
-        host_name: Optional["CustomizationHostName"] = None,
-        type: Optional[Union[str, "CustomizationIdentityType"]] = None,
-        user_data: Optional["CustomizationIdentityUserData"] = None,
+        host_name: Optional["_models.CustomizationHostName"] = None,
+        type: Optional[Union[str, "_models.CustomizationIdentityType"]] = None,
+        user_data: Optional["_models.CustomizationIdentityUserData"] = None,
         **kwargs
     ):
-        super(CustomizationIdentity, self).__init__(**kwargs)
+        """
+        :keyword data: Windows Text Identity. Prepared data.
+        :paramtype data: str
+        :keyword host_name: Virtual machine host name settings.
+        :paramtype host_name: ~azure.mgmt.vmwarecloudsimple.models.CustomizationHostName
+        :keyword type: Identity type. Known values are: "WINDOWS_TEXT", "WINDOWS", and "LINUX".
+        :paramtype type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentityType
+        :keyword user_data: Windows Identity. User data customization.
+        :paramtype user_data: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentityUserData
+        """
+        super().__init__(**kwargs)
         self.data = data
         self.host_name = host_name
         self.type = type
         self.user_data = user_data
 
 
-class CustomizationIdentityUserData(msrest.serialization.Model):
+class CustomizationIdentityUserData(_serialization.Model):
     """Windows Identity. User data customization.
 
-    :param is_password_predefined: Is password predefined in customization policy.
-    :type is_password_predefined: bool
+    :ivar is_password_predefined: Is password predefined in customization policy.
+    :vartype is_password_predefined: bool
     """
 
     _attribute_map = {
-        'is_password_predefined': {'key': 'isPasswordPredefined', 'type': 'bool'},
+        "is_password_predefined": {"key": "isPasswordPredefined", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_password_predefined: Optional[bool] = False,
-        **kwargs
-    ):
-        super(CustomizationIdentityUserData, self).__init__(**kwargs)
+    def __init__(self, *, is_password_predefined: bool = False, **kwargs):
+        """
+        :keyword is_password_predefined: Is password predefined in customization policy.
+        :paramtype is_password_predefined: bool
+        """
+        super().__init__(**kwargs)
         self.is_password_predefined = is_password_predefined
 
 
-class CustomizationIPAddress(msrest.serialization.Model):
+class CustomizationIPAddress(_serialization.Model):
     """CustomizationIPAddress.
 
-    :param argument: Argument when Custom ip type is selected.
-    :type argument: str
-    :param ip_address: Defined Ip Address when Fixed ip type is selected.
-    :type ip_address: str
-    :param type: Customization Specification ip type. Possible values include: "CUSTOM", "DHCP_IP",
-     "FIXED_IP", "USER_DEFINED".
-    :type type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPAddressType
+    :ivar argument: Argument when Custom ip type is selected.
+    :vartype argument: str
+    :ivar ip_address: Defined Ip Address when Fixed ip type is selected.
+    :vartype ip_address: str
+    :ivar type: Customization Specification ip type. Known values are: "CUSTOM", "DHCP_IP",
+     "FIXED_IP", and "USER_DEFINED".
+    :vartype type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPAddressType
     """
 
     _attribute_map = {
-        'argument': {'key': 'argument', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "argument": {"key": "argument", "type": "str"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -363,155 +438,198 @@ class CustomizationIPAddress(msrest.serialization.Model):
         *,
         argument: Optional[str] = None,
         ip_address: Optional[str] = None,
-        type: Optional[Union[str, "CustomizationIPAddressType"]] = None,
+        type: Optional[Union[str, "_models.CustomizationIPAddressType"]] = None,
         **kwargs
     ):
-        super(CustomizationIPAddress, self).__init__(**kwargs)
+        """
+        :keyword argument: Argument when Custom ip type is selected.
+        :paramtype argument: str
+        :keyword ip_address: Defined Ip Address when Fixed ip type is selected.
+        :paramtype ip_address: str
+        :keyword type: Customization Specification ip type. Known values are: "CUSTOM", "DHCP_IP",
+         "FIXED_IP", and "USER_DEFINED".
+        :paramtype type: str or ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPAddressType
+        """
+        super().__init__(**kwargs)
         self.argument = argument
         self.ip_address = ip_address
         self.type = type
 
 
-class CustomizationIPSettings(msrest.serialization.Model):
+class CustomizationIPSettings(_serialization.Model):
     """CustomizationIPSettings.
 
-    :param gateway: The list of gateways.
-    :type gateway: list[str]
-    :param ip: Ip address customization settings.
-    :type ip: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPAddress
-    :param subnet_mask: Adapter subnet mask.
-    :type subnet_mask: str
+    :ivar gateway: The list of gateways.
+    :vartype gateway: list[str]
+    :ivar ip: Ip address customization settings.
+    :vartype ip: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPAddress
+    :ivar subnet_mask: Adapter subnet mask.
+    :vartype subnet_mask: str
     """
 
     _attribute_map = {
-        'gateway': {'key': 'gateway', 'type': '[str]'},
-        'ip': {'key': 'ip', 'type': 'CustomizationIPAddress'},
-        'subnet_mask': {'key': 'subnetMask', 'type': 'str'},
+        "gateway": {"key": "gateway", "type": "[str]"},
+        "ip": {"key": "ip", "type": "CustomizationIPAddress"},
+        "subnet_mask": {"key": "subnetMask", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         gateway: Optional[List[str]] = None,
-        ip: Optional["CustomizationIPAddress"] = None,
+        ip: Optional["_models.CustomizationIPAddress"] = None,
         subnet_mask: Optional[str] = None,
         **kwargs
     ):
-        super(CustomizationIPSettings, self).__init__(**kwargs)
+        """
+        :keyword gateway: The list of gateways.
+        :paramtype gateway: list[str]
+        :keyword ip: Ip address customization settings.
+        :paramtype ip: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPAddress
+        :keyword subnet_mask: Adapter subnet mask.
+        :paramtype subnet_mask: str
+        """
+        super().__init__(**kwargs)
         self.gateway = gateway
         self.ip = ip
         self.subnet_mask = subnet_mask
 
 
-class CustomizationNicSetting(msrest.serialization.Model):
+class CustomizationNicSetting(_serialization.Model):
     """CustomizationNicSetting.
 
-    :param adapter: The list of adapters' settings.
-    :type adapter: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPSettings
-    :param mac_address: NIC mac address.
-    :type mac_address: str
+    :ivar adapter: The list of adapters' settings.
+    :vartype adapter: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPSettings
+    :ivar mac_address: NIC mac address.
+    :vartype mac_address: str
     """
 
     _attribute_map = {
-        'adapter': {'key': 'adapter', 'type': 'CustomizationIPSettings'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
+        "adapter": {"key": "adapter", "type": "CustomizationIPSettings"},
+        "mac_address": {"key": "macAddress", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        adapter: Optional["CustomizationIPSettings"] = None,
+        adapter: Optional["_models.CustomizationIPSettings"] = None,
         mac_address: Optional[str] = None,
         **kwargs
     ):
-        super(CustomizationNicSetting, self).__init__(**kwargs)
+        """
+        :keyword adapter: The list of adapters' settings.
+        :paramtype adapter: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIPSettings
+        :keyword mac_address: NIC mac address.
+        :paramtype mac_address: str
+        """
+        super().__init__(**kwargs)
         self.adapter = adapter
         self.mac_address = mac_address
 
 
-class CustomizationPoliciesListResponse(msrest.serialization.Model):
+class CustomizationPoliciesListResponse(_serialization.Model):
     """List of customization polices response model.
 
-    :param next_link: Link for next list of the Customization policy.
-    :type next_link: str
-    :param value: List of the customization policies.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.CustomizationPolicy]
+    :ivar next_link: Link for next list of the Customization policy.
+    :vartype next_link: str
+    :ivar value: List of the customization policies.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.CustomizationPolicy]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[CustomizationPolicy]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[CustomizationPolicy]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["CustomizationPolicy"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.CustomizationPolicy"]] = None, **kwargs
     ):
-        super(CustomizationPoliciesListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of the Customization policy.
+        :paramtype next_link: str
+        :keyword value: List of the customization policies.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.CustomizationPolicy]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class CustomizationPolicy(msrest.serialization.Model):
+class CustomizationPolicy(_serialization.Model):
     """The virtual machine customization policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param id: Customization policy azure id.
-    :type id: str
-    :param location: Azure region.
-    :type location: str
+    :ivar id: Customization policy azure id.
+    :vartype id: str
+    :ivar location: Azure region.
+    :vartype location: str
     :ivar name: Customization policy name.
     :vartype name: str
     :ivar type:
     :vartype type: str
-    :param description: Policy description.
-    :type description: str
-    :param private_cloud_id: The Private cloud id.
-    :type private_cloud_id: str
-    :param specification: Detailed customization policy specification.
-    :type specification: ~azure.mgmt.vmwarecloudsimple.models.CustomizationSpecification
-    :param type_properties_type: The type of customization (Linux or Windows). Possible values
-     include: "LINUX", "WINDOWS".
-    :type type_properties_type: str or
+    :ivar description: Policy description.
+    :vartype description: str
+    :ivar private_cloud_id: The Private cloud id.
+    :vartype private_cloud_id: str
+    :ivar specification: Detailed customization policy specification.
+    :vartype specification: ~azure.mgmt.vmwarecloudsimple.models.CustomizationSpecification
+    :ivar type_properties_type: The type of customization (Linux or Windows). Known values are:
+     "LINUX" and "WINDOWS".
+    :vartype type_properties_type: str or
      ~azure.mgmt.vmwarecloudsimple.models.CustomizationPolicyPropertiesType
-    :param version: Policy version.
-    :type version: str
+    :ivar version: Policy version.
+    :vartype version: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
-        'specification': {'key': 'properties.specification', 'type': 'CustomizationSpecification'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "private_cloud_id": {"key": "properties.privateCloudId", "type": "str"},
+        "specification": {"key": "properties.specification", "type": "CustomizationSpecification"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "version": {"key": "properties.version", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         description: Optional[str] = None,
         private_cloud_id: Optional[str] = None,
-        specification: Optional["CustomizationSpecification"] = None,
-        type_properties_type: Optional[Union[str, "CustomizationPolicyPropertiesType"]] = None,
+        specification: Optional["_models.CustomizationSpecification"] = None,
+        type_properties_type: Optional[Union[str, "_models.CustomizationPolicyPropertiesType"]] = None,
         version: Optional[str] = None,
         **kwargs
     ):
-        super(CustomizationPolicy, self).__init__(**kwargs)
+        """
+        :keyword id: Customization policy azure id.
+        :paramtype id: str
+        :keyword location: Azure region.
+        :paramtype location: str
+        :keyword description: Policy description.
+        :paramtype description: str
+        :keyword private_cloud_id: The Private cloud id.
+        :paramtype private_cloud_id: str
+        :keyword specification: Detailed customization policy specification.
+        :paramtype specification: ~azure.mgmt.vmwarecloudsimple.models.CustomizationSpecification
+        :keyword type_properties_type: The type of customization (Linux or Windows). Known values are:
+         "LINUX" and "WINDOWS".
+        :paramtype type_properties_type: str or
+         ~azure.mgmt.vmwarecloudsimple.models.CustomizationPolicyPropertiesType
+        :keyword version: Policy version.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.location = location
         self.name = None
@@ -523,33 +641,39 @@ class CustomizationPolicy(msrest.serialization.Model):
         self.version = version
 
 
-class CustomizationSpecification(msrest.serialization.Model):
+class CustomizationSpecification(_serialization.Model):
     """The specification for Customization Policy.
 
-    :param identity: Customization Identity. It contains data about user and hostname.
-    :type identity: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentity
-    :param nic_settings: Network interface settings.
-    :type nic_settings: list[~azure.mgmt.vmwarecloudsimple.models.CustomizationNicSetting]
+    :ivar identity: Customization Identity. It contains data about user and hostname.
+    :vartype identity: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentity
+    :ivar nic_settings: Network interface settings.
+    :vartype nic_settings: list[~azure.mgmt.vmwarecloudsimple.models.CustomizationNicSetting]
     """
 
     _attribute_map = {
-        'identity': {'key': 'identity', 'type': 'CustomizationIdentity'},
-        'nic_settings': {'key': 'nicSettings', 'type': '[CustomizationNicSetting]'},
+        "identity": {"key": "identity", "type": "CustomizationIdentity"},
+        "nic_settings": {"key": "nicSettings", "type": "[CustomizationNicSetting]"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["CustomizationIdentity"] = None,
-        nic_settings: Optional[List["CustomizationNicSetting"]] = None,
+        identity: Optional["_models.CustomizationIdentity"] = None,
+        nic_settings: Optional[List["_models.CustomizationNicSetting"]] = None,
         **kwargs
     ):
-        super(CustomizationSpecification, self).__init__(**kwargs)
+        """
+        :keyword identity: Customization Identity. It contains data about user and hostname.
+        :paramtype identity: ~azure.mgmt.vmwarecloudsimple.models.CustomizationIdentity
+        :keyword nic_settings: Network interface settings.
+        :paramtype nic_settings: list[~azure.mgmt.vmwarecloudsimple.models.CustomizationNicSetting]
+        """
+        super().__init__(**kwargs)
         self.identity = identity
         self.nic_settings = nic_settings
 
 
-class DedicatedCloudNode(msrest.serialization.Model):
+class DedicatedCloudNode(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Dedicated cloud node model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -559,28 +683,28 @@ class DedicatedCloudNode(msrest.serialization.Model):
     :ivar id:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudNodes/{dedicatedCloudNodeName}.
     :vartype id: str
-    :param location: Required. Azure region.
-    :type location: str
+    :ivar location: Azure region. Required.
+    :vartype location: str
     :ivar name: {dedicatedCloudNodeName}.
     :vartype name: str
-    :param sku: Dedicated Cloud Nodes SKU.
-    :type sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
-    :param tags: A set of tags. Dedicated Cloud Nodes tags.
-    :type tags: dict[str, str]
+    :ivar sku: Dedicated Cloud Nodes SKU.
+    :vartype sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
+    :ivar tags: Dedicated Cloud Nodes tags.
+    :vartype tags: dict[str, str]
     :ivar type: {resourceProviderNamespace}/{resourceType}.
     :vartype type: str
-    :param availability_zone_id: Availability Zone id, e.g. "az1".
-    :type availability_zone_id: str
+    :ivar availability_zone_id: Availability Zone id, e.g. "az1".
+    :vartype availability_zone_id: str
     :ivar availability_zone_name: Availability Zone name, e.g. "Availability Zone 1".
     :vartype availability_zone_name: str
     :ivar cloud_rack_name: VMWare Cloud Rack Name.
     :vartype cloud_rack_name: str
     :ivar created: date time the resource was created.
-    :vartype created: any
-    :param nodes_count: count of nodes to create.
-    :type nodes_count: int
-    :param placement_group_id: Placement Group id, e.g. "n1".
-    :type placement_group_id: str
+    :vartype created: ~datetime.datetime
+    :ivar nodes_count: count of nodes to create.
+    :vartype nodes_count: int
+    :ivar placement_group_id: Placement Group id, e.g. "n1".
+    :vartype placement_group_id: str
     :ivar placement_group_name: Placement Name, e.g. "Placement Group 1".
     :vartype placement_group_name: str
     :ivar private_cloud_id: Private Cloud Id.
@@ -589,64 +713,64 @@ class DedicatedCloudNode(msrest.serialization.Model):
     :vartype private_cloud_name: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
-    :param purchase_id: purchase id.
-    :type purchase_id: str
-    :ivar status: Node status, indicates is private cloud set up on this node or not. Possible
-     values include: "unused", "used".
+    :ivar purchase_id: purchase id.
+    :vartype purchase_id: str
+    :ivar status: Node status, indicates is private cloud set up on this node or not. Known values
+     are: "unused" and "used".
     :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.NodeStatus
     :ivar vmware_cluster_name: VMWare Cluster Name.
     :vartype vmware_cluster_name: str
-    :param id_properties_sku_description_id: SKU's id.
-    :type id_properties_sku_description_id: str
-    :param name_properties_sku_description_name: SKU's name.
-    :type name_properties_sku_description_name: str
+    :ivar id_properties_sku_description_id: SKU's id.
+    :vartype id_properties_sku_description_id: str
+    :ivar name_properties_sku_description_name: SKU's name.
+    :vartype name_properties_sku_description_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$'},
-        'type': {'readonly': True},
-        'availability_zone_name': {'readonly': True},
-        'cloud_rack_name': {'readonly': True},
-        'created': {'readonly': True},
-        'placement_group_name': {'readonly': True},
-        'private_cloud_id': {'readonly': True},
-        'private_cloud_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'vmware_cluster_name': {'readonly': True},
+        "id": {"readonly": True},
+        "location": {"required": True},
+        "name": {"readonly": True, "pattern": r"^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$"},
+        "type": {"readonly": True},
+        "availability_zone_name": {"readonly": True},
+        "cloud_rack_name": {"readonly": True},
+        "created": {"readonly": True},
+        "placement_group_name": {"readonly": True},
+        "private_cloud_id": {"readonly": True},
+        "private_cloud_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "vmware_cluster_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
-        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
-        'cloud_rack_name': {'key': 'properties.cloudRackName', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'object'},
-        'nodes_count': {'key': 'properties.nodesCount', 'type': 'int'},
-        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
-        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
-        'private_cloud_name': {'key': 'properties.privateCloudName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'purchase_id': {'key': 'properties.purchaseId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'vmware_cluster_name': {'key': 'properties.vmwareClusterName', 'type': 'str'},
-        'id_properties_sku_description_id': {'key': 'properties.skuDescription.id', 'type': 'str'},
-        'name_properties_sku_description_name': {'key': 'properties.skuDescription.name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
+        "availability_zone_id": {"key": "properties.availabilityZoneId", "type": "str"},
+        "availability_zone_name": {"key": "properties.availabilityZoneName", "type": "str"},
+        "cloud_rack_name": {"key": "properties.cloudRackName", "type": "str"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "nodes_count": {"key": "properties.nodesCount", "type": "int"},
+        "placement_group_id": {"key": "properties.placementGroupId", "type": "str"},
+        "placement_group_name": {"key": "properties.placementGroupName", "type": "str"},
+        "private_cloud_id": {"key": "properties.privateCloudId", "type": "str"},
+        "private_cloud_name": {"key": "properties.privateCloudName", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "purchase_id": {"key": "properties.purchaseId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "vmware_cluster_name": {"key": "properties.vmwareClusterName", "type": "str"},
+        "id_properties_sku_description_id": {"key": "properties.skuDescription.id", "type": "str"},
+        "name_properties_sku_description_name": {"key": "properties.skuDescription.name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         availability_zone_id: Optional[str] = None,
         nodes_count: Optional[int] = None,
@@ -656,7 +780,27 @@ class DedicatedCloudNode(msrest.serialization.Model):
         name_properties_sku_description_name: Optional[str] = None,
         **kwargs
     ):
-        super(DedicatedCloudNode, self).__init__(**kwargs)
+        """
+        :keyword location: Azure region. Required.
+        :paramtype location: str
+        :keyword sku: Dedicated Cloud Nodes SKU.
+        :paramtype sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
+        :keyword tags: Dedicated Cloud Nodes tags.
+        :paramtype tags: dict[str, str]
+        :keyword availability_zone_id: Availability Zone id, e.g. "az1".
+        :paramtype availability_zone_id: str
+        :keyword nodes_count: count of nodes to create.
+        :paramtype nodes_count: int
+        :keyword placement_group_id: Placement Group id, e.g. "n1".
+        :paramtype placement_group_id: str
+        :keyword purchase_id: purchase id.
+        :paramtype purchase_id: str
+        :keyword id_properties_sku_description_id: SKU's id.
+        :paramtype id_properties_sku_description_id: str
+        :keyword name_properties_sku_description_name: SKU's name.
+        :paramtype name_properties_sku_description_name: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.location = location
         self.name = None
@@ -680,33 +824,35 @@ class DedicatedCloudNode(msrest.serialization.Model):
         self.name_properties_sku_description_name = name_properties_sku_description_name
 
 
-class DedicatedCloudNodeListResponse(msrest.serialization.Model):
+class DedicatedCloudNodeListResponse(_serialization.Model):
     """List of dedicated nodes response model.
 
-    :param next_link: Link for next list of DedicatedCloudNode.
-    :type next_link: str
-    :param value: Results of the DedicatedCloudNode list.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudNode]
+    :ivar next_link: Link for next list of DedicatedCloudNode.
+    :vartype next_link: str
+    :ivar value: Results of the DedicatedCloudNode list.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudNode]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DedicatedCloudNode]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DedicatedCloudNode]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["DedicatedCloudNode"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.DedicatedCloudNode"]] = None, **kwargs
     ):
-        super(DedicatedCloudNodeListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of DedicatedCloudNode.
+        :paramtype next_link: str
+        :keyword value: Results of the DedicatedCloudNode list.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudNode]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class DedicatedCloudService(msrest.serialization.Model):
+class DedicatedCloudService(_serialization.Model):
     """Dedicated cloud service model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -716,19 +862,19 @@ class DedicatedCloudService(msrest.serialization.Model):
     :ivar id:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudServices/{dedicatedCloudServiceName}.
     :vartype id: str
-    :param location: Required. Azure region.
-    :type location: str
+    :ivar location: Azure region. Required.
+    :vartype location: str
     :ivar name: {dedicatedCloudServiceName}.
     :vartype name: str
-    :param tags: A set of tags. The list of tags.
-    :type tags: dict[str, str]
+    :ivar tags: The list of tags.
+    :vartype tags: dict[str, str]
     :ivar type: {resourceProviderNamespace}/{resourceType}.
     :vartype type: str
-    :param gateway_subnet: gateway Subnet for the account. It will collect the subnet address and
+    :ivar gateway_subnet: gateway Subnet for the account. It will collect the subnet address and
      always treat it as /28.
-    :type gateway_subnet: str
-    :ivar is_account_onboarded: indicates whether account onboarded or not in a given region.
-     Possible values include: "notOnBoarded", "onBoarded", "onBoardingFailed", "onBoarding".
+    :vartype gateway_subnet: str
+    :ivar is_account_onboarded: indicates whether account onboarded or not in a given region. Known
+     values are: "notOnBoarded", "onBoarded", "onBoardingFailed", and "onBoarding".
     :vartype is_account_onboarded: str or ~azure.mgmt.vmwarecloudsimple.models.OnboardingStatus
     :ivar nodes: total nodes purchased.
     :vartype nodes: int
@@ -737,36 +883,40 @@ class DedicatedCloudService(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$'},
-        'type': {'readonly': True},
-        'is_account_onboarded': {'readonly': True},
-        'nodes': {'readonly': True},
-        'service_url': {'readonly': True},
+        "id": {"readonly": True},
+        "location": {"required": True},
+        "name": {"readonly": True, "pattern": r"^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$"},
+        "type": {"readonly": True},
+        "is_account_onboarded": {"readonly": True},
+        "nodes": {"readonly": True},
+        "service_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'gateway_subnet': {'key': 'properties.gatewaySubnet', 'type': 'str'},
-        'is_account_onboarded': {'key': 'properties.isAccountOnboarded', 'type': 'str'},
-        'nodes': {'key': 'properties.nodes', 'type': 'int'},
-        'service_url': {'key': 'properties.serviceURL', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
+        "gateway_subnet": {"key": "properties.gatewaySubnet", "type": "str"},
+        "is_account_onboarded": {"key": "properties.isAccountOnboarded", "type": "str"},
+        "nodes": {"key": "properties.nodes", "type": "int"},
+        "service_url": {"key": "properties.serviceURL", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        gateway_subnet: Optional[str] = None,
-        **kwargs
+        self, *, location: str, tags: Optional[Dict[str, str]] = None, gateway_subnet: Optional[str] = None, **kwargs
     ):
-        super(DedicatedCloudService, self).__init__(**kwargs)
+        """
+        :keyword location: Azure region. Required.
+        :paramtype location: str
+        :keyword tags: The list of tags.
+        :paramtype tags: dict[str, str]
+        :keyword gateway_subnet: gateway Subnet for the account. It will collect the subnet address and
+         always treat it as /28.
+        :paramtype gateway_subnet: str
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.location = location
         self.name = None
@@ -778,53 +928,59 @@ class DedicatedCloudService(msrest.serialization.Model):
         self.service_url = None
 
 
-class DedicatedCloudServiceListResponse(msrest.serialization.Model):
+class DedicatedCloudServiceListResponse(_serialization.Model):
     """List of dedicated cloud services.
 
-    :param next_link: Link for next list of DedicatedCloudNode.
-    :type next_link: str
-    :param value: Results of the DedicatedCloudService list.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService]
+    :ivar next_link: Link for next list of DedicatedCloudNode.
+    :vartype next_link: str
+    :ivar value: Results of the DedicatedCloudService list.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[DedicatedCloudService]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[DedicatedCloudService]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["DedicatedCloudService"]] = None,
+        value: Optional[List["_models.DedicatedCloudService"]] = None,
         **kwargs
     ):
-        super(DedicatedCloudServiceListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of DedicatedCloudNode.
+        :paramtype next_link: str
+        :keyword value: Results of the DedicatedCloudService list.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudService]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class GuestOSCustomization(msrest.serialization.Model):
+class GuestOSCustomization(_serialization.Model):
     """Guest OS Customization properties.
 
-    :param dns_servers: List of dns servers to use.
-    :type dns_servers: list[str]
-    :param host_name: Virtual Machine hostname.
-    :type host_name: str
-    :param password: Password for login.
-    :type password: str
-    :param policy_id: id of customization policy.
-    :type policy_id: str
-    :param username: Username for login.
-    :type username: str
+    :ivar dns_servers: List of dns servers to use.
+    :vartype dns_servers: list[str]
+    :ivar host_name: Virtual Machine hostname.
+    :vartype host_name: str
+    :ivar password: Password for login.
+    :vartype password: str
+    :ivar policy_id: id of customization policy.
+    :vartype policy_id: str
+    :ivar username: Username for login.
+    :vartype username: str
     """
 
     _attribute_map = {
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "username": {"key": "username", "type": "str"},
     }
 
     def __init__(
@@ -837,7 +993,19 @@ class GuestOSCustomization(msrest.serialization.Model):
         username: Optional[str] = None,
         **kwargs
     ):
-        super(GuestOSCustomization, self).__init__(**kwargs)
+        """
+        :keyword dns_servers: List of dns servers to use.
+        :paramtype dns_servers: list[str]
+        :keyword host_name: Virtual Machine hostname.
+        :paramtype host_name: str
+        :keyword password: Password for login.
+        :paramtype password: str
+        :keyword policy_id: id of customization policy.
+        :paramtype policy_id: str
+        :keyword username: Username for login.
+        :paramtype username: str
+        """
+        super().__init__(**kwargs)
         self.dns_servers = dns_servers
         self.host_name = host_name
         self.password = password
@@ -845,46 +1013,55 @@ class GuestOSCustomization(msrest.serialization.Model):
         self.username = username
 
 
-class GuestOSNICCustomization(msrest.serialization.Model):
+class GuestOSNICCustomization(_serialization.Model):
     """Guest OS nic customization.
 
-    :param allocation: IP address allocation method. Possible values include: "static", "dynamic".
-    :type allocation: str or ~azure.mgmt.vmwarecloudsimple.models.GuestOSNICCustomizationAllocation
-    :param dns_servers: List of dns servers to use.
-    :type dns_servers: list[str]
-    :param gateway: Gateway addresses assigned to nic.
-    :type gateway: list[str]
-    :param ip_address: Static ip address for nic.
-    :type ip_address: str
-    :param mask: Network mask for nic.
-    :type mask: str
-    :param primary_wins_server: primary WINS server for Windows.
-    :type primary_wins_server: str
-    :param secondary_wins_server: secondary WINS server for Windows.
-    :type secondary_wins_server: str
+    :ivar allocation: IP address allocation method. Known values are: "static" and "dynamic".
+    :vartype allocation: str or
+     ~azure.mgmt.vmwarecloudsimple.models.GuestOSNICCustomizationAllocation
+    :ivar dns_servers: List of dns servers to use.
+    :vartype dns_servers: list[str]
+    :ivar gateway: Gateway addresses assigned to nic.
+    :vartype gateway: list[str]
+    :ivar ip_address: Static ip address for nic.
+    :vartype ip_address: str
+    :ivar mask: Network mask for nic.
+    :vartype mask: str
+    :ivar primary_wins_server: primary WINS server for Windows.
+    :vartype primary_wins_server: str
+    :ivar secondary_wins_server: secondary WINS server for Windows.
+    :vartype secondary_wins_server: str
     """
 
     _validation = {
-        'ip_address': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
-        'mask': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
-        'primary_wins_server': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
-        'secondary_wins_server': {'pattern': r'^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'},
+        "ip_address": {
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        },
+        "mask": {
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        },
+        "primary_wins_server": {
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        },
+        "secondary_wins_server": {
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])[.]){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        },
     }
 
     _attribute_map = {
-        'allocation': {'key': 'allocation', 'type': 'str'},
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
-        'gateway': {'key': 'gateway', 'type': '[str]'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
-        'mask': {'key': 'mask', 'type': 'str'},
-        'primary_wins_server': {'key': 'primaryWinsServer', 'type': 'str'},
-        'secondary_wins_server': {'key': 'secondaryWinsServer', 'type': 'str'},
+        "allocation": {"key": "allocation", "type": "str"},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+        "gateway": {"key": "gateway", "type": "[str]"},
+        "ip_address": {"key": "ipAddress", "type": "str"},
+        "mask": {"key": "mask", "type": "str"},
+        "primary_wins_server": {"key": "primaryWinsServer", "type": "str"},
+        "secondary_wins_server": {"key": "secondaryWinsServer", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        allocation: Optional[Union[str, "GuestOSNICCustomizationAllocation"]] = None,
+        allocation: Optional[Union[str, "_models.GuestOSNICCustomizationAllocation"]] = None,
         dns_servers: Optional[List[str]] = None,
         gateway: Optional[List[str]] = None,
         ip_address: Optional[str] = None,
@@ -893,7 +1070,24 @@ class GuestOSNICCustomization(msrest.serialization.Model):
         secondary_wins_server: Optional[str] = None,
         **kwargs
     ):
-        super(GuestOSNICCustomization, self).__init__(**kwargs)
+        """
+        :keyword allocation: IP address allocation method. Known values are: "static" and "dynamic".
+        :paramtype allocation: str or
+         ~azure.mgmt.vmwarecloudsimple.models.GuestOSNICCustomizationAllocation
+        :keyword dns_servers: List of dns servers to use.
+        :paramtype dns_servers: list[str]
+        :keyword gateway: Gateway addresses assigned to nic.
+        :paramtype gateway: list[str]
+        :keyword ip_address: Static ip address for nic.
+        :paramtype ip_address: str
+        :keyword mask: Network mask for nic.
+        :paramtype mask: str
+        :keyword primary_wins_server: primary WINS server for Windows.
+        :paramtype primary_wins_server: str
+        :keyword secondary_wins_server: secondary WINS server for Windows.
+        :paramtype secondary_wins_server: str
+        """
+        super().__init__(**kwargs)
         self.allocation = allocation
         self.dns_servers = dns_servers
         self.gateway = gateway
@@ -903,41 +1097,41 @@ class GuestOSNICCustomization(msrest.serialization.Model):
         self.secondary_wins_server = secondary_wins_server
 
 
-class OperationError(msrest.serialization.Model):
+class OperationError(_serialization.Model):
     """Operation error model.
 
-    :param code: Error's code.
-    :type code: str
-    :param message: Error's message.
-    :type message: str
+    :ivar code: Error's code.
+    :vartype code: str
+    :ivar message: Error's message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationError, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: Error's code.
+        :paramtype code: str
+        :keyword message: Error's message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class OperationResource(msrest.serialization.Model):
+class OperationResource(_serialization.Model):
     """Operation status response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar end_time: End time of the operation.
     :vartype end_time: ~datetime.datetime
-    :param error: Error Message if operation failed.
-    :type error: ~azure.mgmt.vmwarecloudsimple.models.OperationError
+    :ivar error: Error Message if operation failed.
+    :vartype error: ~azure.mgmt.vmwarecloudsimple.models.OperationError
     :ivar id: Operation Id.
     :vartype id: str
     :ivar name: Operation ID.
@@ -949,29 +1143,28 @@ class OperationResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'end_time': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'start_time': {'readonly': True},
-        'status': {'readonly': True},
+        "end_time": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "start_time": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'OperationError'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "error": {"key": "error", "type": "OperationError"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["OperationError"] = None,
-        **kwargs
-    ):
-        super(OperationResource, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.OperationError"] = None, **kwargs):
+        """
+        :keyword error: Error Message if operation failed.
+        :paramtype error: ~azure.mgmt.vmwarecloudsimple.models.OperationError
+        """
+        super().__init__(**kwargs)
         self.end_time = None
         self.error = error
         self.id = None
@@ -980,135 +1173,127 @@ class OperationResource(msrest.serialization.Model):
         self.status = None
 
 
-class PatchPayload(msrest.serialization.Model):
+class PatchPayload(_serialization.Model):
     """General patch payload modal.
 
-    :param tags: A set of tags. The tags key:value pairs.
-    :type tags: dict[str, str]
+    :ivar tags: The tags key:value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(PatchPayload, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags key:value pairs.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class PrivateCloud(msrest.serialization.Model):
+class PrivateCloud(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Private cloud model.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :param id: Azure Id, e.g.
+    :ivar id: Azure Id, e.g.
      "/subscriptions/4da99247-a172-4ed6-8ae9-ebed2d12f839/providers/Microsoft.VMwareCloudSimple/privateClouds/cloud123".
-    :type id: str
-    :param location: Location where private cloud created, e.g "westus".
-    :type location: str
-    :param name: Private cloud name.
-    :type name: str
-    :ivar type: Azure Resource type. Default value: "Microsoft.VMwareCloudSimple/privateClouds".
+    :vartype id: str
+    :ivar location: Location where private cloud created, e.g "westus".
+    :vartype location: str
+    :ivar name: Private cloud name.
+    :vartype name: str
+    :ivar type: Azure Resource type. Default value is "Microsoft.VMwareCloudSimple/privateClouds".
     :vartype type: str
-    :param availability_zone_id: Availability Zone id, e.g. "az1".
-    :type availability_zone_id: str
-    :param availability_zone_name: Availability Zone name, e.g. "Availability Zone 1".
-    :type availability_zone_name: str
-    :param clusters_number: Number of clusters.
-    :type clusters_number: int
-    :param created_by: User's emails who created cloud.
-    :type created_by: str
-    :param created_on: When private cloud was created.
-    :type created_on: ~datetime.datetime
-    :param dns_servers: Array of DNS servers.
-    :type dns_servers: list[str]
-    :param expires: Expiration date of PC.
-    :type expires: str
-    :param nsx_type: Nsx Type, e.g. "Advanced".
-    :type nsx_type: str
-    :param placement_group_id: Placement Group id, e.g. "n1".
-    :type placement_group_id: str
-    :param placement_group_name: Placement Group name.
-    :type placement_group_name: str
-    :param private_cloud_id: Id of a private cloud.
-    :type private_cloud_id: str
-    :param resource_pools: The list of Resource Pools.
-    :type resource_pools: list[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
-    :param state: Private Cloud state, e.g. "operational".
-    :type state: str
-    :param total_cpu_cores: Number of cores.
-    :type total_cpu_cores: int
-    :param total_nodes: Number of nodes.
-    :type total_nodes: int
-    :param total_ram: Memory size.
-    :type total_ram: int
-    :param total_storage: Disk space in TB.
-    :type total_storage: float
-    :param type_properties_type: Virtualization type e.g. "vSphere".
-    :type type_properties_type: str
-    :param v_sphere_version: e.g. "6.5u2".
-    :type v_sphere_version: str
-    :param vcenter_fqdn: FQDN for vcenter access.
-    :type vcenter_fqdn: str
-    :param vcenter_refid: Vcenter ip address.
-    :type vcenter_refid: str
-    :param virtual_machine_templates: The list of Virtual Machine Templates.
-    :type virtual_machine_templates:
+    :ivar availability_zone_id: Availability Zone id, e.g. "az1".
+    :vartype availability_zone_id: str
+    :ivar availability_zone_name: Availability Zone name, e.g. "Availability Zone 1".
+    :vartype availability_zone_name: str
+    :ivar clusters_number: Number of clusters.
+    :vartype clusters_number: int
+    :ivar created_by: User's emails who created cloud.
+    :vartype created_by: str
+    :ivar created_on: When private cloud was created.
+    :vartype created_on: ~datetime.datetime
+    :ivar dns_servers: Array of DNS servers.
+    :vartype dns_servers: list[str]
+    :ivar expires: Expiration date of PC.
+    :vartype expires: str
+    :ivar nsx_type: Nsx Type, e.g. "Advanced".
+    :vartype nsx_type: str
+    :ivar placement_group_id: Placement Group id, e.g. "n1".
+    :vartype placement_group_id: str
+    :ivar placement_group_name: Placement Group name.
+    :vartype placement_group_name: str
+    :ivar private_cloud_id: Id of a private cloud.
+    :vartype private_cloud_id: str
+    :ivar resource_pools: The list of Resource Pools.
+    :vartype resource_pools: list[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
+    :ivar state: Private Cloud state, e.g. "operational".
+    :vartype state: str
+    :ivar total_cpu_cores: Number of cores.
+    :vartype total_cpu_cores: int
+    :ivar total_nodes: Number of nodes.
+    :vartype total_nodes: int
+    :ivar total_ram: Memory size.
+    :vartype total_ram: int
+    :ivar total_storage: Disk space in TB.
+    :vartype total_storage: float
+    :ivar type_properties_type: Virtualization type e.g. "vSphere".
+    :vartype type_properties_type: str
+    :ivar v_sphere_version: e.g. "6.5u2".
+    :vartype v_sphere_version: str
+    :ivar vcenter_fqdn: FQDN for vcenter access.
+    :vartype vcenter_fqdn: str
+    :ivar vcenter_refid: Vcenter ip address.
+    :vartype vcenter_refid: str
+    :ivar virtual_machine_templates: The list of Virtual Machine Templates.
+    :vartype virtual_machine_templates:
      list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate]
-    :param virtual_networks: The list of Virtual Networks.
-    :type virtual_networks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
-    :param vr_ops_enabled: Is Vrops enabled/disabled.
-    :type vr_ops_enabled: bool
+    :ivar virtual_networks: The list of Virtual Networks.
+    :vartype virtual_networks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
+    :ivar vr_ops_enabled: Is Vrops enabled/disabled.
+    :vartype vr_ops_enabled: bool
     """
 
-    _validation = {
-        'type': {'constant': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
-        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
-        'clusters_number': {'key': 'properties.clustersNumber', 'type': 'int'},
-        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
-        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
-        'dns_servers': {'key': 'properties.dnsServers', 'type': '[str]'},
-        'expires': {'key': 'properties.expires', 'type': 'str'},
-        'nsx_type': {'key': 'properties.nsxType', 'type': 'str'},
-        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
-        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
-        'resource_pools': {'key': 'properties.resourcePools', 'type': '[ResourcePool]'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'total_cpu_cores': {'key': 'properties.totalCpuCores', 'type': 'int'},
-        'total_nodes': {'key': 'properties.totalNodes', 'type': 'int'},
-        'total_ram': {'key': 'properties.totalRam', 'type': 'int'},
-        'total_storage': {'key': 'properties.totalStorage', 'type': 'float'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'v_sphere_version': {'key': 'properties.vSphereVersion', 'type': 'str'},
-        'vcenter_fqdn': {'key': 'properties.vcenterFqdn', 'type': 'str'},
-        'vcenter_refid': {'key': 'properties.vcenterRefid', 'type': 'str'},
-        'virtual_machine_templates': {'key': 'properties.virtualMachineTemplates', 'type': '[VirtualMachineTemplate]'},
-        'virtual_networks': {'key': 'properties.virtualNetworks', 'type': '[VirtualNetwork]'},
-        'vr_ops_enabled': {'key': 'properties.vrOpsEnabled', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "availability_zone_id": {"key": "properties.availabilityZoneId", "type": "str"},
+        "availability_zone_name": {"key": "properties.availabilityZoneName", "type": "str"},
+        "clusters_number": {"key": "properties.clustersNumber", "type": "int"},
+        "created_by": {"key": "properties.createdBy", "type": "str"},
+        "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
+        "dns_servers": {"key": "properties.dnsServers", "type": "[str]"},
+        "expires": {"key": "properties.expires", "type": "str"},
+        "nsx_type": {"key": "properties.nsxType", "type": "str"},
+        "placement_group_id": {"key": "properties.placementGroupId", "type": "str"},
+        "placement_group_name": {"key": "properties.placementGroupName", "type": "str"},
+        "private_cloud_id": {"key": "properties.privateCloudId", "type": "str"},
+        "resource_pools": {"key": "properties.resourcePools", "type": "[ResourcePool]"},
+        "state": {"key": "properties.state", "type": "str"},
+        "total_cpu_cores": {"key": "properties.totalCpuCores", "type": "int"},
+        "total_nodes": {"key": "properties.totalNodes", "type": "int"},
+        "total_ram": {"key": "properties.totalRam", "type": "int"},
+        "total_storage": {"key": "properties.totalStorage", "type": "float"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "v_sphere_version": {"key": "properties.vSphereVersion", "type": "str"},
+        "vcenter_fqdn": {"key": "properties.vcenterFqdn", "type": "str"},
+        "vcenter_refid": {"key": "properties.vcenterRefid", "type": "str"},
+        "virtual_machine_templates": {"key": "properties.virtualMachineTemplates", "type": "[VirtualMachineTemplate]"},
+        "virtual_networks": {"key": "properties.virtualNetworks", "type": "[VirtualNetwork]"},
+        "vr_ops_enabled": {"key": "properties.vrOpsEnabled", "type": "bool"},
     }
 
-    type = "Microsoft.VMwareCloudSimple/privateClouds"
-
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         name: Optional[str] = None,
+        type: Optional[Literal["Microsoft.VMwareCloudSimple/privateClouds"]] = None,
         availability_zone_id: Optional[str] = None,
         availability_zone_name: Optional[str] = None,
         clusters_number: Optional[int] = None,
@@ -1120,7 +1305,7 @@ class PrivateCloud(msrest.serialization.Model):
         placement_group_id: Optional[str] = None,
         placement_group_name: Optional[str] = None,
         private_cloud_id: Optional[str] = None,
-        resource_pools: Optional[List["ResourcePool"]] = None,
+        resource_pools: Optional[List["_models.ResourcePool"]] = None,
         state: Optional[str] = None,
         total_cpu_cores: Optional[int] = None,
         total_nodes: Optional[int] = None,
@@ -1130,15 +1315,77 @@ class PrivateCloud(msrest.serialization.Model):
         v_sphere_version: Optional[str] = None,
         vcenter_fqdn: Optional[str] = None,
         vcenter_refid: Optional[str] = None,
-        virtual_machine_templates: Optional[List["VirtualMachineTemplate"]] = None,
-        virtual_networks: Optional[List["VirtualNetwork"]] = None,
+        virtual_machine_templates: Optional[List["_models.VirtualMachineTemplate"]] = None,
+        virtual_networks: Optional[List["_models.VirtualNetwork"]] = None,
         vr_ops_enabled: Optional[bool] = None,
         **kwargs
     ):
-        super(PrivateCloud, self).__init__(**kwargs)
+        """
+        :keyword id: Azure Id, e.g.
+         "/subscriptions/4da99247-a172-4ed6-8ae9-ebed2d12f839/providers/Microsoft.VMwareCloudSimple/privateClouds/cloud123".
+        :paramtype id: str
+        :keyword location: Location where private cloud created, e.g "westus".
+        :paramtype location: str
+        :keyword name: Private cloud name.
+        :paramtype name: str
+        :keyword type: Azure Resource type. Default value is
+         "Microsoft.VMwareCloudSimple/privateClouds".
+        :paramtype type: str
+        :keyword availability_zone_id: Availability Zone id, e.g. "az1".
+        :paramtype availability_zone_id: str
+        :keyword availability_zone_name: Availability Zone name, e.g. "Availability Zone 1".
+        :paramtype availability_zone_name: str
+        :keyword clusters_number: Number of clusters.
+        :paramtype clusters_number: int
+        :keyword created_by: User's emails who created cloud.
+        :paramtype created_by: str
+        :keyword created_on: When private cloud was created.
+        :paramtype created_on: ~datetime.datetime
+        :keyword dns_servers: Array of DNS servers.
+        :paramtype dns_servers: list[str]
+        :keyword expires: Expiration date of PC.
+        :paramtype expires: str
+        :keyword nsx_type: Nsx Type, e.g. "Advanced".
+        :paramtype nsx_type: str
+        :keyword placement_group_id: Placement Group id, e.g. "n1".
+        :paramtype placement_group_id: str
+        :keyword placement_group_name: Placement Group name.
+        :paramtype placement_group_name: str
+        :keyword private_cloud_id: Id of a private cloud.
+        :paramtype private_cloud_id: str
+        :keyword resource_pools: The list of Resource Pools.
+        :paramtype resource_pools: list[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
+        :keyword state: Private Cloud state, e.g. "operational".
+        :paramtype state: str
+        :keyword total_cpu_cores: Number of cores.
+        :paramtype total_cpu_cores: int
+        :keyword total_nodes: Number of nodes.
+        :paramtype total_nodes: int
+        :keyword total_ram: Memory size.
+        :paramtype total_ram: int
+        :keyword total_storage: Disk space in TB.
+        :paramtype total_storage: float
+        :keyword type_properties_type: Virtualization type e.g. "vSphere".
+        :paramtype type_properties_type: str
+        :keyword v_sphere_version: e.g. "6.5u2".
+        :paramtype v_sphere_version: str
+        :keyword vcenter_fqdn: FQDN for vcenter access.
+        :paramtype vcenter_fqdn: str
+        :keyword vcenter_refid: Vcenter ip address.
+        :paramtype vcenter_refid: str
+        :keyword virtual_machine_templates: The list of Virtual Machine Templates.
+        :paramtype virtual_machine_templates:
+         list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate]
+        :keyword virtual_networks: The list of Virtual Networks.
+        :paramtype virtual_networks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
+        :keyword vr_ops_enabled: Is Vrops enabled/disabled.
+        :paramtype vr_ops_enabled: bool
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.location = location
         self.name = name
+        self.type = type
         self.availability_zone_id = availability_zone_id
         self.availability_zone_name = availability_zone_name
         self.clusters_number = clusters_number
@@ -1165,41 +1412,43 @@ class PrivateCloud(msrest.serialization.Model):
         self.vr_ops_enabled = vr_ops_enabled
 
 
-class PrivateCloudList(msrest.serialization.Model):
+class PrivateCloudList(_serialization.Model):
     """List of private clouds.
 
-    :param next_link: Link for next list of Private Clouds.
-    :type next_link: str
-    :param value: the list of private clouds.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.PrivateCloud]
+    :ivar next_link: Link for next list of Private Clouds.
+    :vartype next_link: str
+    :ivar value: the list of private clouds.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.PrivateCloud]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[PrivateCloud]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[PrivateCloud]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["PrivateCloud"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.PrivateCloud"]] = None, **kwargs
     ):
-        super(PrivateCloudList, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of Private Clouds.
+        :paramtype next_link: str
+        :keyword value: the list of private clouds.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.PrivateCloud]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class ResourcePool(msrest.serialization.Model):
+class ResourcePool(_serialization.Model):
     """Resource pool model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. resource pool id (privateCloudId:vsphereId).
-    :type id: str
+    :ivar id: resource pool id (privateCloudId:vsphereId). Required.
+    :vartype id: str
     :ivar location: Azure region.
     :vartype location: str
     :ivar name: {ResourcePoolName}.
@@ -1213,30 +1462,29 @@ class ResourcePool(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'location': {'readonly': True},
-        'name': {'readonly': True},
-        'private_cloud_id': {'readonly': True},
-        'type': {'readonly': True},
-        'full_name': {'readonly': True},
+        "id": {"required": True},
+        "location": {"readonly": True},
+        "name": {"readonly": True},
+        "private_cloud_id": {"readonly": True},
+        "type": {"readonly": True},
+        "full_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'private_cloud_id': {'key': 'privateCloudId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'full_name': {'key': 'properties.fullName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "private_cloud_id": {"key": "privateCloudId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "full_name": {"key": "properties.fullName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
-        super(ResourcePool, self).__init__(**kwargs)
+    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: resource pool id (privateCloudId:vsphereId). Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.location = None
         self.name = None
@@ -1245,61 +1493,63 @@ class ResourcePool(msrest.serialization.Model):
         self.full_name = None
 
 
-class ResourcePoolsListResponse(msrest.serialization.Model):
+class ResourcePoolsListResponse(_serialization.Model):
     """List of resource pools response model.
 
-    :param next_link: Link for next list of ResourcePoolsList.
-    :type next_link: str
-    :param value: Results of the Resource pools list.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
+    :ivar next_link: Link for next list of ResourcePoolsList.
+    :vartype next_link: str
+    :ivar value: Results of the Resource pools list.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ResourcePool]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourcePool]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["ResourcePool"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ResourcePool"]] = None, **kwargs
     ):
-        super(ResourcePoolsListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of ResourcePoolsList.
+        :paramtype next_link: str
+        :keyword value: Results of the Resource pools list.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.ResourcePool]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The purchase SKU for CloudSimple paid resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param capacity: The capacity of the SKU.
-    :type capacity: str
-    :param description: dedicatedCloudNode example: 8 x Ten-Core Intel® Xeon® Processor E5-2640 v4
+    :ivar capacity: The capacity of the SKU.
+    :vartype capacity: str
+    :ivar description: dedicatedCloudNode example: 8 x Ten-Core Intel® Xeon® Processor E5-2640 v4
      2.40GHz 25MB Cache (90W); 12 x 64GB PC4-19200 2400MHz DDR4 ECC Registered DIMM, ...
-    :type description: str
-    :param family: If the service has different generations of hardware, for the same SKU, then
-     that can be captured here.
-    :type family: str
-    :param name: Required. The name of the SKU for VMWare CloudSimple Node.
-    :type name: str
-    :param tier: The tier of the SKU.
-    :type tier: str
+    :vartype description: str
+    :ivar family: If the service has different generations of hardware, for the same SKU, then that
+     can be captured here.
+    :vartype family: str
+    :ivar name: The name of the SKU for VMWare CloudSimple Node. Required.
+    :vartype name: str
+    :ivar tier: The tier of the SKU.
+    :vartype tier: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'capacity': {'key': 'capacity', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "capacity": {"key": "capacity", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
     def __init__(
@@ -1312,7 +1562,21 @@ class Sku(msrest.serialization.Model):
         tier: Optional[str] = None,
         **kwargs
     ):
-        super(Sku, self).__init__(**kwargs)
+        """
+        :keyword capacity: The capacity of the SKU.
+        :paramtype capacity: str
+        :keyword description: dedicatedCloudNode example: 8 x Ten-Core Intel® Xeon® Processor E5-2640
+         v4 2.40GHz 25MB Cache (90W); 12 x 64GB PC4-19200 2400MHz DDR4 ECC Registered DIMM, ...
+        :paramtype description: str
+        :keyword family: If the service has different generations of hardware, for the same SKU, then
+         that can be captured here.
+        :paramtype family: str
+        :keyword name: The name of the SKU for VMWare CloudSimple Node. Required.
+        :paramtype name: str
+        :keyword tier: The tier of the SKU.
+        :paramtype tier: str
+        """
+        super().__init__(**kwargs)
         self.capacity = capacity
         self.description = description
         self.family = family
@@ -1320,42 +1584,42 @@ class Sku(msrest.serialization.Model):
         self.tier = tier
 
 
-class SkuAvailability(msrest.serialization.Model):
+class SkuAvailability(_serialization.Model):
     """SKU availability model.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param dedicated_availability_zone_id: CloudSimple Availability Zone id.
-    :type dedicated_availability_zone_id: str
-    :param dedicated_availability_zone_name: CloudSimple Availability Zone Name.
-    :type dedicated_availability_zone_name: str
-    :param dedicated_placement_group_id: CloudSimple Placement Group Id.
-    :type dedicated_placement_group_id: str
-    :param dedicated_placement_group_name: CloudSimple Placement Group name.
-    :type dedicated_placement_group_name: str
-    :param limit: Required. indicates how many resources of a given SKU is available in a AZ->PG.
-    :type limit: int
-    :param resource_type: resource type e.g. DedicatedCloudNodes.
-    :type resource_type: str
-    :param sku_id: sku id.
-    :type sku_id: str
-    :param sku_name: sku name.
-    :type sku_name: str
+    :ivar dedicated_availability_zone_id: CloudSimple Availability Zone id.
+    :vartype dedicated_availability_zone_id: str
+    :ivar dedicated_availability_zone_name: CloudSimple Availability Zone Name.
+    :vartype dedicated_availability_zone_name: str
+    :ivar dedicated_placement_group_id: CloudSimple Placement Group Id.
+    :vartype dedicated_placement_group_id: str
+    :ivar dedicated_placement_group_name: CloudSimple Placement Group name.
+    :vartype dedicated_placement_group_name: str
+    :ivar limit: indicates how many resources of a given SKU is available in a AZ->PG. Required.
+    :vartype limit: int
+    :ivar resource_type: resource type e.g. DedicatedCloudNodes.
+    :vartype resource_type: str
+    :ivar sku_id: sku id.
+    :vartype sku_id: str
+    :ivar sku_name: sku name.
+    :vartype sku_name: str
     """
 
     _validation = {
-        'limit': {'required': True},
+        "limit": {"required": True},
     }
 
     _attribute_map = {
-        'dedicated_availability_zone_id': {'key': 'dedicatedAvailabilityZoneId', 'type': 'str'},
-        'dedicated_availability_zone_name': {'key': 'dedicatedAvailabilityZoneName', 'type': 'str'},
-        'dedicated_placement_group_id': {'key': 'dedicatedPlacementGroupId', 'type': 'str'},
-        'dedicated_placement_group_name': {'key': 'dedicatedPlacementGroupName', 'type': 'str'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'sku_id': {'key': 'skuId', 'type': 'str'},
-        'sku_name': {'key': 'skuName', 'type': 'str'},
+        "dedicated_availability_zone_id": {"key": "dedicatedAvailabilityZoneId", "type": "str"},
+        "dedicated_availability_zone_name": {"key": "dedicatedAvailabilityZoneName", "type": "str"},
+        "dedicated_placement_group_id": {"key": "dedicatedPlacementGroupId", "type": "str"},
+        "dedicated_placement_group_name": {"key": "dedicatedPlacementGroupName", "type": "str"},
+        "limit": {"key": "limit", "type": "int"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku_id": {"key": "skuId", "type": "str"},
+        "sku_name": {"key": "skuName", "type": "str"},
     }
 
     def __init__(
@@ -1371,7 +1635,25 @@ class SkuAvailability(msrest.serialization.Model):
         sku_name: Optional[str] = None,
         **kwargs
     ):
-        super(SkuAvailability, self).__init__(**kwargs)
+        """
+        :keyword dedicated_availability_zone_id: CloudSimple Availability Zone id.
+        :paramtype dedicated_availability_zone_id: str
+        :keyword dedicated_availability_zone_name: CloudSimple Availability Zone Name.
+        :paramtype dedicated_availability_zone_name: str
+        :keyword dedicated_placement_group_id: CloudSimple Placement Group Id.
+        :paramtype dedicated_placement_group_id: str
+        :keyword dedicated_placement_group_name: CloudSimple Placement Group name.
+        :paramtype dedicated_placement_group_name: str
+        :keyword limit: indicates how many resources of a given SKU is available in a AZ->PG. Required.
+        :paramtype limit: int
+        :keyword resource_type: resource type e.g. DedicatedCloudNodes.
+        :paramtype resource_type: str
+        :keyword sku_id: sku id.
+        :paramtype sku_id: str
+        :keyword sku_name: sku name.
+        :paramtype sku_name: str
+        """
+        super().__init__(**kwargs)
         self.dedicated_availability_zone_id = dedicated_availability_zone_id
         self.dedicated_availability_zone_name = dedicated_availability_zone_name
         self.dedicated_placement_group_id = dedicated_placement_group_id
@@ -1382,179 +1664,203 @@ class SkuAvailability(msrest.serialization.Model):
         self.sku_name = sku_name
 
 
-class SkuAvailabilityListResponse(msrest.serialization.Model):
+class SkuAvailabilityListResponse(_serialization.Model):
     """List of SKU availabilities.
 
-    :param next_link: Link for next list of DedicatedCloudNode.
-    :type next_link: str
-    :param value: Results of the DedicatedPlacementGroupSkuAvailability list.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.SkuAvailability]
+    :ivar next_link: Link for next list of DedicatedCloudNode.
+    :vartype next_link: str
+    :ivar value: Results of the DedicatedPlacementGroupSkuAvailability list.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.SkuAvailability]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[SkuAvailability]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[SkuAvailability]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["SkuAvailability"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.SkuAvailability"]] = None, **kwargs
     ):
-        super(SkuAvailabilityListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of DedicatedCloudNode.
+        :paramtype next_link: str
+        :keyword value: Results of the DedicatedPlacementGroupSkuAvailability list.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.SkuAvailability]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """Usage model.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param current_value: Required. The current usage value.
-    :type current_value: int
-    :param limit: Required. limit of a given sku in a region for a subscription. The maximum
-     permitted value for the usage quota. If there is no limit, this value will be -1.
-    :type limit: int
-    :param name: Usage name value and localized name.
-    :type name: ~azure.mgmt.vmwarecloudsimple.models.UsageName
-    :param unit: The usages' unit. Possible values include: "Count", "Bytes", "Seconds", "Percent",
-     "CountPerSecond", "BytesPerSecond".
-    :type unit: str or ~azure.mgmt.vmwarecloudsimple.models.UsageCount
+    :ivar current_value: The current usage value. Required.
+    :vartype current_value: int
+    :ivar limit: limit of a given sku in a region for a subscription. The maximum permitted value
+     for the usage quota. If there is no limit, this value will be -1. Required.
+    :vartype limit: int
+    :ivar name: Usage name value and localized name.
+    :vartype name: ~azure.mgmt.vmwarecloudsimple.models.UsageName
+    :ivar unit: The usages' unit. Known values are: "Count", "Bytes", "Seconds", "Percent",
+     "CountPerSecond", and "BytesPerSecond".
+    :vartype unit: str or ~azure.mgmt.vmwarecloudsimple.models.UsageCount
     """
 
     _validation = {
-        'current_value': {'required': True},
-        'limit': {'required': True},
+        "current_value": {"required": True},
+        "limit": {"required": True},
     }
 
     _attribute_map = {
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'UsageName'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        current_value: int,
-        limit: int,
-        name: Optional["UsageName"] = None,
-        unit: Optional[Union[str, "UsageCount"]] = None,
+        current_value: int = 0,
+        limit: int = 0,
+        name: Optional["_models.UsageName"] = None,
+        unit: Optional[Union[str, "_models.UsageCount"]] = None,
         **kwargs
     ):
-        super(Usage, self).__init__(**kwargs)
+        """
+        :keyword current_value: The current usage value. Required.
+        :paramtype current_value: int
+        :keyword limit: limit of a given sku in a region for a subscription. The maximum permitted
+         value for the usage quota. If there is no limit, this value will be -1. Required.
+        :paramtype limit: int
+        :keyword name: Usage name value and localized name.
+        :paramtype name: ~azure.mgmt.vmwarecloudsimple.models.UsageName
+        :keyword unit: The usages' unit. Known values are: "Count", "Bytes", "Seconds", "Percent",
+         "CountPerSecond", and "BytesPerSecond".
+        :paramtype unit: str or ~azure.mgmt.vmwarecloudsimple.models.UsageCount
+        """
+        super().__init__(**kwargs)
         self.current_value = current_value
         self.limit = limit
         self.name = name
         self.unit = unit
 
 
-class UsageListResponse(msrest.serialization.Model):
+class UsageListResponse(_serialization.Model):
     """List of usages.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param next_link: Link for next list of DedicatedCloudNode.
-    :type next_link: str
+    :ivar next_link: Link for next list of DedicatedCloudNode.
+    :vartype next_link: str
     :ivar value: The list of usages.
     :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.Usage]
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Usage]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(UsageListResponse, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword next_link: Link for next list of DedicatedCloudNode.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = None
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """User name model.
 
-    :param localized_value: e.g. "Virtual Machines".
-    :type localized_value: str
-    :param value: resource type or resource type sku name, e.g. virtualMachines.
-    :type value: str
+    :ivar localized_value: e.g. "Virtual Machines".
+    :vartype localized_value: str
+    :ivar value: resource type or resource type sku name, e.g. virtualMachines.
+    :vartype value: str
     """
 
     _attribute_map = {
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        localized_value: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(UsageName, self).__init__(**kwargs)
+    def __init__(self, *, localized_value: Optional[str] = None, value: Optional[str] = None, **kwargs):
+        """
+        :keyword localized_value: e.g. "Virtual Machines".
+        :paramtype localized_value: str
+        :keyword value: resource type or resource type sku name, e.g. virtualMachines.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.localized_value = localized_value
         self.value = value
 
 
-class VirtualDisk(msrest.serialization.Model):
+class VirtualDisk(_serialization.Model):
     """Virtual disk model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param controller_id: Required. Disk's Controller id.
-    :type controller_id: str
-    :param independence_mode: Required. Disk's independence mode type. Possible values include:
-     "persistent", "independent_persistent", "independent_nonpersistent".
-    :type independence_mode: str or ~azure.mgmt.vmwarecloudsimple.models.DiskIndependenceMode
-    :param total_size: Required. Disk's total size.
-    :type total_size: int
-    :param virtual_disk_id: Disk's id.
-    :type virtual_disk_id: str
+    :ivar controller_id: Disk's Controller id. Required.
+    :vartype controller_id: str
+    :ivar independence_mode: Disk's independence mode type. Required. Known values are:
+     "persistent", "independent_persistent", and "independent_nonpersistent".
+    :vartype independence_mode: str or ~azure.mgmt.vmwarecloudsimple.models.DiskIndependenceMode
+    :ivar total_size: Disk's total size. Required.
+    :vartype total_size: int
+    :ivar virtual_disk_id: Disk's id.
+    :vartype virtual_disk_id: str
     :ivar virtual_disk_name: Disk's display name.
     :vartype virtual_disk_name: str
     """
 
     _validation = {
-        'controller_id': {'required': True},
-        'independence_mode': {'required': True},
-        'total_size': {'required': True},
-        'virtual_disk_name': {'readonly': True},
+        "controller_id": {"required": True},
+        "independence_mode": {"required": True},
+        "total_size": {"required": True},
+        "virtual_disk_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'controller_id': {'key': 'controllerId', 'type': 'str'},
-        'independence_mode': {'key': 'independenceMode', 'type': 'str'},
-        'total_size': {'key': 'totalSize', 'type': 'int'},
-        'virtual_disk_id': {'key': 'virtualDiskId', 'type': 'str'},
-        'virtual_disk_name': {'key': 'virtualDiskName', 'type': 'str'},
+        "controller_id": {"key": "controllerId", "type": "str"},
+        "independence_mode": {"key": "independenceMode", "type": "str"},
+        "total_size": {"key": "totalSize", "type": "int"},
+        "virtual_disk_id": {"key": "virtualDiskId", "type": "str"},
+        "virtual_disk_name": {"key": "virtualDiskName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         controller_id: str,
-        independence_mode: Union[str, "DiskIndependenceMode"],
+        independence_mode: Union[str, "_models.DiskIndependenceMode"],
         total_size: int,
         virtual_disk_id: Optional[str] = None,
         **kwargs
     ):
-        super(VirtualDisk, self).__init__(**kwargs)
+        """
+        :keyword controller_id: Disk's Controller id. Required.
+        :paramtype controller_id: str
+        :keyword independence_mode: Disk's independence mode type. Required. Known values are:
+         "persistent", "independent_persistent", and "independent_nonpersistent".
+        :paramtype independence_mode: str or ~azure.mgmt.vmwarecloudsimple.models.DiskIndependenceMode
+        :keyword total_size: Disk's total size. Required.
+        :paramtype total_size: int
+        :keyword virtual_disk_id: Disk's id.
+        :paramtype virtual_disk_id: str
+        """
+        super().__init__(**kwargs)
         self.controller_id = controller_id
         self.independence_mode = independence_mode
         self.total_size = total_size
@@ -1562,7 +1868,7 @@ class VirtualDisk(msrest.serialization.Model):
         self.virtual_disk_name = None
 
 
-class VirtualDiskController(msrest.serialization.Model):
+class VirtualDiskController(_serialization.Model):
     """Virtual disk controller model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1579,31 +1885,29 @@ class VirtualDiskController(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'sub_type': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "sub_type": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'sub_type': {'key': 'subType', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "sub_type": {"key": "subType", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VirtualDiskController, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.sub_type = None
         self.type = None
 
 
-class VirtualMachine(msrest.serialization.Model):
+class VirtualMachine(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Virtual machine model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1613,55 +1917,55 @@ class VirtualMachine(msrest.serialization.Model):
     :ivar id:
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/virtualMachines/{virtualMachineName}.
     :vartype id: str
-    :param location: Required. Azure region.
-    :type location: str
+    :ivar location: Azure region. Required.
+    :vartype location: str
     :ivar name: {virtualMachineName}.
     :vartype name: str
-    :param tags: A set of tags. The list of tags.
-    :type tags: dict[str, str]
+    :ivar tags: The list of tags.
+    :vartype tags: dict[str, str]
     :ivar type: {resourceProviderNamespace}/{resourceType}.
     :vartype type: str
-    :param amount_of_ram: The amount of memory.
-    :type amount_of_ram: int
+    :ivar amount_of_ram: The amount of memory.
+    :vartype amount_of_ram: int
     :ivar controllers: The list of Virtual Disks' Controllers.
     :vartype controllers: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDiskController]
-    :param customization: Virtual machine properties.
-    :type customization: ~azure.mgmt.vmwarecloudsimple.models.GuestOSCustomization
-    :param disks: The list of Virtual Disks.
-    :type disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
+    :ivar customization: Virtual machine properties.
+    :vartype customization: ~azure.mgmt.vmwarecloudsimple.models.GuestOSCustomization
+    :ivar disks: The list of Virtual Disks.
+    :vartype disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
     :ivar dnsname: The DNS name of Virtual Machine in VCenter.
     :vartype dnsname: str
-    :param expose_to_guest_vm: Expose Guest OS or not.
-    :type expose_to_guest_vm: bool
+    :ivar expose_to_guest_vm: Expose Guest OS or not.
+    :vartype expose_to_guest_vm: bool
     :ivar folder: The path to virtual machine folder in VCenter.
     :vartype folder: str
     :ivar guest_os: The name of Guest OS.
     :vartype guest_os: str
-    :ivar guest_os_type: The Guest OS type. Possible values include: "linux", "windows", "other".
+    :ivar guest_os_type: The Guest OS type. Known values are: "linux", "windows", and "other".
     :vartype guest_os_type: str or ~azure.mgmt.vmwarecloudsimple.models.GuestOSType
-    :param nics: The list of Virtual NICs.
-    :type nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
-    :param number_of_cores: The number of CPU cores.
-    :type number_of_cores: int
-    :param password: Password for login. Deprecated - use customization property.
-    :type password: str
-    :param private_cloud_id: Private Cloud Id.
-    :type private_cloud_id: str
+    :ivar nics: The list of Virtual NICs.
+    :vartype nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
+    :ivar number_of_cores: The number of CPU cores.
+    :vartype number_of_cores: int
+    :ivar password: Password for login. Deprecated - use customization property.
+    :vartype password: str
+    :ivar private_cloud_id: Private Cloud Id.
+    :vartype private_cloud_id: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar public_ip: The public ip of Virtual Machine.
     :vartype public_ip: str
-    :param resource_pool: Virtual Machines Resource Pool.
-    :type resource_pool: ~azure.mgmt.vmwarecloudsimple.models.ResourcePool
-    :ivar status: The status of Virtual machine. Possible values include: "running", "suspended",
-     "poweredoff", "updating", "deallocating", "deleting".
+    :ivar resource_pool: Virtual Machines Resource Pool.
+    :vartype resource_pool: ~azure.mgmt.vmwarecloudsimple.models.ResourcePool
+    :ivar status: The status of Virtual machine. Known values are: "running", "suspended",
+     "poweredoff", "updating", "deallocating", and "deleting".
     :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.VirtualMachineStatus
-    :param template_id: Virtual Machine Template Id.
-    :type template_id: str
-    :param username: Username for login. Deprecated - use customization property.
-    :type username: str
-    :param v_sphere_networks: The list of Virtual VSphere Networks.
-    :type v_sphere_networks: list[str]
+    :ivar template_id: Virtual Machine Template Id.
+    :vartype template_id: str
+    :ivar username: Username for login. Deprecated - use customization property.
+    :vartype username: str
+    :ivar v_sphere_networks: The list of Virtual VSphere Networks.
+    :vartype v_sphere_networks: list[str]
     :ivar vm_id: The internal id of Virtual Machine in VCenter.
     :vartype vm_id: str
     :ivar vmwaretools: VMware tools version.
@@ -1669,72 +1973,102 @@ class VirtualMachine(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$'},
-        'type': {'readonly': True},
-        'controllers': {'readonly': True},
-        'dnsname': {'readonly': True},
-        'folder': {'readonly': True},
-        'guest_os': {'readonly': True},
-        'guest_os_type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'public_ip': {'readonly': True},
-        'status': {'readonly': True},
-        'vm_id': {'readonly': True},
-        'vmwaretools': {'readonly': True},
+        "id": {"readonly": True},
+        "location": {"required": True},
+        "name": {"readonly": True, "pattern": r"^[a-zA-Z0-9]([-_.a-zA-Z0-9]*[a-zA-Z0-9])?$"},
+        "type": {"readonly": True},
+        "controllers": {"readonly": True},
+        "dnsname": {"readonly": True},
+        "folder": {"readonly": True},
+        "guest_os": {"readonly": True},
+        "guest_os_type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "public_ip": {"readonly": True},
+        "status": {"readonly": True},
+        "vm_id": {"readonly": True},
+        "vmwaretools": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'amount_of_ram': {'key': 'properties.amountOfRam', 'type': 'int'},
-        'controllers': {'key': 'properties.controllers', 'type': '[VirtualDiskController]'},
-        'customization': {'key': 'properties.customization', 'type': 'GuestOSCustomization'},
-        'disks': {'key': 'properties.disks', 'type': '[VirtualDisk]'},
-        'dnsname': {'key': 'properties.dnsname', 'type': 'str'},
-        'expose_to_guest_vm': {'key': 'properties.exposeToGuestVM', 'type': 'bool'},
-        'folder': {'key': 'properties.folder', 'type': 'str'},
-        'guest_os': {'key': 'properties.guestOS', 'type': 'str'},
-        'guest_os_type': {'key': 'properties.guestOSType', 'type': 'str'},
-        'nics': {'key': 'properties.nics', 'type': '[VirtualNic]'},
-        'number_of_cores': {'key': 'properties.numberOfCores', 'type': 'int'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'public_ip': {'key': 'properties.publicIP', 'type': 'str'},
-        'resource_pool': {'key': 'properties.resourcePool', 'type': 'ResourcePool'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'template_id': {'key': 'properties.templateId', 'type': 'str'},
-        'username': {'key': 'properties.username', 'type': 'str'},
-        'v_sphere_networks': {'key': 'properties.vSphereNetworks', 'type': '[str]'},
-        'vm_id': {'key': 'properties.vmId', 'type': 'str'},
-        'vmwaretools': {'key': 'properties.vmwaretools', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
+        "amount_of_ram": {"key": "properties.amountOfRam", "type": "int"},
+        "controllers": {"key": "properties.controllers", "type": "[VirtualDiskController]"},
+        "customization": {"key": "properties.customization", "type": "GuestOSCustomization"},
+        "disks": {"key": "properties.disks", "type": "[VirtualDisk]"},
+        "dnsname": {"key": "properties.dnsname", "type": "str"},
+        "expose_to_guest_vm": {"key": "properties.exposeToGuestVM", "type": "bool"},
+        "folder": {"key": "properties.folder", "type": "str"},
+        "guest_os": {"key": "properties.guestOS", "type": "str"},
+        "guest_os_type": {"key": "properties.guestOSType", "type": "str"},
+        "nics": {"key": "properties.nics", "type": "[VirtualNic]"},
+        "number_of_cores": {"key": "properties.numberOfCores", "type": "int"},
+        "password": {"key": "properties.password", "type": "str"},
+        "private_cloud_id": {"key": "properties.privateCloudId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "public_ip": {"key": "properties.publicIP", "type": "str"},
+        "resource_pool": {"key": "properties.resourcePool", "type": "ResourcePool"},
+        "status": {"key": "properties.status", "type": "str"},
+        "template_id": {"key": "properties.templateId", "type": "str"},
+        "username": {"key": "properties.username", "type": "str"},
+        "v_sphere_networks": {"key": "properties.vSphereNetworks", "type": "[str]"},
+        "vm_id": {"key": "properties.vmId", "type": "str"},
+        "vmwaretools": {"key": "properties.vmwaretools", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
         amount_of_ram: Optional[int] = None,
-        customization: Optional["GuestOSCustomization"] = None,
-        disks: Optional[List["VirtualDisk"]] = None,
+        customization: Optional["_models.GuestOSCustomization"] = None,
+        disks: Optional[List["_models.VirtualDisk"]] = None,
         expose_to_guest_vm: Optional[bool] = None,
-        nics: Optional[List["VirtualNic"]] = None,
+        nics: Optional[List["_models.VirtualNic"]] = None,
         number_of_cores: Optional[int] = None,
         password: Optional[str] = None,
         private_cloud_id: Optional[str] = None,
-        resource_pool: Optional["ResourcePool"] = None,
+        resource_pool: Optional["_models.ResourcePool"] = None,
         template_id: Optional[str] = None,
         username: Optional[str] = None,
         v_sphere_networks: Optional[List[str]] = None,
         **kwargs
     ):
-        super(VirtualMachine, self).__init__(**kwargs)
+        """
+        :keyword location: Azure region. Required.
+        :paramtype location: str
+        :keyword tags: The list of tags.
+        :paramtype tags: dict[str, str]
+        :keyword amount_of_ram: The amount of memory.
+        :paramtype amount_of_ram: int
+        :keyword customization: Virtual machine properties.
+        :paramtype customization: ~azure.mgmt.vmwarecloudsimple.models.GuestOSCustomization
+        :keyword disks: The list of Virtual Disks.
+        :paramtype disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
+        :keyword expose_to_guest_vm: Expose Guest OS or not.
+        :paramtype expose_to_guest_vm: bool
+        :keyword nics: The list of Virtual NICs.
+        :paramtype nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
+        :keyword number_of_cores: The number of CPU cores.
+        :paramtype number_of_cores: int
+        :keyword password: Password for login. Deprecated - use customization property.
+        :paramtype password: str
+        :keyword private_cloud_id: Private Cloud Id.
+        :paramtype private_cloud_id: str
+        :keyword resource_pool: Virtual Machines Resource Pool.
+        :paramtype resource_pool: ~azure.mgmt.vmwarecloudsimple.models.ResourcePool
+        :keyword template_id: Virtual Machine Template Id.
+        :paramtype template_id: str
+        :keyword username: Username for login. Deprecated - use customization property.
+        :paramtype username: str
+        :keyword v_sphere_networks: The list of Virtual VSphere Networks.
+        :paramtype v_sphere_networks: list[str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.location = location
         self.name = None
@@ -1764,125 +2098,127 @@ class VirtualMachine(msrest.serialization.Model):
         self.vmwaretools = None
 
 
-class VirtualMachineListResponse(msrest.serialization.Model):
+class VirtualMachineListResponse(_serialization.Model):
     """List of virtual machines.
 
-    :param next_link: Link for next list of VirtualMachines.
-    :type next_link: str
-    :param value: Results of the VirtualMachine list.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]
+    :ivar next_link: Link for next list of VirtualMachines.
+    :vartype next_link: str
+    :ivar value: Results of the VirtualMachine list.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[VirtualMachine]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[VirtualMachine]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["VirtualMachine"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.VirtualMachine"]] = None, **kwargs
     ):
-        super(VirtualMachineListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of VirtualMachines.
+        :paramtype next_link: str
+        :keyword value: Results of the VirtualMachine list.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachine]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class VirtualMachineStopMode(msrest.serialization.Model):
+class VirtualMachineStopMode(_serialization.Model):
     """List of virtual machine stop modes.
 
-    :param mode: mode indicates a type of stop operation - reboot, suspend, shutdown or power-off.
-     Possible values include: "reboot", "suspend", "shutdown", "poweroff".
-    :type mode: str or ~azure.mgmt.vmwarecloudsimple.models.StopMode
+    :ivar mode: mode indicates a type of stop operation - reboot, suspend, shutdown or power-off.
+     Known values are: "reboot", "suspend", "shutdown", and "poweroff".
+    :vartype mode: str or ~azure.mgmt.vmwarecloudsimple.models.StopMode
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        mode: Optional[Union[str, "StopMode"]] = None,
-        **kwargs
-    ):
-        super(VirtualMachineStopMode, self).__init__(**kwargs)
+    def __init__(self, *, mode: Optional[Union[str, "_models.StopMode"]] = None, **kwargs):
+        """
+        :keyword mode: mode indicates a type of stop operation - reboot, suspend, shutdown or
+         power-off. Known values are: "reboot", "suspend", "shutdown", and "poweroff".
+        :paramtype mode: str or ~azure.mgmt.vmwarecloudsimple.models.StopMode
+        """
+        super().__init__(**kwargs)
         self.mode = mode
 
 
-class VirtualMachineTemplate(msrest.serialization.Model):
+class VirtualMachineTemplate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Virtual machine template model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: virtual machine template id (privateCloudId:vsphereId).
     :vartype id: str
-    :param location: Azure region.
-    :type location: str
+    :ivar location: Azure region.
+    :vartype location: str
     :ivar name: {virtualMachineTemplateName}.
     :vartype name: str
     :ivar type: {resourceProviderNamespace}/{resourceType}.
     :vartype type: str
-    :param amount_of_ram: The amount of memory.
-    :type amount_of_ram: int
-    :param controllers: The list of Virtual Disk Controllers.
-    :type controllers: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDiskController]
-    :param description: The description of Virtual Machine Template.
-    :type description: str
-    :param disks: The list of Virtual Disks.
-    :type disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
-    :param expose_to_guest_vm: Expose Guest OS or not.
-    :type expose_to_guest_vm: bool
+    :ivar amount_of_ram: The amount of memory.
+    :vartype amount_of_ram: int
+    :ivar controllers: The list of Virtual Disk Controllers.
+    :vartype controllers: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDiskController]
+    :ivar description: The description of Virtual Machine Template.
+    :vartype description: str
+    :ivar disks: The list of Virtual Disks.
+    :vartype disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
+    :ivar expose_to_guest_vm: Expose Guest OS or not.
+    :vartype expose_to_guest_vm: bool
     :ivar guest_os: The Guest OS.
     :vartype guest_os: str
     :ivar guest_os_type: The Guest OS types.
     :vartype guest_os_type: str
-    :param nics: The list of Virtual NICs.
-    :type nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
-    :param number_of_cores: The number of CPU cores.
-    :type number_of_cores: int
-    :param path: path to folder.
-    :type path: str
-    :param private_cloud_id: The Private Cloud Id.
-    :type private_cloud_id: str
-    :param v_sphere_networks: The list of VSphere networks.
-    :type v_sphere_networks: list[str]
-    :param v_sphere_tags: The tags from VSphere.
-    :type v_sphere_tags: list[str]
+    :ivar nics: The list of Virtual NICs.
+    :vartype nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
+    :ivar number_of_cores: The number of CPU cores.
+    :vartype number_of_cores: int
+    :ivar path: path to folder.
+    :vartype path: str
+    :ivar private_cloud_id: The Private Cloud Id.
+    :vartype private_cloud_id: str
+    :ivar v_sphere_networks: The list of VSphere networks.
+    :vartype v_sphere_networks: list[str]
+    :ivar v_sphere_tags: The tags from VSphere.
+    :vartype v_sphere_tags: list[str]
     :ivar vmwaretools: The VMware tools version.
     :vartype vmwaretools: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'guest_os': {'readonly': True},
-        'guest_os_type': {'readonly': True},
-        'vmwaretools': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "guest_os": {"readonly": True},
+        "guest_os_type": {"readonly": True},
+        "vmwaretools": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'amount_of_ram': {'key': 'properties.amountOfRam', 'type': 'int'},
-        'controllers': {'key': 'properties.controllers', 'type': '[VirtualDiskController]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'disks': {'key': 'properties.disks', 'type': '[VirtualDisk]'},
-        'expose_to_guest_vm': {'key': 'properties.exposeToGuestVM', 'type': 'bool'},
-        'guest_os': {'key': 'properties.guestOS', 'type': 'str'},
-        'guest_os_type': {'key': 'properties.guestOSType', 'type': 'str'},
-        'nics': {'key': 'properties.nics', 'type': '[VirtualNic]'},
-        'number_of_cores': {'key': 'properties.numberOfCores', 'type': 'int'},
-        'path': {'key': 'properties.path', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
-        'v_sphere_networks': {'key': 'properties.vSphereNetworks', 'type': '[str]'},
-        'v_sphere_tags': {'key': 'properties.vSphereTags', 'type': '[str]'},
-        'vmwaretools': {'key': 'properties.vmwaretools', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "amount_of_ram": {"key": "properties.amountOfRam", "type": "int"},
+        "controllers": {"key": "properties.controllers", "type": "[VirtualDiskController]"},
+        "description": {"key": "properties.description", "type": "str"},
+        "disks": {"key": "properties.disks", "type": "[VirtualDisk]"},
+        "expose_to_guest_vm": {"key": "properties.exposeToGuestVM", "type": "bool"},
+        "guest_os": {"key": "properties.guestOS", "type": "str"},
+        "guest_os_type": {"key": "properties.guestOSType", "type": "str"},
+        "nics": {"key": "properties.nics", "type": "[VirtualNic]"},
+        "number_of_cores": {"key": "properties.numberOfCores", "type": "int"},
+        "path": {"key": "properties.path", "type": "str"},
+        "private_cloud_id": {"key": "properties.privateCloudId", "type": "str"},
+        "v_sphere_networks": {"key": "properties.vSphereNetworks", "type": "[str]"},
+        "v_sphere_tags": {"key": "properties.vSphereTags", "type": "[str]"},
+        "vmwaretools": {"key": "properties.vmwaretools", "type": "str"},
     }
 
     def __init__(
@@ -1890,11 +2226,11 @@ class VirtualMachineTemplate(msrest.serialization.Model):
         *,
         location: Optional[str] = None,
         amount_of_ram: Optional[int] = None,
-        controllers: Optional[List["VirtualDiskController"]] = None,
+        controllers: Optional[List["_models.VirtualDiskController"]] = None,
         description: Optional[str] = None,
-        disks: Optional[List["VirtualDisk"]] = None,
+        disks: Optional[List["_models.VirtualDisk"]] = None,
         expose_to_guest_vm: Optional[bool] = None,
-        nics: Optional[List["VirtualNic"]] = None,
+        nics: Optional[List["_models.VirtualNic"]] = None,
         number_of_cores: Optional[int] = None,
         path: Optional[str] = None,
         private_cloud_id: Optional[str] = None,
@@ -1902,7 +2238,33 @@ class VirtualMachineTemplate(msrest.serialization.Model):
         v_sphere_tags: Optional[List[str]] = None,
         **kwargs
     ):
-        super(VirtualMachineTemplate, self).__init__(**kwargs)
+        """
+        :keyword location: Azure region.
+        :paramtype location: str
+        :keyword amount_of_ram: The amount of memory.
+        :paramtype amount_of_ram: int
+        :keyword controllers: The list of Virtual Disk Controllers.
+        :paramtype controllers: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDiskController]
+        :keyword description: The description of Virtual Machine Template.
+        :paramtype description: str
+        :keyword disks: The list of Virtual Disks.
+        :paramtype disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
+        :keyword expose_to_guest_vm: Expose Guest OS or not.
+        :paramtype expose_to_guest_vm: bool
+        :keyword nics: The list of Virtual NICs.
+        :paramtype nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
+        :keyword number_of_cores: The number of CPU cores.
+        :paramtype number_of_cores: int
+        :keyword path: path to folder.
+        :paramtype path: str
+        :keyword private_cloud_id: The Private Cloud Id.
+        :paramtype private_cloud_id: str
+        :keyword v_sphere_networks: The list of VSphere networks.
+        :paramtype v_sphere_networks: list[str]
+        :keyword v_sphere_tags: The tags from VSphere.
+        :paramtype v_sphere_tags: list[str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.location = location
         self.name = None
@@ -1923,33 +2285,39 @@ class VirtualMachineTemplate(msrest.serialization.Model):
         self.vmwaretools = None
 
 
-class VirtualMachineTemplateListResponse(msrest.serialization.Model):
+class VirtualMachineTemplateListResponse(_serialization.Model):
     """List of virtual machine templates.
 
-    :param next_link: Link for next list of VirtualMachineTemplate.
-    :type next_link: str
-    :param value: Results of the VM template list.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate]
+    :ivar next_link: Link for next list of VirtualMachineTemplate.
+    :vartype next_link: str
+    :ivar value: Results of the VM template list.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[VirtualMachineTemplate]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[VirtualMachineTemplate]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["VirtualMachineTemplate"]] = None,
+        value: Optional[List["_models.VirtualMachineTemplate"]] = None,
         **kwargs
     ):
-        super(VirtualMachineTemplateListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of VirtualMachineTemplate.
+        :paramtype next_link: str
+        :keyword value: Results of the VM template list.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class VirtualNetwork(msrest.serialization.Model):
+class VirtualNetwork(_serialization.Model):
     """Virtual network model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1958,8 +2326,8 @@ class VirtualNetwork(msrest.serialization.Model):
 
     :ivar assignable: can be used in vm creation/deletion.
     :vartype assignable: bool
-    :param id: Required. virtual network id (privateCloudId:vsphereId).
-    :type id: str
+    :ivar id: virtual network id (privateCloudId:vsphereId). Required.
+    :vartype id: str
     :ivar location: Azure region.
     :vartype location: str
     :ivar name: {VirtualNetworkName}.
@@ -1971,30 +2339,29 @@ class VirtualNetwork(msrest.serialization.Model):
     """
 
     _validation = {
-        'assignable': {'readonly': True},
-        'id': {'required': True},
-        'location': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'private_cloud_id': {'readonly': True},
+        "assignable": {"readonly": True},
+        "id": {"required": True},
+        "location": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "private_cloud_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'assignable': {'key': 'assignable', 'type': 'bool'},
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
+        "assignable": {"key": "assignable", "type": "bool"},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_cloud_id": {"key": "properties.privateCloudId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
-        super(VirtualNetwork, self).__init__(**kwargs)
+    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: virtual network id (privateCloudId:vsphereId). Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.assignable = None
         self.id = id
         self.location = None
@@ -2003,88 +2370,107 @@ class VirtualNetwork(msrest.serialization.Model):
         self.private_cloud_id = None
 
 
-class VirtualNetworkListResponse(msrest.serialization.Model):
+class VirtualNetworkListResponse(_serialization.Model):
     """List of virtual networks.
 
-    :param next_link: Link for next list of VirtualNetwork.
-    :type next_link: str
-    :param value: Results of the VirtualNetwork list.
-    :type value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
+    :ivar next_link: Link for next list of VirtualNetwork.
+    :vartype next_link: str
+    :ivar value: Results of the VirtualNetwork list.
+    :vartype value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[VirtualNetwork]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[VirtualNetwork]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["VirtualNetwork"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.VirtualNetwork"]] = None, **kwargs
     ):
-        super(VirtualNetworkListResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: Link for next list of VirtualNetwork.
+        :paramtype next_link: str
+        :keyword value: Results of the VirtualNetwork list.
+        :paramtype value: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class VirtualNic(msrest.serialization.Model):
+class VirtualNic(_serialization.Model):
     """Virtual NIC model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param customization: guest OS customization for nic.
-    :type customization: ~azure.mgmt.vmwarecloudsimple.models.GuestOSNICCustomization
-    :param ip_addresses: NIC ip address.
-    :type ip_addresses: list[str]
-    :param mac_address: NIC MAC address.
-    :type mac_address: str
-    :param network: Required. Virtual Network.
-    :type network: ~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork
-    :param nic_type: Required. NIC type. Possible values include: "E1000", "E1000E", "PCNET32",
-     "VMXNET", "VMXNET2", "VMXNET3".
-    :type nic_type: str or ~azure.mgmt.vmwarecloudsimple.models.NICType
-    :param power_on_boot: Is NIC powered on/off on boot.
-    :type power_on_boot: bool
-    :param virtual_nic_id: NIC id.
-    :type virtual_nic_id: str
+    :ivar customization: guest OS customization for nic.
+    :vartype customization: ~azure.mgmt.vmwarecloudsimple.models.GuestOSNICCustomization
+    :ivar ip_addresses: NIC ip address.
+    :vartype ip_addresses: list[str]
+    :ivar mac_address: NIC MAC address.
+    :vartype mac_address: str
+    :ivar network: Virtual Network. Required.
+    :vartype network: ~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork
+    :ivar nic_type: NIC type. Required. Known values are: "E1000", "E1000E", "PCNET32", "VMXNET",
+     "VMXNET2", and "VMXNET3".
+    :vartype nic_type: str or ~azure.mgmt.vmwarecloudsimple.models.NICType
+    :ivar power_on_boot: Is NIC powered on/off on boot.
+    :vartype power_on_boot: bool
+    :ivar virtual_nic_id: NIC id.
+    :vartype virtual_nic_id: str
     :ivar virtual_nic_name: NIC name.
     :vartype virtual_nic_name: str
     """
 
     _validation = {
-        'network': {'required': True},
-        'nic_type': {'required': True},
-        'virtual_nic_name': {'readonly': True},
+        "network": {"required": True},
+        "nic_type": {"required": True},
+        "virtual_nic_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'customization': {'key': 'customization', 'type': 'GuestOSNICCustomization'},
-        'ip_addresses': {'key': 'ipAddresses', 'type': '[str]'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
-        'network': {'key': 'network', 'type': 'VirtualNetwork'},
-        'nic_type': {'key': 'nicType', 'type': 'str'},
-        'power_on_boot': {'key': 'powerOnBoot', 'type': 'bool'},
-        'virtual_nic_id': {'key': 'virtualNicId', 'type': 'str'},
-        'virtual_nic_name': {'key': 'virtualNicName', 'type': 'str'},
+        "customization": {"key": "customization", "type": "GuestOSNICCustomization"},
+        "ip_addresses": {"key": "ipAddresses", "type": "[str]"},
+        "mac_address": {"key": "macAddress", "type": "str"},
+        "network": {"key": "network", "type": "VirtualNetwork"},
+        "nic_type": {"key": "nicType", "type": "str"},
+        "power_on_boot": {"key": "powerOnBoot", "type": "bool"},
+        "virtual_nic_id": {"key": "virtualNicId", "type": "str"},
+        "virtual_nic_name": {"key": "virtualNicName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        network: "VirtualNetwork",
-        nic_type: Union[str, "NICType"],
-        customization: Optional["GuestOSNICCustomization"] = None,
+        network: "_models.VirtualNetwork",
+        nic_type: Union[str, "_models.NICType"],
+        customization: Optional["_models.GuestOSNICCustomization"] = None,
         ip_addresses: Optional[List[str]] = None,
         mac_address: Optional[str] = None,
         power_on_boot: Optional[bool] = None,
         virtual_nic_id: Optional[str] = None,
         **kwargs
     ):
-        super(VirtualNic, self).__init__(**kwargs)
+        """
+        :keyword customization: guest OS customization for nic.
+        :paramtype customization: ~azure.mgmt.vmwarecloudsimple.models.GuestOSNICCustomization
+        :keyword ip_addresses: NIC ip address.
+        :paramtype ip_addresses: list[str]
+        :keyword mac_address: NIC MAC address.
+        :paramtype mac_address: str
+        :keyword network: Virtual Network. Required.
+        :paramtype network: ~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork
+        :keyword nic_type: NIC type. Required. Known values are: "E1000", "E1000E", "PCNET32",
+         "VMXNET", "VMXNET2", and "VMXNET3".
+        :paramtype nic_type: str or ~azure.mgmt.vmwarecloudsimple.models.NICType
+        :keyword power_on_boot: Is NIC powered on/off on boot.
+        :paramtype power_on_boot: bool
+        :keyword virtual_nic_id: NIC id.
+        :paramtype virtual_nic_id: str
+        """
+        super().__init__(**kwargs)
         self.customization = customization
         self.ip_addresses = ip_addresses
         self.mac_address = mac_address

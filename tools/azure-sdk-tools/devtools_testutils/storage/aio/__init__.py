@@ -1,3 +1,3 @@
-from .asynctestcase import AsyncStorageTestCase, AsyncStorageRecordedTestCase
+from .asynctestcase import AsyncStorageRecordedTestCase
 
-__all__ = ["AsyncStorageTestCase", "AsyncStorageRecordedTestCase"]
+__all__ = ["AsyncStorageRecordedTestCase"]

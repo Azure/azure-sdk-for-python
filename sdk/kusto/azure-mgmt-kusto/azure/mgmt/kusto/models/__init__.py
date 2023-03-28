@@ -24,6 +24,7 @@ from ._models_py3 import ClusterPrincipalAssignmentCheckNameRequest
 from ._models_py3 import ClusterPrincipalAssignmentListResult
 from ._models_py3 import ClusterUpdate
 from ._models_py3 import ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties
+from ._models_py3 import CosmosDbDataConnection
 from ._models_py3 import DataConnection
 from ._models_py3 import DataConnectionCheckNameRequest
 from ._models_py3 import DataConnectionListResult
@@ -72,6 +73,8 @@ from ._models_py3 import ProxyResource
 from ._models_py3 import ReadOnlyFollowingDatabase
 from ._models_py3 import ReadWriteDatabase
 from ._models_py3 import Resource
+from ._models_py3 import ResourceSkuCapabilities
+from ._models_py3 import ResourceSkuZoneDetails
 from ._models_py3 import Script
 from ._models_py3 import ScriptCheckNameRequest
 from ._models_py3 import ScriptListResult
@@ -105,6 +108,7 @@ from ._kusto_management_client_enums import EventHubDataFormat
 from ._kusto_management_client_enums import IdentityType
 from ._kusto_management_client_enums import IotHubDataFormat
 from ._kusto_management_client_enums import Kind
+from ._kusto_management_client_enums import LanguageExtensionImageName
 from ._kusto_management_client_enums import LanguageExtensionName
 from ._kusto_management_client_enums import PrincipalType
 from ._kusto_management_client_enums import PrincipalsModificationKind
@@ -116,7 +120,7 @@ from ._kusto_management_client_enums import State
 from ._kusto_management_client_enums import Status
 from ._kusto_management_client_enums import Type
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -138,6 +142,7 @@ __all__ = [
     "ClusterPrincipalAssignmentListResult",
     "ClusterUpdate",
     "ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties",
+    "CosmosDbDataConnection",
     "DataConnection",
     "DataConnectionCheckNameRequest",
     "DataConnectionListResult",
@@ -186,6 +191,8 @@ __all__ = [
     "ReadOnlyFollowingDatabase",
     "ReadWriteDatabase",
     "Resource",
+    "ResourceSkuCapabilities",
+    "ResourceSkuZoneDetails",
     "Script",
     "ScriptCheckNameRequest",
     "ScriptListResult",
@@ -218,6 +225,7 @@ __all__ = [
     "IdentityType",
     "IotHubDataFormat",
     "Kind",
+    "LanguageExtensionImageName",
     "LanguageExtensionName",
     "PrincipalType",
     "PrincipalsModificationKind",

@@ -1,5 +1,48 @@
 # Release History
 
+## 2.0.0b1 (2022-11-01)
+
+### Features Added
+
+  - Added operation PeeringServicesOperations.initialize_connection_monitor
+  - Added operation PrefixesOperations.create_or_update
+  - Added operation PrefixesOperations.delete
+  - Added operation PrefixesOperations.get
+  - Added operation group CdnPeeringPrefixesOperations
+  - Added operation group ConnectionMonitorTestsOperations
+  - Added operation group LookingGlassOperations
+  - Added operation group PeeringServiceCountriesOperations
+  - Added operation group ReceivedRoutesOperations
+  - Added operation group RegisteredAsnsOperations
+  - Added operation group RegisteredPrefixesOperations
+  - Added operation group RpUnbilledPrefixesOperations
+  - Model DirectConnection has a new parameter error_message
+  - Model DirectConnection has a new parameter microsoft_tracking_id
+  - Model ErrorResponse has a new parameter error
+  - Model ExchangeConnection has a new parameter error_message
+  - Model Operation has a new parameter service_specification
+  - Model PeerAsn has a new parameter error_message
+  - Model PeerAsn has a new parameter peer_contact_detail
+  - Model PeeringService has a new parameter log_analytics_workspace_properties
+  - Model PeeringService has a new parameter provider_backup_peering_location
+  - Model PeeringService has a new parameter provider_primary_peering_location
+  - Model PeeringService has a new parameter sku
+  - Model PeeringServicePrefix has a new parameter error_message
+  - Model PeeringServicePrefix has a new parameter events
+  - Model PeeringServicePrefix has a new parameter peering_service_prefix_key
+  - Model PeeringServiceProvider has a new parameter peering_locations
+
+### Breaking Changes
+
+  - Model ErrorResponse no longer has parameter code
+  - Model ErrorResponse no longer has parameter message
+  - Model PeerAsn no longer has parameter peer_contact_info
+  - Operation LegacyPeeringsOperations.list has a new parameter asn
+  - Operation LegacyPeeringsOperations.list has a new parameter direct_peering_type
+  - Operation PeeringServiceLocationsOperations.list has a new parameter country
+  - Operation PrefixesOperations.list_by_peering_service has a new parameter expand
+  - Removed operation group PeeringServicePrefixesOperations
+
 ## 1.0.0 (2021-04-25)
 
 **Features**

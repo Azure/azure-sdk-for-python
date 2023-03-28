@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any
+from typing import Union, Any, Optional
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
@@ -18,6 +18,8 @@ class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
     #: This is the default version and corresponds to the Cognitive Service for Language API.
+    V2022_10_01_PREVIEW = "2022-10-01-preview"
+    #: This version corresponds to the Cognitive Service for Language API.
     V2022_05_01 = "2022-05-01"
     #: This version corresponds to Text Analytics API.
     V3_1 = "v3.1"
@@ -46,6 +48,8 @@ class TextAnalyticsClientBase:
         self,
         endpoint: str,
         credential: Union[AzureKeyCredential, TokenCredential],
+        *,
+        api_version: Optional[Union[str, TextAnalyticsApiVersion]] = None,
         **kwargs: Any
     ) -> None:
         http_logging_policy = HttpLoggingPolicy(**kwargs)
@@ -56,6 +60,9 @@ class TextAnalyticsClientBase:
                 "x-envoy-upstream-service-time",
                 "Strict-Transport-Security",
                 "x-content-type-options",
+                "warn-code",
+                "warn-agent",
+                "warn-text",
             }
         )
         http_logging_policy.allowed_query_params.update(
@@ -76,10 +83,14 @@ class TextAnalyticsClientBase:
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
+
+        self._api_version = api_version if api_version is not None else DEFAULT_API_VERSION
+        if hasattr(self._api_version, "value"):
+            self._api_version = self._api_version.value  # type: ignore
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
             credential=credential,  # type: ignore
-            api_version=kwargs.pop("api_version", DEFAULT_API_VERSION),
+            api_version=self._api_version,
             sdk_moniker=USER_AGENT,
             authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
             custom_hook_policy=kwargs.pop("custom_hook_policy", TextAnalyticsResponseHookPolicy(**kwargs)),

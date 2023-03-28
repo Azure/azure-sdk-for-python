@@ -6,7 +6,10 @@ These libraries follow the [Azure SDK Design Guidelines for Python](https://azur
 
 If you are a client library developer, please reference [client library developer reference](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md) for more information.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/) | [Package (Pypi)][package] | [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/) 
+| [Package (Pypi)][package]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-core/)
+| [API reference documentation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/)
 
 ## _Disclaimer_
 
@@ -195,11 +198,11 @@ MatchConditions is an enum to describe match conditions.
 
 ```python
 class MatchConditions(Enum):
-    Unconditionally = 1
-    IfNotModified = 2
-    IfModified = 3
-    IfPresent = 4
-    IfMissing = 5
+    Unconditionally = 1  # Matches any condition
+    IfNotModified = 2  # If the target object is not modified. Usually it maps to etag=<specific etag>
+    IfModified = 3  # Only if the target object is modified. Usually it maps to etag!=<specific etag>
+    IfPresent = 4   # If the target object exists. Usually it maps to etag='*'
+    IfMissing = 5   # If the target object does not exist. Usually it maps to etag!='*'
 ```
 
 #### CaseInsensitiveEnumMeta

@@ -5,4 +5,5 @@ package_pprint_name = "Cognitive Services Management"
 package_doc_id = "cognitive-services"
 is_stable = true
 is_arm = true
-sample_link = "cognitiveservices"
+sample_link = ""
+title = "CognitiveServicesManagementClient"

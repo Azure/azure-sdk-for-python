@@ -8,16 +8,22 @@
 
 from ._operations import Operations
 from ._cloud_manifest_file_operations import CloudManifestFileOperations
+from ._deployment_license_operations import DeploymentLicenseOperations
 from ._customer_subscriptions_operations import CustomerSubscriptionsOperations
 from ._products_operations import ProductsOperations
 from ._registrations_operations import RegistrationsOperations
-from ._linked_subscriptions_operations import LinkedSubscriptionsOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Operations',
-    'CloudManifestFileOperations',
-    'CustomerSubscriptionsOperations',
-    'ProductsOperations',
-    'RegistrationsOperations',
-    'LinkedSubscriptionsOperations',
+    "Operations",
+    "CloudManifestFileOperations",
+    "DeploymentLicenseOperations",
+    "CustomerSubscriptionsOperations",
+    "ProductsOperations",
+    "RegistrationsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

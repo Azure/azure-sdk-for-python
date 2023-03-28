@@ -26,17 +26,14 @@ class PatchedBaseSchema(Schema):
 
     @post_dump
     def remove_none(self, data, **kwargs):
-        """Prevents from dumping attributes that are None, thus making the dump
-        more compact."""
+        """Prevents from dumping attributes that are None, thus making the dump more compact."""
         return OrderedDict((key, value) for key, value in data.items() if value is not None)
 
 
 class PatchedSchemaMeta(SchemaMeta):
-    """Currently there is an open issue in marshmallow, that the "unknown"
-    property is not inherited.
+    """Currently there is an open issue in marshmallow, that the "unknown" property is not inherited.
 
-    We use a metaclass to inject a Meta class into all our Schema
-    classes.
+    We use a metaclass to inject a Meta class into all our Schema classes.
     """
 
     def __new__(cls, name, bases, dct):
@@ -49,6 +46,7 @@ class PatchedSchemaMeta(SchemaMeta):
             if not hasattr(meta, "ordered"):
                 dct["Meta"].ordered = True
 
-        bases = bases + (PatchedBaseSchema,)
+        if PatchedBaseSchema not in bases:
+            bases = bases + (PatchedBaseSchema,)
         klass = super().__new__(cls, name, bases, dct)
         return klass

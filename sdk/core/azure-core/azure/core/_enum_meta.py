@@ -23,8 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-
-from enum import EnumMeta
+from typing import Any
+from enum import EnumMeta, Enum
 
 
 class CaseInsensitiveEnumMeta(EnumMeta):
@@ -43,11 +43,11 @@ class CaseInsensitiveEnumMeta(EnumMeta):
 
     """
 
-    def __getitem__(cls, name):
+    def __getitem__(cls, name: str) -> Any:
         # disabling pylint bc of pylint bug https://github.com/PyCQA/astroid/issues/713
         return super(CaseInsensitiveEnumMeta, cls).__getitem__(name.upper())  # pylint: disable=no-value-for-parameter
 
-    def __getattr__(cls, name):
+    def __getattr__(cls, name: str) -> Enum:
         """Return the enum member matching `name`
         We use __getattr__ instead of descriptors or inserting into the enum
         class' __dict__ in order to support `name` and `value` being both

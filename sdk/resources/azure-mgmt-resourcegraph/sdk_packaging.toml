@@ -4,4 +4,5 @@ package_pprint_name = "Resource Graph"
 package_doc_id = "resource-graph"
 is_stable = false
 is_arm = true
-sample_link = "resourcegraph"
+sample_link = ""
+title = "ResourceGraphClient"

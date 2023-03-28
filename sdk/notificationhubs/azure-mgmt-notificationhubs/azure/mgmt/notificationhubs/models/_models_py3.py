@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._notification_hubs_management_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AdmCredential(msrest.serialization.Model):
+class AdmCredential(_serialization.Model):
     """Description of a NotificationHub AdmCredential.
 
     :ivar client_id: The client identifier.
@@ -27,9 +36,9 @@ class AdmCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'properties.clientId', 'type': 'str'},
-        'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
-        'auth_token_url': {'key': 'properties.authTokenUrl', 'type': 'str'},
+        "client_id": {"key": "properties.clientId", "type": "str"},
+        "client_secret": {"key": "properties.clientSecret", "type": "str"},
+        "auth_token_url": {"key": "properties.authTokenUrl", "type": "str"},
     }
 
     def __init__(
@@ -48,13 +57,13 @@ class AdmCredential(msrest.serialization.Model):
         :keyword auth_token_url: The URL of the authorization token.
         :paramtype auth_token_url: str
         """
-        super(AdmCredential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
         self.auth_token_url = auth_token_url
 
 
-class ApnsCredential(msrest.serialization.Model):
+class ApnsCredential(_serialization.Model):
     """Description of a NotificationHub ApnsCredential.
 
     :ivar apns_certificate: The APNS certificate. Specify if using Certificate Authentication Mode.
@@ -85,14 +94,14 @@ class ApnsCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'apns_certificate': {'key': 'properties.apnsCertificate', 'type': 'str'},
-        'certificate_key': {'key': 'properties.certificateKey', 'type': 'str'},
-        'endpoint': {'key': 'properties.endpoint', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'key_id': {'key': 'properties.keyId', 'type': 'str'},
-        'app_name': {'key': 'properties.appName', 'type': 'str'},
-        'app_id': {'key': 'properties.appId', 'type': 'str'},
-        'token': {'key': 'properties.token', 'type': 'str'},
+        "apns_certificate": {"key": "properties.apnsCertificate", "type": "str"},
+        "certificate_key": {"key": "properties.certificateKey", "type": "str"},
+        "endpoint": {"key": "properties.endpoint", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
+        "key_id": {"key": "properties.keyId", "type": "str"},
+        "app_name": {"key": "properties.appName", "type": "str"},
+        "app_id": {"key": "properties.appId", "type": "str"},
+        "token": {"key": "properties.token", "type": "str"},
     }
 
     def __init__(
@@ -136,7 +145,7 @@ class ApnsCredential(msrest.serialization.Model):
          if using Token Authentication Mode.
         :paramtype token: str
         """
-        super(ApnsCredential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.apns_certificate = apns_certificate
         self.certificate_key = certificate_key
         self.endpoint = endpoint
@@ -147,7 +156,7 @@ class ApnsCredential(msrest.serialization.Model):
         self.token = token
 
 
-class BaiduCredential(msrest.serialization.Model):
+class BaiduCredential(_serialization.Model):
     """Description of a NotificationHub BaiduCredential.
 
     :ivar baidu_api_key: Baidu Api Key.
@@ -159,9 +168,9 @@ class BaiduCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'baidu_api_key': {'key': 'properties.baiduApiKey', 'type': 'str'},
-        'baidu_end_point': {'key': 'properties.baiduEndPoint', 'type': 'str'},
-        'baidu_secret_key': {'key': 'properties.baiduSecretKey', 'type': 'str'},
+        "baidu_api_key": {"key": "properties.baiduApiKey", "type": "str"},
+        "baidu_end_point": {"key": "properties.baiduEndPoint", "type": "str"},
+        "baidu_secret_key": {"key": "properties.baiduSecretKey", "type": "str"},
     }
 
     def __init__(
@@ -180,13 +189,13 @@ class BaiduCredential(msrest.serialization.Model):
         :keyword baidu_secret_key: Baidu Secret Key.
         :paramtype baidu_secret_key: str
         """
-        super(BaiduCredential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.baidu_api_key = baidu_api_key
         self.baidu_end_point = baidu_end_point
         self.baidu_secret_key = baidu_secret_key
 
 
-class CheckAvailabilityParameters(msrest.serialization.Model):
+class CheckAvailabilityParameters(_serialization.Model):
     """Parameters supplied to the Check Name Availability for Namespace and NotificationHubs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -195,13 +204,13 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar name: Required. Resource name.
+    :ivar name: Resource name. Required.
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -211,19 +220,19 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'required': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"required": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "is_availiable": {"key": "isAvailiable", "type": "bool"},
     }
 
     def __init__(
@@ -232,16 +241,16 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
         name: str,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         is_availiable: Optional[bool] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Resource name.
+        :keyword name: Resource name. Required.
         :paramtype name: str
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -249,7 +258,7 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
          Namespace/NotificationHub. Otherwise false.
         :paramtype is_availiable: bool
         """
-        super(CheckAvailabilityParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = name
         self.type = None
@@ -259,7 +268,7 @@ class CheckAvailabilityParameters(msrest.serialization.Model):
         self.is_availiable = is_availiable
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -272,25 +281,25 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
     def __init__(
@@ -298,18 +307,18 @@ class Resource(msrest.serialization.Model):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -331,7 +340,7 @@ class CheckAvailabilityResult(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -341,19 +350,19 @@ class CheckAvailabilityResult(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'is_availiable': {'key': 'isAvailiable', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "is_availiable": {"key": "isAvailiable", "type": "bool"},
     }
 
     def __init__(
@@ -361,14 +370,14 @@ class CheckAvailabilityResult(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         is_availiable: Optional[bool] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -376,7 +385,7 @@ class CheckAvailabilityResult(Resource):
          Namespace/NotificationHub. Otherwise false.
         :paramtype is_availiable: bool
         """
-        super(CheckAvailabilityResult, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.is_availiable = is_availiable
 
 
@@ -393,7 +402,7 @@ class DebugSendResponse(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -402,25 +411,25 @@ class DebugSendResponse(Resource):
     :ivar failure: send failure.
     :vartype failure: float
     :ivar results: actual failure description.
-    :vartype results: any
+    :vartype results: JSON
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'success': {'key': 'properties.success', 'type': 'float'},
-        'failure': {'key': 'properties.failure', 'type': 'float'},
-        'results': {'key': 'properties.results', 'type': 'object'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "success": {"key": "properties.success", "type": "float"},
+        "failure": {"key": "properties.failure", "type": "float"},
+        "results": {"key": "properties.results", "type": "object"},
     }
 
     def __init__(
@@ -428,16 +437,16 @@ class DebugSendResponse(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         success: Optional[float] = None,
         failure: Optional[float] = None,
-        results: Optional[Any] = None,
+        results: Optional[JSON] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -446,15 +455,15 @@ class DebugSendResponse(Resource):
         :keyword failure: send failure.
         :paramtype failure: float
         :keyword results: actual failure description.
-        :paramtype results: any
+        :paramtype results: JSON
         """
-        super(DebugSendResponse, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.success = success
         self.failure = failure
         self.results = results
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response indicates NotificationHubs service is not able to process the incoming request. The reason is provided in the error message.
 
     :ivar code: Error code.
@@ -464,29 +473,23 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class GcmCredential(msrest.serialization.Model):
+class GcmCredential(_serialization.Model):
     """Description of a NotificationHub GcmCredential.
 
     :ivar gcm_endpoint: The FCM legacy endpoint. Default value is
@@ -497,17 +500,11 @@ class GcmCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'gcm_endpoint': {'key': 'properties.gcmEndpoint', 'type': 'str'},
-        'google_api_key': {'key': 'properties.googleApiKey', 'type': 'str'},
+        "gcm_endpoint": {"key": "properties.gcmEndpoint", "type": "str"},
+        "google_api_key": {"key": "properties.googleApiKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        gcm_endpoint: Optional[str] = None,
-        google_api_key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, gcm_endpoint: Optional[str] = None, google_api_key: Optional[str] = None, **kwargs):
         """
         :keyword gcm_endpoint: The FCM legacy endpoint. Default value is
          'https://fcm.googleapis.com/fcm/send'.
@@ -515,12 +512,12 @@ class GcmCredential(msrest.serialization.Model):
         :keyword google_api_key: The Google API key.
         :paramtype google_api_key: str
         """
-        super(GcmCredential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.gcm_endpoint = gcm_endpoint
         self.google_api_key = google_api_key
 
 
-class MpnsCredential(msrest.serialization.Model):
+class MpnsCredential(_serialization.Model):
     """Description of a NotificationHub MpnsCredential.
 
     :ivar mpns_certificate: The MPNS certificate.
@@ -532,9 +529,9 @@ class MpnsCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mpns_certificate': {'key': 'properties.mpnsCertificate', 'type': 'str'},
-        'certificate_key': {'key': 'properties.certificateKey', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
+        "mpns_certificate": {"key": "properties.mpnsCertificate", "type": "str"},
+        "certificate_key": {"key": "properties.certificateKey", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
     }
 
     def __init__(
@@ -553,13 +550,13 @@ class MpnsCredential(msrest.serialization.Model):
         :keyword thumbprint: The MPNS certificate Thumbprint.
         :paramtype thumbprint: str
         """
-        super(MpnsCredential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.mpns_certificate = mpns_certificate
         self.certificate_key = certificate_key
         self.thumbprint = thumbprint
 
 
-class NamespaceCreateOrUpdateParameters(Resource):
+class NamespaceCreateOrUpdateParameters(Resource):  # pylint: disable=too-many-instance-attributes
     """Parameters supplied to the CreateOrUpdate Namespace operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -572,7 +569,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -606,39 +603,38 @@ class NamespaceCreateOrUpdateParameters(Resource):
     :vartype critical: bool
     :ivar data_center: Data center for the namespace.
     :vartype data_center: str
-    :ivar namespace_type: The namespace type. Possible values include: "Messaging",
-     "NotificationHub".
+    :ivar namespace_type: The namespace type. Known values are: "Messaging" and "NotificationHub".
     :vartype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'metric_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "metric_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'region': {'key': 'properties.region', 'type': 'str'},
-        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
-        'scale_unit': {'key': 'properties.scaleUnit', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'critical': {'key': 'properties.critical', 'type': 'bool'},
-        'data_center': {'key': 'properties.dataCenter', 'type': 'str'},
-        'namespace_type': {'key': 'properties.namespaceType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "region": {"key": "properties.region", "type": "str"},
+        "metric_id": {"key": "properties.metricId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "updated_at": {"key": "properties.updatedAt", "type": "iso-8601"},
+        "service_bus_endpoint": {"key": "properties.serviceBusEndpoint", "type": "str"},
+        "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
+        "scale_unit": {"key": "properties.scaleUnit", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "critical": {"key": "properties.critical", "type": "bool"},
+        "data_center": {"key": "properties.dataCenter", "type": "str"},
+        "namespace_type": {"key": "properties.namespaceType", "type": "str"},
     }
 
     def __init__(
@@ -646,7 +642,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         region: Optional[str] = None,
@@ -659,13 +655,13 @@ class NamespaceCreateOrUpdateParameters(Resource):
         enabled: Optional[bool] = None,
         critical: Optional[bool] = None,
         data_center: Optional[str] = None,
-        namespace_type: Optional[Union[str, "NamespaceType"]] = None,
+        namespace_type: Optional[Union[str, "_models.NamespaceType"]] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -697,11 +693,11 @@ class NamespaceCreateOrUpdateParameters(Resource):
         :paramtype critical: bool
         :keyword data_center: Data center for the namespace.
         :paramtype data_center: str
-        :keyword namespace_type: The namespace type. Possible values include: "Messaging",
+        :keyword namespace_type: The namespace type. Known values are: "Messaging" and
          "NotificationHub".
         :paramtype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
         """
-        super(NamespaceCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.name_properties_name = name_properties_name
         self.provisioning_state = provisioning_state
         self.region = region
@@ -718,7 +714,7 @@ class NamespaceCreateOrUpdateParameters(Resource):
         self.namespace_type = namespace_type
 
 
-class NamespaceListResult(msrest.serialization.Model):
+class NamespaceListResult(_serialization.Model):
     """The response of the List Namespace operation.
 
     :ivar value: Result of the List Namespace operation.
@@ -729,16 +725,12 @@ class NamespaceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NamespaceResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NamespaceResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NamespaceResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NamespaceResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Result of the List Namespace operation.
@@ -747,44 +739,38 @@ class NamespaceListResult(msrest.serialization.Model):
          list of Namespaces.
         :paramtype next_link: str
         """
-        super(NamespaceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NamespacePatchParameters(msrest.serialization.Model):
+class NamespacePatchParameters(_serialization.Model):
     """Parameters supplied to the Patch Namespace operation.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, sku: Optional["_models.Sku"] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
         """
-        super(NamespacePatchParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.sku = sku
 
 
-class NamespaceResource(Resource):
+class NamespaceResource(Resource):  # pylint: disable=too-many-instance-attributes
     """Description of a Namespace resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -797,7 +783,7 @@ class NamespaceResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -831,39 +817,38 @@ class NamespaceResource(Resource):
     :vartype critical: bool
     :ivar data_center: Data center for the namespace.
     :vartype data_center: str
-    :ivar namespace_type: The namespace type. Possible values include: "Messaging",
-     "NotificationHub".
+    :ivar namespace_type: The namespace type. Known values are: "Messaging" and "NotificationHub".
     :vartype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'metric_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "metric_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'region': {'key': 'properties.region', 'type': 'str'},
-        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
-        'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
-        'scale_unit': {'key': 'properties.scaleUnit', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'critical': {'key': 'properties.critical', 'type': 'bool'},
-        'data_center': {'key': 'properties.dataCenter', 'type': 'str'},
-        'namespace_type': {'key': 'properties.namespaceType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "region": {"key": "properties.region", "type": "str"},
+        "metric_id": {"key": "properties.metricId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "updated_at": {"key": "properties.updatedAt", "type": "iso-8601"},
+        "service_bus_endpoint": {"key": "properties.serviceBusEndpoint", "type": "str"},
+        "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
+        "scale_unit": {"key": "properties.scaleUnit", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "critical": {"key": "properties.critical", "type": "bool"},
+        "data_center": {"key": "properties.dataCenter", "type": "str"},
+        "namespace_type": {"key": "properties.namespaceType", "type": "str"},
     }
 
     def __init__(
@@ -871,7 +856,7 @@ class NamespaceResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         provisioning_state: Optional[str] = None,
         region: Optional[str] = None,
@@ -884,13 +869,13 @@ class NamespaceResource(Resource):
         enabled: Optional[bool] = None,
         critical: Optional[bool] = None,
         data_center: Optional[str] = None,
-        namespace_type: Optional[Union[str, "NamespaceType"]] = None,
+        namespace_type: Optional[Union[str, "_models.NamespaceType"]] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -922,11 +907,11 @@ class NamespaceResource(Resource):
         :paramtype critical: bool
         :keyword data_center: Data center for the namespace.
         :paramtype data_center: str
-        :keyword namespace_type: The namespace type. Possible values include: "Messaging",
+        :keyword namespace_type: The namespace type. Known values are: "Messaging" and
          "NotificationHub".
         :paramtype namespace_type: str or ~azure.mgmt.notificationhubs.models.NamespaceType
         """
-        super(NamespaceResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.name_properties_name = name_properties_name
         self.provisioning_state = provisioning_state
         self.region = region
@@ -943,7 +928,7 @@ class NamespaceResource(Resource):
         self.namespace_type = namespace_type
 
 
-class NotificationHubCreateOrUpdateParameters(Resource):
+class NotificationHubCreateOrUpdateParameters(Resource):  # pylint: disable=too-many-instance-attributes
     """Parameters supplied to the CreateOrUpdate NotificationHub operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -956,7 +941,7 @@ class NotificationHubCreateOrUpdateParameters(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -982,27 +967,30 @@ class NotificationHubCreateOrUpdateParameters(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'registration_ttl': {'key': 'properties.registrationTtl', 'type': 'str'},
-        'authorization_rules': {'key': 'properties.authorizationRules', 'type': '[SharedAccessAuthorizationRuleProperties]'},
-        'apns_credential': {'key': 'properties.apnsCredential', 'type': 'ApnsCredential'},
-        'wns_credential': {'key': 'properties.wnsCredential', 'type': 'WnsCredential'},
-        'gcm_credential': {'key': 'properties.gcmCredential', 'type': 'GcmCredential'},
-        'mpns_credential': {'key': 'properties.mpnsCredential', 'type': 'MpnsCredential'},
-        'adm_credential': {'key': 'properties.admCredential', 'type': 'AdmCredential'},
-        'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "registration_ttl": {"key": "properties.registrationTtl", "type": "str"},
+        "authorization_rules": {
+            "key": "properties.authorizationRules",
+            "type": "[SharedAccessAuthorizationRuleProperties]",
+        },
+        "apns_credential": {"key": "properties.apnsCredential", "type": "ApnsCredential"},
+        "wns_credential": {"key": "properties.wnsCredential", "type": "WnsCredential"},
+        "gcm_credential": {"key": "properties.gcmCredential", "type": "GcmCredential"},
+        "mpns_credential": {"key": "properties.mpnsCredential", "type": "MpnsCredential"},
+        "adm_credential": {"key": "properties.admCredential", "type": "AdmCredential"},
+        "baidu_credential": {"key": "properties.baiduCredential", "type": "BaiduCredential"},
     }
 
     def __init__(
@@ -1010,22 +998,22 @@ class NotificationHubCreateOrUpdateParameters(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         registration_ttl: Optional[str] = None,
-        authorization_rules: Optional[List["SharedAccessAuthorizationRuleProperties"]] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        authorization_rules: Optional[List["_models.SharedAccessAuthorizationRuleProperties"]] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1049,7 +1037,7 @@ class NotificationHubCreateOrUpdateParameters(Resource):
         :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
         :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
         """
-        super(NotificationHubCreateOrUpdateParameters, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.name_properties_name = name_properties_name
         self.registration_ttl = registration_ttl
         self.authorization_rules = authorization_rules
@@ -1061,7 +1049,7 @@ class NotificationHubCreateOrUpdateParameters(Resource):
         self.baidu_credential = baidu_credential
 
 
-class NotificationHubListResult(msrest.serialization.Model):
+class NotificationHubListResult(_serialization.Model):
     """The response of the List NotificationHub operation.
 
     :ivar value: Result of the List NotificationHub operation.
@@ -1072,14 +1060,14 @@ class NotificationHubListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NotificationHubResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NotificationHubResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["NotificationHubResource"]] = None,
+        value: Optional[List["_models.NotificationHubResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1090,12 +1078,12 @@ class NotificationHubListResult(msrest.serialization.Model):
          list of NotificationHub.
         :paramtype next_link: str
         """
-        super(NotificationHubListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NotificationHubPatchParameters(Resource):
+class NotificationHubPatchParameters(Resource):  # pylint: disable=too-many-instance-attributes
     """Parameters supplied to the patch NotificationHub operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1108,7 +1096,7 @@ class NotificationHubPatchParameters(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1134,27 +1122,30 @@ class NotificationHubPatchParameters(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'registration_ttl': {'key': 'properties.registrationTtl', 'type': 'str'},
-        'authorization_rules': {'key': 'properties.authorizationRules', 'type': '[SharedAccessAuthorizationRuleProperties]'},
-        'apns_credential': {'key': 'properties.apnsCredential', 'type': 'ApnsCredential'},
-        'wns_credential': {'key': 'properties.wnsCredential', 'type': 'WnsCredential'},
-        'gcm_credential': {'key': 'properties.gcmCredential', 'type': 'GcmCredential'},
-        'mpns_credential': {'key': 'properties.mpnsCredential', 'type': 'MpnsCredential'},
-        'adm_credential': {'key': 'properties.admCredential', 'type': 'AdmCredential'},
-        'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "registration_ttl": {"key": "properties.registrationTtl", "type": "str"},
+        "authorization_rules": {
+            "key": "properties.authorizationRules",
+            "type": "[SharedAccessAuthorizationRuleProperties]",
+        },
+        "apns_credential": {"key": "properties.apnsCredential", "type": "ApnsCredential"},
+        "wns_credential": {"key": "properties.wnsCredential", "type": "WnsCredential"},
+        "gcm_credential": {"key": "properties.gcmCredential", "type": "GcmCredential"},
+        "mpns_credential": {"key": "properties.mpnsCredential", "type": "MpnsCredential"},
+        "adm_credential": {"key": "properties.admCredential", "type": "AdmCredential"},
+        "baidu_credential": {"key": "properties.baiduCredential", "type": "BaiduCredential"},
     }
 
     def __init__(
@@ -1162,22 +1153,22 @@ class NotificationHubPatchParameters(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         registration_ttl: Optional[str] = None,
-        authorization_rules: Optional[List["SharedAccessAuthorizationRuleProperties"]] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        authorization_rules: Optional[List["_models.SharedAccessAuthorizationRuleProperties"]] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1201,7 +1192,7 @@ class NotificationHubPatchParameters(Resource):
         :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
         :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
         """
-        super(NotificationHubPatchParameters, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.name_properties_name = name_properties_name
         self.registration_ttl = registration_ttl
         self.authorization_rules = authorization_rules
@@ -1213,7 +1204,7 @@ class NotificationHubPatchParameters(Resource):
         self.baidu_credential = baidu_credential
 
 
-class NotificationHubResource(Resource):
+class NotificationHubResource(Resource):  # pylint: disable=too-many-instance-attributes
     """Description of a NotificationHub Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1226,7 +1217,7 @@ class NotificationHubResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1252,27 +1243,30 @@ class NotificationHubResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'name_properties_name': {'key': 'properties.name', 'type': 'str'},
-        'registration_ttl': {'key': 'properties.registrationTtl', 'type': 'str'},
-        'authorization_rules': {'key': 'properties.authorizationRules', 'type': '[SharedAccessAuthorizationRuleProperties]'},
-        'apns_credential': {'key': 'properties.apnsCredential', 'type': 'ApnsCredential'},
-        'wns_credential': {'key': 'properties.wnsCredential', 'type': 'WnsCredential'},
-        'gcm_credential': {'key': 'properties.gcmCredential', 'type': 'GcmCredential'},
-        'mpns_credential': {'key': 'properties.mpnsCredential', 'type': 'MpnsCredential'},
-        'adm_credential': {'key': 'properties.admCredential', 'type': 'AdmCredential'},
-        'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "name_properties_name": {"key": "properties.name", "type": "str"},
+        "registration_ttl": {"key": "properties.registrationTtl", "type": "str"},
+        "authorization_rules": {
+            "key": "properties.authorizationRules",
+            "type": "[SharedAccessAuthorizationRuleProperties]",
+        },
+        "apns_credential": {"key": "properties.apnsCredential", "type": "ApnsCredential"},
+        "wns_credential": {"key": "properties.wnsCredential", "type": "WnsCredential"},
+        "gcm_credential": {"key": "properties.gcmCredential", "type": "GcmCredential"},
+        "mpns_credential": {"key": "properties.mpnsCredential", "type": "MpnsCredential"},
+        "adm_credential": {"key": "properties.admCredential", "type": "AdmCredential"},
+        "baidu_credential": {"key": "properties.baiduCredential", "type": "BaiduCredential"},
     }
 
     def __init__(
@@ -1280,22 +1274,22 @@ class NotificationHubResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
+        sku: Optional["_models.Sku"] = None,
         name_properties_name: Optional[str] = None,
         registration_ttl: Optional[str] = None,
-        authorization_rules: Optional[List["SharedAccessAuthorizationRuleProperties"]] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        authorization_rules: Optional[List["_models.SharedAccessAuthorizationRuleProperties"]] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1319,7 +1313,7 @@ class NotificationHubResource(Resource):
         :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
         :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
         """
-        super(NotificationHubResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.name_properties_name = name_properties_name
         self.registration_ttl = registration_ttl
         self.authorization_rules = authorization_rules
@@ -1331,7 +1325,7 @@ class NotificationHubResource(Resource):
         self.baidu_credential = baidu_credential
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """A NotificationHubs REST API operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1343,30 +1337,25 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.notificationhubs.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1380,30 +1369,26 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list NotificationHubs operations. It contains a list of operations and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1416,27 +1401,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PnsCredentialsResource(Resource):
+class PnsCredentialsResource(Resource):  # pylint: disable=too-many-instance-attributes
     """Description of a NotificationHub PNS Credentials.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1449,7 +1430,7 @@ class PnsCredentialsResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1468,24 +1449,24 @@ class PnsCredentialsResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'apns_credential': {'key': 'properties.apnsCredential', 'type': 'ApnsCredential'},
-        'wns_credential': {'key': 'properties.wnsCredential', 'type': 'WnsCredential'},
-        'gcm_credential': {'key': 'properties.gcmCredential', 'type': 'GcmCredential'},
-        'mpns_credential': {'key': 'properties.mpnsCredential', 'type': 'MpnsCredential'},
-        'adm_credential': {'key': 'properties.admCredential', 'type': 'AdmCredential'},
-        'baidu_credential': {'key': 'properties.baiduCredential', 'type': 'BaiduCredential'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "apns_credential": {"key": "properties.apnsCredential", "type": "ApnsCredential"},
+        "wns_credential": {"key": "properties.wnsCredential", "type": "WnsCredential"},
+        "gcm_credential": {"key": "properties.gcmCredential", "type": "GcmCredential"},
+        "mpns_credential": {"key": "properties.mpnsCredential", "type": "MpnsCredential"},
+        "adm_credential": {"key": "properties.admCredential", "type": "AdmCredential"},
+        "baidu_credential": {"key": "properties.baiduCredential", "type": "BaiduCredential"},
     }
 
     def __init__(
@@ -1493,19 +1474,19 @@ class PnsCredentialsResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        apns_credential: Optional["ApnsCredential"] = None,
-        wns_credential: Optional["WnsCredential"] = None,
-        gcm_credential: Optional["GcmCredential"] = None,
-        mpns_credential: Optional["MpnsCredential"] = None,
-        adm_credential: Optional["AdmCredential"] = None,
-        baidu_credential: Optional["BaiduCredential"] = None,
+        sku: Optional["_models.Sku"] = None,
+        apns_credential: Optional["_models.ApnsCredential"] = None,
+        wns_credential: Optional["_models.WnsCredential"] = None,
+        gcm_credential: Optional["_models.GcmCredential"] = None,
+        mpns_credential: Optional["_models.MpnsCredential"] = None,
+        adm_credential: Optional["_models.AdmCredential"] = None,
+        baidu_credential: Optional["_models.BaiduCredential"] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1522,7 +1503,7 @@ class PnsCredentialsResource(Resource):
         :keyword baidu_credential: The BaiduCredential of the created NotificationHub.
         :paramtype baidu_credential: ~azure.mgmt.notificationhubs.models.BaiduCredential
         """
-        super(PnsCredentialsResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.apns_credential = apns_credential
         self.wns_credential = wns_credential
         self.gcm_credential = gcm_credential
@@ -1531,7 +1512,7 @@ class PnsCredentialsResource(Resource):
         self.baidu_credential = baidu_credential
 
 
-class PolicykeyResource(msrest.serialization.Model):
+class PolicykeyResource(_serialization.Model):
     """Namespace/NotificationHub Regenerate Keys.
 
     :ivar policy_key: Name of the key that has to be regenerated for the Namespace/Notification Hub
@@ -1540,25 +1521,20 @@ class PolicykeyResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'policy_key': {'key': 'policyKey', 'type': 'str'},
+        "policy_key": {"key": "policyKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        policy_key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, policy_key: Optional[str] = None, **kwargs):
         """
         :keyword policy_key: Name of the key that has to be regenerated for the Namespace/Notification
          Hub Authorization Rule. The value can be Primary Key/Secondary Key.
         :paramtype policy_key: str
         """
-        super(PolicykeyResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.policy_key = policy_key
 
 
-class ResourceListKeys(msrest.serialization.Model):
+class ResourceListKeys(_serialization.Model):
     """Namespace/NotificationHub Connection String.
 
     :ivar primary_connection_string: PrimaryConnectionString of the AuthorizationRule.
@@ -1574,11 +1550,11 @@ class ResourceListKeys(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
-        'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        "primary_connection_string": {"key": "primaryConnectionString", "type": "str"},
+        "secondary_connection_string": {"key": "secondaryConnectionString", "type": "str"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
     }
 
     def __init__(
@@ -1604,7 +1580,7 @@ class ResourceListKeys(msrest.serialization.Model):
         :keyword key_name: KeyName of the created AuthorizationRule.
         :paramtype key_name: str
         """
-        super(ResourceListKeys, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
         self.primary_key = primary_key
@@ -1612,40 +1588,35 @@ class ResourceListKeys(msrest.serialization.Model):
         self.key_name = key_name
 
 
-class SharedAccessAuthorizationRuleCreateOrUpdateParameters(msrest.serialization.Model):
+class SharedAccessAuthorizationRuleCreateOrUpdateParameters(_serialization.Model):
     """Parameters supplied to the CreateOrUpdate Namespace AuthorizationRules.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar properties: Required. Properties of the Namespace AuthorizationRules.
+    :ivar properties: Properties of the Namespace AuthorizationRules. Required.
     :vartype properties:
      ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
     """
 
     _validation = {
-        'properties': {'required': True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'SharedAccessAuthorizationRuleProperties'},
+        "properties": {"key": "properties", "type": "SharedAccessAuthorizationRuleProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "SharedAccessAuthorizationRuleProperties",
-        **kwargs
-    ):
+    def __init__(self, *, properties: "_models.SharedAccessAuthorizationRuleProperties", **kwargs):
         """
-        :keyword properties: Required. Properties of the Namespace AuthorizationRules.
+        :keyword properties: Properties of the Namespace AuthorizationRules. Required.
         :paramtype properties:
          ~azure.mgmt.notificationhubs.models.SharedAccessAuthorizationRuleProperties
         """
-        super(SharedAccessAuthorizationRuleCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
+class SharedAccessAuthorizationRuleListResult(_serialization.Model):
     """The response of the List Namespace operation.
 
     :ivar value: Result of the List AuthorizationRules operation.
@@ -1656,14 +1627,14 @@ class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedAccessAuthorizationRuleResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedAccessAuthorizationRuleResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SharedAccessAuthorizationRuleResource"]] = None,
+        value: Optional[List["_models.SharedAccessAuthorizationRuleResource"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
@@ -1675,12 +1646,12 @@ class SharedAccessAuthorizationRuleListResult(msrest.serialization.Model):
          list of AuthorizationRules.
         :paramtype next_link: str
         """
-        super(SharedAccessAuthorizationRuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SharedAccessAuthorizationRuleProperties(msrest.serialization.Model):
+class SharedAccessAuthorizationRuleProperties(_serialization.Model):
     """SharedAccessAuthorizationRule properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1708,39 +1679,34 @@ class SharedAccessAuthorizationRuleProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'primary_key': {'readonly': True},
-        'secondary_key': {'readonly': True},
-        'key_name': {'readonly': True},
-        'claim_type': {'readonly': True},
-        'claim_value': {'readonly': True},
-        'modified_time': {'readonly': True},
-        'created_time': {'readonly': True},
-        'revision': {'readonly': True},
+        "primary_key": {"readonly": True},
+        "secondary_key": {"readonly": True},
+        "key_name": {"readonly": True},
+        "claim_type": {"readonly": True},
+        "claim_value": {"readonly": True},
+        "modified_time": {"readonly": True},
+        "created_time": {"readonly": True},
+        "revision": {"readonly": True},
     }
 
     _attribute_map = {
-        'rights': {'key': 'rights', 'type': '[str]'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'claim_type': {'key': 'claimType', 'type': 'str'},
-        'claim_value': {'key': 'claimValue', 'type': 'str'},
-        'modified_time': {'key': 'modifiedTime', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'str'},
-        'revision': {'key': 'revision', 'type': 'int'},
+        "rights": {"key": "rights", "type": "[str]"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
+        "claim_type": {"key": "claimType", "type": "str"},
+        "claim_value": {"key": "claimValue", "type": "str"},
+        "modified_time": {"key": "modifiedTime", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "str"},
+        "revision": {"key": "revision", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        rights: Optional[List[Union[str, "AccessRights"]]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rights: Optional[List[Union[str, "_models.AccessRights"]]] = None, **kwargs):
         """
         :keyword rights: The rights associated with the rule.
         :paramtype rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
         """
-        super(SharedAccessAuthorizationRuleProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rights = rights
         self.primary_key = None
         self.secondary_key = None
@@ -1752,7 +1718,7 @@ class SharedAccessAuthorizationRuleProperties(msrest.serialization.Model):
         self.revision = None
 
 
-class SharedAccessAuthorizationRuleResource(Resource):
+class SharedAccessAuthorizationRuleResource(Resource):  # pylint: disable=too-many-instance-attributes
     """Description of a Namespace AuthorizationRules.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1765,7 +1731,7 @@ class SharedAccessAuthorizationRuleResource(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the created namespace.
     :vartype sku: ~azure.mgmt.notificationhubs.models.Sku
@@ -1792,35 +1758,35 @@ class SharedAccessAuthorizationRuleResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'primary_key': {'readonly': True},
-        'secondary_key': {'readonly': True},
-        'key_name': {'readonly': True},
-        'claim_type': {'readonly': True},
-        'claim_value': {'readonly': True},
-        'modified_time': {'readonly': True},
-        'created_time': {'readonly': True},
-        'revision': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "primary_key": {"readonly": True},
+        "secondary_key": {"readonly": True},
+        "key_name": {"readonly": True},
+        "claim_type": {"readonly": True},
+        "claim_value": {"readonly": True},
+        "modified_time": {"readonly": True},
+        "created_time": {"readonly": True},
+        "revision": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'rights': {'key': 'properties.rights', 'type': '[str]'},
-        'primary_key': {'key': 'properties.primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'properties.secondaryKey', 'type': 'str'},
-        'key_name': {'key': 'properties.keyName', 'type': 'str'},
-        'claim_type': {'key': 'properties.claimType', 'type': 'str'},
-        'claim_value': {'key': 'properties.claimValue', 'type': 'str'},
-        'modified_time': {'key': 'properties.modifiedTime', 'type': 'str'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'str'},
-        'revision': {'key': 'properties.revision', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "rights": {"key": "properties.rights", "type": "[str]"},
+        "primary_key": {"key": "properties.primaryKey", "type": "str"},
+        "secondary_key": {"key": "properties.secondaryKey", "type": "str"},
+        "key_name": {"key": "properties.keyName", "type": "str"},
+        "claim_type": {"key": "properties.claimType", "type": "str"},
+        "claim_value": {"key": "properties.claimValue", "type": "str"},
+        "modified_time": {"key": "properties.modifiedTime", "type": "str"},
+        "created_time": {"key": "properties.createdTime", "type": "str"},
+        "revision": {"key": "properties.revision", "type": "int"},
     }
 
     def __init__(
@@ -1828,21 +1794,21 @@ class SharedAccessAuthorizationRuleResource(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["Sku"] = None,
-        rights: Optional[List[Union[str, "AccessRights"]]] = None,
+        sku: Optional["_models.Sku"] = None,
+        rights: Optional[List[Union[str, "_models.AccessRights"]]] = None,
         **kwargs
     ):
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the created namespace.
         :paramtype sku: ~azure.mgmt.notificationhubs.models.Sku
         :keyword rights: The rights associated with the rule.
         :paramtype rights: list[str or ~azure.mgmt.notificationhubs.models.AccessRights]
         """
-        super(SharedAccessAuthorizationRuleResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.rights = rights
         self.primary_key = None
         self.secondary_key = None
@@ -1854,13 +1820,13 @@ class SharedAccessAuthorizationRuleResource(Resource):
         self.revision = None
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The Sku description for a namespace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name of the notification hub sku. Possible values include: "Free",
-     "Basic", "Standard".
+    :ivar name: Name of the notification hub sku. Required. Known values are: "Free", "Basic", and
+     "Standard".
     :vartype name: str or ~azure.mgmt.notificationhubs.models.SkuName
     :ivar tier: The tier of particular sku.
     :vartype tier: str
@@ -1873,21 +1839,21 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        name: Union[str, "SkuName"],
+        name: Union[str, "_models.SkuName"],
         tier: Optional[str] = None,
         size: Optional[str] = None,
         family: Optional[str] = None,
@@ -1895,8 +1861,8 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Name of the notification hub sku. Possible values include: "Free",
-         "Basic", "Standard".
+        :keyword name: Name of the notification hub sku. Required. Known values are: "Free", "Basic",
+         and "Standard".
         :paramtype name: str or ~azure.mgmt.notificationhubs.models.SkuName
         :keyword tier: The tier of particular sku.
         :paramtype tier: str
@@ -1907,7 +1873,7 @@ class Sku(msrest.serialization.Model):
         :keyword capacity: The capacity of the resource.
         :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = size
@@ -1915,7 +1881,7 @@ class Sku(msrest.serialization.Model):
         self.capacity = capacity
 
 
-class SubResource(msrest.serialization.Model):
+class SubResource(_serialization.Model):
     """SubResource.
 
     :ivar id: Resource Id.
@@ -1923,24 +1889,19 @@ class SubResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
         """
-        super(SubResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class WnsCredential(msrest.serialization.Model):
+class WnsCredential(_serialization.Model):
     """Description of a NotificationHub WnsCredential.
 
     :ivar package_sid: The package ID for this credential.
@@ -1952,9 +1913,9 @@ class WnsCredential(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'package_sid': {'key': 'properties.packageSid', 'type': 'str'},
-        'secret_key': {'key': 'properties.secretKey', 'type': 'str'},
-        'windows_live_endpoint': {'key': 'properties.windowsLiveEndpoint', 'type': 'str'},
+        "package_sid": {"key": "properties.packageSid", "type": "str"},
+        "secret_key": {"key": "properties.secretKey", "type": "str"},
+        "windows_live_endpoint": {"key": "properties.windowsLiveEndpoint", "type": "str"},
     }
 
     def __init__(
@@ -1973,7 +1934,7 @@ class WnsCredential(msrest.serialization.Model):
         :keyword windows_live_endpoint: The Windows Live endpoint.
         :paramtype windows_live_endpoint: str
         """
-        super(WnsCredential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.package_sid = package_sid
         self.secret_key = secret_key
         self.windows_live_endpoint = windows_live_endpoint

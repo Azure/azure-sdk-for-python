@@ -10,19 +10,20 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml.entities._credentials import (
-    ManagedIdentityConfiguration,
-    AmlTokenConfiguration,
-    UserIdentityConfiguration
-)
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._job.job import SparkConfKey
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -32,7 +33,6 @@ from azure.ai.ml.entities._job._input_output_helpers import (
 )
 from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 
 from ..._schema import NestedField, UnionField
 from .job import Job
@@ -118,22 +118,20 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     def __init__(
         self,
         *,
-        driver_cores: int = None,
-        driver_memory: str = None,
-        executor_cores: int = None,
-        executor_memory: str = None,
-        executor_instances: int = None,
-        dynamic_allocation_enabled: bool = None,
-        dynamic_allocation_min_executors: int = None,
-        dynamic_allocation_max_executors: int = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
+        driver_cores: Optional[int] = None,
+        driver_memory: Optional[str] = None,
+        executor_cores: Optional[int] = None,
+        executor_memory: Optional[str] = None,
+        executor_instances: Optional[int] = None,
+        dynamic_allocation_enabled: Optional[bool] = None,
+        dynamic_allocation_min_executors: Optional[int] = None,
+        dynamic_allocation_max_executors: Optional[int] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
         compute: Optional[str] = None,
-        identity: Union[
-            Dict[str, str],
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+        identity: Optional[
+            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         resources: Union[Dict, SparkResourceConfiguration, None] = None,
         **kwargs,
     ):
@@ -154,6 +152,8 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         self.compute = compute
         self.resources = resources
         self.identity = identity
+        if self.executor_instances is None and str(self.dynamic_allocation_enabled).lower() == "true":
+            self.executor_instances = self.dynamic_allocation_min_executors
 
     @property
     def resources(self) -> Optional[SparkResourceConfiguration]:
@@ -168,19 +168,16 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[
-                    ManagedIdentityConfiguration,
-                    AmlTokenConfiguration,
-                    UserIdentityConfiguration]]:
+    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         return self._identity
 
     @identity.setter
-    def identity(self, value: Union[
-                                Dict[str, str],
-                                ManagedIdentityConfiguration,
-                                AmlTokenConfiguration,
-                                UserIdentityConfiguration,
-                                None]):
+    def identity(
+        self,
+        value: Union[
+            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
+        ],
+    ):
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
@@ -275,8 +272,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                rest_spark_job.identity) if rest_spark_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+            if rest_spark_job.identity
+            else None,
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(
@@ -295,7 +293,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         )
         return spark_job
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
@@ -334,7 +332,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             args=self.args,
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.

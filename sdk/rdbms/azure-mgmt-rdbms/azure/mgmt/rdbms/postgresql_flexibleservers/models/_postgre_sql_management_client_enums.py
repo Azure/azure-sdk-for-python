@@ -10,82 +10,142 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActiveDirectoryAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """If Enabled, Azure Active Directory authentication is enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class ArmServerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Data encryption type to depict if it is System assigned vs Azure Key vault."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    AZURE_KEY_VAULT = "AzureKeyVault"
+
+
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+
 class ConfigurationDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Data type of the configuration.
-    """
+    """Data type of the configuration."""
 
     BOOLEAN = "Boolean"
     NUMERIC = "Numeric"
     INTEGER = "Integer"
     ENUMERATION = "Enumeration"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode to create a new PostgreSQL server.
-    """
+    """The mode to create a new PostgreSQL server."""
 
     DEFAULT = "Default"
     CREATE = "Create"
     UPDATE = "Update"
     POINT_IN_TIME_RESTORE = "PointInTimeRestore"
+    GEO_RESTORE = "GeoRestore"
+    REPLICA = "Replica"
+
 
 class CreateModeForUpdate(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The mode to update a new PostgreSQL server.
-    """
+    """The mode to update a new PostgreSQL server."""
 
     DEFAULT = "Default"
     UPDATE = "Update"
 
+
 class FailoverMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Failover mode.
-    """
+    """Failover mode."""
 
     PLANNED_FAILOVER = "PlannedFailover"
     FORCED_FAILOVER = "ForcedFailover"
     PLANNED_SWITCHOVER = "PlannedSwitchover"
     FORCED_SWITCHOVER = "ForcedSwitchover"
 
+
 class GeoRedundantBackupEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A value indicating whether Geo-Redundant backup is enabled on the server.
-    """
+    """A value indicating whether Geo-Redundant backup is enabled on the server."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class HighAvailabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The HA mode for the server.
-    """
+    """The HA mode for the server."""
 
     DISABLED = "Disabled"
     ZONE_REDUNDANT = "ZoneRedundant"
     SAME_ZONE = "SameZone"
 
-class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The intended executor of the operation.
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the types of identities associated with this resource; currently restricted to 'SystemAssigned
+    and UserAssigned'.
     """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+
+
+class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation."""
 
     NOT_SPECIFIED = "NotSpecified"
     USER = "user"
     SYSTEM = "system"
 
-class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name availability reason.
-    """
 
-    INVALID = "Invalid"
-    ALREADY_EXISTS = "AlreadyExists"
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backup type."""
+
+    FULL = "Full"
+
+
+class PasswordAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """If Enabled, Password authentication is enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The principal type used to represent the type of Active Directory Administrator."""
+
+    UNKNOWN = "Unknown"
+    USER = "User"
+    GROUP = "Group"
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+
+
+class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Used to indicate role of the server in replication set."""
+
+    NONE = "None"
+    PRIMARY = "Primary"
+    SECONDARY = "Secondary"
+    WAL_REPLICA = "WalReplica"
+    SYNC_REPLICA = "SyncReplica"
+    ASYNC_REPLICA = "AsyncReplica"
+    GEO_SYNC_REPLICA = "GeoSyncReplica"
+    GEO_ASYNC_REPLICA = "GeoAsyncReplica"
+
 
 class ServerHAState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A state of a HA server that is visible to user.
-    """
+    """A state of a HA server that is visible to user."""
 
     NOT_ENABLED = "NotEnabled"
     CREATING_STANDBY = "CreatingStandby"
@@ -94,16 +154,16 @@ class ServerHAState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HEALTHY = "Healthy"
     REMOVING_STANDBY = "RemovingStandby"
 
+
 class ServerPublicNetworkAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """public network access is enabled or not
-    """
+    """public network access is enabled or not."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A state of a server that is visible to user.
-    """
+    """A state of a server that is visible to user."""
 
     READY = "Ready"
     DROPPING = "Dropping"
@@ -113,18 +173,18 @@ class ServerState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STOPPED = "Stopped"
     UPDATING = "Updating"
 
+
 class ServerVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The version of a server.
-    """
+    """The version of a server."""
 
     FOURTEEN = "14"
     THIRTEEN = "13"
     TWELVE = "12"
     ELEVEN = "11"
 
+
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The tier of the particular SKU, e.g. Burstable.
-    """
+    """The tier of the particular SKU, e.g. Burstable."""
 
     BURSTABLE = "Burstable"
     GENERAL_PURPOSE = "GeneralPurpose"

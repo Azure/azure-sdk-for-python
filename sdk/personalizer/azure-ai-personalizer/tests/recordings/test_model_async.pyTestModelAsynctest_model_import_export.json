@@ -1,0 +1,116 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview\u0026signed=false",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/octet-stream, application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "b4156fa5-2360-4190-a0f2-a3b97f7f9f93",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Disposition": "attachment; filename=model.vw; filename*=UTF-8\u0027\u0027model.vw",
+        "Content-Length": "364",
+        "Content-Type": "application/octet-stream",
+        "Date": "Thu, 03 Nov 2022 15:57:04 GMT",
+        "Expires": "0",
+        "Last-Modified": "Thu, 03 Nov 2022 15:57:04 GMT",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "24",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": "BgAAADkuMS4wAAEAAAAAbQAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAKcAAAAgLS1jYl9hZGYgLS1jYl9leHBsb3JlX2FkZiAtLWNiX3R5cGUgbXRyIC0tY3NvYWFfbGRmIG11bHRpbGluZSAtLWNzb2FhX3JhbmsgLS1lcHNpbG9uIDAuMjAwMDAwMDAyOTgwMjMyIC0tbGVhcm5pbmdfcmF0ZSAwLjAwMTAwMDAwMDA0NzQ5NzQ1IC0tcG93ZXJfdCAwIC0tcXVhZHJhdGljIDo6AAQAAAB1dVWXAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPw=="
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview\u0026signed=true",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/octet-stream, application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "324b6db7-146f-4043-beca-6edce9d3a6a0",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Disposition": "attachment; filename=model.vw.zip; filename*=UTF-8\u0027\u0027model.vw.zip",
+        "Content-Length": "1862",
+        "Content-Type": "application/octet-stream",
+        "Date": "Thu, 03 Nov 2022 15:57:04 GMT",
+        "Expires": "0",
+        "Last-Modified": "Thu, 03 Nov 2022 15:57:04 GMT",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "45",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": "UEsDBBQAAAAIACJ/Y1U7r/m0rgAAAGwBAAAIAAAAbW9kZWwudndjY2BgsNQz1DNgYASyGHIZoECIARUsB2IFXd3kpPjElDQII7WiICe/KBUhUFJZkKqQW1IE4hXnJybG5wBlcktzSjJzMvNS4aJFiXnZQE5qQXFmTn6egoGekQEEGFlaGBgZGwHlclITi/Iy89KBaktSgSoMDAyhakzMTSzNTUyBagryy1OL4ksUDIDswtLEFKDSzGQFKysGFqBTS0tDp6P5AOJBwqDBnjh1pIIP9gBQSwMEFAAAAAgAIn9jVe7nCNxNBAAA9wYAAAoAAABzaWduZXIuZGVyM2hi\u002B2zQxHp7ATMTIxOTcA3jjQrGr09N3OXe8xozMIB4BrxsnFptHm3feRkZuVkZDFwMhQ0E2bg4J6l1Tv6kk8IoKcbs7uSDKejo62ooYSDGxhzKwizMD\u002BQpeOalFSUqODsqGJgayInzGhkZGhiYG5gYGhlZRAG5xkCuEZRroGqobKAI0SuVmJuqV5BaVJyfl5iTWZVapJdYVVqUqpecn2vQxKiE7D5GVgbmJkZ\u002BBqA4F1MTIyPD4c8yfr9LuT5xc\u002Br9rDWUjrA1SZq9MD6P13GbbtHzvSs78sNUbLS6nObGK7wOnHrXIYDNSfZcS5\u002BVx3/ZXa8eHKy7fujLqun6YfJhd6/WrLTOKVkhZZg/\u002B1KMtrd0xYmTIicbL3cfsDMSdTa6J/zb7WW31Kalv\u002BN39fTXfU24UGbWnR\u002BVcu3o6WPiR2\u002Bz\u002BGy0s/2vVMv24O\u002BuxSyGR\u002BvWHTLm5PxibCLdk/OH9Ujy8wUSF89/Wl1/ku\u002BewxQbX/ZPGq\u002B/Haj8k914aEKZAQs/05ZTYa03Trq8mn7ybibXU27PP1GLmO2X7suu3Xhz8kHW0P/Crqlu/6xk0vnfiHzMaJVNzfpy9VLA3Fjj2WeZmBkZGBc3Mf82aGL\u002BbsAHDFBZfkbG/ywszEysCwxkQXxVFjEDETYObTZGVlZ2ZkY4iwkizccixiKSwns2pbDDpJDpQ0JchbS2\u002B3W1OGcDVZC0IIucgUwTviiSBylTZgEmhQaRqmuSrRqVOYVlcgk/Pnu/X8TqJCYLjCs1kBJ5liZGEEcSiEUXNDEKAjFvm31GSUmBlb5\u002BclGOXm5mclF\u002BcX5aCchc/YLszExQgtJ3DvLRByYvVSMDcAID0s6OQMLAVA\u002Boqc0QYYChHsiZ6Uk5IA5xWoxI12JMuhYT4rQAA\u002BY0LHoYGYHBtRcostMgGSZmwNQWTkRwpRaVFOs7\u002BxsGeHt6\u002BoU4OxoY6gGt1ANm4nhcVpcYBCNZ4o4tSBMzE6llqBEtDDWmhaEmFBlqy8YJNJSFsclclJ3FwECPTQ3G5Wib8Ji35eqWipaP3Xats\u002B\u002BKnZsr1JjQ9PWbdvOniwpMjClMjFwG6gjtXCxSBhIGXIhcjMRmQivAmUHl4tTWhp3fjG6t/hqxZcdmVzExl\u002ByCZVMFdzoHz1VmvbfN9IzK0r7aGdst0l24dAOzut/MaghoY5M5LLml4NyEjrQKgRw5f2eeKyt0VTMuGwit1\u002Bjcf3fFtpZStpAooTsZEmaz1OTCdT8uSZCJfZMXJBzN1re91Xz2yvZ8//OzDsx2ObNL5EfO9HdyfsusUuqFE0M\u002Bvmx1Fjqtx5X/UPhGdrZ4w4f4kugHIn6dG01WPBPrDGZjfrNLeuM13a/vlVKCF9bE7/A54qNTtVPE5VyWwFN\u002BuRShix7Hjk8NNmmMS4l15F0o21n5\u002BMWcVt0JG\u002B/5255seyI\u002Bq1elcapUomnJcqdJtUeYLnPHFzCI8AEAUEsDBBQAAAAIACJ/Y1U\u002BiiP4BQEAAAABAAAUAAAAc2hhNTEyX3NpZ25hdHVyZS5iaW4BAAH//q5k/8cYaKqG7g7X7VJKUZW\u002B\u002BnS/dQJH0RxGnwgPf7XfZICPX19n3lnvy06xJztYHBxf7MeVPgmbqt6RESvsiOXFBofMYV7Xkjt04jLlor8gFSo49KBoJOXCdO41bYHm99glhOhgoCyvpctRrU4jxJhad0ThdDfsjE5bbIMT4MriCtzIIIBcs26a\u002BZD/jflUCD1uCuAtC3KiP0ckPKkgcuOImZVL5bFX2maWcPe7EbBn4ivxi/iy8X8gY/osg6ocd03OljOgW73tYIkwqsjkF7uzMwy1kCvLChiJAvDl6UIsRJEoau6Z9clgCmElQSDFvGS3wXyv6Dz0mmFGUT2\u002BQLZQSwECFAMUAAAACAAif2NVO6/5tK4AAABsAQAACAAAAAAAAAAAAAAAAAAAAAAAbW9kZWwudndQSwECFAMUAAAACAAif2NV7ucI3E0EAAD3BgAACgAAAAAAAAAAAAAAAADUAAAAc2lnbmVyLmRlclBLAQIUAxQAAAAIACJ/Y1U\u002BiiP4BQEAAAABAAAUAAAAAAAAAAAAAAAAAEkFAABzaGE1MTJfc2lnbmF0dXJlLmJpblBLBQYAAAAAAwADALAAAACABgAAAAA="
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Type": "application/octet-stream",
+        "Transfer-Encoding": "chunked",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "UEsDBBQAAAAIACJ/Y1U7r/m0rgAAAGwBAAAIAAAAbW9kZWwudndjY2BgsNQz1DNgYASyGHIZoECIARUsB2IFXd3kpPjElDQII7WiICe/KBUhUFJZkKqQW1IE4hXnJybG5wBlcktzSjJzMvNS4aJFiXnZQE5qQXFmTn6egoGekQEEGFlaGBgZGwHlclITi/Iy89KBaktSgSoMDAyhakzMTSzNTUyBagryy1OL4ksUDIDswtLEFKDSzGQFKysGFqBTS0tDp6P5AOJBwqDBnjh1pIIP9gBQSwMEFAAAAAgAIn9jVe7nCNxNBAAA9wYAAAoAAABzaWduZXIuZGVyM2hi\u002B2zQxHp7ATMTIxOTcA3jjQrGr09N3OXe8xozMIB4BrxsnFptHm3feRkZuVkZDFwMhQ0E2bg4J6l1Tv6kk8IoKcbs7uSDKejo62ooYSDGxhzKwizMD\u002BQpeOalFSUqODsqGJgayInzGhkZGhiYG5gYGhlZRAG5xkCuEZRroGqobKAI0SuVmJuqV5BaVJyfl5iTWZVapJdYVVqUqpecn2vQxKiE7D5GVgbmJkZ\u002BBqA4F1MTIyPD4c8yfr9LuT5xc\u002Br9rDWUjrA1SZq9MD6P13GbbtHzvSs78sNUbLS6nObGK7wOnHrXIYDNSfZcS5\u002BVx3/ZXa8eHKy7fujLqun6YfJhd6/WrLTOKVkhZZg/\u002B1KMtrd0xYmTIicbL3cfsDMSdTa6J/zb7WW31Kalv\u002BN39fTXfU24UGbWnR\u002BVcu3o6WPiR2\u002Bz\u002BGy0s/2vVMv24O\u002BuxSyGR\u002BvWHTLm5PxibCLdk/OH9Ujy8wUSF89/Wl1/ku\u002BewxQbX/ZPGq\u002B/Haj8k914aEKZAQs/05ZTYa03Trq8mn7ybibXU27PP1GLmO2X7suu3Xhz8kHW0P/Crqlu/6xk0vnfiHzMaJVNzfpy9VLA3Fjj2WeZmBkZGBc3Mf82aGL\u002BbsAHDFBZfkbG/ywszEysCwxkQXxVFjEDETYObTZGVlZ2ZkY4iwkizccixiKSwns2pbDDpJDpQ0JchbS2\u002B3W1OGcDVZC0IIucgUwTviiSBylTZgEmhQaRqmuSrRqVOYVlcgk/Pnu/X8TqJCYLjCs1kBJ5liZGEEcSiEUXNDEKAjFvm31GSUmBlb5\u002BclGOXm5mclF\u002BcX5aCchc/YLszExQgtJ3DvLRByYvVSMDcAID0s6OQMLAVA\u002Boqc0QYYChHsiZ6Uk5IA5xWoxI12JMuhYT4rQAA\u002BY0LHoYGYHBtRcostMgGSZmwNQWTkRwpRaVFOs7\u002BxsGeHt6\u002BoU4OxoY6gGt1ANm4nhcVpcYBCNZ4o4tSBMzE6llqBEtDDWmhaEmFBlqy8YJNJSFsclclJ3FwECPTQ3G5Wib8Ji35eqWipaP3Xats\u002B\u002BKnZsr1JjQ9PWbdvOniwpMjClMjFwG6gjtXCxSBhIGXIhcjMRmQivAmUHl4tTWhp3fjG6t/hqxZcdmVzExl\u002ByCZVMFdzoHz1VmvbfN9IzK0r7aGdst0l24dAOzut/MaghoY5M5LLml4NyEjrQKgRw5f2eeKyt0VTMuGwit1\u002Bjcf3fFtpZStpAooTsZEmaz1OTCdT8uSZCJfZMXJBzN1re91Xz2yvZ8//OzDsx2ObNL5EfO9HdyfsusUuqFE0M\u002Bvmx1Fjqtx5X/UPhGdrZ4w4f4kugHIn6dG01WPBPrDGZjfrNLeuM13a/vlVKCF9bE7/A54qNTtVPE5VyWwFN\u002BuRShix7Hjk8NNmmMS4l15F0o21n5\u002BMWcVt0JG\u002B/5255seyI\u002Bq1elcapUomnJcqdJtUeYLnPHFzCI8AEAUEsDBBQAAAAIACJ/Y1U\u002BiiP4BQEAAAABAAAUAAAAc2hhNTEyX3NpZ25hdHVyZS5iaW4BAAH//q5k/8cYaKqG7g7X7VJKUZW\u002B\u002BnS/dQJH0RxGnwgPf7XfZICPX19n3lnvy06xJztYHBxf7MeVPgmbqt6RESvsiOXFBofMYV7Xkjt04jLlor8gFSo49KBoJOXCdO41bYHm99glhOhgoCyvpctRrU4jxJhad0ThdDfsjE5bbIMT4MriCtzIIIBcs26a\u002BZD/jflUCD1uCuAtC3KiP0ckPKkgcuOImZVL5bFX2maWcPe7EbBn4ivxi/iy8X8gY/osg6ocd03OljOgW73tYIkwqsjkF7uzMwy1kCvLChiJAvDl6UIsRJEoau6Z9clgCmElQSDFvGS3wXyv6Dz0mmFGUT2\u002BQLZQSwECFAMUAAAACAAif2NVO6/5tK4AAABsAQAACAAAAAAAAAAAAAAAAAAAAAAAbW9kZWwudndQSwECFAMUAAAACAAif2NV7ucI3E0EAAD3BgAACgAAAAAAAAAAAAAAAADUAAAAc2lnbmVyLmRlclBLAQIUAxQAAAAIACJ/Y1U\u002BiiP4BQEAAAABAAAUAAAAAAAAAAAAAAAAAEkFAABzaGE1MTJfc2lnbmF0dXJlLmJpblBLBQYAAAAAAwADALAAAACABgAAAAA=",
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "apim-request-id": "7696690c-acf1-4bbd-bf7e-76272b7c179e",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "0",
+        "Date": "Thu, 03 Nov 2022 15:57:05 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "233",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/model?api-version=2022-09-01-preview\u0026signed=false",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/octet-stream, application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "ad1765ad-6a74-46b4-bfc8-66a94a6a733c",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Disposition": "attachment; filename=model.vw; filename*=UTF-8\u0027\u0027model.vw",
+        "Content-Length": "364",
+        "Content-Type": "application/octet-stream",
+        "Date": "Thu, 03 Nov 2022 15:57:05 GMT",
+        "Expires": "0",
+        "Last-Modified": "Thu, 03 Nov 2022 15:57:05 GMT",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "24",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": "BgAAADkuMS4wAAEAAAAAbQAAAAAAAAAAEgAAAAAAAAAAAAAAAAAAAKcAAAAgLS1jYl9hZGYgLS1jYl9leHBsb3JlX2FkZiAtLWNiX3R5cGUgbXRyIC0tY3NvYWFfbGRmIG11bHRpbGluZSAtLWNzb2FhX3JhbmsgLS1lcHNpbG9uIDAuMjAwMDAwMDAyOTgwMjMyIC0tbGVhcm5pbmdfcmF0ZSAwLjAwMTAwMDAwMDA0NzQ5NzQ1IC0tcG93ZXJfdCAwIC0tcXVhZHJhdGljIDo6AAQAAAB1dVWXAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPw=="
+    }
+  ],
+  "Variables": {}
+}

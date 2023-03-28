@@ -22,7 +22,7 @@ import pandas as pd
 from azure.monitor.query import LogsQueryClient, LogsBatchQuery, LogsQueryStatus
 from azure.identity import DefaultAzureCredential
 
-credential  = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -52,10 +52,10 @@ results = client.query_batch(requests)
 for res in results:
     if res.status == LogsQueryStatus.FAILURE:
         # this will be a LogsQueryError
-        print(res.message)
+        print(res)
     elif res.status == LogsQueryStatus.PARTIAL:
         ## this will be a LogsQueryPartialResult
-        print(res.partial_error.message)
+        print(res.partial_error)
         for table in res.partial_data:
             df = pd.DataFrame(table.rows, columns=table.columns)
             print(df)

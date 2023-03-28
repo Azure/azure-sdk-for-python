@@ -12,7 +12,7 @@ from ._models_py3 import CertificateListDescription
 from ._models_py3 import CertificateProperties
 from ._models_py3 import CertificateResponse
 from ._models_py3 import ErrorDetails
-from ._models_py3 import ErrorMesssage
+from ._models_py3 import ErrorMessage
 from ._models_py3 import GroupIdInformation
 from ._models_py3 import GroupIdInformationProperties
 from ._models_py3 import IotDpsPropertiesDescription
@@ -42,66 +42,68 @@ from ._models_py3 import VerificationCodeRequest
 from ._models_py3 import VerificationCodeResponse
 from ._models_py3 import VerificationCodeResponseProperties
 
-
-from ._iot_dps_client_enums import (
-    AccessRightsDescription,
-    AllocationPolicy,
-    CertificatePurpose,
-    CreatedByType,
-    IotDpsSku,
-    IpFilterActionType,
-    IpFilterTargetType,
-    NameUnavailabilityReason,
-    PrivateLinkServiceConnectionStatus,
-    PublicNetworkAccess,
-    State,
-)
+from ._iot_dps_client_enums import AccessRightsDescription
+from ._iot_dps_client_enums import AllocationPolicy
+from ._iot_dps_client_enums import CertificatePurpose
+from ._iot_dps_client_enums import CreatedByType
+from ._iot_dps_client_enums import IotDpsSku
+from ._iot_dps_client_enums import IpFilterActionType
+from ._iot_dps_client_enums import IpFilterTargetType
+from ._iot_dps_client_enums import NameUnavailabilityReason
+from ._iot_dps_client_enums import PrivateLinkServiceConnectionStatus
+from ._iot_dps_client_enums import PublicNetworkAccess
+from ._iot_dps_client_enums import State
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AsyncOperationResult',
-    'CertificateBodyDescription',
-    'CertificateListDescription',
-    'CertificateProperties',
-    'CertificateResponse',
-    'ErrorDetails',
-    'ErrorMesssage',
-    'GroupIdInformation',
-    'GroupIdInformationProperties',
-    'IotDpsPropertiesDescription',
-    'IotDpsSkuDefinition',
-    'IotDpsSkuDefinitionListResult',
-    'IotDpsSkuInfo',
-    'IotHubDefinitionDescription',
-    'IpFilterRule',
-    'NameAvailabilityInfo',
-    'Operation',
-    'OperationDisplay',
-    'OperationInputs',
-    'OperationListResult',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionProperties',
-    'PrivateLinkResources',
-    'PrivateLinkServiceConnectionState',
-    'ProvisioningServiceDescription',
-    'ProvisioningServiceDescriptionListResult',
-    'Resource',
-    'SharedAccessSignatureAuthorizationRuleAccessRightsDescription',
-    'SharedAccessSignatureAuthorizationRuleListResult',
-    'SystemData',
-    'TagsResource',
-    'VerificationCodeRequest',
-    'VerificationCodeResponse',
-    'VerificationCodeResponseProperties',
-    'AccessRightsDescription',
-    'AllocationPolicy',
-    'CertificatePurpose',
-    'CreatedByType',
-    'IotDpsSku',
-    'IpFilterActionType',
-    'IpFilterTargetType',
-    'NameUnavailabilityReason',
-    'PrivateLinkServiceConnectionStatus',
-    'PublicNetworkAccess',
-    'State',
+    "AsyncOperationResult",
+    "CertificateBodyDescription",
+    "CertificateListDescription",
+    "CertificateProperties",
+    "CertificateResponse",
+    "ErrorDetails",
+    "ErrorMessage",
+    "GroupIdInformation",
+    "GroupIdInformationProperties",
+    "IotDpsPropertiesDescription",
+    "IotDpsSkuDefinition",
+    "IotDpsSkuDefinitionListResult",
+    "IotDpsSkuInfo",
+    "IotHubDefinitionDescription",
+    "IpFilterRule",
+    "NameAvailabilityInfo",
+    "Operation",
+    "OperationDisplay",
+    "OperationInputs",
+    "OperationListResult",
+    "PrivateEndpoint",
+    "PrivateEndpointConnection",
+    "PrivateEndpointConnectionProperties",
+    "PrivateLinkResources",
+    "PrivateLinkServiceConnectionState",
+    "ProvisioningServiceDescription",
+    "ProvisioningServiceDescriptionListResult",
+    "Resource",
+    "SharedAccessSignatureAuthorizationRuleAccessRightsDescription",
+    "SharedAccessSignatureAuthorizationRuleListResult",
+    "SystemData",
+    "TagsResource",
+    "VerificationCodeRequest",
+    "VerificationCodeResponse",
+    "VerificationCodeResponseProperties",
+    "AccessRightsDescription",
+    "AllocationPolicy",
+    "CertificatePurpose",
+    "CreatedByType",
+    "IotDpsSku",
+    "IpFilterActionType",
+    "IpFilterTargetType",
+    "NameUnavailabilityReason",
+    "PrivateLinkServiceConnectionStatus",
+    "PublicNetworkAccess",
+    "State",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

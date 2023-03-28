@@ -9,26 +9,34 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import WorkloadsClientConfiguration
-from .operations import MonitorsOperations, Operations, PhpWorkloadsOperations, ProviderInstancesOperations, SAPApplicationServerInstancesOperations, SAPCentralInstancesOperations, SAPDatabaseInstancesOperations, SAPVirtualInstancesOperations, SkusOperations, WordpressInstancesOperations, WorkloadsClientOperationsMixin
+from .operations import (
+    MonitorsOperations,
+    Operations,
+    ProviderInstancesOperations,
+    SAPApplicationServerInstancesOperations,
+    SAPCentralInstancesOperations,
+    SAPDatabaseInstancesOperations,
+    SAPVirtualInstancesOperations,
+    SapLandscapeMonitorOperations,
+    WorkloadsClientOperationsMixin,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class WorkloadsClient(WorkloadsClientOperationsMixin):    # pylint: disable=too-many-instance-attributes
+
+class WorkloadsClient(
+    WorkloadsClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Workloads client provides access to various workload operations.
 
-    :ivar php_workloads: PhpWorkloadsOperations operations
-    :vartype php_workloads: azure.mgmt.workloads.aio.operations.PhpWorkloadsOperations
-    :ivar wordpress_instances: WordpressInstancesOperations operations
-    :vartype wordpress_instances: azure.mgmt.workloads.aio.operations.WordpressInstancesOperations
     :ivar sap_virtual_instances: SAPVirtualInstancesOperations operations
     :vartype sap_virtual_instances:
      azure.mgmt.workloads.aio.operations.SAPVirtualInstancesOperations
@@ -41,21 +49,22 @@ class WorkloadsClient(WorkloadsClientOperationsMixin):    # pylint: disable=too-
     :ivar sap_application_server_instances: SAPApplicationServerInstancesOperations operations
     :vartype sap_application_server_instances:
      azure.mgmt.workloads.aio.operations.SAPApplicationServerInstancesOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.workloads.aio.operations.Operations
     :ivar monitors: MonitorsOperations operations
     :vartype monitors: azure.mgmt.workloads.aio.operations.MonitorsOperations
     :ivar provider_instances: ProviderInstancesOperations operations
     :vartype provider_instances: azure.mgmt.workloads.aio.operations.ProviderInstancesOperations
-    :ivar skus: SkusOperations operations
-    :vartype skus: azure.mgmt.workloads.aio.operations.SkusOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar sap_landscape_monitor: SapLandscapeMonitorOperations operations
+    :vartype sap_landscape_monitor:
+     azure.mgmt.workloads.aio.operations.SapLandscapeMonitorOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.workloads.aio.operations.Operations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2021-12-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -72,27 +81,32 @@ class WorkloadsClient(WorkloadsClientOperationsMixin):    # pylint: disable=too-
         self._config = WorkloadsClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.php_workloads = PhpWorkloadsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.wordpress_instances = WordpressInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sap_virtual_instances = SAPVirtualInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sap_central_instances = SAPCentralInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sap_database_instances = SAPDatabaseInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sap_application_server_instances = SAPApplicationServerInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.sap_virtual_instances = SAPVirtualInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sap_central_instances = SAPCentralInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sap_database_instances = SAPDatabaseInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sap_application_server_instances = SAPApplicationServerInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.monitors = MonitorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.provider_instances = ProviderInstancesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.provider_instances = ProviderInstancesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.sap_landscape_monitor = SapLandscapeMonitorOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -101,7 +115,7 @@ class WorkloadsClient(WorkloadsClientOperationsMixin):    # pylint: disable=too-
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

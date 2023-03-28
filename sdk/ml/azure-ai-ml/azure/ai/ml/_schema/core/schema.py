@@ -12,14 +12,14 @@ from typing import Optional
 from marshmallow import fields, post_load, pre_load
 from pydash import objects
 
-from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
+from azure.ai.ml._schema.core.schema_meta import PatchedBaseSchema, PatchedSchemaMeta
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
 
 module_logger = logging.getLogger(__name__)
 
 
-class PathAwareSchema(metaclass=PatchedSchemaMeta):
+class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
     schema_ignored = fields.Str(data_key="$schema", dump_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -56,10 +56,8 @@ class PathAwareSchema(metaclass=PatchedSchemaMeta):
 
     @pre_load
     def trim_dump_only(self, data, **kwargs):
-        """Marshmallow raises if dump_only fields are present in the schema.
-        This is not desirable for our use case, where read-only properties can
-        be present in the yaml, and should simply be ignored, while we should
-        raise in.
+        """Marshmallow raises if dump_only fields are present in the schema. This is not desirable for our use case,
+        where read-only properties can be present in the yaml, and should simply be ignored, while we should raise in.
 
         the case an unknown field is present - to prevent typos.
         """
@@ -74,21 +72,20 @@ class PathAwareSchema(metaclass=PatchedSchemaMeta):
 
 
 class YamlFileSchema(PathAwareSchema):
-    """Base class that allows derived classes to be built from paths to
-    separate yaml files in place of inline yaml definitions.
+    """Base class that allows derived classes to be built from paths to separate yaml files in place of inline yaml
+    definitions.
 
-    This will be transparent to any parent schema containing a nested
-    schema of the derived class, it will not need a union type for the
-    schema, a YamlFile string will be resolved by the pre_load method
-    into a dictionary. On loading the child yaml, update the base path
-    to use for loading sub-child files.
+    This will be transparent to any parent schema containing a nested schema of the derived class, it will not need a
+    union type for the schema, a YamlFile string will be resolved by the pre_load method into a dictionary. On loading
+    the child yaml, update the base path to use for loading sub-child files.
     """
 
     def __init__(self, *args, **kwargs):
         self._previous_base_path = None
         super().__init__(*args, **kwargs)
 
-    def resolve_path(self, data, base_path) -> Optional[Path]:
+    @classmethod
+    def _resolve_path(cls, data, base_path) -> Optional[Path]:
         if isinstance(data, str) and data.startswith(FILE_PREFIX):
             # Use directly if absolute path
             path = Path(data[len(FILE_PREFIX) :])
@@ -100,7 +97,7 @@ class YamlFileSchema(PathAwareSchema):
 
     @pre_load
     def load_from_file(self, data, **kwargs):
-        path = self.resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
+        path = self._resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
         if path is not None:
             self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             # Push update
@@ -114,7 +111,7 @@ class YamlFileSchema(PathAwareSchema):
 
     # Schemas are read depth-first, so push/pop to update current path
     @post_load
-    def reset_base_path(self, data, **kwargs):
+    def reset_base_path_post_load(self, data, **kwargs):
         if self._previous_base_path is not None:
             # pop state
             self.context[BASE_PATH_CONTEXT_KEY] = self._previous_base_path

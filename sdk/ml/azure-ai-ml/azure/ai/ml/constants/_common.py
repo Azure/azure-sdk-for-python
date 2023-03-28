@@ -5,7 +5,6 @@ from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
 
-
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
 API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
@@ -36,9 +35,13 @@ DATASTORE_RESOURCE_ID = (
 PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
+SINGULARITY_ID_FORMAT = (
+    "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
+)
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
+LABEL_SPLITTER = "@"
 PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
@@ -48,6 +51,9 @@ COMPONENT_TYPE = "type"
 TID_FMT = "&tid={}"
 AZUREML_PRIVATE_FEATURES_ENV_VAR = "AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"
 AZUREML_INTERNAL_COMPONENTS_ENV_VAR = "AZURE_ML_INTERNAL_COMPONENTS_ENABLED"
+AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR = "AZURE_ML_DISABLE_ON_DISK_CACHE"
+AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS = "AZURE_ML_COMPONENT_REGISTRATION_MAX_WORKERS"
+AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION = "AZURE_ML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION"
 AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX = "https://componentsdk.azureedge.net/jsonschema/"
 COMMON_RUNTIME_ENV_VAR = "AZUREML_COMPUTE_USE_COMMON_RUNTIME"
 ENDPOINT_DEPLOYMENT_START_MSG = (
@@ -61,13 +67,13 @@ LIMITED_RESULTSET_WARNING_FORMAT = "Displaying top {} results from the list comm
 MAX_LIST_CLI_RESULTS = 50
 LOCAL_COMPUTE_TARGET = "local"
 LOCAL_COMPUTE_PROPERTY = "IsLocal"
+SERVERLESS_COMPUTE = "serverless"
 CONDA_FILE = "conda_file"
 DOCKER_FILE_NAME = "Dockerfile"
 COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
-REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
@@ -80,6 +86,7 @@ JOB_URI_FORMAT = "azureml://jobs/{}/outputs/{}/paths/{}"
 LONG_URI_FORMAT = "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}"
 SHORT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/paths/(.+)"
 MLFLOW_URI_REGEX_FORMAT = "runs:/([^/?]+)/(.+)"
+AZUREML_REGEX_FORMAT = "azureml:([^/]+):(.+)"
 JOB_URI_REGEX_FORMAT = "azureml://jobs/([^/]+)/outputs/([^/]+)/paths/(.+)"
 OUTPUT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/(ExperimentRun/.+)"
 LONG_URI_REGEX_FORMAT = (
@@ -94,6 +101,7 @@ ASSET_ID_REGEX_FORMAT = (
 )
 ASSET_ID_RESOURCE_REGEX_FORMAT = "azureml://resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 MODEL_ID_REGEX_FORMAT = "azureml://models/([^/]+)/versions/(.+)"
+DATA_ID_REGEX_FORMAT = "azureml://data/([^/]+)/versions/(.+)"
 ASSET_ID_URI_REGEX_FORMAT = "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 AZUREML_CLI_SYSTEM_EXECUTED_ENV_VAR = "AZUREML_CLI_SYSTEM_EXECUTED"
 DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
@@ -104,10 +112,9 @@ EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
 EXPERIMENTAL_LINK_MESSAGE = (
     "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 )
-REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "Visit this link to refer to the {} schema if needed: {}."
+REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "\nVisit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
-BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
 BATCH_JOB_CHILD_RUN_OUTPUT_NAME = "score"
 DEFAULT_ARTIFACT_STORE_OUTPUT_NAME = "default"
 DEFAULT_EXPERIMENT_NAME = "Default"
@@ -139,20 +146,21 @@ DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
-    "\n\nError: {description}\n{error_msg}\n\n"
+    "\n{text_color}{description}\n{error_msg}{reset}\n\n"
     "Details: {parsed_error_details}\n"
-    "Resolutions:\n{resolutions}"
+    "Resolutions: {resolutions}"
     "If using the CLI, you can also check the full log in debug mode for more details by adding --debug "
     "to the end of your command\n"
-    "Additional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
+    "\nAdditional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
     "auto-completion Azure ML VS code extension provides: "
-    "https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
-    "To set up VS Code, visit https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code\n"
+    "{link_color}https://code.visualstudio.com/docs/datascience/azure-machine-learning.{reset} "
+    "To set up VS Code, visit {link_color}https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-"
+    "code{reset}\n"
 )
 
 YAML_CREATION_ERROR_DESCRIPTION = (
     "The yaml file you provided does not match the prescribed schema "
-    "for {entity_type} yaml files and/or has the following issues:"
+    "for {entity_type} yaml files and/or has the following issues:\n"
 )
 DATASTORE_SCHEMA_TYPES = [
     "AzureFileSchema",
@@ -168,25 +176,53 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
 )
 
 
-class AzureMLResourceType(object):
+class AzureMLResourceType:
+    """AzureMLResourceType is a class that defines the resource types that are supported by the SDK/CLI."""
+
     CODE = "codes"
+    """Code resource type."""
     COMPUTE = "computes"
+    """Compute resource type."""
     DATA = "data"
+    """Data resource type."""
     DATASTORE = "datastores"
+    """Datastore resource type."""
     ONLINE_ENDPOINT = "online_endpoints"
+    """Online endpoint resource type."""
     BATCH_ENDPOINT = "batch_endpoints"
+    """Batch endpoint resource type."""
     ONLINE_DEPLOYMENT = "online_deployments"
+    """Online deployment resource type."""
     DEPLOYMENT = "deployments"
+    """Deployment resource type."""
     BATCH_DEPLOYMENT = "batch_deployments"
+    """Batch deployment resource type."""
     ENVIRONMENT = "environments"
+    """Environment resource type."""
     JOB = "jobs"
+    """Job resource type."""
     MODEL = "models"
+    """Model resource type."""
     VIRTUALCLUSTER = "virtualclusters"
+    """Virtual cluster resource type."""
     WORKSPACE = "workspaces"
+    """Workspace resource type."""
     WORKSPACE_CONNECTION = "workspace_connections"
+    """Workspace connection resource type."""
     COMPONENT = "components"
+    """Component resource type."""
     SCHEDULE = "schedules"
+    """Schedule resource type."""
     REGISTRY = "registries"
+    """Registry resource type."""
+    CONNECTIONS = "connections"
+    """Connections resource type."""
+    FEATURE_SET = "feature_sets"
+    """Feature set resource type."""
+    FEATURE_STORE_ENTITY = "feature_store_entities"
+    """Feature store entity resource type."""
+    FEATURE_STORE = "feature_store"
+    """Feature store resource type."""
 
     NAMED_TYPES = {
         JOB,
@@ -197,10 +233,16 @@ class AzureMLResourceType(object):
         DATASTORE,
         SCHEDULE,
     }
-    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT}
+    VERSIONED_TYPES = {MODEL, DATA, CODE, ENVIRONMENT, COMPONENT, FEATURE_SET, FEATURE_STORE_ENTITY}
 
 
-class ArmConstants(object):
+class ArmConstants:
+    """ArmConstants is a class that defines the constants used by the SDK/CLI for ARM operations.
+
+    ArmConstants are used to define the names of the parameters that are used in the ARM templates that are used by the
+    SDK/CLI.
+    """
+
     CODE_PARAMETER_NAME = "codes"
     CODE_VERSION_PARAMETER_NAME = "codeVersions"
     MODEL_PARAMETER_NAME = "models"
@@ -261,6 +303,7 @@ class ArmConstants(object):
     STORAGE = "StorageAccount"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
+    LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
@@ -269,25 +312,59 @@ class ArmConstants(object):
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
 
+    DEFAULT_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+    METADATA_URL_ENV_NAME = "ARM_CLOUD_METADATA_URL"
+    REGISTRY_DISCOVERY_DEFAULT_REGION = "west"
+    REGISTRY_DISCOVERY_REGION_ENV_NAME = "REGISTRY_DISCOVERY_ENDPOINT_REGION"
+    REGISTRY_ENV_URL = "REGISTRY_DISCOVERY_ENDPOINT_URL"
 
-class HttpResponseStatusCode(object):
+
+class HttpResponseStatusCode:
+    """Http response status code."""
+
     NOT_FOUND = 404
+    """Not found."""
 
 
-class OperationStatus(object):
+class OperationStatus:
+    """Operation status class.
+
+    Operation status is used to indicate the status of an operation. It can be one of the following values: Succeeded,
+    Failed, Canceled, Running.
+    """
+
     SUCCEEDED = "Succeeded"
+    """Succeeded."""
     FAILED = "Failed"
+    """Failed."""
     CANCELED = "Canceled"
+    """Canceled."""
     RUNNING = "Running"
+    """Running."""
 
 
-class CommonYamlFields(object):
+class CommonYamlFields:
+    """Common yaml fields.
+
+    Common yaml fields are used to define the common fields in yaml files. It can be one of the following values: type,
+    name, $schema.
+    """
+
     TYPE = "type"
+    """Type."""
     NAME = "name"
+    """Name."""
     SCHEMA = "$schema"
+    """Schema."""
 
 
-class GitProperties(object):
+class GitProperties:
+    """GitProperties is a class that defines the constants used by the SDK/CLI for Git operations.
+
+    Gitproperties are used to define the names of the properties that are used in the Git operations that are used by
+    the SDK/CLI. These properties are used to set the Git properties in the run history.
+    """
+
     ENV_REPOSITORY_URI = "AZUREML_GIT_REPOSITORY_URI"
     ENV_BRANCH = "AZUREML_GIT_BRANCH"
     ENV_COMMIT = "AZUREML_GIT_COMMIT"
@@ -305,24 +382,47 @@ class GitProperties(object):
 
 
 class LROConfigurations:
+    """LRO configurations class.
+
+    LRO configurations are used to define the configurations for long running operations. It can be one of the following
+    values: MAX_WAIT_COUNT, POLLING_TIMEOUT, POLL_INTERVAL, SLEEP_TIME.
+    """
+
     MAX_WAIT_COUNT = 400
+    """Max wait count."""
     POLLING_TIMEOUT = 720
+    """Polling timeout."""
     POLL_INTERVAL = 5
+    """Poll interval."""
     SLEEP_TIME = 5
+    """Sleep time."""
 
 
 class OrderString:
+    """Order string class.
+
+    Order string is used to define the order string for list operations. It can be one of the following values:
+    CREATED_AT, CREATED_AT_DESC.
+    """
+
     CREATED_AT = "createdtime asc"
+    """Created at."""
     CREATED_AT_DESC = "createdtime desc"
+    """Created at desc."""
 
 
 class YAMLRefDocLinks:
+    """YAML reference document links.
+
+    YAML reference document links are used to define the reference document links for yaml files.
+    """
+
     WORKSPACE = "https://aka.ms/ml-cli-v2-workspace-yaml-reference"
     ENVIRONMENT = "https://aka.ms/ml-cli-v2-environment-yaml-reference"
     DATA = "https://aka.ms/ml-cli-v2-data-yaml-reference"
     MODEL = "https://aka.ms/ml-cli-v2-model-yaml-reference"
     AML_COMPUTE = "https://aka.ms/ml-cli-v2-compute-aml-yaml-reference"
-    COMPUTE_INSTANCE = "https://aka.ms/ml-cli-v2-compute-aml-yaml-reference"
+    COMPUTE_INSTANCE = "https://aka.ms/ml-cli-v2-compute-instance-yaml-reference"
     VIRTUAL_MACHINE_COMPUTE = "https://aka.ms/ml-cli-v2-compute-vm-yaml-reference"
     COMMAND_JOB = "https://aka.ms/ml-cli-v2-job-command-yaml-reference"
     PARALLEL_JOB = "https://aka.ms/ml-cli-v2-job-parallel-yaml-reference"
@@ -341,45 +441,96 @@ class YAMLRefDocLinks:
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
+    FEATURE_STORE = "https://aka.ms/ml-cli-v2-featurestore-yaml-reference"
+    FEATURE_SET = "https://aka.ms/ml-cli-v2-featureset-yaml-reference"
+    FEATURE_STORE_ENTITY = "https://aka.ms/ml-cli-v2-featurestore-entity-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
+    """YAML reference document schema names.
+
+    YAML reference document schema names are used to define the reference document schema names for yaml files.
+    """
+
     WORKSPACE = "Workspace"
+    """Workspace."""
     ENVIRONMENT = "Environment"
+    """Environment."""
     DATA = "Data"
+    """Data."""
     MODEL = "Model"
+    """Model."""
     AML_COMPUTE = "AMLCompute"
+    """AML compute."""
     COMPUTE_INSTANCE = "ComputeInstance"
+    """Compute instance."""
     VIRTUAL_MACHINE_COMPUTE = "VirtualMachineCompute"
+    """Virtual machine compute."""
     COMMAND_JOB = "CommandJob"
+    """Command job."""
     SWEEP_JOB = "SweepJob"
+    """Sweep job."""
     PARALLEL_JOB = "ParallelJob"
+    """Parallel job."""
     PIPELINE_JOB = "PipelineJob"
+    """Pipeline job."""
     DATASTORE_BLOB = "AzureBlobDatastore"
+    """Azure blob datastore."""
     DATASTORE_FILE = "AzureFileDatastore"
+    """Azure file datastore."""
     DATASTORE_DATA_LAKE_GEN_1 = "AzureDataLakeGen1Datastore"
+    """Azure data lake gen 1 datastore."""
     DATASTORE_DATA_LAKE_GEN_2 = "AzureDataLakeGen2Datastore"
+    """Azure data lake gen 2 datastore."""
     ONLINE_ENDPOINT = "OnlineEndpoint"
+    """Online endpoint."""
     BATCH_ENDPOINT = "BatchEndpoint"
+    """Batch endpoint."""
     MANAGED_ONLINE_DEPLOYMENT = "ManagedOnlineDeployment"
+    """Managed online deployment."""
     KUBERNETES_ONLINE_DEPLOYMENT = "KubernetesOnlineDeployment"
+    """Kubernetes online deployment."""
     BATCH_DEPLOYMENT = "BatchDeployment"
+    """Batch deployment."""
     COMMAND_COMPONENT = "CommandComponent"
+    """Command component."""
     PARALLEL_COMPONENT = "ParallelComponent"
+    """Parallel component."""
     SCHEDULE = "Schedule"
+    """Schedule."""
 
 
 class DockerTypes:
+    """Docker types accepted by the SDK/CLI.
+
+    Docker types are used to define the docker types accepted by the SDK/CLI.
+    """
+
     IMAGE = "Image"
+    """Image."""
     BUILD = "Build"
+    """Build."""
 
 
 class DataType:
+    """Data types that a job or compute instance schedule accepts.
+
+    The supported data types are: simple and dataflow.
+    """
+
     SIMPLE = "Simple"
+    """Simple data type."""
     DATAFLOW = "Dataflow"
+    """Dataflow data type."""
 
 
 class LoggingLevel:
+    """Logging levels that a job or compute instance schedule accepts.
+
+    Logging levels are case-insensitive. For example, "WARNING" and "warning" are both valid. The  supported logging
+    levels are: warning, info, and debug.
+    """
+
     WARN = "WARNING"
     INFO = "INFO"
     DEBUG = "DEBUG"
@@ -522,58 +673,169 @@ class TimeZone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AssetTypes:
+    """AssetTypes is an enumeration of values for the asset types of a dataset.
+
+    Asset types are used to identify the type of an asset. An asset can be a file, folder, mlflow model, triton model,
+    mltable or custom model.
+    """
+
     URI_FILE = "uri_file"
+    """URI file asset type."""
     URI_FOLDER = "uri_folder"
+    """URI folder asset type."""
     MLTABLE = "mltable"
+    """MLTable asset type."""
     MLFLOW_MODEL = "mlflow_model"
+    """MLFlow model asset type."""
     TRITON_MODEL = "triton_model"
+    """Triton model asset type."""
     CUSTOM_MODEL = "custom_model"
+    """Custom model asset type."""
 
 
-class WorkspaceResourceConstants(object):
+class InputTypes:
+    """InputTypes is an enumeration of values for the input types of a dataset.
+
+    Input types are used to identify the type of an asset.
+    """
+
+    INTEGER = "integer"
+    """Integer input type."""
+    NUMBER = "number"
+    """Number input type."""
+    STRING = "string"
+    """String input type."""
+    BOOLEAN = "boolean"
+    """Boolean input type."""
+
+
+class WorkspaceResourceConstants:
+    """WorkspaceResourceConstants is an enumeration of values for the encryption status of a workspace.
+
+    :param object: Flag to indicate that if the encryption is enabled or not.
+    :type object: str
+    """
+
     ENCRYPTION_STATUS_ENABLED = "Enabled"
+    """Encryption is enabled."""
 
 
 class InputOutputModes:
+    """InputOutputModes is an enumeration of values for the input/output modes of a dataset.
+
+    Input/output modes are used to identify the type of an asset when it is created using the API.
+    """
+
     MOUNT = "mount"
+    """Mount asset type."""
+
     DOWNLOAD = "download"
+    """Download asset type."""
     UPLOAD = "upload"
+    """Upload asset type."""
     RO_MOUNT = "ro_mount"
+    """Read-only mount asset type."""
     RW_MOUNT = "rw_mount"
+    """Read-write mount asset type."""
     EVAL_MOUNT = "eval_mount"
+    """Evaluation mount asset type."""
     EVAL_DOWNLOAD = "eval_download"
+    """Evaluation download asset type."""
     DIRECT = "direct"
+    """Direct asset type."""
 
 
 class LegacyAssetTypes:
+    """LegacyAssetTypes is an enumeration of values for the legacy asset types.
+
+    Legacy asset types are used to identify the type of an asset when it is created using the legacy API.
+    """
+
     PATH = "path"
+    """Path asset type."""
 
 
 class PublicNetworkAccess:
+    """PublicNetworkAccess is an enumeration of values for the public network access setting for a workspace.
+
+    Public network access can be 'Enabled' or 'Disabled'. When enabled, Azure Machine Learning will allow all network
+    traffic to the workspace. When disabled, Azure Machine Learning will only allow traffic from the Azure Virtual
+    Network that the workspace is in.
+    """
+
     ENABLED = "Enabled"
+    """Enable public network access."""
     DISABLED = "Disabled"
+    """Disable public network access."""
 
 
 class ModelType:
+    """ModelType is an enumeration of values for the model types.
+
+    Model types are used to identify the type of a model when it is created using the API. Model types can be
+    'CustomModel', 'MLFlowModel' or 'TritonModel'.
+    """
+
     CUSTOM = "CustomModel"
+    """Custom model type."""
     MLFLOW = "MLFlowModel"
+    """MLFlow model type."""
     TRITON = "TritonModel"
+    """Triton model type."""
 
 
 class RollingRate:
-    YEAR = "year"
-    MONTH = "month"
+    """RollingRate is an enumeration of values for the rolling rate of a dataset.
+
+    Rolling rate can be 'day', 'hour' or 'minute'.
+    """
+
     DAY = "day"
+    """Day rolling rate."""
     HOUR = "hour"
+    """Hour rolling rate."""
     MINUTE = "minute"
+    """Minute rolling rate."""
 
 
 class Scope:
-    SUBSCRIPTION="subscription"
-    RESOURCE_GROUP="resource_group"
+    """Scope is an enumeration of values for the scope of an asset.
+
+    Scope can be 'subscription' or 'resource_group'.
+    """
+
+    SUBSCRIPTION = "subscription"
+    """Subscription scope."""
+    RESOURCE_GROUP = "resource_group"
+    """Resource group scope."""
 
 
 class IdentityType:
+    """IdentityType is an enumeration of values for the identity type of a workspace.
+
+    Identity type can be 'aml_token', 'user_identity' or 'managed_identity'.
+    """
+
     AML_TOKEN = "aml_token"
+    """AML Token identity type."""
     USER_IDENTITY = "user_identity"
+    """User identity type."""
     MANAGED_IDENTITY = "managed_identity"
+    """Managed identity type."""
+
+
+class Boolean:
+    """Boolean is an enumeration of values for the boolean type.
+
+    Boolean type can be 'true' or 'false'.
+    """
+
+    TRUE = "true"
+    """True boolean type."""
+    FALSE = "false"
+    """False boolean type."""
+
+
+class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ALL = "all"
+    NONE = "none"

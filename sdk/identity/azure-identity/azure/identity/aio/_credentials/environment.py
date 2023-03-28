@@ -4,19 +4,15 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import Optional, Union, Any
 
+from azure.core.credentials import AccessToken
 from .._internal.decorators import log_get_token_async
-
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Union
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,8 +41,8 @@ class EnvironmentCredential(AsyncContextManager):
         when no value is given.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
-        self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
+    def __init__(self, **kwargs: Any) -> None:
+        self._credential: Optional[Union[CertificateCredential, ClientSecretCredential]] = None
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -81,23 +77,23 @@ class EnvironmentCredential(AsyncContextManager):
             await self._credential.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
 
         if self._credential:
             await self._credential.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:

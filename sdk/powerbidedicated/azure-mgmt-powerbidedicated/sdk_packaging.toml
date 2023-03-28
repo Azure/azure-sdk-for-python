@@ -3,3 +3,4 @@ package_name = "azure-mgmt-powerbidedicated"
 package_pprint_name = "Power BI Dedicated Management"
 package_doc_id = ""
 is_stable = false
+title = "PowerBIDedicated"

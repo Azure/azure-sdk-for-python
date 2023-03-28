@@ -131,7 +131,7 @@ def pipeline_with_setting_binding_node_and_pipeline_level() -> PipelineJob:
 
 
 def pipeline_with_command_builder_setting_binding_node_and_pipeline_level() -> PipelineJob:
-    environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+    environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     inputs = {
         "training_data": Input(type="uri_folder"),
@@ -199,7 +199,7 @@ def nested_dsl_pipeline_with_setting_binding_node_and_pipeline_level() -> Pipeli
         train_job.inputs.training_data.mode = InputOutputModes.MOUNT
         train_job.outputs.model_output.mode = InputOutputModes.MOUNT
         return {
-            "trained_model": train_job.outputs.model_output,
+            "output": train_job.outputs.model_output,
         }
 
     @dsl.pipeline(
@@ -219,10 +219,10 @@ def nested_dsl_pipeline_with_setting_binding_node_and_pipeline_level() -> Pipeli
             learning_rate_schedule=pipeline_learning_rate_schedule,
         )
         subgraph1.inputs.training_input.mode = InputOutputModes.RO_MOUNT
-        subgraph1.outputs.trained_model.mode = InputOutputModes.UPLOAD
+        subgraph1.outputs.output.mode = InputOutputModes.UPLOAD
 
         return {
-            "pipeline_trained_model": subgraph1.outputs.trained_model,
+            "pipeline_trained_model": subgraph1.outputs.output,
         }
 
     pipeline_job = e2e_local_components(

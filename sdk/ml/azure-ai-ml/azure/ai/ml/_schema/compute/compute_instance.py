@@ -7,12 +7,13 @@ from marshmallow.decorators import post_load
 
 # pylint: disable=unused-argument,no-self-use
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants._compute import ComputeType
+from azure.ai.ml.constants._compute import ComputeType, ComputeSizeTier
 
 from ..core.fields import ExperimentalField, NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema
 from .schedule import ComputeSchedulesSchema
 from .setup_scripts import SetupScriptsSchema
+from .custom_applications import CustomApplicationsSchema
 
 
 class ComputeInstanceSshSettingsSchema(PathAwareSchema):
@@ -38,9 +39,21 @@ class CreateOnBehalfOfSchema(PathAwareSchema):
         return AssignedUserConfiguration(**data)
 
 
+class OsImageMetadataSchema(PathAwareSchema):
+    is_latest_os_image_version = fields.Bool(dump_only=True)
+    current_image_version = fields.Str(dump_only=True)
+    latest_image_version = fields.Str(dump_only=True)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import OsImageMetadata
+
+        return OsImageMetadata(**data)
+
+
 class ComputeInstanceSchema(ComputeSchema):
     type = StringTransformedEnum(allowed_values=[ComputeType.COMPUTEINSTANCE], required=True)
-    size = fields.Str()
+    size = fields.Str(metadata={"arm_type": ComputeSizeTier.COMPUTE_INSTANCE})
     network_settings = NestedField(NetworkSettingsSchema)
     create_on_behalf_of = NestedField(CreateOnBehalfOfSchema)
     ssh_settings = NestedField(ComputeInstanceSshSettingsSchema)
@@ -50,5 +63,11 @@ class ComputeInstanceSchema(ComputeSchema):
     services = fields.List(fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True)
     schedules = NestedField(ComputeSchedulesSchema)
     identity = ExperimentalField(NestedField(IdentitySchema))
-    idle_time_before_shutdown = ExperimentalField(fields.Str())
-    setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
+    idle_time_before_shutdown = fields.Str()
+    idle_time_before_shutdown_minutes = fields.Int()
+    custom_applications = fields.List(NestedField(CustomApplicationsSchema))
+    setup_scripts = NestedField(SetupScriptsSchema)
+    os_image_metadata = NestedField(OsImageMetadataSchema, dump_only=True)
+    enable_node_public_ip = fields.Bool(
+        metadata={"description": "Enable or disable node public IP address provisioning."}
+    )

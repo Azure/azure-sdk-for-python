@@ -11,9 +11,15 @@ from ._child_availability_statuses_operations import ChildAvailabilityStatusesOp
 from ._child_resources_operations import ChildResourcesOperations
 from ._operations import Operations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AvailabilityStatusesOperations',
-    'ChildAvailabilityStatusesOperations',
-    'ChildResourcesOperations',
-    'Operations',
+    "AvailabilityStatusesOperations",
+    "ChildAvailabilityStatusesOperations",
+    "ChildResourcesOperations",
+    "Operations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

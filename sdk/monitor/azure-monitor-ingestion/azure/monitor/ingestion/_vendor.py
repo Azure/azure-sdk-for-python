@@ -6,15 +6,15 @@
 # --------------------------------------------------------------------------
 
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING, cast
 
-from ._configuration import MonitorIngestionClientConfiguration
+from ._configuration import LogsIngestionClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from msrest import Deserializer, Serializer
-
     from azure.core import PipelineClient
+
+    from ._serialization import Deserializer, Serializer
 
 
 def _format_url_section(template, **kwargs):
@@ -23,17 +23,16 @@ def _format_url_section(template, **kwargs):
         try:
             return template.format(**kwargs)
         except KeyError as key:
-            formatted_components = template.split("/")
-            components = [
-                c for c in formatted_components if "{}".format(key.args[0]) not in c
-            ]
+            # Need the cast, as for some reasons "split" is typed as list[str | Any]
+            formatted_components = cast(List[str], template.split("/"))
+            components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
             template = "/".join(components)
 
 
-class MixinABC(ABC):
+class LogsIngestionClientMixinABC(ABC):
     """DO NOT use this class. It is for internal typing use only."""
 
     _client: "PipelineClient"
-    _config: MonitorIngestionClientConfiguration
+    _config: LogsIngestionClientConfiguration
     _serialize: "Serializer"
     _deserialize: "Deserializer"

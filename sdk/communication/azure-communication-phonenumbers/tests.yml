@@ -21,8 +21,13 @@ stages:
           MatrixReplace:
             - COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST=false/true
       Clouds: Public,Int
+      EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'True'
+        AZURE_TEST_RUN_LIVE: 'true'
       MatrixConfigs:
         - Name: PhoneNumbers_python_livetest_matrix
           Path: sdk/communication/azure-communication-phonenumbers/phonenumbers-livetest-matrix.json
           Selection: sparse
           GenerateVMJobs: true
+      TestResourceDirectories:
+        - communication/test-resources/

@@ -20,6 +20,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
@@ -41,8 +42,8 @@ logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 class CodeOperations(_ScopeDependentOperations):
     """Represents a client for performing operations on code assets.
 
-    You should not instantiate this class directly. Instead, you should
-    create MLClient and use this client via the property MLClient.code
+    You should not instantiate this class directly. Instead, you should create MLClient and use this client via the
+    property MLClient.code
     """
 
     def __init__(
@@ -92,7 +93,11 @@ class CodeOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
             code, _ = _check_and_upload_path(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+                artifact=code,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.CODE,
+                show_progress=self._show_progress,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,

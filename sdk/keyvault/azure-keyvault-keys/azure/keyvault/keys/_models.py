@@ -48,13 +48,11 @@ class JsonWebKey(object):
 
     _FIELDS = ("kid", "kty", "key_ops", "n", "e", "d", "dp", "dq", "qi", "p", "q", "k", "t", "crv", "x", "y")
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         for field in self._FIELDS:
             setattr(self, field, kwargs.get(field))
 
-    def _to_generated_model(self):
-        # type: () -> _JsonWebKey
+    def _to_generated_model(self) -> _JsonWebKey:
         jwk = _JsonWebKey()
         for field in self._FIELDS:
             setattr(jwk, field, getattr(self, field))
@@ -64,8 +62,7 @@ class JsonWebKey(object):
 class KeyProperties(object):
     """A key's id and attributes."""
 
-    def __init__(self, key_id, attributes=None, **kwargs):
-        # type: (str, Optional[_models.KeyAttributes], **Any) -> None
+    def __init__(self, key_id: str, attributes: "Optional[_models.KeyAttributes]" = None, **kwargs) -> None:
         self._attributes = attributes
         self._id = key_id
         self._vault_id = KeyVaultKeyIdentifier(key_id)
@@ -73,13 +70,11 @@ class KeyProperties(object):
         self._tags = kwargs.get("tags", None)
         self._release_policy = kwargs.pop("release_policy", None)
 
-    def __repr__(self):
-        # type () -> str
-        return "<KeyProperties [{}]>".format(self.id)[:1024]
+    def __repr__(self) -> str:
+        return f"<KeyProperties [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_key_bundle(cls, key_bundle):
-        # type: (_models.KeyBundle) -> KeyProperties
+    def _from_key_bundle(cls, key_bundle: "_models.KeyBundle") -> "KeyProperties":
         """Construct a KeyProperties from an autorest-generated KeyBundle"""
         # pylint:disable=line-too-long
         # release_policy was added in 7.3-preview
@@ -88,7 +83,7 @@ class KeyProperties(object):
             hasattr(key_bundle, "release_policy") and key_bundle.release_policy is not None  # type: ignore[attr-defined]
         ):
             release_policy = KeyReleasePolicy(
-                encoded_policy=key_bundle.release_policy.encoded_policy,  # type: ignore[attr-defined]
+                encoded_policy=key_bundle.release_policy.encoded_policy,  # type: ignore
                 content_type=key_bundle.release_policy.content_type,  # type: ignore[attr-defined]
                 immutable=key_bundle.release_policy.immutable,  # type: ignore[attr-defined]
             )
@@ -102,8 +97,7 @@ class KeyProperties(object):
         )
 
     @classmethod
-    def _from_key_item(cls, key_item):
-        # type: (_models.KeyItem) -> KeyProperties
+    def _from_key_item(cls, key_item: "_models.KeyItem") -> "KeyProperties":
         """Construct a KeyProperties from an autorest-generated KeyItem"""
         return cls(
             key_id=key_item.kid,  # type: ignore
@@ -113,8 +107,7 @@ class KeyProperties(object):
         )
 
     @property
-    def id(self):
-        # type: () -> str
+    def id(self) -> str:
         """The key's id
 
         :rtype: str
@@ -122,8 +115,7 @@ class KeyProperties(object):
         return self._id
 
     @property
-    def name(self):
-        # type: () -> str
+    def name(self) -> str:
         """The key's name
 
         :rtype: str
@@ -131,8 +123,7 @@ class KeyProperties(object):
         return self._vault_id.name
 
     @property
-    def version(self):
-        # type: () -> Optional[str]
+    def version(self) -> "Optional[str]":
         """The key's version
 
         :rtype: str or None
@@ -140,8 +131,7 @@ class KeyProperties(object):
         return self._vault_id.version
 
     @property
-    def enabled(self):
-        # type: () -> Optional[bool]
+    def enabled(self) -> "Optional[bool]":
         """Whether the key is enabled for use
 
         :rtype: bool or None
@@ -149,8 +139,7 @@ class KeyProperties(object):
         return self._attributes.enabled if self._attributes else None
 
     @property
-    def not_before(self):
-        # type: () -> Optional[datetime]
+    def not_before(self) -> "Optional[datetime]":
         """The time before which the key can not be used, in UTC
 
         :rtype: ~datetime.datetime or None
@@ -158,8 +147,7 @@ class KeyProperties(object):
         return self._attributes.not_before if self._attributes else None
 
     @property
-    def expires_on(self):
-        # type: () -> Optional[datetime]
+    def expires_on(self) -> "Optional[datetime]":
         """When the key will expire, in UTC
 
         :rtype: ~datetime.datetime or None
@@ -167,8 +155,7 @@ class KeyProperties(object):
         return self._attributes.expires if self._attributes else None
 
     @property
-    def created_on(self):
-        # type: () -> Optional[datetime]
+    def created_on(self) -> "Optional[datetime]":
         """When the key was created, in UTC
 
         :rtype: ~datetime.datetime or None
@@ -176,8 +163,7 @@ class KeyProperties(object):
         return self._attributes.created if self._attributes else None
 
     @property
-    def updated_on(self):
-        # type: () -> Optional[datetime]
+    def updated_on(self) -> "Optional[datetime]":
         """When the key was last updated, in UTC
 
         :rtype: ~datetime.datetime or None
@@ -185,8 +171,7 @@ class KeyProperties(object):
         return self._attributes.updated if self._attributes else None
 
     @property
-    def vault_url(self):
-        # type: () -> str
+    def vault_url(self) -> str:
         """URL of the vault containing the key
 
         :rtype: str
@@ -194,8 +179,7 @@ class KeyProperties(object):
         return self._vault_id.vault_url
 
     @property
-    def recoverable_days(self):
-        # type: () -> Optional[int]
+    def recoverable_days(self) -> "Optional[int]":
         """The number of days the key is retained before being deleted from a soft-delete enabled Key Vault.
 
         :rtype: int or None
@@ -206,8 +190,7 @@ class KeyProperties(object):
         return None
 
     @property
-    def recovery_level(self):
-        # type: () -> Optional[str]
+    def recovery_level(self) -> "Optional[str]":
         """The vault's deletion recovery level for keys
 
         :rtype: str or None
@@ -215,8 +198,7 @@ class KeyProperties(object):
         return self._attributes.recovery_level if self._attributes else None
 
     @property
-    def tags(self):
-        # type: () -> Dict[str, str]
+    def tags(self) -> "Dict[str, str]":
         """Application specific metadata in the form of key-value pairs
 
         :rtype: dict[str, str]
@@ -224,8 +206,7 @@ class KeyProperties(object):
         return self._tags
 
     @property
-    def managed(self):
-        # type: () -> Optional[bool]
+    def managed(self) -> "Optional[bool]":
         """Whether the key's lifetime is managed by Key Vault. If the key backs a certificate, this will be true.
 
         :rtype: bool or None
@@ -233,8 +214,7 @@ class KeyProperties(object):
         return self._managed
 
     @property
-    def exportable(self):
-        # type: () -> Optional[bool]
+    def exportable(self) -> "Optional[bool]":
         """Whether the private key can be exported
 
         :rtype: bool or None
@@ -245,8 +225,7 @@ class KeyProperties(object):
         return None
 
     @property
-    def release_policy(self):
-        # type: () -> Optional[KeyReleasePolicy]
+    def release_policy(self) -> "Optional[KeyReleasePolicy]":
         """The :class:`~azure.keyvault.keys.KeyReleasePolicy` specifying the rules under which the key can be exported.
 
         :rtype: ~azure.keyvault.keys.KeyReleasePolicy or None
@@ -267,8 +246,7 @@ class KeyReleasePolicy(object):
         updated after being marked immutable. Release policies are mutable by default.
     """
 
-    def __init__(self, encoded_policy, **kwargs):
-        # type: (bytes, **Any) -> None
+    def __init__(self, encoded_policy: bytes, **kwargs) -> None:
         self.encoded_policy = encoded_policy
         self.content_type = kwargs.get("content_type", None)
         self.immutable = kwargs.get("immutable", None)
@@ -280,8 +258,7 @@ class ReleaseKeyResult(object):
     :ivar str value: A signed token containing the released key.
     """
 
-    def __init__(self, value):
-        # type: (str) -> None
+    def __init__(self, value: str) -> None:
         self.value = value
 
 
@@ -294,57 +271,57 @@ class KeyRotationLifetimeAction(object):
     :keyword time_after_create: Time after creation to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
-    :paramtype time_after_create: Optional[str]
+    :paramtype time_after_create: str or None
     :keyword time_before_expiry: Time before expiry to attempt the specified action, as an ISO 8601 duration.
         For example, 90 days is "P90D". See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more
         information on ISO 8601 durations.
-    :paramtype time_before_expiry: Optional[str]
+    :paramtype time_before_expiry: str or None
     """
 
-    def __init__(self, action, **kwargs):
-        # type: (KeyRotationPolicyAction, **Any) -> None
+    def __init__(self, action: "Union[KeyRotationPolicyAction, str]", **kwargs) -> None:
         self.action = action
-        self.time_after_create = kwargs.get("time_after_create", None)
-        self.time_before_expiry = kwargs.get("time_before_expiry", None)
+        self.time_after_create = kwargs.get("time_after_create", None)  # type: Optional[str]
+        self.time_before_expiry = kwargs.get("time_before_expiry", None)  # type: Optional[str]
 
     @classmethod
-    def _from_generated(cls, lifetime_action):
-        if lifetime_action.trigger:
-            return cls(
-                action=lifetime_action.action.type,
-                time_after_create=lifetime_action.trigger.time_after_create,
-                time_before_expiry=lifetime_action.trigger.time_before_expiry,
-            )
-        return cls(action=lifetime_action.action)
+    def _from_generated(cls, lifetime_action: "_models.LifetimeActions") -> "KeyRotationLifetimeAction":
+        if lifetime_action.action:
+            if lifetime_action.trigger:
+                return cls(
+                    action=lifetime_action.action.type,  # type: ignore
+                    time_after_create=lifetime_action.trigger.time_after_create,
+                    time_before_expiry=lifetime_action.trigger.time_before_expiry,
+                )
+            return cls(action=lifetime_action.action)  # type: ignore
+        raise ValueError("Provided LifetimeActions model is missing a required lifetime action property.")
 
 
 class KeyRotationPolicy(object):
     """The key rotation policy that belongs to a key.
 
     :ivar id: The identifier of the key rotation policy.
-    :vartype id: Optional[str]
+    :vartype id: str or None
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
-    :vartype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
+    :vartype lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
     :ivar expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO 8601
         duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for
         more information on ISO 8601 durations.
-    :vartype expires_in: Optional[str]
+    :vartype expires_in: str or None
     :ivar created_on: When the policy was created, in UTC
-    :vartype created_on: Optional[~datetime.datetime]
+    :vartype created_on: ~datetime.datetime or None
     :ivar updated_on: When the policy was last updated, in UTC
-    :vartype updated_on: Optional[~datetime.datetime]
+    :vartype updated_on: ~datetime.datetime or None
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         self.id = kwargs.get("policy_id", None)
-        self.lifetime_actions = kwargs.get("lifetime_actions", [])
+        self.lifetime_actions = kwargs.get("lifetime_actions", [])  # type: List[KeyRotationLifetimeAction]
         self.expires_in = kwargs.get("expires_in", None)
         self.created_on = kwargs.get("created_on", None)
         self.updated_on = kwargs.get("updated_on", None)
 
     @classmethod
-    def _from_generated(cls, policy):
+    def _from_generated(cls, policy: "_models.KeyRotationPolicy") -> "KeyRotationPolicy":
         lifetime_actions = (
             []
             if policy.lifetime_actions is None
@@ -364,11 +341,12 @@ class KeyRotationPolicy(object):
 class KeyVaultKey(object):
     """A key's attributes and cryptographic material.
 
-    :param str key_id:
-        Key Vault's identifier for the key. Typically a URI, e.g. https://myvault.vault.azure.net/keys/my-key/version
-    :param jwk:
-        The key's cryptographic material as a JSON Web Key (https://tools.ietf.org/html/rfc7517). This may be provided
-        as a dictionary or keyword arguments. See :class:`~azure.keyvault.keys.models.JsonWebKey` for field names.
+    :param str key_id: Key Vault's identifier for the key. Typically a URI, e.g.
+        https://myvault.vault.azure.net/keys/my-key/version
+    :param jwk: The key's cryptographic material as a JSON Web Key (https://tools.ietf.org/html/rfc7517). This may be
+        provided as a dictionary or keyword arguments. See :class:`~azure.keyvault.keys.models.JsonWebKey` for field
+        names.
+    :type jwk: Dict[str, Any]
 
     Providing cryptographic material as keyword arguments:
 
@@ -393,9 +371,8 @@ class KeyVaultKey(object):
 
     """
 
-    def __init__(self, key_id, jwk=None, **kwargs):
-        # type: (str, Optional[dict], **Any) -> None
-        self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)
+    def __init__(self, key_id: str, jwk: "Optional[Dict[str, Any]]" = None, **kwargs) -> None:
+        self._properties = kwargs.pop("properties", None) or KeyProperties(key_id, **kwargs)  # type: KeyProperties
         if isinstance(jwk, dict):
             if any(field in kwargs for field in JsonWebKey._FIELDS):  # pylint:disable=protected-access
                 raise ValueError(
@@ -405,13 +382,11 @@ class KeyVaultKey(object):
         else:
             self._key_material = JsonWebKey(**kwargs)
 
-    def __repr__(self):
-        # type () -> str
-        return "<KeyVaultKey [{}]>".format(self.id)[:1024]
+    def __repr__(self) -> str:
+        return f"<KeyVaultKey [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_key_bundle(cls, key_bundle):
-        # type: (_models.KeyBundle) -> KeyVaultKey
+    def _from_key_bundle(cls, key_bundle: "_models.KeyBundle") -> "KeyVaultKey":
         """Construct a KeyVaultKey from an autorest-generated KeyBundle"""
         # pylint:disable=protected-access
         return cls(
@@ -421,8 +396,7 @@ class KeyVaultKey(object):
         )
 
     @property
-    def id(self):
-        # type: () -> str
+    def id(self) -> str:
         """The key's id
 
         :rtype: str
@@ -430,8 +404,7 @@ class KeyVaultKey(object):
         return self._properties.id
 
     @property
-    def name(self):
-        # type: () -> str
+    def name(self) -> str:
         """The key's name
 
         :rtype: str
@@ -439,8 +412,7 @@ class KeyVaultKey(object):
         return self._properties.name
 
     @property
-    def properties(self):
-        # type: () -> KeyProperties
+    def properties(self) -> KeyProperties:
         """The key's properties
 
         :rtype: ~azure.keyvault.keys.KeyProperties
@@ -448,8 +420,7 @@ class KeyVaultKey(object):
         return self._properties
 
     @property
-    def key(self):
-        # type: () -> JsonWebKey
+    def key(self) -> JsonWebKey:
         """The JSON web key
 
         :rtype: ~azure.keyvault.keys.JsonWebKey
@@ -457,8 +428,7 @@ class KeyVaultKey(object):
         return self._key_material
 
     @property
-    def key_type(self):
-        # type: () -> Union[str, KeyType]
+    def key_type(self) -> "Union[str, KeyType]":
         """The key's type. See :class:`~azure.keyvault.keys.KeyType` for possible values.
 
         :rtype: ~azure.keyvault.keys.KeyType or str
@@ -467,8 +437,7 @@ class KeyVaultKey(object):
         return self._key_material.kty  # type: ignore[attr-defined]
 
     @property
-    def key_operations(self):
-        # type: () -> List[Union[str, KeyOperation]]
+    def key_operations(self) -> "List[Union[str, KeyOperation]]":
         """Permitted operations. See :class:`~azure.keyvault.keys.KeyOperation` for possible values.
 
         :rtype: List[~azure.keyvault.keys.KeyOperation or str]
@@ -480,8 +449,10 @@ class KeyVaultKey(object):
 class KeyVaultKeyIdentifier(object):
     """Information about a KeyVaultKey parsed from a key ID.
 
-    :param str source_id: the full original identifier of a key
+    :param str source_id: The full original identifier of a key
+
     :raises ValueError: if the key ID is improperly formatted
+
     Example:
         .. literalinclude:: ../tests/test_parse_id.py
             :start-after: [START parse_key_vault_key_id]
@@ -491,56 +462,50 @@ class KeyVaultKeyIdentifier(object):
             :dedent: 8
     """
 
-    def __init__(self, source_id):
-        # type: (str) -> None
+    def __init__(self, source_id: str) -> None:
         self._resource_id = parse_key_vault_id(source_id)
 
     @property
-    def source_id(self):
-        # type: () -> str
+    def source_id(self) -> str:
         return self._resource_id.source_id
 
     @property
-    def vault_url(self):
-        # type: () -> str
+    def vault_url(self) -> str:
         return self._resource_id.vault_url
 
     @property
-    def name(self):
-        # type: () -> str
+    def name(self) -> str:
         return self._resource_id.name
 
     @property
-    def version(self):
-        # type: () -> Optional[str]
+    def version(self) -> "Optional[str]":
         return self._resource_id.version
 
 
 class DeletedKey(KeyVaultKey):
-    """A deleted key's properties, cryptographic material and its deletion information. If soft-delete
-    is enabled, returns information about its recovery as well."""
+    """A deleted key's properties, cryptographic material and its deletion information.
+
+    If soft-delete is enabled, returns information about its recovery as well.
+    """
 
     def __init__(
         self,
-        properties,  # type: KeyProperties
-        deleted_date=None,  # type: Optional[datetime]
-        recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        properties: KeyProperties,
+        deleted_date: "Optional[datetime]" = None,
+        recovery_id: "Optional[str]" = None,
+        scheduled_purge_date: "Optional[datetime]" = None,
+        **kwargs,
+    ) -> None:
         super(DeletedKey, self).__init__(properties=properties, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
 
-    def __repr__(self):
-        # type () -> str
-        return "<DeletedKey [{}]>".format(self.id)[:1024]
+    def __repr__(self) -> str:
+        return f"<DeletedKey [{self.id}]>"[:1024]
 
     @classmethod
-    def _from_deleted_key_bundle(cls, deleted_key_bundle):
-        # type: (_models.DeletedKeyBundle) -> DeletedKey
+    def _from_deleted_key_bundle(cls, deleted_key_bundle: "_models.DeletedKeyBundle") -> "DeletedKey":
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
         # pylint:disable=protected-access
         return cls(
@@ -553,8 +518,7 @@ class DeletedKey(KeyVaultKey):
         )
 
     @classmethod
-    def _from_deleted_key_item(cls, deleted_key_item):
-        # type: (_models.DeletedKeyItem) -> DeletedKey
+    def _from_deleted_key_item(cls, deleted_key_item: "_models.DeletedKeyItem") -> "DeletedKey":
         """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
         return cls(
             properties=KeyProperties._from_key_item(deleted_key_item),  # pylint: disable=protected-access
@@ -565,8 +529,7 @@ class DeletedKey(KeyVaultKey):
         )
 
     @property
-    def deleted_date(self):
-        # type: () -> Optional[datetime]
+    def deleted_date(self) -> "Optional[datetime]":
         """When the key was deleted, in UTC
 
         :rtype: ~datetime.datetime or None
@@ -574,8 +537,7 @@ class DeletedKey(KeyVaultKey):
         return self._deleted_date
 
     @property
-    def recovery_id(self):
-        # type: () -> Optional[str]
+    def recovery_id(self) -> "Optional[str]":
         """An identifier used to recover the deleted key. Returns ``None`` if soft-delete is disabled.
 
         :rtype: str or None
@@ -583,8 +545,7 @@ class DeletedKey(KeyVaultKey):
         return self._recovery_id
 
     @property
-    def scheduled_purge_date(self):
-        # type: () -> Optional[datetime]
+    def scheduled_purge_date(self) -> "Optional[datetime]":
         """When the key is scheduled to be purged, in UTC. Returns ``None`` if soft-delete is disabled.
 
         :rtype: ~datetime.datetime or None

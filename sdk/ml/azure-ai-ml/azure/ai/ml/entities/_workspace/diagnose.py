@@ -3,11 +3,17 @@
 # ---------------------------------------------------------
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseRequestProperties as RestDiagnoseRequestProperties
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseResponseResult as RestDiagnoseResponseResult
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseResponseResultValue as RestDiagnoseResponseResultValue
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseResult as RestDiagnoseResult
-from azure.ai.ml._restclient.v2022_05_01.models import DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    DiagnoseRequestProperties as RestDiagnoseRequestProperties,
+)
+from azure.ai.ml._restclient.v2022_12_01_preview.models import DiagnoseResponseResult as RestDiagnoseResponseResult
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    DiagnoseResponseResultValue as RestDiagnoseResponseResultValue,
+)
+from azure.ai.ml._restclient.v2022_12_01_preview.models import DiagnoseResult as RestDiagnoseResult
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    DiagnoseWorkspaceParameters as RestDiagnoseWorkspaceParameters,
+)
 
 
 class DiagnoseRequestProperties:
@@ -146,9 +152,9 @@ class DiagnoseResult:
     def __init__(
         self,
         *,
-        code: str = None,
-        level: str = None,
-        message: str = None,
+        code: Optional[str] = None,
+        level: Optional[str] = None,
+        message: Optional[str] = None,
     ):
         self.code = code
         self.level = level

@@ -39,8 +39,8 @@ jobs:
         versionSpec: $(PythonVersion)
 
     - script: |
-        pip install -r eng/ci_tools.txt
-        pip install -r eng/ml_sample_tools.txt
+        python -m pip install -r eng/ci_tools.txt
+        python -m pip install -r eng/ml_sample_tools.txt
       displayName: 'Prep Environment'
 
     - pwsh: |
@@ -72,7 +72,7 @@ jobs:
           --build-id="$(Build.BuildId)"
 
     - pwsh: |
-        cat "$(mlrepo)/sdk/setup.sh"
+        cat "$(mlrepo)/sdk/python/setup.sh"
       displayName: Display Updated setup.sh
 
     - template: /eng/common/pipelines/templates/steps/create-pull-request.yml
@@ -82,7 +82,7 @@ jobs:
         PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
         PROwner: Azure
         BaseBranchName: main
-        CommitMsg: "Update sdk/setup.sh to target fresh built azure-ai-ml wheel."
+        CommitMsg: "Update sdk/python/setup.sh to target fresh built azure-ai-ml wheel."
         PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
         WorkingDirectory: $(mlrepo)
         PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."

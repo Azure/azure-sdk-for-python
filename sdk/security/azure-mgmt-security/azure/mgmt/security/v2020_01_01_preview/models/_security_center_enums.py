@@ -11,60 +11,60 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AuthenticationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the multi-cloud connector.
-    """
+    """State of the multi-cloud connector."""
 
-    #: Valid connector
     VALID = "Valid"
-    #: Invalid connector
+    """Valid connector"""
     INVALID = "Invalid"
-    #: the connection has expired
+    """Invalid connector"""
     EXPIRED = "Expired"
-    #: Incorrect policy of the connector
+    """the connection has expired"""
     INCORRECT_POLICY = "IncorrectPolicy"
+    """Incorrect policy of the connector"""
+
 
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Connect to your cloud account, for AWS use either account credentials or role-based
     authentication. For GCP use account organization credentials.
     """
 
-    #: AWS cloud account connector user credentials authentication
     AWS_CREDS = "awsCreds"
-    #: AWS account connector assume role authentication
+    """AWS cloud account connector user credentials authentication"""
     AWS_ASSUME_ROLE = "awsAssumeRole"
-    #: GCP account connector service to service authentication
+    """AWS account connector assume role authentication"""
     GCP_CREDENTIALS = "gcpCredentials"
+    """GCP account connector service to service authentication"""
+
 
 class AutoProvision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether or not to automatically install Azure Arc (hybrid compute) agents on machines.
-    """
+    """Whether or not to automatically install Azure Arc (hybrid compute) agents on machines."""
 
-    #: Install missing Azure Arc agents on machines automatically
     ON = "On"
-    #: Do not install Azure Arc agent on the machines automatically
+    """Install missing Azure Arc agents on machines automatically"""
     OFF = "Off"
+    """Do not install Azure Arc agent on the machines automatically"""
+
 
 class HybridComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the service principal and its secret.
-    """
+    """State of the service principal and its secret."""
 
-    #: Valid service principal details.
     VALID = "Valid"
-    #: Invalid service principal details.
+    """Valid service principal details."""
     INVALID = "Invalid"
-    #: the service principal details are expired
+    """Invalid service principal details."""
     EXPIRED = "Expired"
+    """the service principal details are expired"""
+
 
 class PermissionProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A permission detected in the cloud account.
-    """
+    """A permission detected in the cloud account."""
 
-    #: This permission provides read only access to AWS Security Hub resources.
     AWS_AWS_SECURITY_HUB_READ_ONLY_ACCESS = "AWS::AWSSecurityHubReadOnlyAccess"
-    #: This permission grants access to read security configuration metadata.
+    """This permission provides read only access to AWS Security Hub resources."""
     AWS_SECURITY_AUDIT = "AWS::SecurityAudit"
-    #: The permission provides for EC2 Automation service to execute activities defined within
-    #: Automation documents.
+    """This permission grants access to read security configuration metadata."""
     AWS_AMAZON_SSM_AUTOMATION_ROLE = "AWS::AmazonSSMAutomationRole"
-    #: This permission provides read only access to GCP Security Command Center.
+    """The permission provides for EC2 Automation service to execute activities defined within
+    #: Automation documents."""
     GCP_SECURITY_CENTER_ADMIN_VIEWER = "GCP::Security Center Admin Viewer"
+    """This permission provides read only access to GCP Security Command Center."""

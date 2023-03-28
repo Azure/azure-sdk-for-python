@@ -2,14 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Callable, Optional, Tuple
 
+from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
-
-if TYPE_CHECKING:
-    from typing import Any, Callable, Optional, List
-    from azure.core.credentials import AccessToken
 
 
 class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
@@ -32,7 +29,7 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, func: "Callable[[], str]", **kwargs: "Any") -> None:
+    def __init__(self, tenant_id: str, client_id: str, func: Callable[[], str], **kwargs: Any) -> None:
         self._func = func
         self._client = AadClient(tenant_id, client_id, **kwargs)
         super().__init__(**kwargs)
@@ -45,10 +42,12 @@ class ClientAssertionCredential(AsyncContextManager, GetTokenMixin):
         """Close the credential's transport session."""
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
-        return self._client.get_cached_access_token(scopes, **kwargs)
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
-    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         assertion = self._func()
         token = await self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token

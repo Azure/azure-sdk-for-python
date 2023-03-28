@@ -1,5 +1,32 @@
 # Release History
 
+## 9.0.0 (2023-02-15)
+
+### Features Added
+
+  - Model PrivateEndpointConnectionProperties has a new parameter group_id
+  - Model PrivateEndpointConnectionProperties has a new parameter provisioning_state
+  - Model SearchService has a new parameter auth_options
+  - Model SearchService has a new parameter disable_local_auth
+  - Model SearchService has a new parameter encryption_with_cmk
+  - Model SearchServiceUpdate has a new parameter auth_options
+  - Model SearchServiceUpdate has a new parameter disable_local_auth
+  - Model SearchServiceUpdate has a new parameter encryption_with_cmk
+
+## 9.0.0b1 (2022-10-28)
+
+### Features Added
+
+  - Model Resource has a new parameter identity
+  - Model Resource has a new parameter location
+  - Model Resource has a new parameter tags
+
+### Breaking Changes
+
+  - Model PrivateLinkResourceProperties no longer has parameter shareable_private_link_resource_types
+  - Model SearchService no longer has parameter shared_private_link_resources
+  - Removed operation group SharedPrivateLinkResourcesOperations
+
 ## 8.0.0 (2020-12-22)
 
 - GA release

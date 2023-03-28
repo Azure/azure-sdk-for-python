@@ -10,14 +10,11 @@ from azure.identity import (
     CredentialUnavailableError,
     TokenCachePersistenceOptions,
 )
-from azure.identity._internal import EnvironmentVariables, InteractiveCredential
+from azure.identity._internal import InteractiveCredential
+from azure.identity._constants import EnvironmentVariables
 import pytest
-from six.moves.urllib_parse import urlparse
-
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
+from urllib.parse import urlparse
+from unittest.mock import Mock, patch
 
 from helpers import build_aad_response, get_discovery_response, id_token_claims
 

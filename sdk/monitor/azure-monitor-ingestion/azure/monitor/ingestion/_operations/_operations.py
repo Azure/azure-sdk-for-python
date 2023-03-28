@@ -7,15 +7,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
-
-from msrest import Serializer
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -24,38 +23,38 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .._vendor import MixinABC, _format_url_section
+from .._serialization import Serializer
+from .._vendor import LogsIngestionClientMixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_upload_request(rule_id: str, stream: str, **kwargs: Any) -> HttpRequest:
+def build_logs_ingestion_upload_request(
+    rule_id: str,
+    stream: str,
+    *,
+    content_encoding: Optional[str] = None,
+    x_ms_client_request_id: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2021-11-01-preview")
-    )  # type: str
-    content_encoding = kwargs.pop(
-        "content_encoding", _headers.pop("Content-Encoding", None)
-    )  # type: Optional[str]
-    x_ms_client_request_id = kwargs.pop(
-        "x_ms_client_request_id", _headers.pop("x-ms-client-request-id", None)
-    )  # type: Optional[str]
-    content_type = kwargs.pop(
-        "content_type", _headers.pop("Content-Type", None)
-    )  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -65,107 +64,24 @@ def build_upload_request(rule_id: str, stream: str, **kwargs: Any) -> HttpReques
         "stream": _SERIALIZER.url("stream", stream, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_encoding is not None:
-        _headers["Content-Encoding"] = _SERIALIZER.header(
-            "content_encoding", content_encoding, "str"
-        )
+        _headers["Content-Encoding"] = _SERIALIZER.header("content_encoding", content_encoding, "str")
     if x_ms_client_request_id is not None:
-        _headers["x-ms-client-request-id"] = _SERIALIZER.header(
-            "x_ms_client_request_id", x_ms_client_request_id, "str"
-        )
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("x_ms_client_request_id", x_ms_client_request_id, "str")
     if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header(
-            "content_type", content_type, "str"
-        )
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST", url=_url, params=_params, headers=_headers, **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class MonitorIngestionClientOperationsMixin(MixinABC):
-    @overload
-    def upload(  # pylint: disable=inconsistent-return-statements
-        self,
-        rule_id: str,
-        stream: str,
-        body: List[JSON],
-        *,
-        content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Ingestion API used to directly ingest data using Data Collection Rules.
-
-        See error response code and error response message for more detail.
-
-        :param rule_id: The immutable Id of the Data Collection Rule resource. Required.
-        :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
-        :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream. Required.
-        :type body: list[JSON]
-        :keyword content_encoding: gzip. Default value is None.
-        :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = [
-                    {}  # Optional.
-                ]
-        """
-
-    @overload
-    def upload(  # pylint: disable=inconsistent-return-statements
-        self,
-        rule_id: str,
-        stream: str,
-        body: IO,
-        *,
-        content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Ingestion API used to directly ingest data using Data Collection Rules.
-
-        See error response code and error response message for more detail.
-
-        :param rule_id: The immutable Id of the Data Collection Rule resource. Required.
-        :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
-        :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream. Required.
-        :type body: IO
-        :keyword content_encoding: gzip. Default value is None.
-        :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
 
     @distributed_trace
     def upload(  # pylint: disable=inconsistent-return-statements
@@ -187,7 +103,7 @@ class MonitorIngestionClientOperationsMixin(MixinABC):
         :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream. Is either
-         a list type or a IO type. Required.
+         a [JSON] type or a IO type. Required.
         :type body: list[JSON] or IO
         :keyword content_encoding: gzip. Default value is None.
         :paramtype content_encoding: str
@@ -204,19 +120,15 @@ class MonitorIngestionClientOperationsMixin(MixinABC):
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
-        content_type = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -226,35 +138,32 @@ class MonitorIngestionClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_upload_request(
+        request = build_logs_ingestion_upload_request(
             rule_id=rule_id,
             stream=stream,
-            api_version=api_version,
             content_encoding=content_encoding,
             x_ms_client_request_id=x_ms_client_request_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:

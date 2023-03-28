@@ -6,21 +6,19 @@ from typing import Dict, List, Union
 
 from marshmallow import INCLUDE, Schema
 
-from azure.ai.ml import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml._internal._schema.component import NodeType
-from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.core.fields import DistributionField
-from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._job.distribution import DistributionConfiguration
-from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
+from ... import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from ..._schema import PathAwareSchema
+from ..._schema.core.fields import DistributionField
+from ...entities import CommandJobLimits, JobResourceConfiguration
+from ...entities._util import get_rest_dict_for_node_attrs
+from .._schema.component import NodeType
+from ..entities.component import InternalComponent
+from ..entities.node import InternalBaseNode
 
 
 class Command(InternalBaseNode):
     """Node of internal command components in pipeline with specific run settings.
+
     Different from azure.ai.ml.entities.Command, type of this class is CommandComponent.
     """
 
@@ -31,6 +29,7 @@ class Command(InternalBaseNode):
         self._resources = kwargs.pop("resources", JobResourceConfiguration())
         self._compute = kwargs.pop("compute", None)
         self._environment = kwargs.pop("environment", None)
+        self._environment_variables = kwargs.pop("environment_variables", None)
         self._limits = kwargs.pop("limits", CommandJobLimits())
         self._init = False
 
@@ -55,6 +54,16 @@ class Command(InternalBaseNode):
         self._environment = value
 
     @property
+    def environment_variables(self) -> Dict[str, str]:
+        """Get the environment variables for the command."""
+        return self._environment_variables
+
+    @environment_variables.setter
+    def environment_variables(self, value: Dict[str, str]):
+        """Set the environment variables for the command."""
+        self._environment_variables = value
+
+    @property
     def limits(self) -> CommandJobLimits:
         return self._limits
 
@@ -73,7 +82,7 @@ class Command(InternalBaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["environment", "limits", "resources"]
+        return ["environment", "limits", "resources", "environment_variables"]
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -92,18 +101,15 @@ class Command(InternalBaseNode):
         return rest_obj
 
     @classmethod
-    def _rest_object_to_init_params(cls, obj):
-        obj = InternalBaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj):
+        obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
-        # resources
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
         return obj
 
 
@@ -149,16 +155,6 @@ class Distributed(Command):
         from .._schema.command import DistributedSchema
 
         return DistributedSchema(context=context)
-
-    @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
-        obj = Command._rest_object_to_init_params(obj)
-
-        # distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
-
-        return obj
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:

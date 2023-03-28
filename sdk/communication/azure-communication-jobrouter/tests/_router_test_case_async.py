@@ -9,31 +9,25 @@ from azure.communication.jobrouter.aio import (
     RouterClient,
     RouterAdministrationClient,
 )
-from _router_test_case import RouterTestCaseBase
 from azure.communication.jobrouter import (
     RouterJobStatus,
 )
+from devtools_testutils import AzureRecordedTestCase
 
 
-class AsyncRouterTestCase(RouterTestCaseBase):
-    def setUp(self):
-        super(AsyncRouterTestCase, self).setUp()
-
+class AsyncRouterRecordedTestCase(AzureRecordedTestCase):
     @abstractmethod
     async def clean_up(self):
         pass
 
-    def tearDown(self):
-        super(AsyncRouterTestCase, self).tearDown()
-
     def create_client(self) -> RouterClient:
         return RouterClient.from_connection_string(
-            conn_str = self.connection_str,
+            conn_str = self.connection_string,
             http_logging_policy=get_http_logging_policy())
 
     def create_admin_client(self) -> RouterAdministrationClient:
         return RouterAdministrationClient.from_connection_string(
-            conn_str = self.connection_str,
+            conn_str = self.connection_string,
             http_logging_policy=get_http_logging_policy())
 
     async def clean_up_job(
@@ -112,5 +106,4 @@ class AsyncRouterTestCase(RouterTestCaseBase):
             except expected_exception:
                 return
 
-        self.fail(f"expected exception {expected_exception} was not raised")
-
+        raise AssertionError(f"expected exception {expected_exception} was not raised")

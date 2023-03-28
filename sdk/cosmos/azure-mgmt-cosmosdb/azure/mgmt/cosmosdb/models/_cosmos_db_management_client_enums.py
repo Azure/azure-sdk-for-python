@@ -205,6 +205,16 @@ class ManagedCassandraResourceIdentityType(str, Enum, metaclass=CaseInsensitiveE
     NONE = "None"
 
 
+class MinimalTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the minimum allowed Tls version. The default is Tls 1.0, except for Cassandra and
+    Mongo API's, which only work with Tls 1.2.
+    """
+
+    TLS = "Tls"
+    TLS11 = "Tls11"
+    TLS12 = "Tls12"
+
+
 class MongoRoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the Role Definition was built-in or user created."""
 

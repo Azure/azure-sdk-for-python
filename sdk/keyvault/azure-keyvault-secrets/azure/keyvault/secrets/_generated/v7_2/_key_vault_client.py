@@ -7,23 +7,18 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any
 
 from azure.core import PipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
+from . import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
 from .operations import KeyVaultClientOperationsMixin
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
 
-    from azure.core.rest import HttpRequest, HttpResponse
-
-class KeyVaultClient(KeyVaultClientOperationsMixin):
+class KeyVaultClient(KeyVaultClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """The key vault client performs cryptographic key operations and vault operations against the Key
     Vault service.
 
@@ -32,27 +27,17 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        _base_url = '{vaultBaseUrl}'
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+        _endpoint = "{vaultBaseUrl}"
         self._config = KeyVaultClientConfiguration(**kwargs)
-        self._client = PipelineClient(base_url=_base_url, config=self._config, **kwargs)
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -61,7 +46,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -74,15 +59,12 @@ class KeyVaultClient(KeyVaultClientOperationsMixin):
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> KeyVaultClient
+    def __enter__(self) -> "KeyVaultClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

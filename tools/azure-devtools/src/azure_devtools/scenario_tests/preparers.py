@@ -121,7 +121,9 @@ You must specify use_cache=True in the preparer decorator""".format(
             if self._use_cache and aggregate_cache_key in AbstractPreparer._resource_cache:
                 _logger.debug("Using cached resource for %s", self.__class__.__name__)
                 with self._cache_lock:
+                    new_kwargs = kwargs
                     resource_name, kwargs, _ = AbstractPreparer._resource_cache[aggregate_cache_key]
+                    kwargs.update(new_kwargs)
             else:
                 resource_name, kwargs = self._prepare_create_resource(test_class_instance, **kwargs)
 
@@ -155,8 +157,7 @@ You must specify use_cache=True in the preparer decorator""".format(
                     fn(test_class_instance, **trimmed_kwargs)
                 else:
                     if asyncio.iscoroutinefunction(fn):
-                        loop = asyncio.get_event_loop()
-                        loop.run_until_complete(fn(test_class_instance, **trimmed_kwargs))
+                        asyncio.run(fn(test_class_instance, **trimmed_kwargs))
                     else:
                         fn(test_class_instance, **trimmed_kwargs)
             finally:

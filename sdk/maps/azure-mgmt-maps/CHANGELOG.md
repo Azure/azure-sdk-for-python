@@ -1,5 +1,25 @@
 # Release History
 
+## 2.1.0b1 (2022-11-01)
+
+### Features Added
+
+  - Added operation AccountsOperations.list_sas
+  - Added operation MapsOperations.list_subscription_operations
+  - Model Creator has a new parameter system_data
+  - Model Dimension has a new parameter internal_metric_name
+  - Model Dimension has a new parameter internal_name
+  - Model Dimension has a new parameter source_mdm_namespace
+  - Model Dimension has a new parameter to_be_exported_to_shoebox
+  - Model MapsAccount has a new parameter identity
+  - Model MapsAccountProperties has a new parameter cors
+  - Model MapsAccountProperties has a new parameter linked_resources
+  - Model MapsAccountUpdateParameters has a new parameter cors
+  - Model MapsAccountUpdateParameters has a new parameter identity
+  - Model MapsAccountUpdateParameters has a new parameter linked_resources
+  - Model MetricSpecification has a new parameter internal_metric_name
+  - Model MetricSpecification has a new parameter source_mdm_account
+
 ## 2.0.0 (2021-05-08)
 
 **Features**

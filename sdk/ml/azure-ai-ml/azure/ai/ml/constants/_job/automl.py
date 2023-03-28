@@ -52,9 +52,8 @@ class AutoMLTransformerParameterKeys(Enum):
 
 
 class ImageClassificationModelNames(Enum):
-    '''
-    Model names that are supported for Image Classification tasks.
-    '''
+    """Model names that are supported for Image Classification tasks."""
+
     MOBILENETV2 = "mobilenetv2"
     RESNET18 = "resnet18"
     RESNET34 = "resnet34"
@@ -70,9 +69,8 @@ class ImageClassificationModelNames(Enum):
 
 
 class ImageObjectDetectionModelNames(Enum):
-    '''
-    Model names that are supported for Image Object Detection tasks.
-    '''
+    """Model names that are supported for Image Object Detection tasks."""
+
     YOLOV5 = "yolov5"
     FASTERRCNN_RESNET18_FPN = "fasterrcnn_resnet18_fpn"
     FASTERRCNN_RESNET34_FPN = "fasterrcnn_resnet34_fpn"
@@ -83,9 +81,8 @@ class ImageObjectDetectionModelNames(Enum):
 
 
 class ImageInstanceSegmentationModelNames(Enum):
-    '''
-    Model names that are supported for Image Instance Segmentation tasks.
-    '''
+    """Model names that are supported for Image Instance Segmentation tasks."""
+
     MASKRCNN_RESNET18_FPN = "maskrcnn_resnet18_fpn"
     MASKRCNN_RESNET34_FPN = "maskrcnn_resnet34_fpn"
     MASKRCNN_RESNET50_FPN = "maskrcnn_resnet50_fpn"

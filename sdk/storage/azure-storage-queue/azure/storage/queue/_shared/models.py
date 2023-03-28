@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-instance-attributes
-
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta

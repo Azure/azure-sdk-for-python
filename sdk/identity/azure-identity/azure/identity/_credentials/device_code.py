@@ -4,20 +4,12 @@
 # ------------------------------------
 from datetime import datetime
 import time
+from typing import Dict, Optional, Callable, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import InteractiveCredential, wrap_exceptions
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
 
 
 class DeviceCodeCredential(InteractiveCredential):
@@ -57,16 +49,20 @@ class DeviceCodeCredential(InteractiveCredential):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    def __init__(self, client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs):
-        # type: (Optional[str], **Any) -> None
-        self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
-        self._prompt_callback = kwargs.pop("prompt_callback", None)
+    def __init__(
+            self,
+            client_id: str = DEVELOPER_SIGN_ON_CLIENT_ID,
+            *,
+            timeout: Optional[int] = None,
+            prompt_callback: Optional[Callable[[str, str, datetime], None]] = None,
+            **kwargs: Any
+    ) -> None:
+        self._timeout = timeout
+        self._prompt_callback = prompt_callback
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> dict
-
+    def _request_token(self, *scopes: str, **kwargs: Any) -> Dict:
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore
 

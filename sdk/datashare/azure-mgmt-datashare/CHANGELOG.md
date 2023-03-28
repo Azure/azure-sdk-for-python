@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b1 (2022-10-31)
+
+### Features Added
+
+  - Added operation group EmailRegistrationsOperations
+
 ## 1.0.0 (2021-04-12)
 
 **Features**

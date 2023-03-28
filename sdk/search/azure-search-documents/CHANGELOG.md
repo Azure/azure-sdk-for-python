@@ -1,6 +1,6 @@
 # Release History
 
-## 11.4.0b2 (Unreleased)
+## 11.4.0b4 (Unreleased)
 
 ### Features Added
 
@@ -10,9 +10,26 @@
 
 ### Other Changes
 
+## 11.4.0b3 (2023-02-07)
+
+### Features Added
+
+- Added the semantic reranker score and captions on `SearchResult`.(thanks to @LucasVascovici for the contribution)
+
+## 11.4.0b2 (2022-11-08)
+
+### Features Added
+
+- Enabled `OcrSkill` and `ImageAnalysisSkill`
+
+### Other Changes
+
+- Added Python 3.11 support.
+
 ## 11.4.0b1 (2022-09-08)
 
 ### Features Added
+
 - Added support to create, update and delete aliases via the `SearchIndexClient`.
 
 ## 11.3.0 (2022-09-06)
@@ -22,23 +39,28 @@
 - Some of the features that were available in the `11.3.0b8` version are not available in this GA. They would be available in the upcoming beta release.
 
 ### Features Added
+
 - Added support for other national clouds.
 - Added support for TokenCredential
 
 ### Bugs Fixed
+
 - Fixed issue where async `search` call would fail with a 403 error when retrieving large number of documents.
 
 ### Other Changes
+
 - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 
 ## 11.2.2 (2022-04-14)
 
 ### Bugs Fixed
+
 - Fixes a bug allowing users to set keys for cognitive service skills using the API. Exposes `DefaultCognitiveServicesAccount` and `CognitiveServicesAccountKey`
 
 ## 11.3.0b8 (2022-03-08)
 
 ### Features Added
+
 - Added support to create, update and delete aliases via the `SearchIndexClient`.
 
 ## 11.3.0b7 (2022-02-08)

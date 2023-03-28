@@ -1,5 +1,18 @@
 # Release History
 
+## 9.0.2b1 (2023-02-16)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
+## 9.0.1 (2022-10-26)
+
+### Bugs Fixed
+
+  - Added missing parameter `api_version` for operation AccountsOperations.begin_renew_credentials
+
 ## 9.0.0 (2022-09-26)
 
 ### Features Added

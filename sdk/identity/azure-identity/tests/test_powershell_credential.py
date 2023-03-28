@@ -192,10 +192,13 @@ def test_timeout():
     proc = Mock(communicate=Mock(side_effect=TimeoutExpired("", 42)), returncode=None)
     with patch(POPEN, Mock(return_value=proc)):
         with pytest.raises(CredentialUnavailableError):
-            AzurePowerShellCredential().get_token("scope")
+            AzurePowerShellCredential(process_timeout=42).get_token("scope")
 
     assert proc.communicate.call_count == 1
-    assert proc.kill.call_count == 1
+    # Ensure custom timeout is passed to subprocess
+    _, kwargs = proc.communicate.call_args
+    assert "timeout" in kwargs
+    assert kwargs["timeout"] == 42
 
 
 def test_unexpected_error():

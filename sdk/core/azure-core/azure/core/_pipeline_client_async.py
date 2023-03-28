@@ -26,7 +26,18 @@
 
 import logging
 import collections.abc
-from typing import Any, Awaitable
+from typing import (
+    Any,
+    Awaitable,
+    TypeVar,
+    AsyncContextManager,
+    Generator,
+    Generic,
+    Optional,
+    cast,
+    TYPE_CHECKING,
+)
+from typing_extensions import Protocol
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
@@ -38,51 +49,88 @@ from .pipeline.policies import (
     AsyncRetryPolicy,
 )
 
-try:
-    from typing import TYPE_CHECKING, TypeVar
-except ImportError:
-    TYPE_CHECKING = False
+
+if TYPE_CHECKING:  # Protocol and non-Protocol can't mix in Python 3.7
+
+    class _AsyncContextManagerCloseable(AsyncContextManager, Protocol):
+        """Defines a context manager that is closeable at the same time."""
+
+        async def close(self):
+            ...
+
 
 HTTPRequestType = TypeVar("HTTPRequestType")
-AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-
-if TYPE_CHECKING:
-    from typing import (
-        List,
-        Dict,
-        Union,
-        IO,
-        Tuple,
-        Optional,
-        Callable,
-        Iterator,
-        cast,
-    )  # pylint: disable=unused-import
+AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType", bound="_AsyncContextManagerCloseable")
 
 _LOGGER = logging.getLogger(__name__)
 
-class _AsyncContextManager(collections.abc.Awaitable):
 
-    def __init__(self, wrapped: collections.abc.Awaitable):
+class _Coroutine(Awaitable[AsyncHTTPResponseType]):
+    """Wrapper to get both context manager and awaitable in place.
+
+    Naming it "_Coroutine" because if you don't await it makes the error message easier:
+    >>> result = client.send_request(request)
+    >>> result.text()
+    AttributeError: '_Coroutine' object has no attribute 'text'
+
+    Indeed, the message for calling a coroutine without waiting would be:
+    AttributeError: 'coroutine' object has no attribute 'text'
+
+    This allows the dev to either use the "async with" syntax, or simply the object directly.
+    It's also why "send_request" is not declared as async, since it couldn't be both easily.
+
+    "wrapped" must be an awaitable that returns an object that:
+    - has an async "close()"
+    - has an "__aexit__" method (IOW, is an async context manager)
+
+    This permits this code to work for both requests.
+
+    ```python
+    from azure.core import AsyncPipelineClient
+    from azure.core.rest import HttpRequest
+
+    async def main():
+
+        request = HttpRequest("GET", "https://httpbin.org/user-agent")
+        async with AsyncPipelineClient("https://httpbin.org/") as client:
+            # Can be used directly
+            result = await client.send_request(request)
+            print(result.text())
+
+            # Can be used as an async context manager
+            async with client.send_request(request) as result:
+                print(result.text())
+    ```
+
+    :param wrapped: Must be an awaitable the returns an async context manager that supports async "close()"
+    """
+
+    def __init__(self, wrapped: Awaitable[AsyncHTTPResponseType]) -> None:
         super().__init__()
-        self.wrapped = wrapped
-        self.response = None
+        self._wrapped = wrapped
+        # If someone tries to use the object without awaiting, they will get a
+        # AttributeError: '_Coroutine' object has no attribute 'text'
+        self._response: AsyncHTTPResponseType = cast(AsyncHTTPResponseType, None)
 
-    def __await__(self):
-        return self.wrapped.__await__()
+    def __await__(self) -> Generator[Any, None, AsyncHTTPResponseType]:
+        return self._wrapped.__await__()
 
-    async def __aenter__(self):
-        self.response = await self
-        return self.response
+    async def __aenter__(self) -> AsyncHTTPResponseType:
+        self._response = await self
+        return self._response
 
-    async def __aexit__(self, *args):
-        await self.response.__aexit__(*args)
+    async def __aexit__(self, *args) -> None:
+        await self._response.__aexit__(*args)
 
-    async def close(self):
-        await self.response.close()
+    async def close(self) -> None:
+        await self._response.close()
 
 
-class AsyncPipelineClient(PipelineClientBase):
+class AsyncPipelineClient(
+    PipelineClientBase,
+    AsyncContextManager["AsyncPipelineClient"],
+    Generic[HTTPRequestType, AsyncHTTPResponseType],
+):
     """Service client core methods.
 
     Builds an AsyncPipeline client.
@@ -111,14 +159,18 @@ class AsyncPipelineClient(PipelineClientBase):
             :caption: Builds the async pipeline client.
     """
 
-    def __init__(self, base_url, **kwargs):
+    def __init__(
+        self,
+        base_url: str,
+        *,
+        pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        config: Optional[Configuration] = None,
+        **kwargs
+    ):
         super(AsyncPipelineClient, self).__init__(base_url)
-        self._config = kwargs.pop("config", None) or Configuration(**kwargs)
+        self._config: Configuration = config or Configuration(**kwargs)
         self._base_url = base_url
-        if kwargs.get("pipeline"):
-            self._pipeline = kwargs["pipeline"]
-        else:
-            self._pipeline = self._build_pipeline(self._config, **kwargs)
+        self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
     async def __aenter__(self):
         await self._pipeline.__aenter__()
@@ -130,11 +182,12 @@ class AsyncPipelineClient(PipelineClientBase):
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(self, config, **kwargs): # pylint: disable=no-self-use
-        transport = kwargs.get('transport')
-        policies = kwargs.get('policies')
-        per_call_policies = kwargs.get('per_call_policies', [])
-        per_retry_policies = kwargs.get('per_retry_policies', [])
+    def _build_pipeline(  # pylint: disable=no-self-use
+        self, config: Configuration, *, policies=None, per_call_policies=None, per_retry_policies=None, **kwargs
+    ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
+        transport = kwargs.get("transport")
+        per_call_policies = per_call_policies or []
+        per_retry_policies = per_retry_policies or []
 
         if policies is None:  # [] is a valid policy list
             policies = [
@@ -142,25 +195,33 @@ class AsyncPipelineClient(PipelineClientBase):
                 config.headers_policy,
                 config.user_agent_policy,
                 config.proxy_policy,
-                ContentDecodePolicy(**kwargs)
+                ContentDecodePolicy(**kwargs),
             ]
             if isinstance(per_call_policies, collections.abc.Iterable):
                 policies.extend(per_call_policies)
             else:
                 policies.append(per_call_policies)
 
-            policies.extend([config.redirect_policy,
-                             config.retry_policy,
-                             config.authentication_policy,
-                             config.custom_hook_policy])
+            policies.extend(
+                [
+                    config.redirect_policy,
+                    config.retry_policy,
+                    config.authentication_policy,
+                    config.custom_hook_policy,
+                ]
+            )
             if isinstance(per_retry_policies, collections.abc.Iterable):
                 policies.extend(per_retry_policies)
             else:
                 policies.append(per_retry_policies)
 
-            policies.extend([config.logging_policy,
-                             DistributedTracingPolicy(**kwargs),
-                             config.http_logging_policy or HttpLoggingPolicy(**kwargs)])
+            policies.extend(
+                [
+                    config.logging_policy,
+                    DistributedTracingPolicy(**kwargs),
+                    config.http_logging_policy or HttpLoggingPolicy(**kwargs),
+                ]
+            )
         else:
             if isinstance(per_call_policies, collections.abc.Iterable):
                 per_call_policies_list = list(per_call_policies)
@@ -178,35 +239,31 @@ class AsyncPipelineClient(PipelineClientBase):
                     if isinstance(policy, AsyncRetryPolicy):
                         index_of_retry = index
                 if index_of_retry == -1:
-                    raise ValueError("Failed to add per_retry_policies; "
-                                     "no RetryPolicy found in the supplied list of policies. ")
-                policies_1 = policies[:index_of_retry + 1]
-                policies_2 = policies[index_of_retry + 1:]
+                    raise ValueError(
+                        "Failed to add per_retry_policies; no RetryPolicy found in the supplied list of policies. "
+                    )
+                policies_1 = policies[: index_of_retry + 1]
+                policies_2 = policies[index_of_retry + 1 :]
                 policies_1.extend(per_retry_policies_list)
                 policies_1.extend(policies_2)
                 policies = policies_1
 
         if not transport:
             from .pipeline.transport import AioHttpTransport
+
             transport = AioHttpTransport(**kwargs)
 
-        return AsyncPipeline(transport, policies)
+        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](transport, policies)
 
-    async def _make_pipeline_call(self, request, **kwargs):
+    async def _make_pipeline_call(self, request: HTTPRequestType, **kwargs) -> AsyncHTTPResponseType:
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = await self._pipeline.run(
-            request, **kwargs  # pylint: disable=protected-access
-        )
+        pipeline_response = await self._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
-            return pipeline_response
+            return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response
 
     def send_request(
-        self,
-        request: HTTPRequestType,
-        *,
-        stream: bool = False,
-        **kwargs: Any
+        self, request: HTTPRequestType, *, stream: bool = False, **kwargs: Any
     ) -> Awaitable[AsyncHTTPResponseType]:
         """Method that runs the network request through the client's chained policies.
 
@@ -223,4 +280,4 @@ class AsyncPipelineClient(PipelineClientBase):
         :rtype: ~azure.core.rest.AsyncHttpResponse
         """
         wrapped = self._make_pipeline_call(request, stream=stream, **kwargs)
-        return _AsyncContextManager(wrapped=wrapped)
+        return _Coroutine(wrapped=wrapped)

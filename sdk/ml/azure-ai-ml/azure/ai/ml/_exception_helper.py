@@ -5,9 +5,9 @@
 import json
 import logging
 import traceback
-from typing import Dict, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
-from colorama import Fore, init
+from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml.constants._common import (
@@ -86,7 +86,7 @@ def format_details_section(
 
     if hasattr(error, "message"):
         error_types[error.error_type] = True
-        details += f"\n\n{error.message}\n"
+        details += f"\n\n{Fore.RED}(x) {error.message}{Fore.RESET}\n"
     else:
         if (
             entity_type == ErrorTarget.COMMAND_JOB
@@ -139,12 +139,13 @@ def format_details_section(
             if isinstance(field_error, dict):
                 field_error = f"{list(field_error.keys())[0]}:\n    - {list(field_error.values())[0][0]}"
 
-            details += f"\n{field}:\n- {field_error}\n"
-
+            details += f"{Fore.RED}\n(x) {field}:\n- {field_error}{Fore.RESET}\n"
     return error_types, details
 
 
-def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[str, bool]) -> Tuple[str, str]:
+def format_errors_and_resolutions_sections(
+    entity_type: str, error_types: Dict[str, bool], cli: bool
+) -> Tuple[str, str]:
     """Builds strings for details of the error message template's Errors and Resolutions sections."""
 
     resolutions = ""
@@ -153,63 +154,78 @@ def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[s
 
     if error_types[ValidationErrorType.INVALID_VALUE]:
         errors += f"\n{count}) One or more fields are invalid"
-        resolutions += f"Double-check that all specified parameters are of the correct types and formats \
-        prescribed by the {entity_type} schema."
+        resolutions += (
+            f"\n{count}) Double-check that all specified parameters are of the correct types and formats "
+            f"prescribed by the {entity_type} schema."
+        )
         count += 1
     if error_types[ValidationErrorType.UNKNOWN_FIELD]:
         errors += f"\n{count}) A least one unrecognized parameter is specified"
-        resolutions += f"Remove any parameters not prescribed by the {entity_type} schema."
+        resolutions += f"\n{count}) Remove any parameters not prescribed by the {entity_type} schema."
         count += 1
     if error_types[ValidationErrorType.MISSING_FIELD]:
         errors += f"\n{count}) At least one required parameter is missing"
-        resolutions += f"Ensure all parameters required by the {entity_type} schema are specified."
+        resolutions += f"\n{count}) Ensure all parameters required by the {entity_type} schema are specified."
         count += 1
     if error_types[ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND]:
         errors += f"\n{count}) One or more files or folders do not exist.\n"
-        resolutions += "Double-check the directory paths you provided and enter the correct paths."
+        resolutions += f"\n{count}) Double-check the directory path you provided and enter the correct path."
         count += 1
     if error_types[ValidationErrorType.CANNOT_SERIALIZE]:
         errors += f"\n{count}) One or more fields cannot be serialized.\n"
-        resolutions += f"Double-check that all specified parameters are of the correct types and formats \
+        resolutions += f"\n{count}) Double-check that all specified parameters are of the correct types and formats \
         prescribed by the {entity_type} schema."
         count += 1
     if error_types[ValidationErrorType.CANNOT_PARSE]:
         errors += f"\n{count}) YAML file cannot be parsed.\n"
-        resolutions += "Double-check your YAML file for syntax and formatting errors."
+        resolutions += f"\n{count}) Double-check your YAML file for syntax and formatting errors."
         count += 1
     if error_types[ValidationErrorType.RESOURCE_NOT_FOUND]:
         errors += f"\n{count}) Resource was not found.\n"
-        resolutions += "Double-check that the resource has been specified correctly and that you have access to it."
+        resolutions += (
+            f"\n{count}) Double-check that the resource has been specified correctly and " "that you have access to it."
+        )
         count += 1
+
+    if cli:
+        errors = "Error: " + errors
+    else:
+        errors = Fore.BLACK + errors + Fore.RESET
 
     return errors, resolutions
 
 
 def format_create_validation_error(
-    error: Union[SchemaValidationError, ValidationException], yaml_operation: bool
+    error: Union[SchemaValidationError, ValidationException],
+    yaml_operation: bool,
+    cli: bool = False,
+    raw_error: Optional[str] = None,
 ) -> str:
     """
     Formats a detailed error message for validation errors.
     """
-    from azure.ai.ml.entities._util import REF_DOC_ERROR_MESSAGE_MAP
-    from azure.ai.ml._schema.assets.data import DataSchema
     from azure.ai.ml._schema._datastore import (
         AzureBlobSchema,
         AzureDataLakeGen1Schema,
         AzureDataLakeGen2Schema,
         AzureFileSchema,
     )
-    from azure.ai.ml._schema.job import CommandJobSchema
     from azure.ai.ml._schema._sweep import SweepJobSchema
+    from azure.ai.ml._schema.assets.data import DataSchema
     from azure.ai.ml._schema.assets.environment import EnvironmentSchema
     from azure.ai.ml._schema.assets.model import ModelSchema
+    from azure.ai.ml._schema.job import CommandJobSchema
+    from azure.ai.ml.entities._util import REF_DOC_ERROR_MESSAGE_MAP
 
+    if raw_error:
+        error = raw_error
     entity_type, details = get_entity_type(error)
     error_types, details = format_details_section(error, details, entity_type)
-    errors, resolutions = format_errors_and_resolutions_sections(entity_type, error_types)
+    errors, resolutions = format_errors_and_resolutions_sections(entity_type, error_types, cli)
 
     if yaml_operation:
         description = YAML_CREATION_ERROR_DESCRIPTION.format(entity_type=entity_type)
+        description = Style.BRIGHT + description + Style.RESET_ALL
 
         if entity_type == ErrorTarget.MODEL:
             schema_type = ModelSchema
@@ -242,9 +258,11 @@ def format_create_validation_error(
         error_msg=errors,
         parsed_error_details=details,
         resolutions=resolutions,
+        text_color=Fore.WHITE,
+        link_color=Fore.CYAN,
+        reset=Fore.RESET,
     )
 
-    formatted_error = Fore.RED + formatted_error + Fore.RESET
     return formatted_error
 
 
@@ -257,7 +275,6 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
 
     if isinstance(error, SchemaValidationError):
         module_logger.debug(traceback.format_exc())
-
         try:
             formatted_error = format_create_validation_error(error.messages[0], yaml_operation=yaml_operation)
         except NotImplementedError:
@@ -265,7 +282,8 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
     elif isinstance(error, ValidationException):
         module_logger.debug(traceback.format_exc())
         try:
-            if error.error_type == ValidationErrorType.GENERIC:
+            error_type = error.error_type
+            if error_type == ValidationErrorType.GENERIC:
                 formatted_error = error
             else:
                 formatted_error = format_create_validation_error(error, yaml_operation=yaml_operation)

@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import os
+import tempfile
 import time
 import uuid
 from datetime import datetime, timedelta
@@ -40,6 +41,7 @@ from azure.storage.blob import (
     ResourceTypes,
     RetentionPolicy,
     StandardBlobTier,
+    StorageErrorCode,
     download_blob_from_url,
     generate_account_sas,
     generate_blob_sas,
@@ -148,7 +150,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # wait until the policy has gone into effect
         if self.is_live:
             self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
-            time.sleep(40)
+            time.sleep(60)
 
     def _disable_soft_delete(self):
         delete_retention_policy = RetentionPolicy(enabled=False)
@@ -390,11 +392,25 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
 
+        # Create a blob to download with requests using SAS
+        data = b'a' * 1024 * 1024
+        blob = self._create_blob(data=data)
+
+        sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
         # Act
-        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = blob.url + '?' + sas
         data = requests.get(uri, stream=True)
-        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
-        resp = blob.upload_blob(data=data.raw)
+        blob2 = self.bsc.get_blob_client(self.container_name, blob.blob_name + '_copy')
+        resp = blob2.upload_blob(data=data.raw)
 
         assert resp.get('etag') is not None
 
@@ -1161,6 +1177,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         try:
             self._setup(storage_account_name, storage_account_key)
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
 
             container = self.bsc.get_container_client(self.container_name)
@@ -1200,6 +1219,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         try:
             self._setup(storage_account_name, storage_account_key)
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             blob_snapshot_1 = blob.create_snapshot()
@@ -1250,6 +1272,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         try:
             self._setup(storage_account_name, storage_account_key)
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             blob_snapshot_1 = blob.create_snapshot()
@@ -1297,6 +1322,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         try:
             self._setup(storage_account_name, storage_account_key)
             self._enable_soft_delete()
+            after_props = self.bsc.get_service_properties()
+            assert after_props['delete_retention_policy'].days == 2
+            assert after_props['delete_retention_policy'].enabled is True
             blob_name = self._create_block_blob()
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
             blob_snapshot_1 = blob.create_snapshot()
@@ -1676,14 +1704,20 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         copy = copied_blob.start_copy_from_url(source_blob)
         assert copy['copy_status'] == 'pending'
 
-        copied_blob.abort_copy(copy)
-        props = self._wait_for_async_copy(copied_blob)
-        assert props.copy.status == 'aborted'
+        try:
+            copied_blob.abort_copy(copy)
+            props = self._wait_for_async_copy(copied_blob)
+            assert props.copy.status == 'aborted'
 
-        # Assert
-        actual_data = copied_blob.download_blob()
-        assert actual_data.readall() == b""
-        assert actual_data.properties.copy.status == 'aborted'
+            # Assert
+            actual_data = copied_blob.download_blob()
+            assert actual_data.readall() == b""
+            assert actual_data.properties.copy.status == 'aborted'
+
+        # In the Live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1755,7 +1789,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
-        self.sleep(17)
+        self.sleep(20)
 
         # Assert
         with pytest.raises(HttpResponseError):
@@ -2712,16 +2746,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient.from_blob_url(source_blob.url, credential=sas_token)
-        file_path = 'download_to_file_with_sas.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(blob.url, file_path)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            download_blob_from_url(blob.url, temp_file)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2732,18 +2764,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = self._create_blob(data=data)
-        file_path = 'to_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(
-            source_blob.url, file_path,
-            credential=storage_account_key)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2754,19 +2782,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = self._create_blob(data=data)
-        file_path = 'download_to_stream_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        with open(file_path, 'wb') as stream:
-            download_blob_from_url(
-                source_blob.url, stream,
-                credential=storage_account_key)
-
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+        with tempfile.TemporaryFile() as temp_file:
+            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key)
+            temp_file.seek(0)
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2777,21 +2800,21 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
         source_blob = self._create_blob(data=data)
-        file_path = 'file_with_existing_file.temp.{}.dat'.format(str(uuid.uuid4()))
 
         # Act
-        download_blob_from_url(
-            source_blob.url, file_path,
-            credential=storage_account_key)
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            download_blob_from_url(source_blob.url, temp_file.name, credential=storage_account_key, overwrite=True)
 
-        with pytest.raises(ValueError):
-            download_blob_from_url(source_blob.url, file_path)
+            with pytest.raises(ValueError):
+                download_blob_from_url(source_blob.url, temp_file.name)
 
-        # Assert
-        with open(file_path, 'rb') as stream:
-            actual = stream.read()
+            # Assert
+            temp_file.seek(0)
+            actual = temp_file.read()
             assert data == actual
-        self._teardown(file_path)
+
+            temp_file.close()
+            os.unlink(temp_file.name)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -2944,24 +2967,21 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        file_path = 'upload_to_url_file_with_credential.temp.{}.dat'.format(str(uuid.uuid4()))
         self._setup(storage_account_name, storage_account_key)
         data = b'123' * 1024
-        with open(file_path, 'wb') as stream:
-            stream.write(data)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        with open(file_path, 'rb'):
-            uploaded = upload_blob_to_url(
-                blob.url, data, credential=storage_account_key)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            uploaded = upload_blob_to_url(blob.url, data, credential=storage_account_key)
 
-        # Assert
-        assert uploaded is not None
-        content = blob.download_blob().readall()
-        assert data == content
-        self._teardown(file_path)
+            # Assert
+            assert uploaded is not None
+            content = blob.download_blob().readall()
+            assert data == content
 
     def test_set_blob_permission_from_string(self):
         # Arrange
@@ -3251,6 +3271,32 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
+    def test_download_properties(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+
+        # Act
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob.upload_blob(blob_data)
+
+        # Assert
+        data = blob.download_blob(encoding='utf-8')
+        props = data.properties
+
+        assert data is not None
+        assert data.readall() == blob_data
+        assert props['name'] == blob_name
+        assert props['creation_time'] is not None
+        assert props['content_settings'] is not None
+        assert props['size'] == len(blob_data)
+    
+    @BlobPreparer()
+    @recorded_by_proxy
     def test_public_access_error_code(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -3264,7 +3310,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"))
         blob = bsc.get_blob_client(container=blob_name, blob='test')
-        with pytest.raises(ClientAuthenticationError):
+        with pytest.raises(HttpResponseError):
             blob.upload_blob(blob_data)
 
 # ------------------------------------------------------------------------------

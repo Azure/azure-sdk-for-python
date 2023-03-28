@@ -1,8 +1,5 @@
 cryptography<4
 
-# python 3.10 pinned packages
-cffi==1.15.0rc2; python_version >= '3.10'
-
 # requirements leveraged by ci for testing
 pytest==4.6.9; python_version == '2.7'
 pytest==5.4.2; python_version >= '3.5' and python_version <= '3.9'

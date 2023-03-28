@@ -4,25 +4,20 @@
 # ------------------------------------
 import functools
 import os
-from typing import TYPE_CHECKING
+from typing import Any, Dict, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import HTTPPolicy
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
-
 
 class AzureArcCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs):
-        # type: (**Any) -> Optional[ManagedIdentityClient]
+    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         if url and imds:
@@ -33,23 +28,23 @@ class AzureArcCredential(ManagedIdentityBase):
             )
         return None
 
-    def __enter__(self):
-        self._client.__enter__()
+    def __enter__(self) -> "AzureArcCredential":
+        if self._client:
+            self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        self._client.__exit__(*args)
+    def __exit__(self, *args: Any) -> None:
+        if self._client:
+            self._client.__exit__(*args)
 
-    def close(self):
+    def close(self) -> None:
         self.__exit__()
 
-    def get_unavailable_message(self):
-        # type: () -> str
+    def get_unavailable_message(self) -> str:
         return "Azure Arc managed identity configuration not found in environment"
 
 
-def _get_request(url, scope, identity_config):
-    # type: (str, str, dict) -> HttpRequest
+def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     if identity_config:
         raise ClientAuthenticationError(
             message="User assigned managed identities are not supported by Azure Arc. To authenticate with the system "
@@ -62,8 +57,7 @@ def _get_request(url, scope, identity_config):
     return request
 
 
-def _get_secret_key(response):
-    # type: (PipelineResponse) -> str
+def _get_secret_key(response: PipelineResponse) -> str:
     # expecting header containing path to secret key file
     header = response.http_response.headers.get("WWW-Authenticate")
     if not header:
@@ -87,8 +81,7 @@ def _get_secret_key(response):
 class ArcChallengeAuthPolicy(HTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: PipelineRequest) -> PipelineResponse:
         request.http_request.headers["Metadata"] = "true"
         response = self.next.send(request)
 

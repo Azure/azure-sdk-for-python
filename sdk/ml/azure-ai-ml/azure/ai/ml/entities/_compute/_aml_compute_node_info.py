@@ -4,15 +4,15 @@
 
 from typing import Dict
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import AmlComputeNodeInformation
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlComputeNodeInformation
 from azure.ai.ml._schema.compute.aml_compute_node_info import AmlComputeNodeInfoSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
 class AmlComputeNodeInfo:
     def __init__(self):
-        """Compute node information related to a AmlCompute Variables are only
-        populated by the server, and will be ignored when sending a request."""
+        """Compute node information related to a AmlCompute Variables are only populated by the server, and will be
+        ignored when sending a request."""
 
         self.node_id = None
         self.private_ip_address = None

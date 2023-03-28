@@ -18,6 +18,7 @@ from ._models_py3 import DataDiskImageEncryption
 from ._models_py3 import Disallowed
 from ._models_py3 import DiskImageEncryption
 from ._models_py3 import EncryptionImages
+from ._models_py3 import ExtendedLocation
 from ._models_py3 import Gallery
 from ._models_py3 import GalleryApplication
 from ._models_py3 import GalleryApplicationCustomAction
@@ -70,6 +71,7 @@ from ._models_py3 import RegionalSharingStatus
 from ._models_py3 import ReplicationStatus
 from ._models_py3 import Resource
 from ._models_py3 import ResourceRange
+from ._models_py3 import ResourceWithOptionalLocation
 from ._models_py3 import SharedGallery
 from ._models_py3 import SharedGalleryDataDiskImage
 from ._models_py3 import SharedGalleryDiskImage
@@ -85,15 +87,20 @@ from ._models_py3 import SharingProfileGroup
 from ._models_py3 import SharingStatus
 from ._models_py3 import SharingUpdate
 from ._models_py3 import SoftDeletePolicy
+from ._models_py3 import SubResource
+from ._models_py3 import SubResourceReadOnly
+from ._models_py3 import SystemData
 from ._models_py3 import TargetRegion
 from ._models_py3 import UpdateResourceDefinition
 from ._models_py3 import UserArtifactManage
 from ._models_py3 import UserArtifactSettings
 from ._models_py3 import UserArtifactSource
+from ._models_py3 import UserAssignedIdentitiesValue
 
 from ._compute_management_client_enums import AggregatedReplicationState
 from ._compute_management_client_enums import Architecture
 from ._compute_management_client_enums import ConfidentialVMEncryptionType
+from ._compute_management_client_enums import ExtendedLocationTypes
 from ._compute_management_client_enums import GalleryApplicationCustomActionParameterType
 from ._compute_management_client_enums import GalleryExpandParams
 from ._compute_management_client_enums import GalleryExtendedLocationType
@@ -115,7 +122,7 @@ from ._compute_management_client_enums import SharingState
 from ._compute_management_client_enums import SharingUpdateOperationTypes
 from ._compute_management_client_enums import StorageAccountType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -131,6 +138,7 @@ __all__ = [
     "Disallowed",
     "DiskImageEncryption",
     "EncryptionImages",
+    "ExtendedLocation",
     "Gallery",
     "GalleryApplication",
     "GalleryApplicationCustomAction",
@@ -183,6 +191,7 @@ __all__ = [
     "ReplicationStatus",
     "Resource",
     "ResourceRange",
+    "ResourceWithOptionalLocation",
     "SharedGallery",
     "SharedGalleryDataDiskImage",
     "SharedGalleryDiskImage",
@@ -198,14 +207,19 @@ __all__ = [
     "SharingStatus",
     "SharingUpdate",
     "SoftDeletePolicy",
+    "SubResource",
+    "SubResourceReadOnly",
+    "SystemData",
     "TargetRegion",
     "UpdateResourceDefinition",
     "UserArtifactManage",
     "UserArtifactSettings",
     "UserArtifactSource",
+    "UserAssignedIdentitiesValue",
     "AggregatedReplicationState",
     "Architecture",
     "ConfidentialVMEncryptionType",
+    "ExtendedLocationTypes",
     "GalleryApplicationCustomActionParameterType",
     "GalleryExpandParams",
     "GalleryExtendedLocationType",

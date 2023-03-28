@@ -23,7 +23,7 @@ from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
-credential  = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -32,7 +32,7 @@ query= """let Weight = 92233720368547758;
             | summarize percentilesw(x, Weight * 100, 50)"""
 
 
-# this block of code is exactly the same whether the expected result is a success, a failure or a 
+# this block of code is exactly the same whether the expected result is a success, a failure or a
 # partial success
 try:
     response = client.query_workspace(os.environ['LOGS_WORKSPACE_ID'], query, timespan=timedelta(days=1))
@@ -40,9 +40,10 @@ try:
         # handle error here
         error = response.partial_error
         data = response.partial_data
-        print(error.message)
+        print(error)
     elif response.status == LogsQueryStatus.SUCCESS:
         data = response.tables
+
     for table in data:
         df = pd.DataFrame(data=table.rows, columns=table.columns)
         print(df)

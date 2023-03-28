@@ -5,7 +5,7 @@
 import os
 import platform
 import time
-from typing import TYPE_CHECKING
+from typing import Dict, Optional, Any
 
 from msal import PublicClientApplication
 
@@ -18,25 +18,28 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Dict
-    from .. import AuthenticationRecord
+from .._constants import EnvironmentVariables
+from .. import AuthenticationRecord
 
 
-class SilentAuthenticationCredential(object):
+class SilentAuthenticationCredential:
     """Internal class for authenticating from the default shared cache given an AuthenticationRecord"""
 
-    def __init__(self, authentication_record, **kwargs):
-        # type: (AuthenticationRecord, **Any) -> None
+    def __init__(
+            self,
+            authentication_record: AuthenticationRecord,
+            *,
+            tenant_id: Optional[str] = None,
+            **kwargs
+    ) -> None:
         self._auth_record = authentication_record
 
         # authenticate in the tenant that produced the record unless "tenant_id" specifies another
-        self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
+        self._tenant_id = tenant_id or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
         self._cache = kwargs.pop("_cache", None)
-        self._client_applications = {}  # type: Dict[str, PublicClientApplication]
+        self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
+        self._client_applications: Dict[str, PublicClientApplication] = {}
         self._additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", [])
         self._client = MsalClient(**kwargs)
         self._initialized = False
@@ -48,8 +51,7 @@ class SilentAuthenticationCredential(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
@@ -64,16 +66,19 @@ class SilentAuthenticationCredential(object):
     def _initialize(self):
         if not self._cache and platform.system() in {"Darwin", "Linux", "Windows"}:
             try:
-                # This credential accepts the user's default cache regardless of whether it's encrypted. It doesn't
-                # create a new cache. If the default cache exists, the user must have created it earlier. If it's
-                # unencrypted, the user must have allowed that.
-                self._cache = _load_persistent_cache(TokenCachePersistenceOptions(allow_unencrypted_storage=True))
+                # If no cache options were provided, the default cache will be used. This credential accepts the
+                # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
+                # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
+                # have allowed that.
+                options = self._cache_persistence_options or \
+                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+                self._cache = _load_persistent_cache(options)
             except Exception:  # pylint:disable=broad-except
                 pass
 
         self._initialized = True
 
-    def _get_client_application(self, **kwargs):
+    def _get_client_application(self, **kwargs: Any):
         tenant_id = resolve_tenant(
             self._tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
@@ -81,7 +86,7 @@ class SilentAuthenticationCredential(object):
         )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
-            capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
+            capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
             self._client_applications[tenant_id] = PublicClientApplication(
                 client_id=self._auth_record.client_id,
                 authority="https://{}/{}".format(self._auth_record.authority, tenant_id),
@@ -92,8 +97,7 @@ class SilentAuthenticationCredential(object):
         return self._client_applications[tenant_id]
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _acquire_token_silent(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Silently acquire a token from MSAL."""
 
         result = None

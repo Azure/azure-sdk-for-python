@@ -72,7 +72,7 @@ class ArmDeploymentExecutor(object):
         self,
         template: str,
         resources_being_deployed: Dict[str, Any],
-        parameters: Dict = None,
+        parameters: Optional[Dict] = None,
         wait: bool = True,
     ) -> Optional[LROPoller]:
         total_duration = None
@@ -131,7 +131,7 @@ class ArmDeploymentExecutor(object):
         if len(resources_being_deployed) > 1 and total_duration:
             module_logger.info("Total time : %s\n", from_iso_duration_format_min_sec(total_duration))
 
-    def _get_poller(self, template: str, parameters: Dict = None, wait: bool = True) -> None:
+    def _get_poller(self, template: str, parameters: Optional[Dict] = None, wait: bool = True) -> None:
         # deploy the template
         properties = DeploymentProperties(template=template, parameters=parameters, mode="incremental")
         return self._deployments_client.begin_create_or_update(
@@ -167,6 +167,12 @@ class ArmDeploymentExecutor(object):
 
             resource_name = (
                 f"{arm_id_obj.asset_name} {arm_id_obj.asset_version if hasattr(arm_id_obj,'asset_version') else ''}"
+            )
+            # do swap on asset_type to avoid collision with workspaces asset_type in arm id
+            arm_id_obj.asset_type = (
+                arm_id_obj.asset_type
+                if not arm_id_obj.provider_namespace_with_type == "OperationalInsightsworkspaces"
+                else "LogAnalytics"
             )
             deployment_message = deployment_message_mapping[arm_id_obj.asset_type].format(f"{resource_name} ")
             if target_resource.resource_name not in self._resources_being_deployed.keys():

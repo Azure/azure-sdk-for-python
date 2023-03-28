@@ -26,9 +26,10 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
-
+    "**/assets.json",
+    "**/pyproject.toml",
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
-    "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-autosuggest/**",
     "sdk/cognitiveservices/azure-cognitiveservices-search-customimagesearch/**",
@@ -57,9 +58,11 @@
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
+    "sdk/easm/azure-defender-easm/azure/defender/easm/**",
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
@@ -91,10 +94,17 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
+    "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
-    "tools/azure-sdk-tools/setup.py"
+    "tools/azure-sdk-tools/setup.py",
+    "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
+    "pyprojecttoml",
+    "tomli",
+    "sdkrel",
+    "qnamaker",
+    "mindependency",
     "automl",
     "pyyaml",
     "CONLL",
@@ -133,6 +143,7 @@
     "cname",
     "conda",
     "connectedvmware",
+    "consts",
     "contoso",
     "contosodataset",
     "centralus",
@@ -160,6 +171,8 @@
     "dtlksd",
     "DWORD",
     "eastus",
+    "Easm",
+    "euap",
     "eckey",
     "ekus",
     "encryptor",
@@ -201,6 +214,7 @@
     "iscsi",
     "iterrows",
     "ivar",
+    "ivars",
     "jwks",
     "keybak",
     "kube",
@@ -275,6 +289,8 @@
     "pyfuncitem",
     "pygobject",
     "pyodide",
+    "pyright",
+    "pyrightconfig",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -372,13 +388,48 @@
     "prnumber",
     "yarl",
     "SDDL",
-    "dacl"
+    "dacl",
+    "whls"
   ],
   "overrides": [
+    {
+      "filename": "doc/dev/test_proxy_migration_guide.md",
+      "words": [
+        "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
+      "words": [
+        "certifi",
+        "passenv"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/tests/integration/test_proxy_startup.py",
+      "words": [
+        "spinup"
+      ]
+    },
     {
       "filename": "sdk/remoterendering/**",
       "words": [
         "Phong"
+      ]
+    },
+    {              
+      "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
+      "words": [
+        "isfork",
+        "ISFORK",
+        "thead"
+      ]
+    },
+    {
+      "filename": "sdk/core/azure-core/tests/test_serialization.py",
+      "words": [
+        "Rlcw",
+        "Jwcmlud"
       ]
     },
     {
@@ -410,9 +461,16 @@
       ]
     },
     {
-      "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
+      "filename": "sdk/tables/test-resources.json",
       "words": [
-        "essai"
+        "mmspecial"
+      ]
+    },
+    {
+      "filename": "sdk/translation/azure-ai-translation-document/**",
+      "words": [
+        "essai",
+        "myfoldername"
       ]
     },
     {
@@ -457,7 +515,9 @@
         "verfasst",
         "engelska",
         "fhir",
-        "FHIR"
+        "FHIR",
+        "naam",
+        "aenter"
       ]
     },
     {
@@ -466,7 +526,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv"],
+      "words": ["conv", "summ"],
       "caseSensitive": false
     },
     {
@@ -562,7 +622,14 @@
         "ierr",
         "mymodel",
         "heif",
-        "racwd"
+        "racwd",
+        "rrggbb"
+      ]
+    },
+    {
+      "filename": "sdk/keyvault/**",
+      "words": [
+        "eddsa"
       ]
     },
     {
@@ -624,6 +691,57 @@
       ]
     },
     {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/aio/operations/*.py",
+      "words": [
+        "Syms",
+        "MetastoreUpdation"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/models/*.py",
+      "words": [
+        "USQL",
+        "Eloqua",
+        "Hdfs",
+        "Informix",
+        "Magento",
+        "MetastoreUpdation",
+        "Netezza",
+        "Odbc",
+        "Responsys",
+        "Sybase",
+        "Twilio",
+        "Vertica",
+        "Xero",
+        "SASL",
+        "SSISDB",
+        "WTGCTBG",
+        "ilearner",
+        "DBFS",
+        "eloqua",
+        "byoa",
+        "cacerts",
+        "HDFS",
+        "hcatalog",
+        "ondemand",
+        "oozie",
+        "magento",
+        "mktorest",
+        "nbformat",
+        "paramref",
+        "myshopify",
+        "mysquare",
+        "xero"
+      ]
+    },
+    {
+      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
+      "words": [
+        "Syms",
+        "Updation",
+      ]
+    },
+    {
       "filename": "sdk/storage/azure-storage-file-datalake/**",
       "words": [
         "dlake",
@@ -657,7 +775,8 @@
         "cpksubdirectory",
         "thead",
         "tbody",
-        "racwdlmeop"
+        "racwdlmeop",
+        "newfs"
       ]
     },
     {
@@ -681,7 +800,7 @@
       ]
     },
     {
-      "filename": "sdk/ml/tests.yml",
+      "filename": "sdk/ml/*tests.yml",
       "words": [
         "euap"
       ]
@@ -808,7 +927,9 @@
         "fnmatch",
         "posixpath",
         "SEPS",
-        "wargs"
+        "wargs",
+        "pycache",
+        "ruamel"
       ]
     },
     {
@@ -827,7 +948,19 @@
       "filename": "sdk/agrifood/azure-agrifood-farming/**",
       "words": [
         "NDVI",
-        "Unhandleable"
+        "Unhandleable",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize",
+        "stac",
+        "nnumeral",
+        "nonly",
+        "STAC",
+        "Placeid",
+        "resouce",
+        "nnumeral"
       ]
      },
      {
@@ -853,7 +986,12 @@
         "myaccount",
         "testid",
         "filea",
-        "fileb"
+        "fileb",
+        "FFFE",
+        "Fdirectory",
+        "Ffile",
+        "Fsubdir",
+        "Fdir"
       ]
     },
     {
@@ -1000,7 +1138,9 @@
         "mybytes",
         "myid",
         "jsonify",
-        "ints"
+        "ints",
+        "inirudebwoy",
+	"mghextreme"
       ]
     },
     {
@@ -1023,6 +1163,13 @@
         "nonly",
         "nthe",
         "reques"
+      ]
+    },
+    {
+      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
       ]
     },
     {
@@ -1103,6 +1250,18 @@
       ]
     },
     {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/receipt/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/azure-confidentialledger/samples/*.py",
       "words": [
         "tids",
@@ -1125,8 +1284,30 @@
         "Nify",
         "ctxt",
         "unflattened",
-	  "deseralize",
-	  "wday"
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/personalizer/test-resources.json",
+      "words": [
+        "euap"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/_serialization.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize"
       ]
     }
   ],

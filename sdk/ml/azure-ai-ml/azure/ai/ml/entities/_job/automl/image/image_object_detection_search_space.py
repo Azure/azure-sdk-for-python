@@ -5,14 +5,9 @@
 # pylint: disable=R0902,too-many-locals
 # pylint: disable=C0302,too-many-lines
 
-from typing import Union
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageModelDistributionSettingsObjectDetection
-from azure.ai.ml.entities._job.automl.search_space_utils import (
-    _convert_from_rest_object,
-    _convert_to_rest_object,
-)
-from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageModelDistributionSettingsObjectDetection
 from azure.ai.ml.entities import (
     Choice,
     LogNormal,
@@ -25,12 +20,13 @@ from azure.ai.ml.entities import (
     Randint,
     Uniform,
 )
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
-    """Search space for AutoML Image Object Detection and Image Instance
-    Segmentation tasks.
+    """Search space for AutoML Image Object Detection and Image Instance Segmentation tasks.
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :type ams_gradient: bool or Union[~azure.ai.ml.entities.Choice,
@@ -524,125 +520,385 @@ class ImageObjectDetectionSearchSpace(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        ams_gradient: Union[
-            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        ams_gradient: Optional[
+            Union[
+                bool,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        beta1: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        beta1: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        beta2: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        beta2: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        distributed: Union[
-            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        distributed: Optional[
+            Union[
+                bool,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        early_stopping: Union[
-            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        early_stopping: Optional[
+            Union[
+                bool,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        early_stopping_delay: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        early_stopping_delay: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        early_stopping_patience: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        early_stopping_patience: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        enable_onnx_normalization: Union[
-            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        enable_onnx_normalization: Optional[
+            Union[
+                bool,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        evaluation_frequency: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        evaluation_frequency: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        gradient_accumulation_step: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        gradient_accumulation_step: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        layers_to_freeze: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        layers_to_freeze: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        learning_rate: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        learning_rate: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        learning_rate_scheduler: Union[
-            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        learning_rate_scheduler: Optional[
+            Union[
+                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        model_name: Union[
-            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        model_name: Optional[
+            Union[
+                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        momentum: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        momentum: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        nesterov: Union[
-            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        nesterov: Optional[
+            Union[
+                bool,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        number_of_epochs: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        number_of_epochs: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        number_of_workers: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        number_of_workers: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        optimizer: Union[
-            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        optimizer: Optional[
+            Union[
+                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        random_seed: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        random_seed: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        step_lr_gamma: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        step_lr_gamma: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        step_lr_step_size: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        step_lr_step_size: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        training_batch_size: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        training_batch_size: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        validation_batch_size: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        validation_batch_size: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        warmup_cosine_lr_cycles: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        warmup_cosine_lr_cycles: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        warmup_cosine_lr_warmup_epochs: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        warmup_cosine_lr_warmup_epochs: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        weight_decay: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        weight_decay: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        box_detections_per_image: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        box_detections_per_image: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        box_score_threshold: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        box_score_threshold: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        image_size: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        image_size: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        max_size: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        max_size: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        min_size: Union[
-            int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        min_size: Optional[
+            Union[
+                int, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        model_size: Union[
-            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        model_size: Optional[
+            Union[
+                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        multi_scale: Union[
-            bool, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        multi_scale: Optional[
+            Union[
+                bool,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        nms_iou_threshold: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        nms_iou_threshold: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        tile_grid_size: Union[
-            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        tile_grid_size: Optional[
+            Union[
+                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
-        tile_overlap_ratio: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        tile_overlap_ratio: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        tile_predictions_nms_threshold: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        tile_predictions_nms_threshold: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        validation_iou_threshold: Union[
-            float, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        validation_iou_threshold: Optional[
+            Union[
+                float,
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ]
         ] = None,
-        validation_metric_type: Union[
-            str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+        validation_metric_type: Optional[
+            Union[
+                str, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+            ]
         ] = None,
     ) -> None:
         self.ams_gradient = ams_gradient

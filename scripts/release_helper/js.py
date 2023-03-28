@@ -1,11 +1,10 @@
 import datetime
 from common import IssueProcess, Common
 from typing import Any, List
-import os
 
 # assignee dict which will be assigned to handle issues
-_JS_OWNER = {'lirenhe', 'kazrael2119', 'azure-sdk'}
-_JS_ASSIGNEE = {'qiaozha', 'MaryGao'}
+_JS_OWNER = {'lirenhe', 'kazrael2119', 'azure-sdk', 'qiaozha'}
+_JS_ASSIGNEE = {'MaryGao'}
 
 
 class IssueProcessJs(IssueProcess):
@@ -23,6 +22,6 @@ class Js(Common):
         self.file_out_name = 'release_js_status.md'
         self.issue_process_function = IssueProcessJs
 
-def js_process(issues: List[Any]):
-    instance = Js(issues, _JS_OWNER, _JS_ASSIGNEE)
-    instance.run()
+
+def js_process(issues: List[Any]) -> Js:
+    return Js(issues, _JS_OWNER, _JS_ASSIGNEE)

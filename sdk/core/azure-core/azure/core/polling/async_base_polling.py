@@ -38,8 +38,7 @@ __all__ = ["AsyncLROBasePolling"]
 
 
 class AsyncLROBasePolling(LROBasePolling):
-    """A subclass or LROBasePolling that redefine "run" as async.
-    """
+    """A subclass or LROBasePolling that redefine "run" as async."""
 
     async def run(self):  # pylint:disable=invalid-overridden-method
         try:
@@ -47,24 +46,18 @@ class AsyncLROBasePolling(LROBasePolling):
 
         except BadStatus as err:
             self._status = "Failed"
-            raise HttpResponseError(
-                response=self._pipeline_response.http_response,
-                error=err
-            )
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
         except BadResponse as err:
             self._status = "Failed"
             raise HttpResponseError(
                 response=self._pipeline_response.http_response,
                 message=str(err),
-                error=err
+                error=err,
             )
 
         except OperationFailed as err:
-            raise HttpResponseError(
-                response=self._pipeline_response.http_response,
-                error=err
-            )
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
     async def _poll(self):  # pylint:disable=invalid-overridden-method
         """Poll status of operation so long as operation is incomplete and
@@ -101,11 +94,8 @@ class AsyncLROBasePolling(LROBasePolling):
         await self._sleep(delay)
 
     async def update_status(self):  # pylint:disable=invalid-overridden-method
-        """Update the current status of the LRO.
-        """
-        self._pipeline_response = await self.request_status(
-            self._operation.get_polling_url()
-        )
+        """Update the current status of the LRO."""
+        self._pipeline_response = await self.request_status(self._operation.get_polling_url())
         _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
         self._status = self._operation.get_status(self._pipeline_response)
 
@@ -125,10 +115,9 @@ class AsyncLROBasePolling(LROBasePolling):
             # if I am a azure.core.rest.HttpResponse
             # want to keep making azure.core.rest calls
             from azure.core.rest import HttpRequest as RestHttpRequest
+
             request = RestHttpRequest("GET", status_link)
-            return await self._client.send_request(
-                request, _return_pipeline_response=True, **self._operation_config
-            )
+            return await self._client.send_request(request, _return_pipeline_response=True, **self._operation_config)
         # if I am a azure.core.pipeline.transport.HttpResponse
         request = self._client.get(status_link)
 
@@ -136,6 +125,5 @@ class AsyncLROBasePolling(LROBasePolling):
             request, stream=False, **self._operation_config
         )
 
-__all__ = [
-    'AsyncLROBasePolling'
-]
+
+__all__ = ["AsyncLROBasePolling"]

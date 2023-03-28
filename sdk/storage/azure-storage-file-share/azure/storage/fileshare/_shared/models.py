@@ -4,10 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-instance-attributes
-
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
+
 
 def get_enum_value(value):
     if value is None or value in ["None", ""]:

@@ -88,3 +88,19 @@ class RSAKeyWrapper:
 
     def get_kid(self):
         return self.kid
+
+
+def mock_urandom(size: int) -> bytes:
+    """
+    Used to mock os.urandom to return fixed values for creation of IV (16 bytes), encryption keys
+    (32 bytes), and nonces (12 bytes) internal to the encryption algorithm. This allows these tests
+    to be recorded.
+    """
+    if size == 12:
+        return b'Mb\xd5N\xc2\xbd\xa0\xc8\xa4L\xfb\xa0'
+    elif size == 16:
+        return b'\xbb\xd6\x87\xb6j\xe5\xdc\x93\xb0\x13\x1e\xcc\x9f\xf4\xca\xab'
+    elif size == 32:
+        return b'\x08\xe0A\xb6\xf2\xb7x\x8f\xe5\xdap\x87^6x~\xa4F\xc4\xe9\xb1\x8a:\xfbC%S\x0cZ\xbb\xbe\x88'
+    else:
+        return os.urandom(size)

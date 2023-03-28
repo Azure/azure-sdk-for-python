@@ -1,5 +1,30 @@
 # Release History
 
+## 21.1.0b1 (2023-02-20)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
+## 21.0.0 (2022-11-15)
+
+### Features Added
+
+  - Model ManagementPolicyBaseBlob has a new parameter tier_to_cold
+  - Model ManagementPolicyBaseBlob has a new parameter tier_to_hot
+  - Model ManagementPolicySnapShot has a new parameter tier_to_cold
+  - Model ManagementPolicySnapShot has a new parameter tier_to_hot
+  - Model ManagementPolicyVersion has a new parameter tier_to_cold
+  - Model ManagementPolicyVersion has a new parameter tier_to_hot
+
+### Breaking Changes
+
+  - Operation EncryptionScopesOperations.list has a new parameter filter
+  - Operation EncryptionScopesOperations.list has a new parameter include
+  - Operation EncryptionScopesOperations.list has a new parameter maxpagesize
+  - Operation StorageAccountsOperations.begin_failover has a new parameter failover_type
+
 ## 20.1.0 (2022-08-09)
 
 **Features**

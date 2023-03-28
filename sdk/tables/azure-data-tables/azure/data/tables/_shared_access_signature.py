@@ -3,21 +3,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from datetime import date
-from typing import Optional, Union, TYPE_CHECKING
+from datetime import date, datetime
+from typing import Optional, Union
 
 from ._deserialize import url_quote
-
-
+from ._models import AccountSasPermissions, ResourceTypes, SASProtocol
 from ._common_conversion import (
     _sign_string,
     _to_str,
 )
 from ._constants import DEFAULT_X_MS_VERSION
-
-if TYPE_CHECKING:
-    from datetime import datetime  # pylint: disable=ungrouped-imports
-    from ._models import AccountSasPermissions, ResourceTypes, SASProtocol
 
 
 def _to_utc_datetime(value):
@@ -46,15 +41,14 @@ class SharedAccessSignature(object):
 
     def generate_account(
         self,
-        services,  # type: str
-        resource_types,  # type: ResourceTypes
-        permission,  # type: Union[AccountSasPermissions, str]
-        expiry,  # type: Union[datetime, str]
-        start=None,  # type: Optional[Union[datetime, str]]
-        ip_address_or_range=None,  # type: Optional[str]
-        protocol=None,  # type: Optional[Union[str, SASProtocol]]
-    ):
-    # type: (...) -> str
+        services: str,
+        resource_types: ResourceTypes,
+        permission: Union[AccountSasPermissions, str],
+        expiry: Union[datetime, str],
+        start: Optional[Union[datetime, str]] = None,
+        ip_address_or_range: Optional[str] = None,
+        protocol: Optional[Union[str, SASProtocol]] = None,
+    ) -> str:
         """
         Generates a shared access signature for the account.
         Use the returned signature with the sas_token parameter of the service
@@ -248,8 +242,7 @@ class _SharedAccessHelper(object):
             _sign_string(account_key, string_to_sign),
         )
 
-    def add_account_signature(self, account_name, account_key):
-        # type: (str, str) -> None
+    def add_account_signature(self, account_name: str, account_key: str) -> None:
         def get_value_to_append(query):
             return_value = self.query_dict.get(query) or ""
             return return_value + "\n"
@@ -272,8 +265,7 @@ class _SharedAccessHelper(object):
             _sign_string(account_key, string_to_sign),
         )
 
-    def get_token(self):
-        # type: () -> str
+    def get_token(self) -> str:
         return "&".join(
             [
                 "{0}={1}".format(n, url_quote(v))

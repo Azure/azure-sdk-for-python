@@ -726,6 +726,32 @@
       },
       "additionalProperties": false
     },
+    "CustomModelJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "CustomModel",
+      "additionalProperties": false
+    },
+    "CustomModelJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "CustomModel",
+      "additionalProperties": false
+    },
     "DatasetType": {
       "enum": [
         "Simple",
@@ -955,7 +981,11 @@
       "enum": [
         "UriFile",
         "UriFolder",
-        "MLTable"
+        "MLTable",
+        "Literal",
+        "CustomModel",
+        "MLFlowModel",
+        "TritonModel"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -990,7 +1020,12 @@
     "JobOutputType": {
       "description": "Enum to determine the Job Output Type.",
       "enum": [
-        "UriFile"
+        "UriFile",
+        "UriFolder",
+        "MLTable",
+        "CustomModel",
+        "MLFlowModel",
+        "TritonModel"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -1091,6 +1126,52 @@
       },
       "additionalProperties": false
     },
+    "LiteralJobInput": {
+      "required": [
+        "value"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "properties": {
+        "value": {
+          "description": "Literal input value",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
+      "x-ms-discriminator-value": "Literal",
+      "additionalProperties": false
+    },
+    "MLFlowModelJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "MLFlowModel",
+      "additionalProperties": false
+    },
+    "MLFlowModelJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "MLFlowModel",
+      "additionalProperties": false
+    },
     "MLTableJobInput": {
       "type": "object",
       "allOf": [
@@ -1099,6 +1180,19 @@
         },
         {
           "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "MLTable",
+      "additionalProperties": false
+    },
+    "MLTableJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
         }
       ],
       "x-ms-discriminator-value": "MLTable",
@@ -1115,6 +1209,32 @@
         "name": "OutputDeliveryMode",
         "modelAsString": true
       },
+      "additionalProperties": false
+    },
+    "TritonModelJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "TritonModel",
+      "additionalProperties": false
+    },
+    "TritonModelJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "TritonModel",
       "additionalProperties": false
     },
     "UriFileJobInput": {
@@ -1151,6 +1271,19 @@
         },
         {
           "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "UriFolder",
+      "additionalProperties": false
+    },
+    "UriFolderJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
         }
       ],
       "x-ms-discriminator-value": "UriFolder",

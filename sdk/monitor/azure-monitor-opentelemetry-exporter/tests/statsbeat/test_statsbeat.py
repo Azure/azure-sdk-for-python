@@ -27,6 +27,10 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _STATSBEAT_STATE,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat import (
+    _DEFAULT_STATS_LONG_EXPORT_INTERVAL,
+    _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+)
 from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import (
     _shorten_host,
     _FEATURE_TYPES,
@@ -147,6 +151,54 @@ class TestStatsbeat(unittest.TestCase):
             _statsbeat._DEFAULT_EU_STATS_CONNECTION_STRING.split(";")[1].split("=")[1]   # noqa: E501
         )
 
+
+    @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics')
+    def test_collect_statsbeat_metrics_aad(
+        self,
+        mock_statsbeat_metrics,
+    ):
+        exporter = mock.Mock()
+        TEST_ENDPOINT = "test endpoint"
+        TEST_IKEY = "test ikey"
+        TEST_CREDENTIAL = "test credential"
+        exporter._endpoint = TEST_ENDPOINT
+        exporter._instrumentation_key = TEST_IKEY
+        exporter._disable_offline_storage = False
+        exporter._credential = TEST_CREDENTIAL
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        mock_statsbeat_metrics.assert_called_once_with(
+            _statsbeat._STATSBEAT_METER_PROVIDER,
+            TEST_IKEY,
+            TEST_ENDPOINT,
+            False,
+            _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+            True,
+        )
+
+
+    @mock.patch('azure.monitor.opentelemetry.exporter.statsbeat._statsbeat._StatsbeatMetrics')
+    def test_collect_statsbeat_metrics_no_aad(
+        self,
+        mock_statsbeat_metrics,
+    ):
+        exporter = mock.Mock()
+        TEST_ENDPOINT = "test endpoint"
+        TEST_IKEY = "test ikey"
+        TEST_CREDENTIAL = None
+        exporter._endpoint = TEST_ENDPOINT
+        exporter._instrumentation_key = TEST_IKEY
+        exporter._disable_offline_storage = False
+        exporter._credential = TEST_CREDENTIAL
+        _statsbeat.collect_statsbeat_metrics(exporter)
+        mock_statsbeat_metrics.assert_called_once_with(
+            _statsbeat._STATSBEAT_METER_PROVIDER,
+            TEST_IKEY,
+            TEST_ENDPOINT,
+            False,
+            _DEFAULT_STATS_LONG_EXPORT_INTERVAL / _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
+            False,
+        )
+
     @mock.patch.object(MeterProvider, 'shutdown')
     def test_shutdown_statsbeat_metrics(self, shutdown_mock):
         _STATSBEAT_STATE["SHUTDOWN"] = False
@@ -185,6 +237,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             endpoint,
             True,
             0,
+            False,
         )
 
     def setUp(self):
@@ -211,8 +264,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             5,
+            False,
         )
         self.assertEqual(_StatsbeatMetrics._COMMON_ATTRIBUTES["cikey"], ikey)
         self.assertEqual(_StatsbeatMetrics._NETWORK_ATTRIBUTES["host"], "westus-1")
@@ -241,8 +295,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
+            False,
         )
         metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 2
         metric._vm_retry = False
@@ -259,8 +314,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
+            False,
         )
         metric._long_interval_count_map[_ATTACH_METRIC_NAME[0]] = 1
         observations = metric._get_attach_metric(options=None)
@@ -313,8 +369,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         _vm_data = {}
         _vm_data["vmId"] = "123"
@@ -346,8 +403,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         _vm_data = {}
         _vm_data["vmId"] = "123"
@@ -373,8 +431,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         metric._vm_retry = False
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -392,8 +451,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         with mock.patch('requests.get') as get:
             get.return_value = MockResponse(
@@ -421,8 +481,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         with mock.patch(
             'requests.get',
@@ -441,8 +502,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         with mock.patch(
             'requests.get',
@@ -461,8 +523,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         with mock.patch(
             'requests.get',
@@ -482,8 +545,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
+            False,
         )
         metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 2
         observations = metric._get_feature_metric(options=None)
@@ -499,8 +563,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             2,
+            False,
         )
         metric._long_interval_count_map[_FEATURE_METRIC_NAME[0]] = 1
         observations = metric._get_feature_metric(options=None)
@@ -516,8 +581,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
         attributes.update(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
@@ -537,13 +603,32 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            False,
+            True,
             0,
+            False,
         )
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
         observations = metric._get_feature_metric(options=None)
         self.assertEqual(len(observations), 0)
         self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], 0)
+
+    # pylint: disable=protected-access
+    def test_get_feature_metric_aad(self):
+        mp = MeterProvider()
+        ikey = "1aa11111-bbbb-1ccc-8ddd-eeeeffff3334"
+        endpoint = "https://westus-1.in.applicationinsights.azure.com/"
+        metric = _StatsbeatMetrics(
+            mp,
+            ikey,
+            endpoint,
+            True,
+            0,
+            True
+        )
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
+        observations = metric._get_feature_metric(options=None)
+        self.assertEqual(len(observations), 1)
+        self.assertEqual(_StatsbeatMetrics._FEATURE_ATTRIBUTES["feature"], _StatsbeatFeature.AAD)
 
     # pylint: disable=protected-access
     def test_get_feature_metric_instrumentation(self):
@@ -556,6 +641,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             endpoint,
             False,
             0,
+            False,
         )
         metric._feature = _StatsbeatFeature.NONE
         attributes = dict(_StatsbeatMetrics._COMMON_ATTRIBUTES)
@@ -588,6 +674,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
             endpoint,
             False,
             0,
+            False,
         )
         metric._feature = _StatsbeatFeature.NONE
         self.assertEqual(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES["feature"], 0)
@@ -607,8 +694,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         metric.init_non_initial_metrics()
         self.assertTrue(isinstance(metric._success_count, ObservableGauge))
@@ -632,8 +720,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)
@@ -657,8 +746,9 @@ class TestStatsbeatMetrics(unittest.TestCase):
             mp,
             ikey,
             endpoint,
-            True,
+            False,
             0,
+            False,
         )
         attributes = _StatsbeatMetrics._COMMON_ATTRIBUTES
         attributes.update(_StatsbeatMetrics._NETWORK_ATTRIBUTES)

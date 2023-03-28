@@ -3,44 +3,53 @@
 # ---------------------------------------------------------
 import json
 from pathlib import Path
+from typing import Any, Dict
 
 import pydash
 import pytest
 import yaml
-
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
+    Ae365exepool,
     AISuperComputerConfiguration,
     AISuperComputerScalePolicy,
     AISuperComputerStorageReferenceConfiguration,
+    Command,
+    DataTransfer,
+    Distributed,
+    HDInsight,
+    Hemera,
     ITPConfiguration,
     ITPInteractiveConfiguration,
     ITPPriorityConfiguration,
     ITPResourceConfiguration,
     ITPRetrySettings,
-    TargetSelector,
-    Command,
-    Scope,
-    HDInsight,
     Parallel,
-    Distributed,
-    DataTransfer,
-    Starlite,
     Pipeline,
-    Hemera,
-    Ae365exepool,
+    Scope,
+    Starlite,
+    TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
+from azure.ai.ml.entities import (
+    CommandComponent,
+    CommandJobLimits,
+    Data,
+    JobResourceConfiguration,
+    PipelineJob,
+    SparkResourceConfiguration,
+)
+from test_utilities.utils import parse_local_path
 
 from .._utils import (
     DATA_VERSION,
     PARAMETERS_TO_TEST,
     assert_strong_type_intellisense_enabled,
     extract_non_primitive,
+    get_expected_runsettings_items,
     set_run_settings,
 )
 
@@ -96,14 +105,7 @@ class TestPipelineJob:
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
-        dot_key_map = {"compute": "computeId"}
-        for dot_key, expected_value in runsettings_dict.items():
-            if dot_key in dot_key_map:
-                dot_key = dot_key_map[dot_key]
-
-            # hack: timeout will be transformed into str
-            if dot_key == "limits.timeout":
-                expected_value = "PT5M"
+        for dot_key, expected_value in get_expected_runsettings_items(runsettings_dict):
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
@@ -126,8 +128,11 @@ class TestPipelineJob:
         for input_name, input_obj in inputs.items():
             if isinstance(input_obj, Input):
                 data_name = input_obj.path.split("@")[0]
-                inputs[input_name] = Data(name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE)
-                input_data_names[input_name] = data_name
+                if "spark" in yaml_path:
+                    input_data_names[input_name] = input_obj
+                else:
+                    inputs[input_name] = Data(name=data_name, version=DATA_VERSION, type=AssetTypes.MLTABLE)
+                    input_data_names[input_name] = data_name
         if len(input_data_names) == 0:
             return
 
@@ -143,10 +148,13 @@ class TestPipelineJob:
 
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         for input_name, dataset_name in input_data_names.items():
-            expected_rest_obj = {
-                "job_input_type": AssetTypes.MLTABLE,
-                "uri": dataset_name + ":" + DATA_VERSION,
-            }
+            if "spark" in yaml_path:
+                expected_rest_obj = {"job_input_type": AssetTypes.MLTABLE, "uri": dataset_name.path, "mode": "Direct"}
+            else:
+                expected_rest_obj = {
+                    "job_input_type": AssetTypes.MLTABLE,
+                    "uri": dataset_name + ":" + DATA_VERSION,
+                }
             assert node_rest_dict["inputs"][input_name] == expected_rest_obj
 
     @pytest.mark.parametrize(
@@ -199,6 +207,11 @@ class TestPipelineJob:
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_internal_component_output_as_pipeline_component_output(self):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+
         yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component_func = load_component(yaml_path, params_override=[{"inputs": {}}])
 
@@ -280,9 +293,7 @@ class TestPipelineJob:
         }
 
     def test_elastic_component_in_pipeline(self):
-        yaml_path = (
-            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
-        )
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
         configuration = ITPConfiguration(
@@ -337,9 +348,7 @@ class TestPipelineJob:
         }
 
     def test_singularity_component_in_pipeline(self):
-        yaml_path = (
-            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
-        )
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
         configuration = AISuperComputerConfiguration(
@@ -405,9 +414,8 @@ class TestPipelineJob:
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
-        for _input in yaml_dict["inputs"].values():
-            if "optional" in _input and _input["optional"] is False:
-                del _input["optional"]
+
+        yaml_dict["code"] = parse_local_path(yaml_dict["code"], scope_internal_func.base_path)
 
         command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
 
@@ -446,7 +454,6 @@ class TestPipelineJob:
                 "ExtractionClause": "column1:string, column2:int",
                 "TextData": {"path": "azureml:scope_tsv:1", "type": "mltable"},
             },
-            "outputs": {},
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         assert pydash.omit(scope_node._to_rest_object(), "componentId") == {
@@ -459,7 +466,6 @@ class TestPipelineJob:
                 "ExtractionClause": {"job_input_type": "literal", "value": "column1:string, column2:int"},
                 "TextData": {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"},
             },
-            "outputs": {},
             "type": "ScopeComponent",
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
@@ -469,12 +475,7 @@ class TestPipelineJob:
         assert pydash.omit(dsl_pipeline._to_dict(), *omit_fields) == pydash.omit(
             {
                 "display_name": "pipeline_func",
-                "inputs": {},
                 "jobs": {"node": dsl_pipeline.jobs["node"]._to_dict(), "node_internal": scope_node._to_dict()},
-                "outputs": {},
-                "properties": {},
-                "settings": {},
-                "tags": {},
                 "type": "pipeline",
             },
             *omit_fields,
@@ -568,13 +569,16 @@ class TestPipelineJob:
         component: InternalComponent = load_component(test_path)
 
         @pipeline()
-        def pipeline_func(compute_name: str = "cpu-cluster", environment_name: str = "AzureML-PyTorch-1.6-GPU:1"):
+        def pipeline_func(
+            compute_name: str = "cpu-cluster", environment_name: str = "AzureML-ACPT-pytorch-1.12-py39-cuda11.6-gpu:8"
+        ):
             node = component(
                 training_data=Input(path="./tests/test_configs/data"),
                 max_epochs=1,
             )
             node.compute = compute_name
             node.environment = environment_name
+
         pipeline_job = pipeline_func()
         assert pipeline_job._validate().passed, repr(pipeline_job._validate())
         rest_object = pipeline_job._to_rest_object().properties.jobs["node"]
@@ -608,3 +612,69 @@ class TestPipelineJob:
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
 
+    @pytest.mark.parametrize(
+        "component_path, fields_to_test, fake_inputs",
+        [
+            pytest.param(
+                "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "limits.timeout": CommandJobLimits(timeout=100),
+                },
+                {},
+                id="command",
+            ),
+            pytest.param(
+                "./tests/test_configs/internal/batch_inference/batch_score.yaml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    "limits.timeout": CommandJobLimits(timeout=100),
+                },
+                {
+                    "model_path": Input(type=AssetTypes.MLTABLE, path="mltable_mnist_model@latest"),
+                    "images_to_score": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest"),
+                },
+                id="parallel.resources",
+            ),
+            pytest.param(
+                "tests/test_configs/internal/spark-component/spec.yaml",
+                {
+                    "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
+                },
+                {
+                    "file_input1": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                    "file_input2": Input(type=AssetTypes.MLTABLE, path="mltable_mnist@latest", mode="direct"),
+                },
+                id="spark",
+            ),
+        ],
+    )
+    def test_data_binding_expression_on_node_runsettings(
+        self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
+    ):
+        component = load_component(component_path)
+
+        @pipeline()
+        def pipeline_func(param: str = "2"):
+            node = component(**fake_inputs)
+            for field, value in fields_to_test.items():
+                attr, sub_attr = field.split(".")
+                setattr(node, attr, value)
+                setattr(getattr(node, attr), sub_attr, str(param))
+
+        pipeline_job: PipelineJob = pipeline_func()
+        rest_object = pipeline_job._to_rest_object()
+        regenerated_job = PipelineJob._from_rest_object(rest_object)
+        expected_dict, actual_dict = pipeline_job._to_dict(), regenerated_job._to_dict()
+
+        assert actual_dict == expected_dict
+
+        # directly update component to arm id
+        for _node in pipeline_job.jobs.values():
+            _node._component = (
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/"
+                "Microsoft.MachineLearningServices/workspaces/ws/components/component_name/"
+                "versions/1.0.0"
+            )
+        # check if all the fields are correctly serialized
+        pipeline_job.component._get_anonymous_hash()

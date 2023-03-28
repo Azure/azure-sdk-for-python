@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,127 +7,353 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import TYPE_CHECKING
-import warnings
+import sys
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
+import urllib.parse
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpResponse
+from azure.core.rest import HttpRequest
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models
+from .. import models as _models
+from .._serialization import Serializer
+from .._vendor import _convert_request, _format_url_section
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
 
-class HealthMonitorsOperations(object):
-    """HealthMonitorsOperations operations.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
+def build_list_request(
+    subscription_id: str,
+    resource_group_name: str,
+    provider_name: str,
+    resource_collection_name: str,
+    resource_name: str,
+    *,
+    filter: Optional[str] = None,
+    expand: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~workload_monitor_api.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-01-13-preview")
+    )  # type: Literal["2020-01-13-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "providerName": _SERIALIZER.url("provider_name", provider_name, "str"),
+        "resourceCollectionName": _SERIALIZER.url("resource_collection_name", resource_collection_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_request(
+    subscription_id: str,
+    resource_group_name: str,
+    provider_name: str,
+    resource_collection_name: str,
+    resource_name: str,
+    monitor_id: str,
+    *,
+    expand: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-01-13-preview")
+    )  # type: Literal["2020-01-13-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "providerName": _SERIALIZER.url("provider_name", provider_name, "str"),
+        "resourceCollectionName": _SERIALIZER.url("resource_collection_name", resource_collection_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "monitorId": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_list_state_changes_request(
+    subscription_id: str,
+    resource_group_name: str,
+    provider_name: str,
+    resource_collection_name: str,
+    resource_name: str,
+    monitor_id: str,
+    *,
+    filter: Optional[str] = None,
+    expand: Optional[str] = None,
+    start_timestamp_utc: Optional[datetime.datetime] = None,
+    end_timestamp_utc: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-01-13-preview")
+    )  # type: Literal["2020-01-13-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}/history",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "providerName": _SERIALIZER.url("provider_name", provider_name, "str"),
+        "resourceCollectionName": _SERIALIZER.url("resource_collection_name", resource_collection_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "monitorId": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+    if start_timestamp_utc is not None:
+        _params["startTimestampUtc"] = _SERIALIZER.query("start_timestamp_utc", start_timestamp_utc, "iso-8601")
+    if end_timestamp_utc is not None:
+        _params["endTimestampUtc"] = _SERIALIZER.query("end_timestamp_utc", end_timestamp_utc, "iso-8601")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_state_change_request(
+    subscription_id: str,
+    resource_group_name: str,
+    provider_name: str,
+    resource_collection_name: str,
+    resource_name: str,
+    monitor_id: str,
+    timestamp_unix: str,
+    *,
+    expand: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-01-13-preview")
+    )  # type: Literal["2020-01-13-preview"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}/history/{timestampUnix}",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "providerName": _SERIALIZER.url("provider_name", provider_name, "str"),
+        "resourceCollectionName": _SERIALIZER.url("resource_collection_name", resource_collection_name, "str"),
+        "resourceName": _SERIALIZER.url("resource_name", resource_name, "str"),
+        "monitorId": _SERIALIZER.url("monitor_id", monitor_id, "str"),
+        "timestampUnix": _SERIALIZER.url("timestamp_unix", timestamp_unix, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if expand is not None:
+        _params["$expand"] = _SERIALIZER.query("expand", expand, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class HealthMonitorsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.workloadmonitor.WorkloadMonitorAPI`'s
+        :attr:`health_monitors` attribute.
     """
 
-    models = models
+    models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+    @distributed_trace
     def list(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        provider_name,  # type: str
-        resource_collection_name,  # type: str
-        resource_name,  # type: str
-        filter=None,  # type: Optional[str]
-        expand=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.HealthMonitorList"]
-        """Get the current health status of all monitors of a virtual machine. Optional parameters: $expand (retrieve the monitor's evidence and configuration) and $filter (filter by monitor name).
+        subscription_id: str,
+        resource_group_name: str,
+        provider_name: str,
+        resource_collection_name: str,
+        resource_name: str,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.HealthMonitor"]:
+        """Get the current health status of all monitors of a virtual machine. Optional parameters:
+        $expand (retrieve the monitor's evidence and configuration) and $filter (filter by monitor
+        name).
 
         Get the current health status of all monitors of a virtual machine. Optional parameters:
         $expand (retrieve the monitor's evidence and configuration) and $filter (filter by monitor
         name).
 
-        :param subscription_id: The subscription Id of the virtual machine.
+        :param subscription_id: The subscription Id of the virtual machine. Required.
         :type subscription_id: str
-        :param resource_group_name: The resource group of the virtual machine.
+        :param resource_group_name: The resource group of the virtual machine. Required.
         :type resource_group_name: str
-        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines).
+        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines). Required.
         :type provider_name: str
         :param resource_collection_name: The resource collection name (ex: virtualMachines for virtual
-         machines).
+         machines). Required.
         :type resource_collection_name: str
-        :param resource_name: The name of the virtual machine.
+        :param resource_name: The name of the virtual machine. Required.
         :type resource_name: str
-        :param filter: Optionally filter by monitor name. Example: $filter=monitorName eq 'logical-
-         disks|C:|disk-free-space-mb.'.
+        :param filter: Optionally filter by monitor name. Example: $filter=monitorName eq
+         'logical-disks|C:|disk-free-space-mb.'. Default value is None.
         :type filter: str
         :param expand: Optionally expand the monitor’s evidence and/or configuration. Example:
-         $expand=evidence,configuration.
+         $expand=evidence,configuration. Default value is None.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either HealthMonitorList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~workload_monitor_api.models.HealthMonitorList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either HealthMonitor or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.workloadmonitor.models.HealthMonitor]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitorList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )  # type: Literal["2020-01-13-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthMonitorList]
+
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-13-preview"
-        accept = "application/json"
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'providerName': self._serialize.url("provider_name", provider_name, 'str'),
-                    'resourceCollectionName': self._serialize.url("resource_collection_name", resource_collection_name, 'str'),
-                    'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
-                request = self._client.get(url, query_parameters, header_parameters)
+                request = build_list_request(
+                    subscription_id=subscription_id,
+                    resource_group_name=resource_group_name,
+                    provider_name=provider_name,
+                    resource_collection_name=resource_collection_name,
+                    resource_name=resource_name,
+                    filter=filter,
+                    expand=expand,
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('HealthMonitorList', pipeline_response)
+            deserialized = self._deserialize("HealthMonitorList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -135,200 +362,224 @@ class HealthMonitorsOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors'}  # type: ignore
+        return ItemPaged(get_next, extract_data)
 
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors"}  # type: ignore
+
+    @distributed_trace
     def get(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        provider_name,  # type: str
-        resource_collection_name,  # type: str
-        resource_name,  # type: str
-        monitor_id,  # type: str
-        expand=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.HealthMonitor"
-        """Get the current health status of a monitor of a virtual machine. Optional parameter: $expand (retrieve the monitor's evidence and configuration).
+        subscription_id: str,
+        resource_group_name: str,
+        provider_name: str,
+        resource_collection_name: str,
+        resource_name: str,
+        monitor_id: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.HealthMonitor:
+        """Get the current health status of a monitor of a virtual machine. Optional parameter: $expand
+        (retrieve the monitor's evidence and configuration).
 
         Get the current health status of a monitor of a virtual machine. Optional parameter: $expand
         (retrieve the monitor's evidence and configuration).
 
-        :param subscription_id: The subscription Id of the virtual machine.
+        :param subscription_id: The subscription Id of the virtual machine. Required.
         :type subscription_id: str
-        :param resource_group_name: The resource group of the virtual machine.
+        :param resource_group_name: The resource group of the virtual machine. Required.
         :type resource_group_name: str
-        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines).
+        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines). Required.
         :type provider_name: str
         :param resource_collection_name: The resource collection name (ex: virtualMachines for virtual
-         machines).
+         machines). Required.
         :type resource_collection_name: str
-        :param resource_name: The name of the virtual machine.
+        :param resource_name: The name of the virtual machine. Required.
         :type resource_name: str
-        :param monitor_id: The monitor Id of the virtual machine.
+        :param monitor_id: The monitor Id of the virtual machine. Required.
         :type monitor_id: str
         :param expand: Optionally expand the monitor’s evidence and/or configuration. Example:
-         $expand=evidence,configuration.
+         $expand=evidence,configuration. Default value is None.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HealthMonitor, or the result of cls(response)
-        :rtype: ~workload_monitor_api.models.HealthMonitor
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: HealthMonitor or the result of cls(response)
+        :rtype: ~azure.mgmt.workloadmonitor.models.HealthMonitor
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitor"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-13-preview"
-        accept = "application/json"
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        # Construct URL
-        url = self.get.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'providerName': self._serialize.url("provider_name", provider_name, 'str'),
-            'resourceCollectionName': self._serialize.url("resource_collection_name", resource_collection_name, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'monitorId': self._serialize.url("monitor_id", monitor_id, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )  # type: Literal["2020-01-13-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthMonitor]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        request = build_get_request(
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            provider_name=provider_name,
+            resource_collection_name=resource_collection_name,
+            resource_name=resource_name,
+            monitor_id=monitor_id,
+            expand=expand,
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('HealthMonitor', pipeline_response)
+        deserialized = self._deserialize("HealthMonitor", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}'}  # type: ignore
 
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}"}  # type: ignore
+
+    @distributed_trace
     def list_state_changes(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        provider_name,  # type: str
-        resource_collection_name,  # type: str
-        resource_name,  # type: str
-        monitor_id,  # type: str
-        filter=None,  # type: Optional[str]
-        expand=None,  # type: Optional[str]
-        start_timestamp_utc=None,  # type: Optional[datetime.datetime]
-        end_timestamp_utc=None,  # type: Optional[datetime.datetime]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable["models.HealthMonitorStateChangeList"]
-        """Get the health state changes of a monitor of a virtual machine within the provided time window (default is the last 24 hours). Optional parameters: $expand (retrieve the monitor's evidence and configuration) and $filter (filter by heartbeat condition).
+        subscription_id: str,
+        resource_group_name: str,
+        provider_name: str,
+        resource_collection_name: str,
+        resource_name: str,
+        monitor_id: str,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        start_timestamp_utc: Optional[datetime.datetime] = None,
+        end_timestamp_utc: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> Iterable["_models.HealthMonitorStateChange"]:
+        """Get the health state changes of a monitor of a virtual machine within the provided time window
+        (default is the last 24 hours). Optional parameters: $expand (retrieve the monitor's evidence
+        and configuration) and $filter (filter by heartbeat condition).
 
         Get the health state changes of a monitor of a virtual machine within the provided time window
         (default is the last 24 hours). Optional parameters: $expand (retrieve the monitor's evidence
         and configuration) and $filter (filter by heartbeat condition).
 
-        :param subscription_id: The subscription Id of the virtual machine.
+        :param subscription_id: The subscription Id of the virtual machine. Required.
         :type subscription_id: str
-        :param resource_group_name: The resource group of the virtual machine.
+        :param resource_group_name: The resource group of the virtual machine. Required.
         :type resource_group_name: str
-        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines).
+        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines). Required.
         :type provider_name: str
         :param resource_collection_name: The resource collection name (ex: virtualMachines for virtual
-         machines).
+         machines). Required.
         :type resource_collection_name: str
-        :param resource_name: The name of the virtual machine.
+        :param resource_name: The name of the virtual machine. Required.
         :type resource_name: str
-        :param monitor_id: The monitor Id of the virtual machine.
+        :param monitor_id: The monitor Id of the virtual machine. Required.
         :type monitor_id: str
         :param filter: Optionally filter by heartbeat condition. Example: $filter=isHeartbeat eq false.
+         Default value is None.
         :type filter: str
         :param expand: Optionally expand the monitor’s evidence and/or configuration. Example:
-         $expand=evidence,configuration.
+         $expand=evidence,configuration. Default value is None.
         :type expand: str
-        :param start_timestamp_utc: The start of the time window.
+        :param start_timestamp_utc: The start of the time window. Default value is None.
         :type start_timestamp_utc: ~datetime.datetime
-        :param end_timestamp_utc: The end of the time window.
+        :param end_timestamp_utc: The end of the time window. Default value is None.
         :type end_timestamp_utc: ~datetime.datetime
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either HealthMonitorStateChangeList or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~workload_monitor_api.models.HealthMonitorStateChangeList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either HealthMonitorStateChange or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.workloadmonitor.models.HealthMonitorStateChange]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitorStateChangeList"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )  # type: Literal["2020-01-13-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthMonitorStateChangeList]
+
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-13-preview"
-        accept = "application/json"
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
-            # Construct headers
-            header_parameters = {}  # type: Dict[str, Any]
-            header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
-
             if not next_link:
-                # Construct URL
-                url = self.list_state_changes.metadata['url']  # type: ignore
-                path_format_arguments = {
-                    'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-                    'providerName': self._serialize.url("provider_name", provider_name, 'str'),
-                    'resourceCollectionName': self._serialize.url("resource_collection_name", resource_collection_name, 'str'),
-                    'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-                    'monitorId': self._serialize.url("monitor_id", monitor_id, 'str'),
-                }
-                url = self._client.format_url(url, **path_format_arguments)
-                # Construct parameters
-                query_parameters = {}  # type: Dict[str, Any]
-                query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-                if filter is not None:
-                    query_parameters['$filter'] = self._serialize.query("filter", filter, 'str')
-                if expand is not None:
-                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-                if start_timestamp_utc is not None:
-                    query_parameters['startTimestampUtc'] = self._serialize.query("start_timestamp_utc", start_timestamp_utc, 'iso-8601')
-                if end_timestamp_utc is not None:
-                    query_parameters['endTimestampUtc'] = self._serialize.query("end_timestamp_utc", end_timestamp_utc, 'iso-8601')
 
-                request = self._client.get(url, query_parameters, header_parameters)
+                request = build_list_state_changes_request(
+                    subscription_id=subscription_id,
+                    resource_group_name=resource_group_name,
+                    provider_name=provider_name,
+                    resource_collection_name=resource_collection_name,
+                    resource_name=resource_name,
+                    monitor_id=monitor_id,
+                    filter=filter,
+                    expand=expand,
+                    start_timestamp_utc=start_timestamp_utc,
+                    end_timestamp_utc=end_timestamp_utc,
+                    api_version=api_version,
+                    template_url=self.list_state_changes.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+
             else:
-                url = next_link
-                query_parameters = {}  # type: Dict[str, Any]
-                request = self._client.get(url, query_parameters, header_parameters)
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)  # type: ignore
+                request.method = "GET"
             return request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize('HealthMonitorStateChangeList', pipeline_response)
+            deserialized = self._deserialize("HealthMonitorStateChangeList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)
@@ -337,106 +588,113 @@ class HealthMonitorsOperations(object):
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                error = self._deserialize(models.ErrorResponse, response)
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_state_changes.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}/history'}  # type: ignore
+        return ItemPaged(get_next, extract_data)
 
+    list_state_changes.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}/history"}  # type: ignore
+
+    @distributed_trace
     def get_state_change(
         self,
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        provider_name,  # type: str
-        resource_collection_name,  # type: str
-        resource_name,  # type: str
-        monitor_id,  # type: str
-        timestamp_unix,  # type: str
-        expand=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "models.HealthMonitorStateChange"
-        """Get the health state change of a monitor of a virtual machine at the provided timestamp. Optional parameter: $expand (retrieve the monitor's evidence and configuration).
+        subscription_id: str,
+        resource_group_name: str,
+        provider_name: str,
+        resource_collection_name: str,
+        resource_name: str,
+        monitor_id: str,
+        timestamp_unix: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.HealthMonitorStateChange:
+        """Get the health state change of a monitor of a virtual machine at the provided timestamp.
+        Optional parameter: $expand (retrieve the monitor's evidence and configuration).
 
         Get the health state change of a monitor of a virtual machine at the provided timestamp.
         Optional parameter: $expand (retrieve the monitor's evidence and configuration).
 
-        :param subscription_id: The subscription Id of the virtual machine.
+        :param subscription_id: The subscription Id of the virtual machine. Required.
         :type subscription_id: str
-        :param resource_group_name: The resource group of the virtual machine.
+        :param resource_group_name: The resource group of the virtual machine. Required.
         :type resource_group_name: str
-        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines).
+        :param provider_name: The provider name (ex: Microsoft.Compute for virtual machines). Required.
         :type provider_name: str
         :param resource_collection_name: The resource collection name (ex: virtualMachines for virtual
-         machines).
+         machines). Required.
         :type resource_collection_name: str
-        :param resource_name: The name of the virtual machine.
+        :param resource_name: The name of the virtual machine. Required.
         :type resource_name: str
-        :param monitor_id: The monitor Id of the virtual machine.
+        :param monitor_id: The monitor Id of the virtual machine. Required.
         :type monitor_id: str
-        :param timestamp_unix: The timestamp of the state change (unix format).
+        :param timestamp_unix: The timestamp of the state change (unix format). Required.
         :type timestamp_unix: str
         :param expand: Optionally expand the monitor’s evidence and/or configuration. Example:
-         $expand=evidence,configuration.
+         $expand=evidence,configuration. Default value is None.
         :type expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: HealthMonitorStateChange, or the result of cls(response)
-        :rtype: ~workload_monitor_api.models.HealthMonitorStateChange
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: HealthMonitorStateChange or the result of cls(response)
+        :rtype: ~azure.mgmt.workloadmonitor.models.HealthMonitorStateChange
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["models.HealthMonitorStateChange"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
-        api_version = "2020-01-13-preview"
-        accept = "application/json"
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        # Construct URL
-        url = self.get_state_change.metadata['url']  # type: ignore
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("subscription_id", subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'providerName': self._serialize.url("provider_name", provider_name, 'str'),
-            'resourceCollectionName': self._serialize.url("resource_collection_name", resource_collection_name, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str'),
-            'monitorId': self._serialize.url("monitor_id", monitor_id, 'str'),
-            'timestampUnix': self._serialize.url("timestamp_unix", timestamp_unix, 'str'),
-        }
-        url = self._client.format_url(url, **path_format_arguments)
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        # Construct parameters
-        query_parameters = {}  # type: Dict[str, Any]
-        query_parameters['api-version'] = self._serialize.query("api_version", api_version, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )  # type: Literal["2020-01-13-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthMonitorStateChange]
 
-        # Construct headers
-        header_parameters = {}  # type: Dict[str, Any]
-        header_parameters['Accept'] = self._serialize.header("accept", accept, 'str')
+        request = build_get_state_change_request(
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            provider_name=provider_name,
+            resource_collection_name=resource_collection_name,
+            resource_name=resource_name,
+            monitor_id=monitor_id,
+            timestamp_unix=timestamp_unix,
+            expand=expand,
+            api_version=api_version,
+            template_url=self.get_state_change.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize(models.ErrorResponse, response)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('HealthMonitorStateChange', pipeline_response)
+        deserialized = self._deserialize("HealthMonitorStateChange", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-    get_state_change.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}/history/{timestampUnix}'}  # type: ignore
+
+    get_state_change.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{providerName}/{resourceCollectionName}/{resourceName}/providers/Microsoft.WorkloadMonitor/monitors/{monitorId}/history/{timestampUnix}"}  # type: ignore

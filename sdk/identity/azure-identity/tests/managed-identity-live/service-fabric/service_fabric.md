@@ -19,7 +19,7 @@ The `arm-templates` directory contains Azure resource templates for creating the
 
 From a command prompt window, run
 ```
-git clone https://github.com/Azure/azure-sdk-for-python --single-branch --branch master --depth 1
+git clone https://github.com/Azure/azure-sdk-for-python --single-branch --branch main --depth 1
 cd azure-sdk-for-python/sdk/identity/azure-identity/tests/managed-identity-live/service-fabric
 ```
 
@@ -148,7 +148,7 @@ Your Service Fabric cluster will target each application by referencing a `.sfpk
 
 ### Upload the application packages to a storage account
 
-If using an existing cluster, ensure your resource group has a storage account connected to your cluster. If you deployed a cluster using the template provided, two storage accounts were created but only one needs to store the `.sfpkg` files for the applications (the one with the name corresponding to `applicationDiagnosticsStorageAccountName` in the template). 
+If using an existing cluster, ensure your resource group has a storage account connected to your cluster. If you deployed a cluster using the template provided, two storage accounts were created but only one needs to store the `.sfpkg` files for the applications (the one with the name corresponding to `applicationDiagnosticsStorageAccountName` in the template).
 
 Go to your resource group in the [Azure Portal](https://portal.azure.com) and click on the storage account. Go to the "Containers" page and create a new container named "apps" -- be sure the set the public access level to Blob.
 

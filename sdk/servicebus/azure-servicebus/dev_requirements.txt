@@ -2,6 +2,6 @@
 -e ../../identity/azure-identity
 -e ../../../tools/azure-devtools
 -e ../../../tools/azure-sdk-tools
-azure-mgmt-servicebus~=1.0.0
+azure-mgmt-servicebus~=8.0.0
 aiohttp>=3.0
 azure-mgmt-resource<=16.0.0

@@ -4,20 +4,20 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageObjectDetection as RestImageObjectDetection
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, ObjectDetectionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageObjectDetection as RestImageObjectDetection
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, ObjectDetectionPrimaryMetrics, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
 from azure.ai.ml.entities._job.automl.image.automl_image_object_detection_base import AutoMLImageObjectDetectionBase
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
-from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
 from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
+from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -29,7 +29,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
     def __init__(
         self,
         *,
-        primary_metric: Union[str, ObjectDetectionPrimaryMetrics] = None,
+        primary_metric: Optional[Union[str, ObjectDetectionPrimaryMetrics]] = None,
         **kwargs,
     ) -> None:
         """Initialize a new AutoML Image Object Detection job.
@@ -77,8 +77,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             validation_data_size=self.validation_data_size,
             limit_settings=self._limits._to_rest_object() if self._limits else None,
             sweep_settings=self._sweep._to_rest_object() if self._sweep else None,
-            model_settings=self._training_parameters._to_rest_object(
-            ) if self._training_parameters else None,
+            model_settings=self._training_parameters._to_rest_object() if self._training_parameters else None,
             search_space=(
                 [entry._to_rest_object() for entry in self._search_space if entry is not None]
                 if self._search_space is not None
@@ -104,6 +103,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             resources=self.resources,
             task_details=image_object_detection_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -129,8 +129,10 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": _BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
+            "queue_settings": properties.queue_settings,
         }
 
         image_object_detection_job = cls(
@@ -149,8 +151,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
                 else None
             ),
             training_parameters=(
-                ImageModelSettingsObjectDetection._from_rest_object(
-                    task_details.model_settings)
+                ImageModelSettingsObjectDetection._from_rest_object(task_details.model_settings)
                 if task_details.model_settings
                 else None
             ),

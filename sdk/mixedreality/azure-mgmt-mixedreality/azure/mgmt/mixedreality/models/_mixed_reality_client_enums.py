@@ -6,52 +6,36 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class NameUnavailableReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """reason of name unavailable.
-    """
+
+class NameUnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """reason of name unavailable."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class Serial(with_metaclass(_CaseInsensitiveEnumMeta, int, Enum)):
-    """Serial of key to be regenerated
-    """
 
-    #: The Primary Key.
+class Serial(int, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Serial of key to be regenerated."""
+
+    #: The Primary Key
     PRIMARY = 1
-    #: The Secondary Key.
+    #: The Secondary Key
     SECONDARY = 2
 
-class SkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """

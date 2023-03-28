@@ -63,6 +63,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -83,8 +84,8 @@ setup(
         "azure-core<2.0.0,>=1.23.0",
         "fixedint==0.1.6",
         "msrest>=0.6.10",
-        "opentelemetry-api<2.0.0,>=1.12.0",
-        "opentelemetry-sdk<2.0.0,>=1.12.0",
+        "opentelemetry-api==1.15.0",
+        "opentelemetry-sdk==1.15.0",
     ],
     entry_points={
         "opentelemetry_traces_exporter": [
@@ -95,6 +96,9 @@ setup(
         ],
         "opentelemetry_metrics_exporter": [
             "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorMetricExporter"
+        ],
+        "opentelemetry_traces_sampler": [
+            "azure_monitor_opentelemetry_sampler = azure.monitor.opentelemetry.exporter.export.trace._sampling:azure_monitor_opentelemetry_sampler_factory"
         ]
     }
 )

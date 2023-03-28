@@ -7,21 +7,27 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AuthenticationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Authentication Mode. Valid modes are ``ConnectionString``\ , ``Msi`` and 'UserToken'.
-    """
+class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication Mode. Valid modes are ``ConnectionString``\ , ``Msi`` and 'UserToken'."""
 
     MSI = "Msi"
     USER_TOKEN = "UserToken"
     CONNECTION_STRING = "ConnectionString"
 
-class ClusterProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class BlobWriteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines whether blob blocks are either committed automatically or appended."""
+
+    APPEND = "Append"
+    ONCE = "Once"
+
+
+class ClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the cluster provisioning. The three terminal states are: Succeeded, Failed and
-    Canceled
+    Canceled.
     """
 
     #: The cluster provisioning succeeded.
@@ -33,21 +39,22 @@ class ClusterProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     #: The cluster provisioning was inprogress.
     IN_PROGRESS = "InProgress"
 
-class ClusterSkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate) requests.
-    """
+
+class ClusterSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the SKU name of the cluster. Required on PUT (CreateOrUpdate) requests."""
 
     #: The default SKU.
     DEFAULT = "Default"
 
-class CompatibilityLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Controls certain runtime behaviors of the streaming job.
-    """
+
+class CompatibilityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls certain runtime behaviors of the streaming job."""
 
     ONE0 = "1.0"
     ONE2 = "1.2"
 
-class CompressionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class CompressionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the type of compression that the input uses. Required on PUT (CreateOrReplace)
     requests.
     """
@@ -56,7 +63,8 @@ class CompressionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     G_ZIP = "GZip"
     DEFLATE = "Deflate"
 
-class ContentStoragePolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ContentStoragePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Valid values are JobStorageAccount and SystemAccount. If set to JobStorageAccount, this
     requires the user to also specify jobStorageAccount property. .
     """
@@ -64,14 +72,23 @@ class ContentStoragePolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ACCOUNT = "SystemAccount"
     JOB_STORAGE_ACCOUNT = "JobStorageAccount"
 
-class Encoding(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Encoding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the encoding of the incoming data in the case of input and the encoding of outgoing
     data in the case of output.
     """
 
     UTF8 = "UTF8"
 
-class EventSerializationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class EventGridEventSchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported Event Grid schema types."""
+
+    EVENT_GRID_EVENT_SCHEMA = "EventGridEventSchema"
+    CLOUD_EVENT_SCHEMA = "CloudEventSchema"
+
+
+class EventSerializationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the type of serialization that the input or output uses. Required on PUT
     (CreateOrReplace) requests.
     """
@@ -79,18 +96,26 @@ class EventSerializationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     CSV = "Csv"
     AVRO = "Avro"
     JSON = "Json"
+    CUSTOM_CLR = "CustomClr"
     PARQUET = "Parquet"
 
-class EventsOutOfOrderPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates the policy to apply to events that arrive out of order in the input event stream.
-    """
+
+class EventsOutOfOrderPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the policy to apply to events that arrive out of order in the input event stream."""
 
     ADJUST = "Adjust"
     DROP = "Drop"
 
-class JobState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current execution state of the streaming job.
-    """
+
+class InputWatermarkMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The input watermark mode."""
+
+    NONE = "None"
+    READ_WATERMARK = "ReadWatermark"
+
+
+class JobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current execution state of the streaming job."""
 
     #: The job is currently in the Created state.
     CREATED = "Created"
@@ -113,14 +138,15 @@ class JobState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: The job is currently in the Scaling state.
     SCALING = "Scaling"
 
-class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes the type of the job. Valid modes are ``Cloud`` and 'Edge'.
-    """
+
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the type of the job. Valid modes are ``Cloud`` and 'Edge'."""
 
     CLOUD = "Cloud"
     EDGE = "Edge"
 
-class JsonOutputSerializationFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class JsonOutputSerializationFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the format of the JSON the output will be written in. The currently supported values
     are 'lineSeparated' indicating the output will be formatted by having each JSON object
     separated by a new line and 'array' indicating the output will be formatted as an array of JSON
@@ -130,7 +156,8 @@ class JsonOutputSerializationFormat(with_metaclass(CaseInsensitiveEnumMeta, str,
     LINE_SEPARATED = "LineSeparated"
     ARRAY = "Array"
 
-class OutputErrorPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class OutputErrorPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the policy to apply to events that arrive at the output and cannot be written to the
     external storage due to being malformed (missing column values, column values of wrong type or
     size).
@@ -139,7 +166,8 @@ class OutputErrorPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STOP = "Stop"
     DROP = "Drop"
 
-class OutputStartMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class OutputStartMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Value may be JobStartTime, CustomTime, or LastOutputEventTime to indicate whether the starting
     point of the output event stream should start whenever the job is started, start at a custom
     user time stamp specified via the outputStartTime property, or start from the last event output
@@ -150,16 +178,92 @@ class OutputStartMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     CUSTOM_TIME = "CustomTime"
     LAST_OUTPUT_EVENT_TIME = "LastOutputEventTime"
 
-class RefreshType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates the type of data refresh option.
-    """
+
+class OutputWatermarkMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The output watermark mode."""
+
+    NONE = "None"
+    SEND_CURRENT_PARTITION_WATERMARK = "SendCurrentPartitionWatermark"
+    SEND_LOWEST_WATERMARK_ACROSS_PARTITIONS = "SendLowestWatermarkAcrossPartitions"
+
+
+class QueryTestingResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the query testing request."""
+
+    #: The query testing operation was initiated.
+    STARTED = "Started"
+    #: The query testing operation succeeded.
+    SUCCESS = "Success"
+    #: The query testing operation failed due to a compiler error.
+    COMPILER_ERROR = "CompilerError"
+    #: The query testing operation failed due to a runtime error.
+    RUNTIME_ERROR = "RuntimeError"
+    #: The query testing operation failed due to a timeout.
+    TIMEOUT = "Timeout"
+    #: The query testing operation failed due to an unknown error .
+    UNKNOWN_ERROR = "UnknownError"
+
+
+class RefreshType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the type of data refresh option."""
 
     STATIC = "Static"
     REFRESH_PERIODICALLY_WITH_FULL = "RefreshPeriodicallyWithFull"
     REFRESH_PERIODICALLY_WITH_DELTA = "RefreshPeriodicallyWithDelta"
 
-class SkuName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the SKU. Required on PUT (CreateOrReplace) requests.
-    """
+
+class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of resource the SKU applies to."""
+
+    MICROSOFT_STREAM_ANALYTICS_STREAMINGJOBS = "Microsoft.StreamAnalytics/streamingjobs"
+
+
+class SampleInputResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the sample input request."""
+
+    #: The sample input operation successfully read all the events in the range.
+    READ_ALL_EVENTS_IN_RANGE = "ReadAllEventsInRange"
+    #: The sample input operation found no events in the range.
+    NO_EVENTS_FOUND_IN_RANGE = "NoEventsFoundInRange"
+    #: The sample input operation failed to connect to the input.
+    ERROR_CONNECTING_TO_INPUT = "ErrorConnectingToInput"
+
+
+class SkuCapacityScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scale type applicable to the SKU."""
+
+    #: Supported scale type automatic.
+    AUTOMATIC = "automatic"
+    #: Supported scale type manual.
+    MANUAL = "manual"
+    #: Scaling not supported.
+    NONE = "none"
+
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the SKU. Required on PUT (CreateOrReplace) requests."""
 
     STANDARD = "Standard"
+
+
+class TestDatasourceResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the test input or output request."""
+
+    #: The test datasource operation succeeded.
+    TEST_SUCCEEDED = "TestSucceeded"
+    #: The test datasource operation failed.
+    TEST_FAILED = "TestFailed"
+
+
+class UpdatableUdfRefreshType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This property indicates which data refresh option to use, Blocking or Nonblocking."""
+
+    BLOCKING = "Blocking"
+    NONBLOCKING = "Nonblocking"
+
+
+class UpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Refresh modes for Stream Analytics functions."""
+
+    STATIC = "Static"
+    REFRESHABLE = "Refreshable"

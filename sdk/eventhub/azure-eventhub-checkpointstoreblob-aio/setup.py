@@ -60,6 +60,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -76,6 +77,6 @@ setup(
         "cryptography>=2.1.4",
         # end of dependencies for the vendored storage blob
         'azure-eventhub<6.0.0,>=5.0.0',
-        'aiohttp<4.0,>=3.0',
+        'aiohttp<4.0,>=3.8.3',
     ]
 )

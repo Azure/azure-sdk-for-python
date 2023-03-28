@@ -12,6 +12,10 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
 )
 from azure.ai.ml.constants._common import REGISTRY_ASSET_ID
 from azure.core.exceptions import HttpResponseError
+from azure.ai.ml._azure_environments import (
+    _get_default_cloud_name,
+    _get_registry_discovery_endpoint_from_metadata,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -35,7 +39,7 @@ class RegistryDiscovery:
         self._base_url = None
 
     def _get_registry_details(self) -> str:
-        response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace( # pylint: disable=line-too-long
+        response = self.service_client_registry_discovery_client.registry_management_non_workspace.registry_management_non_workspace(  # pylint: disable=line-too-long
             self.registry_name
         )
         self._base_url = f"{response.primary_region_resource_provider_uri}{MFE_PATH_PREFIX}"
@@ -75,7 +79,7 @@ class RegistryDiscovery:
 
 
 def get_sas_uri_for_registry_asset(service_client, name, version, resource_group, registry, body) -> str:
-    """Get sas_uri for registry asset
+    """Get sas_uri for registry asset.
 
     :param service_client: Service client
     :type service_client: AzureMachineLearningWorkspaces
@@ -113,7 +117,8 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
 def get_asset_body_for_registry_storage(
     registry_name: str, asset_type: str, asset_name: str, asset_version: str
 ) -> TemporaryDataReferenceRequestDto:
-    """
+    """Get Asset body for registry.
+
     :param registry_name: Registry name.
     :type registry_name: str
     :param asset_type: Asset type.
@@ -140,7 +145,8 @@ def get_storage_details_for_registry_assets(
     reg_name: str,
     uri: str,
 ) -> str:
-    """
+    """Get storage details for registry assets.
+
     :param service_client: AzureMachineLearningWorkspaces service client.
     :type service_client: AzureMachineLearningWorkspaces
     :param asset_type: Asset type.
@@ -165,3 +171,18 @@ def get_storage_details_for_registry_assets(
         name=asset_name, version=asset_version, resource_group_name=rg_name, registry_name=reg_name, body=body
     )
     return sas_uri.blob_reference_for_consumption.credential["sasUri"]
+
+
+def get_registry_client(credential, registry_name, **kwargs):
+    base_url = _get_registry_discovery_endpoint_from_metadata(_get_default_cloud_name())
+    kwargs.pop("base_url", None)
+    service_client_registry_discovery_client = ServiceClientRegistryDiscovery(
+        credential=credential, base_url=base_url, **kwargs
+    )
+    registry_discovery = RegistryDiscovery(
+        credential, registry_name, service_client_registry_discovery_client, **kwargs
+    )
+    service_client_10_2021_dataplanepreview = registry_discovery.get_registry_service_client()
+    subscription_id = registry_discovery.subscription_id
+    resource_group_name = registry_discovery.resource_group
+    return service_client_10_2021_dataplanepreview, resource_group_name, subscription_id

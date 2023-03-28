@@ -10,6 +10,10 @@ autorest --use=@autorest/python@5.19.0 swagger/README.md --python-sdks-folder=<p
 
 We automatically hardcode in that this is `python` and `multiapi`.
 
+After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
+
+`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
+
 ## Basic
 
 ```yaml
@@ -32,6 +36,7 @@ batch:
   - tag: release_3_0
   - tag: release_3_1
   - tag: release_2022_05_01
+  - tag: release_2022_10_01_preview
   - multiapiscript: true
 ```
 
@@ -74,6 +79,16 @@ namespace: azure.ai.textanalytics.v2022_05_01
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_05_01
 ```
 
+## Release v2022_10_01_preview
+
+These settings apply only when `--tag=release_2022_10_01_preview` is specified on the command line.
+
+```yaml $(tag) == 'release_2022_10_01_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/72664c83300dfaf6782e22822a5aae0b0df92735/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext.json
+namespace: azure.ai.textanalytics.v2022_10_01_preview
+output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_10_01_preview
+```
+
 ### Override Analyze's pager poller for v3.1
 
 ```yaml
@@ -102,7 +117,7 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeHealthcareEntitiesLROPollingMethod";
 ```
 
-### Override Analyze's pager poller for 2022_05_01
+### Override Analyze's pager poller for 2022_05_01 and 2022_10_01_preview
 
 ```yaml
 directive:
@@ -116,7 +131,6 @@ directive:
       $["x-python-custom-default-polling-method-async"] = ".....aio._lro_async.AsyncAnalyzeActionsLROPollingMethod";
 ```
 
-
 ### Override parameterizing the ApiVersion v3.1
 
 ```yaml $(tag) == 'release_3_1'
@@ -128,9 +142,9 @@ directive:
       $["parameters"] = [{"$ref": "#/parameters/Endpoint"}];
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_05_01
+### Fix naming clash with analyze_text method
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs"]["post"]'
@@ -138,9 +152,9 @@ directive:
       $["operationId"] = "AnalyzeTextSubmitJob";
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_05_01
+### Fix naming clash with analyze_text method
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs/{jobId}"]["get"]'
@@ -148,9 +162,9 @@ directive:
       $["operationId"] = "AnalyzeTextJobStatus";
 ```
 
-### Fix naming clash with analyze_text method in ApiVersion v2022_05_01
+### Fix naming clash with analyze_text method
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["paths"]["/analyze-text/jobs/{jobId}:cancel"]["post"]'
@@ -158,9 +172,9 @@ directive:
       $["operationId"] = "AnalyzeTextCancelJob";
 ```
 
-### Fix generation of operation class name with ApiVersion v2022_05_01
+### Fix generation of operation class name
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: '$["info"]'
@@ -169,11 +183,27 @@ directive:
 ```
 
 
-### Rename changed JobState property with ApiVersion v2022_05_01
+### Rename changed JobState property
 
-```yaml $(tag) == 'release_2022_05_01'
+```yaml
 directive:
   - from: swagger-document
     where: $.definitions.JobState
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
+```
+
+
+### Remove unsupported BooleanResolution
+
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions
+  transform: >
+    delete $["BooleanResolution"]
+- from: swagger-document
+  where: $.definitions.BaseResolution.properties.resolutionKind.enum
+  transform: >
+    $.splice($.indexOf("BooleanResolution"), 1);
+    return $;
 ```

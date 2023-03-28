@@ -26,11 +26,8 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
 import logging
 import time
-from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
-
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
@@ -40,7 +37,6 @@ from ._base_async import AsyncHTTPPolicy
 from ._retry import RetryPolicyBase
 
 _LOGGER = logging.getLogger(__name__)
-
 
 
 class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
@@ -137,7 +133,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
         retry_settings = self.configure_retries(request.context.options)
         self._configure_positions(request, retry_settings)
 
-        absolute_timeout = retry_settings['timeout']
+        absolute_timeout = retry_settings["timeout"]
         is_response_error = True
 
         while retry_active:
@@ -170,7 +166,7 @@ class AsyncRetryPolicy(RetryPolicyBase, AsyncHTTPPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
+                    absolute_timeout -= end_time - start_time
 
         self.update_context(response.context, retry_settings)
         return response

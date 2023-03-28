@@ -11,12 +11,11 @@
 
 from typing import Any, Optional
 
-from msrest import Deserializer, Serializer
-
 from azure.core import AsyncPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
 from ._operations_mixin import KeyVaultClientOperationsMixin
 
@@ -44,7 +43,7 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '7.3'
+    DEFAULT_API_VERSION = '7.4'
     _PROFILE_TAG = "azure.keyvault.KeyVaultClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
@@ -57,9 +56,9 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
         self,
         api_version: Optional[str] = None,
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
-        if api_version == '7.2' or api_version == '7.3':
+        if api_version == '7.2' or api_version == '7.3' or api_version == '7.4':
             base_url = '{vaultBaseUrl}'
         else:
             raise ValueError("API version {} is not available".format(api_version))
@@ -80,12 +79,16 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
            * 7.2: :mod:`v7_2.models<azure.keyvault.v7_2.models>`
            * 7.3: :mod:`v7_3.models<azure.keyvault.v7_3.models>`
+           * 7.4: :mod:`v7_4.models<azure.keyvault.v7_4.models>`
         """
         if api_version == '7.2':
             from ..v7_2 import models
             return models
         elif api_version == '7.3':
             from ..v7_3 import models
+            return models
+        elif api_version == '7.4':
+            from ..v7_4 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -95,14 +98,18 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
            * 7.2: :class:`RoleAssignmentsOperations<azure.keyvault.v7_2.aio.operations.RoleAssignmentsOperations>`
            * 7.3: :class:`RoleAssignmentsOperations<azure.keyvault.v7_3.aio.operations.RoleAssignmentsOperations>`
+           * 7.4: :class:`RoleAssignmentsOperations<azure.keyvault.v7_4.aio.operations.RoleAssignmentsOperations>`
         """
         api_version = self._get_api_version('role_assignments')
         if api_version == '7.2':
             from ..v7_2.aio.operations import RoleAssignmentsOperations as OperationClass
         elif api_version == '7.3':
             from ..v7_3.aio.operations import RoleAssignmentsOperations as OperationClass
+        elif api_version == '7.4':
+            from ..v7_4.aio.operations import RoleAssignmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_assignments'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -111,14 +118,18 @@ class KeyVaultClient(KeyVaultClientOperationsMixin, MultiApiClientMixin, _SDKCli
 
            * 7.2: :class:`RoleDefinitionsOperations<azure.keyvault.v7_2.aio.operations.RoleDefinitionsOperations>`
            * 7.3: :class:`RoleDefinitionsOperations<azure.keyvault.v7_3.aio.operations.RoleDefinitionsOperations>`
+           * 7.4: :class:`RoleDefinitionsOperations<azure.keyvault.v7_4.aio.operations.RoleDefinitionsOperations>`
         """
         api_version = self._get_api_version('role_definitions')
         if api_version == '7.2':
             from ..v7_2.aio.operations import RoleDefinitionsOperations as OperationClass
         elif api_version == '7.3':
             from ..v7_3.aio.operations import RoleDefinitionsOperations as OperationClass
+        elif api_version == '7.4':
+            from ..v7_4.aio.operations import RoleDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'role_definitions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

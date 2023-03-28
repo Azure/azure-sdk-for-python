@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Dict
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -12,8 +12,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 class UnsupportedCompute(Compute):
     """Unsupported compute resource.
 
-    Only for use displaying compute properties for resources not fully
-    supported in the SDK.
+    Only for use displaying compute properties for resources not fully supported in the SDK.
     """
 
     def __init__(
@@ -26,12 +25,18 @@ class UnsupportedCompute(Compute):
     @classmethod
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "UnsupportedCompute":
         prop = rest_obj.properties
+        if hasattr(rest_obj, "tags"):
+            # TODO(2294131): remove this when DataFactory object has no tags got fixed
+            tags = rest_obj.tags
+        else:
+            tags = None
         response = UnsupportedCompute(
             name=rest_obj.name,
             id=rest_obj.id,
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=tags,
             provisioning_state=prop.provisioning_state,
             created_on=prop.additional_properties.get("createdOn", None),
         )

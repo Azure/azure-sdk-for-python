@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import os
-from typing import Dict, Union
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import AmlToken, ManagedIdentity
 from azure.ai.ml.constants._component import ComponentSource
@@ -16,34 +16,35 @@ from .parallel import Parallel
 
 def parallel_run_function(
     *,
-    name: str = None,
-    description: str = None,
-    tags: Dict = None,
-    properties: Dict = None,
-    display_name: str = None,
-    experiment_name: str = None,
-    compute: str = None,
-    retry_settings: BatchRetrySettings = None,
-    environment_variables: Dict = None,
-    logging_level: str = None,
-    max_concurrency_per_instance: int = None,
-    error_threshold: int = None,
-    mini_batch_error_threshold: int = None,
-    task: RunFunction = None,
-    mini_batch_size: str = None,
-    input_data: str = None,
-    inputs: Dict = None,
-    outputs: Dict = None,
-    instance_count: int = None,
-    instance_type: str = None,
-    docker_args: str = None,
-    shm_size: str = None,
-    identity: Union[ManagedIdentity, AmlToken] = None,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    properties: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    compute: Optional[str] = None,
+    retry_settings: Optional[BatchRetrySettings] = None,
+    environment_variables: Optional[Dict] = None,
+    logging_level: Optional[str] = None,
+    max_concurrency_per_instance: Optional[int] = None,
+    error_threshold: Optional[int] = None,
+    mini_batch_error_threshold: Optional[int] = None,
+    task: Optional[RunFunction] = None,
+    mini_batch_size: Optional[str] = None,
+    partition_keys: Optional[List] = None,
+    input_data: Optional[str] = None,
+    inputs: Optional[Dict] = None,
+    outputs: Optional[Dict] = None,
+    instance_count: Optional[int] = None,
+    instance_type: Optional[str] = None,
+    docker_args: Optional[str] = None,
+    shm_size: Optional[str] = None,
+    identity: Optional[Union[ManagedIdentity, AmlToken]] = None,
     is_deterministic: bool = True,
     **kwargs,
 ) -> Parallel:
-    """Create a Parallel object which can be used inside dsl.pipeline as a
-    function and can also be created as a standalone parallel job.
+    """Create a Parallel object which can be used inside dsl.pipeline as a function and can also be created as a
+    standalone parallel job.
 
     For an example of using ParallelRunStep, see the notebook
     https://aka.ms/parallel-example-notebook
@@ -66,30 +67,35 @@ def parallel_run_function(
         from azure.ai.ml import Input, Output, parallel
 
         parallel_run = parallel_run_function(
-            name = 'batch_score_with_tabular_input',
-            display_name = 'Batch Score with Tabular Dataset',
-            description = 'parallel component for batch score',
-            inputs = dict(
-            job_data_path=Input(type=AssetTypes.MLTABLE, description='The data to be split and scored in parallel'),
-            score_model=Input(type=AssetTypes.URI_FOLDER, description='The model for batch score.')
-            ),
-            outputs = dict(job_output_path=Output(type=AssetTypes.MLTABLE)),
-            input_data = '${{inputs.job_data_path}}',
-            max_concurrency_per_instance = 2,  # Optional, default is 1
-            mini_batch_size = '100',      # optional
-            mini_batch_error_threshold = 5,  # Optional, allowed failed count on mini batch items, default is -1
-            logging_level = 'DEBUG',     # Optional, default is INFO
-            error_threshold = 5,       # Optional, allowed failed count totally, default is -1
-            retry_settings = dict(max_retries=2, timeout=60),  # Optional
-            task = RunFunction(
-                code = './src',
-                entry_script = 'tabular_batch_inference.py',
-                environment = Environment(
-                    image= 'mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04',
-                    conda_file='./src/environment_parallel.yml'
+            name="batch_score_with_tabular_input",
+            display_name="Batch Score with Tabular Dataset",
+            description="parallel component for batch score",
+            inputs=dict(
+                job_data_path=Input(
+                    type=AssetTypes.MLTABLE,
+                    description="The data to be split and scored in parallel",
                 ),
-                program_arguments = '--model ${{inputs.score_model}}',
-                append_row_to = '${{outputs.job_output_path}}',   # Optional, if not set, summary_only
+                score_model=Input(
+                    type=AssetTypes.URI_FOLDER, description="The model for batch score."
+                ),
+            ),
+            outputs=dict(job_output_path=Output(type=AssetTypes.MLTABLE)),
+            input_data="${{inputs.job_data_path}}",
+            max_concurrency_per_instance=2,  # Optional, default is 1
+            mini_batch_size="100",  # optional
+            mini_batch_error_threshold=5,  # Optional, allowed failed count on mini batch items, default is -1
+            logging_level="DEBUG",  # Optional, default is INFO
+            error_threshold=5,  # Optional, allowed failed count totally, default is -1
+            retry_settings=dict(max_retries=2, timeout=60),  # Optional
+            task=RunFunction(
+                code="./src",
+                entry_script="tabular_batch_inference.py",
+                environment=Environment(
+                    image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+                    conda_file="./src/environment_parallel.yml",
+                ),
+                program_arguments="--model ${{inputs.score_model}}",
+                append_row_to="${{outputs.job_output_path}}",  # Optional, if not set, summary_only
             ),
         )
 
@@ -136,6 +142,12 @@ def parallel_run_function(
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter.
     :type mini_batch_size: str
+    :param partition_keys: The keys used to partition dataset into mini-batches.
+        If specified, the data with the same key will be partitioned into the same mini-batch.
+        If both partition_keys and mini_batch_size are specified, the partition keys will take effect.
+        The input(s) must be partitioned dataset(s),
+        and the partition_keys must be a subset of the keys of every input dataset for this to work.
+    :type partition_keys: List
     :param input_data: The input data.
     :type input_data: str
     :param inputs: a dict of inputs used by this parallel.
@@ -190,6 +202,7 @@ def parallel_run_function(
             mini_batch_error_threshold=mini_batch_error_threshold,
             task=task,
             mini_batch_size=mini_batch_size,
+            partition_keys=partition_keys,
             input_data=input_data,
             _source=ComponentSource.BUILDER,
             is_deterministic=is_deterministic,
@@ -216,6 +229,7 @@ def parallel_run_function(
         mini_batch_error_threshold=mini_batch_error_threshold,
         task=task,
         mini_batch_size=mini_batch_size,
+        partition_keys=partition_keys,
         input_data=input_data,
         **kwargs,
     )

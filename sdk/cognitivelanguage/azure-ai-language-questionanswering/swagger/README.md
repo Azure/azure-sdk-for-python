@@ -21,10 +21,6 @@ autorest
 
 `autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
 
-2) Revert the changes made by the script in all files except:
-.../azure-sdk-for-python/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/_operations/__init__.py
-.../azure-sdk-for-python/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/aio/_operations/__init__.py
-
 ### Settings
 
 ```yaml
@@ -35,7 +31,7 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 version-tolerant: true
-package-version: 1.1.0
+package-version: 1.1.1
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key
@@ -87,6 +83,12 @@ directive:
   transform: |
     var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
     $.description = "See https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/" + operationId + " for more information.";
+
+# Fix too long of link in description.
+- from: swagger-document
+  where: $.info
+  transform: |
+    $["description"] = "The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms. The API can be used to analyze unstructured text for tasks such as sentiment analysis, key phrase extraction, language detection and question answering. Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview";
 ```
 
 ```yaml

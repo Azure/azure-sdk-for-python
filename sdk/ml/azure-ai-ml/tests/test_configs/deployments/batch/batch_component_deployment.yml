@@ -1,0 +1,12 @@
+$schema: http://azureml/sdk-2-0/BatchDeployment.json
+name: component-deployment
+description: A sample deployment with pre and post processing done before and after inference.
+endpoint_name: component-endpoint
+compute: azureml:cpu-cluster
+type: component
+job_definition:
+    Type: pipeline
+    # component: ../../components/component_e2e.yml
+    Component: azureml:helloworld_pipeline_component:1
+    Settings:
+        continue_on_step_failure: false

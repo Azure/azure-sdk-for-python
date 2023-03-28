@@ -13,12 +13,12 @@ from azure.ai.ml.operations._code_operations import CodeOperations
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
@@ -60,7 +60,7 @@ class TestDataUtils:
         ):
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="https://fake.localhost/file.yaml",
+                base_uri="https://fake.localhost/file.yaml",
                 requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
@@ -69,16 +69,16 @@ class TestDataUtils:
         with pytest.raises(Exception) as ex:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="https://fake.localhost/file.yaml",
+                base_uri="https://fake.localhost/file.yaml",
                 requests_pipeline=mock_requests_pipeline,
             )
-        assert "Invalid URL" in str(ex)
+        assert "Failed to establish a new connection" in str(ex)
 
         # remote azureml accessible
         with patch("azure.ai.ml._utils._data_utils.TemporaryDirectory", return_value=mltable_folder):
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="azureml://datastores/mydatastore/paths/images/dogs",
+                base_uri="azureml://datastores/mydatastore/paths/images/dogs",
                 requests_pipeline=mock_requests_pipeline,
             )
             assert contents["paths"] == [OrderedDict([("file", "./tmp_file.csv")])]
@@ -87,7 +87,7 @@ class TestDataUtils:
         with pytest.raises(Exception) as ex:
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
-                path="azureml://datastores/mydatastore/paths/images/dogs",
+                base_uri="azureml://datastores/mydatastore/paths/images/dogs",
                 requests_pipeline=mock_requests_pipeline,
             )
         assert "No such file or directory" in str(ex)

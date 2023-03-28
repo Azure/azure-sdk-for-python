@@ -6,58 +6,44 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Attributes
-    from ._models_py3 import BackupSecretResult
-    from ._models_py3 import DeletedSecretBundle
-    from ._models_py3 import DeletedSecretItem
-    from ._models_py3 import DeletedSecretListResult
-    from ._models_py3 import Error
-    from ._models_py3 import KeyVaultError
-    from ._models_py3 import SecretAttributes
-    from ._models_py3 import SecretBundle
-    from ._models_py3 import SecretItem
-    from ._models_py3 import SecretListResult
-    from ._models_py3 import SecretProperties
-    from ._models_py3 import SecretRestoreParameters
-    from ._models_py3 import SecretSetParameters
-    from ._models_py3 import SecretUpdateParameters
-except (SyntaxError, ImportError):
-    from ._models import Attributes  # type: ignore
-    from ._models import BackupSecretResult  # type: ignore
-    from ._models import DeletedSecretBundle  # type: ignore
-    from ._models import DeletedSecretItem  # type: ignore
-    from ._models import DeletedSecretListResult  # type: ignore
-    from ._models import Error  # type: ignore
-    from ._models import KeyVaultError  # type: ignore
-    from ._models import SecretAttributes  # type: ignore
-    from ._models import SecretBundle  # type: ignore
-    from ._models import SecretItem  # type: ignore
-    from ._models import SecretListResult  # type: ignore
-    from ._models import SecretProperties  # type: ignore
-    from ._models import SecretRestoreParameters  # type: ignore
-    from ._models import SecretSetParameters  # type: ignore
-    from ._models import SecretUpdateParameters  # type: ignore
+from ._models_py3 import Attributes
+from ._models_py3 import BackupSecretResult
+from ._models_py3 import DeletedSecretBundle
+from ._models_py3 import DeletedSecretItem
+from ._models_py3 import DeletedSecretListResult
+from ._models_py3 import Error
+from ._models_py3 import KeyVaultError
+from ._models_py3 import SecretAttributes
+from ._models_py3 import SecretBundle
+from ._models_py3 import SecretItem
+from ._models_py3 import SecretListResult
+from ._models_py3 import SecretProperties
+from ._models_py3 import SecretRestoreParameters
+from ._models_py3 import SecretSetParameters
+from ._models_py3 import SecretUpdateParameters
 
-from ._key_vault_client_enums import (
-    DeletionRecoveryLevel,
-)
+from ._key_vault_client_enums import DeletionRecoveryLevel
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Attributes',
-    'BackupSecretResult',
-    'DeletedSecretBundle',
-    'DeletedSecretItem',
-    'DeletedSecretListResult',
-    'Error',
-    'KeyVaultError',
-    'SecretAttributes',
-    'SecretBundle',
-    'SecretItem',
-    'SecretListResult',
-    'SecretProperties',
-    'SecretRestoreParameters',
-    'SecretSetParameters',
-    'SecretUpdateParameters',
-    'DeletionRecoveryLevel',
+    "Attributes",
+    "BackupSecretResult",
+    "DeletedSecretBundle",
+    "DeletedSecretItem",
+    "DeletedSecretListResult",
+    "Error",
+    "KeyVaultError",
+    "SecretAttributes",
+    "SecretBundle",
+    "SecretItem",
+    "SecretListResult",
+    "SecretProperties",
+    "SecretRestoreParameters",
+    "SecretSetParameters",
+    "SecretUpdateParameters",
+    "DeletionRecoveryLevel",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

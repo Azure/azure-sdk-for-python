@@ -7,17 +7,17 @@
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 24 Aug 2022 22:07:12 GMT",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 12 Nov 2022 00:41:20 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 24 Aug 2022 22:07:10 GMT",
-        "ETag": "\u00220x8DA861CFE9A3F0C\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 22:07:11 GMT",
+        "Date": "Sat, 12 Nov 2022 00:41:20 GMT",
+        "ETag": "\u00220x8DAC4469E6C91F5\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -27,23 +27,23 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem58243cd1/old?resource=directory",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem58243cd1/directory58243cd1?resource=directory",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 24 Aug 2022 22:07:12 GMT",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 12 Nov 2022 00:41:21 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 24 Aug 2022 22:07:11 GMT",
-        "ETag": "\u00220x8DA861CFEACE3B7\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 22:07:11 GMT",
+        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "ETag": "\u00220x8DAC4469EDFFF74\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -60,17 +60,17 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 24 Aug 2022 22:07:13 GMT",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 12 Nov 2022 00:41:21 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 24 Aug 2022 22:07:11 GMT",
-        "ETag": "\u00220x8DA861CFEBBB50D\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 22:07:11 GMT",
+        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "ETag": "\u00220x8DAC4469EF5A24A\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -87,17 +87,17 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 24 Aug 2022 22:07:13 GMT",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 12 Nov 2022 00:41:21 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 24 Aug 2022 22:07:11 GMT",
-        "ETag": "\u00220x8DA861CFECC6700\u0022",
-        "Last-Modified": "Wed, 24 Aug 2022 22:07:11 GMT",
+        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "ETag": "\u00220x8DAC4469F05B3B5\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:41:22 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -114,31 +114,65 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-storage-dfs/12.9.0b1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Wed, 24 Aug 2022 22:07:13 GMT",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 12 Nov 2022 00:41:22 GMT",
         "x-ms-rename-source": "/filesystem58243cd1/directory58243cd1",
         "x-ms-source-lease-id": "",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
-      "StatusCode": 404,
+      "StatusCode": 201,
       "ResponseHeaders": {
-        "Content-Length": "189",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 24 Aug 2022 22:07:11 GMT",
+        "Content-Length": "0",
+        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "ETag": "\u00220x8DAC4469EDFFF74\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-error-code": "SourcePathNotFound",
         "x-ms-version": "2021-08-06"
       },
-      "ResponseBody": {
-        "error": {
-          "code": "SourcePathNotFound",
-          "message": "The source path for a rename operation does not exist.\nRequestId:4ca3bc81-f01f-0060-1405-b8313f000000\nTime:2022-08-24T22:07:11.9530844Z"
-        }
-      }
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/filesystem58243cd1/newname/newsub",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Sat, 12 Nov 2022 00:41:22 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "0",
+        "Content-Type": "application/octet-stream",
+        "Date": "Sat, 12 Nov 2022 00:41:22 GMT",
+        "ETag": "\u00220x8DAC4469EDFFF74\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-creation-time": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "x-ms-group": "$superuser",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-meta-hdi_isfolder": "true",
+        "x-ms-owner": "$superuser",
+        "x-ms-permissions": "rwxr-x---",
+        "x-ms-resource-type": "directory",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
     }
   ],
   "Variables": {}

@@ -3,27 +3,24 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import cast, TYPE_CHECKING
+from typing import cast, Optional, Tuple
 
+from azure.core.credentials import AccessToken
 from . import AsyncContextManager
 from .get_token_mixin import GetTokenMixin
 from .managed_identity_client import AsyncManagedIdentityClient
 from ... import CredentialUnavailableError
 
-if TYPE_CHECKING:
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
-
 
 class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     """Base class for internal credentials using AsyncManagedIdentityClient"""
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__()
         self._client = self.get_client(**kwargs)
 
     @abc.abstractmethod
-    def get_client(self, **kwargs: "Any") -> "Optional[AsyncManagedIdentityClient]":
+    def get_client(self, **kwargs) -> Optional[AsyncManagedIdentityClient]:
         pass
 
     @abc.abstractmethod
@@ -42,15 +39,17 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self.__aexit__()
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         if not self._client:
             raise CredentialUnavailableError(message=self.get_unavailable_message())
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
         return cast(AsyncManagedIdentityClient, self._client).get_cached_token(*scopes)
 
-    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         return await cast(AsyncManagedIdentityClient, self._client).request_token(*scopes, **kwargs)

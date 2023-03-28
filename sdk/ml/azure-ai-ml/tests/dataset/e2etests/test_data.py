@@ -1,22 +1,17 @@
 from pathlib import Path
-from time import sleep
 from typing import Callable
 
 import pytest
 import yaml
+from devtools_testutils import AzureRecordedTestCase, is_live
+from test_utilities.utils import sleep_if_live
 
 from azure.ai.ml import MLClient, load_data
-from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
 from azure.core.paging import ItemPaged
 
-
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
-
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.e2etest
@@ -180,6 +175,24 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert data_version.id == generate_data_arm_id(client._operation_scope, name, version)
         assert data_version.path.endswith("/tmp_folder/")
 
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
+    def test_create_data_asset_in_registry(
+        self, data_asset_registry_client: MLClient, randstr: Callable[[], str]
+    ) -> None:
+        name = randstr("name")
+        version = "1"
+        data_asset = load_data(
+            source="./tests/test_configs/dataset/data_file.yaml",
+            params_override=[{"name": name}, {"version": version}],
+        )
+        sleep_if_live(3)
+        obj = data_asset_registry_client.data.create_or_update(data_asset)
+        assert obj is not None
+        assert name == obj.name
+        data_version = data_asset_registry_client.data.get(name, version)
+
+        assert data_version.name == obj.name
+
     def test_list(self, client: MLClient, data_with_2_versions: str) -> None:
         data_iterator = client.data.list(name=data_with_2_versions)
         assert isinstance(data_iterator, ItemPaged)
@@ -192,6 +205,12 @@ sepal_length,sepal_width,petal_length,petal_width,species
         # use a set since ordering of elements returned from list isn't guaranteed
         assert {"1", "2"} == {data.version for data in data_list}
 
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
+    def test_list_data_in_registry(self, data_asset_registry_client: MLClient) -> None:
+        data_iterator = data_asset_registry_client.data.list()
+        assert data_iterator
+        assert isinstance(data_iterator, ItemPaged)
+
     def test_data_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
@@ -203,8 +222,24 @@ sepal_length,sepal_width,petal_length,petal_width,species
                     params_override=[{"name": name}, {"version": version}],
                 )
             )
-            sleep(3)
+            sleep_if_live(3)
             assert client.data.get(name, label="latest").version == version
+
+    @pytest.mark.skipif(condition=not is_live(), reason="Auth issue in Registry")
+    def test_data_get_latest_label_in_registry(
+        self, data_asset_registry_client: MLClient, randstr: Callable[[], str]
+    ) -> None:
+        name = randstr("name")
+        versions = ["foo", "bar", "baz", "foobar"]
+        for version in versions:
+            data_asset_registry_client.data.create_or_update(
+                load_data(
+                    source="./tests/test_configs/dataset/data_file.yaml",
+                    params_override=[{"name": name}, {"version": version}],
+                )
+            )
+            sleep_if_live(3)
+            assert data_asset_registry_client.data.get(name, label="latest").version == version
 
     @pytest.mark.e2etest
     def test_data_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
@@ -221,7 +256,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
 
         def get_data_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             data_list = client.data.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [d.version for d in data_list if d is not None]
 
@@ -245,7 +280,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
 
         def get_data_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             data_list = client.data.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [d.name for d in data_list if d is not None]
 

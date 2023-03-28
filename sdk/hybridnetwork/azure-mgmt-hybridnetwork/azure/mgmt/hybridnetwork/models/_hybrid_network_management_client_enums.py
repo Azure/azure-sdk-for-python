@@ -6,90 +6,90 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+
+    INTERNAL = "Internal"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DeviceType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the device.
-    """
+
+class DeviceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the device."""
 
     UNKNOWN = "Unknown"
     AZURE_STACK_EDGE = "AzureStackEdge"
 
-class DiskCreateOptionTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies how the virtual machine should be created.
-    """
+
+class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies how the virtual machine should be created."""
 
     UNKNOWN = "Unknown"
     EMPTY = "Empty"
 
-class IPAllocationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """IP address allocation method.
-    """
+
+class HttpMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The http method of the request."""
+
+    UNKNOWN = "Unknown"
+    POST = "Post"
+    PUT = "Put"
+    GET = "Get"
+    PATCH = "Patch"
+    DELETE = "Delete"
+
+
+class IPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP address allocation method."""
 
     UNKNOWN = "Unknown"
     STATIC = "Static"
     DYNAMIC = "Dynamic"
 
-class IPVersion(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """IP address version.
-    """
+
+class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP address version."""
 
     UNKNOWN = "Unknown"
     I_PV4 = "IPv4"
 
-class NetworkFunctionRoleConfigurationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Role type.
-    """
+
+class NetworkFunctionRoleConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Role type."""
 
     UNKNOWN = "Unknown"
     VIRTUAL_MACHINE = "VirtualMachine"
 
-class NetworkFunctionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The network function type.
-    """
+
+class NetworkFunctionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network function type."""
 
     UNKNOWN = "Unknown"
     VIRTUAL_NETWORK_FUNCTION = "VirtualNetworkFunction"
     CONTAINERIZED_NETWORK_FUNCTION = "ContainerizedNetworkFunction"
 
-class OperatingSystemTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS type.
-    """
+
+class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OS type."""
 
     UNKNOWN = "Unknown"
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class OperationalState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The operational state of the role instance.
-    """
+
+class OperationalState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of the role instance."""
 
     UNKNOWN = "Unknown"
     STOPPED = "Stopped"
@@ -97,9 +97,19 @@ class OperationalState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STOPPING = "Stopping"
     STARTING = "Starting"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+    logs UX. Default value is "user,system".
     """
+
+    USER = "user"
+    SYSTEM = "system"
+    USER_SYSTEM = "user,system"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     UNKNOWN = "Unknown"
     SUCCEEDED = "Succeeded"
@@ -109,35 +119,35 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     CANCELED = "Canceled"
     DELETED = "Deleted"
 
-class SkuDeploymentMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The sku deployment mode.
-    """
+
+class SkuDeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sku deployment mode."""
 
     UNKNOWN = "Unknown"
     AZURE = "Azure"
     PRIVATE_EDGE_ZONE = "PrivateEdgeZone"
 
-class SkuType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Sku type.
-    """
+
+class SkuType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sku type."""
 
     UNKNOWN = "Unknown"
     EVOLVED_PACKET_CORE = "EvolvedPacketCore"
     SDWAN = "SDWAN"
     FIREWALL = "Firewall"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current device status.
-    """
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current device status."""
 
     UNKNOWN = "Unknown"
     NOT_REGISTERED = "NotRegistered"
     REGISTERED = "Registered"
     DELETED = "Deleted"
 
-class VendorProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current vendor provisioning state.
-    """
+
+class VendorProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current vendor provisioning state."""
 
     UNKNOWN = "Unknown"
     NOT_PROVISIONED = "NotProvisioned"
@@ -146,9 +156,9 @@ class VendorProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     DEPROVISIONED = "Deprovisioned"
     USER_DATA_VALIDATION_FAILED = "UserDataValidationFailed"
 
-class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The size of the virtual machine.
-    """
+
+class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The size of the virtual machine."""
 
     UNKNOWN = "Unknown"
     STANDARD_D1_V2 = "Standard_D1_v2"
@@ -178,9 +188,9 @@ class VirtualMachineSizeTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     STANDARD_F8_S = "Standard_F8s"
     STANDARD_F16_S = "Standard_F16s"
 
-class VMSwitchType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the VM switch.
-    """
+
+class VMSwitchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the VM switch."""
 
     UNKNOWN = "Unknown"
     MANAGEMENT = "Management"

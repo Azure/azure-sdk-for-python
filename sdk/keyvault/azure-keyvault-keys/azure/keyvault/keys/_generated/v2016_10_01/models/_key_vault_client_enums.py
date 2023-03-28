@@ -7,60 +7,59 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the action.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the action."""
 
     EMAIL_CONTACTS = "EmailContacts"
     AUTO_RENEW = "AutoRenew"
 
-class DeletionRecoveryLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reflects the deletion recovery level currently in effect for keys in the current vault. If it
     contains 'Purgeable' the key can be permanently deleted by a privileged user; otherwise, only
     the system can purge the key, at the end of the retention interval.
     """
 
-    #: Soft-delete is not enabled for this vault. A DELETE operation results in immediate and
-    #: irreversible data loss.
     PURGEABLE = "Purgeable"
-    #: Soft-delete is enabled for this vault; A privileged user may trigger an immediate, irreversible
-    #: deletion(purge) of a deleted entity.
+    """Soft-delete is not enabled for this vault. A DELETE operation results in immediate and
+    #: irreversible data loss."""
     RECOVERABLE_PURGEABLE = "Recoverable+Purgeable"
-    #: Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain
-    #: in this state until recovered, or the end of the retention interval.
+    """Soft-delete is enabled for this vault; A privileged user may trigger an immediate, irreversible
+    #: deletion(purge) of a deleted entity."""
     RECOVERABLE = "Recoverable"
-    #: Soft-delete is enabled for this vault, and the subscription is protected against immediate
-    #: deletion.
+    """Soft-delete is enabled for this vault and purge has been disabled. A deleted entity will remain
+    #: in this state until recovered, or the end of the retention interval."""
     RECOVERABLE_PROTECTED_SUBSCRIPTION = "Recoverable+ProtectedSubscription"
+    """Soft-delete is enabled for this vault, and the subscription is protected against immediate
+    #: deletion."""
 
-class JsonWebKeyCurveName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Elliptic curve name. For valid values, see JsonWebKeyCurveName.
-    """
 
-    #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
+class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Elliptic curve name. For valid values, see JsonWebKeyCurveName."""
+
     P256 = "P-256"
-    #: The NIST P-384 elliptic curve, AKA SECG curve SECP384R1.
+    """The NIST P-256 elliptic curve, AKA SECG curve SECP256R1."""
     P384 = "P-384"
-    #: The NIST P-521 elliptic curve, AKA SECG curve SECP521R1.
+    """The NIST P-384 elliptic curve, AKA SECG curve SECP384R1."""
     P521 = "P-521"
-    #: The SECG SECP256K1 elliptic curve.
+    """The NIST P-521 elliptic curve, AKA SECG curve SECP521R1."""
     SECP256_K1 = "SECP256K1"
+    """The SECG SECP256K1 elliptic curve."""
 
-class JsonWebKeyEncryptionAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """algorithm identifier
-    """
+
+class JsonWebKeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """algorithm identifier."""
 
     RSA_OAEP = "RSA-OAEP"
     RSA_OAEP256 = "RSA-OAEP-256"
     RSA1_5 = "RSA1_5"
 
-class JsonWebKeyOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """JSON web key operations. For more information, see JsonWebKeyOperation.
-    """
+
+class JsonWebKeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JSON web key operations. For more information, see JsonWebKeyOperation."""
 
     ENCRYPT = "encrypt"
     DECRYPT = "decrypt"
@@ -69,7 +68,8 @@ class JsonWebKeyOperation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WRAP_KEY = "wrapKey"
     UNWRAP_KEY = "unwrapKey"
 
-class JsonWebKeySignatureAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class JsonWebKeySignatureAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signing/verification algorithm identifier. For more information on possible algorithm
     types, see JsonWebKeySignatureAlgorithm.
     """
@@ -86,9 +86,9 @@ class JsonWebKeySignatureAlgorithm(with_metaclass(CaseInsensitiveEnumMeta, str, 
     ES512 = "ES512"
     ECDSA256 = "ECDSA256"
 
-class JsonWebKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """JsonWebKey key type (kty).
-    """
+
+class JsonWebKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JsonWebKey key type (kty)."""
 
     EC = "EC"
     EC_HSM = "EC-HSM"
@@ -96,7 +96,9 @@ class JsonWebKeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     RSA_HSM = "RSA-HSM"
     OCT = "oct"
 
-class KeyUsageType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KeyUsageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyUsageType."""
 
     DIGITAL_SIGNATURE = "digitalSignature"
     NON_REPUDIATION = "nonRepudiation"

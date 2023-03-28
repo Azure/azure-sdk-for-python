@@ -59,12 +59,21 @@ class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
     ML_TABLE = "MLTable"
+    LITERAL = "Literal"
+    CUSTOM_MODEL = "CustomModel"
+    ML_FLOW_MODEL = "MLFlowModel"
+    TRITON_MODEL = "TritonModel"
 
 class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the Job Output Type.
     """
 
     URI_FILE = "UriFile"
+    URI_FOLDER = "UriFolder"
+    ML_TABLE = "MLTable"
+    CUSTOM_MODEL = "CustomModel"
+    ML_FLOW_MODEL = "MLFlowModel"
+    TRITON_MODEL = "TritonModel"
 
 class JobProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 

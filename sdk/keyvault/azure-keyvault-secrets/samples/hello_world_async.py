@@ -41,13 +41,13 @@ async def run_sample():
     print("\n.. Create Secret")
     expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
     secret = await client.set_secret("helloWorldSecretNameAsync", "helloWorldSecretValue", expires_on=expires_on)
-    print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
-    print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires_on))
+    print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
+    print(f"Secret with name '{secret.name}' expires on '{secret.properties.expires_on}'")
 
     # Let's get the bank secret using its name
     print("\n.. Get a Secret by name")
     bank_secret = await client.get_secret(secret.name)
-    print("Secret with name '{0}' was found with value '{1}'.".format(bank_secret.name, bank_secret.value))
+    print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret.value}'.")
 
     # After one year, the bank account is still active, we need to update the expiry time of the secret.
     # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
@@ -56,26 +56,24 @@ async def run_sample():
     expires_on = bank_secret.properties.expires_on + datetime.timedelta(days=365)
     updated_secret_properties = await client.update_secret_properties(secret.name, expires_on=expires_on)
     print(
-        "Secret with name '{0}' was updated on date '{1}'".format(
-            updated_secret_properties.name, updated_secret_properties.updated_on
-        )
+        f"Secret with name '{updated_secret_properties.name}' was updated on date "
+        f"'{updated_secret_properties.updated_on}'"
     )
     print(
-        "Secret with name '{0}' was updated to expire on '{1}'".format(
-            updated_secret_properties.name, updated_secret_properties.expires_on
-        )
+        f"Secret with name '{updated_secret_properties.name}' was updated to expire on "
+        f"'{updated_secret_properties.expires_on}'"
     )
 
     # Bank forced a password update for security purposes. Let's change the value of the secret in the key vault.
     # To achieve this, we need to create a new version of the secret in the key vault. The update operation cannot
     # change the value of the secret.
     new_secret = await client.set_secret(secret.name, "newSecretValueAsync")
-    print("Secret with name '{0}' created with value '{1}'".format(new_secret.name, new_secret.value))
+    print(f"Secret with name '{new_secret.name}' created with value '{new_secret.value}'")
 
     # The bank account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Deleting Secret...")
     deleted_secret = await client.delete_secret(secret.name)
-    print("Secret with name '{0}' was deleted.".format(deleted_secret.name))
+    print(f"Secret with name '{deleted_secret.name}' was deleted.")
 
     print("\nrun_sample done")
     await credential.close()

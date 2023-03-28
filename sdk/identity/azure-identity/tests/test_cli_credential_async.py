@@ -89,72 +89,65 @@ async def test_get_token():
         }
     )
 
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
-        credential = AzureCliCredential()
-        token = await credential.get_token("scope")
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
+            credential = AzureCliCredential()
+            token = await credential.get_token("scope")
 
     assert token.token == access_token
     assert type(token.expires_on) == int
     assert token.expires_on == expected_expires_on
 
 
-async def test_cli_not_installed_linux():
+async def test_cli_not_installed():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    output = "/bin/sh: 1: az: not found"
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=127)):
+    with mock.patch("shutil.which", return_value=None):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             credential = AzureCliCredential()
             await credential.get_token("scope")
-
-
-async def test_cli_not_installed_windows():
-    """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
-
-    output = "'az' is not recognized as an internal or external command, operable program or batch file."
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=1)):
-        with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
-            credential = AzureCliCredential()
-            await credential.get_token("scope")
-
 
 async def test_cannot_execute_shell():
     """The credential should raise CredentialUnavailableError when the subprocess doesn't start"""
 
-    with mock.patch(SUBPROCESS_EXEC, mock.Mock(side_effect=OSError())):
-        with pytest.raises(CredentialUnavailableError):
-            credential = AzureCliCredential()
-            await credential.get_token("scope")
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock.Mock(side_effect=OSError())):
+            with pytest.raises(CredentialUnavailableError):
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
 
 
 async def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
-    output = "ERROR: Please run 'az login' to setup account."
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=1)):
-        with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
-            credential = AzureCliCredential()
-            await credential.get_token("scope")
+    stderr = "ERROR: Please run 'az login' to setup account."
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
+            with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
 
 
 async def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 
-    output = "something went wrong"
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=42)):
-        with pytest.raises(ClientAuthenticationError, match=output):
-            credential = AzureCliCredential()
-            await credential.get_token("scope")
+    stderr = "something went wrong"
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=42)):
+            with pytest.raises(ClientAuthenticationError, match=stderr):
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
 
 
 @pytest.mark.parametrize("output", TEST_ERROR_OUTPUTS)
 async def test_parsing_error_does_not_expose_token(output):
     """Errors during CLI output parsing shouldn't expose access tokens in that output"""
 
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(output)):
-        with pytest.raises(ClientAuthenticationError) as ex:
-            credential = AzureCliCredential()
-            await credential.get_token("scope")
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec(output)):
+            with pytest.raises(ClientAuthenticationError) as ex:
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
 
     assert "secret value" not in str(ex.value)
     assert "secret value" not in repr(ex.value)
@@ -164,10 +157,11 @@ async def test_parsing_error_does_not_expose_token(output):
 async def test_subprocess_error_does_not_expose_token(output):
     """Errors from the subprocess shouldn't expose access tokens in CLI output"""
 
-    with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=1)):
-        with pytest.raises(ClientAuthenticationError) as ex:
-            credential = AzureCliCredential()
-            await credential.get_token("scope")
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=1)):
+            with pytest.raises(ClientAuthenticationError) as ex:
+                credential = AzureCliCredential()
+                await credential.get_token("scope")
 
     assert "secret value" not in str(ex.value)
     assert "secret value" not in repr(ex.value)
@@ -177,12 +171,12 @@ async def test_timeout():
     """The credential should kill the subprocess after a timeout"""
 
     proc = mock.Mock(communicate=mock.Mock(side_effect=asyncio.TimeoutError), returncode=None)
-    with mock.patch(SUBPROCESS_EXEC, mock.Mock(return_value=get_completed_future(proc))):
-        with pytest.raises(CredentialUnavailableError):
-            await AzureCliCredential().get_token("scope")
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, mock.Mock(return_value=get_completed_future(proc))):
+            with pytest.raises(CredentialUnavailableError):
+                await AzureCliCredential().get_token("scope")
 
     assert proc.communicate.call_count == 1
-    assert proc.kill.call_count == 1
 
 
 async def test_multitenant_authentication():
@@ -207,19 +201,20 @@ async def test_multitenant_authentication():
         return mock.Mock(communicate=mock.Mock(return_value=get_completed_future((output, b""))), returncode=0)
 
     credential = AzureCliCredential()
-    with mock.patch(SUBPROCESS_EXEC, fake_exec):
-        token = await credential.get_token("scope")
-        assert token.token == first_token
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, fake_exec):
+            token = await credential.get_token("scope")
+            assert token.token == first_token
 
-        token = await credential.get_token("scope", tenant_id=default_tenant)
-        assert token.token == first_token
+            token = await credential.get_token("scope", tenant_id=default_tenant)
+            assert token.token == first_token
 
-        token = await credential.get_token("scope", tenant_id=second_tenant)
-        assert token.token == second_token
+            token = await credential.get_token("scope", tenant_id=second_tenant)
+            assert token.token == second_token
 
-        # should still default to the first tenant
-        token = await credential.get_token("scope")
-        assert token.token == first_token
+            # should still default to the first tenant
+            token = await credential.get_token("scope")
+            assert token.token == first_token
 
 async def test_multitenant_authentication_not_allowed():
     expected_tenant = "expected-tenant"
@@ -240,10 +235,11 @@ async def test_multitenant_authentication_not_allowed():
         return mock.Mock(communicate=mock.Mock(return_value=get_completed_future((output, b""))), returncode=0)
 
     credential = AzureCliCredential()
-    with mock.patch(SUBPROCESS_EXEC, fake_exec):
-        token = await credential.get_token("scope")
-        assert token.token == expected_token
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(SUBPROCESS_EXEC, fake_exec):
+            token = await credential.get_token("scope")
+            assert token.token == expected_token
 
-        with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
-            token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
-        assert token.token == expected_token
+            with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+                token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
+            assert token.token == expected_token

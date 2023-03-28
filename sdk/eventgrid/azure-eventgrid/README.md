@@ -2,7 +2,13 @@
 
 Azure Event Grid is a fully-managed intelligent event routing service that allows for uniform event consumption using a publish-subscribe model.
 
-[Source code][python-eg-src] | [Package (PyPI)][python-eg-pypi] | [API reference documentation][python-eg-ref-docs] | [Product documentation][python-eg-product-docs] | [Samples][python-eg-samples] | [Changelog][python-eg-changelog]
+[Source code][python-eg-src]
+| [Package (PyPI)][python-eg-pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-eventgrid/)
+| [API reference documentation][python-eg-ref-docs]
+| [Product documentation][python-eg-product-docs]
+| [Samples][python-eg-samples]
+| [Changelog][python-eg-changelog]
 
 ## _Disclaimer_
 
@@ -11,7 +17,7 @@ _Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. 
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and an Event Grid Topic resource to use this package. Follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
 
 
@@ -52,23 +58,18 @@ With the `azure-identity` package, you can seamlessly authorize requests in both
 
 For example, you can use `DefaultAzureCredential` to construct a client which will authenticate using Azure Active Directory:
 
-```Python
+<!-- SNIPPET:sample_authentication.client_auth_with_token_cred -->
+
+```python
 from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
-event = EventGridEvent(
-    data={"team": "azure-sdk"},
-    subject="Door1",
-    event_type="Azure.Sdk.Demo",
-    data_version="2.0"
-)
-
 credential = DefaultAzureCredential()
-endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 client = EventGridPublisherClient(endpoint, credential)
-
-client.send(event)
 ```
+
+<!-- END SNIPPET -->
 
 #### Looking up the endpoint
 You can find the topic endpoint within the Event Grid Topic resource on the Azure portal. This will look like:
@@ -81,14 +82,22 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 
 > **Note:** The Access Key may be found in the azure portal in the "Access Keys" menu of the Event Grid Topic resource.  They may also be obtained via the azure CLI, or the `azure-mgmt-eventgrid` library. A guide for getting access keys can be found [here](https://docs.microsoft.com/azure/event-grid/get-access-keys).
 
-```python
-from azure.core.credentials import AzureKeyCredential
-from azure.eventgrid import EventGridPublisherClient
+<!-- SNIPPET:sample_authentication.client_auth_with_key_cred -->
 
-endpoint = "https://<name>.<region>.eventgrid.azure.net/api/events"
-credential = AzureKeyCredential("<access_key>")
-eg_publisher_client = EventGridPublisherClient(endpoint, credential)
+```python
+import os
+from azure.eventgrid import EventGridPublisherClient
+from azure.core.credentials import AzureKeyCredential
+
+topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
+
+credential = AzureKeyCredential(topic_key)
+client = EventGridPublisherClient(endpoint, credential)
 ```
+
+<!-- END SNIPPET -->
+
 > **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).
 
 > **Note:** The `generate_sas` method can be used to generate a shared access signature. A sample demonstrating this can be seen [here][python-eg-generate-sas].
@@ -172,7 +181,7 @@ The following sections provide several code snippets covering some of the most c
 
 This example publishes an Event Grid event.
 
-```Python
+```python
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
@@ -197,7 +206,7 @@ client.send(event)
 
 This example publishes a Cloud event.
 
-```Python
+```python
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
@@ -224,7 +233,7 @@ It is possible to send events as a batch when sending multiple events to a topic
 
 **WARNING:** When sending a list of multiple events at one time, iterating over and sending each event will not result in optimal performance. For best performance, it is highly recommended to send a list of events.
 
-```Python
+```python
 import os
 from azure.core.credentials import AzureKeyCredential
 from azure.core.messaging import CloudEvent
@@ -258,7 +267,7 @@ A dict representation of respective serialized models can also be used to publis
 
 Use a dict-like representation to send to a topic with custom schema as shown below.
 
-```Python
+```python
 import os
 import uuid
 import datetime as dt
@@ -288,7 +297,7 @@ client.send(event)
 
 This example consumes a message received from storage queue and deserializes it to a CloudEvent object.
 
-```Python
+```python
 from azure.core.messaging import CloudEvent
 from azure.storage.queue import QueueServiceClient, BinaryBase64DecodePolicy
 import os
@@ -312,7 +321,7 @@ with QueueServiceClient.from_connection_string(connection_str) as qsc:
 
 This example consumes a payload message received from ServiceBus and deserializes it to an EventGridEvent object.
 
-```Python
+```python
 from azure.eventgrid import EventGridEvent
 from azure.servicebus import ServiceBusClient
 import os

@@ -9,7 +9,7 @@ FILE: sample_analyze_healthcare_action_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which uses the
-    AnalyzeHealthcareEntitiesAction and RecognizePiiEntitiesAction to recognize healthcare entities,
+    AnalyzeHealthcareEntitiesAction (plus FHIR feature) and RecognizePiiEntitiesAction to recognize healthcare entities,
     along with any PII entities.
     The response will contain results from each of the individual actions specified in the request.
 
@@ -21,12 +21,11 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-import os
 import asyncio
 
 
 async def sample_analyze_healthcare_action() -> None:
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
     from azure.ai.textanalytics import (
@@ -57,7 +56,7 @@ async def sample_analyze_healthcare_action() -> None:
             documents,
             display_name="Sample Text Analysis",
             actions=[
-                AnalyzeHealthcareEntitiesAction(),
+                AnalyzeHealthcareEntitiesAction(fhir_version="4.0.1"),
                 RecognizePiiEntitiesAction(domain_filter="phi"),
             ],
         )
@@ -98,16 +97,17 @@ async def sample_analyze_healthcare_action() -> None:
                         print(f"Relation of type: {relation.relation_type} has the following roles")
                         for role in relation.roles:
                             print(f"...Role '{role.name}' with entity '{role.entity.text}'")
+                    print(f"......FHIR object: {result.fhir_bundle}")
 
                 elif result.kind == "PiiEntityRecognition":
                     print("Results of Recognize PII Entities action:")
-                    for entity in result.entities:
-                        print(f"......Entity: {entity.text}")
-                        print(f".........Category: {entity.category}")
-                        print(f".........Confidence Score: {entity.confidence_score}")
+                    for pii_entity in result.entities:
+                        print(f"......Entity: {pii_entity.text}")
+                        print(f".........Category: {pii_entity.category}")
+                        print(f".........Confidence Score: {pii_entity.confidence_score}")
 
                 elif result.is_error is True:
-                    print(f"...Is an error with code '{result.code}' and message '{result.message}'")
+                    print(f"...Is an error with code '{result.error.code}' and message '{result.error.message}'")
 
                 print("------------------------------------------")
 

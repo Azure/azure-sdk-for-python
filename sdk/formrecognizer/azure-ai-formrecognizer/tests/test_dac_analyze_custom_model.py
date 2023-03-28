@@ -9,7 +9,7 @@ import functools
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer import DocumentAnalysisClient, DocumentModelAdministrationClient, AnalyzeResult
-from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
@@ -24,16 +24,18 @@ class TestDACAnalyzeCustomModel(FormRecognizerTest):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_analyze_document(model_id=None, document=b"xx")
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     def test_analyze_document_empty_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_analyze_document(model_id="", document=b"xx")
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @skip_flaky_test
     @FormRecognizerPreparer()

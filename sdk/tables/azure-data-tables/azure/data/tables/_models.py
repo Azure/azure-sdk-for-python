@@ -4,20 +4,19 @@
 # license information.
 # --------------------------------------------------------------------------
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import Any, Dict, List
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-# from azure.core import CaseInsensitiveEnumMeta
-# from six import with_metaclass
-
+from ._generated.models import TableQueryResponse
 from ._generated.models import TableServiceStats as GenTableServiceStats
+from ._generated.models import TableServiceProperties as GenTableServiceProperties
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import QueryOptions
 from ._deserialize import (
     _convert_to_entity,
     _return_context_and_deserialized,
@@ -25,10 +24,6 @@ from ._deserialize import (
 )
 from ._error import _process_table_error
 from ._constants import NEXT_PARTITION_KEY, NEXT_ROW_KEY, NEXT_TABLE_NAME
-
-if TYPE_CHECKING:
-    from ._generated.models import TableQueryResponse
-    from ._generated.models import TableServiceProperties as GenTableServiceProperties
 
 
 class TableAccessPolicy(GenAccessPolicy):
@@ -78,8 +73,7 @@ class TableAccessPolicy(GenAccessPolicy):
         self.expiry = kwargs.get('expiry')
         self.permission = kwargs.get('permission')
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "TableAccessPolicy(start={}, expiry={}, permission={})".format(
             self.start, self.expiry, self.permission
         )[1024:]
@@ -98,8 +92,7 @@ class TableAnalyticsLogging(GeneratedLogging):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Any)-> None
+    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
         self.version = kwargs.get("version", u"1.0")
         self.delete = kwargs.get("delete", False)
         self.read = kwargs.get("read", False)
@@ -120,8 +113,7 @@ class TableAnalyticsLogging(GeneratedLogging):
             )
         )
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "TableAnalyticsLogging(version={}, delete={}, read={}, write={}, retention_policy={})".format(
             self.version, self.delete, self.read, self.write, self.retention_policy
         )[1024:]
@@ -140,16 +132,14 @@ class TableMetrics(GeneratedMetrics):
         The retention policy for the metrics.
     """
 
-    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Any) -> None
+    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
         self.version = kwargs.get("version", u"1.0")
         self.enabled = kwargs.get("enabled", False)
         self.include_apis = kwargs.get("include_apis")
         self.retention_policy = kwargs.get("retention_policy") or TableRetentionPolicy()
 
     @classmethod
-    def _from_generated(cls, generated):
-        # type: (...) -> TableMetrics
+    def _from_generated(cls, generated) -> 'TableMetrics':
         """A summary of request statistics grouped by API in hour or minute aggregates.
 
         :param TableMetrics generated: generated Metrics
@@ -165,16 +155,14 @@ class TableMetrics(GeneratedMetrics):
             )
         )
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "TableMetrics(version={}, enabled={}, include_apis={}, retention_policy={})".format(
             self.version, self.enabled, self.include_apis, self.retention_policy
         )[1024:]
 
 
 class TableRetentionPolicy(GeneratedRetentionPolicy):
-    def __init__(self, **kwargs):  # pylint: disable=super-init-not-called
-        # type: (Any) -> None
+    def __init__(self, **kwargs) -> None:  # pylint: disable=super-init-not-called
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -192,8 +180,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (GeneratedRetentionPolicy, Dict[str, Any]) -> TableRetentionPolicy
+    def _from_generated(cls, generated: GeneratedRetentionPolicy) -> 'TableRetentionPolicy':
         """The retention policy which determines how long the associated data should
         persist.
 
@@ -208,8 +195,7 @@ class TableRetentionPolicy(GeneratedRetentionPolicy):
             enabled=generated.enabled,
             days=generated.days,
         )
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "TableRetentionPolicy(enabled={}, days={})".format(self.enabled, self.days)[1024:]
 
 
@@ -222,34 +208,28 @@ class TableCorsRule(object):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param list[str] allowed_origins:
+    :param List[str] allowed_origins:
         A list of origin domains that will be allowed via CORS, or "*" to allow
         all domains. The list of must contain at least one entry. Limited to 64
         origin domains. Each allowed origin can have up to 256 characters.
-    :param list[str] allowed_methods:
+    :param List[str] allowed_methods:
         A list of HTTP methods that are allowed to be executed by the origin.
         The list of must contain at least one entry. For Azure Storage,
         permitted methods are DELETE, GET, HEAD, MERGE, POST, OPTIONS or PUT.
     :keyword int max_age_in_seconds:
         The number of seconds that the client/browser should cache a
         pre-flight response.
-    :keyword list[str] exposed_headers:
+    :keyword List[str] exposed_headers:
         Defaults to an empty list. A list of response headers to expose to CORS
         clients. Limited to 64 defined headers and two prefixed headers. Each
         header can be up to 256 characters.
-    :keyword list[str] allowed_headers:
+    :keyword List[str] allowed_headers:
         Defaults to an empty list. A list of headers allowed to be part of
         the cross-origin request. Limited to 64 defined headers and 2 prefixed
         headers. Each header can be up to 256 characters.
     """
 
-    def __init__(
-        self,
-        allowed_origins,  # type: List[str]
-        allowed_methods,  # type: List[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...)-> None
+    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs) -> None:
         self.allowed_origins = allowed_origins
         self.allowed_methods = allowed_methods
         self.allowed_headers = kwargs.get("allowed_headers", [])
@@ -277,8 +257,7 @@ class TableCorsRule(object):
             max_age_in_seconds=generated.max_age_in_seconds,
         )
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "TableCorsRules(allowed_origins={}, allowed_methods={}, allowed_headers={}, exposed_headers={}, max_age_in_seconds={})".format(  # pylint: disable=line-too-long
             self.allowed_origins, self.allowed_methods, self.allowed_headers, self.exposed_headers, self.max_age_in_seconds  # pylint: disable=line-too-long
         )[1024:]
@@ -307,10 +286,10 @@ class TablePropertiesPaged(PageIterator):
         self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
-        query_options = QueryOptions(top=self.results_per_page, filter=self.filter)
         try:
             return self._command(
-                query_options=query_options,
+                top=self.results_per_page,
+                filter=self.filter,
                 next_table_name=continuation_token or None,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
                 use_location=self._location_mode,
@@ -356,12 +335,11 @@ class TableEntityPropertiesPaged(PageIterator):
         next_partition_key, next_row_key = _extract_continuation_token(
             continuation_token
         )
-        query_options = QueryOptions(
-            top=self.results_per_page, select=self.select, filter=self.filter
-        )
         try:
             return self._command(
-                query_options=query_options,
+                top=self.results_per_page,
+                select=self.select,
+                filter=self.filter,
                 next_row_key=next_row_key,
                 next_partition_key=next_partition_key,
                 table=self.table,
@@ -384,8 +362,7 @@ class TableEntityPropertiesPaged(PageIterator):
 
 
 class TableSasPermissions(object):
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, **kwargs) -> None:
         """
         :keyword bool read:
             Get entities and query entities.
@@ -396,30 +373,27 @@ class TableSasPermissions(object):
         :keyword bool delete:
             Delete entities.
         """
-        _str = kwargs.pop('_str', "") or ""
-        self.read = kwargs.pop("read", False) or ("r" in _str)
-        self.add = kwargs.pop("add", False) or ("a" in _str)
-        self.update = kwargs.pop("update", False) or ("u" in _str)
-        self.delete = kwargs.pop("delete", False) or ("d" in _str)
+        self._str = kwargs.pop('_str', "") or ""
+        self.read = kwargs.pop("read", False) or ("r" in self._str)
+        self.add = kwargs.pop("add", False) or ("a" in self._str)
+        self.update = kwargs.pop("update", False) or ("u" in self._str)
+        self.delete = kwargs.pop("delete", False) or ("d" in self._str)
 
-    def __or__(self, other):
-        # type: (TableSasPermissions) -> TableSasPermissions
+    def __or__(self, other: 'TableSasPermissions') -> 'TableSasPermissions':
         """
         :param other:
         :type other: :class:`~azure.data.tables.TableSasPermissions`
         """
         return TableSasPermissions(_str=str(self) + str(other))
 
-    def __add__(self, other):
-        # type: (TableSasPermissions) -> TableSasPermissions
+    def __add__(self, other: 'TableSasPermissions') -> 'TableSasPermissions':
         """
         :param other:
         :type other: :class:`~azure.data.tables.TableSasPermissions`
         """
         return TableSasPermissions(_str=str(self) + str(other))
 
-    def __str__(self):
-        # type: () -> str
+    def __str__(self) -> str:
         return (
             ("r" if self.read else "")
             + ("a" if self.add else "")
@@ -427,20 +401,14 @@ class TableSasPermissions(object):
             + ("d" if self.delete else "")
         )
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "TableSasPermissions(read={}, add={}, update={}, delete={})".format(
             self.read, self.add, self.update, self.delete
         )[1024:]
 
     @classmethod
-    def from_string(
-        cls,
-        permission,
-        **kwargs
-    ):
-        # Type: (str, Dict[str, Any]) -> AccountSasPermissions
-        """Create AccountSasPermissions from a string.
+    def from_string(cls, permission: str, **kwargs) -> 'TableSasPermissions':
+        """Create TableSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to
         include the first letter of the word in the string. E.g. for read and write
@@ -448,9 +416,8 @@ class TableSasPermissions(object):
 
         :param str permission: Specify permissions in
             the string with the first letter of the word.
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An AccountSasPermissions object
-        :rtype: :class:`~azure.data.tables.AccountSasPermissions`
+        :return: An TableSasPermissions object
+        :rtype: :class:`~azure.data.tables.TableSasPermissions`
         """
         p_read = "r" in permission
         p_add = "a" in permission
@@ -464,8 +431,7 @@ class TableSasPermissions(object):
         return parsed
 
 
-def service_stats_deserialize(generated):
-    # type: (GenTableServiceStats) -> Dict[str, Any]
+def service_stats_deserialize(generated: GenTableServiceStats) -> Dict[str, Any]:
     """Deserialize a ServiceStats objects into a dict."""
     return {
         "geo_replication": {
@@ -475,8 +441,7 @@ def service_stats_deserialize(generated):
     }
 
 
-def service_properties_deserialize(generated):
-    # type: (GenTableServiceProperties) -> Dict[str, Any]
+def service_properties_deserialize(generated: GenTableServiceProperties) -> Dict[str, Any]:
     """Deserialize a ServiceProperties objects into a dict."""
     return {
         "analytics_logging": TableAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
@@ -501,8 +466,7 @@ class TableItem(object):
     :ivar str name: The name of the table.
     """
 
-    def __init__(self, name):
-        # type: (str) -> None
+    def __init__(self, name: str) -> None:
         """
         :param str name: Name of the Table
         """
@@ -510,12 +474,10 @@ class TableItem(object):
 
     # TODO: TableQueryResponse is not the correct type
     @classmethod
-    def _from_generated(cls, generated, **kwargs):  # pylint: disable=unused-argument
-        # type: (TableQueryResponse, Any) -> TableItem
+    def _from_generated(cls, generated: TableQueryResponse, **kwargs) -> 'TableItem':  # pylint: disable=unused-argument
         return cls(generated.table_name)  # type: ignore
 
-    def __repr__(self):
-        # type: () -> str
+    def __repr__(self) -> str:
         return "TableItem(name={})".format(self.name)[1024:]
 
 
@@ -535,24 +497,24 @@ class TablePayloadFormat(object):
     """Returns minimal type information for the entity properties plus some extra odata properties."""
 
 
-class UpdateMode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class UpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REPLACE = "replace"
     MERGE = "merge"
 
 
-class TransactionOperation(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class TransactionOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATE = "create"
     UPSERT = "upsert"
     UPDATE = "update"
     DELETE = "delete"
 
 
-class SASProtocol(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class SASProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HTTPS = "https"
     HTTP = "http"
 
 
-class LocationMode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class LocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types
@@ -576,8 +538,7 @@ class ResourceTypes(object):
         Access to object-level APIs for tables (e.g. Get/Create/Query Entity etc.)
     """
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, **kwargs) -> None:
         self.service = kwargs.get('service', False)
         self.object = kwargs.get('object', False)
         self._str = ("s" if self.service else "") + ("o" if self.object else "")
@@ -586,8 +547,7 @@ class ResourceTypes(object):
         return self._str
 
     @classmethod
-    def from_string(cls, string):
-        # type: (str) -> ResourceTypes
+    def from_string(cls, string: str) -> 'ResourceTypes':
         """Create a ResourceTypes from a string.
 
         To specify service, container, or object you need only to
@@ -657,8 +617,7 @@ class AccountSasPermissions(object):
         return self._str
 
     @classmethod
-    def from_string(cls, permission, **kwargs):
-        # type: (str, Dict[str, Any]) -> AccountSasPermissions
+    def from_string(cls, permission: str, **kwargs) -> 'AccountSasPermissions':
         """Create AccountSasPermissions from a string.
 
         To specify read, write, delete, etc. permissions you need only to

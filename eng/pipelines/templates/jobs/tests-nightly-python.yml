@@ -12,7 +12,7 @@ jobs:
     timeoutInMinutes: 90
 
     pool:
-      name: 'azsdk-pool-mms-win-2019-general'
+      name: 'azsdk-pool-mms-win-2022-general'
 
     steps:
       - template: /eng/pipelines/templates/steps/use-python-version.yml
@@ -22,8 +22,8 @@ jobs:
       - script: |
           python -m pip freeze
           python -m pip --version
-          pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
-          pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
+          python -m pip install setuptools==67.6.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
+          python -m pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
         displayName: Install Dependencies
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -67,8 +67,8 @@ jobs:
           sudo apt-get install build-essential -y
           python -m pip freeze
           python -m pip --version
-          pip install setuptools==56.0.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
-          pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
+          python -m pip install setuptools==67.6.0 wheel==0.37.0 tox==3.24.3 tox-monorepo==0.1.2 packaging==21.0 requests
+          python -m pip install $(Build.SourcesDirectory)/tools/azure-sdk-tools[build]
         displayName: Install Dependencies
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -130,7 +130,7 @@ jobs:
           export PATH=~/.local/bin:$PATH
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
-          python3 -m pip install setuptools wheel
+          python3 -m pip install setuptools==67.6.0 wheel
           python3 -m pip install tox tox-monorepo packaging twine codecov beautifulsoup4
           python3 --version
           cd $(Build.SourcesDirectory)

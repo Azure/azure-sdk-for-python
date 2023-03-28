@@ -1,14 +1,22 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.10.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
+- Added new enum values to `SystemEventNames` related to Azure Communication Services, DataBox and ApiManagementGateway APIs.
 
 ### Bugs Fixed
 
-### Other Changes
+- `SystemEventNames` enums for APIManagement were incorrectly capitalized, changed `Api` to `API`.
+
+## 4.9.1 (2022-11-08)
+
+- This version and all future versions will require Python 3.7+.
+
+### Features Added
+
+- Added new enum values to `SystemEventNames` related to health care APIs.
 
 ## 4.9.0 (2022-07-05)
 

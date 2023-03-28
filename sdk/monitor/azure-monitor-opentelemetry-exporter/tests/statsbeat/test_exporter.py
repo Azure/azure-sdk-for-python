@@ -63,7 +63,7 @@ class TestStatsbeatExporter(unittest.TestCase):
     @mock.patch(
         'azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics')
     def test_init(self, collect_mock):
-        exporter = _StatsBeatExporter(enable_local_storage=False)
+        exporter = _StatsBeatExporter(disable_offline_storage=True)
         self.assertFalse(exporter._should_collect_stats())
         collect_mock.assert_not_called()
 

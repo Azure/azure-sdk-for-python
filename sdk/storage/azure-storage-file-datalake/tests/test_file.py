@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import tempfile
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
@@ -41,7 +42,6 @@ from settings.testcase import DataLakePreparer
 
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
 
 # ------------------------------------------------------------------------------
 
@@ -366,6 +366,54 @@ class TestFile(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_append_data_lease_action(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+
+        data = b'Hello world'
+        lease_id = '670d43d1-ecde-4ae9-9c37-d22d340e7719'
+
+        # Act / Assert
+        # ---Acquire---
+        file_client.append_data(data, 0, len(data), lease_action='acquire', lease_duration=30, lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Renew---
+        file_client.append_data(data, 0, len(data), lease_action='auto-renew', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Release---
+        file_client.append_data(data, 0, len(data), flush=True, lease_action='release', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'available'
+        assert not lease.duration
+
+        # ---Acquire and release---
+        file_client.append_data(data, 0, len(data), flush=True, lease_action='acquire-release', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'available'
+        assert not lease.duration
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_append_empty_data(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -403,6 +451,58 @@ class TestFile(StorageRecordedTestCase):
         prop = file_client.get_file_properties()
         assert response is not None
         assert prop['size'] == 3
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_flush_data_lease_action(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        directory_name = self._get_directory_reference()
+
+        # Create a directory to put the file under that
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        directory_client.create_directory()
+
+        file_client = directory_client.get_file_client('filename')
+        file_client.create_file()
+
+        data = b'Hello world'
+        lease_id = 'c8107e94-ab42-42ac-92d6-6458764982af'
+
+        # Act / Assert
+        # ---Acquire---
+        file_client.append_data(data, 0, len(data))
+        file_client.flush_data(len(data), lease_action='acquire', lease_duration=30, lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Renew---
+        file_client.append_data(data, 0, len(data), lease=lease_id)
+        file_client.flush_data(len(data), lease_action='auto-renew', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'leased'
+        assert lease.duration == 'fixed'
+
+        # ---Release---
+        file_client.append_data(data, 0, len(data), lease=lease_id)
+        file_client.flush_data(len(data), lease_action='release', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'available'
+        assert not lease.duration
+
+        # ---Acquire and release---
+        file_client.append_data(data, 0, len(data))
+        file_client.flush_data(len(data), lease_action='acquire-release', lease=lease_id)
+
+        lease = file_client.get_file_properties().lease
+        assert lease.state == 'available'
+        assert not lease.duration
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -750,13 +850,14 @@ class TestFile(StorageRecordedTestCase):
         file_client.flush_data(len(data))
 
         # download the data into a file and make sure it is the same as uploaded data
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             download = file_client.download_file()
-            download.readinto(stream)
+            download.readinto(temp_file)
 
-        # Assert
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            temp_file.seek(0)
+
+            # Assert
+            actual = temp_file.read()
             assert data == actual
 
     @DataLakePreparer()
@@ -1271,6 +1372,67 @@ class TestFile(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_rename_file_different_filesystem_with_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        # Use filesystem SAS without access to new filesystem
+        existing_sas = self.generate_sas(
+            generate_file_system_sas,
+            self.dsc.account_name,
+            self.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=existing_sas)
+        file_client.create_file()
+        file_client.append_data(b"abc", 0, 3, flush=True)
+
+        # Create another filesystem to rename to
+        new_file_system = self.dsc.get_file_system_client(self.file_system_name + '2')
+        new_file_system.create_file_system()
+
+        # Get different SAS to new file system
+        new_sas = self.generate_sas(
+            generate_file_system_sas,
+            self.dsc.account_name,
+            new_file_system.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # ? in new name to test parsing
+        new_name = new_file_system.file_system_name + '/' + 'new?file' + '?' + new_sas
+        new_client = file_client.rename_file(new_name)
+        new_props = new_client.get_file_properties()
+
+        assert new_props.name == 'new?file'
+
+        new_file_system.delete_file_system()
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_rename_file_special_chars(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        file_client = self._create_file_and_return_client(file="oldfile")
+        file_client.append_data(b"abc", 0, 3, flush=True)
+
+        new_client = file_client.rename_file(file_client.file_system_name + '/' + '?!@#$%^&*.?test')
+        new_props = new_client.get_file_properties()
+
+        assert new_props.name == '?!@#$%^&*.?test'
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_read_file_read(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1298,6 +1460,43 @@ class TestFile(StorageRecordedTestCase):
 
         # Assert
         assert result == data
+
+    @DataLakePreparer()
+    @recorded_by_proxy
+    def test_create_and_read_file_encryption_context(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.file_system_name = self.get_resource_name('filesystem')
+        file_name = 'testfile'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            file_system.create_file_system()
+        except:
+            pass
+        file_client = file_system.get_file_client(file_name)
+
+        # Act
+        file_client.create_file(encryption_context='encryptionContext')
+
+        properties = file_client.get_file_properties()
+        read_response = file_client.download_file()
+        path_response = list(file_system.get_paths())
+
+        assert properties
+        assert properties['encryption_context'] is not None
+        assert properties['encryption_context'] == 'encryptionContext'
+
+        assert read_response.properties
+        assert read_response.properties['encryption_context'] is not None
+        assert read_response.properties['encryption_context'] == 'encryptionContext'
+
+        assert path_response[0]['encryption_context']
+        assert path_response[0]['encryption_context'] is not None
+        assert path_response[0]['encryption_context'] == 'encryptionContext'
 
 
 # ------------------------------------------------------------------------------

@@ -6,6 +6,7 @@
 import base64
 import functools
 import json
+import datetime
 from urllib.parse import urlencode
 from typing import Any, Mapping, Optional, Callable, TypeVar, cast
 from typing_extensions import Protocol, runtime_checkable
@@ -18,7 +19,6 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
-from ._generated.v2022_05_01.models import JobState
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
@@ -118,15 +118,15 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
     def __init__(
-        self, operation_location_header="operation-location", show_stats=False
-    ):
+        self, operation_location_header: str ="operation-location", show_stats: Optional[bool] = False
+    ) -> None:
         super().__init__(
             operation_location_header=operation_location_header
         )
         self._show_stats = show_stats
         self._query_params = {"showStats": show_stats}
 
-    def get_polling_url(self):
+    def get_polling_url(self) -> str:
         if not self._show_stats:
             return super().get_polling_url()
 
@@ -141,7 +141,7 @@ class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
 
 
 class TextAnalyticsLROPollingMethod(LROBasePolling):
-    def finished(self):
+    def finished(self) -> bool:
         """Is this polling finished?
 
         :rtype: bool
@@ -149,13 +149,13 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         return TextAnalyticsLROPollingMethod._finished(self.status())
 
     @staticmethod
-    def _finished(status):
+    def _finished(status) -> bool:
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FINISHED
 
     @staticmethod
-    def _failed(status):
+    def _failed(status) -> bool:
         if hasattr(status, "value"):
             status = status.value
         return str(status).lower() in _FAILED
@@ -188,6 +188,8 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
         :raises: BadResponse if response invalid.
         """
 
+        if not self.finished():
+            self.update_status()
         while not self.finished():
             self._delay()
             self.update_status()
@@ -211,7 +213,7 @@ class TextAnalyticsLROPollingMethod(LROBasePolling):
 
 
 class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
         self._text_analytics_client = kwargs.pop("text_analytics_client")
@@ -219,28 +221,29 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
-    def created_on(self):
+    def created_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.created_date_time
 
     @property
-    def expires_on(self):
+    def expires_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.expiration_date_time
 
     @property
-    def last_modified_on(self):
+    def last_modified_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.last_update_date_time
 
     @property
-    def id(self):
+    def id(self) -> str:
         if self._current_body and self._current_body.job_id is not None:
             return self._current_body.job_id
         return self._get_id_from_headers()
@@ -251,13 +254,12 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
         ].split("/jobs/")[1].split("?")[0]
 
     @property
-    def display_name(self):
+    def display_name(self) -> Optional[str]:
         if not self._current_body:
             return None
         return self._current_body.display_name
 
-    def get_continuation_token(self):
-        # type: () -> str
+    def get_continuation_token(self) -> str:
         import pickle
         self._initial_response.context.options["doc_id_order"] = self._doc_id_order
         self._initial_response.context.options["show_stats"] = self._show_stats
@@ -288,7 +290,7 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
             "last_modified_on": self.polling_method().last_modified_on,
         }
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         attrs = [
             "created_on",
             "expires_on",
@@ -375,67 +377,68 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType]):
 
 
 class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        self._text_analytics_client = kwargs.pop("text_analytics_client", None)
+        self._text_analytics_client = kwargs.pop("text_analytics_client")
         super().__init__(*args, **kwargs)
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
-    def created_on(self):
+    def created_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.created_date_time
 
     @property
-    def expires_on(self):
+    def expires_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.expiration_date_time
 
     @property
-    def display_name(self):
+    def display_name(self) -> Optional[str]:
         if not self._current_body:
             return None
         return self._current_body.display_name
 
     @property
-    def actions_failed_count(self):
+    def actions_failed_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("failed", None)
 
     @property
-    def actions_in_progress_count(self):
+    def actions_in_progress_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("inProgress", None)
 
     @property
-    def actions_succeeded_count(self):
+    def actions_succeeded_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("completed", None)
 
     @property
-    def last_modified_on(self):
+    def last_modified_on(self) -> Optional[datetime.datetime]:
         if not self._current_body:
             return None
         return self._current_body.last_update_date_time
 
     @property
-    def total_actions_count(self):
+    def total_actions_count(self) -> Optional[int]:
         if not self._current_body:
             return None
         return self._current_body.additional_properties.get("tasks", {}).get("total", None)
 
     @property
-    def id(self):
+    def id(self) -> str:
         if self._current_body and self._current_body.job_id is not None:
             return self._current_body.job_id
         return self._get_id_from_headers()
@@ -445,8 +448,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
             "Operation-Location"
         ].split("/jobs/")[1].split("?")[0]
 
-    def get_continuation_token(self):
-        # type: () -> str
+    def get_continuation_token(self) -> str:
         import pickle
         self._initial_response.context.options["doc_id_order"] = self._doc_id_order
         self._initial_response.context.options["task_id_order"] = self._task_id_order
@@ -482,7 +484,7 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType]):
             "total_actions_count": self.polling_method().total_actions_count,
         }
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         attrs = [
             "created_on",
             "expires_on",

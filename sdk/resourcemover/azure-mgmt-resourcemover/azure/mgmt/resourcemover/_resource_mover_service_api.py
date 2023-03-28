@@ -6,89 +6,102 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, TYPE_CHECKING
 
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
+
+from . import models
+from ._configuration import ResourceMoverServiceAPIConfiguration
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    MoveCollectionsOperations,
+    MoveResourcesOperations,
+    OperationsDiscoveryOperations,
+    UnresolvedDependenciesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import ResourceMoverServiceAPIConfiguration
-from .operations import MoveCollectionsOperations
-from .operations import MoveResourcesOperations
-from .operations import UnresolvedDependenciesOperations
-from .operations import OperationsDiscoveryOperations
-from . import models
 
 
-class ResourceMoverServiceAPI(object):
-    """A first party Azure service orchestrating the move of Azure resources from one Azure region to another or between zones within a region.
+class ResourceMoverServiceAPI:  # pylint: disable=client-accepts-api-version-keyword
+    """A first party Azure service orchestrating the move of Azure resources from one Azure region to
+    another or between zones within a region.
 
     :ivar move_collections: MoveCollectionsOperations operations
-    :vartype move_collections: resource_mover_service_api.operations.MoveCollectionsOperations
+    :vartype move_collections: azure.mgmt.resourcemover.operations.MoveCollectionsOperations
     :ivar move_resources: MoveResourcesOperations operations
-    :vartype move_resources: resource_mover_service_api.operations.MoveResourcesOperations
+    :vartype move_resources: azure.mgmt.resourcemover.operations.MoveResourcesOperations
     :ivar unresolved_dependencies: UnresolvedDependenciesOperations operations
-    :vartype unresolved_dependencies: resource_mover_service_api.operations.UnresolvedDependenciesOperations
+    :vartype unresolved_dependencies:
+     azure.mgmt.resourcemover.operations.UnresolvedDependenciesOperations
     :ivar operations_discovery: OperationsDiscoveryOperations operations
-    :vartype operations_discovery: resource_mover_service_api.operations.OperationsDiscoveryOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :vartype operations_discovery:
+     azure.mgmt.resourcemover.operations.OperationsDiscoveryOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Subscription ID.
+    :param subscription_id: The Subscription ID. Required.
     :type subscription_id: str
-    :param str base_url: Service URL
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-08-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        base_url=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = ResourceMoverServiceAPIConfiguration(credential, subscription_id, **kwargs)
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = ResourceMoverServiceAPIConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
-
+        self._serialize.client_side_validation = False
         self.move_collections = MoveCollectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.move_resources = MoveResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.move_resources = MoveResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.unresolved_dependencies = UnresolvedDependenciesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations_discovery = OperationsDiscoveryOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-    def _send_request(self, http_request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

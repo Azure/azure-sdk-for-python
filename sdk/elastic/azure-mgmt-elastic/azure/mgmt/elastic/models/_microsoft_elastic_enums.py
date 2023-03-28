@@ -6,70 +6,65 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class ApiVersionParameter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ApiVersionParameter."""
+
+    TWO_THOUSAND_TWENTY07_01_PREVIEW = "2020-07-01-preview"
+    TWO_THOUSAND_TWENTY07_01 = "2020-07-01"
+    TWO_THOUSAND_TWENTY_ONE09_01_PREVIEW = "2021-09-01-preview"
+    TWO_THOUSAND_TWENTY_ONE10_01_PREVIEW = "2021-10-01-preview"
+    TWO_THOUSAND_TWENTY_TWO05_05_PREVIEW = "2022-05-05-preview"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class ElasticDeploymentStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Flag specifying if the Elastic deployment status is healthy or not.
-    """
+
+class ElasticDeploymentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag specifying if the Elastic deployment status is healthy or not."""
 
     HEALTHY = "Healthy"
     UNHEALTHY = "Unhealthy"
 
-class LiftrResourceCategories(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class LiftrResourceCategories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """LiftrResourceCategories."""
 
     UNKNOWN = "Unknown"
     MONITOR_LOGS = "MonitorLogs"
 
-class ManagedIdentityTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Managed Identity types.
-    """
+
+class ManagedIdentityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Managed Identity types."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class MonitoringStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Flag specifying if the resource monitoring is enabled or disabled.
-    """
+
+class MonitoringStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag specifying if the resource monitoring is enabled or disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class OperationName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Operation to be performed on the given vm resource id.
-    """
+
+class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operation to be performed on the given vm resource id."""
 
     ADD = "Add"
     DELETE = "Delete"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of Elastic resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of Elastic resource."""
 
     ACCEPTED = "Accepted"
     CREATING = "Creating"
@@ -81,16 +76,23 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETED = "Deleted"
     NOT_SPECIFIED = "NotSpecified"
 
-class SendingLogs(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Flag indicating the status of the resource for sending logs operation to Elastic.
-    """
+
+class SendingLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag indicating the status of the resource for sending logs operation to Elastic."""
 
     TRUE = "True"
     FALSE = "False"
 
-class TagAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Valid actions for a filtering tag. Exclusion takes priority over inclusion.
-    """
+
+class TagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Valid actions for a filtering tag. Exclusion takes priority over inclusion."""
 
     INCLUDE = "Include"
     EXCLUDE = "Exclude"
+
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the elastic filter."""
+
+    IP = "ip"
+    AZURE_PRIVATE_ENDPOINT = "azure_private_endpoint"

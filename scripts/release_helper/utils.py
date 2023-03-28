@@ -1,16 +1,18 @@
-import datetime
 import logging
 import os
 import re
+import json
 from typing import List, Any
+from datetime import datetime
 
-from bs4 import BeautifulSoup
 from github.Issue import Issue
 from github.Repository import Repository
 import requests
 from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
 from azure.devops.v6_0.pipelines import models
 from msrest.authentication import BasicAuthentication
+from packaging.version import parse as Version
+from urllib3 import Retry, PoolManager
 
 REQUEST_REPO = 'Azure/sdk-release-request'
 REST_REPO = 'Azure/azure-rest-api-specs'
@@ -26,7 +28,7 @@ _LOG = logging.getLogger(__name__)
 def get_origin_link_and_tag(issue_body_list: List[str]) -> (str, str):
     link, readme_tag = '', ''
     for row in issue_body_list:
-        if 'link' in row.lower() and link == '':
+        if 'link' in row.lower() and 'release request' not in row.lower() and link == '':
             link = row.split(":", 1)[-1].strip()
         if 'readme tag' in row.lower() and readme_tag == '':
             readme_tag = row.split(":", 1)[-1].strip()
@@ -38,22 +40,20 @@ def get_origin_link_and_tag(issue_body_list: List[str]) -> (str, str):
         link = link.replace('[', "").replace(']', "").replace('(', "").replace(')', "")
     return link, readme_tag
 
+def to_datetime(data: str) -> datetime:
+    return datetime.strptime(data, '%Y-%m-%dT%H:%M:%S')
 
-def get_last_released_date(package_name: str) -> (str, str):
-    pypi_link = f'https://pypi.org/project/{package_name}/#history'
-    res = requests.get(pypi_link)
-    soup = BeautifulSoup(res.text, 'html.parser')
-    # find top div from <div class="release-timeline">
+def get_last_released_date(package_name: str) -> (str, datetime):
     try:
-        package_info = soup.select('div[class="release-timeline"]')[0].find_all('div')[0]
-        last_version_mix = package_info.find_all('p', class_="release__version")[0].contents[0]
-    except IndexError as e:
-        return '', ''
-    last_version = last_version_mix.replace(' ', '').replace('\n', '')
-    last_version_date_str = package_info.time.attrs['datetime'].split('+')[0]
-    last_version_date = datetime.datetime.strptime(last_version_date_str, '%Y-%m-%dT%H:%M:%S')
-    return last_version, last_version_date
-
+        pypi = PyPIClient()
+        latest_release, latest_stable = pypi.get_relevant_versions(package_name)
+        latest_release_date = pypi.project_release(package_name, latest_release)["urls"][0]["upload_time"]
+        latest_stable_date = pypi.project_release(package_name, latest_stable)["urls"][0]["upload_time"]
+        if latest_release_date > latest_stable_date:
+            return str(latest_release), to_datetime(latest_release_date)
+        return str(latest_stable), to_datetime(latest_stable_date)
+    except:
+        return '', to_datetime('1970-01-01T00:00:00')
 
 # get python release pipeline link from web
 def get_python_release_pipeline(output_folder):
@@ -125,9 +125,10 @@ def record_release(package_name: str, issue_info: Any, file: str, version: str) 
     created_at = issue_info.created_at.strftime('%Y-%m-%d')
     closed_at = issue_info.closed_at.strftime('%Y-%m-%d')
     assignee = issue_info.assignee.login
+    author = issue_info.user.login
     link = issue_info.html_url
     is_stable = True if 'b' not in version else ''
-    closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link},{version},{is_stable}\n'
+    closed_issue_info = f'{package_name},{author},{assignee},{created_at},{closed_at},{link},{version},{is_stable}\n'
     with open(file, 'r') as file_read:
         lines = file_read.readlines()
     with open(file, 'w') as file_write:
@@ -144,3 +145,43 @@ class IssuePackage:
         self.issue = issue
         self.rest_repo = rest_repo
         self.labels_name = {label.name for label in issue.labels}
+
+class PyPIClient:
+    def __init__(self, host="https://pypi.org"):
+        self._host = host
+        self._http = PoolManager(
+            retries=Retry(total=3, raise_on_status=True), ca_certs=os.getenv("REQUESTS_CA_BUNDLE", None)
+        )
+
+    def project(self, package_name):
+        response = self._http.request(
+            "get", "{host}/pypi/{project_name}/json".format(host=self._host, project_name=package_name)
+        )
+        return json.loads(response.data.decode("utf-8"))
+
+    def project_release(self, package_name, version):
+        response = self._http.request(
+            "get",
+            "{host}/pypi/{project_name}/{version}/json".format(
+                host=self._host, project_name=package_name, version=version
+            ),
+        )
+        return json.loads(response.data.decode("utf-8"))
+
+    def get_ordered_versions(self, package_name) -> List[Version]:
+        project = self.project(package_name)
+
+        versions = [Version(package_version) for package_version in project["releases"].keys()]
+        versions.sort()
+
+        return versions
+
+    def get_relevant_versions(self, package_name):
+        """Return a tuple: (latest release, latest stable)
+        If there are different, it means the latest is not a stable
+        """
+        versions = self.get_ordered_versions(package_name)
+        pre_releases = [version for version in versions if not version.is_prerelease]
+        if pre_releases:
+            return versions[-1], pre_releases[-1]
+        return versions[-1], versions[-1]

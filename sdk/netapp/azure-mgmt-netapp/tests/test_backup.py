@@ -170,7 +170,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
         clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, vnet=VNETNAME, live=self.is_live)
 
-    @pytest.mark.skip(reason="CBS is not working properly on any region")
+    #@pytest.mark.skip(reason="CBS is not working properly on any region")
     @recorded_by_proxy
     def test_update_backup(self):
         set_bodiless_matcher()
@@ -189,7 +189,7 @@ class TestNetAppBackup(AzureMgmtRecordedTestCase):
 
         clean_up(self, account_name=ACCOUNT1, volume_name=volumeName1, backup_name=backup1, vnet=VNETNAME, live=self.is_live)
 
-    @pytest.mark.skip(reason="CBS is not working properly on any region")
+    #@pytest.mark.skip(reason="CBS is not working properly on any region")
     @recorded_by_proxy
     def test_get_backup_status(self):
         set_bodiless_matcher()

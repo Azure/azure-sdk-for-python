@@ -5,62 +5,52 @@
 import abc
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional, Tuple
 
-from . import within_credential_chain
+from azure.core.credentials import AccessToken
+from .utils import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
-
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class GetTokenMixin(ABC):
-    def __init__(self, *args, **kwargs):
-        # type: (*Any, **Any) -> None
+class GetTokenMixin(abc.ABC):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
         # https://github.com/python/mypy/issues/5887
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
 
     @abc.abstractmethod
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
 
     @abc.abstractmethod
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token from the STS"""
 
-    def _should_refresh(self, token):
-        # type: (AccessToken) -> bool
+    def _should_refresh(self, token: AccessToken, refresh_on: Optional[int] = None) -> bool:
         now = int(time.time())
-        if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
-            return False
         if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
+            return False
+        if refresh_on and refresh_on < now:
+            return True
+        if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
             return False
         return True
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -70,11 +60,11 @@ class GetTokenMixin(ABC):
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token = self._acquire_token_silently(*scopes, **kwargs)
+            token, refresh_on = self._acquire_token_silently(*scopes, **kwargs)
             if not token:
                 self._last_request_time = int(time.time())
                 token = self._request_token(*scopes, **kwargs)
-            elif self._should_refresh(token):
+            elif self._should_refresh(token, refresh_on):
                 try:
                     self._last_request_time = int(time.time())
                     token = self._request_token(*scopes, **kwargs)

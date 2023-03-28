@@ -2,9 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -20,7 +20,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e64s_v3",
     ]
 
-    def __init__(self, *, instance_type: str = None, runtime_version: str = None):
+    def __init__(self, *, instance_type: Optional[str] = None, runtime_version: Optional[str] = None):
         self.instance_type = instance_type
         self.runtime_version = runtime_version
 
@@ -28,9 +28,13 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         return RestSparkResourceConfiguration(instance_type=self.instance_type, runtime_version=self.runtime_version)
 
     @classmethod
-    def _from_rest_object(cls, obj: Optional[RestSparkResourceConfiguration]) -> Optional["SparkResourceConfiguration"]:
+    def _from_rest_object(
+        cls, obj: Union[dict, None, RestSparkResourceConfiguration]
+    ) -> Optional["SparkResourceConfiguration"]:
         if obj is None:
             return None
+        if isinstance(obj, dict):
+            return SparkResourceConfiguration(**obj)
         return SparkResourceConfiguration(instance_type=obj.instance_type, runtime_version=obj.runtime_version)
 
     def _validate(self):

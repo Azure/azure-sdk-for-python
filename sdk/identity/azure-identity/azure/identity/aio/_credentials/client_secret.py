@@ -2,18 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, TypeVar
+from typing import Optional, TypeVar, Any, Tuple
 
 import msal
 
+from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._internal import validate_tenant_id
 from ..._persistent_cache import _load_persistent_cache
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, List
-    from azure.core.credentials import AccessToken
 
 T = TypeVar("T", bound="ClientSecretCredential")
 
@@ -36,11 +33,17 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id: str, client_id: str, client_secret: str, **kwargs: "Any") -> None:
+    def __init__(
+        self, tenant_id: str, client_id: str, client_secret: str, **kwargs: Any
+    ) -> None:
         if not client_id:
-            raise ValueError("client_id should be the id of an Azure Active Directory application")
+            raise ValueError(
+                "client_id should be the id of an Azure Active Directory application"
+            )
         if not client_secret:
-            raise ValueError("secret should be an Azure Active Directory application's client secret")
+            raise ValueError(
+                "secret should be an Azure Active Directory application's client secret"
+            )
         if not tenant_id:
             raise ValueError(
                 "tenant_id should be an Azure Active Directory tenant's id (also called its 'directory id')"
@@ -58,17 +61,21 @@ class ClientSecretCredential(AsyncContextManager, GetTokenMixin):
         self._secret = client_secret
         super().__init__()
 
-    async def __aenter__(self:T) -> T:
+    async def __aenter__(self: T) -> T:
         await self._client.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
 
         await self._client.__aexit__()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
-        return self._client.get_cached_access_token(scopes, **kwargs)
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
-    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
-        return await self._client.obtain_token_by_client_secret(scopes, self._secret, **kwargs)
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        return await self._client.obtain_token_by_client_secret(
+            scopes, self._secret, **kwargs
+        )

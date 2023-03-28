@@ -13,6 +13,8 @@ from azure.core.credentials import AzureKeyCredential
 from .._generated.aio import (
     BatchDocumentTranslationClient as _BatchDocumentTranslationClient,
 )
+from .._generated.models import StartTranslationDetails
+from .._api_version import DocumentTranslationApiVersion
 from .._user_agent import USER_AGENT
 from .._models import (
     TranslationStatus,
@@ -86,6 +88,9 @@ class DocumentTranslationClient:
             raise ValueError("Parameter 'endpoint' must be a string.")
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
+        if hasattr(self._api_version, "value"):
+            self._api_version = cast(DocumentTranslationApiVersion, self._api_version)
+            self._api_version = self._api_version.value
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -281,7 +286,7 @@ class DocumentTranslationClient:
         callback = kwargs.pop("cls", deserialization_callback)
         return cast(AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]],
             await self._client.document_translation.begin_start_translation(
-                inputs=inputs if not continuation_token else None,
+                body=StartTranslationDetails(inputs=inputs),
                 polling=AsyncDocumentTranslationLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[TranslationPolling()],
@@ -403,7 +408,7 @@ class DocumentTranslationClient:
                 order_by=order_by,
                 statuses=statuses,
                 top=top,
-                skip=skip,
+                skip=skip,  # type: ignore
                 **kwargs
             )
         )
@@ -485,7 +490,7 @@ class DocumentTranslationClient:
                 order_by=order_by,
                 statuses=statuses,
                 top=top,
-                skip=skip,
+                skip=skip,  # type: ignore
                 **kwargs
             )
         )

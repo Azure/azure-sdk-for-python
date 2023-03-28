@@ -3,3 +3,4 @@ package_name = "azure-mgmt-datamigration"
 package_pprint_name = "Data Migration"
 package_doc_id = ""
 is_stable = true
+title = "DataMigrationManagementClient"

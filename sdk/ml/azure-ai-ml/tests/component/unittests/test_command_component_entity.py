@@ -1,13 +1,20 @@
+import os
+import sys
 from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 
 import pydash
 import pytest
-from test_utilities.utils import verify_entity_load_and_dump
+
+from conftest import normalized_arm_id_in_object
+from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.entities import Component, CommandComponent, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
@@ -48,7 +55,6 @@ class TestCommandComponentEntity:
         assert command_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
 
         yaml_dict["version"] = str(yaml_dict["version"])
-        yaml_dict["inputs"] = {}
         component_dict = command_component._to_dict()
         component_dict.pop("is_deterministic")
         assert yaml_dict == component_dict
@@ -68,7 +74,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World",
             code=code,
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
         omits = ["properties.component_spec.$schema", "properties.component_spec._source"]
@@ -102,7 +108,7 @@ class TestCommandComponentEntity:
             # TODO: reorganize code to minimize the code context
             code=".",
             command="""echo Hello World""",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         component_dict = component._to_rest_object().as_dict()
         inputs = component_dict["properties"]["component_spec"]["inputs"]
@@ -134,7 +140,7 @@ class TestCommandComponentEntity:
             outputs={"component_out_path": {"type": "uri_folder"}},
             command="echo Hello World & echo ${{inputs.component_in_number}} & echo ${{inputs.component_in_path}} "
             "& echo ${{outputs.component_out_path}}",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             distribution=TensorFlowDistribution(
                 parameter_server_count=1,
                 worker_count=2,
@@ -174,7 +180,7 @@ class TestCommandComponentEntity:
             tags={"tag": "tagvalue", "owner": "sdkteam"},
             outputs={"component_out_path": {"type": "path"}},
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./helloworld_components_with_env",
         )
 
@@ -182,20 +188,38 @@ class TestCommandComponentEntity:
         yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
 
+    def test_command_component_code_with_current_folder(self):
+        old_cwd = os.getcwd()
+        os.chdir("./tests/test_configs/components")
+        try:
+            yaml_path = "./basic_component_code_current_folder.yml"
+            component = load_component(yaml_path)
+            with component._resolve_local_code() as code:
+                Path(code.path).resolve().name == "components"
+        finally:
+            os.chdir(old_cwd)
+
+    def test_command_component_code_git_path(self):
+        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+
+        yaml_path = "./tests/test_configs/components/component_git_path.yml"
+        yaml_dict = load_yaml(yaml_path)
+        component = load_component(yaml_path)
+
+        def mock_get_arm_id_and_fill_back(asset: Code, azureml_type: str) -> None:
+            assert isinstance(asset, Code)
+            assert azureml_type == AzureMLResourceType.CODE
+            assert asset.path == yaml_dict["code"]
+
+        _try_resolve_code_for_component(component, mock_get_arm_id_and_fill_back)
+
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
-            "inputs": {},
-            "properties": {},
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
             "type": "command",
             "_source": "YAML.COMPONENT",
         }
@@ -212,9 +236,9 @@ class TestCommandComponentEntity:
         assert rest_yaml_component == expected_rest_component
 
         # assert positional args is not supported
-        with pytest.raises(TypeError) as error_info:
+        with pytest.raises(ValidationException) as error_info:
             yaml_component_version(1)
-        assert "[component] CommandComponentBasic() takes 0 positional arguments but 1 was given" in str(error_info)
+        assert "Component function doesn't has any parameters" in str(error_info)
 
         # unknown kw arg
         with pytest.raises(UnexpectedKeywordError) as error_info:
@@ -224,20 +248,10 @@ class TestCommandComponentEntity:
     def test_command_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
-            "properties": {},
             "type": "command",
             "_source": "YAML.COMPONENT",
         }
@@ -269,7 +283,7 @@ class TestCommandComponentEntity:
                 "extracted_data": {"type": "path"}
             },
             # we're using a curated environment
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:9",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
         )
         basic_component = load_component(source="./tests/test_configs/components/basic_component_code_local_path.yml")
         sweep_component = load_component(source="./tests/test_configs/components/helloworld_component_for_sweep.yml")
@@ -325,10 +339,13 @@ class TestCommandComponentEntity:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(test_command)
             outstr = std_out.getvalue()
-            assert (
-                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\nenvironment: azureml:my-env:1\ncode: azureml:./src\nresources:\n  instance_count: 2"
-                in outstr
-            )
+            for piece in [
+                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\n",
+                "environment: azureml:my-env:1\n",
+                "code: azureml:./src\n",
+                "resources:\n  instance_count: 2",
+            ]:
+                assert piece in outstr
 
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -350,6 +367,34 @@ class TestCommandComponentEntity:
                 "name: microsoftsamples_command_component_basic\n  version: 0.0.1\n  display_name: CommandComponentBasi"
                 in std_out.getvalue()
             )
+
+    def test_sweep_early_termination_setter(self):
+        yaml_file = "./tests/test_configs/components/helloworld_component.yml"
+
+        component_to_sweep: CommandComponent = load_component(source=yaml_file)
+        cmd_node1: Command = component_to_sweep(
+            component_in_number=Choice([2, 3, 4, 5]), component_in_path=Input(path="/a/path/on/ds")
+        )
+
+        sweep_job1: Sweep = cmd_node1.sweep(
+            primary_metric="AUC",  # primary_metric,
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_job1.early_termination = {
+            "type": "bandit",
+            "evaluation_interval": 100,
+            "delay_evaluation": 200,
+            "slack_factor": 40.0,
+        }
+        from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+
+        assert isinstance(sweep_job1.early_termination, BanditPolicy)
+        assert [
+            sweep_job1.early_termination.evaluation_interval,
+            sweep_job1.early_termination.delay_evaluation,
+            sweep_job1.early_termination.slack_factor,
+        ] == [100, 200, 40.0]
 
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
@@ -377,8 +422,7 @@ class TestCommandComponentEntity:
             "command": "echo Hello World",
             "description": "This is the basic command component",
             "display_name": "CommandComponentBasic",
-            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-            "inputs": {},
+            "environment": "azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {
@@ -386,6 +430,12 @@ class TestCommandComponentEntity:
                 "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
                 "component_out_number": {"description": "A ranged number", "type": "number"},
                 "component_out_string": {"description": "A string", "type": "string"},
+                "component_out_early_available_string": {
+                    "description": "A early available string",
+                    "type": "string",
+                    "is_control": True,
+                    "early_available": True,
+                },
             },
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "type": "command",
@@ -399,7 +449,6 @@ class TestCommandComponentEntity:
         actual_component_dict1 = pydash.omit(
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
-
         assert actual_component_dict1 == expected_rest_component
 
         # from CLASS
@@ -414,12 +463,121 @@ class TestCommandComponentEntity:
                 "component_out_integer": {"description": "A integer", "type": "integer", "is_control": True},
                 "component_out_number": {"description": "A ranged number", "type": "number"},
                 "component_out_string": {"description": "A string", "type": "string"},
+                "component_out_early_available_string": {
+                    "description": "A early available string",
+                    "type": "string",
+                    "is_control": True,
+                    "early_available": True,
+                },
             },
             command="echo Hello World",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
             code="./helloworld_components_with_env",
         )
         actual_component_dict2 = pydash.omit(
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
         assert actual_component_dict2 == expected_rest_component
+
+    def test_invalid_component_outputs(self) -> None:
+        yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
+        component = load_component(yaml_path)
+        with pytest.raises(ValidationException) as e:
+            component._validate(raise_error=True)
+        assert "Early available output 'component_out_string' requires is_control as True, got None." in str(e.value)
+        params_override = [
+            {
+                "outputs": {
+                    "component_out_string": {
+                        "description": "A string",
+                        "type": "string",
+                        "is_control": True,
+                        "early_available": True,
+                    }
+                }
+            },
+        ]
+        component = load_component(yaml_path, params_override=params_override)
+        validation_result = component._validate()
+        assert validation_result.passed
+
+    def test_component_code_asset_ignoring_pycache(self) -> None:
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        component = load_component(component_yaml)
+        with build_temp_folder(
+            source_base_dir="./tests/test_configs/components",
+            relative_files_to_copy=["helloworld_component.yml"],
+            extra_files_to_create={"__pycache__/a.pyc": None},
+        ) as temp_dir:
+            # resolve and test for ignore_file's is_file_excluded
+            component.code = temp_dir
+            with component._resolve_local_code() as code:
+                excluded = []
+                for root, _, files in os.walk(code.path):
+                    for name in files:
+                        path = os.path.join(root, name)
+                        if code._ignore_file.is_file_excluded(path):
+                            excluded.append(path)
+                assert excluded == [str((Path(temp_dir) / "__pycache__/a.pyc").absolute())]
+
+    def test_normalized_arm_id_in_component_dict(self):
+        component_dict = {
+            "code": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/codes/xxx",
+            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx",
+        }
+        normalized_arm_id_in_object(component_dict)
+
+        expected_dict = {
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx",
+            "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx",
+        }
+        assert component_dict == expected_dict
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_component_with_ipp_fields(self):
+        # code is specified in yaml, value is respected
+        component_yaml = "./tests/test_configs/components/component_ipp.yml"
+
+        command_component = load_component(
+            source=component_yaml,
+        )
+
+        expected_output_dict = {
+            "model_output_not_ipp": {
+                "type": "path",
+                "intellectual_property": {"protection_level": "none"},
+            },
+            "model_output_ipp": {
+                "type": "path",
+                "intellectual_property": {"protection_level": "all"},
+            },
+        }
+
+        # check top-level component
+        assert command_component._intellectual_property
+        assert command_component._intellectual_property.publisher == "contoso"
+        assert command_component._intellectual_property.protection_level == "all"
+
+        rest_component = command_component._to_rest_object()
+
+        assert rest_component.properties.component_spec["intellectualProperty"]
+        assert rest_component.properties.component_spec["intellectualProperty"] == {
+            "publisher": "contoso",
+            "protectionLevel": "all",
+        }
+        assert rest_component.properties.component_spec["outputs"] == expected_output_dict
+
+        # because there's a mismatch between what the service accepts for IPP fields and what it returns
+        # (accepts camelCase for IPP, returns snake_case IPP), mock out the service response
+
+        rest_component.properties.component_spec.pop("intellectualProperty")
+        yaml_dict = {
+            "publisher": "contoso",
+            "protection_level": "all",
+        }
+        rest_component.properties.component_spec["intellectual_property"] = yaml_dict
+
+        from_rest_dict = Component._from_rest_object(rest_component)._to_dict()
+        assert from_rest_dict["intellectual_property"]
+        assert from_rest_dict["intellectual_property"] == yaml_dict
+        assert from_rest_dict["outputs"] == expected_output_dict

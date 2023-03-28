@@ -1079,7 +1079,8 @@ class RedisCommonPropertiesRedisConfiguration(_serialization.Model):  # pylint: 
     :vartype additional_properties: dict[str, any]
     :ivar rdb_backup_enabled: Specifies whether the rdb backup is enabled.
     :vartype rdb_backup_enabled: str
-    :ivar rdb_backup_frequency: Specifies the frequency for creating rdb backup.
+    :ivar rdb_backup_frequency: Specifies the frequency for creating rdb backup in minutes. Valid
+     values: (15, 30, 60, 360, 720, 1440).
     :vartype rdb_backup_frequency: str
     :ivar rdb_backup_max_snapshot_count: Specifies the maximum number of snapshots for rdb backup.
     :vartype rdb_backup_max_snapshot_count: str
@@ -1168,7 +1169,8 @@ class RedisCommonPropertiesRedisConfiguration(_serialization.Model):  # pylint: 
         :paramtype additional_properties: dict[str, any]
         :keyword rdb_backup_enabled: Specifies whether the rdb backup is enabled.
         :paramtype rdb_backup_enabled: str
-        :keyword rdb_backup_frequency: Specifies the frequency for creating rdb backup.
+        :keyword rdb_backup_frequency: Specifies the frequency for creating rdb backup in minutes.
+         Valid values: (15, 30, 60, 360, 720, 1440).
         :paramtype rdb_backup_frequency: str
         :keyword rdb_backup_max_snapshot_count: Specifies the maximum number of snapshots for rdb
          backup.
@@ -1752,6 +1754,8 @@ class RedisLinkedServer(_serialization.Model):
 class RedisLinkedServerCreateParameters(_serialization.Model):
     """Parameter required for creating a linked server to redis cache.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar linked_redis_cache_id: Fully qualified resourceId of the linked redis cache. Required.
@@ -1761,18 +1765,28 @@ class RedisLinkedServerCreateParameters(_serialization.Model):
     :ivar server_role: Role of the linked server. Required. Known values are: "Primary" and
      "Secondary".
     :vartype server_role: str or ~azure.mgmt.redis.models.ReplicationRole
+    :ivar geo_replicated_primary_host_name: The unchanging DNS name which will always point to
+     current geo-primary cache among the linked redis caches for seamless Geo Failover experience.
+    :vartype geo_replicated_primary_host_name: str
+    :ivar primary_host_name: The changing DNS name that resolves to the current geo-primary cache
+     among the linked redis caches before or after the Geo Failover.
+    :vartype primary_host_name: str
     """
 
     _validation = {
         "linked_redis_cache_id": {"required": True},
         "linked_redis_cache_location": {"required": True},
         "server_role": {"required": True},
+        "geo_replicated_primary_host_name": {"readonly": True},
+        "primary_host_name": {"readonly": True},
     }
 
     _attribute_map = {
         "linked_redis_cache_id": {"key": "properties.linkedRedisCacheId", "type": "str"},
         "linked_redis_cache_location": {"key": "properties.linkedRedisCacheLocation", "type": "str"},
         "server_role": {"key": "properties.serverRole", "type": "str"},
+        "geo_replicated_primary_host_name": {"key": "properties.geoReplicatedPrimaryHostName", "type": "str"},
+        "primary_host_name": {"key": "properties.primaryHostName", "type": "str"},
     }
 
     def __init__(
@@ -1796,10 +1810,14 @@ class RedisLinkedServerCreateParameters(_serialization.Model):
         self.linked_redis_cache_id = linked_redis_cache_id
         self.linked_redis_cache_location = linked_redis_cache_location
         self.server_role = server_role
+        self.geo_replicated_primary_host_name = None
+        self.primary_host_name = None
 
 
 class RedisLinkedServerCreateProperties(_serialization.Model):
     """Create properties for a linked server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1810,18 +1828,28 @@ class RedisLinkedServerCreateProperties(_serialization.Model):
     :ivar server_role: Role of the linked server. Required. Known values are: "Primary" and
      "Secondary".
     :vartype server_role: str or ~azure.mgmt.redis.models.ReplicationRole
+    :ivar geo_replicated_primary_host_name: The unchanging DNS name which will always point to
+     current geo-primary cache among the linked redis caches for seamless Geo Failover experience.
+    :vartype geo_replicated_primary_host_name: str
+    :ivar primary_host_name: The changing DNS name that resolves to the current geo-primary cache
+     among the linked redis caches before or after the Geo Failover.
+    :vartype primary_host_name: str
     """
 
     _validation = {
         "linked_redis_cache_id": {"required": True},
         "linked_redis_cache_location": {"required": True},
         "server_role": {"required": True},
+        "geo_replicated_primary_host_name": {"readonly": True},
+        "primary_host_name": {"readonly": True},
     }
 
     _attribute_map = {
         "linked_redis_cache_id": {"key": "linkedRedisCacheId", "type": "str"},
         "linked_redis_cache_location": {"key": "linkedRedisCacheLocation", "type": "str"},
         "server_role": {"key": "serverRole", "type": "str"},
+        "geo_replicated_primary_host_name": {"key": "geoReplicatedPrimaryHostName", "type": "str"},
+        "primary_host_name": {"key": "primaryHostName", "type": "str"},
     }
 
     def __init__(
@@ -1845,6 +1873,8 @@ class RedisLinkedServerCreateProperties(_serialization.Model):
         self.linked_redis_cache_id = linked_redis_cache_id
         self.linked_redis_cache_location = linked_redis_cache_location
         self.server_role = server_role
+        self.geo_replicated_primary_host_name = None
+        self.primary_host_name = None
 
 
 class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
@@ -1861,6 +1891,12 @@ class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
     :ivar server_role: Role of the linked server. Required. Known values are: "Primary" and
      "Secondary".
     :vartype server_role: str or ~azure.mgmt.redis.models.ReplicationRole
+    :ivar geo_replicated_primary_host_name: The unchanging DNS name which will always point to
+     current geo-primary cache among the linked redis caches for seamless Geo Failover experience.
+    :vartype geo_replicated_primary_host_name: str
+    :ivar primary_host_name: The changing DNS name that resolves to the current geo-primary cache
+     among the linked redis caches before or after the Geo Failover.
+    :vartype primary_host_name: str
     :ivar provisioning_state: Terminal state of the link between primary and secondary redis cache.
     :vartype provisioning_state: str
     """
@@ -1869,6 +1905,8 @@ class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
         "linked_redis_cache_id": {"required": True},
         "linked_redis_cache_location": {"required": True},
         "server_role": {"required": True},
+        "geo_replicated_primary_host_name": {"readonly": True},
+        "primary_host_name": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -1876,6 +1914,8 @@ class RedisLinkedServerProperties(RedisLinkedServerCreateProperties):
         "linked_redis_cache_id": {"key": "linkedRedisCacheId", "type": "str"},
         "linked_redis_cache_location": {"key": "linkedRedisCacheLocation", "type": "str"},
         "server_role": {"key": "serverRole", "type": "str"},
+        "geo_replicated_primary_host_name": {"key": "geoReplicatedPrimaryHostName", "type": "str"},
+        "primary_host_name": {"key": "primaryHostName", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
@@ -1924,6 +1964,12 @@ class RedisLinkedServerWithProperties(ProxyResource):
     :vartype linked_redis_cache_location: str
     :ivar server_role: Role of the linked server. Known values are: "Primary" and "Secondary".
     :vartype server_role: str or ~azure.mgmt.redis.models.ReplicationRole
+    :ivar geo_replicated_primary_host_name: The unchanging DNS name which will always point to
+     current geo-primary cache among the linked redis caches for seamless Geo Failover experience.
+    :vartype geo_replicated_primary_host_name: str
+    :ivar primary_host_name: The changing DNS name that resolves to the current geo-primary cache
+     among the linked redis caches before or after the Geo Failover.
+    :vartype primary_host_name: str
     :ivar provisioning_state: Terminal state of the link between primary and secondary redis cache.
     :vartype provisioning_state: str
     """
@@ -1932,6 +1978,8 @@ class RedisLinkedServerWithProperties(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "geo_replicated_primary_host_name": {"readonly": True},
+        "primary_host_name": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -1942,6 +1990,8 @@ class RedisLinkedServerWithProperties(ProxyResource):
         "linked_redis_cache_id": {"key": "properties.linkedRedisCacheId", "type": "str"},
         "linked_redis_cache_location": {"key": "properties.linkedRedisCacheLocation", "type": "str"},
         "server_role": {"key": "properties.serverRole", "type": "str"},
+        "geo_replicated_primary_host_name": {"key": "properties.geoReplicatedPrimaryHostName", "type": "str"},
+        "primary_host_name": {"key": "properties.primaryHostName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
@@ -1965,6 +2015,8 @@ class RedisLinkedServerWithProperties(ProxyResource):
         self.linked_redis_cache_id = linked_redis_cache_id
         self.linked_redis_cache_location = linked_redis_cache_location
         self.server_role = server_role
+        self.geo_replicated_primary_host_name = None
+        self.primary_host_name = None
         self.provisioning_state = None
 
 

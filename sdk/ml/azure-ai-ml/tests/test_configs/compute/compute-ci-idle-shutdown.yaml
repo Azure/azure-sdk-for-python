@@ -1,0 +1,5 @@
+name: banchci
+type: computeinstance
+size: STANDARD_DS3_V2
+idle_time_before_shutdown: PT20M
+idle_time_before_shutdown_minutes: 15

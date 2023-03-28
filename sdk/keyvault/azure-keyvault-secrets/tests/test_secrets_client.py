@@ -147,8 +147,8 @@ class TestSecretClient(KeyVaultTestCase):
 
         # create many secrets
         for x in range(0, max_secrets):
-            secret_name = self.get_resource_name("sec{}".format(x))
-            secret_value = "secVal{}".format(x)
+            secret_name = self.get_resource_name(f"sec{x}")
+            secret_value = f"secVal{x}"
             secret = None
             while not secret:
                 secret = client.set_secret(secret_name, secret_value)
@@ -194,8 +194,8 @@ class TestSecretClient(KeyVaultTestCase):
 
         # create secrets
         for i in range(list_test_size):
-            secret_name = self.get_resource_name("secret{}".format(i))
-            secret_value = "value{}".format(i)
+            secret_name = self.get_resource_name(f"secret{i}")
+            secret_value = f"value{i}"
             expected[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete them
@@ -246,8 +246,8 @@ class TestSecretClient(KeyVaultTestCase):
 
         # create secrets to recover
         for i in range(list_test_size):
-            secret_name = self.get_resource_name("secret{}".format(i))
-            secret_value = "value{}".format(i)
+            secret_name = self.get_resource_name(f"secret{i}")
+            secret_value = f"value{i}"
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets
@@ -276,8 +276,8 @@ class TestSecretClient(KeyVaultTestCase):
 
         # create secrets to purge
         for i in range(list_test_size):
-            secret_name = self.get_resource_name("secret{}".format(i))
-            secret_value = "value{}".format(i)
+            secret_name = self.get_resource_name(f"secret{i}")
+            secret_value = f"value{i}"
             secrets[secret_name] = client.set_secret(secret_name, secret_value)
 
         # delete all secrets

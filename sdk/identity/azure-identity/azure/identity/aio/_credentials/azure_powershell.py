@@ -4,7 +4,8 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, TYPE_CHECKING, List
+from typing import cast, List, Any, Optional
+from azure.core.credentials import AccessToken
 
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
@@ -18,11 +19,6 @@ from ..._credentials.azure_powershell import (
 )
 from ..._internal import resolve_tenant
 
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any
-    from azure.core.credentials import AccessToken
-
 
 class AzurePowerShellCredential(AsyncContextManager):
     """Authenticates by requesting a token from Azure PowerShell.
@@ -33,27 +29,35 @@ class AzurePowerShellCredential(AsyncContextManager):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+    :keyword int process_timeout: Seconds to wait for the Azure PowerShell process to respond. Defaults to 10 seconds.
     """
 
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        process_timeout: int = 10
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
+        self._process_timeout = process_timeout
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, **kwargs: "Any"
-    ) -> "AccessToken":  # pylint:disable=no-self-use,unused-argument
+        self, *scopes: str, **kwargs: Any
+    ) -> AccessToken:  # pylint:disable=no-self-use,unused-argument
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke Azure PowerShell, or
           no account is authenticated
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
@@ -69,7 +73,7 @@ class AzurePowerShellCredential(AsyncContextManager):
             **kwargs
         )
         command_line = get_command_line(scopes, tenant_id)
-        output = await run_command_line(command_line)
+        output = await run_command_line(command_line, self._process_timeout)
         token = parse_token(output)
         return token
 
@@ -77,7 +81,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def run_command_line(command_line: "List[str]") -> str:
+async def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
@@ -85,7 +89,7 @@ async def run_command_line(command_line: "List[str]") -> str:
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = await start_process(command_line)
-            stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout)
 
     except OSError as ex:
         # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed

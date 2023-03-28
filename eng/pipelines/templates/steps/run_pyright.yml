@@ -1,0 +1,46 @@
+parameters:
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+  TestMarkArgument: ''
+
+# The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
+#     eng/pipelines/templates/jobs/ci.tests.yml
+#     eng/pipelines/templates/jobs/ci.yml
+#     eng/pipelines/templates/jobs/live.test.yml
+
+# Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
+steps:
+  - task: UsePythonVersion@0
+    displayName: 'Use Python 3.7'
+    inputs:
+     versionSpec: '3.7'
+    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
+
+  - script: |
+      python -m pip install -r eng/ci_tools.txt
+    displayName: 'Prep Environment'
+    condition: and(succeededOrFailed(), or(ne(variables['Skip.Pyright'],'true'), ne(variables['Skip.Verifytypes'],'true')))
+
+  - task: PythonScript@0
+    displayName: 'Run Pyright'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "$(TargetingString)"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="pyright"
+        --disablecov
+    condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
+
+  - task: PythonScript@0
+    displayName: 'Run verifytypes'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "$(TargetingString)"
+        --mark_arg="${{ parameters.TestMarkArgument }}"
+        --service="${{ parameters.ServiceDirectory }}"
+        --toxenv="verifytypes"
+        --disablecov
+    condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))

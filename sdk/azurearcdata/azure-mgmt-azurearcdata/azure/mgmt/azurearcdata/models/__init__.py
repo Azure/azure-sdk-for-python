@@ -6,147 +6,138 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import BasicLoginInformation
-    from ._models_py3 import CommonSku
-    from ._models_py3 import DataControllerProperties
-    from ._models_py3 import DataControllerResource
-    from ._models_py3 import DataControllerUpdate
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import ErrorResponseBody
-    from ._models_py3 import ExtendedLocation
-    from ._models_py3 import Identity
-    from ._models_py3 import K8SResourceRequirements
-    from ._models_py3 import K8SScheduling
-    from ._models_py3 import K8SSchedulingOptions
-    from ._models_py3 import LogAnalyticsWorkspaceConfig
-    from ._models_py3 import ODataError
-    from ._models_py3 import OnPremiseProperty
-    from ._models_py3 import Operation
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationListResult
-    from ._models_py3 import PageOfDataControllerResource
-    from ._models_py3 import Plan
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import ResourceSku
-    from ._models_py3 import SqlManagedInstance
-    from ._models_py3 import SqlManagedInstanceK8SRaw
-    from ._models_py3 import SqlManagedInstanceK8SSpec
-    from ._models_py3 import SqlManagedInstanceListResult
-    from ._models_py3 import SqlManagedInstanceProperties
-    from ._models_py3 import SqlManagedInstanceSku
-    from ._models_py3 import SqlManagedInstanceUpdate
-    from ._models_py3 import SqlServerInstance
-    from ._models_py3 import SqlServerInstanceListResult
-    from ._models_py3 import SqlServerInstanceProperties
-    from ._models_py3 import SqlServerInstanceUpdate
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-    from ._models_py3 import UploadServicePrincipal
-    from ._models_py3 import UploadWatermark
-except (SyntaxError, ImportError):
-    from ._models import BasicLoginInformation  # type: ignore
-    from ._models import CommonSku  # type: ignore
-    from ._models import DataControllerProperties  # type: ignore
-    from ._models import DataControllerResource  # type: ignore
-    from ._models import DataControllerUpdate  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import ErrorResponseBody  # type: ignore
-    from ._models import ExtendedLocation  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import K8SResourceRequirements  # type: ignore
-    from ._models import K8SScheduling  # type: ignore
-    from ._models import K8SSchedulingOptions  # type: ignore
-    from ._models import LogAnalyticsWorkspaceConfig  # type: ignore
-    from ._models import ODataError  # type: ignore
-    from ._models import OnPremiseProperty  # type: ignore
-    from ._models import Operation  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationListResult  # type: ignore
-    from ._models import PageOfDataControllerResource  # type: ignore
-    from ._models import Plan  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ResourceSku  # type: ignore
-    from ._models import SqlManagedInstance  # type: ignore
-    from ._models import SqlManagedInstanceK8SRaw  # type: ignore
-    from ._models import SqlManagedInstanceK8SSpec  # type: ignore
-    from ._models import SqlManagedInstanceListResult  # type: ignore
-    from ._models import SqlManagedInstanceProperties  # type: ignore
-    from ._models import SqlManagedInstanceSku  # type: ignore
-    from ._models import SqlManagedInstanceUpdate  # type: ignore
-    from ._models import SqlServerInstance  # type: ignore
-    from ._models import SqlServerInstanceListResult  # type: ignore
-    from ._models import SqlServerInstanceProperties  # type: ignore
-    from ._models import SqlServerInstanceUpdate  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-    from ._models import UploadServicePrincipal  # type: ignore
-    from ._models import UploadWatermark  # type: ignore
+from ._models_py3 import ActiveDirectoryConnectorDNSDetails
+from ._models_py3 import ActiveDirectoryConnectorDomainDetails
+from ._models_py3 import ActiveDirectoryConnectorListResult
+from ._models_py3 import ActiveDirectoryConnectorProperties
+from ._models_py3 import ActiveDirectoryConnectorResource
+from ._models_py3 import ActiveDirectoryConnectorSpec
+from ._models_py3 import ActiveDirectoryConnectorStatus
+from ._models_py3 import ActiveDirectoryDomainController
+from ._models_py3 import ActiveDirectoryDomainControllers
+from ._models_py3 import ActiveDirectoryInformation
+from ._models_py3 import BasicLoginInformation
+from ._models_py3 import CommonSku
+from ._models_py3 import DataControllerProperties
+from ._models_py3 import DataControllerResource
+from ._models_py3 import DataControllerUpdate
+from ._models_py3 import ErrorResponse
+from ._models_py3 import ErrorResponseBody
+from ._models_py3 import ExtendedLocation
+from ._models_py3 import K8SResourceRequirements
+from ._models_py3 import K8SScheduling
+from ._models_py3 import K8SSchedulingOptions
+from ._models_py3 import KeytabInformation
+from ._models_py3 import LogAnalyticsWorkspaceConfig
+from ._models_py3 import OnPremiseProperty
+from ._models_py3 import Operation
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationListResult
+from ._models_py3 import PageOfDataControllerResource
+from ._models_py3 import PostgresInstance
+from ._models_py3 import PostgresInstanceListResult
+from ._models_py3 import PostgresInstanceProperties
+from ._models_py3 import PostgresInstanceSku
+from ._models_py3 import PostgresInstanceUpdate
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import SqlManagedInstance
+from ._models_py3 import SqlManagedInstanceK8SRaw
+from ._models_py3 import SqlManagedInstanceK8SSpec
+from ._models_py3 import SqlManagedInstanceListResult
+from ._models_py3 import SqlManagedInstanceProperties
+from ._models_py3 import SqlManagedInstanceSku
+from ._models_py3 import SqlManagedInstanceUpdate
+from ._models_py3 import SqlServerInstance
+from ._models_py3 import SqlServerInstanceListResult
+from ._models_py3 import SqlServerInstanceProperties
+from ._models_py3 import SqlServerInstanceUpdate
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+from ._models_py3 import UploadServicePrincipal
+from ._models_py3 import UploadWatermark
 
-from ._azure_arc_data_management_client_enums import (
-    ArcSqlManagedInstanceLicenseType,
-    ArcSqlServerLicenseType,
-    ConnectionStatus,
-    DefenderStatus,
-    EditionType,
-    ExtendedLocationTypes,
-    IdentityType,
-    Infrastructure,
-    OperationOrigin,
-    SqlManagedInstanceSkuTier,
-    SqlVersion,
-)
+from ._azure_arc_data_management_client_enums import AccountProvisioningMode
+from ._azure_arc_data_management_client_enums import ArcSqlManagedInstanceLicenseType
+from ._azure_arc_data_management_client_enums import ArcSqlServerLicenseType
+from ._azure_arc_data_management_client_enums import ConnectionStatus
+from ._azure_arc_data_management_client_enums import CreatedByType
+from ._azure_arc_data_management_client_enums import DefenderStatus
+from ._azure_arc_data_management_client_enums import EditionType
+from ._azure_arc_data_management_client_enums import ExtendedLocationTypes
+from ._azure_arc_data_management_client_enums import HostType
+from ._azure_arc_data_management_client_enums import Infrastructure
+from ._azure_arc_data_management_client_enums import OperationOrigin
+from ._azure_arc_data_management_client_enums import SqlManagedInstanceSkuTier
+from ._azure_arc_data_management_client_enums import SqlVersion
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'BasicLoginInformation',
-    'CommonSku',
-    'DataControllerProperties',
-    'DataControllerResource',
-    'DataControllerUpdate',
-    'ErrorResponse',
-    'ErrorResponseBody',
-    'ExtendedLocation',
-    'Identity',
-    'K8SResourceRequirements',
-    'K8SScheduling',
-    'K8SSchedulingOptions',
-    'LogAnalyticsWorkspaceConfig',
-    'ODataError',
-    'OnPremiseProperty',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PageOfDataControllerResource',
-    'Plan',
-    'ProxyResource',
-    'Resource',
-    'ResourceSku',
-    'SqlManagedInstance',
-    'SqlManagedInstanceK8SRaw',
-    'SqlManagedInstanceK8SSpec',
-    'SqlManagedInstanceListResult',
-    'SqlManagedInstanceProperties',
-    'SqlManagedInstanceSku',
-    'SqlManagedInstanceUpdate',
-    'SqlServerInstance',
-    'SqlServerInstanceListResult',
-    'SqlServerInstanceProperties',
-    'SqlServerInstanceUpdate',
-    'SystemData',
-    'TrackedResource',
-    'UploadServicePrincipal',
-    'UploadWatermark',
-    'ArcSqlManagedInstanceLicenseType',
-    'ArcSqlServerLicenseType',
-    'ConnectionStatus',
-    'DefenderStatus',
-    'EditionType',
-    'ExtendedLocationTypes',
-    'IdentityType',
-    'Infrastructure',
-    'OperationOrigin',
-    'SqlManagedInstanceSkuTier',
-    'SqlVersion',
+    "ActiveDirectoryConnectorDNSDetails",
+    "ActiveDirectoryConnectorDomainDetails",
+    "ActiveDirectoryConnectorListResult",
+    "ActiveDirectoryConnectorProperties",
+    "ActiveDirectoryConnectorResource",
+    "ActiveDirectoryConnectorSpec",
+    "ActiveDirectoryConnectorStatus",
+    "ActiveDirectoryDomainController",
+    "ActiveDirectoryDomainControllers",
+    "ActiveDirectoryInformation",
+    "BasicLoginInformation",
+    "CommonSku",
+    "DataControllerProperties",
+    "DataControllerResource",
+    "DataControllerUpdate",
+    "ErrorResponse",
+    "ErrorResponseBody",
+    "ExtendedLocation",
+    "K8SResourceRequirements",
+    "K8SScheduling",
+    "K8SSchedulingOptions",
+    "KeytabInformation",
+    "LogAnalyticsWorkspaceConfig",
+    "OnPremiseProperty",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PageOfDataControllerResource",
+    "PostgresInstance",
+    "PostgresInstanceListResult",
+    "PostgresInstanceProperties",
+    "PostgresInstanceSku",
+    "PostgresInstanceUpdate",
+    "ProxyResource",
+    "Resource",
+    "SqlManagedInstance",
+    "SqlManagedInstanceK8SRaw",
+    "SqlManagedInstanceK8SSpec",
+    "SqlManagedInstanceListResult",
+    "SqlManagedInstanceProperties",
+    "SqlManagedInstanceSku",
+    "SqlManagedInstanceUpdate",
+    "SqlServerInstance",
+    "SqlServerInstanceListResult",
+    "SqlServerInstanceProperties",
+    "SqlServerInstanceUpdate",
+    "SystemData",
+    "TrackedResource",
+    "UploadServicePrincipal",
+    "UploadWatermark",
+    "AccountProvisioningMode",
+    "ArcSqlManagedInstanceLicenseType",
+    "ArcSqlServerLicenseType",
+    "ConnectionStatus",
+    "CreatedByType",
+    "DefenderStatus",
+    "EditionType",
+    "ExtendedLocationTypes",
+    "HostType",
+    "Infrastructure",
+    "OperationOrigin",
+    "SqlManagedInstanceSkuTier",
+    "SqlVersion",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

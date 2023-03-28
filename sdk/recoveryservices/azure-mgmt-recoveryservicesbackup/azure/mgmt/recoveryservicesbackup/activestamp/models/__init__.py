@@ -156,6 +156,7 @@ from ._models_py3 import EncryptionDetails
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
 from ._models_py3 import ExportJobsOperationResultInfo
+from ._models_py3 import ExtendedLocation
 from ._models_py3 import ExtendedProperties
 from ._models_py3 import FeatureSupportRequest
 from ._models_py3 import GenericContainer
@@ -248,6 +249,7 @@ from ._models_py3 import ProtectionPolicyResourceList
 from ._models_py3 import RecoveryPoint
 from ._models_py3 import RecoveryPointDiskConfiguration
 from ._models_py3 import RecoveryPointMoveReadinessInfo
+from ._models_py3 import RecoveryPointProperties
 from ._models_py3 import RecoveryPointRehydrationInfo
 from ._models_py3 import RecoveryPointResource
 from ._models_py3 import RecoveryPointResourceList
@@ -268,6 +270,7 @@ from ._models_py3 import RetentionPolicy
 from ._models_py3 import SQLDataDirectory
 from ._models_py3 import SQLDataDirectoryMapping
 from ._models_py3 import SchedulePolicy
+from ._models_py3 import SecuredVMDetails
 from ._models_py3 import SecurityPinBase
 from ._models_py3 import Settings
 from ._models_py3 import SimpleRetentionPolicy
@@ -275,6 +278,7 @@ from ._models_py3 import SimpleSchedulePolicy
 from ._models_py3 import SimpleSchedulePolicyV2
 from ._models_py3 import SubProtectionPolicy
 from ._models_py3 import TargetAFSRestoreInfo
+from ._models_py3 import TargetDiskNetworkAccessSettings
 from ._models_py3 import TargetRestoreInfo
 from ._models_py3 import TieringPolicy
 from ._models_py3 import TokenInformation
@@ -361,6 +365,7 @@ from ._recovery_services_backup_client_enums import SoftDeleteFeatureState
 from ._recovery_services_backup_client_enums import StorageType
 from ._recovery_services_backup_client_enums import StorageTypeState
 from ._recovery_services_backup_client_enums import SupportStatus
+from ._recovery_services_backup_client_enums import TargetDiskNetworkAccessOption
 from ._recovery_services_backup_client_enums import TieringMode
 from ._recovery_services_backup_client_enums import Type
 from ._recovery_services_backup_client_enums import UsagesUnit
@@ -370,7 +375,7 @@ from ._recovery_services_backup_client_enums import WorkloadItemType
 from ._recovery_services_backup_client_enums import WorkloadType
 from ._recovery_services_backup_client_enums import XcoolState
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -524,6 +529,7 @@ __all__ = [
     "ErrorAdditionalInfo",
     "ErrorDetail",
     "ExportJobsOperationResultInfo",
+    "ExtendedLocation",
     "ExtendedProperties",
     "FeatureSupportRequest",
     "GenericContainer",
@@ -616,6 +622,7 @@ __all__ = [
     "RecoveryPoint",
     "RecoveryPointDiskConfiguration",
     "RecoveryPointMoveReadinessInfo",
+    "RecoveryPointProperties",
     "RecoveryPointRehydrationInfo",
     "RecoveryPointResource",
     "RecoveryPointResourceList",
@@ -636,6 +643,7 @@ __all__ = [
     "SQLDataDirectory",
     "SQLDataDirectoryMapping",
     "SchedulePolicy",
+    "SecuredVMDetails",
     "SecurityPinBase",
     "Settings",
     "SimpleRetentionPolicy",
@@ -643,6 +651,7 @@ __all__ = [
     "SimpleSchedulePolicyV2",
     "SubProtectionPolicy",
     "TargetAFSRestoreInfo",
+    "TargetDiskNetworkAccessSettings",
     "TargetRestoreInfo",
     "TieringPolicy",
     "TokenInformation",
@@ -728,6 +737,7 @@ __all__ = [
     "StorageType",
     "StorageTypeState",
     "SupportStatus",
+    "TargetDiskNetworkAccessOption",
     "TieringMode",
     "Type",
     "UsagesUnit",

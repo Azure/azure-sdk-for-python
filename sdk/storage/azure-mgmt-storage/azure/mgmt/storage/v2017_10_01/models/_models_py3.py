@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,63 +8,69 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class AccountSasParameters(msrest.serialization.Model):
+class AccountSasParameters(_serialization.Model):
     """The parameters to list SAS credentials of a storage account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar services: Required. The signed services accessible with the account SAS. Possible values
-     include: Blob (b), Queue (q), Table (t), File (f). Known values are: "b", "q", "t", "f".
+    :ivar services: The signed services accessible with the account SAS. Possible values include:
+     Blob (b), Queue (q), Table (t), File (f). Required. Known values are: "b", "q", "t", and "f".
     :vartype services: str or ~azure.mgmt.storage.v2017_10_01.models.Services
-    :ivar resource_types: Required. The signed resource types that are accessible with the account
-     SAS. Service (s): Access to service-level APIs; Container (c): Access to container-level APIs;
+    :ivar resource_types: The signed resource types that are accessible with the account SAS.
+     Service (s): Access to service-level APIs; Container (c): Access to container-level APIs;
      Object (o): Access to object-level APIs for blobs, queue messages, table entities, and files.
-     Known values are: "s", "c", "o".
+     Required. Known values are: "s", "c", and "o".
     :vartype resource_types: str or ~azure.mgmt.storage.v2017_10_01.models.SignedResourceTypes
-    :ivar permissions: Required. The signed permissions for the account SAS. Possible values
-     include: Read (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process
-     (p). Known values are: "r", "d", "w", "l", "a", "c", "u", "p".
+    :ivar permissions: The signed permissions for the account SAS. Possible values include: Read
+     (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p).
+     Required. Known values are: "r", "d", "w", "l", "a", "c", "u", and "p".
     :vartype permissions: str or ~azure.mgmt.storage.v2017_10_01.models.Permissions
     :ivar ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
     :vartype ip_address_or_range: str
     :ivar protocols: The protocol permitted for a request made with the account SAS. Known values
-     are: "https,http", "https".
+     are: "https,http" and "https".
     :vartype protocols: str or ~azure.mgmt.storage.v2017_10_01.models.HttpProtocol
     :ivar shared_access_start_time: The time at which the SAS becomes valid.
     :vartype shared_access_start_time: ~datetime.datetime
-    :ivar shared_access_expiry_time: Required. The time at which the shared access signature
-     becomes invalid.
+    :ivar shared_access_expiry_time: The time at which the shared access signature becomes invalid.
+     Required.
     :vartype shared_access_expiry_time: ~datetime.datetime
     :ivar key_to_sign: The key to sign the account SAS token with.
     :vartype key_to_sign: str
     """
 
     _validation = {
-        'services': {'required': True},
-        'resource_types': {'required': True},
-        'permissions': {'required': True},
-        'shared_access_expiry_time': {'required': True},
+        "services": {"required": True},
+        "resource_types": {"required": True},
+        "permissions": {"required": True},
+        "shared_access_expiry_time": {"required": True},
     }
 
     _attribute_map = {
-        'services': {'key': 'signedServices', 'type': 'str'},
-        'resource_types': {'key': 'signedResourceTypes', 'type': 'str'},
-        'permissions': {'key': 'signedPermission', 'type': 'str'},
-        'ip_address_or_range': {'key': 'signedIp', 'type': 'str'},
-        'protocols': {'key': 'signedProtocol', 'type': 'str'},
-        'shared_access_start_time': {'key': 'signedStart', 'type': 'iso-8601'},
-        'shared_access_expiry_time': {'key': 'signedExpiry', 'type': 'iso-8601'},
-        'key_to_sign': {'key': 'keyToSign', 'type': 'str'},
+        "services": {"key": "signedServices", "type": "str"},
+        "resource_types": {"key": "signedResourceTypes", "type": "str"},
+        "permissions": {"key": "signedPermission", "type": "str"},
+        "ip_address_or_range": {"key": "signedIp", "type": "str"},
+        "protocols": {"key": "signedProtocol", "type": "str"},
+        "shared_access_start_time": {"key": "signedStart", "type": "iso-8601"},
+        "shared_access_expiry_time": {"key": "signedExpiry", "type": "iso-8601"},
+        "key_to_sign": {"key": "keyToSign", "type": "str"},
     }
 
     def __init__(
@@ -77,36 +84,37 @@ class AccountSasParameters(msrest.serialization.Model):
         protocols: Optional[Union[str, "_models.HttpProtocol"]] = None,
         shared_access_start_time: Optional[datetime.datetime] = None,
         key_to_sign: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword services: Required. The signed services accessible with the account SAS. Possible
-         values include: Blob (b), Queue (q), Table (t), File (f). Known values are: "b", "q", "t", "f".
+        :keyword services: The signed services accessible with the account SAS. Possible values
+         include: Blob (b), Queue (q), Table (t), File (f). Required. Known values are: "b", "q", "t",
+         and "f".
         :paramtype services: str or ~azure.mgmt.storage.v2017_10_01.models.Services
-        :keyword resource_types: Required. The signed resource types that are accessible with the
-         account SAS. Service (s): Access to service-level APIs; Container (c): Access to
-         container-level APIs; Object (o): Access to object-level APIs for blobs, queue messages, table
-         entities, and files. Known values are: "s", "c", "o".
+        :keyword resource_types: The signed resource types that are accessible with the account SAS.
+         Service (s): Access to service-level APIs; Container (c): Access to container-level APIs;
+         Object (o): Access to object-level APIs for blobs, queue messages, table entities, and files.
+         Required. Known values are: "s", "c", and "o".
         :paramtype resource_types: str or ~azure.mgmt.storage.v2017_10_01.models.SignedResourceTypes
-        :keyword permissions: Required. The signed permissions for the account SAS. Possible values
-         include: Read (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process
-         (p). Known values are: "r", "d", "w", "l", "a", "c", "u", "p".
+        :keyword permissions: The signed permissions for the account SAS. Possible values include: Read
+         (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p).
+         Required. Known values are: "r", "d", "w", "l", "a", "c", "u", and "p".
         :paramtype permissions: str or ~azure.mgmt.storage.v2017_10_01.models.Permissions
         :keyword ip_address_or_range: An IP address or a range of IP addresses from which to accept
          requests.
         :paramtype ip_address_or_range: str
         :keyword protocols: The protocol permitted for a request made with the account SAS. Known
-         values are: "https,http", "https".
+         values are: "https,http" and "https".
         :paramtype protocols: str or ~azure.mgmt.storage.v2017_10_01.models.HttpProtocol
         :keyword shared_access_start_time: The time at which the SAS becomes valid.
         :paramtype shared_access_start_time: ~datetime.datetime
-        :keyword shared_access_expiry_time: Required. The time at which the shared access signature
-         becomes invalid.
+        :keyword shared_access_expiry_time: The time at which the shared access signature becomes
+         invalid. Required.
         :paramtype shared_access_expiry_time: ~datetime.datetime
         :keyword key_to_sign: The key to sign the account SAS token with.
         :paramtype key_to_sign: str
         """
-        super(AccountSasParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.services = services
         self.resource_types = resource_types
         self.permissions = permissions
@@ -117,7 +125,7 @@ class AccountSasParameters(msrest.serialization.Model):
         self.key_to_sign = key_to_sign
 
 
-class CheckNameAvailabilityResult(msrest.serialization.Model):
+class CheckNameAvailabilityResult(_serialization.Model):
     """The CheckNameAvailability operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -127,7 +135,7 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      and cannot be used.
     :vartype name_available: bool
     :ivar reason: Gets the reason that a storage account name could not be used. The Reason element
-     is only returned if NameAvailable is false. Known values are: "AccountNameInvalid",
+     is only returned if NameAvailable is false. Known values are: "AccountNameInvalid" and
      "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.storage.v2017_10_01.models.Reason
     :ivar message: Gets an error message explaining the Reason value in more detail.
@@ -135,36 +143,32 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_available': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "name_available": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name_available = None
         self.reason = None
         self.message = None
 
 
-class CustomDomain(msrest.serialization.Model):
+class CustomDomain(_serialization.Model):
     """The custom domain assigned to this storage account. This can be set via Update.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the custom domain name assigned to the storage account. Name
-     is the CNAME source.
+    :ivar name: Gets or sets the custom domain name assigned to the storage account. Name is the
+     CNAME source. Required.
     :vartype name: str
     :ivar use_sub_domain_name: Indicates whether indirect CName validation is enabled. Default
      value is false. This should only be set on updates.
@@ -172,35 +176,29 @@ class CustomDomain(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'use_sub_domain_name': {'key': 'useSubDomainName', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "use_sub_domain_name": {"key": "useSubDomainName", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        use_sub_domain_name: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, use_sub_domain_name: Optional[bool] = None, **kwargs: Any) -> None:
         """
-        :keyword name: Required. Gets or sets the custom domain name assigned to the storage account.
-         Name is the CNAME source.
+        :keyword name: Gets or sets the custom domain name assigned to the storage account. Name is the
+         CNAME source. Required.
         :paramtype name: str
         :keyword use_sub_domain_name: Indicates whether indirect CName validation is enabled. Default
          value is false. This should only be set on updates.
         :paramtype use_sub_domain_name: bool
         """
-        super(CustomDomain, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.use_sub_domain_name = use_sub_domain_name
 
 
-class Dimension(msrest.serialization.Model):
+class Dimension(_serialization.Model):
     """Dimension of blobs, possibly be blob type or access tier.
 
     :ivar name: Display name of dimension.
@@ -210,51 +208,45 @@ class Dimension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Display name of dimension.
         :paramtype name: str
         :keyword display_name: Display name of dimension.
         :paramtype display_name: str
         """
-        super(Dimension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
 
 
-class Encryption(msrest.serialization.Model):
+class Encryption(_serialization.Model):
     """The encryption settings on the storage account.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar services: List of services which support encryption.
     :vartype services: ~azure.mgmt.storage.v2017_10_01.models.EncryptionServices
-    :ivar key_source: Required. The encryption keySource (provider). Possible values
-     (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Known values are:
-     "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
+    :ivar key_source: The encryption keySource (provider). Possible values (case-insensitive):
+     Microsoft.Storage, Microsoft.Keyvault. Known values are: "Microsoft.Storage" and
+     "Microsoft.Keyvault".
     :vartype key_source: str or ~azure.mgmt.storage.v2017_10_01.models.KeySource
     :ivar key_vault_properties: Properties provided by key vault.
     :vartype key_vault_properties: ~azure.mgmt.storage.v2017_10_01.models.KeyVaultProperties
     """
 
     _validation = {
-        'key_source': {'required': True},
+        "key_source": {"required": True},
     }
 
     _attribute_map = {
-        'services': {'key': 'services', 'type': 'EncryptionServices'},
-        'key_source': {'key': 'keySource', 'type': 'str'},
-        'key_vault_properties': {'key': 'keyvaultproperties', 'type': 'KeyVaultProperties'},
+        "services": {"key": "services", "type": "EncryptionServices"},
+        "key_source": {"key": "keySource", "type": "str"},
+        "key_vault_properties": {"key": "keyvaultproperties", "type": "KeyVaultProperties"},
     }
 
     def __init__(
@@ -263,25 +255,25 @@ class Encryption(msrest.serialization.Model):
         key_source: Union[str, "_models.KeySource"] = "Microsoft.Storage",
         services: Optional["_models.EncryptionServices"] = None,
         key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword services: List of services which support encryption.
         :paramtype services: ~azure.mgmt.storage.v2017_10_01.models.EncryptionServices
-        :keyword key_source: Required. The encryption keySource (provider). Possible values
-         (case-insensitive):  Microsoft.Storage, Microsoft.Keyvault. Known values are:
-         "Microsoft.Storage", "Microsoft.Keyvault". Default value: "Microsoft.Storage".
+        :keyword key_source: The encryption keySource (provider). Possible values (case-insensitive):
+         Microsoft.Storage, Microsoft.Keyvault. Known values are: "Microsoft.Storage" and
+         "Microsoft.Keyvault".
         :paramtype key_source: str or ~azure.mgmt.storage.v2017_10_01.models.KeySource
         :keyword key_vault_properties: Properties provided by key vault.
         :paramtype key_vault_properties: ~azure.mgmt.storage.v2017_10_01.models.KeyVaultProperties
         """
-        super(Encryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.services = services
         self.key_source = key_source
         self.key_vault_properties = key_vault_properties
 
 
-class EncryptionService(msrest.serialization.Model):
+class EncryptionService(_serialization.Model):
     """A service that allows server-side encryption to be used.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -296,31 +288,26 @@ class EncryptionService(msrest.serialization.Model):
     """
 
     _validation = {
-        'last_enabled_time': {'readonly': True},
+        "last_enabled_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'last_enabled_time': {'key': 'lastEnabledTime', 'type': 'iso-8601'},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "last_enabled_time": {"key": "lastEnabledTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword enabled: A boolean indicating whether or not the service encrypts the data as it is
          stored.
         :paramtype enabled: bool
         """
-        super(EncryptionService, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.last_enabled_time = None
 
 
-class EncryptionServices(msrest.serialization.Model):
+class EncryptionServices(_serialization.Model):
     """A list of services that support encryption.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -336,15 +323,15 @@ class EncryptionServices(msrest.serialization.Model):
     """
 
     _validation = {
-        'table': {'readonly': True},
-        'queue': {'readonly': True},
+        "table": {"readonly": True},
+        "queue": {"readonly": True},
     }
 
     _attribute_map = {
-        'blob': {'key': 'blob', 'type': 'EncryptionService'},
-        'file': {'key': 'file', 'type': 'EncryptionService'},
-        'table': {'key': 'table', 'type': 'EncryptionService'},
-        'queue': {'key': 'queue', 'type': 'EncryptionService'},
+        "blob": {"key": "blob", "type": "EncryptionService"},
+        "file": {"key": "file", "type": "EncryptionService"},
+        "table": {"key": "table", "type": "EncryptionService"},
+        "queue": {"key": "queue", "type": "EncryptionService"},
     }
 
     def __init__(
@@ -352,22 +339,22 @@ class EncryptionServices(msrest.serialization.Model):
         *,
         blob: Optional["_models.EncryptionService"] = None,
         file: Optional["_models.EncryptionService"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword blob: The encryption function of the blob storage service.
         :paramtype blob: ~azure.mgmt.storage.v2017_10_01.models.EncryptionService
         :keyword file: The encryption function of the file storage service.
         :paramtype file: ~azure.mgmt.storage.v2017_10_01.models.EncryptionService
         """
-        super(EncryptionServices, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.blob = blob
         self.file = file
         self.table = None
         self.queue = None
 
 
-class Endpoints(msrest.serialization.Model):
+class Endpoints(_serialization.Model):
     """The URIs that are used to perform a retrieval of a public blob, queue, or table object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -383,33 +370,29 @@ class Endpoints(msrest.serialization.Model):
     """
 
     _validation = {
-        'blob': {'readonly': True},
-        'queue': {'readonly': True},
-        'table': {'readonly': True},
-        'file': {'readonly': True},
+        "blob": {"readonly": True},
+        "queue": {"readonly": True},
+        "table": {"readonly": True},
+        "file": {"readonly": True},
     }
 
     _attribute_map = {
-        'blob': {'key': 'blob', 'type': 'str'},
-        'queue': {'key': 'queue', 'type': 'str'},
-        'table': {'key': 'table', 'type': 'str'},
-        'file': {'key': 'file', 'type': 'str'},
+        "blob": {"key": "blob", "type": "str"},
+        "queue": {"key": "queue", "type": "str"},
+        "table": {"key": "table", "type": "str"},
+        "file": {"key": "file", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Endpoints, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.blob = None
         self.queue = None
         self.table = None
         self.file = None
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -420,78 +403,66 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: The identity type. Has constant value: "SystemAssigned".
+    :ivar type: The identity type. Required. Default value is "SystemAssigned".
     :vartype type: str
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
-        'type': {'required': True, 'constant': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True, "constant": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     type = "SystemAssigned"
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Identity, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
 
 
-class IPRule(msrest.serialization.Model):
+class IPRule(_serialization.Model):
     """IP rule with specific IP or IP range in CIDR format.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
-     address is allowed.
+    :ivar ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
+     allowed. Required.
     :vartype ip_address_or_range: str
-    :ivar action: The action of IP ACL rule. The only acceptable values to pass in are None and
-     "Allow". The default value is None.
+    :ivar action: The action of IP ACL rule. Default value is "Allow".
     :vartype action: str
     """
 
     _validation = {
-        'ip_address_or_range': {'required': True},
+        "ip_address_or_range": {"required": True},
     }
 
     _attribute_map = {
-        'ip_address_or_range': {'key': 'value', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
+        "ip_address_or_range": {"key": "value", "type": "str"},
+        "action": {"key": "action", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip_address_or_range: str,
-        action: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip_address_or_range: str, action: Optional[Literal["Allow"]] = None, **kwargs: Any) -> None:
         """
-        :keyword ip_address_or_range: Required. Specifies the IP or IP range in CIDR format. Only IPV4
-         address is allowed.
+        :keyword ip_address_or_range: Specifies the IP or IP range in CIDR format. Only IPV4 address is
+         allowed. Required.
         :paramtype ip_address_or_range: str
-        :keyword action: The action of IP ACL rule. The only acceptable values to pass in are None and
-         "Allow". The default value is None.
+        :keyword action: The action of IP ACL rule. Default value is "Allow".
         :paramtype action: str
         """
-        super(IPRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip_address_or_range = ip_address_or_range
         self.action = action
 
 
-class KeyVaultProperties(msrest.serialization.Model):
+class KeyVaultProperties(_serialization.Model):
     """Properties of key vault.
 
     :ivar key_name: The name of KeyVault key.
@@ -503,9 +474,9 @@ class KeyVaultProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_name': {'key': 'keyname', 'type': 'str'},
-        'key_version': {'key': 'keyversion', 'type': 'str'},
-        'key_vault_uri': {'key': 'keyvaulturi', 'type': 'str'},
+        "key_name": {"key": "keyname", "type": "str"},
+        "key_version": {"key": "keyversion", "type": "str"},
+        "key_vault_uri": {"key": "keyvaulturi", "type": "str"},
     }
 
     def __init__(
@@ -514,8 +485,8 @@ class KeyVaultProperties(msrest.serialization.Model):
         key_name: Optional[str] = None,
         key_version: Optional[str] = None,
         key_vault_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: The name of KeyVault key.
         :paramtype key_name: str
@@ -524,13 +495,13 @@ class KeyVaultProperties(msrest.serialization.Model):
         :keyword key_vault_uri: The Uri of KeyVault.
         :paramtype key_vault_uri: str
         """
-        super(KeyVaultProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_name = key_name
         self.key_version = key_version
         self.key_vault_uri = key_vault_uri
 
 
-class ListAccountSasResponse(msrest.serialization.Model):
+class ListAccountSasResponse(_serialization.Model):
     """The List SAS credentials operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -540,24 +511,20 @@ class ListAccountSasResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'account_sas_token': {'readonly': True},
+        "account_sas_token": {"readonly": True},
     }
 
     _attribute_map = {
-        'account_sas_token': {'key': 'accountSasToken', 'type': 'str'},
+        "account_sas_token": {"key": "accountSasToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ListAccountSasResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.account_sas_token = None
 
 
-class ListServiceSasResponse(msrest.serialization.Model):
+class ListServiceSasResponse(_serialization.Model):
     """The List service SAS credentials operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -567,24 +534,20 @@ class ListServiceSasResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'service_sas_token': {'readonly': True},
+        "service_sas_token": {"readonly": True},
     }
 
     _attribute_map = {
-        'service_sas_token': {'key': 'serviceSasToken', 'type': 'str'},
+        "service_sas_token": {"key": "serviceSasToken", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ListServiceSasResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.service_sas_token = None
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):
     """Metric specification of operation.
 
     :ivar name: Name of metric specification.
@@ -608,15 +571,15 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'category': {'key': 'category', 'type': 'str'},
-        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "category": {"key": "category", "type": "str"},
+        "resource_id_dimension_name_override": {"key": "resourceIdDimensionNameOverride", "type": "str"},
     }
 
     def __init__(
@@ -631,8 +594,8 @@ class MetricSpecification(msrest.serialization.Model):
         fill_gap_with_zero: Optional[bool] = None,
         category: Optional[str] = None,
         resource_id_dimension_name_override: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of metric specification.
         :paramtype name: str
@@ -653,7 +616,7 @@ class MetricSpecification(msrest.serialization.Model):
         :keyword resource_id_dimension_name_override: Account Resource Id.
         :paramtype resource_id_dimension_name_override: str
         """
-        super(MetricSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -665,68 +628,68 @@ class MetricSpecification(msrest.serialization.Model):
         self.resource_id_dimension_name_override = resource_id_dimension_name_override
 
 
-class NetworkRuleSet(msrest.serialization.Model):
+class NetworkRuleSet(_serialization.Model):
     """Network rule set.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible
      values are any combination of Logging|Metrics|AzureServices (For example, "Logging, Metrics"),
-     or None to bypass none of those traffics. Known values are: "None", "Logging", "Metrics",
-     "AzureServices". Default value: "AzureServices".
+     or None to bypass none of those traffics. Known values are: "None", "Logging", "Metrics", and
+     "AzureServices".
     :vartype bypass: str or ~azure.mgmt.storage.v2017_10_01.models.Bypass
     :ivar virtual_network_rules: Sets the virtual network rules.
     :vartype virtual_network_rules: list[~azure.mgmt.storage.v2017_10_01.models.VirtualNetworkRule]
     :ivar ip_rules: Sets the IP ACL rules.
     :vartype ip_rules: list[~azure.mgmt.storage.v2017_10_01.models.IPRule]
-    :ivar default_action: Required. Specifies the default action of allow or deny when no other
-     rules match. Known values are: "Allow", "Deny". Default value: "Allow".
+    :ivar default_action: Specifies the default action of allow or deny when no other rules match.
+     Known values are: "Allow" and "Deny".
     :vartype default_action: str or ~azure.mgmt.storage.v2017_10_01.models.DefaultAction
     """
 
     _validation = {
-        'default_action': {'required': True},
+        "default_action": {"required": True},
     }
 
     _attribute_map = {
-        'bypass': {'key': 'bypass', 'type': 'str'},
-        'virtual_network_rules': {'key': 'virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'ip_rules': {'key': 'ipRules', 'type': '[IPRule]'},
-        'default_action': {'key': 'defaultAction', 'type': 'str'},
+        "bypass": {"key": "bypass", "type": "str"},
+        "virtual_network_rules": {"key": "virtualNetworkRules", "type": "[VirtualNetworkRule]"},
+        "ip_rules": {"key": "ipRules", "type": "[IPRule]"},
+        "default_action": {"key": "defaultAction", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         default_action: Union[str, "_models.DefaultAction"] = "Allow",
-        bypass: Optional[Union[str, "_models.Bypass"]] = "AzureServices",
+        bypass: Union[str, "_models.Bypass"] = "AzureServices",
         virtual_network_rules: Optional[List["_models.VirtualNetworkRule"]] = None,
         ip_rules: Optional[List["_models.IPRule"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword bypass: Specifies whether traffic is bypassed for Logging/Metrics/AzureServices.
          Possible values are any combination of Logging|Metrics|AzureServices (For example, "Logging,
          Metrics"), or None to bypass none of those traffics. Known values are: "None", "Logging",
-         "Metrics", "AzureServices". Default value: "AzureServices".
+         "Metrics", and "AzureServices".
         :paramtype bypass: str or ~azure.mgmt.storage.v2017_10_01.models.Bypass
         :keyword virtual_network_rules: Sets the virtual network rules.
         :paramtype virtual_network_rules:
          list[~azure.mgmt.storage.v2017_10_01.models.VirtualNetworkRule]
         :keyword ip_rules: Sets the IP ACL rules.
         :paramtype ip_rules: list[~azure.mgmt.storage.v2017_10_01.models.IPRule]
-        :keyword default_action: Required. Specifies the default action of allow or deny when no other
-         rules match. Known values are: "Allow", "Deny". Default value: "Allow".
+        :keyword default_action: Specifies the default action of allow or deny when no other rules
+         match. Known values are: "Allow" and "Deny".
         :paramtype default_action: str or ~azure.mgmt.storage.v2017_10_01.models.DefaultAction
         """
-        super(NetworkRuleSet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.bypass = bypass
         self.virtual_network_rules = virtual_network_rules
         self.ip_rules = ip_rules
         self.default_action = default_action
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Storage REST API operation definition.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -740,10 +703,10 @@ class Operation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "service_specification": {"key": "properties.serviceSpecification", "type": "ServiceSpecification"},
     }
 
     def __init__(
@@ -753,8 +716,8 @@ class Operation(msrest.serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         service_specification: Optional["_models.ServiceSpecification"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -765,14 +728,14 @@ class Operation(msrest.serialization.Model):
         :keyword service_specification: One property of operation, include metric specifications.
         :paramtype service_specification: ~azure.mgmt.storage.v2017_10_01.models.ServiceSpecification
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
         self.service_specification = service_specification
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Display metadata associated with the operation.
 
     :ivar provider: Service provider: Microsoft Storage.
@@ -784,9 +747,9 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
     def __init__(
@@ -795,8 +758,8 @@ class OperationDisplay(msrest.serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft Storage.
         :paramtype provider: str
@@ -805,38 +768,34 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword operation: Type of operation: get, read, delete, etc.
         :paramtype operation: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
 
 
-class OperationListResult(msrest.serialization.Model):
-    """Result of the request to list Storage operations. It contains a list of operations and a URL link to get the next set of results.
+class OperationListResult(_serialization.Model):
+    """Result of the request to list Storage operations. It contains a list of operations and a URL
+    link to get the next set of results.
 
     :ivar value: List of Storage operations supported by the Storage resource provider.
     :vartype value: list[~azure.mgmt.storage.v2017_10_01.models.Operation]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Operation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Storage operations supported by the Storage resource provider.
         :paramtype value: list[~azure.mgmt.storage.v2017_10_01.models.Operation]
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Describes a storage resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -849,40 +808,34 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Tags assigned to a resource; can be used for viewing and grouping a
-     resource (across resource groups).
+    :ivar tags: Tags assigned to a resource; can be used for viewing and grouping a resource
+     (across resource groups).
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Tags assigned to a resource; can be used for viewing and grouping
-         a resource (across resource groups).
+        :keyword tags: Tags assigned to a resource; can be used for viewing and grouping a resource
+         (across resource groups).
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -890,7 +843,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class Restriction(msrest.serialization.Model):
+class Restriction(_serialization.Model):
     """The restriction because of which SKU cannot be used.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -903,59 +856,55 @@ class Restriction(msrest.serialization.Model):
     :ivar reason_code: The reason for the restriction. As of now this can be "QuotaId" or
      "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
      subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
-     capacity at DC. Known values are: "QuotaId", "NotAvailableForSubscription".
+     capacity at DC. Known values are: "QuotaId" and "NotAvailableForSubscription".
     :vartype reason_code: str or ~azure.mgmt.storage.v2017_10_01.models.ReasonCode
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'values': {'readonly': True},
+        "type": {"readonly": True},
+        "values": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+        "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        reason_code: Optional[Union[str, "_models.ReasonCode"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs: Any) -> None:
         """
         :keyword reason_code: The reason for the restriction. As of now this can be "QuotaId" or
          "NotAvailableForSubscription". Quota Id is set when the SKU has requiredQuotas parameter as the
          subscription does not belong to that quota. The "NotAvailableForSubscription" is related to
-         capacity at DC. Known values are: "QuotaId", "NotAvailableForSubscription".
+         capacity at DC. Known values are: "QuotaId" and "NotAvailableForSubscription".
         :paramtype reason_code: str or ~azure.mgmt.storage.v2017_10_01.models.ReasonCode
         """
-        super(Restriction, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = None
         self.values = None
         self.reason_code = reason_code
 
 
-class ServiceSasParameters(msrest.serialization.Model):
+class ServiceSasParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The parameters to list service SAS credentials of a specific resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar canonicalized_resource: Required. The canonical path to the signed resource.
+    :ivar canonicalized_resource: The canonical path to the signed resource. Required.
     :vartype canonicalized_resource: str
-    :ivar resource: Required. The signed services accessible with the service SAS. Possible values
-     include: Blob (b), Container (c), File (f), Share (s). Known values are: "b", "c", "f", "s".
+    :ivar resource: The signed services accessible with the service SAS. Possible values include:
+     Blob (b), Container (c), File (f), Share (s). Required. Known values are: "b", "c", "f", and
+     "s".
     :vartype resource: str or ~azure.mgmt.storage.v2017_10_01.models.SignedResource
     :ivar permissions: The signed permissions for the service SAS. Possible values include: Read
      (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Known
-     values are: "r", "d", "w", "l", "a", "c", "u", "p".
+     values are: "r", "d", "w", "l", "a", "c", "u", and "p".
     :vartype permissions: str or ~azure.mgmt.storage.v2017_10_01.models.Permissions
     :ivar ip_address_or_range: An IP address or a range of IP addresses from which to accept
      requests.
     :vartype ip_address_or_range: str
     :ivar protocols: The protocol permitted for a request made with the account SAS. Known values
-     are: "https,http", "https".
+     are: "https,http" and "https".
     :vartype protocols: str or ~azure.mgmt.storage.v2017_10_01.models.HttpProtocol
     :ivar shared_access_start_time: The time at which the SAS becomes valid.
     :vartype shared_access_start_time: ~datetime.datetime
@@ -987,30 +936,30 @@ class ServiceSasParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'canonicalized_resource': {'required': True},
-        'resource': {'required': True},
-        'identifier': {'max_length': 64, 'min_length': 0},
+        "canonicalized_resource": {"required": True},
+        "resource": {"required": True},
+        "identifier": {"max_length": 64},
     }
 
     _attribute_map = {
-        'canonicalized_resource': {'key': 'canonicalizedResource', 'type': 'str'},
-        'resource': {'key': 'signedResource', 'type': 'str'},
-        'permissions': {'key': 'signedPermission', 'type': 'str'},
-        'ip_address_or_range': {'key': 'signedIp', 'type': 'str'},
-        'protocols': {'key': 'signedProtocol', 'type': 'str'},
-        'shared_access_start_time': {'key': 'signedStart', 'type': 'iso-8601'},
-        'shared_access_expiry_time': {'key': 'signedExpiry', 'type': 'iso-8601'},
-        'identifier': {'key': 'signedIdentifier', 'type': 'str'},
-        'partition_key_start': {'key': 'startPk', 'type': 'str'},
-        'partition_key_end': {'key': 'endPk', 'type': 'str'},
-        'row_key_start': {'key': 'startRk', 'type': 'str'},
-        'row_key_end': {'key': 'endRk', 'type': 'str'},
-        'key_to_sign': {'key': 'keyToSign', 'type': 'str'},
-        'cache_control': {'key': 'rscc', 'type': 'str'},
-        'content_disposition': {'key': 'rscd', 'type': 'str'},
-        'content_encoding': {'key': 'rsce', 'type': 'str'},
-        'content_language': {'key': 'rscl', 'type': 'str'},
-        'content_type': {'key': 'rsct', 'type': 'str'},
+        "canonicalized_resource": {"key": "canonicalizedResource", "type": "str"},
+        "resource": {"key": "signedResource", "type": "str"},
+        "permissions": {"key": "signedPermission", "type": "str"},
+        "ip_address_or_range": {"key": "signedIp", "type": "str"},
+        "protocols": {"key": "signedProtocol", "type": "str"},
+        "shared_access_start_time": {"key": "signedStart", "type": "iso-8601"},
+        "shared_access_expiry_time": {"key": "signedExpiry", "type": "iso-8601"},
+        "identifier": {"key": "signedIdentifier", "type": "str"},
+        "partition_key_start": {"key": "startPk", "type": "str"},
+        "partition_key_end": {"key": "endPk", "type": "str"},
+        "row_key_start": {"key": "startRk", "type": "str"},
+        "row_key_end": {"key": "endRk", "type": "str"},
+        "key_to_sign": {"key": "keyToSign", "type": "str"},
+        "cache_control": {"key": "rscc", "type": "str"},
+        "content_disposition": {"key": "rscd", "type": "str"},
+        "content_encoding": {"key": "rsce", "type": "str"},
+        "content_language": {"key": "rscl", "type": "str"},
+        "content_type": {"key": "rsct", "type": "str"},
     }
 
     def __init__(
@@ -1034,24 +983,24 @@ class ServiceSasParameters(msrest.serialization.Model):
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword canonicalized_resource: Required. The canonical path to the signed resource.
+        :keyword canonicalized_resource: The canonical path to the signed resource. Required.
         :paramtype canonicalized_resource: str
-        :keyword resource: Required. The signed services accessible with the service SAS. Possible
-         values include: Blob (b), Container (c), File (f), Share (s). Known values are: "b", "c", "f",
-         "s".
+        :keyword resource: The signed services accessible with the service SAS. Possible values
+         include: Blob (b), Container (c), File (f), Share (s). Required. Known values are: "b", "c",
+         "f", and "s".
         :paramtype resource: str or ~azure.mgmt.storage.v2017_10_01.models.SignedResource
         :keyword permissions: The signed permissions for the service SAS. Possible values include: Read
          (r), Write (w), Delete (d), List (l), Add (a), Create (c), Update (u) and Process (p). Known
-         values are: "r", "d", "w", "l", "a", "c", "u", "p".
+         values are: "r", "d", "w", "l", "a", "c", "u", and "p".
         :paramtype permissions: str or ~azure.mgmt.storage.v2017_10_01.models.Permissions
         :keyword ip_address_or_range: An IP address or a range of IP addresses from which to accept
          requests.
         :paramtype ip_address_or_range: str
         :keyword protocols: The protocol permitted for a request made with the account SAS. Known
-         values are: "https,http", "https".
+         values are: "https,http" and "https".
         :paramtype protocols: str or ~azure.mgmt.storage.v2017_10_01.models.HttpProtocol
         :keyword shared_access_start_time: The time at which the SAS becomes valid.
         :paramtype shared_access_start_time: ~datetime.datetime
@@ -1082,7 +1031,7 @@ class ServiceSasParameters(msrest.serialization.Model):
         :keyword content_type: The response header override for content type.
         :paramtype content_type: str
         """
-        super(ServiceSasParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.canonicalized_resource = canonicalized_resource
         self.resource = resource
         self.permissions = permissions
@@ -1103,7 +1052,7 @@ class ServiceSasParameters(msrest.serialization.Model):
         self.content_type = content_type
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """One property of operation, include metric specifications.
 
     :ivar metric_specifications: Metric specifications of operation.
@@ -1112,42 +1061,39 @@ class ServiceSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
     def __init__(
-        self,
-        *,
-        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
-        **kwargs
-    ):
+        self, *, metric_specifications: Optional[List["_models.MetricSpecification"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications:
          list[~azure.mgmt.storage.v2017_10_01.models.MetricSpecification]
         """
-        super(ServiceSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The SKU of the storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the sku name. Required for account creation; optional for
-     update. Note that in older versions, sku name was called accountType. Known values are:
-     "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS".
+    :ivar name: Gets or sets the sku name. Required for account creation; optional for update. Note
+     that in older versions, sku name was called accountType. Required. Known values are:
+     "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", and "Premium_LRS".
     :vartype name: str or ~azure.mgmt.storage.v2017_10_01.models.SkuName
-    :ivar tier: Gets the sku tier. This is based on the SKU name. Known values are: "Standard",
+    :ivar tier: Gets the sku tier. This is based on the SKU name. Known values are: "Standard" and
      "Premium".
     :vartype tier: str or ~azure.mgmt.storage.v2017_10_01.models.SkuTier
     :ivar resource_type: The type of the resource, usually it is 'storageAccounts'.
     :vartype resource_type: str
     :ivar kind: Indicates the type of storage account. Known values are: "Storage", "StorageV2",
-     "BlobStorage".
+     and "BlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2017_10_01.models.Kind
     :ivar locations: The set of locations that the SKU is available. This will be supported and
      registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.).
@@ -1161,22 +1107,22 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'tier': {'readonly': True},
-        'resource_type': {'readonly': True},
-        'kind': {'readonly': True},
-        'locations': {'readonly': True},
-        'capabilities': {'readonly': True},
+        "name": {"required": True},
+        "tier": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "kind": {"readonly": True},
+        "locations": {"readonly": True},
+        "capabilities": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'capabilities': {'key': 'capabilities', 'type': '[SKUCapability]'},
-        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "capabilities": {"key": "capabilities", "type": "[SKUCapability]"},
+        "restrictions": {"key": "restrictions", "type": "[Restriction]"},
     }
 
     def __init__(
@@ -1184,18 +1130,18 @@ class Sku(msrest.serialization.Model):
         *,
         name: Union[str, "_models.SkuName"],
         restrictions: Optional[List["_models.Restriction"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword name: Required. Gets or sets the sku name. Required for account creation; optional for
-         update. Note that in older versions, sku name was called accountType. Known values are:
-         "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", "Premium_LRS".
+        :keyword name: Gets or sets the sku name. Required for account creation; optional for update.
+         Note that in older versions, sku name was called accountType. Required. Known values are:
+         "Standard_LRS", "Standard_GRS", "Standard_RAGRS", "Standard_ZRS", and "Premium_LRS".
         :paramtype name: str or ~azure.mgmt.storage.v2017_10_01.models.SkuName
         :keyword restrictions: The restrictions because of which SKU cannot be used. This is empty if
          there are no restrictions.
         :paramtype restrictions: list[~azure.mgmt.storage.v2017_10_01.models.Restriction]
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = None
         self.resource_type = None
@@ -1205,8 +1151,9 @@ class Sku(msrest.serialization.Model):
         self.restrictions = restrictions
 
 
-class SKUCapability(msrest.serialization.Model):
-    """The capability information in the specified sku, including file encryption, network acls, change notification, etc.
+class SKUCapability(_serialization.Model):
+    """The capability information in the specified sku, including file encryption, network acls,
+    change notification, etc.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1218,27 +1165,23 @@ class SKUCapability(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'value': {'readonly': True},
+        "name": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SKUCapability, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.value = None
 
 
-class StorageAccount(Resource):
+class StorageAccount(Resource):  # pylint: disable=too-many-instance-attributes
     """The storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1251,17 +1194,17 @@ class StorageAccount(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Tags assigned to a resource; can be used for viewing and grouping a
-     resource (across resource groups).
+    :ivar tags: Tags assigned to a resource; can be used for viewing and grouping a resource
+     (across resource groups).
     :vartype tags: dict[str, str]
     :ivar sku: Gets the SKU.
     :vartype sku: ~azure.mgmt.storage.v2017_10_01.models.Sku
-    :ivar kind: Gets the Kind. Known values are: "Storage", "StorageV2", "BlobStorage".
+    :ivar kind: Gets the Kind. Known values are: "Storage", "StorageV2", and "BlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2017_10_01.models.Kind
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.storage.v2017_10_01.models.Identity
     :ivar provisioning_state: Gets the status of the storage account at the time the operation was
-     called. Known values are: "Creating", "ResolvingDNS", "Succeeded".
+     called. Known values are: "Creating", "ResolvingDNS", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.storage.v2017_10_01.models.ProvisioningState
     :ivar primary_endpoints: Gets the URLs that are used to perform a retrieval of a public blob,
      queue, or table object. Note that Standard_ZRS and Premium_LRS accounts only return the blob
@@ -1270,7 +1213,7 @@ class StorageAccount(Resource):
     :ivar primary_location: Gets the location of the primary data center for the storage account.
     :vartype primary_location: str
     :ivar status_of_primary: Gets the status indicating whether the primary location of the storage
-     account is available or unavailable. Known values are: "available", "unavailable".
+     account is available or unavailable. Known values are: "available" and "unavailable".
     :vartype status_of_primary: str or ~azure.mgmt.storage.v2017_10_01.models.AccountStatus
     :ivar last_geo_failover_time: Gets the timestamp of the most recent instance of a failover to
      the secondary location. Only the most recent timestamp is retained. This element is not
@@ -1282,7 +1225,7 @@ class StorageAccount(Resource):
     :vartype secondary_location: str
     :ivar status_of_secondary: Gets the status indicating whether the secondary location of the
      storage account is available or unavailable. Only available if the SKU name is Standard_GRS or
-     Standard_RAGRS. Known values are: "available", "unavailable".
+     Standard_RAGRS. Known values are: "available" and "unavailable".
     :vartype status_of_secondary: str or ~azure.mgmt.storage.v2017_10_01.models.AccountStatus
     :ivar creation_time: Gets the creation date and time of the storage account in UTC.
     :vartype creation_time: ~datetime.datetime
@@ -1296,7 +1239,7 @@ class StorageAccount(Resource):
      unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2017_10_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
-     for billing. Known values are: "Hot", "Cool".
+     for billing. Known values are: "Hot" and "Cool".
     :vartype access_tier: str or ~azure.mgmt.storage.v2017_10_01.models.AccessTier
     :ivar enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
     :vartype enable_https_traffic_only: bool
@@ -1305,49 +1248,49 @@ class StorageAccount(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'sku': {'readonly': True},
-        'kind': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'primary_endpoints': {'readonly': True},
-        'primary_location': {'readonly': True},
-        'status_of_primary': {'readonly': True},
-        'last_geo_failover_time': {'readonly': True},
-        'secondary_location': {'readonly': True},
-        'status_of_secondary': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'custom_domain': {'readonly': True},
-        'secondary_endpoints': {'readonly': True},
-        'encryption': {'readonly': True},
-        'access_tier': {'readonly': True},
-        'network_rule_set': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "sku": {"readonly": True},
+        "kind": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "primary_endpoints": {"readonly": True},
+        "primary_location": {"readonly": True},
+        "status_of_primary": {"readonly": True},
+        "last_geo_failover_time": {"readonly": True},
+        "secondary_location": {"readonly": True},
+        "status_of_secondary": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "custom_domain": {"readonly": True},
+        "secondary_endpoints": {"readonly": True},
+        "encryption": {"readonly": True},
+        "access_tier": {"readonly": True},
+        "network_rule_set": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'primary_endpoints': {'key': 'properties.primaryEndpoints', 'type': 'Endpoints'},
-        'primary_location': {'key': 'properties.primaryLocation', 'type': 'str'},
-        'status_of_primary': {'key': 'properties.statusOfPrimary', 'type': 'str'},
-        'last_geo_failover_time': {'key': 'properties.lastGeoFailoverTime', 'type': 'iso-8601'},
-        'secondary_location': {'key': 'properties.secondaryLocation', 'type': 'str'},
-        'status_of_secondary': {'key': 'properties.statusOfSecondary', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
-        'secondary_endpoints': {'key': 'properties.secondaryEndpoints', 'type': 'Endpoints'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
-        'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
-        'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "kind": {"key": "kind", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "primary_endpoints": {"key": "properties.primaryEndpoints", "type": "Endpoints"},
+        "primary_location": {"key": "properties.primaryLocation", "type": "str"},
+        "status_of_primary": {"key": "properties.statusOfPrimary", "type": "str"},
+        "last_geo_failover_time": {"key": "properties.lastGeoFailoverTime", "type": "iso-8601"},
+        "secondary_location": {"key": "properties.secondaryLocation", "type": "str"},
+        "status_of_secondary": {"key": "properties.statusOfSecondary", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "custom_domain": {"key": "properties.customDomain", "type": "CustomDomain"},
+        "secondary_endpoints": {"key": "properties.secondaryEndpoints", "type": "Endpoints"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "access_tier": {"key": "properties.accessTier", "type": "str"},
+        "enable_https_traffic_only": {"key": "properties.supportsHttpsTrafficOnly", "type": "bool"},
+        "network_rule_set": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
     }
 
     def __init__(
@@ -1356,14 +1299,14 @@ class StorageAccount(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         identity: Optional["_models.Identity"] = None,
-        enable_https_traffic_only: Optional[bool] = False,
-        **kwargs
-    ):
+        enable_https_traffic_only: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Tags assigned to a resource; can be used for viewing and grouping
-         a resource (across resource groups).
+        :keyword tags: Tags assigned to a resource; can be used for viewing and grouping a resource
+         (across resource groups).
         :paramtype tags: dict[str, str]
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.storage.v2017_10_01.models.Identity
@@ -1371,7 +1314,7 @@ class StorageAccount(Resource):
          true.
         :paramtype enable_https_traffic_only: bool
         """
-        super(StorageAccount, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = None
         self.kind = None
         self.identity = identity
@@ -1391,65 +1334,60 @@ class StorageAccount(Resource):
         self.network_rule_set = None
 
 
-class StorageAccountCheckNameAvailabilityParameters(msrest.serialization.Model):
+class StorageAccountCheckNameAvailabilityParameters(_serialization.Model):
     """The parameters used to check the availability of the storage account name.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The storage account name.
+    :ivar name: The storage account name. Required.
     :vartype name: str
-    :ivar type: The type of resource, Microsoft.Storage/storageAccounts. Has constant value:
+    :ivar type: The type of resource, Microsoft.Storage/storageAccounts. Required. Default value is
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True, 'constant': True},
+        "name": {"required": True},
+        "type": {"required": True, "constant": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     type = "Microsoft.Storage/storageAccounts"
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
-        :keyword name: Required. The storage account name.
+        :keyword name: The storage account name. Required.
         :paramtype name: str
         """
-        super(StorageAccountCheckNameAvailabilityParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class StorageAccountCreateParameters(msrest.serialization.Model):
+class StorageAccountCreateParameters(_serialization.Model):
     """The parameters used when creating a storage account.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar sku: Required. Required. Gets or sets the sku name.
+    :ivar sku: Required. Gets or sets the sku name. Required.
     :vartype sku: ~azure.mgmt.storage.v2017_10_01.models.Sku
-    :ivar kind: Required. Required. Indicates the type of storage account. Known values are:
-     "Storage", "StorageV2", "BlobStorage".
+    :ivar kind: Required. Indicates the type of storage account. Required. Known values are:
+     "Storage", "StorageV2", and "BlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2017_10_01.models.Kind
-    :ivar location: Required. Required. Gets or sets the location of the resource. This will be one
-     of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
-     etc.). The geo region of a resource cannot be changed once it is created, but if an identical
-     geo region is specified on update, the request will succeed.
+    :ivar location: Required. Gets or sets the location of the resource. This will be one of the
+     supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.). The
+     geo region of a resource cannot be changed once it is created, but if an identical geo region
+     is specified on update, the request will succeed. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
-     These tags can be used for viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key with a length no
-     greater than 128 characters and a value with a length no greater than 256 characters.
+    :ivar tags: Gets or sets a list of key value pairs that describe the resource. These tags can
+     be used for viewing and grouping this resource (across resource groups). A maximum of 15 tags
+     can be provided for a resource. Each tag must have a key with a length no greater than 128
+     characters and a value with a length no greater than 256 characters.
     :vartype tags: dict[str, str]
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.storage.v2017_10_01.models.Identity
@@ -1463,29 +1401,29 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
     :ivar network_rule_set: Network rule set.
     :vartype network_rule_set: ~azure.mgmt.storage.v2017_10_01.models.NetworkRuleSet
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
-     for billing. Known values are: "Hot", "Cool".
+     for billing. Known values are: "Hot" and "Cool".
     :vartype access_tier: str or ~azure.mgmt.storage.v2017_10_01.models.AccessTier
     :ivar enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
     :vartype enable_https_traffic_only: bool
     """
 
     _validation = {
-        'sku': {'required': True},
-        'kind': {'required': True},
-        'location': {'required': True},
+        "sku": {"required": True},
+        "kind": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
-        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
-        'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
+        "sku": {"key": "sku", "type": "Sku"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "custom_domain": {"key": "properties.customDomain", "type": "CustomDomain"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "network_rule_set": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
+        "access_tier": {"key": "properties.accessTier", "type": "str"},
+        "enable_https_traffic_only": {"key": "properties.supportsHttpsTrafficOnly", "type": "bool"},
     }
 
     def __init__(
@@ -1500,24 +1438,24 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         encryption: Optional["_models.Encryption"] = None,
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
-        enable_https_traffic_only: Optional[bool] = False,
-        **kwargs
-    ):
+        enable_https_traffic_only: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword sku: Required. Required. Gets or sets the sku name.
+        :keyword sku: Required. Gets or sets the sku name. Required.
         :paramtype sku: ~azure.mgmt.storage.v2017_10_01.models.Sku
-        :keyword kind: Required. Required. Indicates the type of storage account. Known values are:
-         "Storage", "StorageV2", "BlobStorage".
+        :keyword kind: Required. Indicates the type of storage account. Required. Known values are:
+         "Storage", "StorageV2", and "BlobStorage".
         :paramtype kind: str or ~azure.mgmt.storage.v2017_10_01.models.Kind
-        :keyword location: Required. Required. Gets or sets the location of the resource. This will be
-         one of the supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia,
-         etc.). The geo region of a resource cannot be changed once it is created, but if an identical
-         geo region is specified on update, the request will succeed.
+        :keyword location: Required. Gets or sets the location of the resource. This will be one of the
+         supported and registered Azure Geo Regions (e.g. West US, East US, Southeast Asia, etc.). The
+         geo region of a resource cannot be changed once it is created, but if an identical geo region
+         is specified on update, the request will succeed. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Gets or sets a list of key value pairs that describe the
-         resource. These tags can be used for viewing and grouping this resource (across resource
-         groups). A maximum of 15 tags can be provided for a resource. Each tag must have a key with a
-         length no greater than 128 characters and a value with a length no greater than 256 characters.
+        :keyword tags: Gets or sets a list of key value pairs that describe the resource. These tags
+         can be used for viewing and grouping this resource (across resource groups). A maximum of 15
+         tags can be provided for a resource. Each tag must have a key with a length no greater than 128
+         characters and a value with a length no greater than 256 characters.
         :paramtype tags: dict[str, str]
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.storage.v2017_10_01.models.Identity
@@ -1531,13 +1469,13 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         :keyword network_rule_set: Network rule set.
         :paramtype network_rule_set: ~azure.mgmt.storage.v2017_10_01.models.NetworkRuleSet
         :keyword access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-         used for billing. Known values are: "Hot", "Cool".
+         used for billing. Known values are: "Hot" and "Cool".
         :paramtype access_tier: str or ~azure.mgmt.storage.v2017_10_01.models.AccessTier
         :keyword enable_https_traffic_only: Allows https traffic only to storage service if sets to
          true.
         :paramtype enable_https_traffic_only: bool
         """
-        super(StorageAccountCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sku = sku
         self.kind = kind
         self.location = location
@@ -1550,7 +1488,7 @@ class StorageAccountCreateParameters(msrest.serialization.Model):
         self.enable_https_traffic_only = enable_https_traffic_only
 
 
-class StorageAccountKey(msrest.serialization.Model):
+class StorageAccountKey(_serialization.Model):
     """An access key for the storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1560,35 +1498,31 @@ class StorageAccountKey(msrest.serialization.Model):
     :ivar value: Base 64-encoded value of the key.
     :vartype value: str
     :ivar permissions: Permissions for the key -- read-only or full permissions. Known values are:
-     "Read", "Full".
+     "Read" and "Full".
     :vartype permissions: str or ~azure.mgmt.storage.v2017_10_01.models.KeyPermission
     """
 
     _validation = {
-        'key_name': {'readonly': True},
-        'value': {'readonly': True},
-        'permissions': {'readonly': True},
+        "key_name": {"readonly": True},
+        "value": {"readonly": True},
+        "permissions": {"readonly": True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'permissions': {'key': 'permissions', 'type': 'str'},
+        "key_name": {"key": "keyName", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "permissions": {"key": "permissions", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageAccountKey, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.key_name = None
         self.value = None
         self.permissions = None
 
 
-class StorageAccountListKeysResult(msrest.serialization.Model):
+class StorageAccountListKeysResult(_serialization.Model):
     """The response from the ListKeys operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1599,24 +1533,20 @@ class StorageAccountListKeysResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'keys': {'readonly': True},
+        "keys": {"readonly": True},
     }
 
     _attribute_map = {
-        'keys': {'key': 'keys', 'type': '[StorageAccountKey]'},
+        "keys": {"key": "keys", "type": "[StorageAccountKey]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageAccountListKeysResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.keys = None
 
 
-class StorageAccountListResult(msrest.serialization.Model):
+class StorageAccountListResult(_serialization.Model):
     """The response from the List Storage Accounts operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1626,71 +1556,62 @@ class StorageAccountListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StorageAccount]'},
+        "value": {"key": "value", "type": "[StorageAccount]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageAccountListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class StorageAccountRegenerateKeyParameters(msrest.serialization.Model):
+class StorageAccountRegenerateKeyParameters(_serialization.Model):
     """The parameters used to regenerate the storage account key.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_name: Required. The name of storage keys that want to be regenerated, possible values
-     are key1, key2.
+    :ivar key_name: The name of storage keys that want to be regenerated, possible values are key1,
+     key2. Required.
     :vartype key_name: str
     """
 
     _validation = {
-        'key_name': {'required': True},
+        "key_name": {"required": True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, key_name: str, **kwargs: Any) -> None:
         """
-        :keyword key_name: Required. The name of storage keys that want to be regenerated, possible
-         values are key1, key2.
+        :keyword key_name: The name of storage keys that want to be regenerated, possible values are
+         key1, key2. Required.
         :paramtype key_name: str
         """
-        super(StorageAccountRegenerateKeyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_name = key_name
 
 
-class StorageAccountUpdateParameters(msrest.serialization.Model):
+class StorageAccountUpdateParameters(_serialization.Model):
     """The parameters that can be provided when updating the storage account properties.
 
     :ivar sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to Standard_ZRS
      or Premium_LRS, nor can accounts of those sku names be updated to any other value.
     :vartype sku: ~azure.mgmt.storage.v2017_10_01.models.Sku
-    :ivar tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater in
-     length than 128 characters and a value no greater in length than 256 characters.
+    :ivar tags: Gets or sets a list of key value pairs that describe the resource. These tags can
+     be used in viewing and grouping this resource (across resource groups). A maximum of 15 tags
+     can be provided for a resource. Each tag must have a key no greater in length than 128
+     characters and a value no greater in length than 256 characters.
     :vartype tags: dict[str, str]
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.storage.v2017_10_01.models.Identity
     :ivar kind: Optional. Indicates the type of storage account. Currently only StorageV2 value
-     supported by server. Known values are: "Storage", "StorageV2", "BlobStorage".
+     supported by server. Known values are: "Storage", "StorageV2", and "BlobStorage".
     :vartype kind: str or ~azure.mgmt.storage.v2017_10_01.models.Kind
     :ivar custom_domain: Custom domain assigned to the storage account by the user. Name is the
      CNAME source. Only one custom domain is supported per storage account at this time. To clear
@@ -1700,7 +1621,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
      unencrypted.
     :vartype encryption: ~azure.mgmt.storage.v2017_10_01.models.Encryption
     :ivar access_tier: Required for storage accounts where kind = BlobStorage. The access tier used
-     for billing. Known values are: "Hot", "Cool".
+     for billing. Known values are: "Hot" and "Cool".
     :vartype access_tier: str or ~azure.mgmt.storage.v2017_10_01.models.AccessTier
     :ivar enable_https_traffic_only: Allows https traffic only to storage service if sets to true.
     :vartype enable_https_traffic_only: bool
@@ -1709,15 +1630,15 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'custom_domain': {'key': 'properties.customDomain', 'type': 'CustomDomain'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'access_tier': {'key': 'properties.accessTier', 'type': 'str'},
-        'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
-        'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
+        "sku": {"key": "sku", "type": "Sku"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "kind": {"key": "kind", "type": "str"},
+        "custom_domain": {"key": "properties.customDomain", "type": "CustomDomain"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "access_tier": {"key": "properties.accessTier", "type": "str"},
+        "enable_https_traffic_only": {"key": "properties.supportsHttpsTrafficOnly", "type": "bool"},
+        "network_rule_set": {"key": "properties.networkAcls", "type": "NetworkRuleSet"},
     }
 
     def __init__(
@@ -1730,23 +1651,23 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         custom_domain: Optional["_models.CustomDomain"] = None,
         encryption: Optional["_models.Encryption"] = None,
         access_tier: Optional[Union[str, "_models.AccessTier"]] = None,
-        enable_https_traffic_only: Optional[bool] = False,
+        enable_https_traffic_only: bool = False,
         network_rule_set: Optional["_models.NetworkRuleSet"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Gets or sets the SKU name. Note that the SKU name cannot be updated to
          Standard_ZRS or Premium_LRS, nor can accounts of those sku names be updated to any other value.
         :paramtype sku: ~azure.mgmt.storage.v2017_10_01.models.Sku
-        :keyword tags: A set of tags. Gets or sets a list of key value pairs that describe the
-         resource. These tags can be used in viewing and grouping this resource (across resource
-         groups). A maximum of 15 tags can be provided for a resource. Each tag must have a key no
-         greater in length than 128 characters and a value no greater in length than 256 characters.
+        :keyword tags: Gets or sets a list of key value pairs that describe the resource. These tags
+         can be used in viewing and grouping this resource (across resource groups). A maximum of 15
+         tags can be provided for a resource. Each tag must have a key no greater in length than 128
+         characters and a value no greater in length than 256 characters.
         :paramtype tags: dict[str, str]
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.storage.v2017_10_01.models.Identity
         :keyword kind: Optional. Indicates the type of storage account. Currently only StorageV2 value
-         supported by server. Known values are: "Storage", "StorageV2", "BlobStorage".
+         supported by server. Known values are: "Storage", "StorageV2", and "BlobStorage".
         :paramtype kind: str or ~azure.mgmt.storage.v2017_10_01.models.Kind
         :keyword custom_domain: Custom domain assigned to the storage account by the user. Name is the
          CNAME source. Only one custom domain is supported per storage account at this time. To clear
@@ -1756,7 +1677,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
          unencrypted.
         :paramtype encryption: ~azure.mgmt.storage.v2017_10_01.models.Encryption
         :keyword access_tier: Required for storage accounts where kind = BlobStorage. The access tier
-         used for billing. Known values are: "Hot", "Cool".
+         used for billing. Known values are: "Hot" and "Cool".
         :paramtype access_tier: str or ~azure.mgmt.storage.v2017_10_01.models.AccessTier
         :keyword enable_https_traffic_only: Allows https traffic only to storage service if sets to
          true.
@@ -1764,7 +1685,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         :keyword network_rule_set: Network rule set.
         :paramtype network_rule_set: ~azure.mgmt.storage.v2017_10_01.models.NetworkRuleSet
         """
-        super(StorageAccountUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sku = sku
         self.tags = tags
         self.identity = identity
@@ -1776,7 +1697,7 @@ class StorageAccountUpdateParameters(msrest.serialization.Model):
         self.network_rule_set = network_rule_set
 
 
-class StorageSkuListResult(msrest.serialization.Model):
+class StorageSkuListResult(_serialization.Model):
     """The response from the List Storage SKUs operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1786,30 +1707,26 @@ class StorageSkuListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Sku]'},
+        "value": {"key": "value", "type": "[Sku]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageSkuListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """Describes Storage Resource Usage.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar unit: Gets the unit of measurement. Known values are: "Count", "Bytes", "Seconds",
-     "Percent", "CountsPerSecond", "BytesPerSecond".
+     "Percent", "CountsPerSecond", and "BytesPerSecond".
     :vartype unit: str or ~azure.mgmt.storage.v2017_10_01.models.UsageUnit
     :ivar current_value: Gets the current count of the allocated resources in the subscription.
     :vartype current_value: int
@@ -1820,33 +1737,29 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'readonly': True},
-        'current_value': {'readonly': True},
-        'limit': {'readonly': True},
-        'name': {'readonly': True},
+        "unit": {"readonly": True},
+        "current_value": {"readonly": True},
+        "limit": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Usage, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.unit = None
         self.current_value = None
         self.limit = None
         self.name = None
 
 
-class UsageListResult(msrest.serialization.Model):
+class UsageListResult(_serialization.Model):
     """The response from the List Usages operation.
 
     :ivar value: Gets or sets the list of Storage Resource Usages.
@@ -1854,24 +1767,19 @@ class UsageListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
+        "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Usage"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Gets or sets the list of Storage Resource Usages.
         :paramtype value: list[~azure.mgmt.storage.v2017_10_01.models.Usage]
         """
-        super(UsageListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The usage names that can be used; currently limited to StorageAccount.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1883,72 +1791,68 @@ class UsageName(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        "value": {"readonly": True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UsageName, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.localized_value = None
 
 
-class VirtualNetworkRule(msrest.serialization.Model):
+class VirtualNetworkRule(_serialization.Model):
     """Virtual Network rule.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar virtual_network_resource_id: Required. Resource ID of a subnet, for example:
+    :ivar virtual_network_resource_id: Resource ID of a subnet, for example:
      /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+     Required.
     :vartype virtual_network_resource_id: str
-    :ivar action: The action of virtual network rule. The only acceptable values to pass in are
-     None and "Allow". The default value is None.
+    :ivar action: The action of virtual network rule. Default value is "Allow".
     :vartype action: str
     :ivar state: Gets the state of virtual network rule. Known values are: "provisioning",
-     "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
+     "deprovisioning", "succeeded", "failed", and "networkSourceDeleted".
     :vartype state: str or ~azure.mgmt.storage.v2017_10_01.models.State
     """
 
     _validation = {
-        'virtual_network_resource_id': {'required': True},
+        "virtual_network_resource_id": {"required": True},
     }
 
     _attribute_map = {
-        'virtual_network_resource_id': {'key': 'id', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
+        "virtual_network_resource_id": {"key": "id", "type": "str"},
+        "action": {"key": "action", "type": "str"},
+        "state": {"key": "state", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         virtual_network_resource_id: str,
-        action: Optional[str] = None,
+        action: Optional[Literal["Allow"]] = None,
         state: Optional[Union[str, "_models.State"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword virtual_network_resource_id: Required. Resource ID of a subnet, for example:
+        :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
          /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
+         Required.
         :paramtype virtual_network_resource_id: str
-        :keyword action: The action of virtual network rule. The only acceptable values to pass in are
-         None and "Allow". The default value is None.
+        :keyword action: The action of virtual network rule. Default value is "Allow".
         :paramtype action: str
         :keyword state: Gets the state of virtual network rule. Known values are: "provisioning",
-         "deprovisioning", "succeeded", "failed", "networkSourceDeleted".
+         "deprovisioning", "succeeded", "failed", and "networkSourceDeleted".
         :paramtype state: str or ~azure.mgmt.storage.v2017_10_01.models.State
         """
-        super(VirtualNetworkRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.virtual_network_resource_id = virtual_network_resource_id
         self.action = action
         self.state = state

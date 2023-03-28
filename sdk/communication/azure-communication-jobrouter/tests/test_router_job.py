@@ -7,8 +7,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils import recorded_by_proxy
 from _router_test_case import (
-    RouterTestCase
+    RouterRecordedTestCase
 )
 from _validators import RouterJobValidator
 from _helpers import _convert_str_to_datetime
@@ -114,15 +115,7 @@ job_notes = {
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestRouterJob(RouterTestCase):
-    def __init__(self, method_name):
-        super(TestRouterJob, self).__init__(method_name)
-
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-        self.job_ids = {}  # type: Dict[str, List[str]]
-
+class TestRouterJob(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
@@ -147,15 +140,6 @@ class TestRouterJob(RouterTestCase):
                     and any(self.distribution_policy_ids[self._testMethodName]):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                     router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
-
-    def setUp(self):
-        super(TestRouterJob, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestRouterJob, self).tearDown()
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp"
@@ -285,8 +269,11 @@ class TestRouterJob(RouterTestCase):
         router_job = router_client.get_job(job_id = identifier)
         assert router_job.job_status == RouterJobStatus.CANCELLED
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_create_job_direct_q(self):
         job_identifier = "tst_create_job_man"
         router_client: RouterClient = self.create_client()
@@ -331,9 +318,11 @@ class TestRouterJob(RouterTestCase):
             Exception,
             job_identifier)
 
-    @pytest.mark.skip(reason = "Update job not working correctly")
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_direct_q(self):
         job_identifier = "tst_update_job_man"
         router_client: RouterClient = self.create_client()
@@ -402,9 +391,11 @@ class TestRouterJob(RouterTestCase):
         # updating labels does not change job status
         assert update_router_job.job_status == RouterJobStatus.QUEUED
 
-    @pytest.mark.skip(reason = "Update job not working correctly")
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_direct_q_w_kwargs(self):
         job_identifier = "tst_update_job_man_w_kwargs"
         router_client: RouterClient = self.create_client()
@@ -473,8 +464,11 @@ class TestRouterJob(RouterTestCase):
         # updating labels does not change job status
         assert update_router_job.job_status == RouterJobStatus.QUEUED
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_get_job_direct_q(self):
         job_identifier = "tst_get_job_man"
         router_client: RouterClient = self.create_client()
@@ -536,10 +530,13 @@ class TestRouterJob(RouterTestCase):
             notes = job_notes
         )
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_fallback_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_create_job_w_cp(self):
         job_identifier = "tst_create_job_cp"
         router_client: RouterClient = self.create_client()
@@ -582,10 +579,13 @@ class TestRouterJob(RouterTestCase):
             Exception,
             job_identifier)
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_fallback_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_w_cp(self):
         job_identifier = "tst_update_job_cp"
         router_client: RouterClient = self.create_client()
@@ -658,10 +658,13 @@ class TestRouterJob(RouterTestCase):
             Exception,
             job_identifier)
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_fallback_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_job_w_cp_w_kwargs(self):
         job_identifier = "tst_update_job_cp_w_kwargs"
         router_client: RouterClient = self.create_client()
@@ -734,10 +737,13 @@ class TestRouterJob(RouterTestCase):
             Exception,
             job_identifier)
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_fallback_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_get_job_w_cp(self):
         job_identifier = "tst_get_job_cp"
         router_client: RouterClient = self.create_client()
@@ -800,8 +806,11 @@ class TestRouterJob(RouterTestCase):
 
         assert queried_router_job.job_status == RouterJobStatus.QUEUED
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_delete_job(self):
         job_identifier = "tst_del_job_man"
         router_client: RouterClient = self.create_client()
@@ -852,8 +861,11 @@ class TestRouterJob(RouterTestCase):
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_list_jobs(self):
         router_client: RouterClient = self.create_client()
         job_identifiers = ["tst_list_job_1", "tst_list_job_2", "tst_list_job_3"]

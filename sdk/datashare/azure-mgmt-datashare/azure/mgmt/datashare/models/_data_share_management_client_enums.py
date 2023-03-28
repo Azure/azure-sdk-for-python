@@ -6,38 +6,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DataSetKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of data set.
-    """
+
+class DataSetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of data set."""
 
     BLOB = "Blob"
     CONTAINER = "Container"
@@ -53,9 +36,9 @@ class DataSetKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SQL_DW_TABLE = "SqlDWTable"
     SYNAPSE_WORKSPACE_SQL_POOL_TABLE = "SynapseWorkspaceSqlPoolTable"
 
-class DataSetMappingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of data set mapping.
-    """
+
+class DataSetMappingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of data set mapping."""
 
     BLOB = "Blob"
     CONTAINER = "Container"
@@ -69,16 +52,16 @@ class DataSetMappingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SQL_DW_TABLE = "SqlDWTable"
     SYNAPSE_WORKSPACE_SQL_POOL_TABLE = "SynapseWorkspaceSqlPoolTable"
 
-class DataSetMappingStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the status of the data set mapping.
-    """
+
+class DataSetMappingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of the data set mapping."""
 
     OK = "Ok"
     BROKEN = "Broken"
 
-class DataSetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of data set
-    """
+
+class DataSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of data set."""
 
     BLOB = "Blob"
     CONTAINER = "Container"
@@ -94,34 +77,34 @@ class DataSetType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SQL_DW_TABLE = "SqlDWTable"
     SYNAPSE_WORKSPACE_SQL_POOL_TABLE = "SynapseWorkspaceSqlPoolTable"
 
-class InvitationStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the invitation.
-    """
+
+class InvitationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the invitation."""
 
     PENDING = "Pending"
     ACCEPTED = "Accepted"
     REJECTED = "Rejected"
     WITHDRAWN = "Withdrawn"
 
-class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that last modified the resource.
-    """
+
+class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that last modified the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class OutputType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of output file
-    """
+
+class OutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of output file."""
 
     CSV = "Csv"
     PARQUET = "Parquet"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the data set mapping.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Account."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
@@ -129,38 +112,46 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     MOVING = "Moving"
     FAILED = "Failed"
 
-class RecurrenceInterval(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Recurrence Interval
-    """
+
+class RecurrenceInterval(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Recurrence Interval."""
 
     HOUR = "Hour"
     DAY = "Day"
 
-class ShareKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Share kind.
-    """
+
+class RegistrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Registration status."""
+
+    ACTIVATION_PENDING = "ActivationPending"
+    ACTIVATED = "Activated"
+    ACTIVATION_ATTEMPTS_EXHAUSTED = "ActivationAttemptsExhausted"
+
+
+class ShareKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Share kind."""
 
     COPY_BASED = "CopyBased"
     IN_PLACE = "InPlace"
 
-class ShareSubscriptionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the status of share subscription
-    """
+
+class ShareSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the status of share subscription."""
 
     ACTIVE = "Active"
     REVOKED = "Revoked"
     SOURCE_DELETED = "SourceDeleted"
     REVOKING = "Revoking"
 
-class SourceShareSynchronizationSettingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of synchronization setting on share.
-    """
+
+class SourceShareSynchronizationSettingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of synchronization setting on share."""
 
     SCHEDULE_BASED = "ScheduleBased"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Operation state of the long running operation.
-    """
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operation state of the long running operation."""
 
     ACCEPTED = "Accepted"
     IN_PROGRESS = "InProgress"
@@ -169,35 +160,35 @@ class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class SynchronizationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Synchronization mode
-    """
+
+class SynchronizationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Synchronization mode."""
 
     INCREMENTAL = "Incremental"
     FULL_SYNC = "FullSync"
 
-class SynchronizationSettingKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of synchronization setting.
-    """
+
+class SynchronizationSettingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of synchronization setting."""
 
     SCHEDULE_BASED = "ScheduleBased"
 
-class TriggerKind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of synchronization on trigger.
-    """
+
+class TriggerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of synchronization on trigger."""
 
     SCHEDULE_BASED = "ScheduleBased"
 
-class TriggerStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets the trigger state
-    """
+
+class TriggerStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the trigger state."""
 
     ACTIVE = "Active"
     INACTIVE = "Inactive"
     SOURCE_SYNCHRONIZATION_SETTING_DELETED = "SourceSynchronizationSettingDeleted"
 
-class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Identity Type
-    """
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identity Type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"

@@ -4,13 +4,10 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Any
+from typing import Any, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    StackEnsembleSettings as RestStackEnsembleSettings,
-    StackMetaLearnerType,
-)
-
+from azure.ai.ml._restclient.v2023_02_01_preview.models import StackEnsembleSettings as RestStackEnsembleSettings
+from azure.ai.ml._restclient.v2023_02_01_preview.models import StackMetaLearnerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -20,9 +17,9 @@ class StackEnsembleSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        stack_meta_learner_k_wargs: Any = None,
+        stack_meta_learner_k_wargs: Optional[Any] = None,
         stack_meta_learner_train_percentage: float = 0.2,
-        stack_meta_learner_type: StackMetaLearnerType = None,
+        stack_meta_learner_type: Optional[StackMetaLearnerType] = None,
         **kwargs
     ):
         """
@@ -53,9 +50,7 @@ class StackEnsembleSettings(RestTranslatableMixin):
         )
 
     @classmethod
-    def _from_rest_object(
-        cls, obj: RestStackEnsembleSettings
-    ) -> "StackEnsembleSettings":
+    def _from_rest_object(cls, obj: RestStackEnsembleSettings) -> "StackEnsembleSettings":
         return cls(
             stack_meta_learner_k_wargs=obj.stack_meta_learner_k_wargs,
             stack_meta_learner_train_percentage=obj.stack_meta_learner_train_percentage,
@@ -69,8 +64,7 @@ class StackEnsembleSettings(RestTranslatableMixin):
         return (
             super().__eq__(other)
             and self.stack_meta_learner_k_wargs == other.stack_meta_learner_k_wargs
-            and self.stack_meta_learner_train_percentage
-            == other.stack_meta_learner_train_percentage
+            and self.stack_meta_learner_train_percentage == other.stack_meta_learner_train_percentage
             and self.stack_meta_learner_type == other.stack_meta_learner_type
         )
 

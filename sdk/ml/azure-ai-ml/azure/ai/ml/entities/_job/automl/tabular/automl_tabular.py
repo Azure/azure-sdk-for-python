@@ -5,9 +5,9 @@
 # pylint: disable=too-many-instance-attributes
 
 from abc import ABC
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     AutoNCrossValidations,
     BlockedTransformers,
     CustomNCrossValidations,
@@ -17,12 +17,10 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
-)
-from azure.ai.ml.entities._job.automl.stack_ensemble_settings import (
-    StackEnsembleSettings
 )
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
@@ -30,15 +28,87 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 
 class AutoMLTabular(AutoMLVertical, ABC):
+    """Initialize an AutoML job entity for tabular data.
+
+    Constructor for AutoMLTabular.
+
+    :keyword task_type: The type of task to run. Possible values include: "classification", "regression"
+        , "forecasting".
+    :paramtype task_type: str
+    :keyword featurization: featurization settings. Defaults to None.
+    :paramtype featurization: typing.Optional[TabularFeaturizationSettings]
+    :keyword limits: limits settings. Defaults to None.
+    :paramtype limits: typing.Optional[TabularLimitSettings]
+    :keyword training: training settings. Defaults to None.
+    :paramtype training: typing.Optional[TrainingSettings]
+    :keyword log_verbosity: Verbosity of logging. Possible values include: "debug", "info", "warning", "error",
+        "critical". Defaults to "info".
+    :paramtype log_verbosity: str
+    :keyword target_column_name: The name of the target column. Defaults to None.
+    :paramtype target_column_name: typing.Optional[str]
+    :keyword weight_column_name: The name of the weight column. Defaults to None.
+    :paramtype weight_column_name: typing.Optional[str]
+    :keyword validation_data_size: The size of the validation data. Defaults to None.
+    :paramtype validation_data_size: typing.Optional[float]
+    :keyword cv_split_column_names: The names of the columns to use for cross validation. Defaults to None.
+    :paramtype cv_split_column_names: typing.Optional[List[str]]
+    :keyword n_cross_validations: The number of cross validations to run. Defaults to None.
+    :paramtype n_cross_validations: typing.Optional[int]
+    :keyword test_data_size: The size of the test data. Defaults to None.
+    :paramtype test_data_size: typing.Optional[float]
+    :keyword training_data: The training data. Defaults to None.
+    :paramtype training_data: typing.Optional[azure.ai.ml.entities._inputs_outputs.Input]
+    :keyword validation_data: The validation data. Defaults to None.
+    :paramtype validation_data: typing.Optional[azure.ai.ml.entities._inputs_outputs.Input]
+    :keyword test_data: The test data. Defaults to None.
+    :paramtype test_data: typing.Optional[azure.ai.ml.entities._inputs_outputs.Input]
+    """
+
     def __init__(
         self,
         *,
         task_type: str,
-        featurization: TabularFeaturizationSettings = None,
-        limits: TabularLimitSettings = None,
-        training: TrainingSettings = None,
+        featurization: Optional[TabularFeaturizationSettings] = None,
+        limits: Optional[TabularLimitSettings] = None,
+        training: Optional[TrainingSettings] = None,
         **kwargs,
     ) -> None:
+        """Initialize an AutoML job entity for tabular data.
+
+        Constructor for AutoMLTabular.
+
+        :keyword task_type: The type of task to run. Possible values include: "classification", "regression"
+            , "forecasting".
+        :paramtype task_type: str
+        :keyword featurization: featurization settings. Defaults to None.
+        :paramtype featurization: typing.Optional[TabularFeaturizationSettings]
+        :keyword limits: limits settings. Defaults to None.
+        :paramtype limits: typing.Optional[TabularLimitSettings]
+        :keyword training: training settings. Defaults to None.
+        :paramtype training: typing.Optional[TrainingSettings]
+        :keyword log_verbosity: Verbosity of logging. Possible values include: "debug", "info", "warning", "error",
+            "critical". Defaults to "info".
+        :paramtype log_verbosity: str
+        :keyword target_column_name: The name of the target column. Defaults to None.
+        :paramtype target_column_name: typing.Optional[str]
+        :keyword weight_column_name: The name of the weight column. Defaults to None.
+        :paramtype weight_column_name: typing.Optional[str]
+        :keyword validation_data_size: The size of the validation data. Defaults to None.
+        :paramtype validation_data_size: typing.Optional[float]
+        :keyword cv_split_column_names: The names of the columns to use for cross validation. Defaults to None.
+        :paramtype cv_split_column_names: typing.Optional[List[str]]
+        :keyword n_cross_validations: The number of cross validations to run. Defaults to None.
+        :paramtype n_cross_validations: typing.Optional[int]
+        :keyword test_data_size: The size of the test data. Defaults to None.
+        :paramtype test_data_size: typing.Optional[float]
+        :keyword training_data: The training data. Defaults to None.
+        :paramtype training_data: typing.Optional[azure.ai.ml.entities._inputs_outputs.Input]
+        :keyword validation_data: The validation data. Defaults to None.
+        :paramtype validation_data: typing.Optional[azure.ai.ml.entities._inputs_outputs.Input]
+        :keyword test_data: The test data. Defaults to None.
+        :paramtype test_data: typing.Optional[azure.ai.ml.entities._inputs_outputs.Input]
+        :raises: :class:`azure.ai.ml.exceptions.ValidationException`
+        """
         self.log_verbosity = kwargs.pop("log_verbosity", LogVerbosity.INFO)
 
         self.target_column_name = kwargs.pop("target_column_name", None)
@@ -62,18 +132,39 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
     @property
     def log_verbosity(self) -> LogVerbosity:
+        """Get the log verbosity for the AutoML job.
+
+        :return: log verbosity for the AutoML job
+        :rtype: LogVerbosity
+        """
         return self._log_verbosity
 
     @log_verbosity.setter
     def log_verbosity(self, value: Union[str, LogVerbosity]):
+        """Set the log verbosity for the AutoML job.
+
+        :param value: str or LogVerbosity
+        :type value: typing.Union[str, LogVerbosity]
+        """
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
 
     @property
     def limits(self) -> TabularLimitSettings:
+        """Get the tabular limits for the AutoML job.
+
+        :return: Tabular limits for the AutoML job
+        :rtype: TabularLimitSettings
+        """
         return self._limits
 
     @limits.setter
     def limits(self, value: Union[Dict, TabularLimitSettings]) -> None:
+        """Set the limits for the AutoML job.
+
+        :param value: typing.Dict or TabularLimitSettings
+        :type value: typing.Union[typing.Dict, TabularLimitSettings]
+        :raises ValidationException: Expected a dictionary for limit settings.
+        """
         if isinstance(value, TabularLimitSettings):
             self._limits = value
         else:
@@ -89,10 +180,21 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
     @property
     def training(self) -> TrainingSettings:
+        """Get the training settings for the AutoML job.
+
+        :return: Training settings for the AutoML job.
+        :rtype: TrainingSettings
+        """
         return self._training
 
     @training.setter
     def training(self, value: Union[Dict, TrainingSettings]) -> None:
+        """Set the training settings for the AutoML job.
+
+        :param value: typing.Dict or TrainingSettings
+        :type value: typing.Union[typing.Dict, TrainingSettings]
+        :raises ValidationException: Expected a dictionary for training settings.
+        """
         if isinstance(value, TrainingSettings):
             self._training = value
         else:
@@ -108,10 +210,21 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
     @property
     def featurization(self) -> TabularFeaturizationSettings:
+        """Get the tabular featurization settings for the AutoML job.
+
+        :return: Tabular featurization settings for the AutoML job
+        :rtype: TabularFeaturizationSettings
+        """
         return self._featurization
 
     @featurization.setter
     def featurization(self, value: Union[Dict, TabularFeaturizationSettings]) -> None:
+        """Set the featurization settings for the AutoML job.
+
+        :param value: typing.Dict or TabularFeaturizationSettings
+        :type value: typing.Union[typing.Dict, TabularFeaturizationSettings]
+        :raises ValidationException: Expected a dictionary for featurization settings
+        """
         if isinstance(value, TabularFeaturizationSettings):
             self._featurization = value
         else:
@@ -128,78 +241,77 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_limits(
         self,
         *,
-        enable_early_termination: bool = None,
-        exit_score: float = None,
-        max_concurrent_trials: int = None,
-        max_cores_per_trial: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
-        trial_timeout_minutes: int = None,
+        enable_early_termination: Optional[bool] = None,
+        exit_score: Optional[float] = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_cores_per_trial: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ) -> None:
         """Set limits for the job.
 
-        :param enable_early_termination: Whether to enable early termination if the score is not improving in the
-        short term. The default is True.
+        :keyword enable_early_termination: Whether to enable early termination if the score is not improving in the
+            short term, defaults to None.
 
-        Early stopping logic:
+            Early stopping logic:
 
-        * No early stopping for first 20 iterations (landmarks).
+            * No early stopping for first 20 iterations (landmarks).
 
-        * Early stopping window starts on the 21st iteration and looks for early_stopping_n_iters iterations
-            (currently set to 10). This means that the first iteration where stopping can occur is
-            the 31st.
+            * Early stopping window starts on the 21st iteration and looks for early_stopping_n_iters iterations
+                (currently set to 10). This means that the first iteration where stopping can occur is the 31st.
 
-        * AutoML still schedules 2 ensemble iterations AFTER early stopping, which might result in
-            higher scores.
+            * AutoML still schedules 2 ensemble iterations AFTER early stopping, which might result in higher scores.
 
-        * Early stopping is triggered if the absolute value of best score calculated is the same for past
-            early_stopping_n_iters iterations, that is, if there is no improvement in score for
-            early_stopping_n_iters iterations.
-        :type enable_early_termination: bool, optional
-        :param exit_score: Target score for experiment. The experiment terminates after this score is reached.
-        If not specified (no criteria), the experiment runs until no further progress is made
-        on the primary metric. For for more information on exit criteria, see this `article
-        <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#exit-criteria>`_.
-        :type exit_score: float, optional
-        :param max_concurrent_trials: Represents the maximum number of iterations that would be executed in parallel.
-        The default value is 1.
+            * Early stopping is triggered if the absolute value of best score calculated is the same for past
+                early_stopping_n_iters iterations, that is, if there is no improvement in score for
+                early_stopping_n_iters iterations.
+        :paramtype enable_early_termination: typing.Optional[bool]
+        :keyword exit_score: Target score for experiment. The experiment terminates after this score is reached.
+            If not specified (no criteria), the experiment runs until no further progress is made
+            on the primary metric. For for more information on exit criteria, see this `article
+            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#exit-criteria>`_
+            , defaults to None
+        :paramtype exit_score: typing.Optional[float]
+        :keyword max_concurrent_trials: This is the maximum number of iterations that would be executed in parallel.
+            The default value is 1.
 
-        * AmlCompute clusters support one interation running per node.
-          For multiple AutoML experiment parent runs executed in parallel on a single AmlCompute cluster, the
-          sum of the ``max_concurrent_trials`` values for all experiments should be less
-          than or equal to the maximum number of nodes. Otherwise, runs will be queued until nodes are available.
+            * AmlCompute clusters support one iteration running per node.
+            For multiple AutoML experiment parent runs executed in parallel on a single AmlCompute cluster, the
+            sum of the ``max_concurrent_trials`` values for all experiments should be less
+            than or equal to the maximum number of nodes. Otherwise, runs will be queued until nodes are available.
 
-        * DSVM supports multiple iterations per node. ``max_concurrent_trials`` should
-          be less than or equal to the number of cores on the DSVM. For multiple experiments
-          run in parallel on a single DSVM, the sum of the ``max_concurrent_trials`` values for all
-          experiments should be less than or equal to the maximum number of nodes.
+            * DSVM supports multiple iterations per node. ``max_concurrent_trials`` should
+            be less than or equal to the number of cores on the DSVM. For multiple experiments
+            run in parallel on a single DSVM, the sum of the ``max_concurrent_trials`` values for all
+            experiments should be less than or equal to the maximum number of nodes.
 
-        * Databricks - ``max_concurrent_trials`` should be less than or equal to the number of
-          worker nodes on Databricks.
+            * Databricks - ``max_concurrent_trials`` should be less than or equal to the number of
+            worker nodes on Databricks.
 
-        ``max_concurrent_trials`` does not apply to local runs. Formerly, this parameter
-        was named ``concurrent_iterations``.
-        :type max_concurrent_trials: int, optional
-        :param max_cores_per_trial: The maximum number of threads to use for a given training iteration.
-        Acceptable values:
+            ``max_concurrent_trials`` does not apply to local runs. Formerly, this parameter
+            was named ``concurrent_iterations``.
+        :paramtype max_concurrent_trials: typing.Optional[int]
+        :keyword max_cores_per_trial: The maximum number of threads to use for a given training iteration.
+            Acceptable values:
 
-        * Greater than 1 and less than or equal to the maximum number of cores on the compute target.
+            * Greater than 1 and less than or equal to the maximum number of cores on the compute target.
 
-        * Equal to -1, which means to use all the possible cores per iteration per child-run.
+            * Equal to -1, which means to use all the possible cores per iteration per child-run.
 
-        * Equal to 1, the default.
-        :type max_cores_per_trial: int, optional
-        :param max_trials: he total number of different algorithm and parameter combinations to test during an
-        automated ML experiment. If not specified, the default is 1000 iterations.
-        :type max_trials: int, optional
-        :param timeout_minutes: Maximum amount of time in minutes that all iterations combined can take before the
-        experiment terminates. If not specified, the default experiment timeout is 6 days. To specify a timeout
-        less than or equal to 1 hour, make sure your dataset's size is not greater than
-        10,000,000 (rows times column) or an error results.
-        :type timeout_minutes: int, optional
-        :param trial_timeout_minutes: Maximum time in minutes that each iteration can run for before it terminates.
-        If not specified, a value of 1 month or 43200 minutes is used.
-        :type trial_timeout_minutes: int, optional
+            * Equal to 1, the default.
+        :paramtype max_cores_per_trial: typing.Optional[int]
+        :keyword max_trials: The total number of different algorithm and parameter combinations to test during an
+            automated ML experiment. If not specified, the default is 1000 iterations.
+        :paramtype max_trials: typing.Optional[int]
+        :keyword timeout_minutes:  Maximum amount of time in minutes that all iterations combined can take before the
+            experiment terminates. If not specified, the default experiment timeout is 6 days. To specify a timeout
+            less than or equal to 1 hour, make sure your dataset's size is not greater than
+            10,000,000 (rows times column) or an error results, defaults to None
+        :paramtype timeout_minutes: typing.Optional[int]
+        :keyword trial_timeout_minutes: Maximum time in minutes that each iteration can run for before it terminates.
+            If not specified, a value of 1 month or 43200 minutes is used, defaults to None
+        :paramtype trial_timeout_minutes: typing.Optional[int]
         """
         self._limits = self._limits or TabularLimitSettings()
         self._limits.enable_early_termination = (
@@ -221,56 +333,56 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_training(
         self,
         *,
-        enable_onnx_compatible_models: bool = None,
-        enable_dnn_training: bool = None,
-        enable_model_explainability: bool = None,
-        enable_stack_ensemble: bool = None,
-        enable_vote_ensemble: bool = None,
-        stack_ensemble_settings: StackEnsembleSettings = None,
-        ensemble_model_download_timeout: int = None,
-        allowed_training_algorithms: List[str] = None,
-        blocked_training_algorithms: List[str] = None,
+        enable_onnx_compatible_models: Optional[bool] = None,
+        enable_dnn_training: Optional[bool] = None,
+        enable_model_explainability: Optional[bool] = None,
+        enable_stack_ensemble: Optional[bool] = None,
+        enable_vote_ensemble: Optional[bool] = None,
+        stack_ensemble_settings: Optional[StackEnsembleSettings] = None,
+        ensemble_model_download_timeout: Optional[int] = None,
+        allowed_training_algorithms: Optional[List[str]] = None,
+        blocked_training_algorithms: Optional[List[str]] = None,
     ) -> None:
-        """Method to configure training related settings.
+        """The method to configure training related settings.
 
-        :param enable_onnx_compatible_models: Whether to enable or disable enforcing the ONNX-compatible models.
-        The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
-        Learning,see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.,
-        :type enable_onnx_compatible_models: bool, optional
-        :param enable_dnn_training: Whether to include DNN based models during model selection. The default is None.
-        However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
-        :type enable_dnn_training: bool, optional
-        :param enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all
-        AutoML training iterations. The default is None. For more information, see
-        `Interpretability: model explanations in automated machine learning
-        <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
-        :type enable_model_explainability: bool, optional
-        :param enable_stack_ensemble: Whether to enable/disable StackEnsemble iteration. The default is None.
-        If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
-        Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
-        overfitting due to small training set used in fitting the meta learner.
-        For more information about ensembles, see `Ensemble configuration
-        <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__.
-        :type enable_stack_ensemble: bool, optional
-        :param enable_vote_ensemble:Whether to enable/disable VotingEnsemble iteration. The default is True.
-        For more information about ensembles, see `Ensemble configuration
-        <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__.
-        :type enable_vote_ensemble: bool, optional
-        :param stack_ensemble_settings: Settings for StackEnsemble iteration.
-        :type stack_ensemble_settings: StackEnsembleSettings, optional
-        :param ensemble_model_download_timeout: During VotingEnsemble and StackEnsemble model generation,
-        multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
-        higher value than 300 secs, if more time is needed.
-        :type ensemble_model_download_timeout: int, optional
-        :param allowed_training_algorithms: A list of model names to search for an experiment. If not specified,
-        then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
-        or deprecated TensorFlow models.
-        :type allowed_training_algorithms: List[str], optional
-        :param blocked_training_algorithms: A list of algorithms to ignore for an experiment.
-        :type blocked_training_algorithms:List(str)
-        or List(azureml.train.automl.ClassificationModels) for classification task,
-        or List(azure.ai.ml.automl.RegressionModels) for regression task,
-        or List(azure.ai.ml.automl.ForecastingModels) for forecasting task
+        :keyword enable_onnx_compatible_models: Whether to enable or disable enforcing the ONNX-compatible models.
+            The default is False. For more information about Open Neural Network Exchange (ONNX) and Azure Machine
+            Learning,see this `article <https://docs.microsoft.com/azure/machine-learning/concept-onnx>`__.
+        :paramtype enable_onnx_compatible_models: typing.Optional[bool]
+        :keyword enable_dnn_training: Whether to include DNN based models during model selection.
+            However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
+        :paramtype enable_dnn_training: typing.Optional[bool]
+        :keyword enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all
+            AutoML training iterations. For more information, see
+            `Interpretability: model explanations in automated machine learning
+            <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
+            , defaults to None
+        :paramtype enable_model_explainability: typing.Optional[bool]
+        :keyword enable_stack_ensemble: Whether to enable/disable StackEnsemble iteration.
+            If `enable_onnx_compatible_models` flag is being set, then StackEnsemble iteration will be disabled.
+            Similarly, for Timeseries tasks, StackEnsemble iteration will be disabled by default, to avoid risks of
+            overfitting due to small training set used in fitting the meta learner.
+            For more information about ensembles, see `Ensemble configuration
+            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            , defaults to None
+        :paramtype enable_stack_ensemble: typing.Optional[bool]
+        :keyword enable_vote_ensemble: Whether to enable/disable VotingEnsemble iteration.
+            For more information about ensembles, see `Ensemble configuration
+            <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#ensemble>`__
+            , defaults to None
+        :paramtype enable_vote_ensemble: typing.Optional[bool]
+        :keyword stack_ensemble_settings: Settings for StackEnsemble iteration, defaults to None
+        :paramtype stack_ensemble_settings: typing.Optional[StackEnsembleSettings]
+        :keyword ensemble_model_download_timeout: During VotingEnsemble and StackEnsemble model generation,
+            multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
+            higher value than 300 secs, if more time is needed, defaults to None
+        :paramtype ensemble_model_download_timeout: typing.Optional[int]
+        :keyword allowed_training_algorithms: A list of model names to search for an experiment. If not specified,
+            then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
+            or deprecated TensorFlow models, defaults to None
+        :paramtype allowed_training_algorithms: typing.Optional[List[str]]
+        :keyword blocked_training_algorithms: A list of algorithms to ignore for an experiment, defaults to None
+        :paramtype blocked_training_algorithms: typing.Optional[List[str]]
         """
         # get training object by calling training getter of respective tabular task
         self._training = self.training
@@ -309,30 +421,32 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_featurization(
         self,
         *,
-        blocked_transformers: List[Union[BlockedTransformers, str]] = None,
-        column_name_and_types: Dict[str, str] = None,
-        dataset_language: str = None,
-        transformer_params: Dict[str, List[ColumnTransformer]] = None,
-        mode: str = None,
-        enable_dnn_featurization: bool = None,
+        blocked_transformers: Optional[List[Union[BlockedTransformers, str]]] = None,
+        column_name_and_types: Optional[Dict[str, str]] = None,
+        dataset_language: Optional[str] = None,
+        transformer_params: Optional[Dict[str, List[ColumnTransformer]]] = None,
+        mode: Optional[str] = None,
+        enable_dnn_featurization: Optional[bool] = None,
     ) -> None:
         """Define feature engineering configuration.
 
-        :param blocked_transformers: A list of transformer names to be blocked during featurization
-        :type blocked_transformers: List[Union[BlockedTransformers, str]], optional
-        :param column_name_and_types: A dictionary of column names and feature types used to update column purpose
-        :type column_name_and_types: Dict[str, str], optional
-        :param dataset_language: three character ISO 639-3 code for the language(s) contained in the dataset.
-        Languages other than English are only supported if you use GPU-enabled compute.  The language_code
-        'mul' should be used if the dataset contains multiple languages. To find ISO 639-3 codes for different
-        languages, please refer to https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes
-        :type dataset_language: str, optional
-        :param transformer_params: A dictionary of transformer and corresponding customization parameters
-        :type transformer_params: Dict[str, List[ColumnTransformer]], optional
-        :param mode: "off", "auto", defeaults to "auto"
-        :type mode: str, optional
-        :param enable_dnn_featurization: Whether to include DNN based feature engineering methods
-        :type enable_dnn_featurization: bool, optional
+        :keyword blocked_transformers: A list of transformer names to be blocked during featurization, defaults to None
+        :paramtype blocked_transformers: Optional[List[Union[BlockedTransformers, str]]]
+        :keyword column_name_and_types: A dictionary of column names and feature types used to update column purpose
+            , defaults to None
+        :paramtype column_name_and_types: Optional[Dict[str, str]]
+        :keyword dataset_language: Three character ISO 639-3 code for the language(s) contained in the dataset.
+            Languages other than English are only supported if you use GPU-enabled compute.  The language_code
+            'mul' should be used if the dataset contains multiple languages. To find ISO 639-3 codes for different
+            languages, please refer to https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes, defaults to None
+        :paramtype dataset_language: Optional[str]
+        :keyword transformer_params: A dictionary of transformer and corresponding customization parameters
+            , defaults to None
+        :paramtype transformer_params: Optional[Dict[str, List[ColumnTransformer]]]
+        :keyword mode: "off", "auto", defaults to "auto", defaults to None
+        :paramtype mode: Optional[str]
+        :keyword enable_dnn_featurization: Whether to include DNN based feature engineering methods, defaults to None
+        :paramtype enable_dnn_featurization: Optional[bool]
         """
         self._featurization = self._featurization or TabularFeaturizationSettings()
         self._featurization.blocked_transformers = (
@@ -359,14 +473,35 @@ class AutoMLTabular(AutoMLVertical, ABC):
         *,
         training_data: Input,
         target_column_name: str,
-        weight_column_name: str = None,
-        validation_data: Input = None,
-        validation_data_size: float = None,
-        n_cross_validations: Union[str, int] = None,
-        cv_split_column_names: List[str] = None,
-        test_data: Input = None,
-        test_data_size: float = None,
+        weight_column_name: Optional[str] = None,
+        validation_data: Optional[Input] = None,
+        validation_data_size: Optional[float] = None,
+        n_cross_validations: Optional[Union[str, int]] = None,
+        cv_split_column_names: Optional[List[str]] = None,
+        test_data: Optional[Input] = None,
+        test_data_size: Optional[float] = None,
     ) -> None:
+        """Define data configuration.
+
+        :keyword training_data: Training data.
+        :paramtype training_data: Input
+        :keyword target_column_name: Column name of the target column.
+        :paramtype target_column_name: str
+        :keyword weight_column_name: Weight column name, defaults to None
+        :paramtype weight_column_name: typing.Optional[str]
+        :keyword validation_data: Validation data, defaults to None
+        :paramtype validation_data: typing.Optional[Input]
+        :keyword validation_data_size: Validation data size, defaults to None
+        :paramtype validation_data_size: typing.Optional[float]
+        :keyword n_cross_validations: n_cross_validations, defaults to None
+        :paramtype n_cross_validations: typing.Optional[typing.Union[str, int]]
+        :keyword cv_split_column_names: cv_split_column_names, defaults to None
+        :paramtype cv_split_column_names: typing.Optional[typing.List[str]]
+        :keyword test_data: Test data, defaults to None
+        :paramtype test_data: typing.Optional[Input]
+        :keyword test_data_size: Test data size, defaults to None
+        :paramtype test_data_size: typing.Optional[float]
+        """
         self.target_column_name = target_column_name if target_column_name is not None else self.target_column_name
         self.weight_column_name = weight_column_name if weight_column_name is not None else self.weight_column_name
         self.training_data = training_data if training_data is not None else self.training_data
@@ -383,7 +518,11 @@ class AutoMLTabular(AutoMLVertical, ABC):
 
     # pylint: disable=no-self-use
     def _validation_data_to_rest(self, rest_obj):
-        """validation data serialization."""
+        """Validation data serialization.
+
+        :param rest_obj: Serialized object
+        :type rest_obj: AutoMLTabular
+        """
         if rest_obj.n_cross_validations:
             n_cross_val = rest_obj.n_cross_validations
             # Convert n_cross_validations int value to CustomNCrossValidations
@@ -394,7 +533,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
                 rest_obj.n_cross_validations = AutoNCrossValidations()
 
     def _validation_data_from_rest(self):
-        """validation data deserialization."""
+        """Validation data deserialization."""
         if self.n_cross_validations:
             n_cross_val = self.n_cross_validations
             # Convert n_cross_validations CustomNCrossValidations back into int value
@@ -405,6 +544,16 @@ class AutoMLTabular(AutoMLVertical, ABC):
                 self.n_cross_validations = AutoMLConstants.AUTO
 
     def __eq__(self, other):
+        """Return True if both instances have the same values.
+
+        This method check instances equality and returns True if both of
+            the instances have the same attributes with the same values.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
         if not isinstance(other, AutoMLTabular):
             return NotImplemented
 
@@ -424,4 +573,11 @@ class AutoMLTabular(AutoMLVertical, ABC):
         )
 
     def __ne__(self, other):
+        """Check inequality between two AutoMLTabular objects.
+
+        :param other: Any object
+        :type other: object
+        :return: True or False
+        :rtype: bool
+        """
         return not self.__eq__(other)

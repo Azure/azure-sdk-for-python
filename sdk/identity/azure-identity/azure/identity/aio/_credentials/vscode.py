@@ -2,8 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, TYPE_CHECKING
+from typing import cast, Optional, Any, Tuple
 
+from azure.core.credentials import AccessToken
 from ..._exceptions import CredentialUnavailableError
 from .._internal import AsyncContextManager
 from .._internal.aad_client import AadClient
@@ -11,14 +12,14 @@ from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.decorators import log_get_token_async
 from ..._credentials.vscode import _VSCodeCredentialBase
 
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, List
-    from azure.core.credentials import AccessToken
-
 
 class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, GetTokenMixin):
-    """Authenticates as the Azure user signed in to Visual Studio Code.
+    """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
+
+    It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential doesn't
+    work with `Azure Account extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account>`_
+    versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
+    authenticating with :class:`AzureCliCredential`.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
@@ -44,16 +45,16 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
             await self._client.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes` as the user currently signed in to Visual Studio Code.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
             Studio Code
         """
@@ -68,14 +69,16 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes, **kwargs)
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
-    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         refresh_token = self._get_refresh_token()
         self._client = cast(AadClient, self._client)
         return await self._client.obtain_token_by_refresh_token(scopes, refresh_token, **kwargs)
 
-    def _get_client(self, **kwargs: "Any") -> AadClient:
+    def _get_client(self, **kwargs: Any) -> AadClient:
         return AadClient(**kwargs)

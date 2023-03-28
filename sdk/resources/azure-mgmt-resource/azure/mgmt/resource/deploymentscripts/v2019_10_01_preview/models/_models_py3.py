@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -42,7 +42,7 @@ class AzureResourceBase(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -112,8 +112,8 @@ class DeploymentScript(AzureResourceBase):
         identity: "_models.ManagedServiceIdentity",
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Managed identity to be used for this deployment script. Currently, only
          user-assigned MSI is supported. Required.
@@ -129,7 +129,7 @@ class DeploymentScript(AzureResourceBase):
         self.identity = identity
         self.location = location
         self.tags = tags
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -267,8 +267,8 @@ class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-att
         environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: datetime.timedelta = "P1D",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Managed identity to be used for this deployment script. Currently, only
          user-assigned MSI is supported. Required.
@@ -317,7 +317,7 @@ class AzureCliScript(DeploymentScript):  # pylint: disable=too-many-instance-att
         :paramtype az_cli_version: str
         """
         super().__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.kind = "AzureCLI"  # type: str
+        self.kind: str = "AzureCLI"
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
@@ -391,8 +391,8 @@ class ScriptConfigurationBase(_serialization.Model):
         environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: datetime.timedelta = "P1D",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_script_uri: Uri for the script. This is the entry point for the external
          script.
@@ -477,8 +477,8 @@ class DeploymentScriptPropertiesBase(_serialization.Model):
         container_settings: Optional["_models.ContainerConfiguration"] = None,
         storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
         cleanup_preference: Union[str, "_models.CleanupOptions"] = "Always",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword container_settings: Container settings.
         :paramtype container_settings:
@@ -598,8 +598,8 @@ class AzureCliScriptProperties(
         container_settings: Optional["_models.ContainerConfiguration"] = None,
         storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
         cleanup_preference: Union[str, "_models.CleanupOptions"] = "Always",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_script_uri: Uri for the script. This is the entry point for the external
          script.
@@ -803,8 +803,8 @@ class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-insta
         environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
         force_update_tag: Optional[str] = None,
         timeout: datetime.timedelta = "P1D",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Managed identity to be used for this deployment script. Currently, only
          user-assigned MSI is supported. Required.
@@ -853,7 +853,7 @@ class AzurePowerShellScript(DeploymentScript):  # pylint: disable=too-many-insta
         :paramtype az_power_shell_version: str
         """
         super().__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.kind = "AzurePowerShell"  # type: str
+        self.kind: str = "AzurePowerShell"
         self.container_settings = container_settings
         self.storage_account_settings = storage_account_settings
         self.cleanup_preference = cleanup_preference
@@ -968,8 +968,8 @@ class AzurePowerShellScriptProperties(
         container_settings: Optional["_models.ContainerConfiguration"] = None,
         storage_account_settings: Optional["_models.StorageAccountConfiguration"] = None,
         cleanup_preference: Union[str, "_models.CleanupOptions"] = "Always",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_script_uri: Uri for the script. This is the entry point for the external
          script.
@@ -1063,7 +1063,7 @@ class ContainerConfiguration(_serialization.Model):
         "container_group_name": {"key": "containerGroupName", "type": "str"},
     }
 
-    def __init__(self, *, container_group_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, container_group_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword container_group_name: Container group name, if not specified then the name will get
          auto-generated. Not specifying a 'containerGroupName' indicates the system to generate a unique
@@ -1102,7 +1102,7 @@ class DeploymentScriptListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DeploymentScript"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DeploymentScript"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of deployment scripts.
         :paramtype value:
@@ -1125,7 +1125,7 @@ class DeploymentScriptsError(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Common error response for all Azure Resource Manager APIs to return error
          details for failed operations. (This also follows the OData error response format.).
@@ -1164,7 +1164,7 @@ class DeploymentScriptUpdateParameter(AzureResourceBase):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags to be updated.
         :paramtype tags: dict[str, str]
@@ -1196,7 +1196,9 @@ class EnvironmentVariable(_serialization.Model):
         "secure_value": {"key": "secureValue", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: Optional[str] = None, secure_value: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, name: str, value: Optional[str] = None, secure_value: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the environment variable. Required.
         :paramtype name: str
@@ -1232,7 +1234,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -1240,7 +1242,8 @@ class ErrorAdditionalInfo(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1274,7 +1277,7 @@ class ErrorResponse(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -1315,8 +1318,8 @@ class ManagedServiceIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of the managed identity. "UserAssigned"
         :paramtype type: str or
@@ -1361,7 +1364,7 @@ class ScriptLog(AzureResourceBase):
         "log": {"key": "properties.log", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.log = None
@@ -1379,7 +1382,7 @@ class ScriptLogsList(_serialization.Model):
         "value": {"key": "value", "type": "[ScriptLog]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ScriptLog"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ScriptLog"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Deployment scripts logs.
         :paramtype value:
@@ -1425,7 +1428,7 @@ class ScriptStatus(_serialization.Model):
         "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error that is relayed from the script execution.
         :paramtype error:
@@ -1441,7 +1444,8 @@ class ScriptStatus(_serialization.Model):
 
 
 class StorageAccountConfiguration(_serialization.Model):
-    """Settings to use an existing storage account. Valid storage account kinds are: Storage, StorageV2 and FileStorage.
+    """Settings to use an existing storage account. Valid storage account kinds are: Storage,
+    StorageV2 and FileStorage.
 
     :ivar storage_account_name: The storage account name.
     :vartype storage_account_name: str
@@ -1455,8 +1459,8 @@ class StorageAccountConfiguration(_serialization.Model):
     }
 
     def __init__(
-        self, *, storage_account_name: Optional[str] = None, storage_account_key: Optional[str] = None, **kwargs
-    ):
+        self, *, storage_account_name: Optional[str] = None, storage_account_key: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_name: The storage account name.
         :paramtype storage_account_name: str
@@ -1507,8 +1511,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1557,7 +1561,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None

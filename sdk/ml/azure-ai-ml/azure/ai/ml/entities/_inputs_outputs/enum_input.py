@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from enum import EnumMeta
-from typing import Iterable, Sequence, Union
+from typing import Iterable, Optional, Sequence, Union
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -16,13 +16,12 @@ class EnumInput(Input):
     def __init__(
         self,
         *,
-        enum: Union[EnumMeta, Sequence[str]] = None,
+        enum: Optional[Union[EnumMeta, Sequence[str]]] = None,
         default=None,
         description=None,
         **kwargs,
     ):
-        """Initialize an enum parameter, the options of an enum parameter are
-        the enum values.
+        """Initialize an enum parameter, the options of an enum parameter are the enum values.
 
         :param enum: Enum values.
         :type Union[EnumMeta, Sequence[str]]
@@ -54,8 +53,7 @@ class EnumInput(Input):
 
     @classmethod
     def _assert_enum_valid(cls, enum):
-        """Check whether the enum is valid and return the values of the
-        enum."""
+        """Check whether the enum is valid and return the values of the enum."""
         if isinstance(enum, EnumMeta):
             enum_values = [str(option.value) for option in enum]
         elif isinstance(enum, Iterable):

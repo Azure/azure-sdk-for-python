@@ -6,58 +6,96 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRights(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AccessRights(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessRights."""
 
     MANAGE = "Manage"
     SEND = "Send"
     LISTEN = "Listen"
 
-class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The access key to regenerate.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Default Action for Network Rule Set."""
+
+    ALLOW = "Allow"
+    DENY = "Deny"
+
+
+class EndPointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Private Endpoint Connection."""
+
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The access key to regenerate."""
 
     PRIMARY_KEY = "PrimaryKey"
     SECONDARY_KEY = "SecondaryKey"
 
-class ProvisioningStateEnum(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    CREATED = "Created"
-    SUCCEEDED = "Succeeded"
-    DELETED = "Deleted"
-    FAILED = "Failed"
-    UPDATING = "Updating"
-    UNKNOWN = "Unknown"
+class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The IP Filter Action."""
 
-class Relaytype(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """WCF relay type.
-    """
+    ALLOW = "Allow"
+
+
+class PrivateLinkConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the connection."""
+
+    PENDING = "Pending"
+    APPROVED = "Approved"
+    REJECTED = "Rejected"
+    DISCONNECTED = "Disconnected"
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This determines if traffic is allowed over public network. By default it is enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+
+
+class Relaytype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """WCF relay type."""
 
     NET_TCP = "NetTcp"
     HTTP = "Http"
 
-class UnavailableReason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies the reason for the unavailability of the service.
-    """
+
+class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of this SKU."""
+
+    STANDARD = "Standard"
+
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The tier of this SKU."""
+
+    STANDARD = "Standard"
+
+
+class UnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the reason for the unavailability of the service."""
 
     NONE = "None"
     INVALID_NAME = "InvalidName"

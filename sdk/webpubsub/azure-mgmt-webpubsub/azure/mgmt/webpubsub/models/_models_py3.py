@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,33 +8,293 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._web_pub_sub_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Dimension(msrest.serialization.Model):
-    """Specifications of the Dimension of metrics.
+class Resource(_serialization.Model):
+    """The core properties of ARM resources.
 
-    :param name: The public facing name of the dimension.
-    :type name: str
-    :param display_name: Localized friendly display name of the dimension.
-    :type display_name: str
-    :param internal_name: Name of the dimension as it appears in MDM.
-    :type internal_name: str
-    :param to_be_exported_for_shoebox: A Boolean flag indicating whether this dimension should be
-     included for the shoebox export scenario.
-    :type to_be_exported_for_shoebox: bool
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+
+
+class CustomCertificate(ProxyResource):
+    """A custom certificate.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
+    :ivar key_vault_base_uri: Base uri of the KeyVault that stores certificate. Required.
+    :vartype key_vault_base_uri: str
+    :ivar key_vault_secret_name: Certificate secret name. Required.
+    :vartype key_vault_secret_name: str
+    :ivar key_vault_secret_version: Certificate secret version.
+    :vartype key_vault_secret_version: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "key_vault_base_uri": {"required": True},
+        "key_vault_secret_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "key_vault_base_uri": {"key": "properties.keyVaultBaseUri", "type": "str"},
+        "key_vault_secret_name": {"key": "properties.keyVaultSecretName", "type": "str"},
+        "key_vault_secret_version": {"key": "properties.keyVaultSecretVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        key_vault_base_uri: str,
+        key_vault_secret_name: str,
+        key_vault_secret_version: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword key_vault_base_uri: Base uri of the KeyVault that stores certificate. Required.
+        :paramtype key_vault_base_uri: str
+        :keyword key_vault_secret_name: Certificate secret name. Required.
+        :paramtype key_vault_secret_name: str
+        :keyword key_vault_secret_version: Certificate secret version.
+        :paramtype key_vault_secret_version: str
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.provisioning_state = None
+        self.key_vault_base_uri = key_vault_base_uri
+        self.key_vault_secret_name = key_vault_secret_name
+        self.key_vault_secret_version = key_vault_secret_version
+
+
+class CustomCertificateList(_serialization.Model):
+    """Custom certificates list.
+
+    :ivar value: List of custom certificates of this resource.
+    :vartype value: list[~azure.mgmt.webpubsub.models.CustomCertificate]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "value": {"key": "value", "type": "[CustomCertificate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["_models.CustomCertificate"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of custom certificates of this resource.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.CustomCertificate]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class CustomDomain(ProxyResource):
+    """A custom domain.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
+    :vartype type: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
+    :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
+    :ivar domain_name: The custom domain name. Required.
+    :vartype domain_name: str
+    :ivar custom_certificate: Reference to a resource. Required.
+    :vartype custom_certificate: ~azure.mgmt.webpubsub.models.ResourceReference
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "domain_name": {"required": True},
+        "custom_certificate": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "domain_name": {"key": "properties.domainName", "type": "str"},
+        "custom_certificate": {"key": "properties.customCertificate", "type": "ResourceReference"},
+    }
+
+    def __init__(self, *, domain_name: str, custom_certificate: "_models.ResourceReference", **kwargs: Any) -> None:
+        """
+        :keyword domain_name: The custom domain name. Required.
+        :paramtype domain_name: str
+        :keyword custom_certificate: Reference to a resource. Required.
+        :paramtype custom_certificate: ~azure.mgmt.webpubsub.models.ResourceReference
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.provisioning_state = None
+        self.domain_name = domain_name
+        self.custom_certificate = custom_certificate
+
+
+class CustomDomainList(_serialization.Model):
+    """Custom domains list.
+
+    :ivar value: List of custom domains that bind to this resource.
+    :vartype value: list[~azure.mgmt.webpubsub.models.CustomDomain]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
+     It's null for now, added for future use.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[CustomDomain]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[List["_models.CustomDomain"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of custom domains that bind to this resource.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.CustomDomain]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class Dimension(_serialization.Model):
+    """Specifications of the Dimension of metrics.
+
+    :ivar name: The public facing name of the dimension.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the dimension.
+    :vartype display_name: str
+    :ivar internal_name: Name of the dimension as it appears in MDM.
+    :vartype internal_name: str
+    :ivar to_be_exported_for_shoebox: A Boolean flag indicating whether this dimension should be
+     included for the shoebox export scenario.
+    :vartype to_be_exported_for_shoebox: bool
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
     def __init__(
@@ -43,16 +304,27 @@ class Dimension(msrest.serialization.Model):
         display_name: Optional[str] = None,
         internal_name: Optional[str] = None,
         to_be_exported_for_shoebox: Optional[bool] = None,
-        **kwargs
-    ):
-        super(Dimension, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The public facing name of the dimension.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the dimension.
+        :paramtype display_name: str
+        :keyword internal_name: Name of the dimension as it appears in MDM.
+        :paramtype internal_name: str
+        :keyword to_be_exported_for_shoebox: A Boolean flag indicating whether this dimension should be
+         included for the shoebox export scenario.
+        :paramtype to_be_exported_for_shoebox: bool
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -60,29 +332,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -100,26 +370,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -127,63 +395,63 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.webpubsub.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.webpubsub.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.webpubsub.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class EventHandler(msrest.serialization.Model):
+class EventHandler(_serialization.Model):
     """Properties of event handler.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param url_template: Required. Gets or sets the EventHandler URL template. You can use a
-     predefined parameter {hub} and {event} inside the template, the value of the EventHandler URL
-     is dynamically calculated when the client request comes in.
+    :ivar url_template: Gets or sets the EventHandler URL template. You can use a predefined
+     parameter {hub} and {event} inside the template, the value of the EventHandler URL is
+     dynamically calculated when the client request comes in.
      For example, UrlTemplate can be ``http://example.com/api/{hub}/{event}``. The host part can't
-     contains parameters.
-    :type url_template: str
-    :param user_event_pattern: Gets or sets the matching pattern for event names.
-     There are 3 kind of patterns supported:
-    
+     contains parameters. Required.
+    :vartype url_template: str
+    :ivar user_event_pattern: Gets or sets the matching pattern for event names.
+     There are 3 kinds of patterns supported:
+
      .. code-block::
-    
-        1. "*", it to matches any event name
+
+        1. "*", it matches any event name
         2. Combine multiple events with ",", for example "event1,event2", it matches event "event1"
      and "event2"
-        3. The single event name, for example, "event1", it matches "event1".
-    :type user_event_pattern: str
-    :param system_events: Gets ot sets the list of system events.
-    :type system_events: list[str]
-    :param auth: Gets or sets the auth settings for an event handler. If not set, no auth is used.
-    :type auth: ~azure.mgmt.webpubsub.models.UpstreamAuthSettings
+        3. A single event name, for example, "event1", it matches "event1".
+    :vartype user_event_pattern: str
+    :ivar system_events: Gets or sets the list of system events.
+    :vartype system_events: list[str]
+    :ivar auth: Upstream auth settings. If not set, no auth is used for upstream messages.
+    :vartype auth: ~azure.mgmt.webpubsub.models.UpstreamAuthSettings
     """
 
     _validation = {
-        'url_template': {'required': True},
+        "url_template": {"required": True},
     }
 
     _attribute_map = {
-        'url_template': {'key': 'urlTemplate', 'type': 'str'},
-        'user_event_pattern': {'key': 'userEventPattern', 'type': 'str'},
-        'system_events': {'key': 'systemEvents', 'type': '[str]'},
-        'auth': {'key': 'auth', 'type': 'UpstreamAuthSettings'},
+        "url_template": {"key": "urlTemplate", "type": "str"},
+        "user_event_pattern": {"key": "userEventPattern", "type": "str"},
+        "system_events": {"key": "systemEvents", "type": "[str]"},
+        "auth": {"key": "auth", "type": "UpstreamAuthSettings"},
     }
 
     def __init__(
@@ -192,113 +460,342 @@ class EventHandler(msrest.serialization.Model):
         url_template: str,
         user_event_pattern: Optional[str] = None,
         system_events: Optional[List[str]] = None,
-        auth: Optional["UpstreamAuthSettings"] = None,
-        **kwargs
-    ):
-        super(EventHandler, self).__init__(**kwargs)
+        auth: Optional["_models.UpstreamAuthSettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword url_template: Gets or sets the EventHandler URL template. You can use a predefined
+         parameter {hub} and {event} inside the template, the value of the EventHandler URL is
+         dynamically calculated when the client request comes in.
+         For example, UrlTemplate can be ``http://example.com/api/{hub}/{event}``. The host part can't
+         contains parameters. Required.
+        :paramtype url_template: str
+        :keyword user_event_pattern: Gets or sets the matching pattern for event names.
+         There are 3 kinds of patterns supported:
+
+         .. code-block::
+
+            1. "*", it matches any event name
+            2. Combine multiple events with ",", for example "event1,event2", it matches event "event1"
+         and "event2"
+            3. A single event name, for example, "event1", it matches "event1".
+        :paramtype user_event_pattern: str
+        :keyword system_events: Gets or sets the list of system events.
+        :paramtype system_events: list[str]
+        :keyword auth: Upstream auth settings. If not set, no auth is used for upstream messages.
+        :paramtype auth: ~azure.mgmt.webpubsub.models.UpstreamAuthSettings
+        """
+        super().__init__(**kwargs)
         self.url_template = url_template
         self.user_event_pattern = user_event_pattern
         self.system_events = system_events
         self.auth = auth
 
 
-class LiveTraceCategory(msrest.serialization.Model):
-    """Live trace category configuration of a Microsoft.SignalRService resource.
+class EventListenerEndpoint(_serialization.Model):
+    """An endpoint specifying where Web PubSub should send events to.
 
-    :param name: Gets or sets the live trace category's name.
-     Available values: ConnectivityLogs, MessagingLogs.
-     Case insensitive.
-    :type name: str
-    :param enabled: Indicates whether or the live trace category is enabled.
-     Available values: true, false.
-     Case insensitive.
-    :type enabled: str
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EventHubEndpoint
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. "EventHub"
+    :vartype type: str or ~azure.mgmt.webpubsub.models.EventListenerEndpointDiscriminator
     """
 
+    _validation = {
+        "type": {"required": True},
+    }
+
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    _subtype_map = {"type": {"EventHub": "EventHubEndpoint"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+
+
+class EventHubEndpoint(EventListenerEndpoint):
+    """An Event Hub endpoint.
+    The managed identity of Web PubSub service must be enabled, and the identity should have the
+    "Azure Event Hubs Data sender" role to access Event Hub.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. "EventHub"
+    :vartype type: str or ~azure.mgmt.webpubsub.models.EventListenerEndpointDiscriminator
+    :ivar fully_qualified_namespace: The fully qualified namespace name of the Event Hub resource.
+     For example, "example.servicebus.windows.net". Required.
+    :vartype fully_qualified_namespace: str
+    :ivar event_hub_name: The name of the Event Hub. Required.
+    :vartype event_hub_name: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+        "fully_qualified_namespace": {"required": True},
+        "event_hub_name": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "fully_qualified_namespace": {"key": "fullyQualifiedNamespace", "type": "str"},
+        "event_hub_name": {"key": "eventHubName", "type": "str"},
+    }
+
+    def __init__(self, *, fully_qualified_namespace: str, event_hub_name: str, **kwargs: Any) -> None:
+        """
+        :keyword fully_qualified_namespace: The fully qualified namespace name of the Event Hub
+         resource. For example, "example.servicebus.windows.net". Required.
+        :paramtype fully_qualified_namespace: str
+        :keyword event_hub_name: The name of the Event Hub. Required.
+        :paramtype event_hub_name: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "EventHub"
+        self.fully_qualified_namespace = fully_qualified_namespace
+        self.event_hub_name = event_hub_name
+
+
+class EventListener(_serialization.Model):
+    """A setting defines which kinds of events should be sent to which endpoint.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar filter: A base class for event filter which determines whether an event should be sent to
+     an event listener. Required.
+    :vartype filter: ~azure.mgmt.webpubsub.models.EventListenerFilter
+    :ivar endpoint: An endpoint specifying where Web PubSub should send events to. Required.
+    :vartype endpoint: ~azure.mgmt.webpubsub.models.EventListenerEndpoint
+    """
+
+    _validation = {
+        "filter": {"required": True},
+        "endpoint": {"required": True},
+    }
+
+    _attribute_map = {
+        "filter": {"key": "filter", "type": "EventListenerFilter"},
+        "endpoint": {"key": "endpoint", "type": "EventListenerEndpoint"},
     }
 
     def __init__(
         self,
         *,
-        name: Optional[str] = None,
-        enabled: Optional[str] = None,
-        **kwargs
-    ):
-        super(LiveTraceCategory, self).__init__(**kwargs)
+        filter: "_models.EventListenerFilter",  # pylint: disable=redefined-builtin
+        endpoint: "_models.EventListenerEndpoint",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword filter: A base class for event filter which determines whether an event should be sent
+         to an event listener. Required.
+        :paramtype filter: ~azure.mgmt.webpubsub.models.EventListenerFilter
+        :keyword endpoint: An endpoint specifying where Web PubSub should send events to. Required.
+        :paramtype endpoint: ~azure.mgmt.webpubsub.models.EventListenerEndpoint
+        """
+        super().__init__(**kwargs)
+        self.filter = filter
+        self.endpoint = endpoint
+
+
+class EventListenerFilter(_serialization.Model):
+    """A base class for event filter which determines whether an event should be sent to an event
+    listener.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EventNameFilter
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. "EventName"
+    :vartype type: str or ~azure.mgmt.webpubsub.models.EventListenerFilterDiscriminator
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+    }
+
+    _subtype_map = {"type": {"EventName": "EventNameFilter"}}
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+
+
+class EventNameFilter(EventListenerFilter):
+    """Filter events by their name.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. "EventName"
+    :vartype type: str or ~azure.mgmt.webpubsub.models.EventListenerFilterDiscriminator
+    :ivar system_events: Gets or sets a list of system events. Supported events: "connected" and
+     "disconnected". Blocking event "connect" is not supported because it requires a response.
+    :vartype system_events: list[str]
+    :ivar user_event_pattern: Gets or sets a matching pattern for event names.
+     There are 3 kinds of patterns supported:
+
+     .. code-block::
+
+        1. "*", it matches any event name
+        2. Combine multiple events with ",", for example "event1,event2", it matches events
+     "event1" and "event2"
+        3. A single event name, for example, "event1", it matches "event1".
+    :vartype user_event_pattern: str
+    """
+
+    _validation = {
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "system_events": {"key": "systemEvents", "type": "[str]"},
+        "user_event_pattern": {"key": "userEventPattern", "type": "str"},
+    }
+
+    def __init__(
+        self, *, system_events: Optional[List[str]] = None, user_event_pattern: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword system_events: Gets or sets a list of system events. Supported events: "connected" and
+         "disconnected". Blocking event "connect" is not supported because it requires a response.
+        :paramtype system_events: list[str]
+        :keyword user_event_pattern: Gets or sets a matching pattern for event names.
+         There are 3 kinds of patterns supported:
+
+         .. code-block::
+
+            1. "*", it matches any event name
+            2. Combine multiple events with ",", for example "event1,event2", it matches events
+         "event1" and "event2"
+            3. A single event name, for example, "event1", it matches "event1".
+        :paramtype user_event_pattern: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "EventName"
+        self.system_events = system_events
+        self.user_event_pattern = user_event_pattern
+
+
+class LiveTraceCategory(_serialization.Model):
+    """Live trace category configuration of a Microsoft.SignalRService resource.
+
+    :ivar name: Gets or sets the live trace category's name.
+     Available values: ConnectivityLogs, MessagingLogs.
+     Case insensitive.
+    :vartype name: str
+    :ivar enabled: Indicates whether or the live trace category is enabled.
+     Available values: true, false.
+     Case insensitive.
+    :vartype enabled: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "enabled": {"key": "enabled", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Gets or sets the live trace category's name.
+         Available values: ConnectivityLogs, MessagingLogs.
+         Case insensitive.
+        :paramtype name: str
+        :keyword enabled: Indicates whether or the live trace category is enabled.
+         Available values: true, false.
+         Case insensitive.
+        :paramtype enabled: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.enabled = enabled
 
 
-class LiveTraceConfiguration(msrest.serialization.Model):
+class LiveTraceConfiguration(_serialization.Model):
     """Live trace configuration of a Microsoft.SignalRService resource.
 
-    :param enabled: Indicates whether or not enable live trace.
+    :ivar enabled: Indicates whether or not enable live trace.
      When it's set to true, live trace client can connect to the service.
      Otherwise, live trace client can't connect to the service, so that you are unable to receive
      any log, no matter what you configure in "categories".
      Available values: true, false.
      Case insensitive.
-    :type enabled: str
-    :param categories: Gets or sets the list of category configurations.
-    :type categories: list[~azure.mgmt.webpubsub.models.LiveTraceCategory]
+    :vartype enabled: str
+    :ivar categories: Gets or sets the list of category configurations.
+    :vartype categories: list[~azure.mgmt.webpubsub.models.LiveTraceCategory]
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'categories': {'key': 'categories', 'type': '[LiveTraceCategory]'},
+        "enabled": {"key": "enabled", "type": "str"},
+        "categories": {"key": "categories", "type": "[LiveTraceCategory]"},
     }
 
     def __init__(
-        self,
-        *,
-        enabled: Optional[str] = "false",
-        categories: Optional[List["LiveTraceCategory"]] = None,
-        **kwargs
-    ):
-        super(LiveTraceConfiguration, self).__init__(**kwargs)
+        self, *, enabled: str = "false", categories: Optional[List["_models.LiveTraceCategory"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword enabled: Indicates whether or not enable live trace.
+         When it's set to true, live trace client can connect to the service.
+         Otherwise, live trace client can't connect to the service, so that you are unable to receive
+         any log, no matter what you configure in "categories".
+         Available values: true, false.
+         Case insensitive.
+        :paramtype enabled: str
+        :keyword categories: Gets or sets the list of category configurations.
+        :paramtype categories: list[~azure.mgmt.webpubsub.models.LiveTraceCategory]
+        """
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.categories = categories
 
 
-class LogSpecification(msrest.serialization.Model):
+class LogSpecification(_serialization.Model):
     """Specifications of the Logs for Azure Monitoring.
 
-    :param name: Name of the log.
-    :type name: str
-    :param display_name: Localized friendly display name of the log.
-    :type display_name: str
+    :ivar name: Name of the log.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the log.
+    :vartype display_name: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(LogSpecification, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of the log.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the log.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
 
 
-class ManagedIdentity(msrest.serialization.Model):
+class ManagedIdentity(_serialization.Model):
     """A class represent managed identities used for request and response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: Represent the identity type: systemAssigned, userAssigned, None. Possible values
-     include: "None", "SystemAssigned", "UserAssigned".
-    :type type: str or ~azure.mgmt.webpubsub.models.ManagedIdentityType
-    :param user_assigned_identities: Get or set the user assigned identities.
-    :type user_assigned_identities: dict[str,
+    :ivar type: Represents the identity type: systemAssigned, userAssigned, None. Known values are:
+     "None", "SystemAssigned", and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.webpubsub.models.ManagedIdentityType
+    :ivar user_assigned_identities: Get or set the user assigned identities.
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.webpubsub.models.UserAssignedIdentityProperty]
     :ivar principal_id: Get the principal id for the system assigned identity.
      Only be used in response.
@@ -309,90 +806,98 @@ class ManagedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentityProperty}'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentityProperty}"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ManagedIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentityProperty"]] = None,
-        **kwargs
-    ):
-        super(ManagedIdentity, self).__init__(**kwargs)
+        type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentityProperty"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Represents the identity type: systemAssigned, userAssigned, None. Known values
+         are: "None", "SystemAssigned", and "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.webpubsub.models.ManagedIdentityType
+        :keyword user_assigned_identities: Get or set the user assigned identities.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.webpubsub.models.UserAssignedIdentityProperty]
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
         self.principal_id = None
         self.tenant_id = None
 
 
-class ManagedIdentitySettings(msrest.serialization.Model):
+class ManagedIdentitySettings(_serialization.Model):
     """Managed identity settings for upstream.
 
-    :param resource: The Resource indicating the App ID URI of the target resource.
+    :ivar resource: The Resource indicating the App ID URI of the target resource.
      It also appears in the aud (audience) claim of the issued token.
-    :type resource: str
+    :vartype resource: str
     """
 
     _attribute_map = {
-        'resource': {'key': 'resource', 'type': 'str'},
+        "resource": {"key": "resource", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource: Optional[str] = None,
-        **kwargs
-    ):
-        super(ManagedIdentitySettings, self).__init__(**kwargs)
+    def __init__(self, *, resource: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource: The Resource indicating the App ID URI of the target resource.
+         It also appears in the aud (audience) claim of the issued token.
+        :paramtype resource: str
+        """
+        super().__init__(**kwargs)
         self.resource = resource
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):
     """Specifications of the Metrics for Azure Monitoring.
 
-    :param name: Name of the metric.
-    :type name: str
-    :param display_name: Localized friendly display name of the metric.
-    :type display_name: str
-    :param display_description: Localized friendly description of the metric.
-    :type display_description: str
-    :param unit: The unit that makes sense for the metric.
-    :type unit: str
-    :param aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
+    :ivar name: Name of the metric.
+    :vartype name: str
+    :ivar display_name: Localized friendly display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: Localized friendly description of the metric.
+    :vartype display_description: str
+    :ivar unit: The unit that makes sense for the metric.
+    :vartype unit: str
+    :ivar aggregation_type: Only provide one value for this field. Valid values: Average, Minimum,
      Maximum, Total, Count.
-    :type aggregation_type: str
-    :param fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+    :vartype aggregation_type: str
+    :ivar fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
      duration where no metric is emitted/published.
      Ex. a metric that returns the number of times a particular error code was emitted. The error
      code may not appear
      often, instead of the RP publishing 0, Shoebox can auto fill in 0s for time periods where
      nothing was emitted.
-    :type fill_gap_with_zero: str
-    :param category: The name of the metric category that the metric belongs to. A metric can only
+    :vartype fill_gap_with_zero: str
+    :ivar category: The name of the metric category that the metric belongs to. A metric can only
      belong to a single category.
-    :type category: str
-    :param dimensions: The dimensions of the metrics.
-    :type dimensions: list[~azure.mgmt.webpubsub.models.Dimension]
+    :vartype category: str
+    :ivar dimensions: The dimensions of the metrics.
+    :vartype dimensions: list[~azure.mgmt.webpubsub.models.Dimension]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[Dimension]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
     }
 
     def __init__(
@@ -405,10 +910,35 @@ class MetricSpecification(msrest.serialization.Model):
         aggregation_type: Optional[str] = None,
         fill_gap_with_zero: Optional[str] = None,
         category: Optional[str] = None,
-        dimensions: Optional[List["Dimension"]] = None,
-        **kwargs
-    ):
-        super(MetricSpecification, self).__init__(**kwargs)
+        dimensions: Optional[List["_models.Dimension"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the metric.
+        :paramtype name: str
+        :keyword display_name: Localized friendly display name of the metric.
+        :paramtype display_name: str
+        :keyword display_description: Localized friendly description of the metric.
+        :paramtype display_description: str
+        :keyword unit: The unit that makes sense for the metric.
+        :paramtype unit: str
+        :keyword aggregation_type: Only provide one value for this field. Valid values: Average,
+         Minimum, Maximum, Total, Count.
+        :paramtype aggregation_type: str
+        :keyword fill_gap_with_zero: Optional. If set to true, then zero will be returned for time
+         duration where no metric is emitted/published.
+         Ex. a metric that returns the number of times a particular error code was emitted. The error
+         code may not appear
+         often, instead of the RP publishing 0, Shoebox can auto fill in 0s for time periods where
+         nothing was emitted.
+        :paramtype fill_gap_with_zero: str
+        :keyword category: The name of the metric category that the metric belongs to. A metric can
+         only belong to a single category.
+        :paramtype category: str
+        :keyword dimensions: The dimensions of the metrics.
+        :paramtype dimensions: list[~azure.mgmt.webpubsub.models.Dimension]
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -419,21 +949,22 @@ class MetricSpecification(msrest.serialization.Model):
         self.dimensions = dimensions
 
 
-class NameAvailability(msrest.serialization.Model):
-    """Result of the request to check name availability. It contains a flag and possible reason of failure.
+class NameAvailability(_serialization.Model):
+    """Result of the request to check name availability. It contains a flag and possible reason of
+    failure.
 
-    :param name_available: Indicates whether the name is available or not.
-    :type name_available: bool
-    :param reason: The reason of the availability. Required if name is not available.
-    :type reason: str
-    :param message: The message of the operation.
-    :type message: str
+    :ivar name_available: Indicates whether the name is available or not.
+    :vartype name_available: bool
+    :ivar reason: The reason of the availability. Required if name is not available.
+    :vartype reason: str
+    :ivar message: The message of the operation.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
@@ -442,98 +973,115 @@ class NameAvailability(msrest.serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
-        super(NameAvailability, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name_available: Indicates whether the name is available or not.
+        :paramtype name_available: bool
+        :keyword reason: The reason of the availability. Required if name is not available.
+        :paramtype reason: str
+        :keyword message: The message of the operation.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message
 
 
-class NameAvailabilityParameters(msrest.serialization.Model):
+class NameAvailabilityParameters(_serialization.Model):
     """Data POST-ed to the nameAvailability action.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The resource type. Can be "Microsoft.SignalRService/SignalR" or
-     "Microsoft.SignalRService/webPubSub".
-    :type type: str
-    :param name: Required. The resource name to validate. e.g."my-resource-name".
-    :type name: str
+    :ivar type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
+     "Microsoft.SignalRService/webPubSub". Required.
+    :vartype type: str
+    :ivar name: The resource name to validate. e.g."my-resource-name". Required.
+    :vartype name: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: str,
-        name: str,
-        **kwargs
-    ):
-        super(NameAvailabilityParameters, self).__init__(**kwargs)
+    def __init__(self, *, type: str, name: str, **kwargs: Any) -> None:
+        """
+        :keyword type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
+         "Microsoft.SignalRService/webPubSub". Required.
+        :paramtype type: str
+        :keyword name: The resource name to validate. e.g."my-resource-name". Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.name = name
 
 
-class NetworkACL(msrest.serialization.Model):
+class NetworkACL(_serialization.Model):
     """Network ACL.
 
-    :param allow: Allowed request types. The value can be one or more of: ClientConnection,
+    :ivar allow: Allowed request types. The value can be one or more of: ClientConnection,
      ServerConnection, RESTAPI.
-    :type allow: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
-    :param deny: Denied request types. The value can be one or more of: ClientConnection,
+    :vartype allow: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+    :ivar deny: Denied request types. The value can be one or more of: ClientConnection,
      ServerConnection, RESTAPI.
-    :type deny: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+    :vartype deny: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
     """
 
     _attribute_map = {
-        'allow': {'key': 'allow', 'type': '[str]'},
-        'deny': {'key': 'deny', 'type': '[str]'},
+        "allow": {"key": "allow", "type": "[str]"},
+        "deny": {"key": "deny", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        allow: Optional[List[Union[str, "WebPubSubRequestType"]]] = None,
-        deny: Optional[List[Union[str, "WebPubSubRequestType"]]] = None,
-        **kwargs
-    ):
-        super(NetworkACL, self).__init__(**kwargs)
+        allow: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
+        deny: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword allow: Allowed request types. The value can be one or more of: ClientConnection,
+         ServerConnection, RESTAPI.
+        :paramtype allow: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+        :keyword deny: Denied request types. The value can be one or more of: ClientConnection,
+         ServerConnection, RESTAPI.
+        :paramtype deny: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+        """
+        super().__init__(**kwargs)
         self.allow = allow
         self.deny = deny
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """REST API operation supported by resource provider.
 
-    :param name: Name of the operation with format: {provider}/{resource}/{operation}.
-    :type name: str
-    :param is_data_action: If the operation is a data action. (for data plane rbac).
-    :type is_data_action: bool
-    :param display: The object that describes the operation.
-    :type display: ~azure.mgmt.webpubsub.models.OperationDisplay
-    :param origin: Optional. The intended executor of the operation; governs the display of the
+    :ivar name: Name of the operation with format: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar is_data_action: If the operation is a data action. (for data plane rbac).
+    :vartype is_data_action: bool
+    :ivar display: The object that describes a operation.
+    :vartype display: ~azure.mgmt.webpubsub.models.OperationDisplay
+    :ivar origin: Optional. The intended executor of the operation; governs the display of the
      operation in the RBAC UX and the audit logs UX.
-    :type origin: str
-    :param properties: Extra properties for the operation.
-    :type properties: ~azure.mgmt.webpubsub.models.OperationProperties
+    :vartype origin: str
+    :ivar properties: Extra Operation properties.
+    :vartype properties: ~azure.mgmt.webpubsub.models.OperationProperties
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'OperationProperties'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "OperationProperties"},
     }
 
     def __init__(
@@ -541,12 +1089,25 @@ class Operation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional["OperationProperties"] = None,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+        properties: Optional["_models.OperationProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the operation with format: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword is_data_action: If the operation is a data action. (for data plane rbac).
+        :paramtype is_data_action: bool
+        :keyword display: The object that describes a operation.
+        :paramtype display: ~azure.mgmt.webpubsub.models.OperationDisplay
+        :keyword origin: Optional. The intended executor of the operation; governs the display of the
+         operation in the RBAC UX and the audit logs UX.
+        :paramtype origin: str
+        :keyword properties: Extra Operation properties.
+        :paramtype properties: ~azure.mgmt.webpubsub.models.OperationProperties
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.display = display
@@ -554,24 +1115,24 @@ class Operation(msrest.serialization.Model):
         self.properties = properties
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that describes a operation.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param resource: Resource type on which the operation is performed.
-    :type resource: str
-    :param operation: The localized friendly name for the operation.
-    :type operation: str
-    :param description: The localized friendly description for the operation.
-    :type description: str
+    :ivar provider: Friendly name of the resource provider.
+    :vartype provider: str
+    :ivar resource: Resource type on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: The localized friendly name for the operation.
+    :vartype operation: str
+    :ivar description: The localized friendly description for the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -581,82 +1142,95 @@ class OperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword provider: Friendly name of the resource provider.
+        :paramtype provider: str
+        :keyword resource: Resource type on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: The localized friendly name for the operation.
+        :paramtype operation: str
+        :keyword description: The localized friendly description for the operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """Result of the request to list REST API operations. It contains a list of operations.
 
-    :param value: List of operations supported by the resource provider.
-    :type value: list[~azure.mgmt.webpubsub.models.Operation]
-    :param next_link: The URL the client should use to fetch the next page (per server side
-     paging).
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.webpubsub.models.Operation]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationList, self).__init__(**kwargs)
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of operations supported by the resource provider.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.Operation]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationProperties(msrest.serialization.Model):
+class OperationProperties(_serialization.Model):
     """Extra Operation properties.
 
-    :param service_specification: The service specifications.
-    :type service_specification: ~azure.mgmt.webpubsub.models.ServiceSpecification
+    :ivar service_specification: An object that describes a specification.
+    :vartype service_specification: ~azure.mgmt.webpubsub.models.ServiceSpecification
     """
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
     def __init__(
-        self,
-        *,
-        service_specification: Optional["ServiceSpecification"] = None,
-        **kwargs
-    ):
-        super(OperationProperties, self).__init__(**kwargs)
+        self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword service_specification: An object that describes a specification.
+        :paramtype service_specification: ~azure.mgmt.webpubsub.models.ServiceSpecification
+        """
+        super().__init__(**kwargs)
         self.service_specification = service_specification
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """Private endpoint.
 
-    :param id: Full qualified Id of the private endpoint.
-    :type id: str
+    :ivar id: Full qualified Id of the private endpoint.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateEndpoint, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Full qualified Id of the private endpoint.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -665,103 +1239,46 @@ class PrivateEndpointACL(NetworkACL):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param allow: Allowed request types. The value can be one or more of: ClientConnection,
+    :ivar allow: Allowed request types. The value can be one or more of: ClientConnection,
      ServerConnection, RESTAPI.
-    :type allow: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
-    :param deny: Denied request types. The value can be one or more of: ClientConnection,
+    :vartype allow: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+    :ivar deny: Denied request types. The value can be one or more of: ClientConnection,
      ServerConnection, RESTAPI.
-    :type deny: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
-    :param name: Required. Name of the private endpoint connection.
-    :type name: str
+    :vartype deny: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+    :ivar name: Name of the private endpoint connection. Required.
+    :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'allow': {'key': 'allow', 'type': '[str]'},
-        'deny': {'key': 'deny', 'type': '[str]'},
-        'name': {'key': 'name', 'type': 'str'},
+        "allow": {"key": "allow", "type": "[str]"},
+        "deny": {"key": "deny", "type": "[str]"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        allow: Optional[List[Union[str, "WebPubSubRequestType"]]] = None,
-        deny: Optional[List[Union[str, "WebPubSubRequestType"]]] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointACL, self).__init__(allow=allow, deny=deny, **kwargs)
+        allow: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
+        deny: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword allow: Allowed request types. The value can be one or more of: ClientConnection,
+         ServerConnection, RESTAPI.
+        :paramtype allow: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+        :keyword deny: Denied request types. The value can be one or more of: ClientConnection,
+         ServerConnection, RESTAPI.
+        :paramtype deny: list[str or ~azure.mgmt.webpubsub.models.WebPubSubRequestType]
+        :keyword name: Name of the private endpoint connection. Required.
+        :paramtype name: str
+        """
+        super().__init__(allow=allow, deny=deny, **kwargs)
         self.name = name
-
-
-class Resource(msrest.serialization.Model):
-    """The core properties of ARM resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -777,47 +1294,58 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
-    :ivar provisioning_state: Provisioning state of the private endpoint connection. Possible
-     values include: "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating",
-     "Updating", "Deleting", "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
-    :param private_endpoint: Private endpoint associated with the private endpoint connection.
-    :type private_endpoint: ~azure.mgmt.webpubsub.models.PrivateEndpoint
+    :ivar private_endpoint: Private endpoint.
+    :vartype private_endpoint: ~azure.mgmt.webpubsub.models.PrivateEndpoint
     :ivar group_ids: Group IDs.
     :vartype group_ids: list[str]
-    :param private_link_service_connection_state: Connection state.
-    :type private_link_service_connection_state:
+    :ivar private_link_service_connection_state: Connection state of the private endpoint
+     connection.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.webpubsub.models.PrivateLinkServiceConnectionState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'group_ids': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "group_ids": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint: Private endpoint.
+        :paramtype private_endpoint: ~azure.mgmt.webpubsub.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: Connection state of the private endpoint
+         connection.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.webpubsub.models.PrivateLinkServiceConnectionState
+        """
+        super().__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
         self.private_endpoint = private_endpoint
@@ -825,30 +1353,38 @@ class PrivateEndpointConnection(ProxyResource):
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
-class PrivateEndpointConnectionList(msrest.serialization.Model):
+class PrivateEndpointConnectionList(_serialization.Model):
     """A list of private endpoint connections.
 
-    :param value: The list of the private endpoint connections.
-    :type value: list[~azure.mgmt.webpubsub.models.PrivateEndpointConnection]
-    :param next_link: Request URL that can be used to query next page of private endpoint
+    :ivar value: The list of the private endpoint connections.
+    :vartype value: list[~azure.mgmt.webpubsub.models.PrivateEndpointConnection]
+    :ivar next_link: Request URL that can be used to query next page of private endpoint
      connections. Returned when the total number of requested private endpoint connections exceed
      maximum page size.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
+        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnectionList, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of the private endpoint connections.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.PrivateEndpointConnection]
+        :keyword next_link: Request URL that can be used to query next page of private endpoint
+         connections. Returned when the total number of requested private endpoint connections exceed
+         maximum page size.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -864,32 +1400,35 @@ class PrivateLinkResource(ProxyResource):
     :vartype name: str
     :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
     :vartype type: str
-    :param group_id: Group Id of the private link resource.
-    :type group_id: str
-    :param required_members: Required members of the private link resource.
-    :type required_members: list[str]
-    :param required_zone_names: Required private DNS zone names.
-    :type required_zone_names: list[str]
-    :param shareable_private_link_resource_types: The list of resources that are onboarded to
+    :ivar group_id: Group Id of the private link resource.
+    :vartype group_id: str
+    :ivar required_members: Required members of the private link resource.
+    :vartype required_members: list[str]
+    :ivar required_zone_names: Required private DNS zone names.
+    :vartype required_zone_names: list[str]
+    :ivar shareable_private_link_resource_types: The list of resources that are onboarded to
      private link service.
-    :type shareable_private_link_resource_types:
+    :vartype shareable_private_link_resource_types:
      list[~azure.mgmt.webpubsub.models.ShareablePrivateLinkResourceType]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
-        'shareable_private_link_resource_types': {'key': 'properties.shareablePrivateLinkResourceTypes', 'type': '[ShareablePrivateLinkResourceType]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
+        "shareable_private_link_resource_types": {
+            "key": "properties.shareablePrivateLinkResourceTypes",
+            "type": "[ShareablePrivateLinkResourceType]",
+        },
     }
 
     def __init__(
@@ -898,201 +1437,271 @@ class PrivateLinkResource(ProxyResource):
         group_id: Optional[str] = None,
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
-        shareable_private_link_resource_types: Optional[List["ShareablePrivateLinkResourceType"]] = None,
-        **kwargs
-    ):
-        super(PrivateLinkResource, self).__init__(**kwargs)
+        shareable_private_link_resource_types: Optional[List["_models.ShareablePrivateLinkResourceType"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword group_id: Group Id of the private link resource.
+        :paramtype group_id: str
+        :keyword required_members: Required members of the private link resource.
+        :paramtype required_members: list[str]
+        :keyword required_zone_names: Required private DNS zone names.
+        :paramtype required_zone_names: list[str]
+        :keyword shareable_private_link_resource_types: The list of resources that are onboarded to
+         private link service.
+        :paramtype shareable_private_link_resource_types:
+         list[~azure.mgmt.webpubsub.models.ShareablePrivateLinkResourceType]
+        """
+        super().__init__(**kwargs)
         self.group_id = group_id
         self.required_members = required_members
         self.required_zone_names = required_zone_names
         self.shareable_private_link_resource_types = shareable_private_link_resource_types
 
 
-class PrivateLinkResourceList(msrest.serialization.Model):
+class PrivateLinkResourceList(_serialization.Model):
     """Contains a list of PrivateLinkResource and a possible link to query more results.
 
-    :param value: List of PrivateLinkResource.
-    :type value: list[~azure.mgmt.webpubsub.models.PrivateLinkResource]
-    :param next_link: The URL the client should use to fetch the next page (per server side
-     paging).
+    :ivar value: List of PrivateLinkResource.
+    :vartype value: list[~azure.mgmt.webpubsub.models.PrivateLinkResource]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["PrivateLinkResource"]] = None,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateLinkResourceList, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of PrivateLinkResource.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.PrivateLinkResource]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """Connection state of the private endpoint connection.
 
-    :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Possible values include: "Pending", "Approved", "Rejected", "Disconnected".
-    :type status: str or ~azure.mgmt.webpubsub.models.PrivateLinkServiceConnectionStatus
-    :param description: The reason for approval/rejection of the connection.
-    :type description: str
-    :param actions_required: A message indicating if changes on the service provider require any
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", "Rejected", and "Disconnected".
+    :vartype status: str or ~azure.mgmt.webpubsub.models.PrivateLinkServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :type actions_required: str
+    :vartype actions_required: str
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "PrivateLinkServiceConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.PrivateLinkServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Known values are: "Pending", "Approved", "Rejected", and "Disconnected".
+        :paramtype status: str or ~azure.mgmt.webpubsub.models.PrivateLinkServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
 
 
-class RegenerateKeyParameters(msrest.serialization.Model):
+class RegenerateKeyParameters(_serialization.Model):
     """Parameters describes the request to regenerate access keys.
 
-    :param key_type: The keyType to regenerate. Must be either 'primary' or
-     'secondary'(case-insensitive). Possible values include: "Primary", "Secondary", "Salt".
-    :type key_type: str or ~azure.mgmt.webpubsub.models.KeyType
+    :ivar key_type: The type of access key. Known values are: "Primary", "Secondary", and "Salt".
+    :vartype key_type: str or ~azure.mgmt.webpubsub.models.KeyType
     """
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'str'},
+        "key_type": {"key": "keyType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_type: Optional[Union[str, "KeyType"]] = None,
-        **kwargs
-    ):
-        super(RegenerateKeyParameters, self).__init__(**kwargs)
+    def __init__(self, *, key_type: Optional[Union[str, "_models.KeyType"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword key_type: The type of access key. Known values are: "Primary", "Secondary", and
+         "Salt".
+        :paramtype key_type: str or ~azure.mgmt.webpubsub.models.KeyType
+        """
+        super().__init__(**kwargs)
         self.key_type = key_type
 
 
-class ResourceLogCategory(msrest.serialization.Model):
+class ResourceLogCategory(_serialization.Model):
     """Resource log category configuration of a Microsoft.SignalRService resource.
 
-    :param name: Gets or sets the resource log category's name.
+    :ivar name: Gets or sets the resource log category's name.
      Available values: ConnectivityLogs, MessagingLogs.
      Case insensitive.
-    :type name: str
-    :param enabled: Indicates whether or the resource log category is enabled.
+    :vartype name: str
+    :ivar enabled: Indicates whether or the resource log category is enabled.
      Available values: true, false.
      Case insensitive.
-    :type enabled: str
+    :vartype enabled: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "enabled": {"key": "enabled", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        enabled: Optional[str] = None,
-        **kwargs
-    ):
-        super(ResourceLogCategory, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Gets or sets the resource log category's name.
+         Available values: ConnectivityLogs, MessagingLogs.
+         Case insensitive.
+        :paramtype name: str
+        :keyword enabled: Indicates whether or the resource log category is enabled.
+         Available values: true, false.
+         Case insensitive.
+        :paramtype enabled: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.enabled = enabled
 
 
-class ResourceLogConfiguration(msrest.serialization.Model):
+class ResourceLogConfiguration(_serialization.Model):
     """Resource log configuration of a Microsoft.SignalRService resource.
 
-    :param categories: Gets or sets the list of category configurations.
-    :type categories: list[~azure.mgmt.webpubsub.models.ResourceLogCategory]
+    :ivar categories: Gets or sets the list of category configurations.
+    :vartype categories: list[~azure.mgmt.webpubsub.models.ResourceLogCategory]
     """
 
     _attribute_map = {
-        'categories': {'key': 'categories', 'type': '[ResourceLogCategory]'},
+        "categories": {"key": "categories", "type": "[ResourceLogCategory]"},
     }
 
-    def __init__(
-        self,
-        *,
-        categories: Optional[List["ResourceLogCategory"]] = None,
-        **kwargs
-    ):
-        super(ResourceLogConfiguration, self).__init__(**kwargs)
+    def __init__(self, *, categories: Optional[List["_models.ResourceLogCategory"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword categories: Gets or sets the list of category configurations.
+        :paramtype categories: list[~azure.mgmt.webpubsub.models.ResourceLogCategory]
+        """
+        super().__init__(**kwargs)
         self.categories = categories
 
 
-class ResourceSku(msrest.serialization.Model):
+class ResourceReference(_serialization.Model):
+    """Reference to a resource.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+
+
+class ResourceSku(_serialization.Model):
     """The billing information of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Required.
-    
-     Allowed values: Standard_S1, Free_F1.
-    :type name: str
-    :param tier: Optional tier of this particular SKU. 'Standard' or 'Free'.
-    
-     ``Basic`` is deprecated, use ``Standard`` instead. Possible values include: "Free", "Basic",
-     "Standard", "Premium".
-    :type tier: str or ~azure.mgmt.webpubsub.models.WebPubSubSkuTier
+    :ivar name: The name of the SKU. Required.
+
+     Allowed values: Standard_S1, Free_F1, Premium_P1. Required.
+    :vartype name: str
+    :ivar tier: Optional tier of this particular SKU. 'Standard' or 'Free'.
+
+     ``Basic`` is deprecated, use ``Standard`` instead. Known values are: "Free", "Basic",
+     "Standard", and "Premium".
+    :vartype tier: str or ~azure.mgmt.webpubsub.models.WebPubSubSkuTier
     :ivar size: Not used. Retained for future use.
     :vartype size: str
     :ivar family: Not used. Retained for future use.
     :vartype family: str
-    :param capacity: Optional, integer. The unit count of the resource. 1 by default.
-    
+    :ivar capacity: Optional, integer. The unit count of the resource. 1 by default.
+
      If present, following values are allowed:
-         Free: 1
-         Standard: 1,2,5,10,20,50,100.
-    :type capacity: int
+         Free: 1;
+         Standard: 1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;
+         Premium:  1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;.
+    :vartype capacity: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'size': {'readonly': True},
-        'family': {'readonly': True},
+        "name": {"required": True},
+        "size": {"readonly": True},
+        "family": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'size': {'key': 'size', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "size": {"key": "size", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        tier: Optional[Union[str, "WebPubSubSkuTier"]] = None,
+        tier: Optional[Union[str, "_models.WebPubSubSkuTier"]] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
-        super(ResourceSku, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the SKU. Required.
+
+         Allowed values: Standard_S1, Free_F1, Premium_P1. Required.
+        :paramtype name: str
+        :keyword tier: Optional tier of this particular SKU. 'Standard' or 'Free'.
+
+         ``Basic`` is deprecated, use ``Standard`` instead. Known values are: "Free", "Basic",
+         "Standard", and "Premium".
+        :paramtype tier: str or ~azure.mgmt.webpubsub.models.WebPubSubSkuTier
+        :keyword capacity: Optional, integer. The unit count of the resource. 1 by default.
+
+         If present, following values are allowed:
+             Free: 1;
+             Standard: 1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;
+             Premium:  1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100;.
+        :paramtype capacity: int
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.size = None
@@ -1100,50 +1709,56 @@ class ResourceSku(msrest.serialization.Model):
         self.capacity = capacity
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """An object that describes a specification.
 
-    :param metric_specifications: Specifications of the Metrics for Azure Monitoring.
-    :type metric_specifications: list[~azure.mgmt.webpubsub.models.MetricSpecification]
-    :param log_specifications: Specifications of the Logs for Azure Monitoring.
-    :type log_specifications: list[~azure.mgmt.webpubsub.models.LogSpecification]
+    :ivar metric_specifications: Specifications of the Metrics for Azure Monitoring.
+    :vartype metric_specifications: list[~azure.mgmt.webpubsub.models.MetricSpecification]
+    :ivar log_specifications: Specifications of the Logs for Azure Monitoring.
+    :vartype log_specifications: list[~azure.mgmt.webpubsub.models.LogSpecification]
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
     }
 
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
-        log_specifications: Optional[List["LogSpecification"]] = None,
-        **kwargs
-    ):
-        super(ServiceSpecification, self).__init__(**kwargs)
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword metric_specifications: Specifications of the Metrics for Azure Monitoring.
+        :paramtype metric_specifications: list[~azure.mgmt.webpubsub.models.MetricSpecification]
+        :keyword log_specifications: Specifications of the Logs for Azure Monitoring.
+        :paramtype log_specifications: list[~azure.mgmt.webpubsub.models.LogSpecification]
+        """
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
         self.log_specifications = log_specifications
 
 
-class ShareablePrivateLinkResourceProperties(msrest.serialization.Model):
+class ShareablePrivateLinkResourceProperties(_serialization.Model):
     """Describes the properties of a resource type that has been onboarded to private link service.
 
-    :param description: The description of the resource type that has been onboarded to private
-     link service.
-    :type description: str
-    :param group_id: The resource provider group id for the resource that has been onboarded to
+    :ivar description: The description of the resource type that has been onboarded to private link
+     service.
+    :vartype description: str
+    :ivar group_id: The resource provider group id for the resource that has been onboarded to
      private link service.
-    :type group_id: str
-    :param type: The resource provider type for the resource that has been onboarded to private
-     link service.
-    :type type: str
+    :vartype group_id: str
+    :ivar type: The resource provider type for the resource that has been onboarded to private link
+     service.
+    :vartype type: str
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -1152,37 +1767,55 @@ class ShareablePrivateLinkResourceProperties(msrest.serialization.Model):
         description: Optional[str] = None,
         group_id: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
-        super(ShareablePrivateLinkResourceProperties, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: The description of the resource type that has been onboarded to private
+         link service.
+        :paramtype description: str
+        :keyword group_id: The resource provider group id for the resource that has been onboarded to
+         private link service.
+        :paramtype group_id: str
+        :keyword type: The resource provider type for the resource that has been onboarded to private
+         link service.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.description = description
         self.group_id = group_id
         self.type = type
 
 
-class ShareablePrivateLinkResourceType(msrest.serialization.Model):
+class ShareablePrivateLinkResourceType(_serialization.Model):
     """Describes a  resource type that has been onboarded to private link service.
 
-    :param name: The name of the resource type that has been onboarded to private link service.
-    :type name: str
-    :param properties: Describes the properties of a resource type that has been onboarded to
+    :ivar name: The name of the resource type that has been onboarded to private link service.
+    :vartype name: str
+    :ivar properties: Describes the properties of a resource type that has been onboarded to
      private link service.
-    :type properties: ~azure.mgmt.webpubsub.models.ShareablePrivateLinkResourceProperties
+    :vartype properties: ~azure.mgmt.webpubsub.models.ShareablePrivateLinkResourceProperties
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ShareablePrivateLinkResourceProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "ShareablePrivateLinkResourceProperties"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        properties: Optional["ShareablePrivateLinkResourceProperties"] = None,
-        **kwargs
-    ):
-        super(ShareablePrivateLinkResourceType, self).__init__(**kwargs)
+        properties: Optional["_models.ShareablePrivateLinkResourceProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the resource type that has been onboarded to private link service.
+        :paramtype name: str
+        :keyword properties: Describes the properties of a resource type that has been onboarded to
+         private link service.
+        :paramtype properties: ~azure.mgmt.webpubsub.models.ShareablePrivateLinkResourceProperties
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.properties = properties
 
@@ -1200,43 +1833,42 @@ class SharedPrivateLinkResource(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
-    :param group_id: The group id from the provider of resource the shared private link resource is
+    :ivar group_id: The group id from the provider of resource the shared private link resource is
      for.
-    :type group_id: str
-    :param private_link_resource_id: The resource id of the resource the shared private link
+    :vartype group_id: str
+    :ivar private_link_resource_id: The resource id of the resource the shared private link
      resource is for.
-    :type private_link_resource_id: str
-    :ivar provisioning_state: Provisioning state of the shared private link resource. Possible
-     values include: "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating",
-     "Updating", "Deleting", "Moving".
+    :vartype private_link_resource_id: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
-    :param request_message: The request message for requesting approval of the shared private link
+    :ivar request_message: The request message for requesting approval of the shared private link
      resource.
-    :type request_message: str
-    :ivar status: Status of the shared private link resource. Possible values include: "Pending",
-     "Approved", "Rejected", "Disconnected", "Timeout".
+    :vartype request_message: str
+    :ivar status: Status of the shared private link resource. Known values are: "Pending",
+     "Approved", "Rejected", "Disconnected", and "Timeout".
     :vartype status: str or ~azure.mgmt.webpubsub.models.SharedPrivateLinkResourceStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'request_message': {'key': 'properties.requestMessage', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "private_link_resource_id": {"key": "properties.privateLinkResourceId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "request_message": {"key": "properties.requestMessage", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
     }
 
     def __init__(
@@ -1245,9 +1877,20 @@ class SharedPrivateLinkResource(ProxyResource):
         group_id: Optional[str] = None,
         private_link_resource_id: Optional[str] = None,
         request_message: Optional[str] = None,
-        **kwargs
-    ):
-        super(SharedPrivateLinkResource, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword group_id: The group id from the provider of resource the shared private link resource
+         is for.
+        :paramtype group_id: str
+        :keyword private_link_resource_id: The resource id of the resource the shared private link
+         resource is for.
+        :paramtype private_link_resource_id: str
+        :keyword request_message: The request message for requesting approval of the shared private
+         link resource.
+        :paramtype request_message: str
+        """
+        super().__init__(**kwargs)
         self.system_data = None
         self.group_id = group_id
         self.private_link_resource_id = private_link_resource_id
@@ -1256,70 +1899,92 @@ class SharedPrivateLinkResource(ProxyResource):
         self.status = None
 
 
-class SharedPrivateLinkResourceList(msrest.serialization.Model):
+class SharedPrivateLinkResourceList(_serialization.Model):
     """A list of shared private link resources.
 
-    :param value: The list of the shared private link resources.
-    :type value: list[~azure.mgmt.webpubsub.models.SharedPrivateLinkResource]
-    :param next_link: Request URL that can be used to query next page of private endpoint
+    :ivar value: The list of the shared private link resources.
+    :vartype value: list[~azure.mgmt.webpubsub.models.SharedPrivateLinkResource]
+    :ivar next_link: Request URL that can be used to query next page of private endpoint
      connections. Returned when the total number of requested private endpoint connections exceed
      maximum page size.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedPrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedPrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SharedPrivateLinkResource"]] = None,
+        value: Optional[List["_models.SharedPrivateLinkResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(SharedPrivateLinkResourceList, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of the shared private link resources.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.SharedPrivateLinkResource]
+        :keyword next_link: Request URL that can be used to query next page of private endpoint
+         connections. Returned when the total number of requested private endpoint connections exceed
+         maximum page size.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SignalRServiceUsage(msrest.serialization.Model):
+class SignalRServiceUsage(_serialization.Model):
     """Object that describes a specific usage of the resources.
 
-    :param id: Fully qualified ARM resource id.
-    :type id: str
-    :param current_value: Current value for the usage quota.
-    :type current_value: long
-    :param limit: The maximum permitted value for the usage quota. If there is no limit, this value
+    :ivar id: Fully qualified ARM resource id.
+    :vartype id: str
+    :ivar current_value: Current value for the usage quota.
+    :vartype current_value: int
+    :ivar limit: The maximum permitted value for the usage quota. If there is no limit, this value
      will be -1.
-    :type limit: long
-    :param name: Localizable String object containing the name and a localized value.
-    :type name: ~azure.mgmt.webpubsub.models.SignalRServiceUsageName
-    :param unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
+    :vartype limit: int
+    :ivar name: Localizable String object containing the name and a localized value.
+    :vartype name: ~azure.mgmt.webpubsub.models.SignalRServiceUsageName
+    :ivar unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
      Seconds, Percent, CountPerSecond, BytesPerSecond.
-    :type unit: str
+    :vartype unit: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'SignalRServiceUsageName'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "SignalRServiceUsageName"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         current_value: Optional[int] = None,
         limit: Optional[int] = None,
-        name: Optional["SignalRServiceUsageName"] = None,
+        name: Optional["_models.SignalRServiceUsageName"] = None,
         unit: Optional[str] = None,
-        **kwargs
-    ):
-        super(SignalRServiceUsage, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified ARM resource id.
+        :paramtype id: str
+        :keyword current_value: Current value for the usage quota.
+        :paramtype current_value: int
+        :keyword limit: The maximum permitted value for the usage quota. If there is no limit, this
+         value will be -1.
+        :paramtype limit: int
+        :keyword name: Localizable String object containing the name and a localized value.
+        :paramtype name: ~azure.mgmt.webpubsub.models.SignalRServiceUsageName
+        :keyword unit: Representing the units of the usage quota. Possible values are: Count, Bytes,
+         Seconds, Percent, CountPerSecond, BytesPerSecond.
+        :paramtype unit: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.current_value = current_value
         self.limit = limit
@@ -1327,96 +1992,101 @@ class SignalRServiceUsage(msrest.serialization.Model):
         self.unit = unit
 
 
-class SignalRServiceUsageList(msrest.serialization.Model):
+class SignalRServiceUsageList(_serialization.Model):
     """Object that includes an array of the resource usages and a possible link for next set.
 
-    :param value: List of the resource usages.
-    :type value: list[~azure.mgmt.webpubsub.models.SignalRServiceUsage]
-    :param next_link: The URL the client should use to fetch the next page (per server side
-     paging).
+    :ivar value: List of the resource usages.
+    :vartype value: list[~azure.mgmt.webpubsub.models.SignalRServiceUsage]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SignalRServiceUsage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SignalRServiceUsage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SignalRServiceUsage"]] = None,
+        value: Optional[List["_models.SignalRServiceUsage"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(SignalRServiceUsageList, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of the resource usages.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.SignalRServiceUsage]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SignalRServiceUsageName(msrest.serialization.Model):
+class SignalRServiceUsageName(_serialization.Model):
     """Localizable String object containing the name and a localized value.
 
-    :param value: The identifier of the usage.
-    :type value: str
-    :param localized_value: Localized name of the usage.
-    :type localized_value: str
+    :ivar value: The identifier of the usage.
+    :vartype value: str
+    :ivar localized_value: Localized name of the usage.
+    :vartype localized_value: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
-        super(SignalRServiceUsageName, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: The identifier of the usage.
+        :paramtype value: str
+        :keyword localized_value: Localized name of the usage.
+        :paramtype localized_value: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """Describes an available sku.".
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar resource_type: The resource type that this object applies to.
     :vartype resource_type: str
-    :ivar sku: The exact set of keys that define this sku.
+    :ivar sku: The billing information of the resource.
     :vartype sku: ~azure.mgmt.webpubsub.models.ResourceSku
-    :ivar capacity: Specifies the unit of the resource.
+    :ivar capacity: Describes scaling information of a sku.
     :vartype capacity: ~azure.mgmt.webpubsub.models.SkuCapacity
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'sku': {'readonly': True},
-        'capacity': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "sku": {"readonly": True},
+        "capacity": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'capacity': {'key': 'capacity', 'type': 'SkuCapacity'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "capacity": {"key": "capacity", "type": "SkuCapacity"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Sku, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.resource_type = None
         self.sku = None
         self.capacity = None
 
 
-class SkuCapacity(msrest.serialization.Model):
+class SkuCapacity(_serialization.Model):
     """Describes scaling information of a sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1429,32 +2099,30 @@ class SkuCapacity(msrest.serialization.Model):
     :vartype default: int
     :ivar allowed_values: Allows capacity value list.
     :vartype allowed_values: list[int]
-    :ivar scale_type: The scale type applicable to the sku. Possible values include: "None",
-     "Manual", "Automatic".
+    :ivar scale_type: The scale type applicable to the sku. Known values are: "None", "Manual", and
+     "Automatic".
     :vartype scale_type: str or ~azure.mgmt.webpubsub.models.ScaleType
     """
 
     _validation = {
-        'minimum': {'readonly': True},
-        'maximum': {'readonly': True},
-        'default': {'readonly': True},
-        'allowed_values': {'readonly': True},
-        'scale_type': {'readonly': True},
+        "minimum": {"readonly": True},
+        "maximum": {"readonly": True},
+        "default": {"readonly": True},
+        "allowed_values": {"readonly": True},
+        "scale_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'minimum': {'key': 'minimum', 'type': 'int'},
-        'maximum': {'key': 'maximum', 'type': 'int'},
-        'default': {'key': 'default', 'type': 'int'},
-        'allowed_values': {'key': 'allowedValues', 'type': '[int]'},
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
+        "minimum": {"key": "minimum", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
+        "default": {"key": "default", "type": "int"},
+        "allowed_values": {"key": "allowedValues", "type": "[int]"},
+        "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SkuCapacity, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.minimum = None
         self.maximum = None
         self.default = None
@@ -1462,7 +2130,7 @@ class SkuCapacity(msrest.serialization.Model):
         self.scale_type = None
 
 
-class SkuList(msrest.serialization.Model):
+class SkuList(_serialization.Model):
     """The list skus operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1475,64 +2143,78 @@ class SkuList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Sku]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Sku]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SkuList, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~azure.mgmt.webpubsub.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~azure.mgmt.webpubsub.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.webpubsub.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.webpubsub.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(SystemData, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.webpubsub.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.webpubsub.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1552,69 +2234,74 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
     :vartype type: str
-    :param location: The GEO location of the resource. e.g. West US | East US | North Central US |
+    :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
      South Central US.
-    :type location: str
-    :param tags: A set of tags. Tags of the service which is a list of key value pairs that
-     describe the resource.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
+         | South Central US.
+        :paramtype location: str
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
 
 
-class UpstreamAuthSettings(msrest.serialization.Model):
-    """Upstream auth settings.
+class UpstreamAuthSettings(_serialization.Model):
+    """Upstream auth settings. If not set, no auth is used for upstream messages.
 
-    :param type: Gets or sets the type of auth. None or ManagedIdentity is supported now. Possible
-     values include: "None", "ManagedIdentity".
-    :type type: str or ~azure.mgmt.webpubsub.models.UpstreamAuthType
-    :param managed_identity: Gets or sets the managed identity settings. It's required if the auth
-     type is set to ManagedIdentity.
-    :type managed_identity: ~azure.mgmt.webpubsub.models.ManagedIdentitySettings
+    :ivar type: Upstream auth type enum. Known values are: "None" and "ManagedIdentity".
+    :vartype type: str or ~azure.mgmt.webpubsub.models.UpstreamAuthType
+    :ivar managed_identity: Managed identity settings for upstream.
+    :vartype managed_identity: ~azure.mgmt.webpubsub.models.ManagedIdentitySettings
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'managed_identity': {'key': 'managedIdentity', 'type': 'ManagedIdentitySettings'},
+        "type": {"key": "type", "type": "str"},
+        "managed_identity": {"key": "managedIdentity", "type": "ManagedIdentitySettings"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "UpstreamAuthType"]] = None,
-        managed_identity: Optional["ManagedIdentitySettings"] = None,
-        **kwargs
-    ):
-        super(UpstreamAuthSettings, self).__init__(**kwargs)
+        type: Optional[Union[str, "_models.UpstreamAuthType"]] = None,
+        managed_identity: Optional["_models.ManagedIdentitySettings"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Upstream auth type enum. Known values are: "None" and "ManagedIdentity".
+        :paramtype type: str or ~azure.mgmt.webpubsub.models.UpstreamAuthType
+        :keyword managed_identity: Managed identity settings for upstream.
+        :paramtype managed_identity: ~azure.mgmt.webpubsub.models.ManagedIdentitySettings
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.managed_identity = managed_identity
 
 
-class UserAssignedIdentityProperty(msrest.serialization.Model):
+class UserAssignedIdentityProperty(_serialization.Model):
     """Properties of user assigned identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1626,20 +2313,18 @@ class UserAssignedIdentityProperty(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UserAssignedIdentityProperty, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
@@ -1659,114 +2344,137 @@ class WebPubSubHub(ProxyResource):
     :vartype type: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
-    :param properties: Required. Properties of the hub setting.
-    :type properties: ~azure.mgmt.webpubsub.models.WebPubSubHubProperties
+    :ivar properties: Properties of a hub. Required.
+    :vartype properties: ~azure.mgmt.webpubsub.models.WebPubSubHubProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'properties': {'key': 'properties', 'type': 'WebPubSubHubProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "properties": {"key": "properties", "type": "WebPubSubHubProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "WebPubSubHubProperties",
-        **kwargs
-    ):
-        super(WebPubSubHub, self).__init__(**kwargs)
+    def __init__(self, *, properties: "_models.WebPubSubHubProperties", **kwargs: Any) -> None:
+        """
+        :keyword properties: Properties of a hub. Required.
+        :paramtype properties: ~azure.mgmt.webpubsub.models.WebPubSubHubProperties
+        """
+        super().__init__(**kwargs)
         self.system_data = None
         self.properties = properties
 
 
-class WebPubSubHubList(msrest.serialization.Model):
+class WebPubSubHubList(_serialization.Model):
     """Hub setting list.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of hub settings to this resource.
-    :type value: list[~azure.mgmt.webpubsub.models.WebPubSubHub]
+    :ivar value: List of hub settings to this resource.
+    :vartype value: list[~azure.mgmt.webpubsub.models.WebPubSubHub]
     :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WebPubSubHub]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WebPubSubHub]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["WebPubSubHub"]] = None,
-        **kwargs
-    ):
-        super(WebPubSubHubList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.WebPubSubHub"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of hub settings to this resource.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.WebPubSubHub]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class WebPubSubHubProperties(msrest.serialization.Model):
+class WebPubSubHubProperties(_serialization.Model):
     """Properties of a hub.
 
-    :param event_handlers: Event handler of a hub.
-    :type event_handlers: list[~azure.mgmt.webpubsub.models.EventHandler]
-    :param anonymous_connect_policy: The settings for configuring if anonymous connections are
+    :ivar event_handlers: Event handler of a hub.
+    :vartype event_handlers: list[~azure.mgmt.webpubsub.models.EventHandler]
+    :ivar event_listeners: Event listener settings for forwarding your client events to listeners.
+     Event listener is transparent to Web PubSub clients, and it doesn't return any result to
+     clients nor interrupt the lifetime of clients.
+     One event can be sent to multiple listeners, as long as it matches the filters in those
+     listeners. The order of the array elements doesn't matter.
+     Maximum count of event listeners among all hubs is 10.
+    :vartype event_listeners: list[~azure.mgmt.webpubsub.models.EventListener]
+    :ivar anonymous_connect_policy: The settings for configuring if anonymous connections are
      allowed for this hub: "allow" or "deny". Default to "deny".
-    :type anonymous_connect_policy: str
+    :vartype anonymous_connect_policy: str
     """
 
     _attribute_map = {
-        'event_handlers': {'key': 'eventHandlers', 'type': '[EventHandler]'},
-        'anonymous_connect_policy': {'key': 'anonymousConnectPolicy', 'type': 'str'},
+        "event_handlers": {"key": "eventHandlers", "type": "[EventHandler]"},
+        "event_listeners": {"key": "eventListeners", "type": "[EventListener]"},
+        "anonymous_connect_policy": {"key": "anonymousConnectPolicy", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        event_handlers: Optional[List["EventHandler"]] = None,
-        anonymous_connect_policy: Optional[str] = "deny",
-        **kwargs
-    ):
-        super(WebPubSubHubProperties, self).__init__(**kwargs)
+        event_handlers: Optional[List["_models.EventHandler"]] = None,
+        event_listeners: Optional[List["_models.EventListener"]] = None,
+        anonymous_connect_policy: str = "deny",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword event_handlers: Event handler of a hub.
+        :paramtype event_handlers: list[~azure.mgmt.webpubsub.models.EventHandler]
+        :keyword event_listeners: Event listener settings for forwarding your client events to
+         listeners.
+         Event listener is transparent to Web PubSub clients, and it doesn't return any result to
+         clients nor interrupt the lifetime of clients.
+         One event can be sent to multiple listeners, as long as it matches the filters in those
+         listeners. The order of the array elements doesn't matter.
+         Maximum count of event listeners among all hubs is 10.
+        :paramtype event_listeners: list[~azure.mgmt.webpubsub.models.EventListener]
+        :keyword anonymous_connect_policy: The settings for configuring if anonymous connections are
+         allowed for this hub: "allow" or "deny". Default to "deny".
+        :paramtype anonymous_connect_policy: str
+        """
+        super().__init__(**kwargs)
         self.event_handlers = event_handlers
+        self.event_listeners = event_listeners
         self.anonymous_connect_policy = anonymous_connect_policy
 
 
-class WebPubSubKeys(msrest.serialization.Model):
+class WebPubSubKeys(_serialization.Model):
     """A class represents the access keys of the resource.
 
-    :param primary_key: The primary access key.
-    :type primary_key: str
-    :param secondary_key: The secondary access key.
-    :type secondary_key: str
-    :param primary_connection_string: Connection string constructed via the primaryKey.
-    :type primary_connection_string: str
-    :param secondary_connection_string: Connection string constructed via the secondaryKey.
-    :type secondary_connection_string: str
+    :ivar primary_key: The primary access key.
+    :vartype primary_key: str
+    :ivar secondary_key: The secondary access key.
+    :vartype secondary_key: str
+    :ivar primary_connection_string: Connection string constructed via the primaryKey.
+    :vartype primary_connection_string: str
+    :ivar secondary_connection_string: Connection string constructed via the secondaryKey.
+    :vartype secondary_connection_string: str
     """
 
     _attribute_map = {
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
-        'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
+        "primary_connection_string": {"key": "primaryConnectionString", "type": "str"},
+        "secondary_connection_string": {"key": "secondaryConnectionString", "type": "str"},
     }
 
     def __init__(
@@ -1776,48 +2484,65 @@ class WebPubSubKeys(msrest.serialization.Model):
         secondary_key: Optional[str] = None,
         primary_connection_string: Optional[str] = None,
         secondary_connection_string: Optional[str] = None,
-        **kwargs
-    ):
-        super(WebPubSubKeys, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword primary_key: The primary access key.
+        :paramtype primary_key: str
+        :keyword secondary_key: The secondary access key.
+        :paramtype secondary_key: str
+        :keyword primary_connection_string: Connection string constructed via the primaryKey.
+        :paramtype primary_connection_string: str
+        :keyword secondary_connection_string: Connection string constructed via the secondaryKey.
+        :paramtype secondary_connection_string: str
+        """
+        super().__init__(**kwargs)
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.primary_connection_string = primary_connection_string
         self.secondary_connection_string = secondary_connection_string
 
 
-class WebPubSubNetworkACLs(msrest.serialization.Model):
+class WebPubSubNetworkACLs(_serialization.Model):
     """Network ACLs for the resource.
 
-    :param default_action: Default action when no other rule matches. Possible values include:
-     "Allow", "Deny".
-    :type default_action: str or ~azure.mgmt.webpubsub.models.ACLAction
-    :param public_network: ACL for requests from public network.
-    :type public_network: ~azure.mgmt.webpubsub.models.NetworkACL
-    :param private_endpoints: ACLs for requests from private endpoints.
-    :type private_endpoints: list[~azure.mgmt.webpubsub.models.PrivateEndpointACL]
+    :ivar default_action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
+    :vartype default_action: str or ~azure.mgmt.webpubsub.models.ACLAction
+    :ivar public_network: Network ACL.
+    :vartype public_network: ~azure.mgmt.webpubsub.models.NetworkACL
+    :ivar private_endpoints: ACLs for requests from private endpoints.
+    :vartype private_endpoints: list[~azure.mgmt.webpubsub.models.PrivateEndpointACL]
     """
 
     _attribute_map = {
-        'default_action': {'key': 'defaultAction', 'type': 'str'},
-        'public_network': {'key': 'publicNetwork', 'type': 'NetworkACL'},
-        'private_endpoints': {'key': 'privateEndpoints', 'type': '[PrivateEndpointACL]'},
+        "default_action": {"key": "defaultAction", "type": "str"},
+        "public_network": {"key": "publicNetwork", "type": "NetworkACL"},
+        "private_endpoints": {"key": "privateEndpoints", "type": "[PrivateEndpointACL]"},
     }
 
     def __init__(
         self,
         *,
-        default_action: Optional[Union[str, "ACLAction"]] = None,
-        public_network: Optional["NetworkACL"] = None,
-        private_endpoints: Optional[List["PrivateEndpointACL"]] = None,
-        **kwargs
-    ):
-        super(WebPubSubNetworkACLs, self).__init__(**kwargs)
+        default_action: Optional[Union[str, "_models.ACLAction"]] = None,
+        public_network: Optional["_models.NetworkACL"] = None,
+        private_endpoints: Optional[List["_models.PrivateEndpointACL"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword default_action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
+        :paramtype default_action: str or ~azure.mgmt.webpubsub.models.ACLAction
+        :keyword public_network: Network ACL.
+        :paramtype public_network: ~azure.mgmt.webpubsub.models.NetworkACL
+        :keyword private_endpoints: ACLs for requests from private endpoints.
+        :paramtype private_endpoints: list[~azure.mgmt.webpubsub.models.PrivateEndpointACL]
+        """
+        super().__init__(**kwargs)
         self.default_action = default_action
         self.public_network = public_network
         self.private_endpoints = private_endpoints
 
 
-class WebPubSubResource(TrackedResource):
+class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A class represent a resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1828,21 +2553,19 @@ class WebPubSubResource(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource - e.g. "Microsoft.SignalRService/SignalR".
     :vartype type: str
-    :param location: The GEO location of the resource. e.g. West US | East US | North Central US |
+    :ivar location: The GEO location of the resource. e.g. West US | East US | North Central US |
      South Central US.
-    :type location: str
-    :param tags: A set of tags. Tags of the service which is a list of key value pairs that
-     describe the resource.
-    :type tags: dict[str, str]
-    :param sku: The billing information of the resource.(e.g. Free, Standard).
-    :type sku: ~azure.mgmt.webpubsub.models.ResourceSku
-    :param identity: The managed identity response.
-    :type identity: ~azure.mgmt.webpubsub.models.ManagedIdentity
+    :vartype location: str
+    :ivar tags: Tags of the service which is a list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
+    :ivar sku: The billing information of the resource.
+    :vartype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+    :ivar identity: A class represent managed identities used for request and response.
+    :vartype identity: ~azure.mgmt.webpubsub.models.ManagedIdentity
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.webpubsub.models.SystemData
-    :ivar provisioning_state: Provisioning state of the resource. Possible values include:
-     "Unknown", "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting",
-     "Moving".
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Unknown",
+     "Succeeded", "Failed", "Canceled", "Running", "Creating", "Updating", "Deleting", and "Moving".
     :vartype provisioning_state: str or ~azure.mgmt.webpubsub.models.ProvisioningState
     :ivar external_ip: The publicly accessible IP of the resource.
     :vartype external_ip: str
@@ -1863,96 +2586,137 @@ class WebPubSubResource(TrackedResource):
     :ivar shared_private_link_resources: The list of shared private link resources.
     :vartype shared_private_link_resources:
      list[~azure.mgmt.webpubsub.models.SharedPrivateLinkResource]
-    :param tls: TLS settings.
-    :type tls: ~azure.mgmt.webpubsub.models.WebPubSubTlsSettings
+    :ivar tls: TLS settings for the resource.
+    :vartype tls: ~azure.mgmt.webpubsub.models.WebPubSubTlsSettings
     :ivar host_name_prefix: Deprecated.
     :vartype host_name_prefix: str
-    :param live_trace_configuration: Live trace configuration of a Microsoft.SignalRService
+    :ivar live_trace_configuration: Live trace configuration of a Microsoft.SignalRService
      resource.
-    :type live_trace_configuration: ~azure.mgmt.webpubsub.models.LiveTraceConfiguration
-    :param resource_log_configuration: Resource log configuration of a Microsoft.SignalRService
+    :vartype live_trace_configuration: ~azure.mgmt.webpubsub.models.LiveTraceConfiguration
+    :ivar resource_log_configuration: Resource log configuration of a Microsoft.SignalRService
      resource.
-     If resourceLogConfiguration isn't null or empty, it will override options
-     "EnableConnectivityLog" and "EnableMessagingLogs" in features.
-     Otherwise, use options "EnableConnectivityLog" and "EnableMessagingLogs" in features.
-    :type resource_log_configuration: ~azure.mgmt.webpubsub.models.ResourceLogConfiguration
-    :param network_ac_ls: Network ACLs.
-    :type network_ac_ls: ~azure.mgmt.webpubsub.models.WebPubSubNetworkACLs
-    :param public_network_access: Enable or disable public network access. Default to "Enabled".
+    :vartype resource_log_configuration: ~azure.mgmt.webpubsub.models.ResourceLogConfiguration
+    :ivar network_ac_ls: Network ACLs for the resource.
+    :vartype network_ac_ls: ~azure.mgmt.webpubsub.models.WebPubSubNetworkACLs
+    :ivar public_network_access: Enable or disable public network access. Default to "Enabled".
      When it's Enabled, network ACLs still apply.
      When it's Disabled, public network access is always disabled no matter what you set in network
      ACLs.
-    :type public_network_access: str
-    :param disable_local_auth: DisableLocalAuth
+    :vartype public_network_access: str
+    :ivar disable_local_auth: DisableLocalAuth
      Enable or disable local auth with AccessKey
      When set as true, connection with AccessKey=xxx won't work.
-    :type disable_local_auth: bool
-    :param disable_aad_auth: DisableLocalAuth
+    :vartype disable_local_auth: bool
+    :ivar disable_aad_auth: DisableLocalAuth
      Enable or disable aad auth
      When set as true, connection with AuthType=aad won't work.
-    :type disable_aad_auth: bool
+    :vartype disable_aad_auth: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'external_ip': {'readonly': True},
-        'host_name': {'readonly': True},
-        'public_port': {'readonly': True},
-        'server_port': {'readonly': True},
-        'version': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'shared_private_link_resources': {'readonly': True},
-        'host_name_prefix': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "external_ip": {"readonly": True},
+        "host_name": {"readonly": True},
+        "public_port": {"readonly": True},
+        "server_port": {"readonly": True},
+        "version": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "shared_private_link_resources": {"readonly": True},
+        "host_name_prefix": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'ResourceSku'},
-        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'external_ip': {'key': 'properties.externalIP', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'public_port': {'key': 'properties.publicPort', 'type': 'int'},
-        'server_port': {'key': 'properties.serverPort', 'type': 'int'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'shared_private_link_resources': {'key': 'properties.sharedPrivateLinkResources', 'type': '[SharedPrivateLinkResource]'},
-        'tls': {'key': 'properties.tls', 'type': 'WebPubSubTlsSettings'},
-        'host_name_prefix': {'key': 'properties.hostNamePrefix', 'type': 'str'},
-        'live_trace_configuration': {'key': 'properties.liveTraceConfiguration', 'type': 'LiveTraceConfiguration'},
-        'resource_log_configuration': {'key': 'properties.resourceLogConfiguration', 'type': 'ResourceLogConfiguration'},
-        'network_ac_ls': {'key': 'properties.networkACLs', 'type': 'WebPubSubNetworkACLs'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
-        'disable_aad_auth': {'key': 'properties.disableAadAuth', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "ResourceSku"},
+        "identity": {"key": "identity", "type": "ManagedIdentity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "external_ip": {"key": "properties.externalIP", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "public_port": {"key": "properties.publicPort", "type": "int"},
+        "server_port": {"key": "properties.serverPort", "type": "int"},
+        "version": {"key": "properties.version", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "shared_private_link_resources": {
+            "key": "properties.sharedPrivateLinkResources",
+            "type": "[SharedPrivateLinkResource]",
+        },
+        "tls": {"key": "properties.tls", "type": "WebPubSubTlsSettings"},
+        "host_name_prefix": {"key": "properties.hostNamePrefix", "type": "str"},
+        "live_trace_configuration": {"key": "properties.liveTraceConfiguration", "type": "LiveTraceConfiguration"},
+        "resource_log_configuration": {
+            "key": "properties.resourceLogConfiguration",
+            "type": "ResourceLogConfiguration",
+        },
+        "network_ac_ls": {"key": "properties.networkACLs", "type": "WebPubSubNetworkACLs"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
+        "disable_aad_auth": {"key": "properties.disableAadAuth", "type": "bool"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["ResourceSku"] = None,
-        identity: Optional["ManagedIdentity"] = None,
-        tls: Optional["WebPubSubTlsSettings"] = None,
-        live_trace_configuration: Optional["LiveTraceConfiguration"] = None,
-        resource_log_configuration: Optional["ResourceLogConfiguration"] = None,
-        network_ac_ls: Optional["WebPubSubNetworkACLs"] = None,
-        public_network_access: Optional[str] = "Enabled",
-        disable_local_auth: Optional[bool] = False,
-        disable_aad_auth: Optional[bool] = False,
-        **kwargs
-    ):
-        super(WebPubSubResource, self).__init__(location=location, tags=tags, **kwargs)
+        sku: Optional["_models.ResourceSku"] = None,
+        identity: Optional["_models.ManagedIdentity"] = None,
+        tls: Optional["_models.WebPubSubTlsSettings"] = None,
+        live_trace_configuration: Optional["_models.LiveTraceConfiguration"] = None,
+        resource_log_configuration: Optional["_models.ResourceLogConfiguration"] = None,
+        network_ac_ls: Optional["_models.WebPubSubNetworkACLs"] = None,
+        public_network_access: str = "Enabled",
+        disable_local_auth: bool = False,
+        disable_aad_auth: bool = False,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
+         | South Central US.
+        :paramtype location: str
+        :keyword tags: Tags of the service which is a list of key value pairs that describe the
+         resource.
+        :paramtype tags: dict[str, str]
+        :keyword sku: The billing information of the resource.
+        :paramtype sku: ~azure.mgmt.webpubsub.models.ResourceSku
+        :keyword identity: A class represent managed identities used for request and response.
+        :paramtype identity: ~azure.mgmt.webpubsub.models.ManagedIdentity
+        :keyword tls: TLS settings for the resource.
+        :paramtype tls: ~azure.mgmt.webpubsub.models.WebPubSubTlsSettings
+        :keyword live_trace_configuration: Live trace configuration of a Microsoft.SignalRService
+         resource.
+        :paramtype live_trace_configuration: ~azure.mgmt.webpubsub.models.LiveTraceConfiguration
+        :keyword resource_log_configuration: Resource log configuration of a Microsoft.SignalRService
+         resource.
+        :paramtype resource_log_configuration: ~azure.mgmt.webpubsub.models.ResourceLogConfiguration
+        :keyword network_ac_ls: Network ACLs for the resource.
+        :paramtype network_ac_ls: ~azure.mgmt.webpubsub.models.WebPubSubNetworkACLs
+        :keyword public_network_access: Enable or disable public network access. Default to "Enabled".
+         When it's Enabled, network ACLs still apply.
+         When it's Disabled, public network access is always disabled no matter what you set in network
+         ACLs.
+        :paramtype public_network_access: str
+        :keyword disable_local_auth: DisableLocalAuth
+         Enable or disable local auth with AccessKey
+         When set as true, connection with AccessKey=xxx won't work.
+        :paramtype disable_local_auth: bool
+        :keyword disable_aad_auth: DisableLocalAuth
+         Enable or disable aad auth
+         When set as true, connection with AuthType=aad won't work.
+        :paramtype disable_aad_auth: bool
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
         self.system_data = None
@@ -1974,50 +2738,56 @@ class WebPubSubResource(TrackedResource):
         self.disable_aad_auth = disable_aad_auth
 
 
-class WebPubSubResourceList(msrest.serialization.Model):
+class WebPubSubResourceList(_serialization.Model):
     """Object that includes an array of resources and a possible link for next set.
 
-    :param value: List of the resources.
-    :type value: list[~azure.mgmt.webpubsub.models.WebPubSubResource]
-    :param next_link: The URL the client should use to fetch the next page (per server side
-     paging).
+    :ivar value: List of the resources.
+    :vartype value: list[~azure.mgmt.webpubsub.models.WebPubSubResource]
+    :ivar next_link: The URL the client should use to fetch the next page (per server side paging).
      It's null for now, added for future use.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[WebPubSubResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[WebPubSubResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["WebPubSubResource"]] = None,
+        value: Optional[List["_models.WebPubSubResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(WebPubSubResourceList, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of the resources.
+        :paramtype value: list[~azure.mgmt.webpubsub.models.WebPubSubResource]
+        :keyword next_link: The URL the client should use to fetch the next page (per server side
+         paging).
+         It's null for now, added for future use.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class WebPubSubTlsSettings(msrest.serialization.Model):
+class WebPubSubTlsSettings(_serialization.Model):
     """TLS settings for the resource.
 
-    :param client_cert_enabled: Request client certificate during TLS handshake if enabled.
-    :type client_cert_enabled: bool
+    :ivar client_cert_enabled: Request client certificate during TLS handshake if enabled.
+    :vartype client_cert_enabled: bool
     """
 
     _attribute_map = {
-        'client_cert_enabled': {'key': 'clientCertEnabled', 'type': 'bool'},
+        "client_cert_enabled": {"key": "clientCertEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_cert_enabled: Optional[bool] = True,
-        **kwargs
-    ):
-        super(WebPubSubTlsSettings, self).__init__(**kwargs)
+    def __init__(self, *, client_cert_enabled: bool = True, **kwargs: Any) -> None:
+        """
+        :keyword client_cert_enabled: Request client certificate during TLS handshake if enabled.
+        :paramtype client_cert_enabled: bool
+        """
+        super().__init__(**kwargs)
         self.client_cert_enabled = client_cert_enabled

@@ -130,8 +130,7 @@ def get_http_logging_policy(**kwargs):
     return http_logging_policy
 
 
-def convert_datetime(date_time):
-    # type: (Union[str, datetime.datetime]) -> datetime.datetime
+def convert_datetime(date_time: Union[str, datetime.datetime]) -> datetime.datetime:
     if isinstance(date_time, datetime.datetime):
         return date_time
     if isinstance(date_time, str):
@@ -145,8 +144,7 @@ def convert_datetime(date_time):
     raise TypeError("Bad datetime type")
 
 
-def convert_order_by(order_by):
-    # type: (Optional[List[str]]) -> Optional[List[str]]
+def convert_order_by(order_by: Optional[List[str]]) -> Optional[List[str]]:
     if order_by:
         order_by = [order.replace("created_on", "createdDateTimeUtc") for order in order_by]
     return order_by

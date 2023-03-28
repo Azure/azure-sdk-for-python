@@ -6,6 +6,7 @@ parameters:
   TestPipeline: false
   VerifyAutorest: false
   ValidateFormatting: false
+  GenerateApiReviewForManualOnly: false
 
 # The variable TargetingString is set by template `eng/pipelines/templates/steps/targeting-string-resolve.yml`. This template is invoked from yml files:
 #     eng/pipelines/templates/jobs/ci.tests.yml
@@ -24,6 +25,12 @@ steps:
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
 
+  - task: PythonScript@0
+    displayName: 'Set Tox Environment Skips'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      arguments: '--team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
+
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
       - template: /eng/common/pipelines/templates/steps/verify-changelog.yml
@@ -33,12 +40,12 @@ steps:
           ForRelease: false
 
   - pwsh: |
-     pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+     python -m pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
     displayName: 'Install Necessary Dependencies'
     condition: succeededOrFailed()
 
   - script: |
-      pip install "./tools/azure-sdk-tools[build]" -q -I
+      python -m pip install "./tools/azure-sdk-tools[build]" -q -I
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()
@@ -93,6 +100,11 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
+  - template: run_pyright.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -115,6 +127,11 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
+  - template: /eng/pipelines/templates/steps/update_snippet.yml
+    parameters:
+      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -124,6 +141,7 @@ steps:
   - template: /eng/pipelines/templates/steps/create-apireview.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
+      GenerateApiReviewForManualOnly: ${{ parameters.GenerateApiReviewForManualOnly }}
 
   - template: /eng/common/pipelines/templates/steps/detect-api-changes.yml
     parameters:

@@ -6,7 +6,6 @@ import logging
 import datetime
 import warnings
 from typing import TYPE_CHECKING, Any, Union, Optional
-import six
 
 from ._common.utils import utc_from_timestamp, utc_now
 from ._common.constants import (
@@ -122,12 +121,14 @@ class ServiceBusSession(BaseSession):
         session_state = response.get(MGMT_RESPONSE_SESSION_STATE)  # type: ignore
         return session_state
 
-    def set_state(self, state: Union[str, bytes, bytearray], *, timeout: Optional[float] = None, **kwargs: Any) -> None:
+    def set_state(
+        self, state: Optional[Union[str, bytes, bytearray]], *, timeout: Optional[float] = None, **kwargs: Any
+    ) -> None:
         # pylint: disable=protected-access
         """Set the session state.
 
-        :param state: The state value.
-        :type state: Union[str, bytes, bytearray]
+        :param state: The state value. Setting state to None will clear the current session.
+        :type state: Union[str, bytes, bytearray, None]
         :keyword float timeout: The total operation timeout in seconds including all the retries. The value must be
          greater than 0 if specified. The default value is None, meaning no timeout.
 
@@ -146,13 +147,13 @@ class ServiceBusSession(BaseSession):
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         state = (
-            state.encode(self._encoding) if isinstance(state, six.text_type) else state
+            state.encode(self._encoding) if isinstance(state, str) else state
         )
         return self._receiver._mgmt_request_response_with_retry(  # type: ignore
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {
                 MGMT_REQUEST_SESSION_ID: self._session_id,
-                MGMT_REQUEST_SESSION_STATE: bytearray(state),
+                MGMT_REQUEST_SESSION_STATE: bytearray(state) if state is not None else None,
             },
             mgmt_handlers.default,
             timeout=timeout,
@@ -196,8 +197,6 @@ class ServiceBusSession(BaseSession):
             timeout=timeout,
         )
         expiry_timestamp = expiry[MGMT_RESPONSE_RECEIVER_EXPIRATION] / 1000.0  # type: ignore
-        self._locked_until_utc = utc_from_timestamp(
-            expiry_timestamp
-        )  # type: datetime.datetime
+        self._locked_until_utc = utc_from_timestamp(expiry_timestamp)  # type: datetime.datetime
 
         return self._locked_until_utc

@@ -4,7 +4,8 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import DumpableFloatField, DumpableIntegerField, NestedField, UnionField
+from azure.ai.ml._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+from azure.ai.ml._schema.core.fields import NestedField, PrimitiveValueField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import (
     DataInputSchema,
     InputLiteralValueSchema,
@@ -14,24 +15,29 @@ from azure.ai.ml._schema.job.input_output_entry import (
 )
 
 
-def InputsField(**kwargs):
+def InputsField(*, support_databinding: bool = False, **kwargs):
+    value_fields = [
+        NestedField(DataInputSchema),
+        NestedField(ModelInputSchema),
+        NestedField(MLTableInputSchema),
+        NestedField(InputLiteralValueSchema),
+        PrimitiveValueField(is_strict=False),
+        # This ordering of types for the values keyword is intentional. The ordering of types
+        # determines what order schema values are matched and cast in. Changing the current ordering can
+        # result in values being mis-cast such as 1.0 translating into True.
+    ]
+
+    # As is_strict is set to True, 1 and only 1 value field must be matched.
+    # root level data-binding expression has already been covered by PrimitiveValueField;
+    # If support_databinding is True, we should only add data-binding expression support for nested fields.
+    if support_databinding:
+        for field_obj in value_fields:
+            if isinstance(field_obj, NestedField):
+                support_data_binding_expression_for_fields(field_obj.schema)
+
     return fields.Dict(
         keys=fields.Str(),
-        values=UnionField(
-            [
-                NestedField(DataInputSchema),
-                NestedField(ModelInputSchema),
-                NestedField(MLTableInputSchema),
-                NestedField(InputLiteralValueSchema),
-                PrimitiveValueField(is_strict=False),
-                # This ordering of types for the values keyword is intentional. The ordering of types
-                # determines what order schema values are matched and cast in. Changing the current ordering can
-                # result in values being mis-cast such as 1.0 translating into True.
-            ],
-            metadata={"description": "Inputs to a job."},
-            is_strict=True,
-            **kwargs
-        ),
+        values=UnionField(value_fields, metadata={"description": "Inputs to a job."}, is_strict=True, **kwargs),
     )
 
 
@@ -41,26 +47,4 @@ def OutputsField(**kwargs):
         values=NestedField(nested=OutputSchema, allow_none=True),
         metadata={"description": "Outputs of a job."},
         **kwargs
-    )
-
-
-def PrimitiveValueField(**kwargs):
-    return UnionField(
-        [
-            # Note: order matters here - to make sure value parsed correctly.
-            # By default when strict is false, marshmallow downcasts float to int.
-            # Setting it to true will throw a validation error when loading a float to int.
-            # https://github.com/marshmallow-code/marshmallow/pull/755
-            # Use DumpableIntegerField to make sure there will be validation error when
-            # loading/dumping a float to int.
-            # note that this field can serialize bool instance but cannot deserialize bool instance.
-            DumpableIntegerField(strict=True),
-            # Use DumpableFloatField with strict of True to avoid '1'(str) serialized to 1.0(float)
-            DumpableFloatField(strict=True),
-            # put string schema after Int and Float to make sure they won't dump to string
-            fields.Str(),
-            # fields.Bool comes last since it'll parse anything non-falsy to True
-            fields.Bool(),
-        ],
-        **kwargs,
     )

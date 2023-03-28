@@ -14,7 +14,7 @@ USAGE:
     python set_sip_trunk_sample_async.py
     Set the environment variables with your own values before running the sample:
     1) COMMUNICATION_SAMPLES_CONNECTION_STRING - the connection string in your ACS account
-    2) COMMUNICATION_SAMPLES_FQDN - FQDN of SipTrunk object to be set
+    2) COMMUNICATION_SAMPLES_TRUNK_FQDN - FQDN of SipTrunk object to be set
     3) COMMUNICATION_SAMPLES_SIGNALING_PORT - SIP signaling port of SipTrunk object to be set
 """
 
@@ -24,7 +24,7 @@ from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting import SipTrunk
 
 connection_string = os.getenv("COMMUNICATION_SAMPLES_CONNECTION_STRING")
-fqdn = os.getenv("COMMUNICATION_SAMPLES_FQDN")
+fqdn = os.getenv("COMMUNICATION_SAMPLES_TRUNK_FQDN")
 signaling_port = os.getenv("COMMUNICATION_SAMPLES_SIGNALING_PORT")
 client = SipRoutingClient.from_connection_string(connection_string)
 new_trunk = SipTrunk(fqdn=fqdn, sip_signaling_port=signaling_port)

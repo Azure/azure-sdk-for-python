@@ -18,35 +18,55 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+
+    This sample assumes your registry has a repository "library/hello-world", run load_registry() if you don't have.
+    Set the environment variables with your own values before running load_registry():
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
+    3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
+    4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
+    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
+    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
-
-from dotenv import find_dotenv, load_dotenv
 import os
-
+from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from azure.identity import DefaultAzureCredential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class HelloWorld(object):
     def __init__(self):
         load_dotenv(find_dotenv())
+        self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
+        self.authority = get_authority(self.endpoint)
+        self.audience = get_audience(self.authority)
+        self.credential = get_credential(self.authority)
 
     def basic_sample(self):
+        load_registry()
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
-        audience = "https://management.azure.com"
-        endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]    
-        
-        with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience=audience) as client:
+        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
         # [END create_registry_client]
             # Iterate through all the repositories
             for repository_name in client.list_repository_names():
-                if repository_name == "hello-world":
+                print(repository_name)
+                if repository_name == "library/hello-world":
+                    print("Tags of repository library/hello-world:")
                     for tag in client.list_tag_properties(repository_name):
-                        print(tag.digest)
+                        print(tag.name)
+                        
+                        # Make sure will have the permission to delete the repository later
+                        client.update_manifest_properties(
+                            repository_name,
+                            tag.name,
+                            can_write=True,
+                            can_delete=True
+                        )
 
+                    print("Deleting " + repository_name)
                     # [START delete_repository]
-                    client.delete_repository(repository_name, tag.name)
+                    client.delete_repository(repository_name)
                     # [END delete_repository]
 
 

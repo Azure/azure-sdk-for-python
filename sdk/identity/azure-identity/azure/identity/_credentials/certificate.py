@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import cast, NamedTuple, TYPE_CHECKING
+from typing import cast, NamedTuple, Union, Dict, Any, Optional
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -13,10 +13,6 @@ import six
 
 from .._internal import validate_tenant_id
 from .._internal.client_credential_base import ClientCredentialBase
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Optional, Union, List
 
 
 class CertificateCredential(ClientCredentialBase):
@@ -50,19 +46,26 @@ class CertificateCredential(ClientCredentialBase):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
-        # type: (str, str, Optional[str], **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            certificate_path: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:
         validate_tenant_id(tenant_id)
 
         client_credential = get_client_credential(certificate_path, **kwargs)
 
         super(CertificateCredential, self).__init__(
-            client_id=client_id, client_credential=client_credential, tenant_id=tenant_id, **kwargs
+            client_id=client_id,
+            client_credential=client_credential,
+            tenant_id=tenant_id,
+            **kwargs
         )
 
 
-def extract_cert_chain(pem_bytes):
-    # type: (bytes) -> bytes
+def extract_cert_chain(pem_bytes: bytes) -> bytes:
     """Extract a certificate chain from a PEM file's bytes, removing line breaks."""
 
     # if index raises ValueError, there's no PEM-encoded cert
@@ -77,16 +80,20 @@ def extract_cert_chain(pem_bytes):
 _Cert = NamedTuple("_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fingerprint", bytes)])
 
 
-def load_pem_certificate(certificate_data, password):
-    # type: (bytes, Optional[bytes]) -> _Cert
+def load_pem_certificate(
+        certificate_data: bytes,
+        password: Optional[bytes] = None
+) -> _Cert:
     private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
     cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
     return _Cert(certificate_data, private_key, fingerprint)
 
 
-def load_pkcs12_certificate(certificate_data, password):
-    # type: (bytes, Optional[bytes]) -> _Cert
+def load_pkcs12_certificate(
+        certificate_data: bytes,
+        password: Optional[bytes] = None
+) -> _Cert:
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
     try:
@@ -113,8 +120,13 @@ def load_pkcs12_certificate(certificate_data, password):
     return _Cert(pem_bytes, private_key, fingerprint)
 
 
-def get_client_credential(certificate_path, password=None, certificate_data=None, send_certificate_chain=False, **_):
-    # type: (Optional[str], Optional[Union[bytes, str]], Optional[bytes], bool, **Any) -> dict
+def get_client_credential(
+        certificate_path: Optional[str] = None,
+        password: Optional[Union[bytes, str]] = None,
+        certificate_data: Optional[bytes] = None,
+        send_certificate_chain: bool = False,
+        **_: Any
+) -> Dict:
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
 
     if certificate_path:

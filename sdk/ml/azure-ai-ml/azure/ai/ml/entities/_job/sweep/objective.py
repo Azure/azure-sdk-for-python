@@ -19,7 +19,7 @@ class Objective(RestTranslatableMixin):
     :type primary_metric: str
     """
 
-    def __init__(self, goal: str = None, primary_metric: str = None):
+    def __init__(self, goal: Optional[str] = None, primary_metric: Optional[str] = None):
         self.goal = goal.lower()
         self.primary_metric = primary_metric
 

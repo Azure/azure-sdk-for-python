@@ -6,42 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class LimitType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The limit object type.
-    """
+class LimitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The limit object type."""
 
     LIMIT_VALUE = "LimitValue"
 
-class QuotaLimitTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The quota or usages limit types.
-    """
+
+class QuotaLimitTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The quota or usages limit types."""
 
     INDEPENDENT = "Independent"
     SHARED = "Shared"
 
-class QuotaRequestState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Quota request status.
-    """
+
+class QuotaRequestState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Quota request status."""
 
     ACCEPTED = "Accepted"
     INVALID = "Invalid"
@@ -49,9 +32,9 @@ class QuotaRequestState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     IN_PROGRESS = "InProgress"
 
-class UsagesTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The quota or usages limit types.
-    """
+
+class UsagesTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The quota or usages limit types."""
 
     INDIVIDUAL = "Individual"
     COMBINED = "Combined"

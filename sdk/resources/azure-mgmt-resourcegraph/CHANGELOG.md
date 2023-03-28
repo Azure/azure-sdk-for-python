@@ -1,5 +1,16 @@
 # Release History
 
+## 8.1.0b3 (2022-12-26)
+
+### Features Added
+
+  - Model QueryRequestOptions has a new parameter authorization_scope_filter
+  - Model ResourcesHistoryRequest has a new parameter management_groups
+
+### Breaking Changes
+
+  - Model ResourcesHistoryRequest no longer has parameter management_group_id
+
 ## 8.1.0b2 (2022-08-30)
 
 ### Other Changes

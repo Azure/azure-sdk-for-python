@@ -5,16 +5,22 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SweepJob as RestSweepJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TrialComponent
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import SweepJob as RestSweepJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TrialComponent
 from azure.ai.ml._schema._sweep.sweep_job import SweepJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._component.command_component import CommandComponent
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
@@ -31,16 +37,11 @@ from azure.ai.ml.entities._job.sweep.sampling_algorithm import SamplingAlgorithm
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
-from azure.ai.ml.entities._credentials import (
-    ManagedIdentityConfiguration,
-    AmlTokenConfiguration,
-    UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration,
-)
 
 # from ..identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from ..job_limits import SweepJobLimits
 from ..parameterized_command import ParameterizedCommand
+from ..queue_settings import QueueSettings
 from .early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,
@@ -112,6 +113,8 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
     :param limits: Limits for the sweep job.
     :type limits: ~azure.ai.ml.entities.SweepJobLimits
+    :param queue_settings: Queue settings for the job.
+    :type queue_settings: QueueSettings
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -119,27 +122,31 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
     def __init__(
         self,
         *,
-        name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        display_name: str = None,
-        experiment_name: str = None,
-        identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
-        inputs: Dict[str, Union[Input, str, bool, int, float]] = None,
-        outputs: Dict[str, Output] = None,
-        compute: str = None,
-        limits: SweepJobLimits = None,
-        sampling_algorithm: Union[str, SamplingAlgorithm] = None,
-        search_space: Dict[
-            str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        display_name: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        identity: Optional[
+            Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        objective: Objective = None,
-        trial: Union[CommandJob, CommandComponent] = None,
-        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
+        compute: Optional[str] = None,
+        limits: Optional[SweepJobLimits] = None,
+        sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
+        search_space: Optional[
+            Dict[
+                str,
+                Union[
+                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                ],
+            ]
+        ] = None,
+        objective: Optional[Objective] = None,
+        trial: Optional[Union[CommandJob, CommandComponent]] = None,
+        early_termination: Optional[Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy]] = None,
+        queue_settings: Optional[QueueSettings] = None,
         **kwargs: Any,
     ):
         kwargs[TYPE] = JobType.SWEEP
@@ -166,6 +173,7 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=objective,
             early_termination=early_termination,
             search_space=search_space,
+            queue_settings=queue_settings,
         )
 
     def _to_dict(self) -> Dict:
@@ -205,12 +213,13 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
             outputs=to_rest_data_outputs(self.outputs),
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
         )
         sweep_job_resource = JobBase(properties=sweep_job)
         sweep_job_resource.name = self.name
         return sweep_job_resource
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         msg = "no sweep component entity"
         raise JobException(
             message=msg,
@@ -262,8 +271,10 @@ class SweepJob(Job, ParameterizedSweep, JobIOMixin):
             objective=properties.objective,
             inputs=from_rest_inputs_to_dataset_literal(properties.inputs),
             outputs=from_rest_data_outputs(properties.outputs),
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
+            queue_settings=properties.queue_settings,
         )
 
     def _override_missing_properties_from_trial(self):

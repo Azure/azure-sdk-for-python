@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import logging
 from enum import Enum
-from typing import Dict, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
@@ -12,16 +12,15 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from ..._schema import PathAwareSchema
 from .._job.pipeline.pipeline_job_settings import PipelineJobSettings
-from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._util import convert_ordered_dict_to_dict, validate_attribute_type, copy_output_setting
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
 
 
 class Pipeline(BaseNode):
-    """Base class for pipeline node, used for pipeline component version
-    consumption. You should not instantiate this class directly. Instead, you should
-    use @pipeline decorator to create a pipeline node.
+    """Base class for pipeline node, used for pipeline component version consumption. You should not instantiate this
+    class directly. Instead, you should use @pipeline decorator to create a pipeline node.
 
     You should not instantiate this class directly. Instead, you should
     create from @pipeline decorator.
@@ -42,20 +41,22 @@ class Pipeline(BaseNode):
         self,
         *,
         component: Union[Component, str],
-        inputs: Dict[
-            str,
-            Union[
-                Input,
+        inputs: Optional[
+            Dict[
                 str,
-                bool,
-                int,
-                float,
-                Enum,
-                "Input",
-            ],
+                Union[
+                    Input,
+                    str,
+                    bool,
+                    int,
+                    float,
+                    Enum,
+                    "Input",
+                ],
+            ]
         ] = None,
-        outputs: Dict[str, Union[str, Output, "Output"]] = None,
-        settings: PipelineJobSettings = None,
+        outputs: Optional[Dict[str, Union[str, Output, "Output"]]] = None,
+        settings: Optional[PipelineJobSettings] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -70,6 +71,8 @@ class Pipeline(BaseNode):
             outputs=outputs,
             **kwargs,
         )
+        # copy pipeline component output's setting to node level
+        self._copy_pipeline_component_out_setting_to_node()
         self._settings = None
         self.settings = settings
 
@@ -93,8 +96,14 @@ class Pipeline(BaseNode):
 
     @settings.setter
     def settings(self, value):
-        if value is not None and not isinstance(value, PipelineJobSettings):
-            raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
+        if value is not None:
+            if isinstance(value, PipelineJobSettings):
+                # since PipelineJobSettings inherit _AttrDict, we need add this branch to distinguish with dict
+                pass
+            elif isinstance(value, dict):
+                value = PipelineJobSettings(**value)
+            else:
+                raise TypeError("settings must be PipelineJobSettings or dict but got {}".format(type(value)))
         self._settings = value
 
     @classmethod
@@ -106,6 +115,12 @@ class Pipeline(BaseNode):
     @property
     def _skip_required_compute_missing_validation(self):
         return True
+
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> List[str]:
+        # pipeline component must be a file reference when loading from yaml,
+        # so the created object can't pass schema validation.
+        return ["component"]
 
     @classmethod
     def _attr_type_map(cls) -> dict:
@@ -125,7 +140,10 @@ class Pipeline(BaseNode):
             description=self.description,
             tags=self.tags,
             properties=self.properties,
-            inputs=self._job_inputs,
+            # Filter None out to avoid case below failed with conflict keys check:
+            # group: None (user not specified)
+            # group.xx: 1 (user specified
+            inputs={k: v for k, v in self._job_inputs.items() if v},
             outputs=self._job_outputs,
             component=self.component,
             settings=self.settings,
@@ -146,15 +164,6 @@ class Pipeline(BaseNode):
         if isinstance(self.component, PipelineComponent):
             validation_result.merge_with(self.component._customized_validate())
         return validation_result
-
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Pipeline":
-        obj = BaseNode._rest_object_to_init_params(obj)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-        return Pipeline(**obj)
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
@@ -181,3 +190,13 @@ class Pipeline(BaseNode):
         from azure.ai.ml._schema.pipeline.pipeline_component import PipelineSchema
 
         return PipelineSchema(context=context)
+
+    def _copy_pipeline_component_out_setting_to_node(self):
+        """Copy pipeline component output's setting to node level."""
+        from azure.ai.ml.entities import PipelineComponent
+
+        if not isinstance(self.component, PipelineComponent):
+            return
+        for key, val in self.component.outputs.items():
+            node_output = self.outputs.get(key)
+            copy_output_setting(source=val, target=node_output)
