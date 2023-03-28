@@ -996,7 +996,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
         :returns: An iterable stream of bytes
-        :rtype: ~azure.containerregistry.DownloadBlobStream
+        :rtype: ~azure.containerregistry._download_stream.DownloadBlobStream
         :raises ValueError: If the parameter repository or digest is None.
         """
         chunk_size = DEFAULT_CHUNK_SIZE  # TODO: We should support client and operation-level overrides

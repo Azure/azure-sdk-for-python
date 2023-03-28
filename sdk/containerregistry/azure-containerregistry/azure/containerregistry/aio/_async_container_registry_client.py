@@ -20,8 +20,8 @@ from azure.core.exceptions import (
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._download_stream_async import AsyncDownloadBlobStream
 from ._async_base_client import ContainerRegistryBaseClient
+from ._async_download_stream import AsyncDownloadBlobStream
 from .._container_registry_client import _return_response_headers, _return_deserialized_and_headers
 from .._generated.models import AcrErrors
 from .._helpers import (
@@ -912,7 +912,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
         :returns: An iterable stream of bytes
-        :rtype: ~azure.containerregistry.DownloadBlobStream
+        :rtype: ~azure.containerregistry._async_download_stream.AsyncDownloadBlobStream
         :raises ValueError: If the parameter repository or digest is None.
         """
         chunk_size = DEFAULT_CHUNK_SIZE  # TODO: We should support client and operation-level overrides
