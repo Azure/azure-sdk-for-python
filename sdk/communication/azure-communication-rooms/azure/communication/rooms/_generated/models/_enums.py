@@ -10,16 +10,9 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Role of a room participant."""
+class ParticipantRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role of a room participant. The default value is Attendee."""
 
     PRESENTER = "Presenter"
     ATTENDEE = "Attendee"
     CONSUMER = "Consumer"
-
-
-class RoomJoinPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Policy based on which Participants can join a room."""
-
-    INVITE_ONLY = "InviteOnly"
-    COMMUNICATION_SERVICE_USERS = "CommunicationServiceUsers"

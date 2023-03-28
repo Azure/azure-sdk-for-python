@@ -4,22 +4,16 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from azure.core.exceptions import DeserializationError
 from .._generated.models import (
-    RoomParticipant as RoomParticipantInternal,
-    CommunicationIdentifierModel,
-    CommunicationUserIdentifierModel,
-    RoomJoinPolicy,
-    RoleType
+    RoomModel,
+    ParticipantRole
 )
-from .._generated.models import RoomModel
 from .._shared.models import (
     CommunicationIdentifier,
-    CommunicationIdentifierKind,
-    CommunicationUserIdentifier,
-    UnknownIdentifier
+    identifier_from_raw_id
 )
 
 
@@ -34,10 +28,6 @@ class CommunicationRoom():
     :vartype valid_from: ~datetime.datetime
     :ivar valid_until: The timestamp from when the room can no longer be joined.
     :vartype valid_until: ~datetime.datetime
-    :ivar room_join_policy: The join policy of the room.
-    :vartype room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
-    :ivar participants: Collection of room participants.
-    :vartype participants: Optional[List[~azure.communication.rooms.RoomParticipant]]
     """
 
     def __init__(
@@ -47,8 +37,6 @@ class CommunicationRoom():
         created_on: datetime,
         valid_from: datetime,
         valid_until: datetime,
-        room_join_policy: RoomJoinPolicy,
-        participants: Optional[List['RoomParticipant']]=None,
         **kwargs
     ):
         """
@@ -60,19 +48,12 @@ class CommunicationRoom():
         :type valid_from: ~datetime.datetime
         :param valid_until: The timestamp from when the room can no longer be joined.
         :type valid_until: ~datetime.datetime
-        :param room_join_policy: The join policy of the room. Allows only participants or any communication
-        service users to join
-        :type room_join_policy: ~azure.communication.rooms.RoomJoinPolicy
-        :param participants: Collection of room participants.
-        :type participants: Optional[List[~azure.communication.rooms.RoomParticipant]]
         """
         super(CommunicationRoom, self).__init__(**kwargs)
         self.id = id
         self.created_on = created_on
         self.valid_from = valid_from
         self.valid_until = valid_until
-        self.room_join_policy = room_join_policy
-        self.participants = participants
 
     @classmethod
     def _from_room_response(cls, get_room_response: RoomModel,
@@ -90,9 +71,6 @@ class CommunicationRoom():
             created_on=get_room_response.created_date_time,
             valid_from=get_room_response.valid_from,
             valid_until=get_room_response.valid_until,
-            room_join_policy=get_room_response.room_join_policy,
-            # pylint: disable=protected-access
-            participants=[RoomParticipant._from_room_participant_internal(p) for p in get_room_response.participants],
             **kwargs
         )
 
@@ -112,94 +90,70 @@ class RoomParticipant():
     :vartype communication_identifier:
     ~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
-    :vartype role: Optional[Union[str, RoleType]
+    :vartype role: Union[str, RoleType]
     """
-
-    def __init__(
-        self,
-        *,
-        communication_identifier: CommunicationIdentifier,
-        role: Optional[Union[str, RoleType]]=None,
-        **kwargs
-    ):
+    def __init__(self, *, raw_id: str, role: Union[str, ParticipantRole], **kwargs: Any) -> None:
         """
-        :param communication_identifier: Identifies a participant in Azure Communication services. A
-         participant is, for example, an Azure communication user. This model must be interpreted as a
-         union: Apart from rawId, at most one further property may be set. Required.
-        :type communication_identifier:
-         ~azure.communication.rooms._shared.models.CommunicationIdentifier
-        :param role: The Role of a room participant. Known values are: "Presenter", "Attendee", and
-         "Consumer".
-        :type role: Optional[Union[str, RoleType]]
+        :keyword raw_id: Raw ID representation of the communication identifier. Please refer to the
+         following document for additional information on Raw ID. :code:`<br>`
+         https://learn.microsoft.com/azure/communication-services/concepts/identifiers?pivots=programming-language-rest#raw-id-representation.
+         Required.
+        :paramtype raw_id: str
+        :keyword role: The role of a room participant. The default value is Attendee. Required. Known
+         values are: "Presenter", "Attendee", and "Consumer".
+        :paramtype role: str or ~azure.communication.rooms.models.ParticipantRole
         """
         super().__init__(**kwargs)
-        self.communication_identifier = communication_identifier
+        self.raw_id = raw_id
         self.role = role
+        self.communication_identifier = identifier_from_raw_id(self.raw_id)
 
-    @classmethod
-    def _from_room_participant_internal(cls, room_participant_internal: RoomParticipantInternal, **kwargs):
-        return cls(
-            communication_identifier=_CommunicationIdentifierConverter
-                .to_communication_identifier(room_participant_internal.communication_identifier),
-            role=room_participant_internal.role,
-            **kwargs
-        )
-
-    def _to_room_participant_internal(self):
-        return RoomParticipantInternal(
-            communication_identifier=_CommunicationIdentifierConverter
-                .to_communication_identifier_model(self.communication_identifier),
-            role=self.role
-        )
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
-class _CommunicationIdentifierConverter():
-    @staticmethod
-    def to_communication_identifier_model(communication_identifier: CommunicationIdentifier):
-        if communication_identifier.kind == CommunicationIdentifierKind.COMMUNICATION_USER:
-            return CommunicationIdentifierModel(
-                communication_user=CommunicationUserIdentifierModel(
-                    id=communication_identifier.properties['id']
-                )
-            )
-        if communication_identifier.kind == CommunicationIdentifierKind.UNKNOWN:
-            return CommunicationIdentifierModel(
-                raw_id=communication_identifier.raw_id
-            )
-
-        raise TypeError('The type of communication identifier "{}" is not supported'
-            .format(communication_identifier.kind))
-
-    @staticmethod
-    def to_communication_identifier(communication_identifier_model: CommunicationIdentifierModel):
-
-        raw_id = communication_identifier_model.raw_id
-        if not raw_id:
-            raise DeserializationError('Property "{}" is required for identifier of type {}'
-                .format('raw_id', type(communication_identifier_model).__name__))
-
-        if isinstance(communication_identifier_model.communication_user, CommunicationUserIdentifierModel):
-            return CommunicationUserIdentifier(
-                communication_identifier_model.communication_user.id
-            )
-
-        return UnknownIdentifier(raw_id)
-
-
-class ParticipantsCollection():
-    """Collection of participants in a room.
+class InvitedRoomParticipant():
+    """An invited participant of the room.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar participants: Room Participants. Required.
-    :vartype participants: List[~azure.communication.rooms.RoomParticipant]
+    :ivar communication_identifier: Identifies a participant in Azure Communication services. A
+    participant is, for example, an Azure communication user. This model must be interpreted as a
+    union: Apart from rawId, at most one further property may be set. Required.
+    :vartype communication_identifier:
+    ~azure.communication.rooms._shared.models.CommunicationIdentifier
+    :ivar role: Role Name.
+    :vartype role: Optional[Union[str, RoleType]
     """
 
-    def __init__(self, *, participants: List[RoomParticipantInternal], **kwargs):
+    def __init__(self, *, communication_identifier: CommunicationIdentifier, role: Optional[Union[str, ParticipantRole]], **kwargs: Any) -> None:
+        """
+        :keyword raw_id: Raw ID representation of the communication identifier. Please refer to the
+         following document for additional information on Raw ID. :code:`<br>`
+         https://learn.microsoft.com/azure/communication-services/concepts/identifiers?pivots=programming-language-rest#raw-id-representation.
+         Required.
+        :paramtype raw_id: str
+        :keyword role: The role of a room participant. The default value is Attendee. Required. Known
+         values are: "Presenter", "Attendee", and "Consumer".
+        :paramtype role: Optional. str or ~azure.communication.rooms.models.ParticipantRole
+        """
         super().__init__(**kwargs)
-        # pylint: disable=protected-access
-        self.participants = [RoomParticipant._from_room_participant_internal(p) for p in participants]
+        self.communication_identifier = communication_identifier
+        self.role = role
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
+
+class UpsertParticipantsResult():
+    def __init__(self):
+        # empty constructor
+        pass
+
+class RemoveParticipantsResult():
+    def __init__(self):
+        # empty constructor
+        pass

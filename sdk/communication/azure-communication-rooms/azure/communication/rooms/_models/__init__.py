@@ -9,11 +9,15 @@
 from ._models import (
     CommunicationRoom,
     RoomParticipant,
-    ParticipantsCollection
+    InvitedRoomParticipant,
+    UpsertParticipantsResult,
+    RemoveParticipantsResult
 )
 
 __all__ = [
     "CommunicationRoom",
     "RoomParticipant",
-    "ParticipantsCollection"
+    "InvitedRoomParticipant",
+    "UpsertParticipantsResult",
+    "UpsertParticipantsResult"
 ]

@@ -7,15 +7,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+import sys
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -26,25 +30,29 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _format_url_section
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_rooms_create_room_request(**kwargs: Any) -> HttpRequest:
+def build_rooms_create_request(
+    *,
+    repeatability_request_id: Optional[str] = None,
+    repeatability_first_sent: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    repeatability_request_id = kwargs.pop(
-        "repeatability_request_id", _headers.pop("Repeatability-Request-ID", None)
-    )  # type: Optional[str]
-    repeatability_first_sent = kwargs.pop(
-        "repeatability_first_sent", _headers.pop("Repeatability-First-Sent", None)
-    )  # type: Optional[datetime.datetime]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -60,7 +68,7 @@ def build_rooms_create_room_request(**kwargs: Any) -> HttpRequest:
         )
     if repeatability_first_sent is not None:
         _headers["Repeatability-First-Sent"] = _SERIALIZER.header(
-            "repeatability_first_sent", repeatability_first_sent, "iso-8601"
+            "repeatability_first_sent", repeatability_first_sent, "rfc-1123"
         )
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
@@ -69,20 +77,15 @@ def build_rooms_create_room_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rooms_get_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
+def build_rooms_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rooms/{roomId}"
-    path_format_arguments = {
-        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url = "/rooms"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -93,12 +96,11 @@ def build_rooms_get_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rooms_update_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
+def build_rooms_get_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +109,32 @@ def build_rooms_update_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
         "roomId": _SERIALIZER.url("room_id", room_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_rooms_update_request(room_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/rooms/{roomId}"
+    path_format_arguments = {
+        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -120,11 +147,11 @@ def build_rooms_update_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rooms_delete_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
+def build_rooms_delete_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +160,7 @@ def build_rooms_delete_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
         "roomId": _SERIALIZER.url("room_id", room_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -144,11 +171,11 @@ def build_rooms_delete_room_request(room_id: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rooms_get_participants_request(room_id: str, **kwargs: Any) -> HttpRequest:
+def build_participants_list_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -157,7 +184,7 @@ def build_rooms_get_participants_request(room_id: str, **kwargs: Any) -> HttpReq
         "roomId": _SERIALIZER.url("room_id", room_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -168,21 +195,21 @@ def build_rooms_get_participants_request(room_id: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rooms_add_participants_request(room_id: str, **kwargs: Any) -> HttpRequest:
+def build_participants_update_request(room_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-03-31-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/rooms/{roomId}/participants:add"
+    _url = "/rooms/{roomId}/participants"
     path_format_arguments = {
         "roomId": _SERIALIZER.url("room_id", room_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -192,61 +219,7 @@ def build_rooms_add_participants_request(room_id: str, **kwargs: Any) -> HttpReq
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_rooms_update_participants_request(room_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/rooms/{roomId}/participants:update"
-    path_format_arguments = {
-        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_rooms_remove_participants_request(room_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-02-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/rooms/{roomId}/participants:remove"
-    path_format_arguments = {
-        "roomId": _SERIALIZER.url("room_id", room_id, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class RoomsOperations:
@@ -269,7 +242,7 @@ class RoomsOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def create_room(
+    def create(
         self,
         create_room_request: _models.CreateRoomRequest,
         *,
@@ -286,8 +259,8 @@ class RoomsOperations:
         :type create_room_request: ~azure.communication.rooms.models.CreateRoomRequest
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. It
          is recommended to use version 4 (random) UUIDs. Default value is None.
         :paramtype repeatability_request_id: str
@@ -305,7 +278,7 @@ class RoomsOperations:
         """
 
     @overload
-    def create_room(
+    def create(
         self,
         create_room_request: IO,
         *,
@@ -322,8 +295,8 @@ class RoomsOperations:
         :type create_room_request: IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. It
          is recommended to use version 4 (random) UUIDs. Default value is None.
         :paramtype repeatability_request_id: str
@@ -341,7 +314,7 @@ class RoomsOperations:
         """
 
     @distributed_trace
-    def create_room(
+    def create(
         self,
         create_room_request: Union[_models.CreateRoomRequest, IO],
         *,
@@ -353,13 +326,13 @@ class RoomsOperations:
 
         Creates a new room.
 
-        :param create_room_request: The create room request body. Is either a model type or a IO type.
-         Required.
+        :param create_room_request: The create room request body. Is either a CreateRoomRequest type or
+         a IO type. Required.
         :type create_room_request: ~azure.communication.rooms.models.CreateRoomRequest or IO
         :keyword repeatability_request_id: If specified, the client directs that the request is
          repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
+         Repeatability-Request-ID and get back an appropriate response without the server executing the
+         request multiple times. The value of the Repeatability-Request-ID is an opaque string
          representing a client-generated, globally unique for all time, identifier for the request. It
          is recommended to use version 4 (random) UUIDs. Default value is None.
         :paramtype repeatability_request_id: str
@@ -375,14 +348,19 @@ class RoomsOperations:
         :rtype: ~azure.communication.rooms.models.RoomModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoomModel]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RoomModel] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -392,7 +370,7 @@ class RoomsOperations:
         else:
             _json = self._serialize.body(create_room_request, "CreateRoomRequest")
 
-        request = build_rooms_create_room_request(
+        request = build_rooms_create_request(
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
             content_type=content_type,
@@ -405,10 +383,11 @@ class RoomsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -426,7 +405,94 @@ class RoomsOperations:
         return deserialized
 
     @distributed_trace
-    def get_room(self, room_id: str, **kwargs: Any) -> _models.RoomModel:
+    def list(self, **kwargs: Any) -> Iterable["_models.RoomModel"]:
+        """Retrieves all created rooms.
+
+        Retrieves all created rooms.
+
+        :return: An iterator like instance of RoomModel
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.rooms.models.RoomModel]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.RoomsCollection] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_rooms_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.RoomsCollection, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get(self, room_id: str, **kwargs: Any) -> _models.RoomModel:
         """Retrieves an existing room by id.
 
         Retrieves an existing room by id.
@@ -437,15 +503,20 @@ class RoomsOperations:
         :rtype: ~azure.communication.rooms.models.RoomModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoomModel]
+        cls: ClsType[_models.RoomModel] = kwargs.pop("cls", None)
 
-        request = build_rooms_get_room_request(
+        request = build_rooms_get_request(
             room_id=room_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -454,10 +525,11 @@ class RoomsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -475,12 +547,12 @@ class RoomsOperations:
         return deserialized
 
     @overload
-    def update_room(
+    def update(
         self,
         room_id: str,
-        patch_room_request: Optional[_models.UpdateRoomRequest] = None,
+        update_room_request: _models.UpdateRoomRequest,
         *,
-        content_type: str = "application/json",
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.RoomModel:
         """Update a room with given changes.
@@ -489,10 +561,10 @@ class RoomsOperations:
 
         :param room_id: The id of the room requested. Required.
         :type room_id: str
-        :param patch_room_request: The patch room request. Default value is None.
-        :type patch_room_request: ~azure.communication.rooms.models.UpdateRoomRequest
+        :param update_room_request: The update room request. Required.
+        :type update_room_request: ~azure.communication.rooms.models.UpdateRoomRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: RoomModel
         :rtype: ~azure.communication.rooms.models.RoomModel
@@ -500,12 +572,12 @@ class RoomsOperations:
         """
 
     @overload
-    def update_room(
+    def update(
         self,
         room_id: str,
-        patch_room_request: Optional[IO] = None,
+        update_room_request: IO,
         *,
-        content_type: str = "application/json",
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.RoomModel:
         """Update a room with given changes.
@@ -514,11 +586,10 @@ class RoomsOperations:
 
         :param room_id: The id of the room requested. Required.
         :type room_id: str
-        :param patch_room_request: The patch room request. Default value is None.
-        :type patch_room_request: IO
+        :param update_room_request: The update room request. Required.
+        :type update_room_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Known values are: 'application/json', 'application/merge-patch+json'. Default value is
-         "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: RoomModel
         :rtype: ~azure.communication.rooms.models.RoomModel
@@ -526,8 +597,8 @@ class RoomsOperations:
         """
 
     @distributed_trace
-    def update_room(
-        self, room_id: str, patch_room_request: Optional[Union[_models.UpdateRoomRequest, IO]] = None, **kwargs: Any
+    def update(
+        self, room_id: str, update_room_request: Union[_models.UpdateRoomRequest, IO], **kwargs: Any
     ) -> _models.RoomModel:
         """Update a room with given changes.
 
@@ -535,37 +606,39 @@ class RoomsOperations:
 
         :param room_id: The id of the room requested. Required.
         :type room_id: str
-        :param patch_room_request: The patch room request. Is either a model type or a IO type. Default
-         value is None.
-        :type patch_room_request: ~azure.communication.rooms.models.UpdateRoomRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
+        :param update_room_request: The update room request. Is either a UpdateRoomRequest type or a IO
+         type. Required.
+        :type update_room_request: ~azure.communication.rooms.models.UpdateRoomRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
         :return: RoomModel
         :rtype: ~azure.communication.rooms.models.RoomModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.RoomModel]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RoomModel] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _json = None
         _content = None
-        if isinstance(patch_room_request, (IO, bytes)):
-            _content = patch_room_request
+        if isinstance(update_room_request, (IO, bytes)):
+            _content = update_room_request
         else:
-            if patch_room_request is not None:
-                _json = self._serialize.body(patch_room_request, "UpdateRoomRequest")
-            else:
-                _json = None
+            _json = self._serialize.body(update_room_request, "UpdateRoomRequest")
 
-        request = build_rooms_update_room_request(
+        request = build_rooms_update_request(
             room_id=room_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -577,10 +650,11 @@ class RoomsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -598,7 +672,7 @@ class RoomsOperations:
         return deserialized
 
     @distributed_trace
-    def delete_room(self, room_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def delete(self, room_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a room.
 
         Delete a room.
@@ -609,15 +683,20 @@ class RoomsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        request = build_rooms_delete_room_request(
+        request = build_rooms_delete_request(
             room_id=room_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -626,10 +705,11 @@ class RoomsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -642,245 +722,204 @@ class RoomsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
+
+class ParticipantsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.communication.rooms.AzureCommunicationRoomsService`'s
+        :attr:`participants` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
     @distributed_trace
-    def get_participants(self, room_id: str, **kwargs: Any) -> _models.ParticipantsCollection:
+    def list(self, room_id: str, **kwargs: Any) -> Iterable["_models.RoomParticipant"]:
         """Get participants in a room.
 
         Get participants in a room.
 
         :param room_id: The id of the room to get participants from. Required.
         :type room_id: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
+        :return: An iterator like instance of RoomParticipant
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.rooms.models.RoomParticipant]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ParticipantsCollection]
+        cls: ClsType[_models._models.ParticipantsCollection] = kwargs.pop(
+            "cls", None
+        )  # pylint: disable=protected-access
 
-        request = build_rooms_get_participants_request(
-            room_id=room_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("ParticipantsCollection", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    @overload
-    def add_participants(
-        self,
-        room_id: str,
-        add_participants_request: _models.AddParticipantsRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ParticipantsCollection:
-        """Adds participants to a room. If participants already exist, no change occurs.
-
-        Adds participants to a room. If participants already exist, no change occurs.
-
-        :param room_id: Room id to add participants. Required.
-        :type room_id: str
-        :param add_participants_request: Participants to be added to the room. Required.
-        :type add_participants_request: ~azure.communication.rooms.models.AddParticipantsRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def add_participants(
-        self, room_id: str, add_participants_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ParticipantsCollection:
-        """Adds participants to a room. If participants already exist, no change occurs.
-
-        Adds participants to a room. If participants already exist, no change occurs.
-
-        :param room_id: Room id to add participants. Required.
-        :type room_id: str
-        :param add_participants_request: Participants to be added to the room. Required.
-        :type add_participants_request: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def add_participants(
-        self, room_id: str, add_participants_request: Union[_models.AddParticipantsRequest, IO], **kwargs: Any
-    ) -> _models.ParticipantsCollection:
-        """Adds participants to a room. If participants already exist, no change occurs.
-
-        Adds participants to a room. If participants already exist, no change occurs.
-
-        :param room_id: Room id to add participants. Required.
-        :type room_id: str
-        :param add_participants_request: Participants to be added to the room. Is either a model type
-         or a IO type. Required.
-        :type add_participants_request: ~azure.communication.rooms.models.AddParticipantsRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ParticipantsCollection]
+                request = build_participants_list_request(
+                    room_id=room_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(add_participants_request, (IO, bytes)):
-            _content = add_participants_request
-        else:
-            _json = self._serialize.body(add_participants_request, "AddParticipantsRequest")
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        request = build_rooms_add_participants_request(
-            room_id=room_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+            return request
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.ParticipantsCollection, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        response = pipeline_response.http_response
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        deserialized = self._deserialize("ParticipantsCollection", pipeline_response)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})
+            return pipeline_response
 
-        return deserialized
+        return ItemPaged(get_next, extract_data)
 
     @overload
-    def update_participants(
+    def update(
         self,
         room_id: str,
         update_participants_request: _models.UpdateParticipantsRequest,
         *,
-        content_type: str = "application/json",
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.ParticipantsCollection:
+    ) -> JSON:
         """Update participants in a room.
 
         Update participants in a room.
 
-        :param room_id: The room id. Required.
+        :param room_id: The id of the room to update the participants in. Required.
         :type room_id: str
-        :param update_participants_request: Participants in a room to be updated. Required.
+        :param update_participants_request: An updated set of participants of the room. Required.
         :type update_participants_request: ~azure.communication.rooms.models.UpdateParticipantsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
+        :return: JSON
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def update_participants(
-        self, room_id: str, update_participants_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ParticipantsCollection:
+    def update(
+        self,
+        room_id: str,
+        update_participants_request: IO,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> JSON:
         """Update participants in a room.
 
         Update participants in a room.
 
-        :param room_id: The room id. Required.
+        :param room_id: The id of the room to update the participants in. Required.
         :type room_id: str
-        :param update_participants_request: Participants in a room to be updated. Required.
+        :param update_participants_request: An updated set of participants of the room. Required.
         :type update_participants_request: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
+        :return: JSON
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def update_participants(
+    def update(
         self, room_id: str, update_participants_request: Union[_models.UpdateParticipantsRequest, IO], **kwargs: Any
-    ) -> _models.ParticipantsCollection:
+    ) -> JSON:
         """Update participants in a room.
 
         Update participants in a room.
 
-        :param room_id: The room id. Required.
+        :param room_id: The id of the room to update the participants in. Required.
         :type room_id: str
-        :param update_participants_request: Participants in a room to be updated. Is either a model
-         type or a IO type. Required.
+        :param update_participants_request: An updated set of participants of the room. Is either a
+         UpdateParticipantsRequest type or a IO type. Required.
         :type update_participants_request: ~azure.communication.rooms.models.UpdateParticipantsRequest
          or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Known values are:
+         'application/merge-patch+json'. Default value is None.
         :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
+        :return: JSON
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ParticipantsCollection]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _json = None
         _content = None
         if isinstance(update_participants_request, (IO, bytes)):
@@ -888,7 +927,7 @@ class RoomsOperations:
         else:
             _json = self._serialize.body(update_participants_request, "UpdateParticipantsRequest")
 
-        request = build_rooms_update_participants_request(
+        request = build_participants_update_request(
             room_id=room_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -900,10 +939,11 @@ class RoomsOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -913,122 +953,7 @@ class RoomsOperations:
             error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = self._deserialize("ParticipantsCollection", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    @overload
-    def remove_participants(
-        self,
-        room_id: str,
-        remove_participants_request: _models.RemoveParticipantsRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ParticipantsCollection:
-        """Remove participants from a room.
-
-        Remove participants from a room.
-
-        :param room_id: Room id to remove the participants from. Required.
-        :type room_id: str
-        :param remove_participants_request: Participants in a room to be removed. Required.
-        :type remove_participants_request: ~azure.communication.rooms.models.RemoveParticipantsRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def remove_participants(
-        self, room_id: str, remove_participants_request: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ParticipantsCollection:
-        """Remove participants from a room.
-
-        Remove participants from a room.
-
-        :param room_id: Room id to remove the participants from. Required.
-        :type room_id: str
-        :param remove_participants_request: Participants in a room to be removed. Required.
-        :type remove_participants_request: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def remove_participants(
-        self, room_id: str, remove_participants_request: Union[_models.RemoveParticipantsRequest, IO], **kwargs: Any
-    ) -> _models.ParticipantsCollection:
-        """Remove participants from a room.
-
-        Remove participants from a room.
-
-        :param room_id: Room id to remove the participants from. Required.
-        :type room_id: str
-        :param remove_participants_request: Participants in a room to be removed. Is either a model
-         type or a IO type. Required.
-        :type remove_participants_request: ~azure.communication.rooms.models.RemoveParticipantsRequest
-         or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: ParticipantsCollection
-        :rtype: ~azure.communication.rooms.models.ParticipantsCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ParticipantsCollection]
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(remove_participants_request, (IO, bytes)):
-            _content = remove_participants_request
-        else:
-            _json = self._serialize.body(remove_participants_request, "RemoveParticipantsRequest")
-
-        request = build_rooms_remove_participants_request(
-            room_id=room_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize("ParticipantsCollection", pipeline_response)
+        deserialized = self._deserialize("object", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})

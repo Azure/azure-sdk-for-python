@@ -10,15 +10,16 @@ npm install -g autorest
 ### Generation
 ```ps
 cd <swagger-folder>
-autorest SWAGGER.md
+autorest README.md
 ```
 
 ### Settings
 
 ```yaml
 require:
-    - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/e30976f6ccb058a36cd2f9d5160e1fd51f6c5d95/specification/communication/data-plane/Rooms/readme.md
+    - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/49ef4666b13e2e5675dfb92dab3b3d13aa8b3596/specification/communication/data-plane/Rooms/readme.md
 output-folder: ../azure/communication/rooms/_generated
+payload-flattening-threshold: 3
 models-mode: msrest
 namespace: azure.communication.rooms
 package-name: azure-communication-rooms
@@ -30,4 +31,13 @@ title: Azure Communication Rooms Service
 add-credential: false
 v3: true
 no-async: false
+```
+
+### Rename Role to ParticipantRole
+```yaml
+directive:
+  from: swagger-document
+  where: $.definitions.Role
+  transform: >
+    $["x-ms-enum"].name = "ParticipantRole";
 ```

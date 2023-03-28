@@ -9,6 +9,7 @@
 from typing import Any
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 VERSION = "unknown"
@@ -22,19 +23,24 @@ class AzureCommunicationRoomsServiceConfiguration(Configuration):  # pylint: dis
 
     :param endpoint: The endpoint of the Azure Communication resource. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-02-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: Api Version. Default value is "2023-03-31-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         super(AzureCommunicationRoomsServiceConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-02-01")  # type: str
+        api_version: str = kwargs.pop("api_version", "2023-03-31-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
+        self.credential = credential
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "communication-rooms/{}".format(VERSION))
         self._configure(**kwargs)
@@ -49,3 +55,5 @@ class AzureCommunicationRoomsServiceConfiguration(Configuration):  # pylint: dis
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = policies.AzureKeyCredentialPolicy(self.credential, "Authorization", **kwargs)
