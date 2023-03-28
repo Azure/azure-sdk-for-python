@@ -48,8 +48,8 @@ if TYPE_CHECKING:
         pass
 
     from ._transport._base import AmqpTransport
-    from ._pyamqp.authentication import JWTTokenAuth
-    from ._pyamqp.client import SendClient as SendClientSync
+    from ._pyamqp.authentication import JWTTokenAuth as pyamqp_JWTTokenAuth
+    from ._pyamqp.client import SendClient as pyamqp_SendClientSync
     MessageTypes = Union[
         Mapping[str, Any],
         ServiceBusMessage,
@@ -179,7 +179,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._max_message_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
-        self._handler: Union["SendClientSync", "uamqp_SendClientSync"]
+        self._handler: Union["pyamqp_SendClientSync", "uamqp_SendClientSync"]
 
     @classmethod
     def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusSender":
@@ -218,7 +218,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         constructor_args = cls._convert_connection_string_to_kwargs(conn_str, **kwargs)
         return cls(**constructor_args)
 
-    def _create_handler(self, auth: Union["uamqp_JWTTokenAuth", "JWTTokenAuth"]) -> None:
+    def _create_handler(self, auth: Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]) -> None:
 
         self._handler = self._amqp_transport.create_send_client(
             config=self._config,

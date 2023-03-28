@@ -151,16 +151,6 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def set_message_partition_key(message, partition_key, **kwargs):
-        """Set the partition key as an annotation on a uamqp message.
-
-        :param message: The message to update.
-        :param str partition_key: The partition key value.
-        :rtype: None
-        """
-
-    @staticmethod
-    @abstractmethod
     def create_source(source, offset, selector):
         """
         Creates and returns the Source.
@@ -217,24 +207,6 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
         :keyword bool update_token: Whether to update token. If not updating token,
          then pass 300 to refresh_window. Only used by uamqp.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def create_mgmt_client(address, mgmt_auth, config):
-        """
-        Creates and returns the mgmt AMQP client.
-        :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
-        """
-
-    @staticmethod
-    @abstractmethod
-    async def get_updated_token_async(mgmt_auth):
-        """
-        Return updated auth token.
-        :param mgmt_auth: Auth.
         """
 
     @staticmethod

@@ -41,6 +41,13 @@ try:
         MessageContentTooLarge,
         MessageException,
     )
+    if TYPE_CHECKING:
+        uamqp_Message = Message
+        uamqp_types = types,
+        uamqp_ReceiveClient = ReceiveClient,
+        uamqp_SendClient = SendClient,
+        from uamqp import AMQPClient as uamqp_AMQPClient
+
     uamqp_installed = True
 except ImportError:
     uamqp_installed = False
@@ -102,6 +109,19 @@ from ..exceptions import (
     OperationTimeoutError
 )
 if TYPE_CHECKING:
+    from .._servicebus_receiver import ServiceBusReceiver
+    from .._common._configuration import Configuration
+    from .._common.message import ServiceBusReceivedMessage
+    from .._pyamqp.performatives import pyamqp_AttachFrame
+    from .._pyamqp.message import (
+        Message as pyamqp_Message,
+        BatchMessage as pyamqp_BatchMessage
+    )
+    from .._pyamqp.client import (
+        SendClient as pyamqp_SendClient,
+        ReceiveClient as pyamqp_ReceiveClient,
+        AMQPClient as pyamqp_AMQPClient
+    )
     from .._servicebus_receiver import ServiceBusReceiver
     from .._common.message import ServiceBusReceivedMessage
 
@@ -212,12 +232,12 @@ if uamqp_installed:
         MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
         MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         TIMEOUT_FACTOR = 1000
-        CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
-            )
+        #CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
+        #        c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
+        #        c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
+        #        c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
+        #        c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
+        #    )
         TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
         # To enable extensible string enums for the public facing parameter
@@ -429,20 +449,21 @@ if uamqp_installed:
         def create_retry_policy(config, *, is_session=False):
             """
             Creates the error retry policy.
-            :param ~azure.eventhub._configuration.Configuration config: Configuration.
+            :param ~azure.servicebus._common._configuration.Configuration config:
+             Configuration.
             :keyword bool is_session: Is session enabled.
             """
             # TODO: What's the retry overlap between servicebus and pyamqp?
             return _ServiceBusErrorPolicy(max_retries=config.retry_total, is_session=is_session)
 
-        @staticmethod
-        def create_link_properties(link_properties):
-            """
-            Creates and returns the link properties.
-            :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
-            :rtype: dict
-            """
-            return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
+        #@staticmethod
+        #def create_link_properties(link_properties):
+        #    """
+        #    Creates and returns the link properties.
+        #    :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
+        #    :rtype: dict
+        #    """
+        #    return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
         def create_connection(host, auth, network_trace, **kwargs):
@@ -470,20 +491,20 @@ if uamqp_installed:
             """
             connection.destroy()
 
-        @staticmethod
-        def get_connection_state(connection):
-            """
-            Gets connection state.
-            :param connection: uamqp or pyamqp Connection.
-            """
-            return connection._state    # pylint:disable=protected-access
+        #@staticmethod
+        #def get_connection_state(connection):
+        #    """
+        #    Gets connection state.
+        #    :param connection: uamqp or pyamqp Connection.
+        #    """
+        #    return connection._state    # pylint:disable=protected-access
 
         @staticmethod
         def create_send_client(config, **kwargs):
             """
             Creates and returns the uamqp SendClient.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
-
+            :param ~azure.servicebus._common._configuration.Configuration config:
+             The configuration.
             :keyword str target: Required. The target.
             :keyword JWTTokenAuth auth: Required.
             :keyword int idle_timeout: Required.
@@ -525,7 +546,7 @@ if uamqp_installed:
         def send_messages(sender, message, logger, timeout, last_exception):
             """
             Handles sending of service bus messages.
-            :param ~azure.servicebus._servicebus_sender.ServiceBusSender sender: The sender with handler
+            :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
              to send messages.
             :param message: ServiceBusMessage with uamqp.Message to be sent.
             :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
@@ -547,10 +568,9 @@ if uamqp_installed:
             sb_message_batch, outgoing_sb_message
         ):  # pylint: disable=unused-argument
             """
-            Add EventData to the data body of the BatchMessage.
-            :param event_data_batch: EventDataBatch to add data to.
-            :param outgoing_event_data: Transformed EventData for sending.
-            :param event_data: EventData to add to internal batch events. uamqp use only.
+            Add ServiceBusMessage to the data body of the BatchMessage.
+            :param sb_message_batch: ServiceBusMessageBatch to add data to.
+            :param outgoing_sb_message: Transformed ServiceBusMessage for sending.
             :rtype: None
             """
             # pylint: disable=protected-access
@@ -574,7 +594,8 @@ if uamqp_installed:
         def create_receive_client(receiver, **kwargs):
             """
             Creates and returns the receive client.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :param ~azure.servicebus._common._configuration.Configuration config:
+             The configuration.
 
             :keyword str source: Required. The source.
             :keyword str offset: Required.
@@ -614,19 +635,19 @@ if uamqp_installed:
                 **kwargs
             )
 
-        @staticmethod
-        def open_receive_client(*, handler, client, auth):
-            """
-            Opens the receive client and returns ready status.
-            :param ReceiveClient handler: The receive client.
-            :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
-            :param auth: Auth.
-            :rtype: bool
-            """
-            # pylint:disable=protected-access
-            handler.open(connection=client._conn_manager.get_connection(
-                client._address.hostname, auth
-            ))
+        #@staticmethod
+        #def open_receive_client(*, handler, receiver, auth):
+        #    """
+        #    Opens the receive client and returns ready status.
+        #    :param ReceiveClient handler: The receive client.
+        #    :param ~azure.servicebus.ServiceBusReceiver client: The .
+        #    :param auth: Auth.
+        #    :rtype: bool
+        #    """
+        #    # pylint:disable=protected-access
+        #    handler.open(connection=receiver._conn_manager.get_connection(
+        #        receiver._address.hostname, auth
+        #    ))
 
         @staticmethod
         def on_attach(receiver, source, target, properties, error): # pylint: disable=unused-argument
@@ -710,7 +731,7 @@ if uamqp_installed:
         def build_received_message(
             receiver: "ServiceBusReceiver",
             message_type: "ServiceBusReceivedMessage",
-            received: "Message"
+            received: "pyamqp_Message"
         ):
             # pylint: disable=protected-access
             message = message_type(
@@ -719,25 +740,6 @@ if uamqp_installed:
             message._uamqp_message = received
             receiver._last_received_sequenced_number = message.sequence_number
             return message
-
-        @staticmethod
-        def get_receive_timeout(handler):
-            """
-            Gets the timeout on the ReceiveClient.
-            :param ReceiveClient handler: Handler to set timeout on.
-            :rtype: int
-            """
-            return handler._timeout    # pylint: disable=protected-access
-
-        @staticmethod
-        def set_receive_timeout(handler, max_wait_time):
-            """
-            Sets the timeout on the ReceiveClient and returns original timeout.
-            :param ReceiveClient handler: Handler to set timeout on.
-            :param int max_wait_time: Max wait time.
-            :rtype: None
-            """
-            handler._timeout = max_wait_time    # pylint: disable=protected-access
 
         @staticmethod
         def get_current_time(handler):
@@ -834,7 +836,7 @@ if uamqp_installed:
         #def check_link_stolen(consumer, exception):
         #    """
         #    Checks if link stolen and handles exception.
-        #    :param consumer: The EventHubConsumer.
+        #    :param consumer: The servicebusConsumer.
         #    :param exception: Exception to check.
         #    """
         #    if (
@@ -851,7 +853,7 @@ if uamqp_installed:
             :param get_token: The callback function used for getting and refreshing
             tokens. It should return a valid jwt token each time it is called.
             :param bytes token_type: Token type.
-            :param ~azure.eventhub._configuration.Configuration config: EH config.
+            :param ~azure.servicebus._configuration.Configuration config: EH config.
 
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
@@ -876,22 +878,6 @@ if uamqp_installed:
                 token_auth.update_token()
             return token_auth
 
-        #@staticmethod
-        #def create_mgmt_client(address, mgmt_auth, config):
-        #    """
-        #    Creates and returns the mgmt AMQP client.
-        #    :param _Address address: Required. The Address.
-        #    :param JWTTokenAuth mgmt_auth: Auth for client.
-        #    :param ~azure.eventhub._configuration.Configuration config: The configuration.
-        #    """
-
-        #    mgmt_target = f"amqps://{address.hostname}{address.path}"
-        #    return AMQPClient(
-        #        mgmt_target,
-        #        auth=mgmt_auth,
-        #        debug=config.network_tracing
-        #    )
-
         @staticmethod
         def open_mgmt_client(mgmt_client, conn):
             """
@@ -900,14 +886,6 @@ if uamqp_installed:
             :param conn: Connection.
             """
             mgmt_client.open(connection=conn)
-
-        @staticmethod
-        def get_updated_token(mgmt_auth):
-            """
-            Return updated auth token.
-            :param mgmt_auth: Auth.
-            """
-            return mgmt_auth.token
 
         @staticmethod
         def create_mgmt_msg(
@@ -945,9 +923,9 @@ if uamqp_installed:
             node,
             timeout,
             callback
-        ):
+        ) -> "ServiceBusReceivedMessage":
             """
-            Send mgmt request.
+            Send mgmt request and return result of callback.
             :param AMQPClient mgmt_client: Client to send request with.
             :param Message mgmt_msg: Message.
             :keyword bytes operation: Operation.

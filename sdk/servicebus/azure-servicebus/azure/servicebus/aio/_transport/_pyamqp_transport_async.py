@@ -323,33 +323,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    def create_mgmt_client(address, mgmt_auth, config):  # pylint: disable=unused-argument
-        """
-        Creates and returns the mgmt AMQP client.
-        :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
-        """
-
-        return AMQPClientAsync(
-            config.hostname,
-            auth=mgmt_auth,
-            network_trace=config.network_tracing,
-            transport_type=config.transport_type,
-            http_proxy=config.http_proxy,
-            custom_endpoint_address=config.custom_endpoint_address,
-            connection_verify=config.connection_verify,
-        )
-
-    @staticmethod
-    async def get_updated_token_async(mgmt_auth):
-        """
-        Return updated auth token.
-        :param mgmt_auth: Auth.
-        """
-        return await mgmt_auth.get_token()
-
-    @staticmethod
     async def mgmt_client_request_async(
         mgmt_client,
         mgmt_msg,

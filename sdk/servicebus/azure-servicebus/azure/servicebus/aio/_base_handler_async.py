@@ -32,8 +32,8 @@ if TYPE_CHECKING:
         from uamqp.async_ops import AMQPClientAsync as uamqp_AMQPClientAsync
     except ImportError:
         pass
-    from .._pyamqp.aio._client_async import AMQPClientAsync
-    from .._pyamqp.message import Message
+    from .._pyamqp.aio._client_async import AMQPClientAsync as pyamqp_AMQPClientAsync
+    from .._pyamqp.message import Message as pyamqp_Message
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -152,7 +152,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
         self._running = False
-        self._handler: Optional[Union["uamqp_AMQPClientAsync", "AMQPClientAsync"]] = None
+        self._handler: Optional[Union["uamqp_AMQPClientAsync", "pyamqp_AMQPClientAsync"]] = None
         self._auth_uri = None
         self._properties = create_properties(
             self._config.user_agent,
@@ -315,7 +315,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         keep_alive_associated_link: bool = True,
         timeout: Optional[float] = None,
         **kwargs: Any
-    ) -> "Message":
+    ) -> "pyamqp_Message":
         """
         Execute an amqp management operation.
 

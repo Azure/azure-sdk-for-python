@@ -226,7 +226,7 @@ if uamqp_installed:
 
         @staticmethod
         async def settle_message_via_receiver_link_async(
-            handler: "ReceiveClientAsync",
+            handler: "pyamqp_ReceiveClientAsync",
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
@@ -275,30 +275,6 @@ if uamqp_installed:
             if update_token:
                 await token_auth.update_token()
             return token_auth
-
-        @staticmethod
-        def create_mgmt_client(address, mgmt_auth, config):
-            """
-            Creates and returns the mgmt AMQP client.
-            :param _Address address: Required. The Address.
-            :param JWTTokenAuth mgmt_auth: Auth for client.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
-            """
-
-            mgmt_target = f"amqps://{address.hostname}{address.path}"
-            return AMQPClientAsync(
-                mgmt_target,
-                auth=mgmt_auth,
-                debug=config.network_tracing
-            )
-
-        @staticmethod
-        async def get_updated_token_async(mgmt_auth):
-            """
-            Return updated auth token.
-            :param mgmt_auth: Auth.
-            """
-            return mgmt_auth.token
 
         @staticmethod
         async def open_mgmt_client_async(mgmt_client, conn):

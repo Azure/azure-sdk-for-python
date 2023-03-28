@@ -168,7 +168,7 @@ def get_renewable_lock_duration(
         )
 
 
-def create_authentication(client) -> Union["uamqp_JWTTokenAuth", "JWTTokenAuth"]:
+def create_authentication(client) -> Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]:
     # pylint: disable=protected-access
     try:
         # ignore mypy's warning because token_type is Optional
@@ -303,10 +303,10 @@ def receive_trace_context_manager(
 
 
 def trace_message(
-    message: Union["uamqp_Message", "Message"],
+    message: Union["uamqp_Message", "pyamqp_Message"],
     amqp_transport: "AmqpTransport",
     parent_span: Optional["AbstractSpan"] = None
-) -> Union["uamqp_Message", "Message"]:
+) -> Union["uamqp_Message", "pyamqp_Message"]:
     """Add tracing information to this message.
     Will open and close a "Azure.Servicebus.message" span, and
     add the "DiagnosticId" as app properties of the message.

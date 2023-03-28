@@ -36,12 +36,11 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
     try:
         from uamqp.async_ops.client_async import SendClientAsync as uamqp_SendClientAsync
-        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
     except ImportError:
         pass
-    from .._pyamqp.aio import SendClientAsync
-    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
-    from .._pyamqp.aio import SendClientAsync
+    from .._pyamqp.aio import SendClientAsync as pyamqp_SendClientAsync
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync as pyamqp_JWTTokenAuthAsync
     from ._transport._base_async import AmqpTransportAsync
 
 
@@ -139,7 +138,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._max_message_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
-        self._handler: Union["SendClientAsync", "uamqp_SendClientAsync"]
+        self._handler: Union["pyamqp_SendClientAsync", "uamqp_SendClientAsync"]
 
     @classmethod
     def _from_connection_string(
@@ -176,7 +175,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         constructor_args = cls._convert_connection_string_to_kwargs(conn_str, **kwargs)
         return cls(**constructor_args)
 
-    def _create_handler(self, auth: Union["uamqp_JWTTokenAsync", "JWTTokenAuthAsync"]) -> None:
+    def _create_handler(
+        self, auth: Union["uamqp_JWTTokenAuthAsync", "pyamqp_JWTTokenAuthAsync"]
+    ) -> None:
 
         self._handler = self._amqp_transport.create_send_client(
             config=self._config,

@@ -58,9 +58,9 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from ._transport._base import AmqpTransport
-    from ._pyamqp.client import ReceiveClient as ReceiveClientSync
-    from ._pyamqp.message import Message
-    from ._pyamqp.authentication import JWTTokenAuth
+    from ._pyamqp.client import ReceiveClient as pyamqp_ReceiveClientSync
+    from ._pyamqp.message import Message as pyamqp_Message
+    from ._pyamqp.authentication import JWTTokenAuth as pyamqp_JWTTokenAuth
     from ._common.auto_lock_renewer import AutoLockRenewer
     from azure.core.credentials import (
         TokenCredential,
@@ -213,7 +213,7 @@ class ServiceBusReceiver(
             else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = threading.Event()
-        self._handler: Union["ReceiveClientSync", "uamqp_ReceiveClientSync"]
+        self._handler: Union["pyamqp_ReceiveClientSync", "uamqp_ReceiveClientSync"]
         self._build_received_message = functools.partial(
             self._amqp_transport.build_received_message,
             self,
@@ -315,7 +315,7 @@ class ServiceBusReceiver(
             )
         return cls(**constructor_args)
 
-    def _create_handler(self, auth: Union["JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
+    def _create_handler(self, auth: Union["pyamqp_JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
 
         self._handler = self._amqp_transport.create_receive_client(
             receiver=self,
@@ -386,7 +386,7 @@ class ServiceBusReceiver(
                 if (timeout_time)
                 else 0
             )
-            batch: Union[List["uamqp_Message"], List["Message"]] = []
+            batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
             while (
                 not received_messages_queue.empty() and len(batch) < max_message_count
             ):

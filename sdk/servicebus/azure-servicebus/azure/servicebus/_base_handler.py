@@ -45,8 +45,8 @@ if TYPE_CHECKING:
         from uamqp import AMQPClient as uamqp_AMQPClientSync
     except ImportError:
         pass
-    from ._pyamqp.message import Message
-    from ._pyamqp.client import AMQPClient as AMQPClientSync
+    from ._pyamqp.message import Message as pyamqp_Message
+    from ._pyamqp.client import AMQPClient as pyamqp_AMQPClientSync
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -270,7 +270,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             **kwargs
         )
         self._running = False
-        self._handler: Optional[Union["uamqp_AMQPClientSync", "AMQPClientSync"]] = None
+        self._handler: Optional[Union["uamqp_AMQPClientSync", "pyamqp_AMQPClientSync"]] = None
         self._auth_uri = None
         self._properties = create_properties(
             self._config.user_agent,
@@ -472,7 +472,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         keep_alive_associated_link: bool = True,
         timeout: Optional[float] = None,
         **kwargs: Any
-    ) -> "Message":
+    ) -> "pyamqp_Message":
         """
         Execute an amqp management operation.
 
@@ -486,7 +486,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
          executing operation on mgmt links.
         :param timeout: timeout in seconds executing the mgmt operation.
-        :rtype: None
+        :rtype: Tuple
         """
         self._open()
         application_properties = {}

@@ -54,14 +54,14 @@ from ._async_utils import create_authentication
 if TYPE_CHECKING:
     try:
         from uamqp.async_ops.client_async import ReceiveClientAsync as uamqp_ReceiveClientAsync
-        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
         from uamqp.message import Message as uamqp_Message
     except ImportError:
         pass
     from ._transport._base_async import AmqpTransportAsync
-    from .._pyamqp.message import Message
-    from .._pyamqp.aio import ReceiveClientAsync
-    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
+    from .._pyamqp.message import Message as pyamqp_Message
+    from .._pyamqp.aio import ReceiveClientAsync as pyamqp_ReceiveClientAsync
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync as pyamqp_JWTTokenAuthAsync
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
     from .._common.auto_lock_renewer import AutoLockRenewer
@@ -208,7 +208,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             None if self._session_id is None else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = asyncio.Event()
-        self._handler: Union["ReceiveClientAsync", "uamqp_ReceiveClientAsync"]
+        self._handler: Union["pyamqp_ReceiveClientAsync", "uamqp_ReceiveClientAsync"]
         self._build_received_message = functools.partial(
             self._amqp_transport.build_received_message,
             self,
@@ -307,7 +307,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
         return cls(**constructor_args)
 
-    def _create_handler(self, auth: Union["JWTTokenAuthAsync", "uamqp_JWTTokenAsync"]) -> None:
+    def _create_handler(self, auth: Union["pyamqp_JWTTokenAuthAsync", "uamqp_JWTTokenAuthAsync"]) -> None:
 
         self._handler = self._amqp_transport.create_receive_client(
             receiver=self,
@@ -375,7 +375,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 else 0
             )
 
-            batch: Union[List["uamqp_Message"], List["Message"]] = []
+            batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
             while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
