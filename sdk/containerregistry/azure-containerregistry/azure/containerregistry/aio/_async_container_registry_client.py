@@ -885,9 +885,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     **kwargs
                 )
             )
-        except Exception:
+        except Exception as e:
             if repository is None or data is None:
-                raise ValueError("The parameter repository and data cannot be None.")
+                raise ValueError("The parameter repository and data cannot be None.") from e
             raise
         return complete_upload_response_headers['Docker-Content-Digest'], blob_size
 
