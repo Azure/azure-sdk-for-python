@@ -14,7 +14,6 @@ from typing import Dict, List, Optional, Union
 from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
@@ -464,9 +463,9 @@ class Command(BaseNode):
             UserIdentityConfiguration]
         :param queue_settings: Queue settings for the job.
         :type queue_settings: QueueSettings
-        :param job_tier: determines the job tier.
+        :param job_tier: **Experimental** determines the job tier.
         :type job_tier: str
-        :param priority: controls the priority on the compute.
+        :param priority: **Experimental** controls the priority on the compute.
         :type priority: str
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
@@ -554,7 +553,7 @@ class Command(BaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["resources", "distribution", "limits", "environment_variables"]
+        return ["resources", "distribution", "limits", "environment_variables", "queue_settings"]
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
@@ -609,8 +608,7 @@ class Command(BaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
 
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])

@@ -1,10 +1,16 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0b3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b2 (2023-03-24)
 
 ### Bugs Fixed
 - Fixed a `TypeError` when call `list_tag()` in an empty repository. ([#28234](https://github.com/Azure/azure-sdk-for-python/issues/28234))

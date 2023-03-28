@@ -7,7 +7,6 @@ import logging
 import pytest
 import datetime
 
-import msrest
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 from azure.servicebus.management import SubscriptionProperties
 from utilities import get_logger
@@ -277,7 +276,7 @@ class TestServiceBusAdministrationClientSubscriptionAsync(AzureMgmtRecordedTestC
 
             # change the name to a topic with an invalid name exist; should fail.
             subscription_description.name = ''
-            with pytest.raises(msrest.exceptions.ValidationError):
+            with pytest.raises(HttpResponseError):
                 await mgmt_service.update_subscription(topic_name, subscription_description)
             subscription_description.name = topic_name
 
