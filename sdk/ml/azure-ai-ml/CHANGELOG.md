@@ -10,6 +10,7 @@
 
 - Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
 - Fixed issue of spark input/output mode validation doesn't take effect because of wrong type assertion
+- Fixed the bug when setting `node.limits.timeout` to a pipeline input.
 
 ### Other Changes
 
