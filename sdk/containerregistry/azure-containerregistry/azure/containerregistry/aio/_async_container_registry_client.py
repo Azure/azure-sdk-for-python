@@ -897,22 +897,23 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         buffer = data.read(DEFAULT_CHUNK_SIZE)
 
         while len(buffer) > 0:
-            buffer_stream = _UnclosableBytesIO(buffer)
-            response_headers = cast(
-                Dict[str, str],
-                await self._client.container_registry_blob.upload_chunk(
-                    location,
-                    buffer_stream,
-                    cls=_return_response_headers,
-                    **kwargs
+            try:
+                buffer_stream = _UnclosableBytesIO(buffer)
+                response_headers = cast(
+                    Dict[str, str],
+                    await self._client.container_registry_blob.upload_chunk(
+                        location,
+                        buffer_stream,
+                        cls=_return_response_headers,
+                        **kwargs
+                    )
                 )
-            )
-            buffer_stream.manual_close()
-            blob_size += len(buffer)
-            hasher.update(buffer)
-
-            location = response_headers['Location']
-            buffer = data.read(DEFAULT_CHUNK_SIZE)
+                blob_size += len(buffer)
+                hasher.update(buffer)
+                location = response_headers['Location']
+                buffer = data.read(DEFAULT_CHUNK_SIZE)
+            finally:
+                buffer_stream.manual_close()
 
         return "sha256:" + hasher.hexdigest(), location, blob_size
 
