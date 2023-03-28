@@ -867,7 +867,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace_async
     async def delete_blob(self, repository: str, digest: str, **kwargs) -> None:
-        """Delete a blob.
+        """Delete a blob. If the manifest cannot be found or a response status code of
+        404 is returned an error will not be raised.
 
         :param str repository: Name of the repository the manifest belongs to
         :param str digest: Digest of the blob to be deleted
@@ -883,4 +884,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
             await client.delete_blob("my_repository", "my_digest")
         """
-        await self._client.container_registry_blob.delete_blob(repository, digest, **kwargs)
+        try:
+            await self._client.container_registry_blob.delete_blob(repository, digest, **kwargs)
+        except HttpResponseError as error:
+            if error.status_code == 404:
+                return
