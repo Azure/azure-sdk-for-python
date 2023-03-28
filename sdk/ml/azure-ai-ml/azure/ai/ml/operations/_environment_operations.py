@@ -149,7 +149,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     )
                     return self.get(name=environment.name, version=environment.version)
 
-            environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
+            environment = _check_and_upload_env_build_context(
+                environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
+            )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
                 self._version_operations.begin_create_or_update(

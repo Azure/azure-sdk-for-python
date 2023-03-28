@@ -7,9 +7,10 @@
 import pytest
 import functools
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
+from azure.core.exceptions import HttpResponseError
+from azure.ai.formrecognizer._generated.v2023_02_28_preview.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
-from azure.ai.formrecognizer import AnalyzeResult
+from azure.ai.formrecognizer import AnalysisFeature, AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
@@ -20,6 +21,21 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 
 class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
+
+    @skip_flaky_test
+    @FormRecognizerPreparer()
+    @DocumentAnalysisClientPreparer()
+    @recorded_by_proxy_async
+    async def test_layout_incorrect_feature_format(self, client):
+        with open(self.invoice_pdf, "rb") as fd:
+            document = fd.read()
+        async with client:
+            with pytest.raises(HttpResponseError):
+                poller = await client.begin_analyze_document(
+                    "prebuilt-layout",
+                    document,
+                    features=AnalysisFeature.OCR_FONT
+                )
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -38,7 +54,12 @@ class TestDACAnalyzeLayoutAsync(AsyncFormRecognizerTest):
             responses.append(extracted_layout)
 
         async with client:
-            poller = await client.begin_analyze_document("prebuilt-layout", document, cls=callback)
+            poller = await client.begin_analyze_document(
+                "prebuilt-layout",
+                document,
+                features=[AnalysisFeature.OCR_FONT],
+                cls=callback
+            )
             result = await poller.result()
         raw_analyze_result = responses[0].analyze_result
         returned_model = responses[1]

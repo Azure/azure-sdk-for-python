@@ -565,6 +565,11 @@ class FormRecognizerTest(AzureRecordedTestCase):
         
         for style, expected in zip(transformed_styles, raw_styles):
             assert style.is_handwritten == expected.is_handwritten
+            assert style.similar_font_family == expected.similar_font_family
+            assert style.font_style == expected.font_style
+            assert style.font_weight == expected.font_weight
+            assert style.color == expected.color
+            assert style.background_color == expected.background_color
             assert style.confidence == expected.confidence
             
             for span, expected_span in zip(style.spans or [], expected.spans or []):

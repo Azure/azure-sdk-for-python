@@ -461,6 +461,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with ContainerRegistryClient(
             endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         ) as client:
+            assert client._client._config.api_version == "2021-07-01"
             async for repo in client.list_repository_names():
                 pass
         
@@ -480,21 +481,29 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 with pytest.raises(ClientAuthenticationError):
                     async for repo in client.list_repository_names():
                         pass
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup tags in ALPINE repo
+            async for tag in client.list_tag_properties(ALPINE):
+                await client.delete_tag(ALPINE, tag.name)
+            
+            response = client.list_tag_properties(ALPINE)
+            if response is not None:
+                async for tag in response:
+                    pass
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup manifests in ALPINE repo
+            async for tag in client.list_tag_properties(ALPINE):
+                await client.delete_manifest(ALPINE, tag.name)
 
-
-async def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
-    
-    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
-        assert client._client._config.api_version == "2021-07-01"
-    
-    with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
-    ) as client:
-        assert client._client._config.api_version == "2019-08-15-preview"
-    
-    with pytest.raises(ValueError):
-        with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
-        ) as client:
-            pass
+            response = client.list_manifest_properties(ALPINE)
+            if response is not None:
+                async for manifest in response:
+                    pass

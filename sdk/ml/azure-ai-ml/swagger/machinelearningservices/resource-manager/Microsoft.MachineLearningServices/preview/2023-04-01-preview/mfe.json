@@ -606,6 +606,81 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{codeName}/versions/pendingUpload/{version}": {
+      "post": {
+        "tags": [
+          "CodeVersion"
+        ],
+        "summary": "Generate a storage location and credential for the client to upload a code asset to.",
+        "operationId": "RegistryCodeVersions_CreateOrGetPendingUpload",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "registryName",
+            "description": "Name of Azure Machine Learning registry.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "codeName",
+            "description": "Pending upload name. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pending upload request object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PendingUploadRequestDto"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/PendingUploadResponseDto"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrGetPendingUpload Registry Code Version.": {
+            "$ref": "./examples/Registry/CodeVersion/createOrGetPendingUpload.json"
+          }
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/components": {
       "get": {
         "tags": [
@@ -933,6 +1008,12 @@
           },
           {
             "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          },
+          {
+            "in": "query",
+            "name": "stage",
+            "description": "Component stage.",
+            "type": "string"
           }
         ],
         "responses": {
@@ -2529,6 +2610,81 @@
         }
       }
     },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{modelName}/versions/pendingUpload/{version}": {
+      "post": {
+        "tags": [
+          "ModelVersion"
+        ],
+        "summary": "Generate a storage location and credential for the client to upload a model asset to.",
+        "operationId": "RegistryModelVersions_CreateOrGetPendingUpload",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "registryName",
+            "description": "Name of Azure Machine Learning registry.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "modelName",
+            "description": "Model name. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pending upload request object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PendingUploadRequestDto"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/PendingUploadResponseDto"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrGetPendingUpload Registry Model Version.": {
+            "$ref": "./examples/Registry/ModelVersion/createOrGetPendingUpload.json"
+          }
+        }
+      }
+    },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints": {
       "get": {
         "tags": [
@@ -2658,7 +2814,10 @@
             "$ref": "./examples/Workspace/BatchEndpoint/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -2874,7 +3033,10 @@
             "$ref": "./examples/Workspace/BatchEndpoint/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments": {
@@ -3026,7 +3188,10 @@
             "$ref": "./examples/Workspace/BatchDeployment/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -3265,7 +3430,10 @@
             "$ref": "./examples/Workspace/BatchDeployment/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/listkeys": {
@@ -3587,6 +3755,18 @@
           },
           {
             "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          },
+          {
+            "in": "query",
+            "name": "hash",
+            "description": "If specified, return CodeVersion assets with specified content hash value, regardless of name",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "hashVersion",
+            "description": "Hash algorithm version when listing by hash",
+            "type": "string"
           }
         ],
         "responses": {
@@ -3801,6 +3981,77 @@
         "x-ms-examples": {
           "CreateOrUpdate Workspace Code Version.": {
             "$ref": "./examples/Workspace/CodeVersion/createOrUpdate.json"
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/codes/{name}/versions/pendingUpload/{version}": {
+      "post": {
+        "tags": [
+          "CodeVersion"
+        ],
+        "summary": "Generate a storage location and credential for the client to upload a code asset to.",
+        "operationId": "CodeVersions_CreateOrGetPendingUpload",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "name",
+            "description": "Container name. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "description": "Version identifier. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pending upload request object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PendingUploadRequestDto"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/PendingUploadResponseDto"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "CreateOrGetPendingUpload Workspace Code Version.": {
+            "$ref": "./examples/Workspace/CodeVersion/createOrGetPendingUpload.json"
           }
         }
       }
@@ -4099,6 +4350,12 @@
           },
           {
             "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          },
+          {
+            "in": "query",
+            "name": "stage",
+            "description": "Component stage.",
+            "type": "string"
           },
           {
             "in": "query",
@@ -4643,6 +4900,12 @@
             "in": "query",
             "name": "$tags",
             "description": "Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "stage",
+            "description": "data stage",
             "type": "string"
           },
           {
@@ -5819,6 +6082,32 @@
                 }
               ]
             }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "page size",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "description": "name for the featureset",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "description",
+            "description": "description for the feature set",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "createdBy",
+            "description": "createdBy user name",
+            "type": "string"
           }
         ],
         "responses": {
@@ -5916,7 +6205,10 @@
             "$ref": "./examples/Workspace/FeaturesetContainer/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -6047,7 +6339,10 @@
             "$ref": "./examples/Workspace/FeaturesetContainer/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions": {
@@ -6073,7 +6368,7 @@
           {
             "in": "path",
             "name": "name",
-            "description": "Container name. This is case-sensitive.",
+            "description": "Featureset name. This is case-sensitive.",
             "required": true,
             "type": "string"
           },
@@ -6115,6 +6410,44 @@
                 }
               ]
             }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "page size",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "in": "query",
+            "name": "versionName",
+            "description": "name for the featureset version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "description": "featureset version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "description",
+            "description": "description for the feature set version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "createdBy",
+            "description": "createdBy user name",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "stage",
+            "description": "stage",
+            "type": "string"
           }
         ],
         "responses": {
@@ -6219,7 +6552,10 @@
             "$ref": "./examples/Workspace/FeaturesetVersion/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -6364,7 +6700,10 @@
             "$ref": "./examples/Workspace/FeaturesetVersion/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featuresets/{name}/versions/{version}/backfill": {
@@ -6427,7 +6766,7 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/FeaturesetVersionBackfillResponse"
+              "$ref": "#/definitions/FeaturesetJob"
             }
           },
           "202": {
@@ -6552,14 +6891,14 @@
           {
             "in": "path",
             "name": "name",
-            "description": "Container name. This is case-sensitive.",
+            "description": "Featureset name. This is case-sensitive.",
             "required": true,
             "type": "string"
           },
           {
             "in": "path",
             "name": "version",
-            "description": "Version identifier. This is case-sensitive.",
+            "description": "Featureset Version identifier. This is case-sensitive.",
             "required": true,
             "type": "string"
           },
@@ -6571,8 +6910,20 @@
           },
           {
             "in": "query",
-            "name": "tags",
+            "name": "$tags",
             "description": "Comma-separated list of tag names (and optionally values). Example: tag1,tag2=value2",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "featureName",
+            "description": "feature name.",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "description",
+            "description": "description.",
             "type": "string"
           }
         ],
@@ -6741,6 +7092,32 @@
                 }
               ]
             }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "page size",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "description": "name for the featurestore entity",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "description",
+            "description": "description for the featurestore entity",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "createdBy",
+            "description": "createdBy user name",
+            "type": "string"
           }
         ],
         "responses": {
@@ -6838,7 +7215,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityContainer/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -6969,7 +7349,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityContainer/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/featurestoreEntities/{name}/versions": {
@@ -6995,7 +7378,7 @@
           {
             "in": "path",
             "name": "name",
-            "description": "Container name. This is case-sensitive.",
+            "description": "Feature entity name. This is case-sensitive.",
             "required": true,
             "type": "string"
           },
@@ -7037,6 +7420,44 @@
                 }
               ]
             }
+          },
+          {
+            "in": "query",
+            "name": "pageSize",
+            "description": "page size",
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          },
+          {
+            "in": "query",
+            "name": "versionName",
+            "description": "name for the featurestore entity version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "version",
+            "description": "featurestore entity version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "description",
+            "description": "description for the feature entity version",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "createdBy",
+            "description": "createdBy user name",
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "stage",
+            "description": "stage",
+            "type": "string"
           }
         ],
         "responses": {
@@ -7141,7 +7562,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityVersion/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -7286,7 +7710,10 @@
             "$ref": "./examples/Workspace/FeaturestoreEntityVersion/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/jobs": {
@@ -7477,7 +7904,10 @@
             "$ref": "./examples/Job/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -7535,6 +7965,68 @@
           },
           "Get Pipeline Job.": {
             "$ref": "./examples/Job/PipelineJob/get.json"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Job"
+        ],
+        "summary": "Updates a Job.",
+        "operationId": "Jobs_Update",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The name and identifier for the Job. This is case-sensitive.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v3/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Job definition to apply during the operation.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PartialJobBasePartialResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/JobBaseResource"
+            }
+          }
+        },
+        "x-ms-examples": {
+          "Update Job.": {
+            "$ref": "./examples/Job/update.json"
           }
         }
       },
@@ -7938,7 +8430,10 @@
             "$ref": "./examples/LabelingJob/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/labelingJobs/{id}/exportLabels": {
@@ -9002,7 +9497,10 @@
             "$ref": "./examples/Workspace/OnlineEndpoint/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -9217,7 +9715,10 @@
             "$ref": "./examples/Workspace/OnlineEndpoint/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/deployments": {
@@ -9369,7 +9870,10 @@
             "$ref": "./examples/Workspace/OnlineDeployment/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -9617,7 +10121,10 @@
             "$ref": "./examples/OnlineDeployment/KubernetesOnlineDeployment/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     },
     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/onlineEndpoints/{endpointName}/deployments/{deploymentName}/getLogs": {
@@ -9904,7 +10411,7 @@
         "tags": [
           "OnlineEndpoint"
         ],
-        "summary": "Retrieve a valid AAD token for an Endpoint using AMLToken-based authentication.",
+        "summary": "Retrieve a valid AML token for an Endpoint using AMLToken-based authentication.",
         "operationId": "OnlineEndpoints_GetToken",
         "produces": [
           "application/json"
@@ -10100,7 +10607,10 @@
             "$ref": "./examples/Schedule/delete.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "location"
+        }
       },
       "get": {
         "tags": [
@@ -10231,7 +10741,10 @@
             "$ref": "./examples/Schedule/createOrUpdate.json"
           }
         },
-        "x-ms-long-running-operation": true
+        "x-ms-long-running-operation": true,
+        "x-ms-long-running-operation-options": {
+          "final-state-via": "original-uri"
+        }
       }
     }
   },
@@ -10279,6 +10792,19 @@
       "x-ms-discriminator-value": "AccountKey",
       "additionalProperties": false
     },
+    "AllFeatures": {
+      "required": [
+        "filterType"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringFeatureFilterBase"
+        }
+      ],
+      "x-ms-discriminator-value": "AllFeatures",
+      "additionalProperties": false
+    },
     "AllNodes": {
       "description": "All nodes means the service will be running on all of the nodes of the job",
       "type": "object",
@@ -10309,6 +10835,16 @@
         }
       ],
       "properties": {
+        "autoDeleteSetting": {
+          "description": "Specifies the lifecycle setting of managed data asset.",
+          "$ref": "#/definitions/AutoDeleteSetting",
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ],
+          "x-nullable": true
+        },
         "isAnonymous": {
           "description": "If the name version are system generated (anonymous registration). For types where Stage is defined, when Stage is provided it will be used to populate IsAnonymous",
           "default": false,
@@ -10388,6 +10924,7 @@
         },
         "uri": {
           "description": "[Required] Input Asset URI.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         }
@@ -10406,6 +10943,16 @@
         "assetVersion": {
           "description": "Output Asset Version.",
           "type": "string",
+          "x-nullable": true
+        },
+        "autoDeleteSetting": {
+          "description": "Auto delete setting of output data asset.",
+          "$ref": "#/definitions/AutoDeleteSetting",
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ],
           "x-nullable": true
         },
         "mode": {
@@ -10476,6 +11023,52 @@
       },
       "discriminator": "referenceType"
     },
+    "AutoDeleteCondition": {
+      "enum": [
+        "CreatedGreaterThan",
+        "LastAccessedGreaterThan"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "AutoDeleteCondition",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "CreatedGreaterThan"
+          },
+          {
+            "value": "LastAccessedGreaterThan"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "AutoDeleteSetting": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "description": "When to check if an asset is expired",
+          "default": "CreatedGreaterThan",
+          "$ref": "#/definitions/AutoDeleteCondition",
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ]
+        },
+        "value": {
+          "description": "Expiration condition value.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "AutoForecastHorizon": {
       "description": "Forecast horizon determined automatically by system.",
       "type": "object",
@@ -10485,24 +11078,6 @@
         }
       ],
       "x-ms-discriminator-value": "Auto",
-      "additionalProperties": false
-    },
-    "AutologgerSettings": {
-      "description": "Settings for Autologger.",
-      "required": [
-        "mlflowAutologger"
-      ],
-      "type": "object",
-      "properties": {
-        "mlflowAutologger": {
-          "description": "[Required] Indicates whether mlflow autologger is enabled.",
-          "$ref": "#/definitions/MLFlowAutologgerState",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
       "additionalProperties": false
     },
     "AutoMLJob": {
@@ -10553,6 +11128,15 @@
           ],
           "x-nullable": true
         },
+        "queueSettings": {
+          "description": "Queue settings for the job",
+          "$ref": "#/definitions/QueueSettings",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
         "resources": {
           "description": "Compute Resource configuration for the job.",
           "default": "{}",
@@ -10561,15 +11145,6 @@
             "create",
             "read"
           ]
-        },
-        "schedulingSettings": {
-          "description": "Scheduling setting for the job",
-          "$ref": "#/definitions/SchedulingSettings",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
         },
         "taskDetails": {
           "description": "[Required] This represents scenario which can be one of Tables/NLP/Image",
@@ -10675,6 +11250,24 @@
       "x-ms-discriminator-value": "Auto",
       "additionalProperties": false
     },
+    "AutologgerSettings": {
+      "description": "Settings for Autologger.",
+      "required": [
+        "mlflowAutologger"
+      ],
+      "type": "object",
+      "properties": {
+        "mlflowAutologger": {
+          "description": "[Required] Indicates whether mlflow autologger is enabled.",
+          "$ref": "#/definitions/MLFlowAutologgerState",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
     "AzureBlobDatastore": {
       "description": "Azure Blob datastore configuration.",
       "type": "object",
@@ -10764,6 +11357,7 @@
         },
         "storeName": {
           "description": "[Required] Azure Data Lake store name.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -10793,6 +11387,7 @@
       "properties": {
         "accountName": {
           "description": "[Required] Storage account name.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -10812,6 +11407,7 @@
         },
         "filesystem": {
           "description": "[Required] The name of the Data Lake Gen2 filesystem.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -10859,6 +11455,17 @@
       },
       "additionalProperties": false
     },
+    "AzureDevOpsWebhook": {
+      "description": "Webhook details specific for Azure DevOps",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Webhook"
+        }
+      ],
+      "x-ms-discriminator-value": "AzureDevOps",
+      "additionalProperties": false
+    },
     "AzureFileDatastore": {
       "description": "Azure File datastore configuration.",
       "required": [
@@ -10877,6 +11484,7 @@
       "properties": {
         "accountName": {
           "description": "[Required] Storage account name.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -10896,6 +11504,7 @@
         },
         "fileShareName": {
           "description": "[Required] The name of the Azure file share that the datastore points to.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -11001,6 +11610,7 @@
       "properties": {
         "resourceId": {
           "description": "[Required] Resource id accepting ArmId or AzureMlId.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         }
@@ -11052,9 +11662,9 @@
           "type": "string",
           "x-nullable": true
         },
-        "deploymentProperties": {
+        "deploymentConfiguration": {
           "description": "Properties relevant to different deployment types.",
-          "$ref": "#/definitions/BatchDeploymentProperties",
+          "$ref": "#/definitions/BatchDeploymentConfiguration",
           "x-nullable": true
         },
         "errorThreshold": {
@@ -11117,21 +11727,21 @@
       "x-ms-client-name": "BatchDeploymentProperties",
       "additionalProperties": false
     },
-    "BatchDeploymentProperties": {
+    "BatchDeploymentConfiguration": {
       "description": "Properties relevant to different deployment types.",
       "required": [
-        "deploymentPropertyType"
+        "deploymentConfigurationType"
       ],
       "type": "object",
       "properties": {
-        "deploymentPropertyType": {
+        "deploymentConfigurationType": {
           "description": "[Required] The type of the deployment",
-          "$ref": "#/definitions/BatchDeploymentPropertyType"
+          "$ref": "#/definitions/BatchDeploymentConfigurationType"
         }
       },
-      "discriminator": "deploymentPropertyType"
+      "discriminator": "deploymentConfigurationType"
     },
-    "BatchDeploymentPropertyType": {
+    "BatchDeploymentConfigurationType": {
       "description": "The enumerated property types for batch deployments.",
       "enum": [
         "Model",
@@ -11139,7 +11749,7 @@
       ],
       "type": "string",
       "x-ms-enum": {
-        "name": "BatchDeploymentPropertyType",
+        "name": "BatchDeploymentConfigurationType",
         "modelAsString": true,
         "values": [
           {
@@ -11336,15 +11946,15 @@
       },
       "additionalProperties": false
     },
-    "BatchPipelineComponentDeploymentProperties": {
+    "BatchPipelineComponentDeploymentConfiguration": {
       "description": "Properties for a Batch Pipeline Component Deployment.",
       "required": [
-        "deploymentPropertyType"
+        "deploymentConfigurationType"
       ],
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/BatchDeploymentProperties"
+          "$ref": "#/definitions/BatchDeploymentConfiguration"
         }
       ],
       "properties": {
@@ -11408,6 +12018,28 @@
         }
       ],
       "x-ms-discriminator-value": "Bayesian",
+      "additionalProperties": false
+    },
+    "BlobReferenceForConsumptionDto": {
+      "type": "object",
+      "properties": {
+        "blobUri": {
+          "format": "uri",
+          "description": "Blob URI path for client to upload data.\r\nExample: https://blob.windows.core.net/Container/Path",
+          "type": "string",
+          "x-nullable": true
+        },
+        "credential": {
+          "description": "Credential info to access storage account",
+          "$ref": "#/definitions/PendingUploadCredentialDto",
+          "x-nullable": true
+        },
+        "storageAccountArmId": {
+          "description": "Arm ID of the storage account to use",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
       "additionalProperties": false
     },
     "BlockedTransformers": {
@@ -11482,6 +12114,7 @@
       "properties": {
         "contextUri": {
           "description": "[Required] URI of the Docker build context used to build the image. Supports blob URIs on environment creation and may return blob or Git URIs.\r\n<seealso href=\"https://docs.docker.com/engine/reference/commandline/build/#extended-description\" />",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "example": "https://storage-account.blob.core.windows.net/azureml/DockerBuildContext/95ddede6b9b8c4e90472db3acd0a8d28/",
@@ -11501,6 +12134,156 @@
           ]
         }
       },
+      "additionalProperties": false
+    },
+    "CategoricalDataDriftMetric": {
+      "enum": [
+        "JensenShannonDistance",
+        "PopulationStabilityIndex",
+        "PearsonsChiSquaredTest"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "CategoricalDataDriftMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "JensenShannonDistance",
+            "description": "The Jensen Shannon Distance (JSD) metric."
+          },
+          {
+            "value": "PopulationStabilityIndex",
+            "description": "The Population Stability Index (PSI) metric."
+          },
+          {
+            "value": "PearsonsChiSquaredTest",
+            "description": "The Pearsons Chi Squared Test metric."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "CategoricalDataDriftMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataDriftMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The categorical data drift metric to calculate.",
+          "$ref": "#/definitions/CategoricalDataDriftMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "Categorical",
+      "additionalProperties": false
+    },
+    "CategoricalDataQualityMetric": {
+      "enum": [
+        "NullValueRate",
+        "DataTypeErrorRate",
+        "OutOfBoundsRate"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "CategoricalDataQualityMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "NullValueRate",
+            "description": "Calculates the rate of null values."
+          },
+          {
+            "value": "DataTypeErrorRate",
+            "description": "Calculates the rate of data type errors."
+          },
+          {
+            "value": "OutOfBoundsRate",
+            "description": "Calculates the rate values are out of bounds."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "CategoricalDataQualityMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataQualityMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The categorical data quality metric to calculate.",
+          "$ref": "#/definitions/CategoricalDataQualityMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "Categorical",
+      "additionalProperties": false
+    },
+    "CategoricalPredictionDriftMetric": {
+      "enum": [
+        "JensenShannonDistance",
+        "PopulationStabilityIndex",
+        "PearsonsChiSquaredTest"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "CategoricalPredictionDriftMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "JensenShannonDistance",
+            "description": "The Jensen Shannon Distance (JSD) metric."
+          },
+          {
+            "value": "PopulationStabilityIndex",
+            "description": "The Population Stability Index (PSI) metric."
+          },
+          {
+            "value": "PearsonsChiSquaredTest",
+            "description": "The Pearsons Chi Squared Test metric."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "CategoricalPredictionDriftMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PredictionDriftMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The categorical prediction drift metric to calculate.",
+          "$ref": "#/definitions/CategoricalPredictionDriftMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "Categorical",
       "additionalProperties": false
     },
     "CertificateDatastoreCredentials": {
@@ -11549,6 +12332,7 @@
         },
         "thumbprint": {
           "description": "[Required] Thumbprint of the certificate used for authentication.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         }
@@ -11600,6 +12384,61 @@
           "description": "Inputs for training phase for an AutoML Job.",
           "$ref": "#/definitions/ClassificationTrainingSettings",
           "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Classification",
+      "additionalProperties": false
+    },
+    "ClassificationModelPerformanceMetric": {
+      "enum": [
+        "Accuracy",
+        "Precision",
+        "Recall",
+        "F1Score"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ClassificationModelPerformanceMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Accuracy",
+            "description": "Calculates the accuracy of the model predictions."
+          },
+          {
+            "value": "Precision",
+            "description": "Calculates the precision of the model predictions."
+          },
+          {
+            "value": "Recall",
+            "description": "Calculates the recall of the model predictions."
+          },
+          {
+            "value": "F1Score",
+            "description": "Calculates the F1 score of the model predictions."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "ClassificationModelPerformanceMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelPerformanceMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The classification model performance to calculate.",
+          "$ref": "#/definitions/ClassificationModelPerformanceMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
         }
       },
       "x-ms-discriminator-value": "Classification",
@@ -11975,6 +12814,33 @@
       },
       "additionalProperties": false
     },
+    "Collection": {
+      "type": "object",
+      "properties": {
+        "clientId": {
+          "description": "The msi client id used to collect logging to blob storage. If it's null,backend will pick a registered endpoint identity to auth.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "dataCollectionMode": {
+          "description": "Enable or disable data collection.",
+          "default": "Disabled",
+          "$ref": "#/definitions/DataCollectionMode"
+        },
+        "dataId": {
+          "description": "The data asset arm resource id. Client side will ensure data asset is pointing to the blob storage, and backend will collect data to the blob storage.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "samplingRate": {
+          "format": "double",
+          "description": "The sampling rate for collection. Sampling rate 1.0 means we collect 100% of data by default.",
+          "default": 1,
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
     "ColumnTransformer": {
       "description": "Column transformer parameters.",
       "type": "object",
@@ -12037,7 +12903,7 @@
           ]
         },
         "distribution": {
-          "description": "Distribution configuration of the job. If set, this should be one of Mpi, Tensorflow, PyTorch, or null.",
+          "description": "Distribution configuration of the job. If set, this should be one of Mpi, Tensorflow, PyTorch, Ray, or null.",
           "$ref": "#/definitions/DistributionConfiguration",
           "x-ms-mutability": [
             "create",
@@ -12047,6 +12913,7 @@
         },
         "environmentId": {
           "description": "[Required] The ARM resource ID of the Environment specification for the job.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -12113,6 +12980,15 @@
           ],
           "x-nullable": true
         },
+        "queueSettings": {
+          "description": "Queue settings for the job",
+          "$ref": "#/definitions/QueueSettings",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
         "resources": {
           "description": "Compute Resource configuration for the job.",
           "default": "{}",
@@ -12121,15 +12997,6 @@
             "create",
             "read"
           ]
-        },
-        "schedulingSettings": {
-          "description": "Scheduling setting for the job",
-          "$ref": "#/definitions/SchedulingSettings",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
         }
       },
       "x-ms-discriminator-value": "Command",
@@ -12239,6 +13106,11 @@
           "x-ms-mutability": [
             "read"
           ]
+        },
+        "stage": {
+          "description": "Stage in the component lifecycle",
+          "type": "string",
+          "x-nullable": true
         }
       },
       "x-ms-client-name": "ComponentVersionProperties",
@@ -12278,18 +13150,6 @@
           "items": {
             "$ref": "#/definitions/ComponentVersionResource"
           }
-        }
-      },
-      "additionalProperties": false
-    },
-    "ComputeResource": {
-      "description": "Dto object representing compute resource",
-      "type": "object",
-      "properties": {
-        "instanceType": {
-          "description": "Specifies the instance type",
-          "type": "string",
-          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -12363,6 +13223,29 @@
       },
       "additionalProperties": false
     },
+    "CreateMonitorAction": {
+      "required": [
+        "monitorDefinition"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ScheduleActionBase"
+        }
+      ],
+      "properties": {
+        "monitorDefinition": {
+          "description": "[Required] Defines the monitor.",
+          "$ref": "#/definitions/MonitorDefinition",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "CreateMonitor",
+      "additionalProperties": false
+    },
     "CredentialsType": {
       "description": "Enum to determine the datastore credentials type.",
       "enum": [
@@ -12417,6 +13300,7 @@
       "properties": {
         "expression": {
           "description": "[Required] Specifies cron expression of schedule.\r\nThe expression should follow NCronTab format.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         }
@@ -12493,6 +13377,34 @@
       "x-ms-discriminator-value": "Custom",
       "additionalProperties": false
     },
+    "CustomMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "properties": {
+        "metric": {
+          "description": "[Required] The user-defined metric to calculate.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "threshold": {
+          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
+          "$ref": "#/definitions/MonitoringThreshold",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "CustomModelJobInput": {
       "type": "object",
       "allOf": [
@@ -12517,6 +13429,57 @@
         }
       ],
       "x-ms-discriminator-value": "custom_model",
+      "additionalProperties": false
+    },
+    "CustomMonitoringSignal": {
+      "required": [
+        "componentId",
+        "metricThresholds"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringSignalBase"
+        }
+      ],
+      "properties": {
+        "componentId": {
+          "description": "[Required] ARM resource ID of the component resource used to calculate the custom metrics.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "inputAssets": {
+          "description": "Monitoring assets to take as input. Key is the component input port name, value is the data asset.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/MonitoringInputData",
+            "x-nullable": true
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "metricThresholds": {
+          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CustomMetricThreshold"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-ms-identifiers": []
+        }
+      },
+      "x-ms-discriminator-value": "Custom",
       "additionalProperties": false
     },
     "CustomNCrossValidations": {
@@ -12603,6 +13566,53 @@
       "x-ms-discriminator-value": "Custom",
       "additionalProperties": false
     },
+    "DataCollectionMode": {
+      "enum": [
+        "Enabled",
+        "Disabled"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DataCollectionMode",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Enabled"
+          },
+          {
+            "value": "Disabled"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "DataCollector": {
+      "required": [
+        "collections"
+      ],
+      "type": "object",
+      "properties": {
+        "collections": {
+          "description": "[Required] The collection configuration. Each collection has it own configuration to collect model data and the name of collection can be arbitrary string.\r\nModel data collector can be used for either payload logging or custom logging or both of them. Collection request and response are reserved for payload logging, others are for custom logging.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Collection",
+            "x-nullable": true
+          }
+        },
+        "requestLogging": {
+          "description": "The request logging configuration for mdc, it includes advanced logging settings for all collections. It's optional.",
+          "$ref": "#/definitions/RequestLogging",
+          "x-nullable": true
+        },
+        "rollingRate": {
+          "description": "When model data is collected to blob storage, we need to roll the data to different path to avoid logging all of them in a single blob file.\r\nIf the rolling rate is hour, all data will be collected in the blob path /yyyy/MM/dd/HH/.\r\nIf it's day, all data will be collected in blob path /yyyy/MM/dd/.\r\nThe other benefit of rolling path is that model monitoring ui is able to select a time range of data very quickly.",
+          "default": "Hour",
+          "$ref": "#/definitions/RollingRateType"
+        }
+      },
+      "additionalProperties": false
+    },
     "DataContainer": {
       "description": "Container for data asset versions.",
       "required": [
@@ -12665,6 +13675,160 @@
       },
       "additionalProperties": false
     },
+    "DataDriftMetricThresholdBase": {
+      "required": [
+        "dataType"
+      ],
+      "type": "object",
+      "properties": {
+        "dataType": {
+          "description": "[Required] Specifies the data type of the metric threshold.",
+          "$ref": "#/definitions/MonitoringFeatureDataType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "threshold": {
+          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
+          "$ref": "#/definitions/MonitoringThreshold",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "discriminator": "dataType"
+    },
+    "DataDriftMonitoringSignal": {
+      "required": [
+        "baselineData",
+        "metricThresholds",
+        "targetData"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringSignalBase"
+        }
+      ],
+      "properties": {
+        "baselineData": {
+          "description": "[Required] The data to calculate drift against.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "dataSegment": {
+          "description": "The data segment used for scoping on a subset of the data population.",
+          "$ref": "#/definitions/MonitoringDataSegment",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "features": {
+          "description": "The feature filter which identifies which feature to calculate drift over.",
+          "$ref": "#/definitions/MonitoringFeatureFilterBase",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "metricThresholds": {
+          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataDriftMetricThresholdBase"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-ms-identifiers": []
+        },
+        "targetData": {
+          "description": "[Required] The data which drift will be calculated for.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "DataDrift",
+      "additionalProperties": false
+    },
+    "DataImport": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataVersionBase"
+        }
+      ],
+      "properties": {
+        "assetName": {
+          "description": "Name of the asset for data import job to create",
+          "type": "string",
+          "x-nullable": true
+        },
+        "source": {
+          "description": "Source data of the asset to import from",
+          "$ref": "#/definitions/DataImportSource",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "uri_folder",
+      "additionalProperties": false
+    },
+    "DataImportSource": {
+      "required": [
+        "sourceType"
+      ],
+      "type": "object",
+      "properties": {
+        "connection": {
+          "description": "Workspace connection for data import source storage",
+          "type": "string",
+          "x-nullable": true
+        },
+        "sourceType": {
+          "description": "[Required] Specifies the type of data.",
+          "$ref": "#/definitions/DataImportSourceType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "discriminator": "sourceType"
+    },
+    "DataImportSourceType": {
+      "description": "Enum to determine the type of data.",
+      "enum": [
+        "database",
+        "file_system"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DataImportSourceType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "database"
+          },
+          {
+            "value": "file_system"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
     "DataPathAssetReference": {
       "description": "Reference to an asset via its path in a datastore.",
       "type": "object",
@@ -12686,6 +13850,236 @@
         }
       },
       "x-ms-discriminator-value": "DataPath",
+      "additionalProperties": false
+    },
+    "DataQualityMetricThresholdBase": {
+      "required": [
+        "dataType"
+      ],
+      "type": "object",
+      "properties": {
+        "dataType": {
+          "description": "[Required] Specifies the data type of the metric threshold.",
+          "$ref": "#/definitions/MonitoringFeatureDataType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "threshold": {
+          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
+          "$ref": "#/definitions/MonitoringThreshold",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "discriminator": "dataType"
+    },
+    "DataQualityMonitoringSignal": {
+      "required": [
+        "baselineData",
+        "metricThresholds",
+        "targetData"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringSignalBase"
+        }
+      ],
+      "properties": {
+        "baselineData": {
+          "description": "[Required] The data to calculate drift against.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "features": {
+          "description": "The features to calculate drift over.",
+          "$ref": "#/definitions/MonitoringFeatureFilterBase",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "metricThresholds": {
+          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataQualityMetricThresholdBase"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-ms-identifiers": []
+        },
+        "targetData": {
+          "description": "[Required] The data produced by the production service which drift will be calculated for.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "DataQuality",
+      "additionalProperties": false
+    },
+    "DataType": {
+      "description": "Enum to determine the type of data.",
+      "enum": [
+        "uri_file",
+        "uri_folder",
+        "mltable"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DataType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "uri_file"
+          },
+          {
+            "value": "uri_folder"
+          },
+          {
+            "value": "mltable"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "DataVersionBase": {
+      "description": "Data version base definition",
+      "required": [
+        "dataType",
+        "dataUri"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetBase"
+        }
+      ],
+      "properties": {
+        "dataType": {
+          "description": "[Required] Specifies the type of data.",
+          "$ref": "#/definitions/DataType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "dataUri": {
+          "description": "[Required] Uri of the data. Example: https://go.microsoft.com/fwlink/?linkid=2202330",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "intellectualProperty": {
+          "description": "Intellectual Property details. Used if data is an Intellectual Property.",
+          "$ref": "#/definitions/IntellectualProperty",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "stage": {
+          "description": "Stage in the data lifecycle assigned to this data asset",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "discriminator": "dataType",
+      "x-ms-client-name": "DataVersionBaseProperties"
+    },
+    "DataVersionBaseResource": {
+      "description": "Azure Resource Manager resource envelope.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/DataVersionBase"
+        }
+      },
+      "x-ms-client-name": "DataVersionBase",
+      "additionalProperties": false
+    },
+    "DataVersionBaseResourceArmPaginatedResult": {
+      "description": "A paginated list of DataVersionBase entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of DataVersionBase objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type DataVersionBase.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DataVersionBaseResource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "DatabaseSource": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataImportSource"
+        }
+      ],
+      "properties": {
+        "query": {
+          "description": "SQL Query statement for data import Database source",
+          "type": "string",
+          "x-nullable": true
+        },
+        "storedProcedure": {
+          "description": "SQL StoredProcedure on data import Database source",
+          "type": "string",
+          "x-nullable": true
+        },
+        "storedProcedureParams": {
+          "description": "SQL StoredProcedure parameters",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "x-nullable": true
+        },
+        "tableName": {
+          "description": "Name of the table on data import Database source",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "database",
       "additionalProperties": false
     },
     "DatasetExportSummary": {
@@ -12729,6 +14123,15 @@
         "datastoreType": {
           "description": "[Required] Storage type backing the datastore.",
           "$ref": "#/definitions/DatastoreType"
+        },
+        "intellectualProperty": {
+          "description": "Intellectual Property details.",
+          "$ref": "#/definitions/IntellectualProperty",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
         },
         "isDefault": {
           "description": "Readonly property to indicate if datastore is the workspace default datastore",
@@ -12815,7 +14218,8 @@
         "AzureDataLakeGen1",
         "AzureDataLakeGen2",
         "AzureFile",
-        "Hdfs"
+        "Hdfs",
+        "OneLake"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -12836,105 +14240,11 @@
           },
           {
             "value": "Hdfs"
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "DataType": {
-      "description": "Enum to determine the type of data.",
-      "enum": [
-        "uri_file",
-        "uri_folder",
-        "mltable"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "DataType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "uri_file"
           },
           {
-            "value": "uri_folder"
-          },
-          {
-            "value": "mltable"
+            "value": "OneLake"
           }
         ]
-      },
-      "additionalProperties": false
-    },
-    "DataVersionBase": {
-      "description": "Data version base definition",
-      "required": [
-        "dataType",
-        "dataUri"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/AssetBase"
-        }
-      ],
-      "properties": {
-        "dataType": {
-          "description": "[Required] Specifies the type of data.",
-          "$ref": "#/definitions/DataType",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "dataUri": {
-          "description": "[Required] Uri of the data. Example: https://go.microsoft.com/fwlink/?linkid=2202330",
-          "pattern": "[a-zA-Z0-9_]",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        }
-      },
-      "discriminator": "dataType",
-      "x-ms-client-name": "DataVersionBaseProperties"
-    },
-    "DataVersionBaseResource": {
-      "description": "Azure Resource Manager resource envelope.",
-      "required": [
-        "properties"
-      ],
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Resource"
-        }
-      ],
-      "properties": {
-        "properties": {
-          "description": "[Required] Additional attributes of the entity.",
-          "$ref": "#/definitions/DataVersionBase"
-        }
-      },
-      "x-ms-client-name": "DataVersionBase",
-      "additionalProperties": false
-    },
-    "DataVersionBaseResourceArmPaginatedResult": {
-      "description": "A paginated list of DataVersionBase entities.",
-      "type": "object",
-      "properties": {
-        "nextLink": {
-          "description": "The link to the next page of DataVersionBase objects. If null, there are no additional pages.",
-          "type": "string"
-        },
-        "value": {
-          "description": "An array of objects of type DataVersionBase.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/DataVersionBaseResource"
-          }
-        }
       },
       "additionalProperties": false
     },
@@ -13049,7 +14359,8 @@
       "enum": [
         "PyTorch",
         "TensorFlow",
-        "Mpi"
+        "Mpi",
+        "Ray"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -13064,6 +14375,9 @@
           },
           {
             "value": "Mpi"
+          },
+          {
+            "value": "Ray"
           }
         ]
       },
@@ -13573,6 +14887,15 @@
             "read"
           ]
         },
+        "intellectualProperty": {
+          "description": "Intellectual Property details. Used if environment is an Intellectual Property.",
+          "$ref": "#/definitions/IntellectualProperty",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
         "osType": {
           "description": "The OS type of the environment.",
           "default": "Linux",
@@ -13589,6 +14912,11 @@
           "x-ms-mutability": [
             "read"
           ]
+        },
+        "stage": {
+          "description": "Stage in the environment lifecycle assigned to this environment",
+          "type": "string",
+          "x-nullable": true
         }
       },
       "x-ms-client-name": "EnvironmentVersionProperties",
@@ -13763,6 +15091,90 @@
       },
       "additionalProperties": false
     },
+    "FeatureAttributionDriftMonitoringSignal": {
+      "required": [
+        "baselineData",
+        "metricThreshold",
+        "targetData"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringSignalBase"
+        }
+      ],
+      "properties": {
+        "baselineData": {
+          "description": "[Required] The data to calculate drift against.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "metricThreshold": {
+          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
+          "$ref": "#/definitions/FeatureAttributionMetricThreshold",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "targetData": {
+          "description": "[Required] The data which drift will be calculated for.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "FeatureAttributionDrift",
+      "additionalProperties": false
+    },
+    "FeatureAttributionMetric": {
+      "enum": [
+        "NormalizedDiscountedCumulativeGain"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "FeatureAttributionMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "NormalizedDiscountedCumulativeGain",
+            "description": "The Normalized Discounted Cumulative Gain metric."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "FeatureAttributionMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "properties": {
+        "metric": {
+          "description": "[Required] The feature attribution metric to calculate.",
+          "$ref": "#/definitions/FeatureAttributionMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "threshold": {
+          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
+          "$ref": "#/definitions/MonitoringThreshold",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "FeatureDataType": {
       "enum": [
         "String",
@@ -13827,6 +15239,52 @@
             "description": "System auto-generates feature lags."
           }
         ]
+      },
+      "additionalProperties": false
+    },
+    "FeatureSubset": {
+      "required": [
+        "features",
+        "filterType"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringFeatureFilterBase"
+        }
+      ],
+      "properties": {
+        "features": {
+          "description": "[Required] The list of features to include.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "FeatureSubset",
+      "additionalProperties": false
+    },
+    "FeatureWindow": {
+      "description": "Specifies the feature window",
+      "type": "object",
+      "properties": {
+        "featureWindowEnd": {
+          "format": "date-time",
+          "description": "Specifies the feature window end time",
+          "type": "string",
+          "x-nullable": true
+        },
+        "featureWindowStart": {
+          "format": "date-time",
+          "description": "Specifies the feature window start time",
+          "type": "string",
+          "x-nullable": true
+        }
       },
       "additionalProperties": false
     },
@@ -14041,7 +15499,7 @@
         },
         "resource": {
           "description": "Specifies the compute resource settings",
-          "$ref": "#/definitions/ComputeResource"
+          "$ref": "#/definitions/MaterializationComputeResource"
         },
         "sparkConfiguration": {
           "description": "Specifies the spark compute settings",
@@ -14058,18 +15516,6 @@
             "type": "string",
             "x-nullable": true
           }
-        }
-      },
-      "additionalProperties": false
-    },
-    "FeaturesetVersionBackfillResponse": {
-      "description": "Response payload for creating a backfill request for a given feature set version",
-      "type": "object",
-      "properties": {
-        "jobId": {
-          "description": "Job id created as part of request",
-          "type": "string",
-          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -14196,6 +15642,11 @@
           "x-ms-mutability": [
             "read"
           ]
+        },
+        "stage": {
+          "description": "Specifies the asset stage",
+          "type": "string",
+          "x-nullable": true
         }
       },
       "x-ms-client-name": "FeaturestoreEntityVersionProperties",
@@ -14259,25 +15710,6 @@
       },
       "additionalProperties": false
     },
-    "FeatureWindow": {
-      "description": "Specifies the feature window",
-      "type": "object",
-      "properties": {
-        "featureWindowEnd": {
-          "format": "date-time",
-          "description": "Specifies the feature window end time",
-          "type": "string",
-          "x-nullable": true
-        },
-        "featureWindowStart": {
-          "format": "date-time",
-          "description": "Specifies the feature window start time",
-          "type": "string",
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
     "FeaturizationMode": {
       "description": "Featurization mode - determines data featurization mode.",
       "enum": [
@@ -14316,6 +15748,23 @@
           "x-nullable": true
         }
       },
+      "additionalProperties": false
+    },
+    "FileSystemSource": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataImportSource"
+        }
+      ],
+      "properties": {
+        "path": {
+          "description": "Path on data import FileSystem source",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "file_system",
       "additionalProperties": false
     },
     "FlavorData": {
@@ -14566,6 +16015,14 @@
           "default": "None",
           "$ref": "#/definitions/FeatureLags"
         },
+        "featuresUnknownAtForecastTime": {
+          "description": "The feature columns that are available for training but unknown at the time of forecast/inference.\r\nIf features_unknown_at_forecast_time is not set, it is assumed that all the feature columns in the dataset are known at inference time.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": true
+        },
         "forecastHorizon": {
           "description": "The desired maximum forecast horizon in units of time-series frequency.",
           "default": "{\"Mode\": \"Custom\", \"Value\": 1}",
@@ -14716,6 +16173,7 @@
         },
         "nameNodeAddress": {
           "description": "[Required] IP Address or DNS HostName.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -14751,6 +16209,7 @@
       "properties": {
         "assetId": {
           "description": "[Required] ARM resource ID of the asset.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         }
@@ -14940,7 +16399,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettings": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nAll distributions can be specified as distribution_name(min, max) or choice(val1, val2, ..., valn)\r\nwhere distribution name can be: uniform, quniform, loguniform, etc\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n```\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n```</example>\r\nAll distributions can be specified as distribution_name(min, max) or choice(val1, val2, ..., valn)\r\nwhere distribution name can be: uniform, quniform, loguniform, etc\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "properties": {
         "amsGradient": {
@@ -15115,7 +16574,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettingsClassification": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n```\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n```</example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {
@@ -15151,7 +16610,7 @@
       "additionalProperties": false
     },
     "ImageModelDistributionSettingsObjectDetection": {
-      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n<code>\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n</code></example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
+      "description": "Distribution expressions to sweep over values of model settings.\r\n<example>\r\nSome examples are:\r\n```\r\nModelName = \"choice('seresnext', 'resnest50')\";\r\nLearningRate = \"uniform(0.001, 0.01)\";\r\nLayersToFreeze = \"choice(0, 2)\";\r\n```</example>\r\nFor more details on how to compose distribution expressions please check the documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-tune-hyperparameters\r\nFor more information on the available settings please visit the official documentation:\r\nhttps://docs.microsoft.com/en-us/azure/machine-learning/how-to-auto-train-image-models.",
       "type": "object",
       "allOf": [
         {
@@ -15492,6 +16951,16 @@
           "type": "integer",
           "x-nullable": true
         },
+        "logTrainingMetrics": {
+          "description": "Enable computing and logging training metrics.",
+          "default": "Enable",
+          "$ref": "#/definitions/LogTrainingMetrics"
+        },
+        "logValidationLoss": {
+          "description": "Enable computing and logging validation loss.",
+          "default": "Disable",
+          "$ref": "#/definitions/LogValidationLoss"
+        },
         "maxSize": {
           "format": "int32",
           "description": "Maximum size of the image to be rescaled before feeding it to the backbone.\r\nMust be a positive integer. Note: training run may get into CUDA OOM if the size is too big.\r\nNote: This settings is not supported for the 'yolov5' algorithm.",
@@ -15645,6 +17114,31 @@
           "x-nullable": true
         }
       },
+      "additionalProperties": false
+    },
+    "ImportDataAction": {
+      "required": [
+        "actionType",
+        "dataImportDefinition"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ScheduleActionBase"
+        }
+      ],
+      "properties": {
+        "dataImportDefinition": {
+          "description": "[Required] Defines Schedule action definition details.",
+          "$ref": "#/definitions/DataImport",
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "ImportData",
       "additionalProperties": false
     },
     "IncrementalDataRefresh": {
@@ -15825,6 +17319,27 @@
       },
       "additionalProperties": false
     },
+    "IntellectualProperty": {
+      "description": "Intellectual Property details for a resource.",
+      "required": [
+        "publisher"
+      ],
+      "type": "object",
+      "properties": {
+        "protectionLevel": {
+          "description": "Protection level of the Intellectual Property.",
+          "default": "All",
+          "$ref": "#/definitions/ProtectionLevel"
+        },
+        "publisher": {
+          "description": "[Required] Publisher of the Intellectual Property. Must be the same as Registry publisher name.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "JobBase": {
       "description": "Base definition for a job.",
       "required": [
@@ -15903,6 +17418,20 @@
         "notificationSetting": {
           "description": "Notification setting for the job",
           "$ref": "#/definitions/NotificationSetting",
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ],
+          "x-nullable": true
+        },
+        "secretsConfiguration": {
+          "description": "Configuration for secrets to be made available during runtime.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/SecretConfiguration",
+            "x-nullable": true
+          },
           "x-ms-mutability": [
             "create",
             "read"
@@ -16454,6 +17983,7 @@
       "properties": {
         "kerberosKdcAddress": {
           "description": "[Required] IP Address or DNS HostName.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -16463,6 +17993,7 @@
         },
         "kerberosPrincipal": {
           "description": "[Required] Kerberos Username",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -16472,6 +18003,7 @@
         },
         "kerberosRealm": {
           "description": "[Required] Domain over which a Kerberos authentication server has the authority to authenticate a user, host or service.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -16935,6 +18467,16 @@
       "x-ms-discriminator-value": "Text",
       "additionalProperties": false
     },
+    "LakehouseArtifact": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OneLakeArtifact"
+        }
+      ],
+      "x-ms-discriminator-value": "Lakehouse",
+      "additionalProperties": false
+    },
     "LearningRateScheduler": {
       "description": "Learning rate scheduler enum.",
       "enum": [
@@ -17001,11 +18543,56 @@
       "properties": {
         "value": {
           "description": "[Required] Literal value for the input.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         }
       },
       "x-ms-discriminator-value": "literal",
+      "additionalProperties": false
+    },
+    "LogTrainingMetrics": {
+      "enum": [
+        "Enable",
+        "Disable"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "LogTrainingMetrics",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Enable",
+            "description": "Enable compute and log training metrics."
+          },
+          {
+            "value": "Disable",
+            "description": "Disable compute and log training metrics."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "LogValidationLoss": {
+      "enum": [
+        "Enable",
+        "Disable"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "LogValidationLoss",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Enable",
+            "description": "Enable compute and log validation metrics."
+          },
+          {
+            "value": "Disable",
+            "description": "Disable compute and log validation metrics."
+          }
+        ]
+      },
       "additionalProperties": false
     },
     "LogVerbosity": {
@@ -17046,154 +18633,6 @@
           {
             "value": "Critical",
             "description": "Only critical statements logged."
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "ManagedIdentity": {
-      "description": "Managed identity configuration.",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/IdentityConfiguration"
-        }
-      ],
-      "properties": {
-        "clientId": {
-          "format": "uuid",
-          "description": "Specifies a user-assigned identity by client ID. For system-assigned, do not set this field.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "objectId": {
-          "format": "uuid",
-          "description": "Specifies a user-assigned identity by object ID. For system-assigned, do not set this field.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        },
-        "resourceId": {
-          "description": "Specifies a user-assigned identity by ARM resource ID. For system-assigned, do not set this field.",
-          "type": "string",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "x-ms-discriminator-value": "Managed",
-      "additionalProperties": false
-    },
-    "ManagedOnlineDeployment": {
-      "description": "Properties specific to a ManagedOnlineDeployment.",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/OnlineDeployment"
-        }
-      ],
-      "x-ms-discriminator-value": "Managed",
-      "additionalProperties": false
-    },
-    "MaterializationSettings": {
-      "type": "object",
-      "properties": {
-        "notification": {
-          "description": "Specifies the notification details",
-          "$ref": "#/definitions/NotificationSetting",
-          "x-nullable": true
-        },
-        "resource": {
-          "description": "Specifies the compute resource settings",
-          "$ref": "#/definitions/ComputeResource",
-          "x-nullable": true
-        },
-        "schedule": {
-          "description": "Specifies the schedule details",
-          "$ref": "#/definitions/RecurrenceTrigger",
-          "x-nullable": true
-        },
-        "sparkConfiguration": {
-          "description": "Specifies the spark compute settings",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string",
-            "x-nullable": true
-          },
-          "x-nullable": true
-        },
-        "storeType": {
-          "description": "Specifies the stores to which materialization should happen",
-          "default": "None",
-          "$ref": "#/definitions/MaterializationStoreType"
-        }
-      },
-      "additionalProperties": false
-    },
-    "MaterializationStoreType": {
-      "enum": [
-        "None",
-        "Online",
-        "Offline",
-        "OnlineAndOffline"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MaterializationStoreType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "None"
-          },
-          {
-            "value": "Online"
-          },
-          {
-            "value": "Offline"
-          },
-          {
-            "value": "OnlineAndOffline"
-          }
-        ]
-      },
-      "additionalProperties": false
-    },
-    "MedianStoppingPolicy": {
-      "description": "Defines an early termination policy based on running averages of the primary metric of all runs",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/EarlyTerminationPolicy"
-        }
-      ],
-      "x-ms-discriminator-value": "MedianStopping",
-      "additionalProperties": false
-    },
-    "MediaType": {
-      "description": "Media type of data asset.",
-      "enum": [
-        "Image",
-        "Text"
-      ],
-      "type": "string",
-      "x-ms-enum": {
-        "name": "MediaType",
-        "modelAsString": true,
-        "values": [
-          {
-            "value": "Image"
-          },
-          {
-            "value": "Text"
           }
         ]
       },
@@ -17244,6 +18683,7 @@
       "properties": {
         "inferencingComputeBinding": {
           "description": "[Required] AML compute binding used in inferencing.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -17254,6 +18694,7 @@
         },
         "trainingComputeBinding": {
           "description": "[Required] AML compute binding used in training.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -17384,6 +18825,166 @@
       "x-ms-discriminator-value": "mltable",
       "additionalProperties": false
     },
+    "ManagedIdentity": {
+      "description": "Managed identity configuration.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/IdentityConfiguration"
+        }
+      ],
+      "properties": {
+        "clientId": {
+          "format": "uuid",
+          "description": "Specifies a user-assigned identity by client ID. For system-assigned, do not set this field.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "objectId": {
+          "format": "uuid",
+          "description": "Specifies a user-assigned identity by object ID. For system-assigned, do not set this field.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "resourceId": {
+          "description": "Specifies a user-assigned identity by ARM resource ID. For system-assigned, do not set this field.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Managed",
+      "additionalProperties": false
+    },
+    "ManagedOnlineDeployment": {
+      "description": "Properties specific to a ManagedOnlineDeployment.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/OnlineDeployment"
+        }
+      ],
+      "x-ms-discriminator-value": "Managed",
+      "additionalProperties": false
+    },
+    "MaterializationComputeResource": {
+      "description": "Dto object representing compute resource",
+      "type": "object",
+      "properties": {
+        "instanceType": {
+          "description": "Specifies the instance type",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MaterializationSettings": {
+      "type": "object",
+      "properties": {
+        "notification": {
+          "description": "Specifies the notification details",
+          "$ref": "#/definitions/NotificationSetting",
+          "x-nullable": true
+        },
+        "resource": {
+          "description": "Specifies the compute resource settings",
+          "$ref": "#/definitions/MaterializationComputeResource",
+          "x-nullable": true
+        },
+        "schedule": {
+          "description": "Specifies the schedule details",
+          "$ref": "#/definitions/RecurrenceTrigger",
+          "x-nullable": true
+        },
+        "sparkConfiguration": {
+          "description": "Specifies the spark compute settings",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        },
+        "storeType": {
+          "description": "Specifies the stores to which materialization should happen",
+          "default": "None",
+          "$ref": "#/definitions/MaterializationStoreType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "MaterializationStoreType": {
+      "enum": [
+        "None",
+        "Online",
+        "Offline",
+        "OnlineAndOffline"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MaterializationStoreType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "None"
+          },
+          {
+            "value": "Online"
+          },
+          {
+            "value": "Offline"
+          },
+          {
+            "value": "OnlineAndOffline"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MediaType": {
+      "description": "Media type of data asset.",
+      "enum": [
+        "Image",
+        "Text"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MediaType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Image"
+          },
+          {
+            "value": "Text"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MedianStoppingPolicy": {
+      "description": "Defines an early termination policy based on running averages of the primary metric of all runs",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/EarlyTerminationPolicy"
+        }
+      ],
+      "x-ms-discriminator-value": "MedianStopping",
+      "additionalProperties": false
+    },
     "ModelConfiguration": {
       "description": "Model configuration options.",
       "type": "object",
@@ -17488,6 +19089,81 @@
       },
       "additionalProperties": false
     },
+    "ModelPerformanceMetricThresholdBase": {
+      "required": [
+        "modelType"
+      ],
+      "type": "object",
+      "properties": {
+        "modelType": {
+          "description": "[Required] Specifies the data type of the metric threshold.",
+          "$ref": "#/definitions/MonitoringModelType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "threshold": {
+          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
+          "$ref": "#/definitions/MonitoringThreshold",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "discriminator": "modelType"
+    },
+    "ModelPerformanceSignalBase": {
+      "required": [
+        "baselineData",
+        "metricThreshold",
+        "targetData"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringSignalBase"
+        }
+      ],
+      "properties": {
+        "baselineData": {
+          "description": "[Required] The data to calculate drift against.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "dataSegment": {
+          "description": "The data segment.",
+          "$ref": "#/definitions/MonitoringDataSegment",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "metricThreshold": {
+          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
+          "$ref": "#/definitions/ModelPerformanceMetricThresholdBase",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "targetData": {
+          "description": "[Required] The data produced by the production service which drift will be calculated for.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
     "ModelSize": {
       "description": "Image model size.",
       "enum": [
@@ -17542,6 +19218,15 @@
             "$ref": "#/definitions/FlavorData",
             "x-nullable": true
           },
+          "x-nullable": true
+        },
+        "intellectualProperty": {
+          "description": "Intellectual Property details. Used if model is an Intellectual Property.",
+          "$ref": "#/definitions/IntellectualProperty",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
           "x-nullable": true
         },
         "jobName": {
@@ -17610,6 +19295,363 @@
           "items": {
             "$ref": "#/definitions/ModelVersionResource"
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "MonitorDefinition": {
+      "required": [
+        "computeId",
+        "signals"
+      ],
+      "type": "object",
+      "properties": {
+        "computeId": {
+          "description": "[Required] The ARM resource ID of the compute resource to run the monitoring job on.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "monitoringTarget": {
+          "description": "The ARM resource ID of either the model or deployment targeted by this monitor.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "notificationSetting": {
+          "description": "The monitor's notification settings.",
+          "$ref": "#/definitions/NotificationSetting",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "signals": {
+          "description": "[Required] The signals to monitor.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/MonitoringSignalBase",
+            "x-nullable": true
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "MonitoringDataSegment": {
+      "type": "object",
+      "properties": {
+        "feature": {
+          "description": "The feature to segment the data on.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "values": {
+          "description": "Filters for only the specified values of the given segmented feature.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MonitoringFeatureDataType": {
+      "enum": [
+        "Numerical",
+        "Categorical"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MonitoringFeatureDataType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Numerical",
+            "description": "Used for features of numerical data type."
+          },
+          {
+            "value": "Categorical",
+            "description": "Used for features of categorical data type."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MonitoringFeatureFilterBase": {
+      "required": [
+        "filterType"
+      ],
+      "type": "object",
+      "properties": {
+        "filterType": {
+          "description": "[Required] Specifies the feature filter to leverage when selecting features to calculate metrics over.",
+          "$ref": "#/definitions/MonitoringFeatureFilterType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "discriminator": "filterType"
+    },
+    "MonitoringFeatureFilterType": {
+      "enum": [
+        "AllFeatures",
+        "TopNByAttribution",
+        "FeatureSubset"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MonitoringFeatureFilterType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "AllFeatures",
+            "description": "Includes all features."
+          },
+          {
+            "value": "TopNByAttribution",
+            "description": "Only includes the top contributing features, measured by feature attribution."
+          },
+          {
+            "value": "FeatureSubset",
+            "description": "Includes a user-defined subset of features."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MonitoringInputData": {
+      "required": [
+        "dataContext"
+      ],
+      "type": "object",
+      "properties": {
+        "asset": {
+          "description": "The data asset input to be leveraged by the monitoring job..",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "dataContext": {
+          "description": "[Required] The context of the data source.",
+          "$ref": "#/definitions/MonitoringInputDataContext",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "preprocessingComponentId": {
+          "description": "The ARM resource ID of the component resource used to preprocess the data.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "MonitoringInputDataContext": {
+      "enum": [
+        "ModelInputs",
+        "ModelOutputs",
+        "Training",
+        "Test",
+        "Validation",
+        "GroundTruth"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MonitoringInputDataContext",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "ModelInputs",
+            "description": "A dataset containing the feature input to the model."
+          },
+          {
+            "value": "ModelOutputs",
+            "description": "A dataset containing the infered results of the model."
+          },
+          {
+            "value": "Training",
+            "description": "A dataset containing the data used for training the model."
+          },
+          {
+            "value": "Test",
+            "description": "A dataset leveraged to test the model."
+          },
+          {
+            "value": "Validation",
+            "description": "A dataset leveraged for model validation."
+          },
+          {
+            "value": "GroundTruth",
+            "description": "A dataset containing the ground truth data."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MonitoringModelType": {
+      "enum": [
+        "Classification",
+        "Regression"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MonitoringModelType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Classification",
+            "description": "A model trained for classification tasks."
+          },
+          {
+            "value": "Regression",
+            "description": "A model trained for regressions tasks."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MonitoringNotificationMode": {
+      "enum": [
+        "Disabled",
+        "Enabled"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MonitoringNotificationMode",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Disabled",
+            "description": "Disabled notifications will not produce emails/metrics leveraged for alerting."
+          },
+          {
+            "value": "Enabled",
+            "description": "Enabled notification will produce emails/metrics leveraged for alerting."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MonitoringSignalBase": {
+      "required": [
+        "signalType"
+      ],
+      "type": "object",
+      "properties": {
+        "lookbackPeriod": {
+          "format": "duration",
+          "description": "The amount of time a single monitor should look back over the target data on a given run.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "mode": {
+          "description": "The current notification mode for this signal.",
+          "default": "Disabled",
+          "$ref": "#/definitions/MonitoringNotificationMode",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "signalType": {
+          "description": "[Required] Specifies the type of signal to monitor.",
+          "$ref": "#/definitions/MonitoringSignalType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "discriminator": "signalType"
+    },
+    "MonitoringSignalType": {
+      "enum": [
+        "DataDrift",
+        "PredictionDrift",
+        "DataQuality",
+        "FeatureAttributionDrift",
+        "Custom",
+        "ModelPerformance"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "MonitoringSignalType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "DataDrift",
+            "description": "Tracks model input data distribution change, comparing against training data or past production data."
+          },
+          {
+            "value": "PredictionDrift",
+            "description": "Tracks prediction result data distribution change, comparing against validation/test label data or past production data."
+          },
+          {
+            "value": "DataQuality",
+            "description": "Tracks model input data integrity."
+          },
+          {
+            "value": "FeatureAttributionDrift",
+            "description": "Tracks feature importance change in production, comparing against feature importance at training time."
+          },
+          {
+            "value": "Custom",
+            "description": "Tracks a custom signal provided by users."
+          },
+          {
+            "value": "ModelPerformance",
+            "description": "Tracks model perforance based on ground truth data."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "MonitoringThreshold": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "format": "double",
+          "description": "The threshold value. If null, the set default is dependent on the metric type.",
+          "type": "number",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
         }
       },
       "additionalProperties": false
@@ -18049,8 +20091,179 @@
             "read"
           ],
           "x-nullable": true
+        },
+        "webhooks": {
+          "description": "Send webhook callback to a service. Key is a user-provided name for the webhook.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Webhook base",
+            "$ref": "#/definitions/Webhook",
+            "x-nullable": true
+          },
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ],
+          "x-nullable": true
         }
       },
+      "additionalProperties": false
+    },
+    "NumericalDataDriftMetric": {
+      "enum": [
+        "JensenShannonDistance",
+        "PopulationStabilityIndex",
+        "NormalizedWassersteinDistance",
+        "TwoSampleKolmogorovSmirnovTest"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "NumericalDataDriftMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "JensenShannonDistance",
+            "description": "The Jensen Shannon Distance (JSD) metric."
+          },
+          {
+            "value": "PopulationStabilityIndex",
+            "description": "The Population Stability Index (PSI) metric."
+          },
+          {
+            "value": "NormalizedWassersteinDistance",
+            "description": "The Normalized Wasserstein Distance metric."
+          },
+          {
+            "value": "TwoSampleKolmogorovSmirnovTest",
+            "description": "The Two Sample Kolmogorov-Smirnov Test (two-sample K–S) metric."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "NumericalDataDriftMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataDriftMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The numerical data drift metric to calculate.",
+          "$ref": "#/definitions/NumericalDataDriftMetric"
+        }
+      },
+      "x-ms-discriminator-value": "Numerical",
+      "additionalProperties": false
+    },
+    "NumericalDataQualityMetric": {
+      "enum": [
+        "NullValueRate",
+        "DataTypeErrorRate",
+        "OutOfBoundsRate"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "NumericalDataQualityMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "NullValueRate",
+            "description": "Calculates the rate of null values."
+          },
+          {
+            "value": "DataTypeErrorRate",
+            "description": "Calculates the rate of data type errors."
+          },
+          {
+            "value": "OutOfBoundsRate",
+            "description": "Calculates the rate values are out of bounds."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "NumericalDataQualityMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DataQualityMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The numerical data quality metric to calculate.",
+          "$ref": "#/definitions/NumericalDataQualityMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "Numerical",
+      "additionalProperties": false
+    },
+    "NumericalPredictionDriftMetric": {
+      "enum": [
+        "JensenShannonDistance",
+        "PopulationStabilityIndex",
+        "NormalizedWassersteinDistance",
+        "TwoSampleKolmogorovSmirnovTest"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "NumericalPredictionDriftMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "JensenShannonDistance",
+            "description": "The Jensen Shannon Distance (JSD) metric."
+          },
+          {
+            "value": "PopulationStabilityIndex",
+            "description": "The Population Stability Index (PSI) metric."
+          },
+          {
+            "value": "NormalizedWassersteinDistance",
+            "description": "The Normalized Wasserstein Distance metric."
+          },
+          {
+            "value": "TwoSampleKolmogorovSmirnovTest",
+            "description": "The Two Sample Kolmogorov-Smirnov Test (two-sample K–S) metric."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "NumericalPredictionDriftMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PredictionDriftMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The numerical prediction drift metric to calculate.",
+          "$ref": "#/definitions/NumericalPredictionDriftMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "Numerical",
       "additionalProperties": false
     },
     "ObjectDetectionPrimaryMetrics": {
@@ -18085,10 +20298,107 @@
         },
         "primaryMetric": {
           "description": "[Required] Name of the metric to optimize.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         }
       },
+      "additionalProperties": false
+    },
+    "OneLakeArtifact": {
+      "description": "OneLake artifact (data source) configuration.",
+      "required": [
+        "artifactName",
+        "artifactType"
+      ],
+      "type": "object",
+      "properties": {
+        "artifactName": {
+          "description": "[Required] OneLake artifact name",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "artifactType": {
+          "description": "[Required] OneLake artifact type",
+          "$ref": "#/definitions/OneLakeArtifactType"
+        }
+      },
+      "discriminator": "artifactType"
+    },
+    "OneLakeArtifactType": {
+      "description": "Enum to determine OneLake artifact type.",
+      "enum": [
+        "Lakehouse"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "OneLakeArtifactType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Lakehouse"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "OneLakeDatastore": {
+      "description": "OneLake (Trident) datastore configuration.",
+      "required": [
+        "artifact",
+        "oneLakeWorkspaceName"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/Datastore"
+        }
+      ],
+      "properties": {
+        "artifact": {
+          "description": "[Required] OneLake artifact backing the datastore.",
+          "$ref": "#/definitions/OneLakeArtifact",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "endpoint": {
+          "description": "OneLake endpoint to use for the datastore.",
+          "type": "string",
+          "example": "data.microsoft.com",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "oneLakeWorkspaceName": {
+          "description": "[Required] OneLake workspace name.",
+          "minLength": 1,
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "serviceDataAccessAuthIdentity": {
+          "description": "Indicates which identity to use to authenticate service data access to customer's storage.",
+          "default": "None",
+          "$ref": "#/definitions/ServiceDataAccessAuthIdentity",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "OneLake",
       "additionalProperties": false
     },
     "OnlineDeployment": {
@@ -18106,6 +20416,11 @@
           "description": "If true, enables Application Insights logging.",
           "default": false,
           "type": "boolean"
+        },
+        "dataCollector": {
+          "description": "The mdc configuration, we disable mdc when it's null.",
+          "$ref": "#/definitions/DataCollector",
+          "x-nullable": true
         },
         "egressPublicNetworkAccess": {
           "description": "If Enabled, allow egress public network access. If Disabled, this will create secure egress. Default: Enabled.",
@@ -18706,6 +21021,7 @@
         },
         "targetEnvironmentName": {
           "description": "[Required] Target environment name to be generated by package.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -18728,12 +21044,16 @@
     "PackageResponse": {
       "description": "Package response returned after async package operation completes successfully.",
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/PackageRequest"
-        }
-      ],
       "properties": {
+        "baseEnvironmentSource": {
+          "description": "Base environment to start with.",
+          "$ref": "#/definitions/BaseEnvironmentSource",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
         "buildId": {
           "description": "Build id of the image build operation.",
           "type": "string",
@@ -18751,6 +21071,41 @@
             "read"
           ]
         },
+        "environmentVariables": {
+          "description": "Collection of environment variables.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "inferencingServer": {
+          "description": "Inferencing server configurations.",
+          "$ref": "#/definitions/InferencingServer",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "inputs": {
+          "description": "Collection of inputs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelPackageInput"
+          },
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true,
+          "x-ms-identifiers": []
+        },
         "logUrl": {
           "description": "Log url of the image build operation.",
           "type": "string",
@@ -18760,8 +21115,48 @@
           ],
           "x-nullable": true
         },
+        "modelConfiguration": {
+          "description": "Model configuration including the mount mode.",
+          "$ref": "#/definitions/ModelConfiguration",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "tags": {
+          "description": "Tag dictionary. Tags can be added, removed, and updated.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          },
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
         "targetEnvironmentId": {
           "description": "Asset ID of the target environment created by package operation.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "targetEnvironmentName": {
+          "description": "Target environment name to be generated by package.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "targetEnvironmentVersion": {
+          "description": "Target environment version to be generated by package.",
           "type": "string",
           "readOnly": true,
           "x-ms-mutability": [
@@ -18799,6 +21194,29 @@
             "type": "string",
             "x-nullable": true
           }
+        }
+      },
+      "additionalProperties": false
+    },
+    "PartialJobBase": {
+      "description": "Mutable base definition for a job.",
+      "type": "object",
+      "properties": {
+        "partialNotificationSetting": {
+          "description": "Mutable notification setting for the job",
+          "$ref": "#/definitions/PartialNotificationSetting",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "PartialJobBasePartialResource": {
+      "description": "Azure Resource Manager resource envelope strictly used in update requests.",
+      "type": "object",
+      "properties": {
+        "properties": {
+          "description": "Additional attributes of the entity.",
+          "$ref": "#/definitions/PartialJobBase"
         }
       },
       "additionalProperties": false
@@ -18868,6 +21286,23 @@
       },
       "additionalProperties": false
     },
+    "PartialNotificationSetting": {
+      "description": "Mutable configuration for notification.",
+      "type": "object",
+      "properties": {
+        "webhooks": {
+          "description": "Send webhook callback to a service. Key is a user-provided name for the webhook.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Webhook base",
+            "$ref": "#/definitions/Webhook",
+            "x-nullable": true
+          },
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "PartialSku": {
       "description": "Common SKU definition.",
       "type": "object",
@@ -18898,6 +21333,94 @@
     },
     "PartialUserAssignedIdentity": {
       "type": "object",
+      "additionalProperties": false
+    },
+    "PendingUploadCredentialDto": {
+      "required": [
+        "credentialType"
+      ],
+      "type": "object",
+      "properties": {
+        "credentialType": {
+          "description": "[Required] Credential type used to authentication with storage.",
+          "$ref": "#/definitions/PendingUploadCredentialType"
+        }
+      },
+      "discriminator": "credentialType"
+    },
+    "PendingUploadCredentialType": {
+      "description": "Enum to determine the PendingUpload credentials type.",
+      "enum": [
+        "SAS"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "PendingUploadCredentialType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "SAS"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "PendingUploadRequestDto": {
+      "type": "object",
+      "properties": {
+        "pendingUploadId": {
+          "description": "If PendingUploadId = null then random guid will be used.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pendingUploadType": {
+          "description": "TemporaryBlobReference is the only supported type",
+          "default": "TemporaryBlobReference",
+          "$ref": "#/definitions/PendingUploadType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PendingUploadResponseDto": {
+      "type": "object",
+      "properties": {
+        "blobReferenceForConsumption": {
+          "description": "Container level read, write, list SAS",
+          "$ref": "#/definitions/BlobReferenceForConsumptionDto",
+          "x-nullable": true
+        },
+        "pendingUploadId": {
+          "description": "ID for this upload request",
+          "type": "string",
+          "x-nullable": true
+        },
+        "pendingUploadType": {
+          "description": "TemporaryBlobReference is the only supported type",
+          "default": "TemporaryBlobReference",
+          "$ref": "#/definitions/PendingUploadType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PendingUploadType": {
+      "description": "Type of storage to use for the pending upload location",
+      "enum": [
+        "None",
+        "TemporaryBlobReference"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "PendingUploadType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "None"
+          },
+          {
+            "value": "TemporaryBlobReference"
+          }
+        ]
+      },
       "additionalProperties": false
     },
     "PipelineJob": {
@@ -18970,6 +21493,86 @@
         }
       },
       "x-ms-discriminator-value": "Pipeline",
+      "additionalProperties": false
+    },
+    "PredictionDriftMetricThresholdBase": {
+      "required": [
+        "dataType"
+      ],
+      "type": "object",
+      "properties": {
+        "dataType": {
+          "description": "[Required] Specifies the data type of the metric threshold.",
+          "$ref": "#/definitions/MonitoringFeatureDataType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "threshold": {
+          "description": "The threshold value. If null, a default value will be set depending on the selected metric.",
+          "$ref": "#/definitions/MonitoringThreshold",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
+      "discriminator": "dataType"
+    },
+    "PredictionDriftMonitoringSignal": {
+      "required": [
+        "baselineData",
+        "metricThresholds",
+        "modelType",
+        "targetData"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringSignalBase"
+        }
+      ],
+      "properties": {
+        "baselineData": {
+          "description": "[Required] The data to calculate drift against.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "metricThresholds": {
+          "description": "[Required] A list of metrics to calculate and their associated thresholds.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PredictionDriftMetricThresholdBase"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-ms-identifiers": []
+        },
+        "modelType": {
+          "description": "[Required] The type of the model monitored.",
+          "$ref": "#/definitions/MonitoringModelType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "targetData": {
+          "description": "[Required] The data which drift will be calculatd for.",
+          "$ref": "#/definitions/MonitoringInputData",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "PredictionDrift",
       "additionalProperties": false
     },
     "ProbeSettings": {
@@ -19056,6 +21659,29 @@
       },
       "additionalProperties": false
     },
+    "ProtectionLevel": {
+      "description": "Protection level associated with the Intellectual Property.",
+      "enum": [
+        "All",
+        "None"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ProtectionLevel",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "All",
+            "description": "All means Intellectual Property is fully protected."
+          },
+          {
+            "value": "None",
+            "description": "None means it is not an Intellectual Property."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
     "PublicNetworkAccessType": {
       "description": "Enum to determine whether PublicNetworkAccess is Enabled or Disabled.",
       "enum": [
@@ -19094,6 +21720,31 @@
         }
       },
       "x-ms-discriminator-value": "PyTorch",
+      "additionalProperties": false
+    },
+    "QueueSettings": {
+      "type": "object",
+      "properties": {
+        "jobTier": {
+          "description": "Enum to determine the job tier.",
+          "default": "Standard",
+          "$ref": "#/definitions/JobTier",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "priority": {
+          "format": "int32",
+          "description": "Controls the priority of the job on a compute.",
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
+      },
       "additionalProperties": false
     },
     "RandomSamplingAlgorithm": {
@@ -19144,6 +21795,51 @@
           }
         ]
       },
+      "additionalProperties": false
+    },
+    "Ray": {
+      "description": "Ray distribution configuration.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/DistributionConfiguration"
+        }
+      ],
+      "properties": {
+        "address": {
+          "description": "The address of Ray head node.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "dashboardPort": {
+          "format": "int32",
+          "description": "The port to bind the dashboard server to.",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "headNodeAdditionalArgs": {
+          "description": "Additional arguments passed to ray start in head node.",
+          "type": "string",
+          "x-nullable": true
+        },
+        "includeDashboard": {
+          "description": "Provide this argument to start the Ray dashboard GUI.",
+          "type": "boolean",
+          "x-nullable": true
+        },
+        "port": {
+          "format": "int32",
+          "description": "The port of the head ray process.",
+          "type": "integer",
+          "x-nullable": true
+        },
+        "workerNodeAdditionalArgs": {
+          "description": "Additional arguments passed to ray start in worker node.",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "Ray",
       "additionalProperties": false
     },
     "RecurrenceFrequency": {
@@ -19327,6 +22023,56 @@
       "x-ms-discriminator-value": "Regression",
       "additionalProperties": false
     },
+    "RegressionModelPerformanceMetric": {
+      "enum": [
+        "MeanAbsoluteError",
+        "RootMeanSquaredError",
+        "MeanSquaredError"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "RegressionModelPerformanceMetric",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "MeanAbsoluteError",
+            "description": "The Mean Absolute Error (MAE) metric."
+          },
+          {
+            "value": "RootMeanSquaredError",
+            "description": "The Root Mean Squared Error (RMSE) metric."
+          },
+          {
+            "value": "MeanSquaredError",
+            "description": "The Mean Squared Error (MSE) metric."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "RegressionModelPerformanceMetricThreshold": {
+      "required": [
+        "metric"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/ModelPerformanceMetricThresholdBase"
+        }
+      ],
+      "properties": {
+        "metric": {
+          "description": "[Required] The regression model performance metric to calculate.",
+          "$ref": "#/definitions/RegressionModelPerformanceMetric",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "Regression",
+      "additionalProperties": false
+    },
     "RegressionModels": {
       "description": "Enum for all Regression models supported by AutoML.",
       "enum": [
@@ -19451,6 +22197,20 @@
       },
       "additionalProperties": false
     },
+    "RequestLogging": {
+      "type": "object",
+      "properties": {
+        "captureHeaders": {
+          "description": "For payload logging, we only collect payload by default. If customers also want to collect the specified headers, they can set them in captureHeaders so that backend will collect those headers along with payload.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
     "ResourceBase": {
       "type": "object",
       "properties": {
@@ -19514,6 +22274,16 @@
           ],
           "x-nullable": true
         },
+        "maxInstanceCount": {
+          "format": "int32",
+          "description": "Optional max allowed number of instances or nodes to be used by the compute target.\r\nFor use with elastic training, currently supported by PyTorch distribution type only.",
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
         "properties": {
           "description": "Additional properties bag.",
           "type": "object",
@@ -19530,6 +22300,38 @@
       },
       "additionalProperties": false
     },
+    "RollingRateType": {
+      "enum": [
+        "Year",
+        "Month",
+        "Day",
+        "Hour",
+        "Minute"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "RollingRateType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "Year"
+          },
+          {
+            "value": "Month"
+          },
+          {
+            "value": "Day"
+          },
+          {
+            "value": "Hour"
+          },
+          {
+            "value": "Minute"
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
     "Route": {
       "required": [
         "path",
@@ -19539,6 +22341,7 @@
       "properties": {
         "path": {
           "description": "[Required] The path for the route.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         },
@@ -19548,6 +22351,30 @@
           "type": "integer"
         }
       },
+      "additionalProperties": false
+    },
+    "SASCredentialDto": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/PendingUploadCredentialDto"
+        }
+      ],
+      "properties": {
+        "sasUri": {
+          "format": "uri",
+          "description": "Full SAS Uri, including the storage, container/blob path and SAS token",
+          "type": "string",
+          "x-nullable": true
+        },
+        "wasbsUri": {
+          "format": "uri",
+          "description": "Windows Azure Storage Blob formatted uri for mounting containers at root, a subdirectory, or a specific file\r\nexample wasbs://[container_name]@[account_name].blob.core.windows.net/[path]?sas=[sas]\r\nFor now, the URI will just be the root path ([path] will be empty).",
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "x-ms-discriminator-value": "SAS",
       "additionalProperties": false
     },
     "SamplingAlgorithm": {
@@ -19734,7 +22561,9 @@
     "ScheduleActionType": {
       "enum": [
         "CreateJob",
-        "InvokeBatchEndpoint"
+        "InvokeBatchEndpoint",
+        "ImportData",
+        "CreateMonitor"
       ],
       "type": "string",
       "x-ms-enum": {
@@ -19746,6 +22575,12 @@
           },
           {
             "value": "InvokeBatchEndpoint"
+          },
+          {
+            "value": "ImportData"
+          },
+          {
+            "value": "CreateMonitor"
           }
         ]
       },
@@ -19849,31 +22684,6 @@
       },
       "additionalProperties": false
     },
-    "SchedulingSettings": {
-      "type": "object",
-      "properties": {
-        "jobTier": {
-          "description": "Enum to determine the job tier.",
-          "default": "Standard",
-          "$ref": "#/definitions/JobTier",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ]
-        },
-        "priority": {
-          "format": "int32",
-          "description": "Controls the priority of the job on a compute.",
-          "type": "integer",
-          "x-ms-mutability": [
-            "create",
-            "read"
-          ],
-          "x-nullable": true
-        }
-      },
-      "additionalProperties": false
-    },
     "Seasonality": {
       "description": "Forecasting seasonality.",
       "required": [
@@ -19912,6 +22722,31 @@
             "description": "Use the custom seasonality value."
           }
         ]
+      },
+      "additionalProperties": false
+    },
+    "SecretConfiguration": {
+      "description": "Secret Configuration definition.",
+      "type": "object",
+      "properties": {
+        "uri": {
+          "description": "Secret Uri.\r\nSample Uri : https://myvault.vault.azure.net/secrets/mysecretname/secretversion",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "workspaceSecretName": {
+          "description": "Name of secret in workspace key vault.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        }
       },
       "additionalProperties": false
     },
@@ -20189,6 +23024,7 @@
       "properties": {
         "name": {
           "description": "[Required] The name of the SKU. Ex - P3. It is typically a letter+number code.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         },
@@ -20236,6 +23072,7 @@
         },
         "codeId": {
           "description": "[Required] ARM resource ID of the code asset.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string",
           "x-ms-mutability": [
@@ -20337,18 +23174,18 @@
           ],
           "x-nullable": true
         },
-        "resources": {
-          "description": "Compute Resource configuration for the job.",
-          "$ref": "#/definitions/SparkResourceConfiguration",
+        "queueSettings": {
+          "description": "Queue settings for the job",
+          "$ref": "#/definitions/QueueSettings",
           "x-ms-mutability": [
             "create",
             "read"
           ],
           "x-nullable": true
         },
-        "schedulingSettings": {
-          "description": "Scheduling setting for the job",
-          "$ref": "#/definitions/SchedulingSettings",
+        "resources": {
+          "description": "Compute Resource configuration for the job.",
+          "$ref": "#/definitions/SparkResourceConfiguration",
           "x-ms-mutability": [
             "create",
             "read"
@@ -20706,18 +23543,18 @@
           ],
           "x-nullable": true
         },
-        "samplingAlgorithm": {
-          "description": "[Required] The hyperparameter sampling algorithm",
-          "$ref": "#/definitions/SamplingAlgorithm"
-        },
-        "schedulingSettings": {
-          "description": "Scheduling setting for the job",
-          "$ref": "#/definitions/SchedulingSettings",
+        "queueSettings": {
+          "description": "Queue settings for the job",
+          "$ref": "#/definitions/QueueSettings",
           "x-ms-mutability": [
             "create",
             "read"
           ],
           "x-nullable": true
+        },
+        "samplingAlgorithm": {
+          "description": "[Required] The hyperparameter sampling algorithm",
+          "$ref": "#/definitions/SamplingAlgorithm"
         },
         "searchSpace": {
           "description": "[Required] A dictionary containing each parameter and its distribution. The dictionary key is the name of the parameter",
@@ -21531,6 +24368,31 @@
       "x-ms-discriminator-value": "TextNER",
       "additionalProperties": false
     },
+    "TopNFeaturesByAttribution": {
+      "required": [
+        "filterType"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/MonitoringFeatureFilterBase"
+        }
+      ],
+      "properties": {
+        "top": {
+          "format": "int32",
+          "description": "The number of top features to include.",
+          "default": 10,
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "x-ms-discriminator-value": "TopNByAttribution",
+      "additionalProperties": false
+    },
     "TrainingMode": {
       "description": "Training mode dictates whether to use distributed training or not",
       "enum": [
@@ -21645,6 +24507,7 @@
         },
         "environmentId": {
           "description": "[Required] The ARM resource ID of the Environment specification for the job.",
+          "minLength": 1,
           "pattern": "[a-zA-Z0-9_]",
           "type": "string"
         },
@@ -21863,17 +24726,6 @@
       "x-ms-discriminator-value": "uri_folder",
       "additionalProperties": false
     },
-    "UserIdentity": {
-      "description": "User identity configuration.",
-      "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/IdentityConfiguration"
-        }
-      ],
-      "x-ms-discriminator-value": "UserIdentity",
-      "additionalProperties": false
-    },
     "UseStl": {
       "description": "Configure STL Decomposition of the time-series target column.",
       "enum": [
@@ -21898,6 +24750,17 @@
           }
         ]
       },
+      "additionalProperties": false
+    },
+    "UserIdentity": {
+      "description": "User identity configuration.",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/IdentityConfiguration"
+        }
+      ],
+      "x-ms-discriminator-value": "UserIdentity",
       "additionalProperties": false
     },
     "ValidationMetricType": {
@@ -21928,6 +24791,50 @@
           {
             "value": "CocoVoc",
             "description": "CocoVoc metric."
+          }
+        ]
+      },
+      "additionalProperties": false
+    },
+    "Webhook": {
+      "description": "Webhook base",
+      "required": [
+        "webhookType"
+      ],
+      "type": "object",
+      "properties": {
+        "eventType": {
+          "description": "Send callback on a specified notification event",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ],
+          "x-nullable": true
+        },
+        "webhookType": {
+          "description": "[Required] Specifies the type of service to send a callback",
+          "$ref": "#/definitions/WebhookType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "discriminator": "webhookType"
+    },
+    "WebhookType": {
+      "description": "Enum to determine the webhook callback service type.",
+      "enum": [
+        "AzureDevOps"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "WebhookType",
+        "modelAsString": true,
+        "values": [
+          {
+            "value": "AzureDevOps"
           }
         ]
       },

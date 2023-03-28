@@ -451,7 +451,7 @@ class ContainerAppsAuthConfigsOperations:
         :param auth_config_name: Name of the Container App AuthConfig. Required.
         :type auth_config_name: str
         :param auth_config_envelope: Properties used to create a Container App AuthConfig. Is either a
-         model type or a IO type. Required.
+         AuthConfig type or a IO type. Required.
         :type auth_config_envelope: ~azure.mgmt.appcontainers.models.AuthConfig or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

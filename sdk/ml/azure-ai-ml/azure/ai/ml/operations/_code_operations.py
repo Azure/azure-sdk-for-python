@@ -93,7 +93,11 @@ class CodeOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
             code, _ = _check_and_upload_path(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+                artifact=code,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                artifact_type=ErrorTarget.CODE,
+                show_progress=self._show_progress,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,

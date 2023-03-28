@@ -188,6 +188,9 @@
           },
           {
             "$ref": "#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceForceToPurgeParameter"
           }
         ],
         "responses": {
@@ -286,6 +289,9 @@
           },
           {
             "$ref": "#/parameters/PaginationParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceKindParameter"
           }
         ],
         "responses": {
@@ -680,6 +686,9 @@
           },
           {
             "$ref": "#/parameters/PaginationParameter"
+          },
+          {
+            "$ref": "#/parameters/WorkspaceKindParameter"
           }
         ],
         "responses": {
@@ -1979,6 +1988,7 @@
       "in": "path",
       "type": "string",
       "required": true,
+      "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$",
       "x-ms-parameter-location": "method"
     },
     "ComputeNameParameter": {
@@ -2078,6 +2088,22 @@
       "description": "Category of the workspace connection.",
       "required": false,
       "x-ms-parameter-location": "method"
+    },
+    "WorkspaceKindParameter": {
+      "in": "query",
+      "name": "kind",
+      "type": "string",
+      "description": "Kind of workspace.",
+      "required": false,
+      "x-ms-parameter-location": "method"
+    },
+    "WorkspaceForceToPurgeParameter": {
+      "in": "query",
+      "name": "forceToPurge",
+      "type": "boolean",
+      "description": "Flag to indicate delete is a purge request.",
+      "required": false,
+      "x-ms-parameter-location": "method"
     }
   },
   "definitions": {
@@ -2165,6 +2191,9 @@
         "sku": {
           "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Sku",
           "description": "The sku of the workspace."
+        },
+        "kind": {
+          "type": "string"
         }
       }
     },
@@ -2333,6 +2362,15 @@
         "systemDatastoresAuthMode": {
           "description": "The auth mode used for accessing the system datastores of the workspace",
           "type": "string"
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
+        },
+        "softDeleteRetentionInDays": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Retention time in days after workspace get soft deleted."
         }
       }
     },
@@ -2409,6 +2447,10 @@
         "encryption": {
           "$ref": "#/definitions/EncryptionUpdateProperties",
           "description": "The encryption settings of the workspace."
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
         }
       }
     },
@@ -5794,7 +5836,11 @@
         "S3",
         "Snowflake",
         "AzureSqlDb",
-        "AzureSynapseAnalytics"
+        "AzureSynapseAnalytics",
+        "AzureMySqlDb",
+        "AzurePostgresDb",
+        "AzureDataLakeGen2",
+        "Redis"
       ],
       "type": "string",
       "description": "Category of the connection",
@@ -6225,6 +6271,28 @@
         "idleTimeBeforeShutdown": {
           "type": "string",
           "description": "Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days."
+        }
+      }
+    },
+    "FeatureStoreSettings": {
+      "type": "object",
+      "properties": {
+        "computeRuntime": {
+          "$ref": "#/definitions/ComputeRuntimeDto"
+        },
+        "offlineStoreConnectionName": {
+          "type": "string"
+        },
+        "onlineStoreConnectionName": {
+          "type": "string"
+        }
+      }
+    },
+    "ComputeRuntimeDto": {
+      "type": "object",
+      "properties": {
+        "sparkRuntimeVersion": {
+          "type": "string"
         }
       }
     }

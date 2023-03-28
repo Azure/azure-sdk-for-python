@@ -14,6 +14,6 @@ class ComputeRuntimeSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._workspace.compute_runtime import ComputeRuntime
+        from azure.ai.ml.entities._workspace.compute_runtime import _ComputeRuntime
 
-        return ComputeRuntime(spark_runtime_version=data.pop("spark_runtime_version"))
+        return _ComputeRuntime(spark_runtime_version=data.pop("spark_runtime_version"))

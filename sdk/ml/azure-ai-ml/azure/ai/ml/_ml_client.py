@@ -66,7 +66,7 @@ from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import get_registry_client
-from azure.ai.ml._utils.utils import _is_https_url
+from azure.ai.ml._utils.utils import _is_https_url, is_private_preview_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -98,15 +98,17 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    WorkspaceOutboundRuleOperations,
 )
+from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
 from azure.ai.ml.operations._schedule_operations import ScheduleOperations
+from azure.ai.ml.operations._feature_set_operations import _FeatureSetOperations
+from azure.ai.ml.operations._feature_store_operations import _FeatureStoreOperations
+from azure.ai.ml.operations._feature_store_entity_operations import _FeatureStoreEntityOperations
 
 module_logger = logging.getLogger(__name__)
 
@@ -132,6 +134,8 @@ class MLClient:
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
     :type show_progress: typing.Optional[bool]
+    :param enable_telemetry: Whether to enable telemetry. Will be overridden to False if not in a Jupyter Notebook.
+    :type enable_telemetry: typing.Optional[bool]
     :keyword cloud: The cloud name to use, defaults to AzureCloud.
     :paramtype cloud: str
 
@@ -496,7 +500,37 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
-        self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
+        try:
+            from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
+
+            self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
+        except Exception as ex:  # pylint: disable=broad-except
+            module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
+
+        self._featurestores = _FeatureStoreOperations(
+            self._operation_scope,
+            self._rp_service_client,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+
+        self._featuresets = _FeatureSetOperations(
+            self._operation_scope,
+            self._operation_config,
+            self._service_client_02_2023_preview,
+            self._datastores,
+            **ops_kwargs,
+        )
+
+        self._featurestoreentities = _FeatureStoreEntityOperations(
+            self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
+        )
+
+        if is_private_preview_enabled():
+            self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
+            self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
+            self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
 
     @classmethod
     def from_config(
@@ -622,6 +656,39 @@ class MLClient:
         :rtype: RegistryOperations
         """
         return self._registries
+
+    @property
+    @experimental
+    def _feature_stores(self) -> _FeatureStoreOperations:
+        """A collection of feature-store related operations.
+        :return: Featurestore operations
+        :rtype: _FeatureStoreOperations
+        """
+        if is_private_preview_enabled():
+            return self._featurestores
+        raise Exception("feature store operations not supported")
+
+    @property
+    @experimental
+    def _feature_sets(self) -> _FeatureSetOperations:
+        """A collection of feature set related operations.
+        :return: FeatureSet operations
+        :rtype: _FeatureSetOperations
+        """
+        if is_private_preview_enabled():
+            return self._featuresets
+        raise Exception("feature set operations not supported")
+
+    @property
+    @experimental
+    def _feature_store_entities(self) -> _FeatureStoreEntityOperations:
+        """A collection of feature store entity related operations.
+        :return: FeatureStoreEntity operations
+        :rtype: _FeatureStoreEntityOperations
+        """
+        if is_private_preview_enabled():
+            return self._featurestoreentities
+        raise Exception("feature store entity operations not supported")
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:

@@ -9,7 +9,6 @@ from ._artifacts.artifact import Artifact
 from ._artifacts.code import Code
 from ._artifacts.data import Data
 from ._artifacts.model import Model
-from ._artifacts.feature_set import FeatureSet
 from .environment import Environment
 from ._artifacts._package.model_package import ModelPackage
 from .workspace_asset_reference import WorkspaceAssetReference

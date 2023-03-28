@@ -25,26 +25,25 @@ from azure.ai.ml.constants._common import (
     PARAMS_OVERRIDE_KEY,
 )
 from azure.ai.ml.entities._assets import Artifact
-from azure.ai.ml.entities._feature_set.featureset_specification import FeaturesetSpecification
-from azure.ai.ml.entities._feature_set.materialization_settings import MaterializationSettings
+from azure.ai.ml.entities._feature_set.feature_set_specification import _FeatureSetSpecification
+from azure.ai.ml.entities._feature_set.materialization_settings import _MaterializationSettings
 
 from .artifact import ArtifactStorageInfo
 
 
 @experimental
-class FeatureSet(Artifact):
+class _FeatureSet(Artifact):
     def __init__(
         self,
         *,
         name: str,
         version: str,
         entities: List[str],
-        specification: FeaturesetSpecification,
+        specification: _FeatureSetSpecification,
         stage: Optional[str] = None,
         description: Optional[str] = None,
-        materialization_settings: Optional[MaterializationSettings] = None,
+        materialization_settings: Optional[_MaterializationSettings] = None,
         tags: Optional[Dict] = None,
-        properties: Optional[Dict[str, str]] = None,
         **kwargs,
     ):
         """FeatureSet
@@ -56,15 +55,13 @@ class FeatureSet(Artifact):
         :param entities: Specifies list of entities.
         :type entities: list[str]
         :param specification: Specifies the feature spec details.
-        :type specification: ~azure.ai.ml.entities.FeaturesetSpecification
+        :type specification: ~azure.ai.ml.entities._FeatureSetSpecification
         :param description: Description of the resource.
         :type description: str
         :param tags: Tag dictionary. Tags can be added, removed, and updated.
         :type tags: dict[str, str]
-        :param properties: The asset property dictionary.
-        :type properties: dict[str, str]
         :param materialization_settings: Specifies the materialization settings.
-        :type materialization_settings: ~azure.ai.ml.entities.MaterializationSettings
+        :type materialization_settings: ~azure.ai.ml.entities._MaterializationSettings
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -73,7 +70,6 @@ class FeatureSet(Artifact):
             version=version,
             description=description,
             tags=tags,
-            properties=properties,
             path=specification.path,
             **kwargs,
         )
@@ -98,38 +94,36 @@ class FeatureSet(Artifact):
         return FeaturesetVersion(name=self.name, properties=featureset_version_properties)
 
     @classmethod
-    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "FeatureSet":
+    def _from_rest_object(cls, featureset_rest_object: FeaturesetVersion) -> "_FeatureSet":
         if not featureset_rest_object:
             return None
         featureset_rest_object_details: FeaturesetVersionProperties = featureset_rest_object.properties
         arm_id_object = get_arm_id_object_from_id(featureset_rest_object.id)
-        featureset = FeatureSet(
+        featureset = _FeatureSet(
             id=featureset_rest_object.id,
             name=arm_id_object.asset_name,
             version=arm_id_object.asset_version,
             description=featureset_rest_object_details.description,
             tags=featureset_rest_object_details.tags,
-            properties=featureset_rest_object_details.properties,
             entities=featureset_rest_object_details.entities,
-            materialization_settings=MaterializationSettings._from_rest_object(
+            materialization_settings=_MaterializationSettings._from_rest_object(
                 featureset_rest_object_details.materialization_settings
             ),
-            specification=FeaturesetSpecification._from_rest_object(featureset_rest_object_details.specification),
+            specification=_FeatureSetSpecification._from_rest_object(featureset_rest_object_details.specification),
             stage=featureset_rest_object_details.stage,
         )
         return featureset
 
     @classmethod
-    def _from_container_rest_object(cls, rest_obj: FeaturesetContainer) -> "FeatureSet":
+    def _from_container_rest_object(cls, rest_obj: FeaturesetContainer) -> "_FeatureSet":
         rest_object_details: FeaturesetContainerProperties = rest_obj.properties
         arm_id_object = get_arm_id_object_from_id(rest_obj.id)
-        featureset = FeatureSet(
+        featureset = _FeatureSet(
             name=arm_id_object.asset_name,
             description=rest_object_details.description,
             tags=rest_object_details.tags,
-            properties=rest_object_details.properties,
             entities=[],
-            specification=FeaturesetSpecification(),
+            specification=_FeatureSetSpecification(),
             version="",
         )
         featureset.latest_version = rest_object_details.latest_version
@@ -142,15 +136,17 @@ class FeatureSet(Artifact):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "FeatureSet":
+    ) -> "_FeatureSet":
         data = data or {}
         params_override = params_override or []
+        base_path = Path(yaml_path).parent if yaml_path else Path("./")
         context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
+            BASE_PATH_CONTEXT_KEY: base_path,
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(FeatureSetSchema, data, context, **kwargs)
-        return FeatureSet(**loaded_schema)
+        feature_set = _FeatureSet(base_path=base_path, **loaded_schema)
+        return feature_set
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

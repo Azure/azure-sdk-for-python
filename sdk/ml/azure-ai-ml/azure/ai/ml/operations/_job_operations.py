@@ -50,7 +50,6 @@ from azure.ai.ml._utils.utils import (
 from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_RESOURCE_PROVIDER,
-    BATCH_JOB_CHILD_RUN_NAME,
     BATCH_JOB_CHILD_RUN_OUTPUT_NAME,
     COMMON_RUNTIME_ENV_VAR,
     DEFAULT_ARTIFACT_STORE_OUTPUT_NAME,
@@ -540,8 +539,10 @@ class JobOperations(_ScopeDependentOperations):
 
             # Make a copy of self._kwargs instead of contaminate the original one
             kwargs = dict(**self._kwargs)
-            if hasattr(rest_job_resource.properties, "identity") and (
-                isinstance(rest_job_resource.properties.identity, UserIdentity)
+            # set headers with user aml token if job is a pipeline or has a user identity setting
+            if (rest_job_resource.properties.job_type == RestJobType.PIPELINE) or (
+                hasattr(rest_job_resource.properties, "identity")
+                and (isinstance(rest_job_resource.properties.identity, UserIdentity))
             ):
                 self._set_headers_with_user_aml_token(kwargs)
 
@@ -831,12 +832,13 @@ class JobOperations(_ScopeDependentOperations):
     def _get_batch_job_scoring_output_uri(self, job_name: str) -> Optional[str]:
         uri = None
         # Download scoring output, which is the "score" output of the child job named "batchscoring"
+        # Batch Jobs are pipeline jobs with only one child, so this should terminate after an iteration
         for child in self._runs_operations.get_run_children(job_name):
-            if child.properties.get("azureml.moduleName", None) == BATCH_JOB_CHILD_RUN_NAME:
-                uri = self._get_named_output_uri(child.name, BATCH_JOB_CHILD_RUN_OUTPUT_NAME).get(
-                    BATCH_JOB_CHILD_RUN_OUTPUT_NAME, None
-                )
-                # After the correct child is found, break to prevent unnecessary looping
+            uri = self._get_named_output_uri(child.name, BATCH_JOB_CHILD_RUN_OUTPUT_NAME).get(
+                BATCH_JOB_CHILD_RUN_OUTPUT_NAME, None
+            )
+            # After the correct child is found, break to prevent unnecessary looping
+            if uri is not None:
                 break
         return uri
 

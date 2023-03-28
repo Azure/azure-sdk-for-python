@@ -49,6 +49,7 @@ from ._credentials import (
     ServicePrincipalConfiguration,
     UserIdentityConfiguration,
     UsernamePasswordConfiguration,
+    AccessKeyConfiguration,
 )
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
@@ -133,6 +134,7 @@ from ._workspace.networking import (
     FqdnDestination,
     ServiceTagDestination,
     PrivateEndpointDestination,
+    IsolationMode,
 )
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
@@ -153,6 +155,23 @@ from ._assets._artifacts._package.model_package import (
     PackageInputPathVersion,
 )
 
+
+from ._assets._artifacts.feature_set import _FeatureSet
+from ._workspace.compute_runtime import _ComputeRuntime
+from ._workspace.feature_store_settings import _FeatureStoreSettings
+from ._feature_store_entity.feature_store_entity import _FeatureStoreEntity
+from ._feature_store_entity.data_column import _DataColumn
+from ._feature_store_entity.data_column_type import _DataColumnType
+from ._feature_set.feature import _Feature
+from ._feature_set.feature_set_specification import _FeatureSetSpecification
+from ._feature_set.materialization_compute_resource import _MaterializationComputeResource
+from ._feature_set.materialization_settings import _MaterializationSettings
+from ._feature_set.materialization_type import _MaterializationType
+from ._feature_set.feature_set_backfill_response import _FeatureSetBackfillResponse
+from ._feature_set.feature_set_materialization_response import _FeatureSetMaterializationResponse
+from ._feature_store.feature_store import _FeatureStore
+from ._feature_store.materialization_store import _MaterializationStore
+from ._notification.notification import _Notification
 
 # TODO: enable in PuP
 # from ._job.import_job import ImportJob
@@ -223,6 +242,7 @@ __all__ = [
     "FqdnDestination",
     "ServiceTagDestination",
     "PrivateEndpointDestination",
+    "IsolationMode",
     "EndpointConnection",
     "CustomerManagedKey",
     "DataImport",
@@ -289,6 +309,22 @@ __all__ = [
     "AutoScaleSettings",
     "AutoPauseSettings",
     "WorkspaceModelReference",
+    "_Feature",
+    "_FeatureSet",
+    "_ComputeRuntime",
+    "_FeatureStoreSettings",
+    "_FeatureStoreEntity",
+    "_DataColumn",
+    "_DataColumnType",
+    "_FeatureSetSpecification",
+    "_MaterializationComputeResource",
+    "_MaterializationSettings",
+    "_MaterializationType",
+    "_FeatureStore",
+    "_MaterializationStore",
+    "_Notification",
+    "_FeatureSetBackfillResponse",
+    "_FeatureSetMaterializationResponse",
     # builders
     "Command",
     "Parallel",
@@ -320,4 +356,5 @@ __all__ = [
     "PackageInputPathUrl",
     "PackageInputPathVersion",
     "Route",
+    "AccessKeyConfiguration",
 ]

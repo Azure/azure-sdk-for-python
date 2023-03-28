@@ -115,7 +115,6 @@ EXPERIMENTAL_LINK_MESSAGE = (
 REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "\nVisit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
-BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
 BATCH_JOB_CHILD_RUN_OUTPUT_NAME = "score"
 DEFAULT_ARTIFACT_STORE_OUTPUT_NAME = "default"
 DEFAULT_EXPERIMENT_NAME = "Default"
@@ -304,6 +303,7 @@ class ArmConstants:
     STORAGE = "StorageAccount"
     KEY_VAULT = "KeyVault"
     APP_INSIGHTS = "AppInsights"
+    LOG_ANALYTICS = "LogAnalytics"
     WORKSPACE = "Workspace"
 
     AZURE_MGMT_RESOURCE_API_VERSION = "2020-06-01"
@@ -841,3 +841,8 @@ class InferenceServerType:
     AZUREML_BATCH = "azureml_batch"
     TRITON = "triton"
     CUSTOM = "custom"
+
+
+class IPProtectionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    ALL = "all"
+    NONE = "none"

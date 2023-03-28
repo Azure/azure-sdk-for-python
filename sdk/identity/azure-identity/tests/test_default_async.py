@@ -93,7 +93,7 @@ def test_authority(authority):
             shared_cache.supported = lambda: False
             with patch.dict("os.environ", {}, clear=True):
                 test_initialization(mock_credential, expect_argument=False)
-                
+
     # authority should not be passed to AzureDeveloperCliCredential
     with patch(DefaultAzureCredential.__module__ + ".AzureDeveloperCliCredential") as mock_credential:
         with patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential") as shared_cache:
@@ -280,6 +280,33 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
     # this credential uses a mock shared cache, so it works on all platforms
     with patch.object(SharedTokenCacheCredential, "supported", lambda: True):
         return DefaultAzureCredential(_cache=cache, transport=transport, **exclude_other_credentials, **kwargs)
+
+
+def test_developer_credential_timeout():
+    """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""
+
+    timeout = 42
+
+    with patch(DefaultAzureCredential.__module__ + ".AzureCliCredential") as mock_cli_credential:
+        with patch(DefaultAzureCredential.__module__ + ".AzurePowerShellCredential") as mock_pwsh_credential:
+            DefaultAzureCredential(developer_credential_timeout=timeout)
+
+    for credential in (mock_cli_credential, mock_pwsh_credential):
+        _, kwargs = credential.call_args
+        assert "process_timeout" in kwargs
+        assert kwargs["process_timeout"] == timeout
+
+def test_developer_credential_timeout():
+    """the credential should allow configuring a process timeout for Azure CLI and PowerShell by kwarg"""
+
+    with patch(DefaultAzureCredential.__module__ + ".AzureCliCredential") as mock_cli_credential:
+        with patch(DefaultAzureCredential.__module__ + ".AzurePowerShellCredential") as mock_pwsh_credential:
+            DefaultAzureCredential()
+
+    for credential in (mock_cli_credential, mock_pwsh_credential):
+        _, kwargs = credential.call_args
+        assert "process_timeout" in kwargs
+        assert kwargs["process_timeout"] == 10
 
 
 def test_unexpected_kwarg():
