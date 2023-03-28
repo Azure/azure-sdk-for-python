@@ -43,7 +43,9 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None, # pylint: disable=redefined-builtin
+        type: Optional[
+            Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]
+        ] = None,  # pylint: disable=redefined-builtin
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -73,8 +75,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _validate_type_name(self):
         if self.type and not self.type in JobServiceTypeNames.ENTITY_TO_REST.keys():
             msg = (
-                f"type should be one of "
-                f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.type}'."
+                f"type should be one of " f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.type}'."
             )
             raise ValidationException(
                 message=msg,
@@ -87,9 +88,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _to_rest_job_service(self, updated_properties: Dict[str, str] = None) -> RestJobService:
         return RestJobService(
             endpoint=self.endpoint,
-            job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None)
-            if self.type
-            else None,
+            job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None) if self.type else None,
             nodes=AllNodes() if self.nodes else None,
             status=self.status,
             port=self.port,
@@ -113,9 +112,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _from_rest_job_service_object(cls, obj: RestJobService):
         return cls(
             endpoint=obj.endpoint,
-            type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
-            if obj.job_service_type
-            else None,
+            type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None) if obj.job_service_type else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
