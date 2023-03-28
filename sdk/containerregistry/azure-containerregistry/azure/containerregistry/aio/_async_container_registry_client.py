@@ -862,7 +862,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Name of the repository.
         :param data: The blob to upload. Note: This must be a seekable stream.
         :type data: IO
-        :returns: The digest and size of the uploaded blob.
+        :returns: The digest and size in bytes of the uploaded blob.
         :rtype: Tuple[str, int]
         :raises ValueError: If the parameter repository or data is None.
         """
