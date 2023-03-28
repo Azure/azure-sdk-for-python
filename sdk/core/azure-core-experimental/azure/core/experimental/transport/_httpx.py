@@ -111,7 +111,8 @@ class HttpXTransport(HttpTransport):
         try:
             if stream_response:
                 stream_ctx = self.client.stream(**parameters)
-                response = stream_ctx.__enter__()
+                if stream_ctx:
+                    response = stream_ctx.__enter__()
             else:
                 response = self.client.request(**parameters)
         except (

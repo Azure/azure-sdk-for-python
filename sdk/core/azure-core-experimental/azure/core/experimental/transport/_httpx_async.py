@@ -50,11 +50,14 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
             stream_download_generator=stream_contextmanager,
         )
 
+    def body(self) -> bytes:
+        return self.internal_response.content
+
     def stream_download(self, pipeline: Pipeline, **kwargs: Any) -> AsyncIterator[bytes]:
         return AsyncHttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
     async def load_body(self) -> None:
-        self._content = self.internal_response.content
+        self._content = await self.internal_response.read()
 
 # pylint: disable=unused-argument
 class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
