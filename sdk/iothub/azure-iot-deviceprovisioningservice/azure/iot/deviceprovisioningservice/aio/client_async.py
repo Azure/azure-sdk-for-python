@@ -122,7 +122,7 @@ class ProvisioningServiceClient(object):
         self._credential_policy = None
         if hasattr(credential, "get_token"):
             self._credential_policy = AsyncBearerTokenCredentialPolicy(
-                credential=credential, scopes=base_url
+                credential, "https://azure-devices-provisioning.net/.default"
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential

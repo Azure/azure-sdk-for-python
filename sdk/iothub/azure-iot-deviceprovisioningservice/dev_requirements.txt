@@ -1,4 +1,16 @@
 -e ../../../tools/azure-sdk-tools
 -e ../../../tools/azure-devtools
 -e ../../resources/azure-mgmt-resource
-../../identity/azure-identity
+-e ../../identity/azure-identity
+../azure-mgmt-iothubprovisioningservices
+../../core/azure-core
+
+aiohttp
+azure-iot-device
+pylint
+pytest
+pytest-asyncio
+pytest-mock
+pytest-cov
+responses
+wheel

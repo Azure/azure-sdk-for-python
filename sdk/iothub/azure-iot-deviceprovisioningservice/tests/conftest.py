@@ -1,9 +1,19 @@
-from functools import partial
+import functools
+import os
 
 import pytest
 import responses
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
+from devtools_testutils import (
+    add_body_key_sanitizer,
+    EnvironmentVariableLoader,
+    add_general_regex_sanitizer,
+    add_header_regex_sanitizer,
+    test_proxy,
+)
+
+
 from urllib3.util.retry import Retry
 
 # TODO - Tests
@@ -44,10 +54,50 @@ REPROVISION_RESET = {"migrateDeviceData": False, "updateHubAssignment": True}
 REPROVISION_NEVER = {"migrateDeviceData": False, "updateHubAssignment": False}
 
 
+@pytest.fixture(scope="session", autouse=True)
+def add_sanitizers(test_proxy):
+    subscription_id = os.environ.get(
+        "AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    tenant_id = os.environ.get(
+        "AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    client_id = os.environ.get(
+        "AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    client_secret = os.environ.get(
+        "AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=tenant_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=client_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=client_secret, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=r"-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----",
+        value="certificate",
+    )
+    add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
+    add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+    add_body_key_sanitizer(json_path="$..primaryKey", value="primaryKey")
+    add_body_key_sanitizer(json_path="$..secondaryKey", value="secondaryKey")
+    add_body_key_sanitizer(json_path="$..sha256Thumbprint", value="thumbprint")
+    add_body_key_sanitizer(json_path="$..sha1Thumbprint", value="thumbprint")
+    return
+
+
 @pytest.fixture
 def mocked_response():
     with responses.RequestsMock() as rsps:
-        on_request_with_no_retry = partial(
+        on_request_with_no_retry = functools.partial(
             rsps._on_request,
             retries=Retry(
                 0,
@@ -70,3 +120,12 @@ def sdk_client() -> ProvisioningServiceClient:
         endpoint=f"https://{host_name}", credential=creds, authentication_policy=creds
     )
     return client
+
+
+ProvisioningServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "iothub",
+    iothub_dps_endpoint="fake-resource.azure-devices-provisioning.net",
+    iothub_dps_conn_str="HostName=mydps;SharedAccessKeyName=name;SharedAccessKey=value",
+    iothub_dps_idscope="IDSCOPE",
+)
