@@ -131,7 +131,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         
         @pipeline(
             name="Scatter gather",
-            description="It includes all steps that needs to be executing in silo+aggregation",
+            description="It includes all steps that need to be executed in silo and aggregation",
         )
         def scatter_gather_iteration_body(**silo_inputs):
             '''
@@ -144,7 +144,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     This dictionary is merged with silo-specific inputs before each executed.
             '''
 
-            sg_graph = {"silo_steps" : []}
+            silo_outputs = []
             siloed_outputs = {}
             # TODO 2293586 replace this for-loop with a parallel-for node
             for i in range(len(self.silo_configs)):
@@ -161,18 +161,17 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     orchestrator_datastore=self.aggregation_datastore
                 )
                 # include executed silo steps in recorded subgraph
-                sg_graph["silo_steps"].append(executed_silo_component)
+                silo_outputs.append(executed_silo_component)
 
                 # Extract user-specified outputs from the silo component, rename them as needed,
                 # annotate them with the silo's index, then jam them all into the
                 # variable-length internal component's input list. 
-                siloed_outputs.update({"{}_{}".format(k, i): v for k, v in
-                                    FLScatterGather._extract_outputs(executed_silo_component.outputs,
-                                                                        self.silo_to_aggregation_argument_map).items()})
+                # siloed_outputs.update({"{}_{}".format(k, i): v for k, v in
+                #                     FLScatterGather._extract_outputs(executed_silo_component.outputs,
+                #                                                         self.silo_to_aggregation_argument_map).items()})
 
             # produce internal argument-merging components and record them in local subgraph
-            merge_comp_mapping = self._inject_merge_components(sg_graph["silo_steps"])
-            sg_graph["mergers"] = [merge_comp for merge_comp in merge_comp_mapping.values()]
+            merge_comp_mapping = self._inject_merge_components(silo_outputs)
 
             # produce aggregate step inputs by merging static kwargs and mapped arguments from
             # internal merge components
@@ -188,8 +187,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             for name, agg_input in executed_aggregation_component.inputs.items():
                 if name in self.silo_to_aggregation_argument_map.keys() and agg_input.type == "mltable":
                     agg_input.mode = "eval_download"
-            # record aggregation step in subgraph
-            sg_graph["aggregation"] = executed_aggregation_component
 
             # Anchor both the internal merge components and the user-supplied aggregation step 
             # to the aggregation compute and datastore
@@ -208,8 +205,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     internal_datastore=self.aggregation_datastore,
                     orchestrator_datastore=self.aggregation_datastore
                 )
-            
-            self.subgraph.append(sg_graph)
             return executed_aggregation_component.outputs
         
         @pipeline(name="Scatter gather graph")
@@ -224,26 +219,23 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             # Start with static inputs
             silo_inputs.update(self.shared_silo_kwargs)
 
-            # merge in inputs passed in from previous iteration's aggregate step if they exist
+            # merge in inputs passed in from previous iteration's aggregate step)
             if self.aggregation_to_silo_argument_map is not None:
                 silo_inputs.update({v: None for v in self.aggregation_to_silo_argument_map.values()})
 
-            loop_body = scatter_gather_iteration_body(**silo_inputs)
-            print("loop body inputs")
-            # print(loop_body.inputs) getattr(loop_body.inputs, v)
+            scatter_gather_body = scatter_gather_iteration_body(**silo_inputs)
+           
             # map aggregation outputs to scatter inputs
-            # do_while_mapping = {k: getattr(loop_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
-            do_while_mapping = {k: getattr(loop_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
-            print(do_while_mapping)
+            do_while_mapping = {k: getattr(scatter_gather_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
+            
             do_while(
-                body=loop_body,
+                body=scatter_gather_body,
                 mapping=do_while_mapping,
                 max_iteration_count=self.max_iterations,
             )
-            return loop_body.outputs
+            return scatter_gather_body.outputs
         
-        scatter_gather_graph = create_scatter_gather_graph()
-        return scatter_gather_graph
+        return create_scatter_gather_graph()
 
     # TODO potential set default fail_on_missing value to false
     @classmethod

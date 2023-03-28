@@ -207,26 +207,22 @@ class TestDSLPipeline(AzureRecordedTestCase):
         aggregation_datastore = datastores[3].name
 
         # Define the fl pipeline
-        @pipeline()
-        def fl_pipeline():
-            fl_node = fl_scatter_gather(
-                silo_configs=silo_configs,
-                silo_component=silo_step_func,
-                aggregation_component=aggregation_step,
-                aggregation_compute=aggregation_compute,
-                aggregation_datastore=aggregation_datastore,
-                shared_silo_kwargs=silo_kwargs,
-                aggregation_kwargs=agg_kwargs,
-                silo_to_aggregation_argument_map=silo_to_aggregation_argument_map,
-                aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
-                max_iterations=iterations,
-            )
-            return {"pipeline_output": fl_node.outputs["aggregated_output"]}
+        fl_node = fl_scatter_gather(
+            silo_configs=silo_configs,
+            silo_component=silo_step_func,
+            aggregation_component=aggregation_step,
+            aggregation_compute=aggregation_compute,
+            aggregation_datastore=aggregation_datastore,
+            shared_silo_kwargs=silo_kwargs,
+            aggregation_kwargs=agg_kwargs,
+            silo_to_aggregation_argument_map=silo_to_aggregation_argument_map,
+            aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
+            max_iterations=iterations,
+        )
 
         # create and submit the pipeline job
-        fl_pipeline_job = fl_pipeline()
-        submitted_pipeline_job = client.jobs.create_or_update(fl_pipeline_job, experiment_name="example_fl_pipeline")
-
+        submitted_pipeline_job = client.jobs.create_or_update(fl_node.scatter_gather_graph, experiment_name="example_fl_pipeline")
+        print("Submitted pipeline job: {}".format(submitted_pipeline_job.id))
         subgraph = submitted_pipeline_job.component.jobs
 
         silo_steps = [value for key, value in subgraph.items() if "silo_step" in key]
