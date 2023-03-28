@@ -57,7 +57,7 @@ if TYPE_CHECKING:
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
-    Class which defines pyamqp-based methods used by the producer and consumer.
+    Class which defines pyamqp-based methods used by the sender and receiver.
     """
 
     @staticmethod

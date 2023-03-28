@@ -156,7 +156,7 @@ _ERROR_CODE_TO_ERROR_MAPPING = {
 
 class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-methods
     """
-    Class which defines uamqp-based methods used by the producer and consumer.
+    Class which defines uamqp-based methods used by the sender and receiver.
     """
 
     KIND = "pyamqp"

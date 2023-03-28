@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 if uamqp_installed:
     class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
         """
-        Class which defines uamqp-based methods used by the producer and consumer.
+        Class which defines uamqp-based methods used by the sender and receiver.
         """
 
         @staticmethod

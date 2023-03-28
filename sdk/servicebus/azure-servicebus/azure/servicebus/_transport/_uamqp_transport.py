@@ -164,9 +164,9 @@ if uamqp_installed:
     def _error_handler(error):
         """Handle connection and service errors.
 
-        Called internally when an event has failed to send so we
+        Called internally when a message has failed to send so we
         can parse the error to determine whether we should attempt
-        to retry sending the event again.
+        to retry sending the message again.
         Returns the action to take according to error type.
 
         :param error: The error received in the send attempt.
@@ -211,7 +211,7 @@ if uamqp_installed:
 
     class UamqpTransport(AmqpTransport):    # pylint: disable=too-many-public-methods
         """
-        Class which defines uamqp-based methods used by the producer and consumer.
+        Class which defines uamqp-based methods used by the sender and receiver.
         """
         KIND = "uamqp"
 

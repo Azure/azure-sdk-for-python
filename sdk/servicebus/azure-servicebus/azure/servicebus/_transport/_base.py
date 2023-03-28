@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     """
-    Abstract class that defines a set of common methods needed by producer and consumer.
+    Abstract class that defines a set of common methods needed by sender and receiver.
     """
     KIND: str
 

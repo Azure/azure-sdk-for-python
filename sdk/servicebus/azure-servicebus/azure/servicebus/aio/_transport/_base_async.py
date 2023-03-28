@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
-    Abstract class that defines a set of common methods needed by producer and consumer.
+    Abstract class that defines a set of common methods needed by sender and receiver.
     """
     KIND: str
 
@@ -125,9 +125,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     @abstractmethod
     async def send_messages_async(sender, message, logger, timeout, last_exception):
         """
-        Handles sending of event data messages.
-        :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
-        :param int timeout_time: Timeout time.
+        Handles sending of service bus messages.
+        :param sender: The sender with handler to send messages.
+        :param int timeout: Timeout time.
         :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
         :param logger: Logger.
         """

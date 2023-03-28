@@ -699,7 +699,7 @@ class ServiceBusMessageBatch(object):
             outgoing_sb_message._message  # pylint: disable=protected-access
         )
 
-        # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
+        # For a ServiceBusMessageBatch, if the encoded_message_size of message is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
             self._size

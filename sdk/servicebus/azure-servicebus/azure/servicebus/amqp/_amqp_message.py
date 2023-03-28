@@ -419,7 +419,7 @@ class AmqpMessageProperties(DictMixin):
     for more information on the message properties.
 
     :keyword message_id: Message-id, if set, uniquely identifies a message within the message system.
-     The message producer is usually responsible for setting the message-id in such a way that it
+     The message sender is usually responsible for setting the message-id in such a way that it
      is assured to be globally unique. A broker MAY discard a message as a duplicate if the value
      of the message-id matches that of a previously received message sent to the same node.
     :paramtype message_id: Optional[Union[str, bytes, uuid.UUID]]
@@ -451,7 +451,7 @@ class AmqpMessageProperties(DictMixin):
      to this message to a specific group.
     :paramtype reply_to_group_id: Optional[Union[str, bytes]]
     :ivar message_id: Message-id, if set, uniquely identifies a message within the message system.
-     The message producer is usually responsible for setting the message-id in such a way that it
+     The message sender is usually responsible for setting the message-id in such a way that it
      is assured to be globally unique. A broker MAY discard a message as a duplicate if the value
      of the message-id matches that of a previously received message sent to the same node.
     :vartype message_id: Optional[Union[str, bytes, uuid.UUID]]
