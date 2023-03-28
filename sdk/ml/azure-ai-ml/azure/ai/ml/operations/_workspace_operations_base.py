@@ -37,6 +37,7 @@ from azure.ai.ml.entities import (
     Workspace,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._hub._constants import LEAN_KIND
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
@@ -257,6 +258,11 @@ class WorkspaceOperationsBase:
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller[None]:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
+
+        # prevent dependent resource delete for lean workspace
+        if workspace._kind == LEAN_KIND:
+            delete_dependent_resources = False
+
         if delete_dependent_resources:
             delete_resource_by_arm_id(
                 self._credentials,
@@ -282,6 +288,28 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
+            for storageaccount in workspace.hub_storageaccounts:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    storageaccount,
+                    ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
+                )
+
+            for keyvault in workspace.hub_keyvaults:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    keyvault,
+                    ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
+                )
+            for containerregistry in workspace.hub_containerregistries:
+                delete_resource_by_arm_id(
+                    self._credentials,
+                    self._subscription_id,
+                    containerregistry,
+                    ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
+                )
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,

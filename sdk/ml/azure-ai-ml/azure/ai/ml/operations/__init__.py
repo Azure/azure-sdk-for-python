@@ -24,6 +24,8 @@ from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
+from ._hub_operation import HubOperations
+from ._lean_operation import LeanOperations
 
 __all__ = [
     "ComputeOperations",
@@ -42,4 +44,6 @@ __all__ = [
     "WorkspaceConnectionsOperations",
     "RegistryOperations",
     "ScheduleOperations",
+    "HubOperations",
+    "LeanOperations"
 ]
