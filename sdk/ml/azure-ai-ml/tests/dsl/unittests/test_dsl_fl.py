@@ -189,26 +189,6 @@ class TestDSLPipeline:
         # Final Output
         assert fl_node.outputs.keys() == aggregation_to_silo_argument_map.keys()
 
-        # for iteration_subgraph in fl_node.subgraph:
-        #     for index in range(len(silo_configs)):
-        #         silo_step = iteration_subgraph["silo_steps"][index]
-        #         config = silo_configs[index]
-        #         sub_step_1 = silo_step.jobs["silo_pre_processing_step"]
-        #         print(sub_step_1)
-        #         assert sub_step_1.outputs["processed_train_data"]
-        #         assert sub_step_1.outputs["processed_test_data"]
-        #         assert sub_step_1.compute == config.compute
-
-        #         sub_step_2 = silo_step.jobs["silo_training_step"]
-        #         assert aggregation_datastore in sub_step_2.outputs["model"].path
-
-        #     merge_step = iteration_subgraph["mergers"][0]
-        #     agg_step = iteration_subgraph["aggregation"]
-        #     assert merge_step.compute == aggregation_compute
-        #     assert agg_step.compute == aggregation_compute
-        #     assert aggregation_datastore in merge_step.outputs["aggregated_output"].path
-        #     assert aggregation_datastore in agg_step.outputs["aggregated_output"].path
-
     # The FL node contains a large validation function
     # This runs that function against a variety of input
     # cases.

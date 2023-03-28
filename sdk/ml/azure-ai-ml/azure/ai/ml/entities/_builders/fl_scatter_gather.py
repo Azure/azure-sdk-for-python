@@ -104,8 +104,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         self.silo_to_aggregation_argument_map = silo_to_aggregation_argument_map
         self.aggregation_to_silo_argument_map = aggregation_to_silo_argument_map
         self.max_iterations = max_iterations
-        # subgraph is a list of all iteration's executed steps, stored in a dictionary for each iteration
-        self.subgraph = []
         self._init = True  # Needed by parent class to work properly
 
         self.scatter_gather_graph = self.scatter_gather()
@@ -145,7 +143,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             '''
 
             silo_outputs = []
-            siloed_outputs = {}
             # TODO 2293586 replace this for-loop with a parallel-for node
             for i in range(len(self.silo_configs)):
                 silo_config = self.silo_configs[i]
@@ -160,15 +157,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     internal_datastore=silo_config.datastore,
                     orchestrator_datastore=self.aggregation_datastore
                 )
-                # include executed silo steps in recorded subgraph
+                # add to silo outputs list
                 silo_outputs.append(executed_silo_component)
-
-                # Extract user-specified outputs from the silo component, rename them as needed,
-                # annotate them with the silo's index, then jam them all into the
-                # variable-length internal component's input list. 
-                # siloed_outputs.update({"{}_{}".format(k, i): v for k, v in
-                #                     FLScatterGather._extract_outputs(executed_silo_component.outputs,
-                #                                                         self.silo_to_aggregation_argument_map).items()})
 
             # produce internal argument-merging components and record them in local subgraph
             merge_comp_mapping = self._inject_merge_components(silo_outputs)
