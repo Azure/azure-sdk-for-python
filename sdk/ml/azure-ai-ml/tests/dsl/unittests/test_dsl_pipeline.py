@@ -2798,9 +2798,8 @@ class TestDSLPipeline:
             return {"output": node.outputs.component_out_path}
 
         pipeline_job: PipelineJob = my_pipeline()
-        pipeline_job.settings.default_compute = "cpu-cluster"
-        pipeline_job.settings.continue_on_step_failure = True
-        pipeline_job.settings.continue_run_on_failed_optional_input = False
+        pipeline_job.settings = {"default_compute": "cpu-cluster", "continue_on_step_failure": True,
+                                 "continue_run_on_failed_optional_input": False}
 
         assert pipeline_job._to_rest_object().properties.settings == {
             PipelineConstants.DEFAULT_COMPUTE: "cpu-cluster",
