@@ -8,7 +8,7 @@ import time
 import types
 from functools import partial
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Optional, Union, List, Any
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -21,12 +21,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
-from azure.ai.ml._telemetry import (
-    ActivityType,
-    monitor_with_activity,
-    monitor_with_telemetry_mixin,
-)
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -45,8 +40,8 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
-from .._utils._cache_utils import CachedNodeResolver
 
+from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
 from ..entities._builders import BaseNode
@@ -635,16 +630,21 @@ class ComponentOperations(_ScopeDependentOperations):
     @classmethod
     def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
         """Traverse the pipeline component and divide nodes to resolve into layers.
+        Layers are divided by depth of the nodes by default, except that all leaf nodes will be in the last layer.
+        Given only leaf nodes may involve code resolution, all code resolution will happen concurrently.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
          /|\
         B C D
         | |
         E F
+        |
+        G
         return value will be:
         [
-          [("B", B), ("C", C), ("D", D)],
-          [("E", E), ("F", F)],
+          [("B", B), ("C", C)],
+          [("E", E)],
+          [("G", G), ("F", F), ("D", D)],
         ]
 
         :param component: The pipeline component to resolve.
@@ -655,7 +655,8 @@ class ComponentOperations(_ScopeDependentOperations):
         :rtype: List[List[Tuple[str, BaseNode]]]
         """
         # add an empty layer to mark the end of the first layer
-        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
+        layers: List[List[Tuple[str, BaseNode]]] = [list(component.jobs.items()), []]
+        cur_layer_head, cur_layer = 0, 0
 
         while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
             key, job_instance = layers[cur_layer][cur_layer_head]
@@ -680,6 +681,16 @@ class ComponentOperations(_ScopeDependentOperations):
         # if there is no subgraph, pop the empty layer inserted at the beginning
         if len(layers[-1]) == 0:
             layers.pop()
+
+        # move all leaf nodes to the last layer
+        for i in range(len(layers) - 1):
+            pipeline_nodes = []
+            for key, node in layers[i]:
+                if isinstance(node, BaseNode) and isinstance(node._component, PipelineComponent):
+                    pipeline_nodes.append((key, node))
+                else:
+                    layers[-1].append((key, node))
+            layers[i] = pipeline_nodes
 
         return layers
 
