@@ -25,10 +25,9 @@ These sample programs show common scenarios for the Health Insights Clinical Mat
 -->
 
 ## Prerequisites
-* Python 2.7 or 3.5 or higher is required to use this package.
+* Python 3.7 or later is required to use this package.
 * The Pandas data analysis library.
-* You must have an [Azure subscription][azure_subscription] and an
-[Azure Health Insights account][azure_healthinsights_account] to run these samples.
+* You must have an [Azure subscription][azure_subscription] and an [Azure Health Insights account][azure_healthinsights_account] to run these samples.
 
 ## Setup
 
