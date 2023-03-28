@@ -3534,7 +3534,7 @@ class OperationSummary:
     """Date and time (UTC) when the operation was last updated."""
     kind: str
     """Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo"."""
+        "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild"."""
     resource_location: str
     """URL of the resource targeted by this operation."""
     api_version: Optional[str]
