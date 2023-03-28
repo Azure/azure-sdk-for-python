@@ -43,9 +43,9 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        type: Optional[
+        type: Optional[  # pylint: disable=redefined-builtin
             Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]
-        ] = None,  # pylint: disable=redefined-builtin
+        ] = None,
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
