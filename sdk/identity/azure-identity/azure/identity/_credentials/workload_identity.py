@@ -2,10 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import os
 import time
 from typing import Any
+from typing import Optional
 
 from .client_assertion import ClientAssertionCredential
+from .._constants import EnvironmentVariables
 
 
 class TokenFileMixin:
@@ -33,18 +36,22 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     See the `workload identity overview <https://learn.microsoft.com/azure/aks/workload-identity-overview>`_
     for more information.
 
-    :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
-    :param str client_id: The client ID of an Azure AD app registration.
-    :param str file: The path to a file containing a Kubernetes service account token that authenticates the identity.
+    :keyword str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
+    :keyword str client_id: The client ID of an Azure AD app registration.
+    :keyword str file: The path to a file containing a Kubernetes service account token that authenticates the identity.
     """
 
     def __init__(
             self,
-            tenant_id: str,
-            client_id: str,
-            file: str,
+            *,
+            tenant_id: Optional[str] = None,
+            client_id: Optional[str] = None,
+            file: Optional[str] = None,
             **kwargs: Any
     ) -> None:
+        tenant_id = tenant_id or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
+        client_id = client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+        file = file or os.environ.get(EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE)
         super(WorkloadIdentityCredential, self).__init__(
             tenant_id=tenant_id,
             client_id=client_id,
