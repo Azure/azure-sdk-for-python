@@ -3250,6 +3250,9 @@ class DocumentTypeDetails:
 class DocumentModelSummary:
     """A summary of document model information including the model ID,
     its description, and when the model was created.
+
+    .. versionadded:: 2023-02-28-preview
+        The *expires_on* property.
     """
     model_id: str
     """Unique model id."""
@@ -3324,7 +3327,11 @@ class DocumentModelSummary:
 
 
 class DocumentModelDetails(DocumentModelSummary):
-    """Document model information. Includes the doc types that the model can analyze."""
+    """Document model information. Includes the doc types that the model can analyze.
+
+    .. versionadded:: 2023-02-28-preview
+        The *expires_on* property.
+    """
 
     model_id: str
     """Unique model id."""
