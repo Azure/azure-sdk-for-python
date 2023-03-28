@@ -21,12 +21,12 @@
         ],
         "Content-Length": "137",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 27 Mar 2023 16:35:30 GMT",
+        "Date": "Tue, 28 Mar 2023 16:25:32 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Metered-Usage": "48",
         "X-MT-System": "Microsoft",
-        "X-RequestId": "TRAN.SN1P.E22E.0327T1635.3D93FA"
+        "X-RequestId": "TRAN.MW1P.99BD.0328T1625.92EAB2D"
       },
       "ResponseBody": "[{\u0022detectedLanguage\u0022:{\u0022language\u0022:\u0022en\u0022,\u0022score\u0022:1.0},\u0022translations\u0022:[{\u0022text\u0022:\u0022\u003Chtml\u003E\u003Cbody\u003EToto \u003Cb\u003Eje\u003C/b\u003E test.\u003C/body\u003E\u003C/html\u003E\u0022,\u0022to\u0022:\u0022cs\u0022}]}]"
     }

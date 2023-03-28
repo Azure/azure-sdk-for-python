@@ -258,7 +258,7 @@ class TestTranslation(TextTranslationTest):
     @TextTranslationPreparer()
     @recorded_by_proxy
     def test_token(self, **kwargs):      
-        endpoint = kwargs.get("text_translation_custom_endpoint")
+        endpoint = kwargs.get("text_translation_endpoint")
         apikey = kwargs.get("text_translation_apikey")
         region = kwargs.get("text_translation_region")
         client = self.create_client_token(endpoint, apikey, region)

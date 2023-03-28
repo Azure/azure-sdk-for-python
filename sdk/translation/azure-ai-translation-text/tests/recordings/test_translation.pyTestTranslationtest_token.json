@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeCustomEndpoint.cognitiveservices.azure.com/translator/text/v3.0/translate?to=cs\u0026api-version=3.0",
+      "RequestUri": "https://fakeEndpoint.cognitive.microsofttranslator.com/translate?to=cs\u0026api-version=3.0",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -14,15 +14,18 @@
       "RequestBody": "[{\u0022text\u0022: \u0022This is a test.\u0022}]",
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "d48664f0-f030-4427-9efb-0f87806c0377",
-        "Content-Length": "224",
-        "Content-Type": "application/json",
-        "Date": "Mon, 27 Mar 2023 16:35:30 GMT"
+        "Access-Control-Expose-Headers": "X-RequestId",
+        "Content-Length": "111",
+        "Content-Type": "text/plain; charset=utf-8",
+        "Date": "Tue, 28 Mar 2023 16:25:33 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-RequestId": "TRAN.MW1P.99BD.0328T1625.92EAD5A"
       },
       "ResponseBody": {
         "error": {
-          "code": "401",
-          "message": "Access denied due to invalid subscription key or wrong API endpoint. Make sure to provide a valid key for an active subscription and use a correct regional API endpoint for your resource."
+          "code": 401000,
+          "message": "The request is not authorized because credentials are missing or invalid."
         }
       }
     }
