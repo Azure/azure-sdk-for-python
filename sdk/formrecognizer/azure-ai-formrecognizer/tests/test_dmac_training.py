@@ -285,3 +285,15 @@ class TestDMACTraining(FormRecognizerTest):
         assert details["resource_location_url"]
         assert details["created_on"]
         assert details["last_updated_on"]
+
+    @FormRecognizerPreparer()
+    @DocumentModelAdministrationClientPreparer()
+    @recorded_by_proxy
+    def test_build_model_file_list_source(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+        poller = client.begin_build_document_model(
+            build_mode="template",
+            blob_container_url=formrecognizer_storage_container_sas_url,
+            file_list=".jsonl"
+        )
+        result = poller.result()
+        print(result)
