@@ -85,7 +85,7 @@
   - Parameter type of model ApplicationArtifact is now required
   - Parameter uri of model ApplicationArtifact is now required
 
-## 23.0.0b1b1 (2023-02-16)
+## 22.1.0b1 (2023-02-16)
 
 ### Other Changes
 
