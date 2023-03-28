@@ -3910,34 +3910,99 @@ class CustomDocumentModelsDetails:
         )
 
 
+class QuotaDetails:
+    """Quota used, limit, and next reset date/time."""
+
+    used: int
+    """Amount of the resource quota used."""
+    quota: int
+    """Resource quota limit."""
+    quota_reset_date_time: datetime.datetime
+    """Date/time when the resource quota usage will be reset."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.used = kwargs.get("used", None)
+        self.quota = kwargs.get("quota", None)
+        self.quota_reset_date_time = kwargs.get("quota_reset_date_time", None)
+
+    def __repr__(self) -> str:
+        return f"QuotaDetails(used={self.used}, quota={self.quota}, quota_reset_date_time={self.quota_reset_date_time})"
+
+    @classmethod
+    def _from_generated(cls, info):
+        return cls(
+            used=info.used,
+            quota=info.quota,
+            quota_reset_date_time=info.quota_reset_date_time
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of QuotaDetails."""
+        return {
+                "used": self.used,
+                "quota": self.quota,
+                "quota_reset_date_time": self.quota_reset_date_time
+            }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> "QuotaDetails":
+        """Converts a dict in the shape of a QuotaDetails to the model itself.
+
+        :param Dict data: A dictionary in the shape of QuotaDetails.
+        :return: QuotaDetails
+        :rtype: QuotaDetails
+        """
+        return cls(
+            used=data.get("custom_document_models", None),
+            quota=data.get("custom_document_models", None),
+            quota_reset_date_time=data.get("quota_reset_date_time", None)
+        )
+
+
 class ResourceDetails:
-    """Details regarding the Form Recognizer resource."""
+    """Details regarding the Form Recognizer resource.
+
+    .. versionadded:: 2023-02-28-preview
+        The *custom_neural_document_model_builds* property.
+    """
 
     custom_document_models: CustomDocumentModelsDetails
     """Details regarding the custom models under the Form Recognizer resource."""
+    custom_neural_document_model_builds: QuotaDetails
 
     def __init__(
         self,
         **kwargs: Any
     ) -> None:
         self.custom_document_models = kwargs.get("custom_document_models", None)
+        self.custom_neural_document_model_builds = kwargs.get("custom_neural_document_model_builds", None)
 
     def __repr__(self) -> str:
-        return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)})"
+        return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)}, " \
+               f"custom_neural_document_model_builds={repr(self.custom_neural_document_model_builds)})"
 
     @classmethod
     def _from_generated(cls, info):
+        custom_neural_builds = info.custom_neural_document_model_builds \
+            if hasattr(info, "custom_neural_document_model_builds") else None
         return cls(
-            custom_document_models=CustomDocumentModelsDetails._from_generated(info)
-            if info else None,
+            custom_document_models=CustomDocumentModelsDetails._from_generated(info.custom_document_models)
+            if info.custom_document_models else None,
+            custom_neural_document_model_builds=QuotaDetails._from_generated(custom_neural_builds)
+            if custom_neural_builds else None,
         )
-
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of ResourceDetails."""
         return {
                 "custom_document_models": self.custom_document_models.to_dict()
                 if self.custom_document_models
+                else None,
+                "custom_neural_document_model_builds": self.custom_neural_document_model_builds.to_dict()
+                if self.custom_neural_document_model_builds
                 else None,
             }
 
@@ -3953,6 +4018,9 @@ class ResourceDetails:
             custom_document_models=CustomDocumentModelsDetails.from_dict(
                 data.get("custom_document_models")  # type: ignore
             ) if data.get("custom_document_models") else None,
+            custom_neural_document_model_builds=QuotaDetails.from_dict(
+                data.get("custom_neural_document_model_builds")  # type: ignore
+            ) if data.get("custom_neural_document_model_builds") else None,
         )
 
 

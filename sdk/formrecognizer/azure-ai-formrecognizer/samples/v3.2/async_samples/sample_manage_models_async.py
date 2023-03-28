@@ -44,6 +44,9 @@ async def sample_manage_models_async():
         print("Our resource has {} custom models, and we can have at most {} custom models\n".format(
             account_details.custom_document_models.count, account_details.custom_document_models.limit
         ))
+        neural_models = account_details.custom_neural_document_model_builds
+        print(f"The quota limit for custom neural document models is {neural_models.quota} and the resource has"
+              f"used {neural_models.used}. The resource quota will reset on {neural_models.quota_reset_date_time}")
         # [END get_resource_details_async]
 
         # Next, we get a paged list of all of our custom models

@@ -66,6 +66,7 @@ from ._models import (
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
     TargetAuthorization,
+    QuotaDetails,
 )
 from ._api_versions import FormRecognizerApiVersion, DocumentAnalysisApiVersion
 
@@ -134,6 +135,7 @@ __all__ = [
     "DocumentAnalysisError",
     "DocumentAnalysisInnerError",
     "TargetAuthorization",
+    "QuotaDetails",
 ]
 
 __VERSION__ = VERSION
