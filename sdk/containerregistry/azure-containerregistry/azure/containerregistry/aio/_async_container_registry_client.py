@@ -31,6 +31,14 @@ from .._helpers import (
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 
+class _UnclosableBytesIO(BytesIO):
+    def close(self):
+        pass
+    
+    def manual_close(self):
+        super().close()
+
+
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self,
@@ -883,24 +891,30 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise
         return complete_upload_response_headers['Docker-Content-Digest'], blob_size
 
+    
     async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
+        blob_size = 0
         buffer = data.read(DEFAULT_CHUNK_SIZE)
-        blob_size = len(buffer)
+
         while len(buffer) > 0:
+            buffer_stream = _UnclosableBytesIO(buffer)
             response_headers = cast(
                 Dict[str, str],
                 await self._client.container_registry_blob.upload_chunk(
                     location,
-                    BytesIO(buffer),
+                    buffer_stream,
                     cls=_return_response_headers,
                     **kwargs
                 )
             )
-            location = response_headers['Location']
-            hasher.update(buffer)
-            buffer = data.read(DEFAULT_CHUNK_SIZE)
+            buffer_stream.manual_close()
             blob_size += len(buffer)
+            hasher.update(buffer)
+
+            location = response_headers['Location']
+            buffer = data.read(DEFAULT_CHUNK_SIZE)
+
         return "sha256:" + hasher.hexdigest(), location, blob_size
 
     @distributed_trace_async
