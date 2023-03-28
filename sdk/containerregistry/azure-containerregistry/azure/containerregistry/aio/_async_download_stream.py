@@ -4,19 +4,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import AsyncIterable, AsyncContextManager, Callable, Awaitable
+from typing import AsyncIterator, AsyncContextManager, Callable, Awaitable
 from typing_extensions import Self
 
 
 class AsyncDownloadBlobStream(
-    AsyncIterable[bytes],
+    AsyncIterator[bytes],
     AsyncContextManager[Self],
 ):
     """Protocol for methods to provide streamed responses."""
 
     def __init__(self, **kwargs) -> None:
-        self._response: AsyncIterable[bytes] = kwargs.get('response')
-        self._next: Callable[[str], Awaitable[AsyncIterable[bytes]]] = kwargs.get('next')
+        self._response: AsyncIterator[bytes] = kwargs.get('response')
+        self._next: Callable[[str], Awaitable[AsyncIterator[bytes]]] = kwargs.get('next')
         self._blob_size: int = kwargs.get('blob_size')
         self._downloaded: int = kwargs.get('downloaded')
         self._hasher = hashlib.sha256()
@@ -37,7 +37,7 @@ class AsyncDownloadBlobStream(
         self._hasher.update(data)
         return data
 
-    async def _download_chunk(self) -> AsyncIterable[bytes]:
+    async def _download_chunk(self) -> AsyncIterator[bytes]:
         end_range = self._downloaded + self._chunk_size
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = await self._next(range=range_header)

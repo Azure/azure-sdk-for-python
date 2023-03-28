@@ -4,19 +4,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import Iterable, ContextManager, Callable
+from typing import Iterator, ContextManager, Callable
 from typing_extensions import Self
 
 
 class DownloadBlobStream(
-    Iterable[bytes],
+    Iterator[bytes],
     ContextManager[Self],
 ):
     """Protocol for methods to provide streamed responses."""
 
     def __init__(self, **kwargs) -> None:
-        self._response: Iterable[bytes] = kwargs.get('response')
-        self._next: Callable[[str], Iterable[bytes]] = kwargs.get('next')
+        self._response: Iterator[bytes] = kwargs.get('response')
+        self._next: Callable[[str], Iterator[bytes]] = kwargs.get('next')
         self._blob_size: int = kwargs.get('blob_size')
         self._downloaded: int = kwargs.get('downloaded')
         self._hasher = hashlib.sha256()
@@ -37,7 +37,7 @@ class DownloadBlobStream(
         self._hasher.update(data)
         return data
 
-    def _download_chunk(self) -> Iterable[bytes]:
+    def _download_chunk(self) -> Iterator[bytes]:
         end_range = self._downloaded + self._chunk_size
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = self._next(range=range_header)
