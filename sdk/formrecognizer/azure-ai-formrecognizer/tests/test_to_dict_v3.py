@@ -70,12 +70,14 @@ class TestToDict(FormRecognizerTest):
         model = _models.CurrencyValue(
             amount=5.01,
             symbol="$",
+            code="USD"
         )
 
         d = model.to_dict()
         final = {
             "amount": 5.01,
             "symbol": "$",
+            "code": "USD"
         }
         assert d == final
 

@@ -622,10 +622,12 @@ class TestRepr():
         model = _models.CurrencyValue(
             amount=10.5,
             symbol="$",
+            code="USD"
         )
-        model_repr = "CurrencyValue(amount={}, symbol={})".format(
+        model_repr = "CurrencyValue(amount={}, symbol={}, code={})".format(
             10.5,
             "$",
+            "USD"
         )
         assert repr(model) == model_repr
 
@@ -633,6 +635,7 @@ class TestRepr():
         model = _models.CurrencyValue(
             amount=10.5,
             symbol="$",
+            code="USD"
         )
         assert str(model) == "$10.5"
 

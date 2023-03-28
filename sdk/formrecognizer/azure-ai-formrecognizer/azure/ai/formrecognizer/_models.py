@@ -2064,22 +2064,30 @@ class AddressValue:
 
 
 class CurrencyValue:
-    """A currency value element."""
+    """A currency value element.
+
+    .. versionadded:: 2023-02-28-preview
+        The *code*  property.
+    """
 
     amount: float
     """The currency amount."""
     symbol: Optional[str]
     """The currency symbol, if found."""
+    code: Optional[str]
+    """Resolved currency code (ISO 4217), if any."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.amount = kwargs.get("amount", None)
         self.symbol = kwargs.get("symbol", None)
+        self.code = kwargs.get("code", None)
 
     @classmethod
     def _from_generated(cls, data):
         return cls(
             amount=data.amount,
             symbol=data.currency_symbol,
+            code=data.currency_code
         )
 
     def __str__(self):
@@ -2088,13 +2096,14 @@ class CurrencyValue:
         return f"{self.amount}"
 
     def __repr__(self) -> str:
-        return f"CurrencyValue(amount={self.amount}, symbol={self.symbol})"
+        return f"CurrencyValue(amount={self.amount}, symbol={self.symbol}, code={self.code})"
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of CurrencyValue."""
         return {
             "amount": self.amount,
             "symbol": self.symbol,
+            "code": self.code,
         }
 
     @classmethod
@@ -2108,6 +2117,7 @@ class CurrencyValue:
         return cls(
             amount=data.get("amount", None),
             symbol=data.get("symbol", None),
+            code=data.get("code", None),
         )
 
 

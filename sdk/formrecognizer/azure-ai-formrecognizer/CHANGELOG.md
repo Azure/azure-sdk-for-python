@@ -13,6 +13,7 @@
 - Added property `expires_on` to `DocumentModelDetails` and `DocumentModelSummary`.
 - Added kind `formulaBlock` to `DocumentParagraph`.
 - Added property `common_name` to `DocumentKeyValuePair`.
+- Added property `code` to `CurrencyValue`.
 
 ### Breaking Changes
 
