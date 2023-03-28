@@ -86,7 +86,7 @@ class TestManagement(FormRecognizerTest):
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
         assert info.custom_neural_document_model_builds.quota
-        assert info.custom_neural_document_model_builds.quota_reset_date_time
+        assert info.custom_neural_document_model_builds.quota_resets_on
         assert info.custom_neural_document_model_builds.used is not None
 
     @skip_flaky_test
@@ -98,6 +98,7 @@ class TestManagement(FormRecognizerTest):
         assert model.model_id == "prebuilt-invoice"
         assert model.description is not None
         assert model.created_on
+        assert model.expires_on
         assert model.api_version
         assert model.tags == {}
         for name, doc_type in model.doc_types.items():
@@ -121,6 +122,7 @@ class TestManagement(FormRecognizerTest):
         assert model.model_id == model_from_get.model_id
         assert model.description == model_from_get.description
         assert model.created_on == model_from_get.created_on
+        assert model.expires_on == model_from_get.expires_on
         for name, doc_type in model.doc_types.items():
             assert name in model_from_get.doc_types
             for key, field in doc_type.field_schema.items():
@@ -132,6 +134,7 @@ class TestManagement(FormRecognizerTest):
         for model in models_list:
             assert model.model_id
             assert model.created_on
+            assert model.expires_on
 
         client.delete_document_model(model.model_id)
 

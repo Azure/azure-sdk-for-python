@@ -122,6 +122,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert model.model_id == expected.model_id
         assert model.created_on == expected.created_date_time
         assert model.description == expected.description
+        assert model.expires_on == expected.expiration_date_time
 
         for name, field in model.doc_types.items():
             assert name in expected.doc_types

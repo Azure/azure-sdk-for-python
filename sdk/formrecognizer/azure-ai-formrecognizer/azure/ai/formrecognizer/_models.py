@@ -3257,6 +3257,8 @@ class DocumentModelSummary:
     """A description for the model."""
     created_on: datetime.datetime
     """Date and time (UTC) when the model was created."""
+    expires_on: Optional[datetime.datetime]
+    """Date and time (UTC) when the document model will expire."""
     api_version: Optional[str]
     """API version used to create this model."""
     tags: Optional[Dict[str, str]]
@@ -3269,23 +3271,27 @@ class DocumentModelSummary:
         self.model_id = kwargs.get("model_id", None)
         self.description = kwargs.get("description", None)
         self.created_on = kwargs.get("created_on", None)
+        self.expires_on = kwargs.get("expires_on", None)
         self.api_version = kwargs.get("api_version", None)
         self.tags = kwargs.get("tags", None)
 
     def __repr__(self) -> str:
         return (
             f"DocumentModelSummary(model_id={self.model_id}, description={self.description}, "
-            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags})"
+            f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
+            f"expires_on={self.expires_on})"
         )
 
     @classmethod
     def _from_generated(cls, model):
+        expires_on = model.expiration_date_time if hasattr(model, "expiration_date_time") else None
         return cls(
             model_id=model.model_id,
             description=model.description,
             created_on=model.created_date_time,
             api_version=model.api_version,
             tags=model.tags if model.tags else {},
+            expires_on=expires_on
         )
 
     def to_dict(self) -> Dict:
@@ -3296,6 +3302,7 @@ class DocumentModelSummary:
             "created_on": self.created_on,
             "api_version": self.api_version,
             "tags": self.tags if self.tags else {},
+            "expires_on": self.expires_on,
         }
 
     @classmethod
@@ -3311,7 +3318,8 @@ class DocumentModelSummary:
             description=data.get("description", None),
             created_on=data.get("created_on", None),
             api_version=data.get("api_version", None),
-            tags=data.get("tags", {})
+            tags=data.get("tags", {}),
+            expires_on=data.get("expires_on", None),
         )
 
 
@@ -3324,6 +3332,8 @@ class DocumentModelDetails(DocumentModelSummary):
     """A description for the model."""
     created_on: datetime.datetime
     """Date and time (UTC) when the model was created."""
+    expires_on: Optional[datetime.datetime]
+    """Date and time (UTC) when the document model will expire."""
     api_version: Optional[str]
     """API version used to create this model."""
     tags: Optional[Dict[str, str]]
@@ -3342,11 +3352,12 @@ class DocumentModelDetails(DocumentModelSummary):
         return (
             f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
             f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
-            f"doc_types={repr(self.doc_types)})"
+            f"doc_types={repr(self.doc_types)}, expires_on={self.expires_on})"
         )
 
     @classmethod
     def _from_generated(cls, model):
+        expires_on = model.expiration_date_time if hasattr(model, "expiration_date_time") else None
         return cls(
             model_id=model.model_id,
             description=model.description,
@@ -3354,7 +3365,8 @@ class DocumentModelDetails(DocumentModelSummary):
             api_version=model.api_version,
             tags=model.tags if model.tags else {},
             doc_types={k: DocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
-            if model.doc_types else {}
+            if model.doc_types else {},
+            expires_on=expires_on
         )
 
     def to_dict(self) -> Dict:
@@ -3365,7 +3377,8 @@ class DocumentModelDetails(DocumentModelSummary):
             "created_on": self.created_on,
             "api_version": self.api_version,
             "tags": self.tags if self.tags else {},
-            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}
+            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {},
+            "expires_on": self.expires_on,
         }
 
     @classmethod
@@ -3385,6 +3398,7 @@ class DocumentModelDetails(DocumentModelSummary):
             doc_types={k: DocumentTypeDetails.from_dict(v) for k, v in data.get("doc_types").items()}  # type: ignore
             if data.get("doc_types")
             else {},
+            expires_on=data.get("expires_on", None),
         )
 
 
@@ -3917,7 +3931,7 @@ class QuotaDetails:
     """Amount of the resource quota used."""
     quota: int
     """Resource quota limit."""
-    quota_reset_date_time: datetime.datetime
+    quota_resets_on: datetime.datetime
     """Date/time when the resource quota usage will be reset."""
 
     def __init__(
@@ -3926,17 +3940,17 @@ class QuotaDetails:
     ) -> None:
         self.used = kwargs.get("used", None)
         self.quota = kwargs.get("quota", None)
-        self.quota_reset_date_time = kwargs.get("quota_reset_date_time", None)
+        self.quota_resets_on = kwargs.get("quota_resets_on", None)
 
     def __repr__(self) -> str:
-        return f"QuotaDetails(used={self.used}, quota={self.quota}, quota_reset_date_time={self.quota_reset_date_time})"
+        return f"QuotaDetails(used={self.used}, quota={self.quota}, quota_resets_on={self.quota_resets_on})"
 
     @classmethod
     def _from_generated(cls, info):
         return cls(
             used=info.used,
             quota=info.quota,
-            quota_reset_date_time=info.quota_reset_date_time
+            quota_resets_on=info.quota_reset_date_time
         )
 
     def to_dict(self) -> Dict[str, Any]:
@@ -3944,7 +3958,7 @@ class QuotaDetails:
         return {
                 "used": self.used,
                 "quota": self.quota,
-                "quota_reset_date_time": self.quota_reset_date_time
+                "quota_resets_on": self.quota_resets_on
             }
 
     @classmethod
@@ -3958,7 +3972,7 @@ class QuotaDetails:
         return cls(
             used=data.get("custom_document_models", None),
             quota=data.get("custom_document_models", None),
-            quota_reset_date_time=data.get("quota_reset_date_time", None)
+            quota_resets_on=data.get("quota_resets_on", None)
         )
 
 
