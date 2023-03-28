@@ -522,11 +522,12 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         description: Optional[str] = None,
         **kwargs: Any
     ) -> DocumentModelAdministrationLROPoller[DocumentClassifierDetails]:
-        """Build a document classifier.
+        """Build a document classifier. For more information on how to build and train
+        a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
 
         :param doc_types: Required. Mapping of document types to classify against.
         :keyword str classifier_id: Unique document classifier name.
-            If not specified, a model ID will be created for you.
+            If not specified, a classifier ID will be created for you.
         :keyword str description: Document classifier description.
         :return: An instance of an DocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentClassifierDetails`.
