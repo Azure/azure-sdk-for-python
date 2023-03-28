@@ -223,7 +223,7 @@ The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.
 
 ## Next steps
 
-### Additional documentation
+## Additional documentation
 For more extensive documentation on Azure Health Insights Cancer Profiling, see the [Cancer Profiling documentation][cancer_profiling_docs] on docs.microsoft.com.
 
 ## Contributing

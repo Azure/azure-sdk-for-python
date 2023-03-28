@@ -164,7 +164,7 @@ Optional keyword arguments can be passed in at the client and per-operation leve
 The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
-### Additional documentation
+## Additional documentation
 
 For more extensive documentation on Azure Health Insights Clinical Matching, see the [Clinical Matching documentation][clinical_matching_docs] on docs.microsoft.com.
 
