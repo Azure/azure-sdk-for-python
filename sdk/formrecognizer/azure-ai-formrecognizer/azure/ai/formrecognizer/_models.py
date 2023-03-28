@@ -3334,9 +3334,9 @@ class DocumentClassifierDetails:
     """Unique document classifier name."""
     description: Optional[str]
     """Document classifier description."""
-    created_date_time: datetime.datetime
+    created_on: datetime.datetime
     """Date and time (UTC) when the document classifier was created."""
-    expiration_date_time: Optional[datetime.datetime]
+    expires_on: Optional[datetime.datetime]
     """Date and time (UTC) when the document classifier will expire."""
     api_version: str
     """API version used to create this document classifier."""
@@ -3349,15 +3349,15 @@ class DocumentClassifierDetails:
     ) -> None:
         self.classifier_id = kwargs.get("classifier_id", None)
         self.description = kwargs.get("description", None)
-        self.created_date_time = kwargs.get("created_date_time", None)
-        self.expiration_date_time = kwargs.get("expiration_date_time", None)
+        self.created_on = kwargs.get("created_on", None)
+        self.expires_on = kwargs.get("expires_on", None)
         self.api_version = kwargs.get("api_version", None)
         self.doc_types = kwargs.get("doc_types", None)
 
     def __repr__(self) -> str:
         return (
             f"DocumentClassifierDetails(classifier_id={self.classifier_id}, description={self.description}, "
-            f"created_date_time={self.created_date_time}, expiration_date_time={self.expiration_date_time}, "
+            f"created_on={self.created_on}, expires_on={self.expires_on}, "
             f"api_version={self.api_version}, doc_types={repr(self.doc_types)})"
         )
 
@@ -3366,8 +3366,8 @@ class DocumentClassifierDetails:
         return cls(
             classifier_id=model.classifier_id,
             description=model.description,
-            created_date_time=model.created_date_time,
-            expiration_date_time=model.expiration_date_time,
+            created_on=model.created_date_time,
+            expires_on=model.expiration_date_time,
             api_version=model.api_version,
             doc_types={k: ClassifierDocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
             if model.doc_types else {}
@@ -3378,8 +3378,8 @@ class DocumentClassifierDetails:
         return {
             "classifier_id": self.classifier_id,
             "description": self.description,
-            "created_date_time": self.created_date_time,
-            "expiration_date_time": self.expiration_date_time,
+            "created_on": self.created_on,
+            "expires_on": self.expires_on,
             "api_version": self.api_version,
             "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}  # type: ignore
         }
@@ -3395,8 +3395,8 @@ class DocumentClassifierDetails:
         return cls(
             classifier_id=data.get("classifier_id", None),
             description=data.get("description", None),
-            created_date_time=data.get("created_date_time", None),
-            expiration_date_time=data.get("expiration_date_time", None),
+            created_on=data.get("created_on", None),
+            expires_on=data.get("expires_on", None),
             api_version=data.get("api_version", None),
             doc_types={k: ClassifierDocumentTypeDetails.from_dict(v)
                        for k, v in data.get("doc_types").items()}  # type: ignore
