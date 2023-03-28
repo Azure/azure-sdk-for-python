@@ -87,7 +87,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _to_rest_job_service(self, updated_properties: Dict[str, str] = None) -> RestJobService:
         return RestJobService(
             endpoint=self.endpoint,
-            type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None)
+            job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None)
             if self.type
             else None,
             nodes=AllNodes() if self.nodes else None,
