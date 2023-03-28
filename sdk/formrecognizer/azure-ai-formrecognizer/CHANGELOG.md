@@ -11,6 +11,8 @@
 - Added model `QuotaDetails` and property `custom_neural_document_model_builds` on `ResourceDetails`.
 - Added kind `documentClassifierBuild` to `OperationSummary`.
 - Added property `expires_on` to `DocumentModelDetails` and `DocumentModelSummary`.
+- Added kind `formulaBlock` to `DocumentParagraph`.
+- Added property `common_name` to `DocumentKeyValuePair`.
 
 ### Breaking Changes
 

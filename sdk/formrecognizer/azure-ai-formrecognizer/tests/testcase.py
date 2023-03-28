@@ -550,6 +550,7 @@ class FormRecognizerTest(AzureRecordedTestCase):
             self.assertDocumentKeyValueElementTransformCorrect(key_value.key, expected.key)
             self.assertDocumentKeyValueElementTransformCorrect(key_value.value, expected.value)
             assert key_value.confidence == expected.confidence
+            assert key_value.common_name == expected.common_name
 
     def assertDocumentLanguagesTransformCorrect(self, transformed_languages, raw_languages, **kwargs):
         if transformed_languages == [] and not raw_languages:

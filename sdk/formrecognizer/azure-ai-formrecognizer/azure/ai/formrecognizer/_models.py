@@ -2448,7 +2448,11 @@ class DocumentKeyValueElement:
 
 
 class DocumentKeyValuePair:
-    """An object representing a document field with distinct field label (key) and field value (may be empty)."""
+    """An object representing a document field with distinct field label (key) and field value (may be empty).
+
+    .. versionadded:: 2023-02-28-preview
+        The *common_name*  property.
+    """
 
     key: DocumentKeyValueElement
     """Field label of the key-value pair."""
@@ -2456,14 +2460,18 @@ class DocumentKeyValuePair:
     """Field value of the key-value pair."""
     confidence: float
     """Confidence of correctly extracting the key-value pair."""
+    common_name: Optional[str]
+    """Common name of the key-value pair."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.key = kwargs.get("key", None)
         self.value = kwargs.get("value", None)
         self.confidence = kwargs.get("confidence", None)
+        self.common_name = kwargs.get("common_name", None)
 
     @classmethod
     def _from_generated(cls, key_value_pair):
+        common_name = key_value_pair.common_name if hasattr(key_value_pair, "common_name") else None
         return cls(
             key=DocumentKeyValueElement._from_generated(key_value_pair.key)
             if key_value_pair.key
@@ -2472,12 +2480,13 @@ class DocumentKeyValuePair:
             if key_value_pair.value
             else None,
             confidence=key_value_pair.confidence,
+            common_name=common_name
         )
 
     def __repr__(self) -> str:
         return (
             f"DocumentKeyValuePair(key={repr(self.key)}, value={repr(self.value)}, "
-            f"confidence={self.confidence})"
+            f"confidence={self.confidence}, common_name={self.common_name})"
         )
 
     def to_dict(self) -> Dict:
@@ -2486,6 +2495,7 @@ class DocumentKeyValuePair:
             "key": self.key.to_dict() if self.key else None,
             "value": self.value.to_dict() if self.value else None,
             "confidence": self.confidence,
+            "common_name": self.common_name,
         }
 
     @classmethod
@@ -2504,6 +2514,7 @@ class DocumentKeyValuePair:
             if data.get("value")
             else None,
             confidence=data.get("confidence", None),
+            common_name=data.get("common_name", None),
         )
 
 
@@ -2719,7 +2730,7 @@ class DocumentParagraph:
 
     role: Optional[str]
     """Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
-     "pageNumber", "title", "sectionHeading", "footnote"."""
+     "pageNumber", "title", "sectionHeading", "footnote", "formulaBlock"."""
     content: str
     """Concatenated content of the paragraph in reading order."""
     bounding_regions: Optional[List[BoundingRegion]]
