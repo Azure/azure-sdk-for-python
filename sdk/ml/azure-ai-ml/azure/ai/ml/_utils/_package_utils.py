@@ -30,8 +30,8 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
     model_ops = all_ops["models"]
     target_environment_name = "packaged-env"
 
-    if not deployment.code_configuration and not deployment.environment:
-        module_logger.info("Code and environment not found, following No code Deployment(NCD)\n")
+    # if not deployment.code_configuration and not deployment.environment:
+    #     module_logger.info("Code and environment not found, following No code Deployment(NCD)\n")
 
     if deployment.code_configuration:
         code_configuration = CodeConfiguration(

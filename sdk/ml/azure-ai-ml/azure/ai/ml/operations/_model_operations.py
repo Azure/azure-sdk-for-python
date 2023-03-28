@@ -592,9 +592,7 @@ class ModelOperations(_ScopeDependentOperations):
             package_request = package_request._to_rest_object()
 
         module_logger.info("Creating package with name: %s", package_request.target_environment_name)
-        # import debugpy
-        # debugpy.connect(("localhost", 5678))
-        # debugpy.breakpoint()
+
         package_out = self._model_versions_operation.begin_package(
             name=model_name,
             version=model_version,
