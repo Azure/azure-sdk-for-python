@@ -34,7 +34,7 @@ from .._models import RepositoryProperties, ArtifactManifestProperties, Artifact
 class _UnclosableBytesIO(BytesIO):
     def close(self):
         pass
-    
+
     def manual_close(self):
         super().close()
 
@@ -891,7 +891,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise
         return complete_upload_response_headers['Docker-Content-Digest'], blob_size
 
-    
     async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
         hasher = hashlib.sha256()
         blob_size = 0

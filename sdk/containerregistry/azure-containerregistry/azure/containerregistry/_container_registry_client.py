@@ -958,27 +958,25 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.models.DownloadManifestResult
         :raises ValueError: If the requested digest does not match the digest of the received manifest.
         """
-        try:
-            response, manifest_wrapper = cast(
-                Tuple[PipelineResponse, ManifestWrapper],
-                self._client.container_registry.get_manifest(
-                    name=repository,
-                    reference=tag_or_digest,
-                    headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
-                    cls=_return_response_and_deserialized,
-                    **kwargs
-                )
+        response, manifest_wrapper = cast(
+            Tuple[PipelineResponse, ManifestWrapper],
+            self._client.container_registry.get_manifest(
+                name=repository,
+                reference=tag_or_digest,
+                headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
+                cls=_return_response_and_deserialized,
+                **kwargs
             )
-            manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
-            manifest_stream = _serialize_manifest(manifest)
-            if tag_or_digest.startswith("sha256:"):
-                digest = tag_or_digest
-            else:
-                digest = response.http_response.headers['Docker-Content-Digest']
-            if not _validate_digest(manifest_stream, digest):
-                raise ValueError("The requested digest does not match the digest of the received manifest.")
-        except ValueError:
-            raise
+        )
+        manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
+        manifest_stream = _serialize_manifest(manifest)
+        if tag_or_digest.startswith("sha256:"):
+            digest = tag_or_digest
+        else:
+            digest = response.http_response.headers['Docker-Content-Digest']
+        if not _validate_digest(manifest_stream, digest):
+            raise ValueError("The requested digest does not match the digest of the received manifest.")
+
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
