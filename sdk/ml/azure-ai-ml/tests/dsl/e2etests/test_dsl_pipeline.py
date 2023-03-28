@@ -64,6 +64,81 @@ def check_name_and_version(output, output_name, output_version):
     assert output.version == output_version
 
 
+def build_pipeline_with_parallel_run_function(data, literal_input=None):
+    # command job with dict distribution
+    environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
+    inputs = {
+        "job_data_path": Input(
+            type=AssetTypes.MLTABLE,
+            path="./tests/test_configs/dataset/mnist-data",
+            mode=InputOutputModes.EVAL_MOUNT,
+        ),
+        "job_data_path_optional": Input(
+            type=AssetTypes.MLTABLE,
+            mode=InputOutputModes.EVAL_MOUNT,
+            optional=True,
+        ),
+    }
+    input_data = "${{inputs.job_data_path}}"
+    outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
+    expected_resources = {"instance_count": 2}
+
+    task = RunFunction(
+        code="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
+        entry_script="score.py",
+        program_arguments="--job_output_path ${{outputs.job_output_path}}",
+        environment=environment,
+    )
+    logging_level = "DEBUG"
+    max_concurrency_per_instance = 1
+    error_threshold = 1
+    mini_batch_error_threshold = 1
+    mini_batch_size = "5"
+
+    # Parallel from parallel_run_function()
+    parallel_function = parallel_run_function(
+        display_name="my-evaluate-job",
+        inputs=inputs,
+        outputs=outputs,
+        mini_batch_size=mini_batch_size,
+        task=task,
+        logging_level=logging_level,
+        max_concurrency_per_instance=max_concurrency_per_instance,
+        error_threshold=error_threshold,
+        mini_batch_error_threshold=mini_batch_error_threshold,
+        resources=expected_resources,
+        input_data=input_data,
+    )
+    if literal_input is None:
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
+        def parallel_in_pipeline(job_data_path):
+            node1 = parallel_function(job_data_path=job_data_path)
+            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
+            node1.task = None
+            return {
+                "pipeline_output": node1.outputs.job_output_path,
+            }
+
+        return parallel_in_pipeline(data)
+    else:
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
+        def parallel_in_pipeline(job_data_path, literal_input):
+            node1 = parallel_function(job_data_path=job_data_path)
+            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
+            node1.task = None
+            node1.resources.instance_count = literal_input
+            node1.max_concurrency_per_instance = literal_input
+            node1.error_threshold = literal_input
+            node1.mini_batch_error_threshold = literal_input
+            return {
+                "pipeline_output": node1.outputs.job_output_path,
+            }
+
+        return parallel_in_pipeline(data, literal_input)
+
+
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
@@ -1568,6 +1643,44 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    def test_parallel_components_with_tabular_input_bind_to_literal_input(self, client: MLClient) -> None:
+        components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
+
+        batch_inference = load_component(source=str(components_dir / "tabular_input_e2e.yml"))
+
+        # Construct pipeline
+        @dsl.pipeline(default_compute="cpu-cluster")
+        def parallel_in_pipeline(job_data_path, score_model, literal_input):
+            batch_inference_node = batch_inference(job_data_path=job_data_path, score_model=score_model)
+            batch_inference_node.mini_batch_size = 5
+            batch_inference_node.max_concurrency_per_instance = literal_input
+            batch_inference_node.error_threshold = literal_input
+            batch_inference_node.mini_batch_error_threshold = literal_input
+
+        pipeline = parallel_in_pipeline(
+            job_data_path=Input(
+                type=AssetTypes.MLTABLE,
+                path="./tests/test_configs/dataset/neural-iris-mltable",
+                mode=InputOutputModes.DIRECT,
+            ),
+            score_model=Input(
+                path="./tests/test_configs/model", type=AssetTypes.URI_FOLDER, mode=InputOutputModes.DOWNLOAD
+            ),
+            literal_input=2,
+        )
+        # submit pipeline job
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
+
+        # check required fields in job dict
+        job_dict = pipeline_job._to_dict()
+        expected_keys = ["status", "properties", "creation_context"]
+        for k in expected_keys:
+            assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
+
+        # original job did not change
+        assert_job_input_output_types(pipeline_job)
+        assert pipeline_job.settings.default_compute == "cpu-cluster"
+
     def test_parallel_components_with_file_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
 
@@ -1599,67 +1712,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
     def test_parallel_run_function(self, client: MLClient):
-        # command job with dict distribution
-        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
-        inputs = {
-            "job_data_path": Input(
-                type=AssetTypes.MLTABLE,
-                path="./tests/test_configs/dataset/mnist-data",
-                mode=InputOutputModes.EVAL_MOUNT,
-            ),
-            "job_data_path_optional": Input(
-                type=AssetTypes.MLTABLE,
-                mode=InputOutputModes.EVAL_MOUNT,
-                optional=True,
-            ),
-        }
-        input_data = "${{inputs.job_data_path}}"
-        outputs = {"job_output_path": Output(type=AssetTypes.URI_FOLDER, mode="rw_mount")}
-        expected_resources = {"instance_count": 2}
-
-        task = RunFunction(
-            code="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
-            entry_script="score.py",
-            program_arguments="--job_output_path ${{outputs.job_output_path}}",
-            environment=environment,
-        )
-        logging_level = "DEBUG"
-        max_concurrency_per_instance = 1
-        error_threshold = 1
-        mini_batch_error_threshold = 1
-        mini_batch_size = "5"
-
-        # Parallel from parallel_run_function()
-        parallel_function = parallel_run_function(
-            display_name="my-evaluate-job",
-            inputs=inputs,
-            outputs=outputs,
-            mini_batch_size=mini_batch_size,
-            task=task,
-            logging_level=logging_level,
-            max_concurrency_per_instance=max_concurrency_per_instance,
-            error_threshold=error_threshold,
-            mini_batch_error_threshold=mini_batch_error_threshold,
-            resources=expected_resources,
-            input_data=input_data,
-        )
-
         data = Input(
             type=AssetTypes.MLTABLE,
             path="./tests/test_configs/dataset/mnist-data",
             mode=InputOutputModes.EVAL_MOUNT,
         )
-
-        @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
-        def parallel_in_pipeline(job_data_path):
-            node1 = parallel_function(job_data_path=job_data_path)
-            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
-            node1.task = None
-            return {
-                "pipeline_output": node1.outputs.job_output_path,
-            }
-
-        pipeline = parallel_in_pipeline(data)
+        pipeline = build_pipeline_with_parallel_run_function(data)
 
         pipeline_job = client.create_or_update(pipeline)  # submit pipeline job
 
@@ -1702,6 +1760,65 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+        # check required fields in job dict
+        job_dict = pipeline_job._to_dict()
+        expected_keys = ["status", "properties", "creation_context"]
+        for k in expected_keys:
+            assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
+
+        # original job did not change
+        assert_job_input_output_types(pipeline_job)
+        assert pipeline_job.settings.default_compute == "cpu-cluster"
+
+    def test_parallel_run_function_run_settings_bind_to_literal_input(self, client: MLClient):
+        data = Input(
+            type=AssetTypes.MLTABLE,
+            path="./tests/test_configs/dataset/mnist-data",
+            mode=InputOutputModes.EVAL_MOUNT,
+        )
+        pipeline = build_pipeline_with_parallel_run_function(data, 2)
+
+        pipeline_job = client.create_or_update(pipeline)  # submit pipeline job
+
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        expected_job = {
+            "tags": {},
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "inputs": {
+                "job_data_path": {"job_input_type": "mltable", "mode": "EvalMount"},
+                "literal_input": {"job_input_type": "literal", "value": "2"},
+            },
+            "jobs": {
+                "node1": {
+                    "input_data": "${{inputs.job_data_path}}",
+                    "display_name": "my-evaluate-job",
+                    "inputs": {
+                        "job_data_path": {
+                            "job_input_type": "literal",
+                            "value": "${{parent.inputs.job_data_path}}",
+                        }
+                    },
+                    "name": "node1",
+                    "mini_batch_size": 5,
+                    "logging_level": "DEBUG",
+                    "max_concurrency_per_instance": "${{parent.inputs.literal_input}}",
+                    "error_threshold": "${{parent.inputs.literal_input}}",
+                    "mini_batch_error_threshold": "${{parent.inputs.literal_input}}",
+                    "outputs": {"job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
+                    "resources": {"instance_count": "${{parent.inputs.literal_input}}"},
+                    "type": "parallel",
+                },
+            },
+            "outputs": {
+                "pipeline_output": {
+                    "mode": "ReadWriteMount",
+                    "job_output_type": "uri_folder",
+                }
+            },
+            "settings": {"default_compute": "cpu-cluster"},
+        }
+        assert expected_job == actual_job
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
         expected_keys = ["status", "properties", "creation_context"]
@@ -2891,3 +3008,22 @@ class TestDSLPipeline(AzureRecordedTestCase):
         check_name_and_version(pipeline_job.outputs.pipeine_b_output, "n2_o_output", "2")
         check_name_and_version(pipeline_job.jobs["node_3"].outputs["component_out_path"], "n3_o_output", "4")
         check_name_and_version(pipeline_job.jobs["sub_node"].outputs["sub_pipeine_a_output"], "subgraph_o_output", "1")
+
+    def test_pipeline_input_binding_limits_timeout(self, client: MLClient):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline(timeout) -> PipelineJob:
+            # case 1: if timeout is PipelineInput, get binding from response
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=timeout)
+            # case 2: if timeout is not PipelineInput, response timeout will be parsed to int
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
+
+        pipeline = my_pipeline(2)
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+        assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
+        assert pipeline_job.jobs["node_1"].limits.timeout == 1

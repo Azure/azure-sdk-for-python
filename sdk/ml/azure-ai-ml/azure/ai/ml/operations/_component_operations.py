@@ -317,7 +317,9 @@ class ComponentOperations(_ScopeDependentOperations):
             self._validate(component, raise_on_failure=True)
 
         # Create all dependent resources
-        self._resolve_arm_id_or_upload_dependencies(component)
+        # Only upload dependencies if component is NOT IPP
+        if not component._intellectual_property:
+            self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()

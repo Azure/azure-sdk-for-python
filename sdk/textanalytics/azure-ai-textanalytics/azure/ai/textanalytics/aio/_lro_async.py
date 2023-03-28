@@ -25,7 +25,7 @@ PollingReturnType_co = TypeVar("PollingReturnType_co", covariant=True)
 
 
 @runtime_checkable
-class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable):
+class AsyncTextAnalysisLROPoller(Protocol[PollingReturnType_co], Awaitable[PollingReturnType_co]):
     """Implements a protocol which returned poller objects are consistent with.
     """
 
