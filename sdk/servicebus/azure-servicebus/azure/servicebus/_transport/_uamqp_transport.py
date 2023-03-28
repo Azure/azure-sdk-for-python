@@ -8,11 +8,10 @@ import time
 import functools
 import datetime
 from datetime import timezone
-from typing import Optional, Tuple, Callable, TYPE_CHECKING
+from typing import Optional, List, TYPE_CHECKING, Any, Callable, Dict
 
 try:
     from uamqp import (
-        c_uamqp,
         BatchMessage,
         constants,
         MessageBodyType,
@@ -21,11 +20,12 @@ try:
         SendClient,
         ReceiveClient,
         Source,
-        authentication,
+        Target,
         compat,
         Connection,
         __version__,
     )
+    from uamqp.authentication import JWTTokenAuth
     from uamqp.constants import ErrorCodes as AMQPErrorCodes
     from uamqp.message import (
         MessageHeader,
@@ -42,11 +42,7 @@ try:
         MessageException,
     )
     if TYPE_CHECKING:
-        uamqp_Message = Message
-        uamqp_types = types,
-        uamqp_ReceiveClient = ReceiveClient,
-        uamqp_SendClient = SendClient,
-        from uamqp import AMQPClient as uamqp_AMQPClient
+        from uamqp import AMQPClient
 
     uamqp_installed = True
 except ImportError:
@@ -109,21 +105,12 @@ from ..exceptions import (
     OperationTimeoutError
 )
 if TYPE_CHECKING:
+    from logging import Logger
+    from ..amqp import AmqpAnnotatedMessage
     from .._servicebus_receiver import ServiceBusReceiver
+    from .._servicebus_sender import ServiceBusSender
+    from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
     from .._common._configuration import Configuration
-    from .._common.message import ServiceBusReceivedMessage
-    from .._pyamqp.performatives import pyamqp_AttachFrame
-    from .._pyamqp.message import (
-        Message as pyamqp_Message,
-        BatchMessage as pyamqp_BatchMessage
-    )
-    from .._pyamqp.client import (
-        SendClient as pyamqp_SendClient,
-        ReceiveClient as pyamqp_ReceiveClient,
-        AMQPClient as pyamqp_AMQPClient
-    )
-    from .._servicebus_receiver import ServiceBusReceiver
-    from .._common.message import ServiceBusReceivedMessage
 
 if uamqp_installed:
     _NO_RETRY_CONDITION_ERROR_CODES = (
@@ -263,7 +250,7 @@ if uamqp_installed:
         TIMEOUT_ERROR = compat.TimeoutException
 
         @staticmethod
-        def build_message(**kwargs):
+        def build_message(**kwargs: Any) -> "Message":
             """
             Creates a uamqp.Message with given arguments.
             :rtype: uamqp.Message
@@ -271,7 +258,7 @@ if uamqp_installed:
             return Message(**kwargs)
 
         @staticmethod
-        def build_batch_message(data):
+        def build_batch_message(data: List) -> "BatchMessage":
             """
             Creates a uamqp.BatchMessage with given arguments.
             :rtype: uamqp.BatchMessage
@@ -279,7 +266,9 @@ if uamqp_installed:
             return BatchMessage(data=data)
 
         @staticmethod
-        def get_message_delivery_tag(message, _):  # pylint: disable=unused-argument
+        def get_message_delivery_tag(
+            message: "Message", _
+        ) -> str:  # pylint: disable=unused-argument
             """
             Gets delivery tag of a Message.
             :param message: Message to get delivery_tag from for uamqp.Message.
@@ -289,7 +278,9 @@ if uamqp_installed:
             return message.delivery_tag
 
         @staticmethod
-        def get_message_delivery_id(message, _):  # pylint: disable=unused-argument
+        def get_message_delivery_id(
+            message: "Message", _
+        ) -> str:  # pylint: disable=unused-argument
             """
             Gets delivery id of a Message.
             :param message: Message to get delivery_id from for uamqp.Message.
@@ -299,7 +290,9 @@ if uamqp_installed:
             return message.delivery_no
 
         @staticmethod
-        def to_outgoing_amqp_message(annotated_message):
+        def to_outgoing_amqp_message(
+            annotated_message: "AmqpAnnotatedMessage"
+        ) -> "Message":
             """
             Converts an AmqpAnnotatedMessage into an Amqp Message.
             :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
@@ -387,7 +380,7 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def encode_message(message):
+        def encode_message(message: "ServiceBusMessage") -> bytes:
             """
             Encodes the outgoing uamqp.Message of the message.
             :param ServiceBusMessage message: Message.
@@ -396,7 +389,11 @@ if uamqp_installed:
             return message._message.encode_message()
 
         @staticmethod
-        def update_message_app_properties(message, key, value):
+        def update_message_app_properties(
+            message: "Message",
+            key: str,
+            value: str
+        ) -> "Message":
             """
             Adds the given key/value to the application properties of the message.
             :param uamqp.Message message: Message.
@@ -410,7 +407,7 @@ if uamqp_installed:
             return message
 
         @staticmethod
-        def get_batch_message_encoded_size(message):
+        def get_batch_message_encoded_size(message: List[bytes]) -> int:
             """
             Gets the batch message encoded size given an underlying Message.
             :param uamqp.BatchMessage message: Message to get encoded size of.
@@ -419,7 +416,7 @@ if uamqp_installed:
             return message.gather()[0].get_message_encoded_size()
 
         @staticmethod
-        def get_message_encoded_size(message):
+        def get_message_encoded_size(message: "Message") -> int:
             """
             Gets the message encoded size given an underlying Message.
             :param uamqp.Message message: Message to get encoded size of.
@@ -428,7 +425,7 @@ if uamqp_installed:
             return message.get_message_encoded_size()
 
         @staticmethod
-        def get_remote_max_message_size(handler):
+        def get_remote_max_message_size(handler: "AMQPClient") -> int:
             """
             Returns max peer message size.
             :param AMQPClient handler: Client to get remote max message size on link from.
@@ -437,7 +434,7 @@ if uamqp_installed:
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
 
         @staticmethod
-        def get_handler_link_name(handler):
+        def get_handler_link_name(handler: "AMQPClient") -> str:
             """
             Returns link name.
             :param AMQPClient handler: Client to get name of link from.
@@ -446,7 +443,9 @@ if uamqp_installed:
             return handler.message_handler.name
 
         @staticmethod
-        def create_retry_policy(config, *, is_session=False):
+        def create_retry_policy(
+            config: "Configuration", *, is_session: bool = False
+        ) -> "_ServiceBusErrorPolicy":
             """
             Creates the error retry policy.
             :param ~azure.servicebus._common._configuration.Configuration config:
@@ -456,17 +455,10 @@ if uamqp_installed:
             # TODO: What's the retry overlap between servicebus and pyamqp?
             return _ServiceBusErrorPolicy(max_retries=config.retry_total, is_session=is_session)
 
-        #@staticmethod
-        #def create_link_properties(link_properties):
-        #    """
-        #    Creates and returns the link properties.
-        #    :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
-        #    :rtype: dict
-        #    """
-        #    return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
-
         @staticmethod
-        def create_connection(host, auth, network_trace, **kwargs):
+        def create_connection(
+            host: str, auth: "JWTTokenAuth", network_trace: bool, **kwargs: Any
+        ) -> "Connection":
             """
             Creates and returns the uamqp Connection object.
             :param str host: The hostname, used by uamqp.
@@ -484,23 +476,17 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def close_connection(connection):
+        def close_connection(connection: "Connection") -> None:
             """
             Closes existing connection.
             :param connection: uamqp or pyamqp Connection.
             """
             connection.destroy()
 
-        #@staticmethod
-        #def get_connection_state(connection):
-        #    """
-        #    Gets connection state.
-        #    :param connection: uamqp or pyamqp Connection.
-        #    """
-        #    return connection._state    # pylint:disable=protected-access
-
         @staticmethod
-        def create_send_client(config, **kwargs):
+        def create_send_client(
+            config: "Configuration", **kwargs: Any
+        ) -> "SendClient":
             """
             Creates and returns the uamqp SendClient.
             :param ~azure.servicebus._common._configuration.Configuration config:
@@ -528,7 +514,12 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def set_msg_timeout(sender, logger, timeout, last_exception):
+        def set_msg_timeout(
+            sender: "ServiceBusSender",
+            logger: "Logger",
+            timeout: int,
+            last_exception: Optional[Exception]
+        ) -> None:
             # pylint: disable=protected-access
             if not timeout:
                 sender._handler._msg_timeout = 0
@@ -543,7 +534,13 @@ if uamqp_installed:
             sender._handler._msg_timeout = timeout * UamqpTransport.TIMEOUT_FACTOR # type: ignore
 
         @staticmethod
-        def send_messages(sender, message, logger, timeout, last_exception):
+        def send_messages(
+            sender: "ServiceBusSender",
+            message: "Message",
+            logger: "Logger",
+            timeout: int,
+            last_exception: Optional[Exception]
+        ) -> None:    # pylint: disable=unused-argument
             """
             Handles sending of service bus messages.
             :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
@@ -565,8 +562,8 @@ if uamqp_installed:
 
         @staticmethod
         def add_batch(
-            sb_message_batch, outgoing_sb_message
-        ):  # pylint: disable=unused-argument
+            sb_message_batch: "ServiceBusMessageBatch", outgoing_sb_message: "ServiceBusMessage"
+        ) -> None:  # pylint: disable=unused-argument
             """
             Add ServiceBusMessage to the data body of the BatchMessage.
             :param sb_message_batch: ServiceBusMessageBatch to add data to.
@@ -579,7 +576,7 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def create_source(source, session_filter):
+        def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
             """
             Creates and returns the Source.
 
@@ -591,7 +588,9 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(receiver, **kwargs):
+        def create_receive_client(
+            receiver: "ServiceBusReceiver", **kwargs: Any
+        ) -> "ReceiveClient":
             """
             Creates and returns the receive client.
             :param ~azure.servicebus._common._configuration.Configuration config:
@@ -635,22 +634,14 @@ if uamqp_installed:
                 **kwargs
             )
 
-        #@staticmethod
-        #def open_receive_client(*, handler, receiver, auth):
-        #    """
-        #    Opens the receive client and returns ready status.
-        #    :param ReceiveClient handler: The receive client.
-        #    :param ~azure.servicebus.ServiceBusReceiver client: The .
-        #    :param auth: Auth.
-        #    :rtype: bool
-        #    """
-        #    # pylint:disable=protected-access
-        #    handler.open(connection=receiver._conn_manager.get_connection(
-        #        receiver._address.hostname, auth
-        #    ))
-
         @staticmethod
-        def on_attach(receiver, source, target, properties, error): # pylint: disable=unused-argument
+        def on_attach(
+            receiver: "ServiceBusReceiver",
+            source: "Source",
+            target: "Target",
+            properties: Dict[str, Any],
+            error: Exception
+        ) -> None: # pylint: disable=unused-argument
             """
             Receiver on_attach callback.
             """
@@ -669,7 +660,9 @@ if uamqp_installed:
                 receiver._session._session_id = receiver._session_id
 
         @staticmethod
-        def iter_contextual_wrapper(receiver, max_wait_time=None):
+        def iter_contextual_wrapper(
+            receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
+        ) -> "ServiceBusReceivedMessage":
             """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
             and per-iter argument passing that requires the former."""
             # pylint: disable=protected-access
@@ -696,7 +689,9 @@ if uamqp_installed:
 
         # wait_time used by pyamqp
         @staticmethod
-        def iter_next(receiver, wait_time=None):    # pylint: disable=unused-argument
+        def iter_next(
+            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+        ) -> "ServiceBusReceivedMessage": # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
@@ -716,14 +711,17 @@ if uamqp_installed:
                 receiver._receive_context.clear()
 
         @staticmethod
-        def enhanced_message_received(reciever, message):
+        def enhanced_message_received(
+            receiver: "ServiceBusReceiver",
+            message: "Message"
+        ) -> None:
             """
             Receiver enhanced_message_received callback.
             """
             # pylint: disable=protected-access
-            reciever._handler._was_message_received = True
-            if reciever._receive_context.is_set():
-                reciever._handler._received_messages.put(message)
+            receiver._handler._was_message_received = True
+            if receiver._receive_context.is_set():
+                receiver._handler._received_messages.put(message)
             else:
                 message.release()
 
@@ -731,8 +729,8 @@ if uamqp_installed:
         def build_received_message(
             receiver: "ServiceBusReceiver",
             message_type: "ServiceBusReceivedMessage",
-            received: "pyamqp_Message"
-        ):
+            received: "Message"
+        ) -> "ServiceBusReceivedMessage":
             # pylint: disable=protected-access
             message = message_type(
                 message=received, receive_mode=receiver._receive_mode, receiver=receiver
@@ -742,7 +740,10 @@ if uamqp_installed:
             return message
 
         @staticmethod
-        def get_current_time(handler):
+        def get_current_time(
+            handler: "ReceiveClient"
+        ) -> int:
+
             """
             Gets the current time.
             :param ReceiveClient handler: Handler with counter to get time.
@@ -751,7 +752,9 @@ if uamqp_installed:
             return handler._counter.get_current_ms()    # pylint: disable=protected-access
 
         @staticmethod
-        def reset_link_credit(handler, link_credit):
+        def reset_link_credit(
+            handler: "ReceiveClient", link_credit: int
+        ) -> None:
             """
             Resets the link credit on the link.
             :param ReceiveClient handler: Client with link to reset link credit.
@@ -808,7 +811,9 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def parse_received_message(message, message_type, **kwargs):
+        def parse_received_message(
+            message: "Message", message_type: "ServiceBusReceivedMessage", **kwargs: Any
+        ) -> List["ServiceBusReceivedMessage"]:
             """
             Parses peek/deferred op messages into ServiceBusReceivedMessage.
             :param Message message: Message to parse.
@@ -829,24 +834,17 @@ if uamqp_installed:
             return parsed
 
         @staticmethod
-        def get_message_value(message):
+        def get_message_value(message: "Message") -> Any:
             return message.get_data()
 
-        #@staticmethod
-        #def check_link_stolen(consumer, exception):
-        #    """
-        #    Checks if link stolen and handles exception.
-        #    :param consumer: The servicebusConsumer.
-        #    :param exception: Exception to check.
-        #    """
-        #    if (
-        #        isinstance(exception, LinkDetach)
-        #        and exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
-        #    ):
-        #        raise consumer._handle_exception(exception)  # pylint: disable=protected-access
-
         @staticmethod
-        def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+        def create_token_auth(
+            auth_uri: str,
+            get_token: Callable,
+            token_type: bytes,
+            config: "Configuration",
+            **kwargs: Any
+        ) -> "JWTTokenAuth":
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -861,7 +859,7 @@ if uamqp_installed:
             update_token = kwargs.pop("update_token")
             refresh_window = 0 if update_token else 300
 
-            token_auth = authentication.JWTTokenAuth(
+            token_auth = JWTTokenAuth(
                 auth_uri,
                 auth_uri,
                 get_token,
@@ -879,22 +877,13 @@ if uamqp_installed:
             return token_auth
 
         @staticmethod
-        def open_mgmt_client(mgmt_client, conn):
-            """
-            Opens the mgmt AMQP client.
-            :param AMQPClient mgmt_client: uamqp AMQPClient.
-            :param conn: Connection.
-            """
-            mgmt_client.open(connection=conn)
-
-        @staticmethod
         def create_mgmt_msg(
-            message,
-            application_properties,
-            config, # pylint:disable=unused-argument
-            reply_to,
-            **kwargs
-        ):
+            message: "Message",
+            application_properties: Dict[str, Any],
+            config: "Configuration", # pylint:disable=unused-argument
+            reply_to: str,
+            **kwargs: Any
+        ) -> "Message":
             """
             :param message: The message to send in the management request.
             :paramtype message: Any
@@ -915,14 +904,14 @@ if uamqp_installed:
 
         @staticmethod
         def mgmt_client_request(
-            mgmt_client,
-            mgmt_msg,
+            mgmt_client: "AMQPClient",
+            mgmt_msg: "Message",
             *,
-            operation,
-            operation_type,
-            node,
-            timeout,
-            callback
+            operation: bytes,
+            operation_type: bytes,
+            node: bytes,
+            timeout: int,
+            callback: Callable
         ) -> "ServiceBusReceivedMessage":
             """
             Send mgmt request and return result of callback.
@@ -943,44 +932,14 @@ if uamqp_installed:
                 callback=functools.partial(callback, amqp_transport=UamqpTransport)
             )
 
-        #@staticmethod
-        #def get_error(status_code, description):
-        #    """
-        #    Gets error corresponding to status code.
-        #    :param status_code: Status code.
-        #    :param str description: Description of error.
-        #    """
-        #    if status_code in [401]:
-        #        return AuthenticationException(
-        #            f"Management authentication failed. Status code: {status_code}, Description: {description!r}"
-        #        )
-        #    if status_code in [404]:
-        #        return ConnectError(
-        #            f"Management connection failed. Status code: {status_code}, Description: {description!r}"
-        #        )
-        #    return AMQPConnectionError(
-        #        f"Management request error. Status code: {status_code}, Description: {description!r}"
-        #    )
-
-        #@staticmethod
-        #def check_timeout_exception(base, exception):
-        #    """
-        #    Checks if timeout exception.
-        #    :param base: ClientBase.
-        #    :param exception: Exception to check.
-        #    """
-        #    if not base.running and isinstance(
-        #        exception, compat.TimeoutException
-        #    ):
-        #        exception = AuthenticationException(
-        #            "Authorization timeout."
-        #        )
-        #    return exception
-
         @staticmethod
         def _handle_amqp_exception_with_condition(
-            logger, condition, description, exception=None, status_code=None
-        ):
+            logger: "Logger",
+            condition: "AMQPErrorCodes",
+            description: str,
+            exception: "AMQPError" = None,
+            status_code: str = None
+        ) -> "ServiceBusError":
             # handling AMQP Errors that have the condition field or the mgmt handler
             logger.info(
                 "AMQP error occurred: (%r), condition: (%r), description: (%r).",
@@ -1018,7 +977,9 @@ if uamqp_installed:
             return error
 
         @staticmethod
-        def _handle_amqp_exception_without_condition(logger, exception):
+        def _handle_amqp_exception_without_condition(
+            logger: "Logger", exception: "AMQPError"
+        ) -> "ServiceBusError":
             error_cls = ServiceBusError
             if isinstance(exception, AMQPConnectionError):
                 logger.info("AMQP Connection error occurred: (%r).", exception)
@@ -1042,8 +1003,12 @@ if uamqp_installed:
 
         @staticmethod
         def handle_amqp_mgmt_error(
-            logger, error_description, condition=None, description=None, status_code=None
-        ):
+            logger: "Logger",
+            error_description: "str",
+            condition: "AMQPErrorCodes" = None,
+            description: str = None,
+            status_code: str = None
+        ) -> "ServiceBusError":
             if description:
                 error_description += f" {description}."
 
@@ -1056,7 +1021,9 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def create_servicebus_exception(logger, exception):
+        def create_servicebus_exception(
+            logger: "Logger", exception: Exception
+        ) -> "ServiceBusError":
             if isinstance(exception, AMQPError):
                 try:
                     # handling AMQP Errors that have the condition field

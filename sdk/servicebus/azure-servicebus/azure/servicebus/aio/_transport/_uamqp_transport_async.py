@@ -5,18 +5,19 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Any, Callable
 
 try:
     from uamqp import (
         constants,
         SendClientAsync,
         ReceiveClientAsync,
-        authentication,
-        AMQPClientAsync,
     )
+    from uamqp.authentication import JWTTokenAsync as JWTTokenAuthAsync
     from uamqp.async_ops import ConnectionAsync
     from ..._transport._uamqp_transport import UamqpTransport
+    if TYPE_CHECKING:
+        from uamqp import AMQPClientAsync, Message
     uamqp_installed = True
 except ImportError:
     uamqp_installed = False
@@ -30,7 +31,12 @@ from ..._common.utils import (
 from ..._common.constants import ServiceBusReceiveMode
 
 if TYPE_CHECKING:
-    from ..._common.message import ServiceBusReceivedMessage
+    from logging import Logger
+    from ...amqp import AmqpAnnotatedMessage
+    from ..._servicebus_receiver import ServiceBusReceiver
+    from ..._servicebus_sender import ServiceBusSender
+    from ..._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
+    from ..._common._configuration import Configuration
 
 if uamqp_installed:
     class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
@@ -39,7 +45,9 @@ if uamqp_installed:
         """
 
         @staticmethod
-        async def create_connection_async(host, auth, network_trace, **kwargs):
+        async def create_connection_async(
+            host: str, auth: "JWTTokenAuthAsync", network_trace: bool, **kwargs: Any
+        ) -> "ConnectionAsync":
             """
             Creates and returns the uamqp Connection object.
             :param str host: The hostname, used by uamqp.
@@ -57,7 +65,7 @@ if uamqp_installed:
             )
 
         @staticmethod
-        async def close_connection_async(connection):
+        async def close_connection_async(connection: "ConnectionAsync") -> None:
             """
             Closes existing connection.
             :param connection: uamqp or pyamqp Connection.
@@ -65,10 +73,12 @@ if uamqp_installed:
             await connection.destroy_async()
 
         @staticmethod
-        def create_send_client(config, **kwargs):
+        def create_send_client(
+            config: "Configuration", **kwargs: Any
+        ) -> "SendClientAsync":
             """
             Creates and returns the uamqp SendClient.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :param Configuration config: The configuration.
 
             :keyword str target: Required. The target.
             :keyword JWTTokenAuth auth: Required.
@@ -93,7 +103,13 @@ if uamqp_installed:
             )
 
         @staticmethod
-        async def send_messages_async(sender, message, logger, timeout, last_exception):
+        async def send_messages_async(
+            sender: "ServiceBusSender",
+            message: "Message",
+            logger: "Logger",
+            timeout: int,
+            last_exception: Optional[Exception]
+        ) -> None:
             """
             Handles sending of service bus messages.
             :param sender: The sender with handler to send messages.
@@ -113,10 +129,12 @@ if uamqp_installed:
                 UamqpTransportAsync.set_msg_timeout(sender, logger, default_timeout, None)
 
         @staticmethod
-        def create_receive_client(receiver, **kwargs): # pylint:disable=unused-argument
+        def create_receive_client(
+            receiver: "ServiceBusReceiver", **kwargs: Any
+        ) -> "ReceiveClientAsync":
             """
             Creates and returns the receive client.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
+            :param Configuration config: The configuration.
 
             :keyword str source: Required. The source.
             :keyword str offset: Required.
@@ -158,7 +176,9 @@ if uamqp_installed:
             )
 
         @staticmethod
-        async def iter_contextual_wrapper_async(receiver, max_wait_time=None):
+        async def iter_contextual_wrapper_async(
+            receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
+        ) -> "ServiceBusReceivedMessage":
             """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
             and per-iter argument passing that requires the former."""
             # pylint: disable=protected-access
@@ -185,7 +205,9 @@ if uamqp_installed:
 
         # wait_time used by pyamqp
         @staticmethod
-        async def iter_next_async(receiver, wait_time=None):    # pylint: disable=unused-argument
+        async def iter_next_async(
+            receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+        ) -> "ServiceBusReceivedMessage": # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
@@ -208,14 +230,16 @@ if uamqp_installed:
         enhanced_message_received_async = UamqpTransport.enhanced_message_received
 
         @staticmethod
-        def set_handler_message_received_async(receiver):
+        def set_handler_message_received_async(receiver: "ServiceBusReceiver") -> None:
             receiver._handler._message_received = functools.partial(
                 UamqpTransportAsync.enhanced_message_received_async,
                 receiver
             )
 
         @staticmethod
-        async def reset_link_credit_async(handler, link_credit):
+        async def reset_link_credit_async(
+            handler: "ReceiveClientAsync", link_credit: int
+        ) -> None:
             """
             Resets the link credit on the link.
             :param ReceiveClientAsync handler: Client with link to reset link credit.
@@ -226,7 +250,7 @@ if uamqp_installed:
 
         @staticmethod
         async def settle_message_via_receiver_link_async(
-            handler: "pyamqp_ReceiveClientAsync",
+            handler: "ReceiveClientAsync",
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
@@ -244,14 +268,20 @@ if uamqp_installed:
             )
 
         @staticmethod
-        async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
+        async def create_token_auth_async(
+            auth_uri: str,
+            get_token: Callable,
+            token_type: bytes,
+            config: "Configuration",
+            **kwargs: Any
+        ) -> "JWTTokenAuthAsync":
             """
             Creates the JWTTokenAuth.
             :param str auth_uri: The auth uri to pass to JWTTokenAuth.
             :param get_token: The callback function used for getting and refreshing
             tokens. It should return a valid jwt token each time it is called.
             :param bytes token_type: Token type.
-            :param ~azure.eventhub._configuration.Configuration config: EH config.
+            :param Configuration config: EH config.
 
             :keyword bool update_token: Required. Whether to update token. If not updating token,
             then pass 300 to refresh_window.
@@ -259,7 +289,7 @@ if uamqp_installed:
             update_token = kwargs.pop("update_token")
             refresh_window = 0 if update_token else 300
 
-            token_auth = authentication.JWTTokenAsync(
+            token_auth = JWTTokenAuthAsync(
                 auth_uri,
                 auth_uri,
                 get_token,
@@ -277,25 +307,16 @@ if uamqp_installed:
             return token_auth
 
         @staticmethod
-        async def open_mgmt_client_async(mgmt_client, conn):
-            """
-            Opens the mgmt AMQP client.
-            :param AMQPClient mgmt_client: uamqp AMQPClient.
-            :param conn: Connection.
-            """
-            await mgmt_client.open_async(connection=conn)
-
-        @staticmethod
         async def mgmt_client_request_async(
-            mgmt_client,
-            mgmt_msg,
+            mgmt_client: "AMQPClientAsync",
+            mgmt_msg: "Message",
             *,
-            operation,
-            operation_type,
-            node,
-            timeout,
-            callback
-        ):
+            operation: bytes,
+            operation_type: bytes,
+            node: bytes,
+            timeout: int,
+            callback: Callable
+        ) -> "ServiceBusReceivedMessage":
             """
             Send mgmt request.
             :param AMQPClient mgmt_client: Client to send request with.

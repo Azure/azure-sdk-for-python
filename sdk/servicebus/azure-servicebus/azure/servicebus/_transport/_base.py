@@ -8,28 +8,9 @@ from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
     try:
-        from uamqp import (
-            types as uamqp_types,
-            Message as uamqp_Message,
-            ReceiveClient as uamqp_ReceiveClient,
-            SendClient as uamqp_SendClient,
-            AMQPClient as uamqp_AMQPClient
-        )
-        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from uamqp import types as uamqp_types
     except ImportError:
         pass
-    from .._servicebus_sender import ServiceBusSender
-    from .._servicebus_receiver import ServiceBusReceiver
-    from .._common._configuration import Configuration
-    from .._common.message import ServiceBusReceivedMessage
-    from .._pyamqp.performatives import AttachFrame
-    from .._pyamqp.message import Message as pyamqp_Message, BatchMessage as pyamqp_BatchMessage
-    from .._pyamqp.authentication import JWTTokenAuth as pyamqp_JWTTokenAuth
-    from .._pyamqp.client import (
-        SendClient as pyamqp_SendClient,
-        ReceiveClient as pyamqp_ReceiveClient,
-        AMQPClient as pyamqp_AMQPClient
-    )
 
 class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     """
@@ -155,9 +136,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(
-        config: "Configuration", **kwargs: Any
-    ) -> Union["pyamqp_SendClient", "uamqp_SendClient"]:
+    def create_send_client(config, **kwargs):
         """
         Creates and returns the uamqp SendClient.
         :param ~azure.servicebus._common._configuration.Configuration config:
@@ -235,61 +214,31 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def on_attach(
-        receiver: "ServiceBusReceiver",
-        attach_frame: "AttachFrame"
-    ) -> None:
-        """
-        Receiver on_attach callback.
-        
-        :param ServiceBusReceiver receiver: Required.
-        :param AttachFrame attach_frame: Required.
-        """
-
-    @staticmethod
-    @abstractmethod
     def iter_contextual_wrapper(
-        receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
-    ) -> "ServiceBusReceivedMessage":
+        receiver, max_wait_time=None
+    ):
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former."""
 
     @staticmethod
     @abstractmethod
     def iter_next(
-        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
-    ) -> "ServiceBusReceivedMessage":
+        receiver, wait_time=None
+    ):
         """
         Used to iterate through received messages.
         """
 
     @staticmethod
     @abstractmethod
-    def enhanced_message_received(
-        receiver: "ServiceBusReceiver",
-        frame: "AttachFrame",
-        message: Union["pyamqp_Message", "uamqp_Message"]
-    ) -> None:
-        """
-        Receiver enhanced_message_received callback.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def build_received_message(
-        receiver: "ServiceBusReceiver",
-        message_type: "ServiceBusReceivedMessage",
-        received: "pyamqp_Message"
-    ) -> "ServiceBusReceivedMessage":
+    def build_received_message(receiver, message_type, received):
         """
         Build ServiceBusReceivedMessage.
         """
 
     @staticmethod
     @abstractmethod
-    def get_current_time(
-        handler: "pyamqp_ReceiveClient"
-    ) -> int:
+    def get_current_time(handler):
         """
         Gets the current time.
         """
@@ -297,8 +246,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def reset_link_credit(
-        handler: "pyamqp_ReceiveClient", link_credit: int
-    ) -> None:
+        handler, link_credit
+    ):
         """
         Resets the link credit on the link.
         """
@@ -306,11 +255,11 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def settle_message_via_receiver_link(
-        handler: "pyamqp_ReceiveClient",
-        message: "ServiceBusReceivedMessage",
-        settle_operation: str,
-        dead_letter_reason: Optional[str] = None,
-        dead_letter_error_description: Optional[str] = None,
+        handler,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
     ) -> None:
         """
         Settles message.
@@ -318,11 +267,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def parse_received_message(
-        message: "pyamqp_Message",
-        message_type: "ServiceBusReceivedMessage",
-        **kwargs: Any
-    ) -> List["ServiceBusReceivedMessage"]:
+    def parse_received_message(message, message_type, **kwargs):
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
         :param Message message: Message to parse.
@@ -335,14 +280,14 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_message_value(message: Union["pyamqp_Message", "uamqp_Message"]) -> Any:
+    def get_message_value(message):
         """Get body of type value from message."""
 
     @staticmethod
     @abstractmethod
     def create_token_auth(
         auth_uri, get_token, token_type, config, **kwargs
-    ) -> Union[uamq]:
+    ):
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
@@ -358,12 +303,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def create_mgmt_msg(
-        message: Union["pyamqp_Message", "uamqp_Message"],
-        application_properties: Dict[str, Any],
-        config: "Configuration",
-        reply_to: str,
-        **kwargs: Any
-    ) -> Union["pyamqp_Message", "uamqp_Message"]:
+        message, application_properties, config, reply_to, **kwargs
+    ):
         """
         :param message: The message to send in the management request.
         :paramtype message: Any
@@ -376,15 +317,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     @staticmethod
     @abstractmethod
     def mgmt_client_request(
-        mgmt_client: Union["pyamqp_AMQPClient", "uamqp_AMQPClient"],
-        mgmt_msg: Union["pyamqp_Message", "uamqp_Message"],
-        *,
-        operation: bytes,
-        operation_type: bytes,
-        node: bytes,
-        timeout: int,
-        callback: Callable
-    ) -> "ServiceBusReceivedMessage":
+        mgmt_client, mgmt_msg, *, operation, operation_type, node, timeout, callback
+    ):
         """
         Send mgmt request and return result of callback.
         :param AMQPClient mgmt_client: Client to send request with.
@@ -395,21 +329,3 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :keyword int timeout: Timeout.
         :keyword Callable callback: Callback to process request response.
         """
-
-    #@staticmethod
-    #@abstractmethod
-    #def get_error(status_code, description):
-    #    """
-    #    Gets error corresponding to status code.
-    #    :param status_code: Status code.
-    #    :param str description: Description of error.
-    #    """
-
-    #@staticmethod
-    #@abstractmethod
-    #def check_timeout_exception(base, exception):
-    #    """
-    #    Checks if timeout exception.
-    #    :param base: ClientBase.
-    #    :param exception: Exception to check.
-    #    """

@@ -7,7 +7,7 @@ import functools
 import time
 import datetime
 from datetime import timezone
-from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Union, Any
+from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict
 
 from .._pyamqp import (
     utils,
@@ -92,12 +92,14 @@ from ..exceptions import (
 )
 
 if TYPE_CHECKING:
+    from logging import Logger
     from ..amqp import AmqpAnnotatedMessage
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_sender import ServiceBusSender
-    from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage
-    from .._pyamqp.performatives import AttachFrame, TransferFrame
+    from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
     from .._common._configuration import Configuration
+    from .._pyamqp.performatives import AttachFrame, TransferFrame
+    from .._pyamqp.client import AMQPClient
     
 
 class _ServiceBusErrorPolicy(RetryPolicy):
@@ -344,7 +346,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return message
 
     @staticmethod
-    def get_batch_message_encoded_size(message: List[bytes]):
+    def get_batch_message_encoded_size(message: List[bytes]) -> int:
         """
         Gets the batch message encoded size given an underlying Message.
         :param List message: Message to get encoded size of.
@@ -353,7 +355,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return utils.get_message_encoded_size(BatchMessage(*message))
 
     @staticmethod
-    def get_message_encoded_size(message):
+    def get_message_encoded_size(message: "Message") -> int:
         """
         Gets the message encoded size given an underlying Message.
         :param pyamqp.Message: Message to get encoded size of.
@@ -362,7 +364,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return utils.get_message_encoded_size(message)
 
     @staticmethod
-    def get_remote_max_message_size(handler):
+    def get_remote_max_message_size(handler: "AMQPClient") -> int:
         """
         Returns max peer message size.
         :param AMQPClient handler: Client to get remote max message size on link from.
@@ -371,7 +373,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return handler._link.remote_max_message_size  # pylint: disable=protected-access
 
     @staticmethod
-    def get_handler_link_name(handler):
+    def get_handler_link_name(handler: "AMQPClient") -> str:
         """
         Returns link name.
         :param AMQPClient handler: Client to get name of link from.
@@ -380,10 +382,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return handler._link.name
 
     @staticmethod
-    def create_retry_policy(config, *, is_session=False):
+    def create_retry_policy(
+        config: "Configuration", *, is_session: bool = False
+    ) -> "_ServiceBusErrorPolicy":
         """
         Creates the error retry policy.
-        :param ~azure.eventhub._configuration.Configuration config: Configuration.
+        :param Configuration config: Configuration.
         :keyword bool is_session: Is session enabled.
         """
         # TODO: What's the retry overlap between servicebus and pyamqp?
@@ -398,19 +402,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def create_link_properties(link_properties):
-        """
-        Creates and returns the link properties.
-        :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
-        :rtype: dict
-        """
-        return {
-            symbol: amqp_long_value(value)
-            for (symbol, value) in link_properties.items()
-        }
-
-    @staticmethod
-    def create_connection(host, auth, network_trace, **kwargs):
+    def create_connection(
+        host: str, auth: "JWTTokenAuth", network_trace: bool, **kwargs: Any
+    ) -> "Connection":
         """
         Creates and returns the pyamqp Connection object.
         :param str host: The hostname used by pyamqp.
@@ -425,20 +419,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def close_connection(connection):
+    def close_connection(connection: "Connection") -> None:
         """
         Closes existing connection.
-        :param connection: uamqp or pyamqp Connection.
+        :param Connection connection: uamqp or pyamqp Connection.
         """
         connection.close()
-
-    @staticmethod
-    def get_connection_state(connection):
-        """
-        Gets connection state.
-        :param connection: uamqp or pyamqp Connection.
-        """
-        return connection.state
 
     @staticmethod
     def create_send_client(
@@ -469,14 +455,21 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def send_messages(sender, message, logger, timeout, last_exception):    # pylint: disable=unused-argument
+    def send_messages(
+        sender: "ServiceBusSender",
+        message: "Message",
+        logger: "Logger",
+        timeout: int,
+        last_exception: Optional[Exception]
+    ) -> None:    # pylint: disable=unused-argument
         """
         Handles sending of service bus messages.
         :param ~azure.servicebus._servicebus_sender.ServiceBusSender sender: The sender with handler
          to send messages.
+        :param Message message: Message to send.
+        :param logger: Logger.
         :param int timeout: Timeout time.
         :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
-        :param logger: Logger.
         """
         # pylint: disable=protected-access
         sender._open()
@@ -492,13 +485,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def add_batch(
-        sb_message_batch, outgoing_sb_message
-    ):  # pylint: disable=unused-argument
+        sb_message_batch: "ServiceBusMessageBatch", outgoing_sb_message: "ServiceBusMessage"
+    ) -> None:  # pylint: disable=unused-argument
         """
-        Add EventData to the data body of the BatchMessage.
-        :param event_data_batch: EventDataBatch to add data to.
-        :param outgoing_event_data: Transformed EventData for sending.
-        :param event_data: EventData to add to internal batch events. uamqp use only.
+        Add ServiceBusMessage to the data body of the BatchMessage.
+        :param sb_message_batch: ServiceBusMessageBatch to add data to.
+        :param outgoing_sb_message: Transformed ServiceBusMessage for sending.
         :rtype: None
         """
         # pylint: disable=protected-access
@@ -507,22 +499,24 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def create_source(source, session_filter):
+    def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
         """
         Creates and returns the Source.
 
         :param str source: Required.
-        :param int or None session_id: Required.
+        :param bytes session_filter: Required.
         """
         filter_map = {SESSION_FILTER: session_filter}
         source = Source(address=source, filters=filter_map)
         return source
 
     @staticmethod
-    def create_receive_client(receiver, **kwargs):
+    def create_receive_client(
+        receiver: "ServiceBusReceiver", **kwargs: "Any"
+    ) -> "ReceiveClient":
         """
         Creates and returns the receive client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :param Configuration config: The configuration.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.
@@ -631,7 +625,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def enhanced_message_received(
         receiver: "ServiceBusReceiver",
         frame: "AttachFrame",
-        message: "pyamqp_Message"
+        message: "Message"
     ) -> None:
         """
         Receiver enhanced_message_received callback.
@@ -647,7 +641,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def build_received_message(
         receiver: "ServiceBusReceiver",
         message_type: "ServiceBusReceivedMessage",
-        received: "pyamqp_Message"
+        received: "Message"
     ) -> "ServiceBusReceivedMessage":
         """
         Build ServiceBusReceivedMessage.
@@ -661,7 +655,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def get_current_time(
-        handler: "pyamqp_ReceiveClient"
+        handler: "ReceiveClient"
     ) -> int:  # pylint: disable=unused-argument
         """
         Gets the current time.
@@ -670,7 +664,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def reset_link_credit(
-        handler: "pyamqp_ReceiveClient", link_credit: int
+        handler: "ReceiveClient", link_credit: int
     ) -> None:
         """
         Resets the link credit on the link.
@@ -723,7 +717,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def parse_received_message(
-        message: "pyamqp_Message", message_type: "ServiceBusReceivedMessage", **kwargs: Any
+        message: "Message", message_type: "ServiceBusReceivedMessage", **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
@@ -745,19 +739,25 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return parsed
 
     @staticmethod
-    def get_message_value(message: "pyamqp_Message") -> Any:
+    def get_message_value(message: "Message") -> Any:
         """Get body of type value from message."""
         return message.value
 
     @staticmethod
-    def create_token_auth(auth_uri, get_token, token_type, config, **kwargs):
+    def create_token_auth(
+        auth_uri: str,
+        get_token: Callable,
+        token_type: bytes,
+        config: "Configuration",
+        **kwargs: Any
+    ) -> "JWTTokenAuth":
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
         :param get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
-        :param ~azure.eventhub._configuration.Configuration config: EH config.
+        :param Configuration config: EH config.
 
         :keyword bool update_token: Whether to update token. If not updating token, then pass 300 to refresh_window.
         """
@@ -780,12 +780,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def create_mgmt_msg(
-        message,
-        application_properties,
-        config, # pylint:disable=unused-argument
-        reply_to,
-        **kwargs
-    ):
+        message: "Message",
+        application_properties: Dict[str, Any],
+        config: "Configuration",
+        reply_to: str,
+        **kwargs: Any
+    ) -> "Message": # pylint:disable=unused-argument
         """
         :param message: The message to send in the management request.
         :paramtype message: Any
@@ -805,15 +805,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def mgmt_client_request(
-        mgmt_client,
-        mgmt_msg,
+        mgmt_client: "AMQPClient",
+        mgmt_msg: "Message",
         *,
-        operation,
-        operation_type,
-        node,
-        timeout,
-        callback
-    ):
+        operation: bytes,
+        operation_type: bytes,
+        node: bytes,
+        timeout: int,
+        callback: Callable
+    ) -> "ServiceBusReceivedMessage":
         """
         Send mgmt request.
         :param AMQPClient mgmt_client: Client to send request with.
@@ -833,49 +833,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
         return callback(status, response, description, amqp_transport=PyamqpTransport)
 
-    #@staticmethod
-    #def get_error(status_code, description):
-    #    """
-    #    Gets error and passes in error message, and, if applicable, condition.
-    #    :param error: The error to raise.
-    #    :param str message: Error message.
-    #    :param condition: Optional error condition. Will not be used by uamqp.
-    #    """
-    #    if status_code in [401]:
-    #        return AuthenticationException(
-    #            ErrorCondition.UnauthorizedAccess,
-    #            description=f"""Management authentication failed. Status code: {status_code}, """
-    #                """Description: {description!r}""",
-    #        )
-    #    if status_code in [404]:
-    #        return AMQPConnectionError(
-    #            ErrorCondition.NotFound,
-    #            description=f"Management connection failed. Status code: {status_code}, Description: {description!r}",
-    #        )
-    #    return AMQPConnectionError(
-    #        ErrorCondition.UnknownError,
-    #        description=f"Management request error. Status code: {status_code}, Description: {description!r}",
-    #    )
-
-    #@staticmethod
-    #def check_timeout_exception(base, exception):
-    #    """
-    #    Checks if timeout exception.
-    #    :param base: ClientBase.
-    #    :param exception: Exception to check.
-    #    """
-    #    if not base.running and isinstance(exception, TimeoutError):
-    #        exception = AuthenticationException(
-    #            ErrorCondition.InternalError,
-    #            description="Authorization timeout.",
-    #        )
-    #    return exception
-
     @staticmethod
     def _handle_amqp_exception_with_condition(
-        logger, condition, description, exception=None, status_code=None
-    ):
-        #
+        logger: "Logger",
+        condition: "ErrorCondition",
+        description: str,
+        exception: "AMQPException" = None,
+        status_code: str = None
+    ) -> "ServiceBusError":
         # handling AMQP Errors that have the condition field or the mgmt handler
         logger.info(
             "AMQP error occurred: (%r), condition: (%r), description: (%r).",
@@ -922,8 +887,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def handle_amqp_mgmt_error(
-        logger, error_description, condition=None, description=None, status_code=None
-    ):
+        logger: "Logger",
+        error_description: "str",
+        condition: "ErrorCondition" = None,
+        description: str = None,
+        status_code: str = None
+    ) -> "ServiceBusError":
         if description:
             error_description += f" {description}."
 
@@ -936,7 +905,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def create_servicebus_exception(logger, exception):
+    def create_servicebus_exception(
+        logger: "Logger", exception: Exception
+    ) -> "ServiceBusError":
         if isinstance(exception, AMQPException):
             # handling AMQP Errors that have the condition field
             condition = exception.condition

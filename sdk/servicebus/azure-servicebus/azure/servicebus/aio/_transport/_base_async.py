@@ -82,16 +82,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_retry_policy(config):
         """
         Creates the error retry policy.
-        :param ~azure.eventhub._configuration.Configuration config: Configuration.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def create_link_properties(link_properties):
-        """
-        Creates and returns the link properties.
-        :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
-        :rtype: dict
+        :param Configuration config: Configuration.
         """
 
     @staticmethod
@@ -114,18 +105,10 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def get_connection_state(connection):
-        """
-        Gets connection state.
-        :param connection: uamqp or pyamqp Connection.
-        """
-
-    @staticmethod
-    @abstractmethod
     def create_send_client(*, config, **kwargs):
         """
         Creates and returns the send client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :param Configuration config: The configuration.
 
         :keyword str target: Required. The target.
         :keyword JWTTokenAuth auth: Required.
@@ -165,7 +148,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     def create_receive_client(*, config, **kwargs):
         """
         Creates and returns the receive client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :param Configuration config: The configuration.
 
         :keyword Source source: Required. The source.
         :keyword JWTTokenAuth auth: Required.
@@ -185,17 +168,6 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
-        """
-        Receives messages, creates events, and returns them by calling the on received callback.
-        :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
-        :param bool batch: If receive batch or single event.
-        :param int max_batch_size: Max batch size.
-        :param int or None max_wait_time: Max wait time.
-        """
-
-    @staticmethod
-    @abstractmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
         """
         Creates the JWTTokenAuth.
@@ -203,7 +175,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :param get_token: The callback function used for getting and refreshing
          tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
-        :param ~azure.eventhub._configuration.Configuration config: EH config.
+        :param Configuration config: EH config.
 
         :keyword bool update_token: Whether to update token. If not updating token,
          then pass 300 to refresh_window. Only used by uamqp.
@@ -230,22 +202,4 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword bytes node: Mgmt target.
         :keyword int timeout: Timeout.
         :keyword Callable callback: Callback to process request response.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def get_error(status_code, description):
-        """
-        Gets error corresponding to status code.
-        :param status_code: Status code.
-        :param str description: Description of error.
-        """
-
-    @staticmethod
-    @abstractmethod
-    def check_timeout_exception(base, exception):
-        """
-        Checks if timeout exception.
-        :param base: ClientBase.
-        :param exception: Exception to check.
         """

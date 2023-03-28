@@ -5,13 +5,13 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Any, Callable
 import time
 
 from ..._pyamqp import constants
 from ..._pyamqp.message import BatchMessage
 from ..._pyamqp.utils import amqp_string_value
-from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
+from ..._pyamqp.aio import SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 from ..._pyamqp.error import (
@@ -45,9 +45,15 @@ from ...exceptions import (
 )
 
 if TYPE_CHECKING:
+    from logging import Logger
+    from ...amqp import AmqpAnnotatedMessage
+    from ..._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
+    from ..._common._configuration import Configuration
+    from .._servicebus_receiver_async import ServiceBusReceiver
+    from .._servicebus_sender_async import ServiceBusSender
+    from ..._pyamqp.performatives import AttachFrame, TransferFrame
     from ..._pyamqp.message import Message
-    from .._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
-    from ..._common.message import ServiceBusReceivedMessage
+    from ..._pyamqp.aio._client_async import AMQPClientAsync
 
 class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
@@ -55,7 +61,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
 
     @staticmethod
-    async def create_connection_async(host, auth, network_trace, **kwargs):
+    async def create_connection_async(
+        host: str, auth: "JWTTokenAuthAsync", network_trace: bool, **kwargs: Any
+    ) -> "ConnectionAsync":
         """
         Creates and returns the pyamqp Connection object.
         :param str host: The hostname used by pyamqp.
@@ -70,7 +78,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def close_connection_async(connection):
+    async def close_connection_async(connection: "ConnectionAsync") -> None:
         """
         Closes existing connection.
         :param connection: pyamqp Connection.
@@ -78,10 +86,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client(config, **kwargs):
+    def create_send_client(
+        config: "Configuration", **kwargs: Any
+    ) -> "SendClientAsync":
         """
         Creates and returns the pyamqp SendClient.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :param Configuration config: The configuration.
 
         :keyword str target: Required. The target.
         :keyword JWTTokenAuth auth: Required.
@@ -107,7 +117,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def send_messages_async(sender, message, logger, timeout, last_exception):
+    async def send_messages_async(
+        sender: "ServiceBusSender",
+        message: "Message",
+        logger: "Logger",
+        timeout: int,
+        last_exception: Optional[Exception]
+    ) -> None:  # pylint: disable=unused-argument
         """
         Handles sending of service bus messages.
         :param sender: The sender with handler to send messages.
@@ -131,10 +147,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise PyamqpTransportAsync.create_servicebus_exception(logger, e)
 
     @staticmethod
-    def create_receive_client(receiver, **kwargs):  # pylint:disable=unused-argument
+    def create_receive_client(
+        receiver: "ServiceBusReceiver", **kwargs: Any
+    ) -> "ReceiveClientAsync":  # pylint:disable=unused-argument
         """
         Creates and returns the receive client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :param Configuration config: The configuration.
 
         :keyword str source: Required. The source.
         :keyword str offset: Required.
@@ -175,7 +193,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def iter_contextual_wrapper_async(receiver, max_wait_time=None):
+    async def iter_contextual_wrapper_async(
+        receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
+    ) -> "ServiceBusReceivedMessage":
         while True:
             try:
                 message = await receiver._inner_anext(wait_time=max_wait_time)
@@ -186,7 +206,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 break
 
     @staticmethod
-    async def iter_next_async(receiver, wait_time=None): # pylint: disable=protected-access
+    async def iter_next_async(
+        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+    ) -> "ServiceBusReceivedMessage":
+        # pylint: disable=protected-access
         try:
             receiver._receive_context.set()
             await receiver._open()
@@ -205,7 +228,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             receiver._receive_context.clear()
 
     @staticmethod
-    async def enhanced_message_received_async(receiver, frame, message):
+    async def enhanced_message_received_async(
+        receiver: "ServiceBusReceiver",
+        frame: "AttachFrame",
+        message: "Message"
+    ) -> None:
         # pylint: disable=protected-access
         receiver._handler._last_activity_timestamp = time.time()
         if receiver._receive_context.is_set():
@@ -214,14 +241,16 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             await receiver._handler.settle_messages_async(frame[1], 'released')
 
     @staticmethod
-    def set_handler_message_received_async(receiver):
+    def set_handler_message_received_async(receiver: ServiceBusReceiver) -> None:
         receiver._handler._message_received_async = functools.partial(
             PyamqpTransportAsync.enhanced_message_received_async,
             receiver
         )
 
     @staticmethod
-    async def reset_link_credit_async(handler, link_credit):
+    async def reset_link_credit_async(
+        handler: "ReceiveClientAsync", link_credit: int
+    ) -> None:
         """
         Resets the link credit on the link.
         :param ReceiveClientAsync handler: Client with link to reset link credit.
@@ -232,7 +261,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
-        handler: "ServiceBusReceiverAsync",
+        handler: "ServiceBusReceiver",
         message: "ServiceBusReceivedMessage",
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,
@@ -272,7 +301,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def on_attach_async(receiver, attach_frame):
+    async def on_attach_async(
+        receiver: "ServiceBusReceiver", attach_frame: "AttachFrame"
+    ) -> None:
         # pylint: disable=protected-access, unused-argument
         if receiver._session and attach_frame.source.address.decode() == receiver._entity_uri:
             # This has to live on the session object so that autorenew has access to it.
@@ -288,19 +319,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             receiver._session._session_id = receiver._session_id
 
     @staticmethod
-    async def message_received_async(consumer, message: Message) -> None:
-        async with consumer._message_buffer_lock: # pylint: disable=protected-access
-            consumer._message_buffer.append(message) # pylint: disable=protected-access
-
-    @staticmethod
-    async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
+    async def create_token_auth_async(
+        auth_uri: str,
+        get_token: Callable,
+        token_type: bytes,
+        config: "Configuration",
+        **kwargs: Any
+    ) -> "JWTTokenAuthAsync":
         """
         Creates the JWTTokenAuth.
         :param str auth_uri: The auth uri to pass to JWTTokenAuth.
         :param get_token: The callback function used for getting and refreshing
         tokens. It should return a valid jwt token each time it is called.
         :param bytes token_type: Token type.
-        :param ~azure.eventhub._configuration.Configuration config: EH config.
+        :param Configuration config: EH config.
 
         :keyword bool update_token: Required. Whether to update token. If not updating token,
         then pass 300 to refresh_window.
@@ -324,15 +356,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def mgmt_client_request_async(
-        mgmt_client,
-        mgmt_msg,
+        mgmt_client: "AMQPClientAsync",
+        mgmt_msg: "Message",
         *,
-        operation,
-        operation_type,
-        node,
-        timeout,
-        callback
-    ):
+        operation: bytes,
+        operation_type: bytes,
+        node: bytes,
+        timeout: int,
+        callback: Callable
+    ) -> "ServiceBusReceivedMessage":
         """
         Send mgmt request.
         :param AMQPClient mgmt_client: Client to send request with.
