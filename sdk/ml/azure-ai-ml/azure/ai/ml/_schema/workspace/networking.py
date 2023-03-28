@@ -33,6 +33,7 @@ class DestinationSchema(metaclass=PatchedSchemaMeta):
 
 @experimental
 class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
+    name = fields.Str()
     type = StringTransformedEnum(
         allowed_values=[OutboundRuleType.FQDN, OutboundRuleType.PRIVATE_ENDPOINT, OutboundRuleType.SERVICE_TAG],
         casing_transform=camel_to_snake,
@@ -51,6 +52,7 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
+        print("in predump", data)
         if data and isinstance(data, FqdnDestination):
             data.destination = self.fqdn_dest2dict(data.destination)
         if data and isinstance(data, PrivateEndpointDestination):
@@ -63,20 +65,21 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
     def createdestobject(self, data, **kwargs):
         dest = data.get("destination", False)
         category = data.get("category", OutboundRuleCategory.USER_DEFINED)
+        name = data.get("name", None)
         if dest:
             if isinstance(dest, str):
-                return FqdnDestination(rule_name=None, destination=dest, category=_snake_to_camel(category))
+                return FqdnDestination(name=name, destination=dest, category=_snake_to_camel(category))
             else:
                 if dest.get("subresource_target", False):
                     return PrivateEndpointDestination(
-                        rule_name=None,
+                        name=name,
                         service_resource_id=dest["service_resource_id"],
                         subresource_target=dest["subresource_target"],
                         spark_enabled=dest["spark_enabled"],
                         category=_snake_to_camel(category),
                     )
             return ServiceTagDestination(
-                rule_name=None,
+                name=name,
                 service_tag=dest["service_tag"],
                 protocol=dest["protocol"],
                 port_ranges=dest["port_ranges"],
@@ -113,25 +116,15 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
         casing_transform=camel_to_snake,
         metadata={"description": "isolation mode for the workspace managed network."},
     )
-    outbound_rules = fields.Dict(
-        keys=fields.Str(required=True), values=NestedField(OutboundRuleSchema, allow_none=False), allow_none=True
+    outbound_rules = fields.List(
+        NestedField(OutboundRuleSchema, allow_none=False), allow_none=True
     )
     network_id = fields.Str(required=False)
 
     @post_load
     def make(self, data, **kwargs):
-        rules_dict = data.get("outbound_rules", False)
-        if rules_dict:
-            rules_as_list = []
-            for rule_name in rules_dict:
-                rule = rules_dict[rule_name]
-                rule.rule_name = rule_name
-                rules_as_list.append(rule)
-            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), rules_as_list)
+        outbound_rules = data.get("outbound_rules", False)
+        if outbound_rules:
+            return ManagedNetwork(_snake_to_camel(data["isolation_mode"]), outbound_rules)
         else:
             return ManagedNetwork(_snake_to_camel(data["isolation_mode"]))
-
-    @pre_dump
-    def predump(self, data, **kwargs):
-        data.outbound_rules = {rule.rule_name: rule for rule in data.outbound_rules}
-        return data

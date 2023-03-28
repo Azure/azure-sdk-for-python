@@ -148,6 +148,7 @@ class Workspace(Resource):
         """
         path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
+        print("yaml_serialized workspace", yaml_serialized)
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:

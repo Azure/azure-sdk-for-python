@@ -42,7 +42,7 @@ class WorkspaceOutboundRuleOperations:
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
-        return OutboundRule._from_rest_object(obj, rule_name=outbound_rule_name)  # pylint: disable=protected-access
+        return OutboundRule._from_rest_object(obj, name=outbound_rule_name)  # pylint: disable=protected-access
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
     def list(self, resource_group: str, ws_name: str, **kwargs) -> Iterable[OutboundRule]:
@@ -53,7 +53,7 @@ class WorkspaceOutboundRuleOperations:
 
         result = [
             OutboundRule._from_rest_object(  # pylint: disable=protected-access
-                rest_obj=rest_rules[rule_name], rule_name=rule_name
+                rest_obj=rest_rules[rule_name], name=rule_name
             )
             for rule_name in rest_rules.keys()
         ]
