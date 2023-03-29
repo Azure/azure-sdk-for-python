@@ -91,7 +91,7 @@ class SenderMixin(object):
                 ServiceBusMessage,
                 to_outgoing_amqp_message=amqp_transport.to_outgoing_amqp_message
             )
-            trace_message(message, send_span)
+            message._message = trace_message(message._message, amqp_transport=amqp_transport, parent_span=send_span)
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
             if message.session_id:
@@ -433,7 +433,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
                     obj_message = batch
                 except TypeError:  # Message was not a list or generator. Do needed tracing.
-                    trace_message(cast(ServiceBusMessage, obj_message), send_span)
+                    obj_message._message = trace_message(
+                        obj_message._message,
+                        amqp_transport=self._amqp_transport,
+                        parent_span=send_span
+                    )
 
             obj_message = cast(Union[ServiceBusMessage, ServiceBusMessageBatch], obj_message)
             if send_span:
