@@ -1,10 +1,10 @@
 # Web PubSub client library for Python
 
-[Azure Web PubSub](https://aka.ms/awps/doc) is a cloud service that helps developers easily build real-time features in web applications with publish-subscribe patterns at scale. 
+[Azure Web PubSub](https://aka.ms/awps/doc) is a cloud service that helps developers easily build real-time features in web applications with publish-subscribe patterns at scale.
 
-Any scenario that requires real-time messaging between server and clients or among clients following publish-subscribe patterns can benefit from using Web PubSub. Developers no longer need to poll the server by sending repeated HTTP requests at intervals, which is wasteful and hard-to-scale. 
+Any scenario that requires real-time messaging between server and clients or among clients following publish-subscribe patterns can benefit from using Web PubSub. Developers no longer need to poll the server by sending repeated HTTP requests at intervals, which is wasteful and hard-to-scale.
 
-As shown in the diagram below, your clients establish WebSocket connections with your Web PubSub resource. This client library: 
+As shown in the diagram below, your clients establish WebSocket connections with your Web PubSub resource. This client library:
 - simplifies managing client connections
 - simplifies sending messages among clients
 - automatically retries after unintended drops of client connection
@@ -15,7 +15,6 @@ As shown in the diagram below, your clients establish WebSocket connections with
 Details about the terms used here are described in [key concepts](#key-concepts) section.
 
 _This library is hosted on [pypi][pypi]._
-***
 
 ## Getting started
 
@@ -114,9 +113,9 @@ client.on("group-message", lambda e: print(f"Received message from {e.group}: {e
 
 ---
 ### Handle rejoin failure
-When a client is disconnected and fails to recover, all group contexts will be cleaned up in your Web PubSub resource. This means when the client reconnects, it needs to rejoin groups. By default, the client has `auto_rejoin_group` option enabled. 
+When a client is disconnected and fails to recover, all group contexts will be cleaned up in your Web PubSub resource. This means when the client reconnects, it needs to rejoin groups. By default, the client has `auto_rejoin_groups` option enabled. 
 
-However, you should be aware of `auto_rejoin_group`'s limitations. 
+However, you should be aware of `auto_rejoin_groups`'s limitations. 
 - The client can only rejoin groups that it's originally joined by the client code _not_ by the server side code. 
 - "rejoin group" operations may fail due to various reasons, e.g. the client doesn't have permission to join the groups. In such cases, you need to add a callback to handle this failure.
 
@@ -193,6 +192,10 @@ Connections to Web PubSub can belong to one user. A user might have multiple con
 ## Client Lifetime
 
 Each of the Web PubSub clients is safe to cache and be used as a singleton for the lifetime of the application. The registered event callbacks share the same lifetime with the client. This means you can add or remove callbacks at any time and the registration status will not change after reconnection or the client being stopped.
+
+## Troubleshooting
+
+This library uses the standard [logging](https://docs.python.org/3/library/logging.html) library for logging. If you want detailed `DEBUG` level logging, including payload of request, you can set `logging_enable=True` in client or per-operation
 
 ## Additional resources
 - Learn more about client permission, see [permissions](https://learn.microsoft.com/azure/azure-web-pubsub/reference-json-reliable-webpubsub-subprotocol#permissions)

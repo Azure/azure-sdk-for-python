@@ -517,7 +517,6 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
         # right now, assuming we don't have unions, since we're getting rid of the only
         # union we used to have in msrest models, which was union of str and enum
         if any(a for a in annotation.__args__ if a == type(None)):
-
             if_obj_deserializer = _get_deserialize_callable_from_annotation(
                 next(a for a in annotation.__args__ if a != type(None)), module, rf
             )

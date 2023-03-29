@@ -106,7 +106,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :keyword RetryMode message_retry_mode: Fixed or exponential delay between attemps, default is exponential.
     :keyword bool auto_rejoin_groups: auto_rejoin_groups, default is True
     :keyword str user_agent: The user agent to be used for the request. If specified, this will be added in front of
-     the defualt user agent string.
+     the default user agent string.
+    :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
     """
 
     def __init__(
@@ -169,25 +170,29 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._cv: threading.Condition = threading.Condition()
         self._thread_seq_ack: Optional[threading.Thread] = None
         self._thread: Optional[threading.Thread] = None
-        self._ack_timeout: float = kwargs.pop("ack_timeout", 1.0)
+        self._ack_timeout: float = kwargs.pop("ack_timeout", 30.0)
         self._start_timeout: float = kwargs.pop("start_timeout", 60.0)
         self._user_agent: Optional[str] = kwargs.pop("user_agent", None)
+        self._logging_enable: bool = kwargs.pop("logging_enable", False)
 
     def _next_ack_id(self) -> int:
         self._ack_id = self._ack_id + 1
         return self._ack_id
 
-    def _send_message(self, message: WebPubSubMessage) -> None:
+    def _send_message(self, message: WebPubSubMessage, **kwargs: Any) -> None:
         pay_load = self._protocol.write_message(message)
         if not self._ws or not self._ws.sock:
             raise Exception("The connection is not connected.")
 
         self._ws.send(pay_load)
+        if kwargs.pop("logging_enable", False) or self._logging_enable:
+            _LOGGER.debug("\nconnection_id: %s\npay_load: %s", self._connection_id, pay_load)
 
     def _send_message_with_ack_id(
         self,
         message_provider: Callable[[int], WebPubSubMessage],
         ack_id: Optional[int] = None,
+        **kwargs: Any,
     ) -> None:
         if ack_id is None:
             ack_id = self._next_ack_id()
@@ -198,7 +203,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 error_detail=AckMessageError(name="", message="timeout to receive ack message")
             )
         try:
-            self._send_message(message)
+            self._send_message(message, **kwargs)
         except Exception as e:
             self._ack_map.pop(ack_id)
             raise e
@@ -237,6 +242,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._send_message_with_ack_id(
             message_provider=lambda id: JoinGroupMessage(group=group_name, ack_id=id),
             ack_id=ack_id,
+            **kwargs,
         )
 
     @distributed_trace
@@ -253,6 +259,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._send_message_with_ack_id(
                 message_provider=lambda id: LeaveGroupMessage(group=group_name, ack_id=id),
                 ack_id=ack_id,
+                **kwargs,
             )
             group.is_joined = False
 
@@ -287,9 +294,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                         data_type=data_type, data=content, ack_id=id, event=event_name
                     ),
                     ack_id=ack_id,
+                    **kwargs,
                 )
             else:
-                self._send_message(message=SendEventMessage(data_type=data_type, data=content, event=event_name))
+                self._send_message(
+                    message=SendEventMessage(data_type=data_type, data=content, event=event_name), **kwargs
+                )
 
         self._retry(send_event_attempt)
 
@@ -320,11 +330,13 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 self._send_message_with_ack_id(
                     message_provider=lambda id: SendToGroupMessage(
                         group=group_name, data_type=data_type, data=content, ack_id=id, no_echo=no_echo
-                    )
+                    ),
+                    **kwargs,
                 )
             else:
                 self._send_message(
-                    message=SendToGroupMessage(group=group_name, data_type=data_type, data=content, no_echo=no_echo)
+                    message=SendToGroupMessage(group=group_name, data_type=data_type, data=content, no_echo=no_echo),
+                    **kwargs,
                 )
 
         self._retry(send_to_group_attempt)
