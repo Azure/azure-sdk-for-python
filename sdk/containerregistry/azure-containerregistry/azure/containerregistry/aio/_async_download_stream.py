@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import AsyncIterator, AsyncContextManager, Callable, Awaitable, TypeVar
+from typing import AsyncIterator, AsyncContextManager, Callable, Awaitable, TypeVar, cast, Tuple, Dict
 
 T = TypeVar('T', bound='AsyncDownloadBlobStream')
 
@@ -19,15 +19,14 @@ class AsyncDownloadBlobStream(
         self,
         *,
         response: AsyncIterator[bytes],
-        next: Callable[[str], Awaitable[AsyncIterator[bytes]]],
+        get_next: Callable[[str], Awaitable[AsyncIterator[bytes]]],
         blob_size: int,
         downloaded: int,
         digest: str,
-        chunk_size: int,
-        **kwargs
+        chunk_size: int
     ) -> None:
         self._response = response
-        self._next = next
+        self._next = get_next
         self._blob_size = blob_size
         self._downloaded = downloaded
         self._digest = digest
@@ -51,7 +50,10 @@ class AsyncDownloadBlobStream(
     async def _download_chunk(self) -> AsyncIterator[bytes]:
         end_range = self._downloaded + self._chunk_size
         range_header = f"bytes={self._downloaded}-{end_range}"
-        next_chunk, headers = await self._next(range=range_header)
+        next_chunk, headers = cast(
+            Tuple[AsyncIterator[bytes], Dict[str, str]],
+            await self._next(range=range_header)
+        )
         self._downloaded += headers["Content-Length"]
         return next_chunk
 

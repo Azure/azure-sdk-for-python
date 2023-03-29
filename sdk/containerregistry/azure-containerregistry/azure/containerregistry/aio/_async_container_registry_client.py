@@ -929,7 +929,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return AsyncDownloadBlobStream(
             response=first_chunk,
             digest=digest,
-            next=functools.partial(
+            get_next=functools.partial(
                 self._client.container_registry_blob.get_chunk,
                 name=repository,
                 digest=digest,
@@ -937,7 +937,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             ),
             blob_size=int(headers["Content-Range"].split("/")[1]),
-            downloaded=headers["Content-Length"],
+            downloaded=int(headers["Content-Length"]),
             chunk_size=chunk_size
         )
 

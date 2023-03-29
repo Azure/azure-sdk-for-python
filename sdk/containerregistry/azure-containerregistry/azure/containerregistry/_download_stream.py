@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import Iterator, ContextManager, Callable, TypeVar
+from typing import Iterator, ContextManager, Callable, TypeVar, cast, Tuple, Dict
 
 T = TypeVar('T', bound='DownloadBlobStream')
 
@@ -19,15 +19,14 @@ class DownloadBlobStream(
         self,
         *,
         response: Iterator[bytes],
-        next: Callable[[str], Iterator[bytes]],
+        get_next: Callable[[str], Iterator[bytes]],
         blob_size: int,
         downloaded: int,
         digest: str,
-        chunk_size: int,
-        **kwargs
+        chunk_size: int
     ) -> None:
         self._response = response
-        self._next = next
+        self._next = get_next
         self._blob_size = blob_size
         self._downloaded = downloaded
         self._digest = digest
@@ -51,8 +50,11 @@ class DownloadBlobStream(
     def _download_chunk(self) -> Iterator[bytes]:
         end_range = self._downloaded + self._chunk_size
         range_header = f"bytes={self._downloaded}-{end_range}"
-        next_chunk, headers = self._next(range=range_header)
-        self._downloaded += headers["Content-Length"]
+        next_chunk, headers = cast(
+            Tuple[Iterator[bytes], Dict[str, str]],
+            self._next(range=range_header)
+        )
+        self._downloaded += int(headers["Content-Length"])
         return next_chunk
 
     def __next__(self) -> bytes:
