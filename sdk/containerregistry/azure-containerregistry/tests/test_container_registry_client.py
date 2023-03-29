@@ -3,11 +3,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import os
 import pytest
 import six
 import hashlib
+from datetime import datetime
+from io import BytesIO
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -16,7 +17,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _serialize_manifest
+from azure.containerregistry._helpers import _serialize_manifest, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -555,15 +556,36 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
 
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # Act
-            data = open(path, "rb")
-            digest = client.upload_blob(repo, data)
-            
-            # Assert
+            with open(path, "rb") as stream:
+                digest, size = client.upload_blob(repo, stream)
+
             res = client.download_blob(repo, digest)
-            assert len(res.data.read()) == len(data.read())
+            assert len(res.data.read()) == size
             assert res.digest == digest
+
+            client.delete_blob(repo, digest)
             
+            # Cleanup
+            client.delete_repository(repo)
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # Test blob upload in equal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+            data = b'\x00' * int(blob_size)
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            # Test blob upload and download in unequal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+            data = b'\x00' * int(blob_size)
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
             client.delete_blob(repo, digest)
 
             # Cleanup
