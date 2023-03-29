@@ -99,7 +99,7 @@ class _AuxiliaryAuthenticationPolicyBase:
             )
 
     def _update_headers(self, headers):
-        """Updates the Authorization header with the auxiliary token.
+        """Updates the x-ms-authorization-auxiliary header with the auxiliary token.
 
         :param dict headers: The HTTP Request headers
         """

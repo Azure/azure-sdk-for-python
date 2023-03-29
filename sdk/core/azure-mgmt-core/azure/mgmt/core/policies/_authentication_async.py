@@ -23,7 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Awaitable, Optional
+from typing import TypeVar, Optional
+import inspect
 
 from azure.core.pipeline.policies import (
     AsyncBearerTokenCredentialPolicy,
@@ -41,7 +42,7 @@ AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 async def await_result(func, *args, **kwargs):
     """If func returns an awaitable, await it."""
     result = func(*args, **kwargs)
-    if hasattr(result, "__await__"):
+    if inspect.isawaitable(result):
         return await result
     return result
 
