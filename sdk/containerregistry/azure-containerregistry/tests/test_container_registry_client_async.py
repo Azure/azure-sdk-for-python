@@ -520,7 +520,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 blob_content += chunk
             assert len(blob_content) == blob_size
 
-            # await client.delete_blob(repo, digest)
+            await client.delete_blob(repo, digest)
             await client.delete_repository(repo)
 
     @pytest.mark.live_test_only
