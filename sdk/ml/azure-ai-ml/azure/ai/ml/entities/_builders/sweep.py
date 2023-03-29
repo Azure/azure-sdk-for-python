@@ -212,6 +212,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             "objective",
             "early_termination",
             "search_space",
+            "queue_settings",
         ]
 
     def _to_rest_object(self, **kwargs) -> dict:
