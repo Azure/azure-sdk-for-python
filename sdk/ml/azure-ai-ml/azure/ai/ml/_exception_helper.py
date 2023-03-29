@@ -292,4 +292,4 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
     else:
         raise error
 
-    raise Exception(formatted_error)
+    raise formatted_error
