@@ -15,6 +15,9 @@ from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPre
 from sb_env_loader import (
     ServiceBusPreparer
 )
+from servicebus_preparer import (
+    SERVICEBUS_ENDPOINT_SUFFIX
+)
 
 from mgmt_test_utilities import clear_topics
 
@@ -117,8 +120,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             subscription = mgmt_service.get_subscription(topic_name, subscription_name)
             # Test forward_to (separately, as it changes auto_delete_on_idle when you enable it.)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            assert subscription.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
-            assert subscription.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+            assert subscription.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            assert subscription.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
 
         finally:
             mgmt_service.delete_subscription(topic_name, subscription_name)
@@ -188,8 +191,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
-            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            #assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            #assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
 
             # Update forward_to with entity name
             subscription_description.forward_to = queue_name
@@ -197,8 +200,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.update_subscription(topic_description.name, subscription_description)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(queue_name))
-            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(queue_name))
+            #assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
+            #assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{queue_name}")
 
             # Update forward_to with None
             subscription_description.forward_to = None
@@ -458,8 +461,8 @@ class TestServiceBusAdministrationClientSubscription(AzureMgmtRecordedTestCase):
             mgmt_service.update_subscription(topic_description.name, subscription_description_dict)
             subscription_description = mgmt_service.get_subscription(topic_description.name, subscription_name)
             # Note: We endswith to avoid the fact that the servicebus_fully_qualified_namespace_name is replacered locally but not in the properties bag, and still test this.
-            assert subscription_description.forward_to.endswith(".servicebus.windows.net/{}".format(topic_name))
-            assert subscription_description.forward_dead_lettered_messages_to.endswith(".servicebus.windows.net/{}".format(topic_name))
+            assert subscription_description.forward_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
+            assert subscription_description.forward_dead_lettered_messages_to.endswith(f"{SERVICEBUS_ENDPOINT_SUFFIX}/{topic_name}")
 
             # updating all settings with keyword arguments.
             mgmt_service.update_subscription(

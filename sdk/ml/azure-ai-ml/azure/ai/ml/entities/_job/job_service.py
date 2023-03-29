@@ -25,8 +25,8 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     :type endpoint: str
     :param error_message: Any error in the service.
     :type error_message: str
-    :param job_service_type: Endpoint type.
-    :type job_service_type: str
+    :param type: Endpoint type.
+    :type type: str
     :param port: Port for endpoint.
     :type nodes: str
     :param nodes: Indicates whether the service has to run in all nodes.
@@ -43,7 +43,9 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None,
+        type: Optional[  # pylint: disable=redefined-builtin
+            Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]
+        ] = None,
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -51,13 +53,13 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
         **kwargs,  # pylint: disable=unused-argument
     ):
         self.endpoint = endpoint
-        self.job_service_type = job_service_type
+        self.type = type
         self.nodes = nodes
         self.status = status
         self.port = port
         self.properties = properties
         self._validate_nodes()
-        self._validate_job_service_type_name()
+        self._validate_type_name()
 
     def _validate_nodes(self):
         if not self.nodes in ["all", None]:
@@ -70,11 +72,10 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _validate_job_service_type_name(self):
-        if self.job_service_type and not self.job_service_type in JobServiceTypeNames.ENTITY_TO_REST.keys():
+    def _validate_type_name(self):
+        if self.type and not self.type in JobServiceTypeNames.ENTITY_TO_REST.keys():
             msg = (
-                f"job_service_type should be one of "
-                f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.job_service_type}'."
+                f"type should be one of " f"{JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC}, but received '{self.type}'."
             )
             raise ValidationException(
                 message=msg,
@@ -87,9 +88,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _to_rest_job_service(self, updated_properties: Dict[str, str] = None) -> RestJobService:
         return RestJobService(
             endpoint=self.endpoint,
-            job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
-            if self.job_service_type
-            else None,
+            job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.type, None) if self.type else None,
             nodes=AllNodes() if self.nodes else None,
             status=self.status,
             port=self.port,
@@ -113,9 +112,7 @@ class JobServiceBase(RestTranslatableMixin, DictMixin):
     def _from_rest_job_service_object(cls, obj: RestJobService):
         return cls(
             endpoint=obj.endpoint,
-            job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
-            if obj.job_service_type
-            else None,
+            type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None) if obj.job_service_type else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
@@ -155,9 +152,9 @@ class JobService(JobServiceBase):
 
     :param endpoint: Url for endpoint.
     :type endpoint: str
-    :param job_service_type: Endpoint type.
+    :param type: Endpoint type.
         Accepts "jupyter_lab", "ssh", "tensor_board", "vs_code"
-    :type job_service_type: str
+    :type type: str
     :param port: Port for endpoint.
     :type nodes: str
     :param nodes: Indicates whether the service has to run in all nodes.
@@ -196,7 +193,7 @@ class SshJobService(JobServiceBase):
     :type ssh_public_keys: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-    :ivar job_service_type: Specifies the type of job service. Set automatically to "ssh" for this class.
+    :ivar type: Specifies the type of job service. Set automatically to "ssh" for this class.
     :vartype type: str
     """
 
@@ -219,7 +216,7 @@ class SshJobService(JobServiceBase):
             properties=properties,
             **kwargs,
         )
-        self.job_service_type = JobServiceTypeNames.EntityNames.SSH
+        self.type = JobServiceTypeNames.EntityNames.SSH
         self.ssh_public_keys = ssh_public_keys
 
     @classmethod
@@ -251,7 +248,7 @@ class TensorBoardJobService(JobServiceBase):
     :type log_dir: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-    :ivar job_service_type: Specifies the type of job service. Set automatically to "tensor_board" for this class.
+    :ivar type: Specifies the type of job service. Set automatically to "tensor_board" for this class.
     :vartype type: str
     """
 
@@ -274,7 +271,7 @@ class TensorBoardJobService(JobServiceBase):
             properties=properties,
             **kwargs,
         )
-        self.job_service_type = JobServiceTypeNames.EntityNames.TENSOR_BOARD
+        self.type = JobServiceTypeNames.EntityNames.TENSOR_BOARD
         self.log_dir = log_dir
 
     @classmethod
@@ -304,7 +301,7 @@ class JupyterLabJobService(JobServiceBase):
     :type status: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-    :ivar job_service_type: Specifies the type of job service. Set automatically to "jupyter_lab" for this class.
+    :ivar type: Specifies the type of job service. Set automatically to "jupyter_lab" for this class.
     :vartype type: str
     """
 
@@ -326,7 +323,7 @@ class JupyterLabJobService(JobServiceBase):
             properties=properties,
             **kwargs,
         )
-        self.job_service_type = JobServiceTypeNames.EntityNames.JUPYTER_LAB
+        self.type = JobServiceTypeNames.EntityNames.JUPYTER_LAB
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JupyterLabJobService":
@@ -352,7 +349,7 @@ class VsCodeJobService(JobServiceBase):
     :type status: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
-    :ivar job_service_type: Specifies the type of job service. Set automatically to "vs_code" for this class.
+    :ivar type: Specifies the type of job service. Set automatically to "vs_code" for this class.
     :vartype type: str
     """
 
@@ -374,7 +371,7 @@ class VsCodeJobService(JobServiceBase):
             properties=properties,
             **kwargs,
         )
-        self.job_service_type = JobServiceTypeNames.EntityNames.VS_CODE
+        self.type = JobServiceTypeNames.EntityNames.VS_CODE
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "VsCodeJobService":

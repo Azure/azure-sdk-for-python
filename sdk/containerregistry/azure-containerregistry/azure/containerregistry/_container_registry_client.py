@@ -1022,14 +1022,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace
-    def delete_blob(self, repository: str, tag_or_digest: str, **kwargs) -> None:
+    def delete_blob(self, repository: str, digest: str, **kwargs) -> None:
         """Delete a blob. If the blob cannot be found or a response status code of
         404 is returned an error will not be raised.
 
         :param str repository: Name of the repository the manifest belongs to
-        :param str tag_or_digest: Tag or digest of the blob to be deleted
+        :param str digest: Digest of the blob to be deleted
         :returns: None
-        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example
 
@@ -1039,9 +1038,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
-            client.delete_blob("my_repository", "my_tag_or_digest")
+            client.delete_blob("my_repository", "my_digest")
         """
-        if _is_tag(tag_or_digest):
-            tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
-
-        self._client.container_registry_blob.delete_blob(repository, tag_or_digest, **kwargs)
+        try:
+            self._client.container_registry_blob.delete_blob(repository, digest, **kwargs)
+        except HttpResponseError as error:
+            if error.status_code == 404:
+                return
+            raise
