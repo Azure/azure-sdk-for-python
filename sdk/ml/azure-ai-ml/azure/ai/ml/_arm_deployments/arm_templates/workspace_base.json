@@ -544,7 +544,11 @@
         "offlineStoreConnectionName": "[if(equals(parameters('offline_store_connection_name'), ''), 'OfflineStoreConnectionName', parameters('offline_store_connection_name'))]",
         "onlineStoreConnectionName": "[if(equals(parameters('online_store_connection_name'), ''), 'OnlineStoreConnectionName', parameters('online_store_connection_name'))]",
         "isLeanWorkspace": "[equals(parameters('kind'), 'lean')]",
-        "isHubWorkspace": "[equals(parameters('kind'), 'hub')]"
+        "isHubWorkspace": "[equals(parameters('kind'), 'hub')]",
+        "storageAccountList": ["[variables('storageAccount')]"],
+        "keyVaultList": ["[variables('keyVault')]"],
+        "emptyArray": [],
+        "containerRegistryList": "[if(not(equals(parameters('containerRegistryOption'), 'none')), array(variables('containerRegistry')), variables('emptyArray'))]"
     },
     "resources": [
         {
@@ -730,11 +734,11 @@
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
                     "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                 },
-                "storageAccounts": "parameters('storage_accounts')",
-                "keyVaults": "parameters('key_vaults')",
-                "containerRegistries": "parameters('container_registies')",
-                "existingWorkspaces": "parameters('existing_workspaces')",
-                "hubResourceId": "parameters('hub_resource_id')"
+                "storageAccounts": "[if(equals(length(parameters('storage_accounts')), 0), variables('storageAccountList'), parameters('storage_accounts'))]",
+                "keyVaults": "[if(equals(length(parameters('key_vaults')), 0), variables('keyVaultList'), parameters('key_vaults'))]",
+                "containerRegistries": "[if(equals(length(parameters('container_registies')), 0), variables('containerRegistryList'), parameters('container_registies'))]",
+                "existingWorkspaces": "[parameters('existing_workspaces')]",
+                "hubResourceId": "[parameters('hub_resource_id')]"
             }
         },
         {

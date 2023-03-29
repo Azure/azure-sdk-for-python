@@ -78,7 +78,9 @@ from azure.ai.ml.entities import (
     OnlineDeployment,
     OnlineEndpoint,
     Registry,
-    Workspace
+    Workspace,
+    _HubWorkspace,
+    _LeanWorkspace,
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -344,7 +346,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
-            self._rp_service_client,
+            self._service_client_04_2023_preview,
             self._operation_container,
             self._credential,
             **app_insights_handler_kwargs,
@@ -561,7 +563,24 @@ class MLClient:
             self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
             self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
             self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
+        
+        self._hubs = HubOperations(
+            self._operation_scope,
+            self._service_client_04_2023_preview,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.HUB, self._hubs)
 
+        self._leans = LeanOperations(
+            self._operation_scope,
+            self._service_client_04_2023_preview,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.LEAN, self._leans)
 
     @classmethod
     def from_config(
@@ -709,6 +728,24 @@ class MLClient:
         if is_private_preview_enabled():
             return self._featuresets
         raise Exception("feature set operations not supported")
+        
+    @property
+    @experimental
+    def hubs(self) -> HubOperations:
+        """A collection of hubs related operations.
+        :return: Hub Operations
+        :rtype: HubOperations
+        """
+        return self._hubs
+
+    @property
+    @experimental
+    def leans(self) -> LeanOperations:
+        """A collection of leans related operations.
+        :return: Lean Operations
+        :rtype: LeanOperations
+        """
+        return self._leans
 
     @property
     @experimental
