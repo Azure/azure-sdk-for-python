@@ -94,8 +94,7 @@ from azure.healthinsights.cancerprofiling import CancerProfilingClient
 KEY = os.getenv("HEALTHINSIGHTS_KEY") or "0"
 ENDPOINT = os.getenv("HEALTHINSIGHTS_ENDPOINT") or "0"
 
-cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT,
-                                                credential=AzureKeyCredential(KEY))
+cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
 
 patient_info = PatientInfo(sex=PatientInfoSex.FEMALE, birth_date=datetime.date(1979, 10, 8))
 patient1 = PatientRecord(id="patient_id", info=patient_info)
@@ -122,13 +121,14 @@ doc_content1 = """
             Findings are suggestive of a working diagnosis of pneumonia. The patient is referred to a
             follow-up CXR in 2 weeks."""
 
-patient_document1 = PatientDocument(type=DocumentType.NOTE,
-                                    id="doc1",
-                                    content=DocumentContent(source_type=DocumentContentSourceType.INLINE,
-                                                            value=doc_content1),
-                                    clinical_type=ClinicalDocumentType.IMAGING,
-                                    language="en",
-                                    created_date_time=datetime.datetime(2021, 8, 15))
+patient_document1 = PatientDocument(
+    type=DocumentType.NOTE,
+    id="doc1",
+    content=DocumentContent(source_type=DocumentContentSourceType.INLINE, value=doc_content1),
+    clinical_type=ClinicalDocumentType.IMAGING,
+    language="en",
+    created_date_time=datetime.datetime(2021, 8, 15),
+)
 
 doc_content2 = """
             Oncology Clinic
@@ -158,13 +158,14 @@ doc_content2 = """
             Could benefit from biological therapy.
             Different treatment options were explained- the patient wants to get a second opinion."""
 
-patient_document2 = PatientDocument(type=DocumentType.NOTE,
-                                    id="doc2",
-                                    content=DocumentContent(source_type=DocumentContentSourceType.INLINE,
-                                                            value=doc_content2),
-                                    clinical_type=ClinicalDocumentType.PATHOLOGY,
-                                    language="en",
-                                    created_date_time=datetime.datetime(2021, 10, 20))
+patient_document2 = PatientDocument(
+    type=DocumentType.NOTE,
+    id="doc2",
+    content=DocumentContent(source_type=DocumentContentSourceType.INLINE, value=doc_content2),
+    clinical_type=ClinicalDocumentType.PATHOLOGY,
+    language="en",
+    created_date_time=datetime.datetime(2021, 10, 20),
+)
 
 doc_content3 = """
             PATHOLOGY REPORT
@@ -188,17 +189,18 @@ doc_content3 = """
             Blocks with invasive carcinoma:  A1
             Special studies: Pending"""
 
-patient_document3 = PatientDocument(type=DocumentType.NOTE,
-                                    id="doc3",
-                                    content=DocumentContent(source_type=DocumentContentSourceType.INLINE,
-                                                            value=doc_content3),
-                                    clinical_type=ClinicalDocumentType.PATHOLOGY,
-                                    language="en",
-                                    created_date_time=datetime.datetime(2022, 1, 1))
+patient_document3 = PatientDocument(
+    type=DocumentType.NOTE,
+    id="doc3",
+    content=DocumentContent(source_type=DocumentContentSourceType.INLINE, value=doc_content3),
+    clinical_type=ClinicalDocumentType.PATHOLOGY,
+    language="en",
+    created_date_time=datetime.datetime(2022, 1, 1),
+)
 
 patient_doc_list = [patient_document1, patient_document2, patient_document3]
 patient1.data = patient_doc_list
-    configuration = OncoPhenotypeModelConfiguration(include_evidence=True)
+configuration = OncoPhenotypeModelConfiguration(include_evidence=True)
 cancer_profiling_data = OncoPhenotypeData(patients=[patient1], configuration=configuration)
 
 poller = await cancer_profiling_client.begin_infer_cancer_profile(cancer_profiling_data)

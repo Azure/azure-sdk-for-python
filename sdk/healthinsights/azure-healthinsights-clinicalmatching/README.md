@@ -96,29 +96,29 @@ from azure.healthinsights.clinicalmatching import ClinicalMatchingClient
 KEY = os.getenv("HEALTHINSIGHTS_KEY") or "0"
 ENDPOINT = os.getenv("HEALTHINSIGHTS_ENDPOINT") or "0"
 
-trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT,
-                                              credential=AzureKeyCredential(KEY))
+trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
 
-clinical_info_list = [ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C0006826",
-                                            name="Malignant Neoplasms",
-                                            value="true"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C1522449",
-                                            name="Therapeutic radiology procedure",
-                                            value="true"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C1512162",
-                                            name="Eastern Cooperative Oncology Group",
-                                            value="1"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C0019693",
-                                            name="HIV Infections",
-                                            value="false"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C1300072",
-                                            name="Tumor stage",
-                                            value="2")]
+clinical_info_list = [
+    ClinicalCodedElement(
+        system="http://www.nlm.nih.gov/research/umls", code="C0006826", name="Malignant Neoplasms", value="true"
+    ),
+    ClinicalCodedElement(
+        system="http://www.nlm.nih.gov/research/umls",
+        code="C1522449",
+        name="Therapeutic radiology procedure",
+        value="true",
+    ),
+    ClinicalCodedElement(
+        system="http://www.nlm.nih.gov/research/umls",
+        code="C1512162",
+        name="Eastern Cooperative Oncology Group",
+        value="1",
+    ),
+    ClinicalCodedElement(
+        system="http://www.nlm.nih.gov/research/umls", code="C0019693", name="HIV Infections", value="false"
+    ),
+    ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls", code="C1300072", name="Tumor stage", value="2"),
+]
 
 patient1 = self.get_patient_from_fhir_patient()
 # Create registry filter
@@ -130,7 +130,9 @@ registry_filters.phases = [ClinicalTrialPhase.PHASE1]
 # Specify the clinical trial registry source as ClinicalTrials.Gov
 registry_filters.sources = [ClinicalTrialSource.CLINICALTRIALS_GOV]
 # Limit the clinical trial to a certain location, in this case California, USA
-registry_filters.facility_locations = [GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
+registry_filters.facility_locations = [
+    GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")
+]
 # Limit the trial to a specific study type, interventional
 registry_filters.study_types = [ClinicalTrialStudyType.INTERVENTIONAL]
 
@@ -139,6 +141,7 @@ configuration = TrialMatcherModelConfiguration(clinical_trials=clinical_trials)
 trial_matcher_data = TrialMatcherData(patients=[patient1], configuration=configuration)
 
 poller = await trial_matcher_client.begin_match_trials(trial_matcher_data)
+
 ```
 
 ## Troubleshooting

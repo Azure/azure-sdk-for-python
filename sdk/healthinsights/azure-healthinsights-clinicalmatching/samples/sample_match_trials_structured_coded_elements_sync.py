@@ -39,39 +39,53 @@ class HealthInsightsSamples:
 
         # Create an Trial Matcher client
         # <client>
-        trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT,
-                                                  credential=AzureKeyCredential(KEY))
+        trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # </client>
 
         # Create clinical info list
         # <clinicalInfo>
-        clinical_info_list = [ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                   code="C0032181",
-                                                   name="Platelet count",
-                                                   value="250000"),
-                              ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                   code="C0002965",
-                                                   name="Unstable Angina",
-                                                   value="true"),
-                              ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                   code="C1522449",
-                                                   name="Radiotherapy",
-                                                   value="false"),
-                              ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                   code="C0242957",
-                                                   name="GeneOrProtein-Expression",
-                                                   value="Negative;EntityType:GENEORPROTEIN-EXPRESSION"),
-                              ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                                   code="C1300072",
-                                                   name="cancer stage",
-                                                   value="2")]
+        clinical_info_list = [
+            ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C0032181",
+                name="Platelet count",
+                value="250000",
+            ),
+            ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C0002965",
+                name="Unstable Angina",
+                value="true",
+            ),
+            ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C1522449",
+                name="Radiotherapy",
+                value="false",
+            ),
+            ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C0242957",
+                name="GeneOrProtein-Expression",
+                value="Negative;EntityType:GENEORPROTEIN-EXPRESSION",
+            ),
+            ClinicalCodedElement(
+                system="http://www.nlm.nih.gov/research/umls",
+                code="C1300072",
+                name="cancer stage",
+                value="2",
+            ),
+        ]
 
         # </clinicalInfo>
 
         # Construct Patient
         # <PatientConstructor>
-        patient_info = PatientInfo(sex=PatientInfoSex.MALE, birth_date=datetime.date(1965, 12, 26),
-                                   clinical_info=clinical_info_list)
+        patient_info = PatientInfo(
+            sex=PatientInfoSex.MALE,
+            birth_date=datetime.date(1965, 12, 26),
+            clinical_info=clinical_info_list,
+        )
         patient1 = PatientRecord(id="patient_id", info=patient_info)
         # </PatientConstructor>
 
@@ -82,7 +96,9 @@ class HealthInsightsSamples:
         # Specify the clinical trial registry source as ClinicalTrials.Gov
         registry_filters.sources = [ClinicalTrialSource.CLINICALTRIALS_GOV]
         # Limit the clinical trial to a certain location, in this case California, USA
-        registry_filters.facility_locations = [GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
+        registry_filters.facility_locations = [
+            GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")
+        ]
         # Limit the trial to a specific recruitment status
         registry_filters.recruitment_statuses = [ClinicalTrialRecruitmentStatus.RECRUITING]
 
@@ -122,4 +138,3 @@ class HealthInsightsSamples:
 if __name__ == "__main__":
     sample = HealthInsightsSamples()
     sample.match_trials()
-
