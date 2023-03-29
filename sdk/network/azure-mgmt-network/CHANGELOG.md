@@ -1,8 +1,16 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2023-03-28)
+## 23.0.0 (2023-03-28)
 
+### Other Changes
 
+  - Continued package size improvements. The whole package is now 5% of the latest stable release
+
+### Breaking Changes
+
+  - All query and header parameters are now keyword-only
+  - Can not individually access each API version's client and operations. This means you can no longer access any `azure.mgmt.network.v20xx_xx_xx` modules
+  - Removed `.models` method from `NetworkManagementClient`
 
 ## 22.3.0 (2023-03-20)
 
