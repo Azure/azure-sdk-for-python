@@ -2571,9 +2571,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert "Studio" in default_services
         assert "Tracking" in default_services
         assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
-        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Studio"]["type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
-        assert default_services["Tracking"]["job_service_type"] == "Tracking"
+        assert default_services["Tracking"]["type"] == "Tracking"
 
     def test_group_outputs_description_overwrite(self, client):
         # test group outputs description overwrite
@@ -3008,3 +3008,22 @@ class TestDSLPipeline(AzureRecordedTestCase):
         check_name_and_version(pipeline_job.outputs.pipeine_b_output, "n2_o_output", "2")
         check_name_and_version(pipeline_job.jobs["node_3"].outputs["component_out_path"], "n3_o_output", "4")
         check_name_and_version(pipeline_job.jobs["sub_node"].outputs["sub_pipeine_a_output"], "subgraph_o_output", "1")
+
+    def test_pipeline_input_binding_limits_timeout(self, client: MLClient):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline(timeout) -> PipelineJob:
+            # case 1: if timeout is PipelineInput, get binding from response
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=timeout)
+            # case 2: if timeout is not PipelineInput, response timeout will be parsed to int
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
+
+        pipeline = my_pipeline(2)
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+        assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
+        assert pipeline_job.jobs["node_1"].limits.timeout == 1

@@ -22,7 +22,8 @@ import os
 import json
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ContainerRegistryClient, Annotations, Descriptor, OCIManifest
+from azure.containerregistry import ContainerRegistryClient
+from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 from utilities import get_authority, get_audience, get_credential
 
 
@@ -73,10 +74,10 @@ class UploadDownloadManifest(object):
             print(b"".join(download_manifest_stream))
             # Download the layers
             for layer in downloaded_manifest.layers:
-                with client.download_blob(repository_name, layer.digest) as layer_stream:
+                with client.download_blob(repository_name, layer.digest).data as layer_stream:
                     print(b"".join(layer_stream))
             # Download the config
-            with client.download_blob(repository_name, downloaded_manifest.config.digest) as config_stream:
+            with client.download_blob(repository_name, downloaded_manifest.config.digest).data as config_stream:
                 print(b"".join(config_stream))
 
             # Delete the layers

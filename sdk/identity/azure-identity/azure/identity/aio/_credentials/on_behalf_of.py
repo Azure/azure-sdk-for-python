@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import Optional, Union, Any
+from typing import Optional, Union, Any, Tuple
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -89,8 +89,10 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is

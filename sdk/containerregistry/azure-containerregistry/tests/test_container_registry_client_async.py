@@ -3,10 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import os
 import pytest
 import six
+import hashlib
+from datetime import datetime
 from io import BytesIO
 from azure.containerregistry import (
     RepositoryProperties,
@@ -452,6 +453,53 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 last_udpated_on = properties.last_udpated_on
             last_updated_on = properties.last_updated_on
             assert last_udpated_on == last_updated_on
+
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_blob(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
+
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            with open(path, "rb") as stream:
+                digest, size = await client.upload_blob(repo, stream)
+            assert digest == f"sha256:{blob}"
+            
+            await client.delete_blob(repo, digest)
+            
+            # Cleanup
+            await client.delete_repository(repo)
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            # Test blob upload in equal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+            data = b'\x00' * int(blob_size)
+            digest, size = await client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            # Test blob upload and download in unequal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+            data = b'\x00' * int(blob_size)
+            digest, size = await client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            # Cleanup
+            await client.delete_repository(repo)
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        hash_value = hashlib.sha256(b"test").hexdigest()
+        digest = f"sha256:{hash_value}"
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await client.delete_blob(repo, digest)
     
     @acr_preparer()
     @recorded_by_proxy_async

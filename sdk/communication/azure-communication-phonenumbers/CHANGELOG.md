@@ -1,18 +1,17 @@
 # Release History
 
-## 1.1.0b4 (Unreleased)
+## 1.1.0 (2023-03-28)
 
 ### Features Added
 - API version `2022-12-01` is now the default for Phone Numbers clients.
 - Added support for SIP routing API version `2023-03-01`, releasing SIP routing functionality from public preview to GA.
 - Added environment variable `AZURE_TEST_DOMAIN` for SIP routing tests to support domain verification.
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Adds missing API version `2022-12-01` to the list of supported API versions.
 
 ### Other Changes
+- Changed list_routes and list_trunks functions on SIP routing client to return (Async)ItemPaged object.
 
 ## 1.1.0b3 (2023-01-10)
 - Users can now manage SIP configuration for Direct routing.
