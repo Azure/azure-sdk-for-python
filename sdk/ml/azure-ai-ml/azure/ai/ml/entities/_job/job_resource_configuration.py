@@ -50,6 +50,7 @@ class BaseProperty(dict):
 
     @classmethod
     def _to_dict(cls, obj: Any) -> Any:
+        # pylint: disable=protected-access
         if isinstance(obj, dict):
             need_key_mapping = getattr(obj, "_NEED_KEY_MAPPING", False)
             result = {}
