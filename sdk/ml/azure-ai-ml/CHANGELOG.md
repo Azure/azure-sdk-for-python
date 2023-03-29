@@ -5,7 +5,6 @@
 ### Features Added
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
 - Added support to make JobService and ServiceInstance objects serializable when printed
-- Added support for auto-token related run settings for internal Scope node in pipeline
 - Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
 
 ### Bugs Fixed
@@ -16,7 +15,7 @@
 
 ### Other Changes
 
--
+- 
 
 ## 1.5.0 (2023-03-20)
 
