@@ -33,13 +33,13 @@ class AsyncDownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    async def __aenter__(self) -> "AsyncDownloadBlobStream":
+    async def __aenter__(self: T) -> T:
         return self
 
     async def __aexit__(self, *args) -> None:
         return None
 
-    def __aiter__(self) -> "AsyncDownloadBlobStream":
+    def __aiter__(self: T) -> T:
         return self
 
     async def _yield_data(self) -> bytes:
@@ -54,7 +54,7 @@ class AsyncDownloadBlobStream(
             Tuple[AsyncIterator[bytes], Dict[str, str]],
             await self._next(range=range_header)
         )
-        self._downloaded += headers["Content-Length"]
+        self._downloaded += int(headers["Content-Length"])
         return next_chunk
 
     async def __anext__(self) -> bytes:
