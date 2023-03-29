@@ -52,7 +52,7 @@ class AsyncDownloadBlobStream(
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = cast(
             Tuple[AsyncIterator[bytes], Dict[str, str]],
-            await self._next(range=range_header)
+            await self._next(range=range_header) # type: ignore
         )
         self._downloaded += int(headers["Content-Length"])
         return next_chunk

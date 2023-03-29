@@ -1017,7 +1017,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 self._client.container_registry_blob.get_chunk,
                 name=repository,
                 digest=digest,
-                range="",
                 cls=_return_deserialized_and_headers,
                 **kwargs
             ),
