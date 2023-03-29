@@ -21,7 +21,7 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._do_while import do_while
 from azure.ai.ml import Input
 
-# TODO 2293610: add support for more types of outputs besides uri_folder and mltable 
+# TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 # Likely types that ought to be mergeable: string, int, uri_file
 MERGE_COMPONENT_MAPPING = {
     "mltable": create_scatter_output_table,
@@ -109,7 +109,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         self.scatter_gather_graph = self.scatter_gather()
 
         # set SG node flag for telemetry
-        self.scatter_gather_graph.properties["azureml.telemetry.attribute"] = "scatter-gather"
+        self.scatter_gather_graph.properties[
+            "azureml.telemetry.attribute"
+        ] = "scatter-gather"
 
         # set output to final aggregation step's output
         self._outputs = self.scatter_gather_graph.outputs
@@ -129,13 +131,12 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         )
 
     def scatter_gather(self):
-        
         @pipeline(
             name="Scatter gather",
             description="It includes all steps that need to be executed in silo and aggregation",
         )
         def scatter_gather_iteration_body(**silo_inputs):
-            '''
+            """
                 Performs a scatter-gather iteration by running copies of the silo step on different
             computes/datstores according to this node's silo configs. The outputs of these
             silo components are then merged by an internal helper component. The merged values
@@ -143,7 +144,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             Args:
                 silo_inputs (dict): A dictionary of names and Inputs to be injected into each executed silo step.
                     This dictionary is merged with silo-specific inputs before each executed.
-            '''
+            """
 
             silo_outputs = []
             # TODO 2293586 replace this for-loop with a parallel-for node
@@ -158,7 +159,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                     pipeline_step=executed_silo_component,
                     compute=silo_config.compute,
                     internal_datastore=silo_config.datastore,
-                    orchestrator_datastore=self.aggregation_datastore
+                    orchestrator_datastore=self.aggregation_datastore,
                 )
                 # add to silo outputs list
                 silo_outputs.append(executed_silo_component)
@@ -170,7 +171,10 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             # internal merge components
             agg_inputs = {}
             agg_inputs.update(self.aggregation_kwargs)
-            internal_merge_outputs = {self._get_aggregator_input_name(k): v.outputs.aggregated_output for k, v in merge_comp_mapping.items()}
+            internal_merge_outputs = {
+                self._get_aggregator_input_name(k): v.outputs.aggregated_output
+                for k, v in merge_comp_mapping.items()
+            }
             agg_inputs.update(internal_merge_outputs)
 
             # run the user aggregation step
@@ -178,61 +182,74 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             # Set mode of aggregated mltable inputs as eval mount to allow files referenced within the table
             # to be accessible by the component
             for name, agg_input in executed_aggregation_component.inputs.items():
-                if name in self.silo_to_aggregation_argument_map.keys() and agg_input.type == "mltable":
+                if (
+                    name in self.silo_to_aggregation_argument_map.keys()
+                    and agg_input.type == "mltable"
+                ):
                     agg_input.mode = "eval_download"
 
-            # Anchor both the internal merge components and the user-supplied aggregation step 
+            # Anchor both the internal merge components and the user-supplied aggregation step
             # to the aggregation compute and datastore
-            if self.aggregation_compute is not None and self.aggregation_datastore is not None:
+            if (
+                self.aggregation_compute is not None
+                and self.aggregation_datastore is not None
+            ):
                 # internal merge component is also siloed to wherever the aggregation component lives.
                 for executed_merge_component in merge_comp_mapping.values():
                     FLScatterGather._anchor_step(
                         pipeline_step=executed_merge_component,
                         compute=self.aggregation_compute,
                         internal_datastore=self.aggregation_datastore,
-                        orchestrator_datastore=self.aggregation_datastore
-                    )     
+                        orchestrator_datastore=self.aggregation_datastore,
+                    )
                 FLScatterGather._anchor_step(
                     pipeline_step=executed_aggregation_component,
                     compute=self.aggregation_compute,
                     internal_datastore=self.aggregation_datastore,
-                    orchestrator_datastore=self.aggregation_datastore
+                    orchestrator_datastore=self.aggregation_datastore,
                 )
             return executed_aggregation_component.outputs
-        
+
         @pipeline(name="Scatter gather graph")
         def create_scatter_gather_graph():
-            '''
-                Creates a scatter-gather graph by executing the scatter_gather_iteration_body
-                function in a do-while loop. The loop terminates when the user-supplied
-                termination condition is met.
-            '''
-            
+            """
+            Creates a scatter-gather graph by executing the scatter_gather_iteration_body
+            function in a do-while loop. The loop terminates when the user-supplied
+            termination condition is met.
+            """
+
             silo_inputs = {}
             # Start with static inputs
             silo_inputs.update(self.shared_silo_kwargs)
 
             # merge in inputs passed in from previous iteration's aggregate step)
             if self.aggregation_to_silo_argument_map is not None:
-                silo_inputs.update({v: None for v in self.aggregation_to_silo_argument_map.values()})
+                silo_inputs.update(
+                    {v: None for v in self.aggregation_to_silo_argument_map.values()}
+                )
 
             scatter_gather_body = scatter_gather_iteration_body(**silo_inputs)
-           
+
             # map aggregation outputs to scatter inputs
-            do_while_mapping = {k: getattr(scatter_gather_body.inputs, v) for k,v in self.aggregation_to_silo_argument_map.items()}
-            
+            do_while_mapping = {
+                k: getattr(scatter_gather_body.inputs, v)
+                for k, v in self.aggregation_to_silo_argument_map.items()
+            }
+
             do_while(
                 body=scatter_gather_body,
                 mapping=do_while_mapping,
                 max_iteration_count=self.max_iterations,
             )
             return scatter_gather_body.outputs
-        
+
         return create_scatter_gather_graph()
 
     # TODO potential set default fail_on_missing value to false
     @classmethod
-    def _extract_outputs(cls, component_output: Output, argument_map: Dict, fail_on_missing=False):
+    def _extract_outputs(
+        cls, component_output: Output, argument_map: Dict, fail_on_missing=False
+    ):
         """
             Pulls values from a component_output, as specified by the keys of the
         inputted argument_map, and groups in a new dictionary. The keys of the new dictionary
@@ -261,7 +278,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
     @classmethod
     def _get_fl_datastore_path(
-        cls, datastore_name: str, output_name: str, unique_id: str = "${{name}}", iteration_num: Optional[int] = None
+        cls,
+        datastore_name: str,
+        output_name: str,
+        unique_id: str = "${{name}}",
+        iteration_num: Optional[int] = None,
     ) -> str:
         """Construct a path string using the inputted values. The important aspect is that this produces a
         path with a specified datastore.
@@ -326,7 +347,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
         validation_result = cls._create_empty_validation_result()
         if not hasattr(output, "path") or not output.path:
-            output.path = cls._get_fl_datastore_path(target_datastore, name, iteration_num=iteration_num)
+            output.path = cls._get_fl_datastore_path(
+                target_datastore, name, iteration_num=iteration_num
+            )
         # Double check the path's datastore leads to the target if it's already set.
         elif not cls._check_datastore(output.path, target_datastore):
             validation_result.append_warning(
@@ -431,12 +454,17 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 if output.type in ANCHORABLE_OUTPUT_TYPES:
                     validation_result.merge_with(
                         cls._check_or_set_datastore(
-                            name=name, output=output, target_datastore=orchestrator_datastore, iteration_num=iteration
+                            name=name,
+                            output=output,
+                            target_datastore=orchestrator_datastore,
+                            iteration_num=iteration,
                         )
                     )
         else:
             # TODO revisit this and add support for anchoring more things
-            raise NotImplementedError(f"under path={_path}: step type={pipeline_step.type} is not supported")
+            raise NotImplementedError(
+                f"under path={_path}: step type={pipeline_step.type} is not supported"
+            )
 
         return validation_result
 
@@ -460,7 +488,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         max_iterations: int,
         raise_error=False,
     ) -> MutableValidationResult:
-
         validation_result = cls._create_empty_validation_result()
 
         # saved values for validation later on
@@ -471,7 +498,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         # validate silo component
         if silo_component is None:
             validation_result.append_error(
-                yaml_path="silo_component", message="silo_component is a required argument for the scatter gather node."
+                yaml_path="silo_component",
+                message="silo_component is a required argument for the scatter gather node.",
             )
         else:
             # ensure that silo component has both inputs and outputs
@@ -519,10 +547,14 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         # validate silos configs
         if silo_configs is None:
             validation_result.append_error(
-                yaml_path="silo_configs", message="silo_configs is a required argument for the scatter gather node."
+                yaml_path="silo_configs",
+                message="silo_configs is a required argument for the scatter gather node.",
             )
         elif len(silo_configs) == 0:
-            validation_result.append_error(yaml_path="silo_configs", message="silo_configs cannot be an empty list.")
+            validation_result.append_error(
+                yaml_path="silo_configs",
+                message="silo_configs cannot be an empty list.",
+            )
         else:
             first_silo = silo_configs[0]
             expected_inputs = []
@@ -643,7 +675,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
         if max_iterations < 1:
             validation_result.append_error(
-                yaml_path="max_iterations", message=f"max_iterations must be a positive value, not '{max_iterations}'."
+                yaml_path="max_iterations",
+                message=f"max_iterations must be a positive value, not '{max_iterations}'.",
             )
 
         return validation_result.try_raise(
@@ -653,7 +686,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
     @classmethod
     def _custom_fl_data_path(
-        cls, datastore_name, output_name, unique_id="${{name}}", iteration_num="${{iteration_num}}"
+        cls,
+        datastore_name,
+        output_name,
+        unique_id="${{name}}",
+        iteration_num="${{iteration_num}}",
     ):
         """Produces a path to store the data during FL training.
         Args:
@@ -679,7 +716,11 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
     @classmethod
     def _try_create_default_mappings(
-        cls, silo_comp: Component, agg_comp: Component, silo_agg_map: Dict, agg_silo_map: Dict
+        cls,
+        silo_comp: Component,
+        agg_comp: Component,
+        silo_agg_map: Dict,
+        agg_silo_map: Dict,
     ):
         """
         This function tries to produce dictionaries that link the silo and aggregation
@@ -709,10 +750,22 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         """
         if silo_comp is None or agg_comp is None:
             return silo_agg_map, agg_silo_map
-        if silo_agg_map is None and silo_comp.outputs is not None and agg_comp.inputs is not None:
-            silo_agg_map = {output: output for output in silo_comp.outputs.keys() if output in agg_comp.inputs}
+        if (
+            silo_agg_map is None
+            and silo_comp.outputs is not None
+            and agg_comp.inputs is not None
+        ):
+            silo_agg_map = {
+                output: output
+                for output in silo_comp.outputs.keys()
+                if output in agg_comp.inputs
+            }
         if agg_silo_map is None:
-            agg_silo_map = {output: output for output in agg_comp.outputs.keys() if output in silo_comp.inputs}
+            agg_silo_map = {
+                output: output
+                for output in agg_comp.outputs.keys()
+                if output in silo_comp.inputs
+            }
         return silo_agg_map, agg_silo_map
 
     @staticmethod
@@ -736,8 +789,13 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         executed_component = executed_silo_components[0]
 
         merge_comp_mapping = {}
-        for silo_output_argument_name, _ in self.silo_to_aggregation_argument_map.items():
-            merge_comp = self._get_merge_component(executed_component.outputs[silo_output_argument_name].type)
+        for (
+            silo_output_argument_name,
+            _,
+        ) in self.silo_to_aggregation_argument_map.items():
+            merge_comp = self._get_merge_component(
+                executed_component.outputs[silo_output_argument_name].type
+            )
             merge_component_inputs = {
                 silo_output_argument_name
                 + "_silo_"
@@ -747,7 +805,9 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             executed_merge_component = merge_comp(**merge_component_inputs)
             for input_obj in executed_merge_component.inputs.values():
                 input_obj.mode = "direct"
-            merge_comp_mapping.update({silo_output_argument_name: executed_merge_component})
+            merge_comp_mapping.update(
+                {silo_output_argument_name: executed_merge_component}
+            )
 
         return merge_comp_mapping
 

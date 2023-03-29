@@ -23,7 +23,9 @@ def save_mltable_yaml(path, mltable_paths):
     save_path = os.path.join(path, "MLTable")
     # Do not touch - this is MLTable syntax that is needed to mount these paths
     # To the MLTable's inputs
-    mltable_file_content = "\n".join(["paths:"] + [f"- folder : {path}" for path in mltable_paths])
+    mltable_file_content = "\n".join(
+        ["paths:"] + [f"- folder : {path}" for path in mltable_paths]
+    )
 
     with open(save_path, "w") as f:
         f.write(mltable_file_content)
