@@ -16,24 +16,13 @@ from ._models import (
     RemoveParticipantsResult
 )
 
-from ._shared.models import (
-    CommunicationIdentifier,
-    CommunicationUserIdentifier,
-    identifier_from_raw_id
-)
-
 from ._version import VERSION
 
 __all__ = [
     'CommunicationRoom',
     'ParticipantRole',
-    'ParticipantsCollection',
     'RoomsClient',
     'RoomParticipant',
-    'RoomsCollection',
-    "identifier_from_raw_id",
-    "CommunicationIdentifier",
-    "CommunicationUserIdentifier",
     "InvitedRoomParticipant",
     "UpsertParticipantsResult",
     "RemoveParticipantsResult"

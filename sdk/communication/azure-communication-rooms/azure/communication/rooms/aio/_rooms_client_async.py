@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from ast import Dict
 from datetime import datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 import uuid
 
 from azure.core.credentials import AzureKeyCredential
@@ -19,7 +19,6 @@ from azure.communication.rooms._models import (
     RemoveParticipantsResult)
 from azure.communication.rooms._shared.models import CommunicationIdentifier
 from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
-from azure.communication.rooms._utils import verify_datetime_format
 from .._generated.aio._client import AzureCommunicationRoomsService
 from .._shared.utils import parse_connection_str
 from .._version import SDK_MONIKER
@@ -119,23 +118,22 @@ class RoomsClient(object):
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        if verify_datetime_format(valid_from) and verify_datetime_format(valid_until):
-            create_room_request = CreateRoomRequest(
-                valid_from=valid_from,
-                valid_until=valid_until,
-                # pylint: disable=protected-access
-                participants=self._convert_room_participants_to_dictionary_for_upsert(participants)
-            )
+        create_room_request = CreateRoomRequest(
+            valid_from=valid_from,
+            valid_until=valid_until,
+            # pylint: disable=protected-access
+            participants=self._convert_room_participants_to_dictionary_for_upsert(participants)
+        )
 
-            repeatability_request_id = uuid.uuid1()
-            repeatability_first_sent = datetime.utcnow()
+        repeatability_request_id = uuid.uuid1()
+        repeatability_first_sent = datetime.utcnow()
 
-            create_room_response = await self._rooms_service_client.rooms.create(
-                create_room_request=create_room_request,
-                repeatability_request_id=repeatability_request_id,
-                repeatability_first_sent=repeatability_first_sent,
-                **kwargs)
-            return CommunicationRoom._from_room_response(create_room_response) # pylint: disable=protected-access
+        create_room_response = await self._rooms_service_client.rooms.create(
+            create_room_request=create_room_request,
+            repeatability_request_id=repeatability_request_id,
+            repeatability_first_sent=repeatability_first_sent,
+            **kwargs)
+        return CommunicationRoom._from_room_response(create_room_response) # pylint: disable=protected-access
 
     @distributed_trace_async
     async def delete_room(
@@ -177,14 +175,13 @@ class RoomsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         """
-        if verify_datetime_format(valid_from) and verify_datetime_format(valid_until):
-            update_room_request = UpdateRoomRequest(
-                valid_from=valid_from,
-                valid_until=valid_until,
-            )
-            update_room_response = await self._rooms_service_client.rooms.update(
-                room_id=room_id, patch_room_request=update_room_request, **kwargs)
-            return CommunicationRoom._from_room_response(update_room_response) # pylint: disable=protected-access
+        update_room_request = UpdateRoomRequest(
+            valid_from=valid_from,
+            valid_until=valid_until,
+        )
+        update_room_response = await self._rooms_service_client.rooms.update(
+            room_id=room_id, patch_room_request=update_room_request, **kwargs)
+        return CommunicationRoom._from_room_response(update_room_response) # pylint: disable=protected-access
 
     @distributed_trace_async
     async def get_room(

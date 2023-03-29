@@ -4,9 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Any, List, Optional, Union
-
-from azure.core.exceptions import DeserializationError
+from typing import Any, Optional, Union
 from .._generated.models import (
     RoomModel,
     ParticipantRole

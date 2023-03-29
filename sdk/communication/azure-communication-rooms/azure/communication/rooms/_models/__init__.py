@@ -19,5 +19,5 @@ __all__ = [
     "RoomParticipant",
     "InvitedRoomParticipant",
     "UpsertParticipantsResult",
-    "UpsertParticipantsResult"
+    "RemoveParticipantsResult"
 ]
