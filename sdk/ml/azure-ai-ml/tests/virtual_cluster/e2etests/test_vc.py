@@ -1,5 +1,3 @@
-import re
-
 import pytest
 from azure.identity import ClientSecretCredential
 from devtools_testutils import AzureRecordedTestCase
@@ -52,31 +50,30 @@ def virtual_cluster_client(virtual_cluster_id: str, auth: ClientSecretCredential
 
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.virtual_cluster_test
+@pytest.mark.e2etest
 class TestVirtualCluster(AzureRecordedTestCase):
-    @pytest.mark.e2etest
-    def test_get_and_list(self, client: MLClient) -> None:
+    def test_list(self, client: MLClient):
         vc_list = client._virtual_clusters.list()
-        assert len(vc_list) > 0
 
-        test_vc_name = "SingularityTestVC"
-        singularity_test_vc = [vc for vc in vc_list if vc["name"] == test_vc_name][0]
+        first_element = next(iter(vc_list), None)
+        assert first_element is not None, "should return a non-empty iterable"
+        # Currently returns a dict, should update when typing is made more precise
+        assert isinstance(first_element, dict), "should return an iterable of dict"
 
-        # Test get by ARM id
-        vc = client._virtual_clusters.get(singularity_test_vc["id"])
-        assert test_vc_name == vc["name"]
+    def test_get_by_id(self, client: MLClient, virtual_cluster_name: str, virtual_cluster_id: str):
+        # Can use an MLClient with arbitary scoping since it uses an id with full resource coordinates
+        vc = client._virtual_clusters.get(virtual_cluster_id)
+        assert vc["name"] == virtual_cluster_name
+        # Service returns ids with inconsistent casing, so temporarily do insensitive equality
+        assert vc["id"].lower() == virtual_cluster_id.lower()
 
-        # Test get by name
-        REGEX_PATTERN = "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.MachineLearningServices/virtualclusters/([^/]+)"
-        match = re.match(REGEX_PATTERN, singularity_test_vc["id"])
-        subscription_id = match.group(1)
-        resource_group_name = match.group(2)
-        vc_name = match.group(3)
+    def test_get_by_name(self, virtual_cluster_client: MLClient, virtual_cluster_name: str, virtual_cluster_id: str):
+        # Needs to use an MLClient scoped to the correct subscription and resource group
+        vc = virtual_cluster_client._virtual_clusters.get(virtual_cluster_name)
+        assert vc["name"] == virtual_cluster_name
+        # Service returns ids with inconsistent casing, so temporarily do insensitive equality
+        assert vc["id"].lower() == virtual_cluster_id.lower()
 
-        vc_get_client = MLClient(client._credential, subscription_id, resource_group_name)
-        vc = vc_get_client._virtual_clusters.get(vc_name)
-        assert test_vc_name == vc["name"]
-
-    @pytest.mark.e2etest
     def test_list_jobs(self, virtual_cluster_client: MLClient, virtual_cluster_name: str):
         job_iterable = virtual_cluster_client._virtual_clusters.list_jobs(virtual_cluster_name)
 
