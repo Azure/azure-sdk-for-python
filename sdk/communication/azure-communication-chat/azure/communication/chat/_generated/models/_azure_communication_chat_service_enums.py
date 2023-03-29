@@ -10,6 +10,12 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AttachmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of attachment."""
+
+    TEAMS_INLINE_IMAGE = "teamsInlineImage"
+
+
 class ChatMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The chat message type."""
 
@@ -31,5 +37,5 @@ class CommunicationCloudEnvironmentModel(str, Enum, metaclass=CaseInsensitiveEnu
 class PolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Retention Policy Type."""
 
-    BASED_ON_THREAD_CREATION_DATE = "basedOnThreadCreationDate"
+    THREAD_CREATION_DATE = "threadCreationDate"
     """Thread retention policy based on thread creation date."""

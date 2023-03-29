@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
 import urllib.parse
 
@@ -30,10 +29,6 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -47,9 +42,7 @@ def build_list_chat_read_receipts_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,9 +70,7 @@ def build_send_chat_read_receipt_request(chat_thread_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -106,9 +97,7 @@ def build_send_chat_message_request(chat_thread_id: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -141,9 +130,7 @@ def build_list_chat_messages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -171,9 +158,7 @@ def build_get_chat_message_request(chat_thread_id: str, chat_message_id: str, **
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -198,9 +183,7 @@ def build_update_chat_message_request(chat_thread_id: str, chat_message_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -228,9 +211,7 @@ def build_delete_chat_message_request(chat_thread_id: str, chat_message_id: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -257,9 +238,7 @@ def build_list_chat_participants_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -287,9 +266,7 @@ def build_remove_chat_participant_request(chat_thread_id: str, **kwargs: Any) ->
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -316,9 +293,7 @@ def build_add_chat_participants_request(chat_thread_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -345,9 +320,7 @@ def build_update_chat_thread_properties_request(chat_thread_id: str, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -374,9 +347,7 @@ def build_get_chat_thread_properties_request(chat_thread_id: str, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -400,9 +371,7 @@ def build_send_typing_notification_request(chat_thread_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-07-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-07-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -469,9 +438,7 @@ class ChatThreadOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatMessageReadReceiptsCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -657,9 +624,7 @@ class ChatThreadOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -798,9 +763,7 @@ class ChatThreadOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SendChatMessageResult] = kwargs.pop("cls", None)
 
@@ -876,9 +839,7 @@ class ChatThreadOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatMessagesCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1006,9 +967,7 @@ class ChatThreadOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatMessage] = kwargs.pop("cls", None)
 
         request = build_get_chat_message_request(
@@ -1153,9 +1112,7 @@ class ChatThreadOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1239,9 +1196,7 @@ class ChatThreadOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_chat_message_request(
@@ -1297,9 +1252,7 @@ class ChatThreadOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatParticipantsCollection] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1493,9 +1446,7 @@ class ChatThreadOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1639,9 +1590,7 @@ class ChatThreadOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AddChatParticipantsResult] = kwargs.pop("cls", None)
 
@@ -1785,9 +1734,7 @@ class ChatThreadOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1866,9 +1813,7 @@ class ChatThreadOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         cls: ClsType[_models.ChatThreadProperties] = kwargs.pop("cls", None)
 
         request = build_get_chat_thread_properties_request(
@@ -2007,9 +1952,7 @@ class ChatThreadOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-07-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 

@@ -8,7 +8,7 @@
 
 from ._models_py3 import AddChatParticipantsRequest
 from ._models_py3 import AddChatParticipantsResult
-from ._models_py3 import BasedOnThreadCreationDateRetentionPolicy
+from ._models_py3 import ChatAttachment
 from ._models_py3 import ChatError
 from ._models_py3 import ChatMessage
 from ._models_py3 import ChatMessageContent
@@ -32,9 +32,11 @@ from ._models_py3 import SendChatMessageRequest
 from ._models_py3 import SendChatMessageResult
 from ._models_py3 import SendReadReceiptRequest
 from ._models_py3 import SendTypingNotificationRequest
+from ._models_py3 import ThreadCreationDateRetentionPolicy
 from ._models_py3 import UpdateChatMessageRequest
 from ._models_py3 import UpdateChatThreadRequest
 
+from ._azure_communication_chat_service_enums import AttachmentType
 from ._azure_communication_chat_service_enums import ChatMessageType
 from ._azure_communication_chat_service_enums import CommunicationCloudEnvironmentModel
 from ._azure_communication_chat_service_enums import PolicyType
@@ -45,7 +47,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AddChatParticipantsRequest",
     "AddChatParticipantsResult",
-    "BasedOnThreadCreationDateRetentionPolicy",
+    "ChatAttachment",
     "ChatError",
     "ChatMessage",
     "ChatMessageContent",
@@ -69,8 +71,10 @@ __all__ = [
     "SendChatMessageResult",
     "SendReadReceiptRequest",
     "SendTypingNotificationRequest",
+    "ThreadCreationDateRetentionPolicy",
     "UpdateChatMessageRequest",
     "UpdateChatThreadRequest",
+    "AttachmentType",
     "ChatMessageType",
     "CommunicationCloudEnvironmentModel",
     "PolicyType",
