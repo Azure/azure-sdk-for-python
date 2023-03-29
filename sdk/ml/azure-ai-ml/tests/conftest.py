@@ -916,3 +916,22 @@ def federated_learning_local_data_folder() -> Path:
 def mock_set_headers_with_user_aml_token(mocker: MockFixture):
     if not is_live() or not is_live_and_not_recording():
         mocker.patch("azure.ai.ml.operations._job_operations.JobOperations._set_headers_with_user_aml_token")
+
+
+@pytest.fixture
+def singularity_compute_id(environment_variables, e2e_ws_scope: OperationScope) -> str:
+    # Singularity compute id contains information like subscription id and resource group,
+    # we prefer not exposing these to public, so make this a fixture.
+
+    # During local development, set ML_SINGULARITY_COMPUTE_ID in environment variables
+    # to configure Singularity compute.
+    singularity_compute_id_in_environ = environment_variables.get("ML_SINGULARITY_COMPUTE_ID")
+    if singularity_compute_id_in_environ is not None:
+        return singularity_compute_id_in_environ
+    # If not set, concatenate fake Singularity compute from subscription id and resource group name;
+    # note that this does not affect job submission, but the created pipeline job shall not complete.
+    #
+    return (
+        f"/subscriptions/{e2e_ws_scope.subscription_id}/resourceGroups/{e2e_ws_scope.resource_group_name}/"
+        f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
+    )
