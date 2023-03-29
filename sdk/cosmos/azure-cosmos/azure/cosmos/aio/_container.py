@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, Optional, Union, cast, Awaitable
+from typing import Any, Dict, Optional, Union, cast, Awaitable, List
 from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
@@ -525,20 +525,22 @@ class ContainerProxy(object):
     @distributed_trace_async
     async def patch_item(
         self,
-        item,  # type: Union[str, Dict[str, Any]]
-        partition_key,  # type: Dict[str, Any]
-        patch_operations,  # type: List[Dict[str, Any]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+        item: Union[str, Dict[str, Any]],
+        partition_key: Union[str, int, float, bool],
+        patch_operations: List[Dict[str, Any]],
+        **kwargs: Any
+    ) -> Dict[str, Any]:
         """ **Provisional method** Patches the specified item with the provided operations if it
          exists in the container.
 
         If the item does not already exist in the container, an exception is raised.
 
         :param item: The ID (name) or dict representing item to be patched.
+        :type item: Union[str, Dict[str, Any]]
         :param partition_key: The partition key of the object to patch.
+        :type partition_key: Union[str, int, float, bool]
         :param patch_operations: The list of patch operations to apply to the item.
+        :type patch_operations: List[Dict[str, Any]]
         :keyword str pre_trigger_include: trigger id to be used as pre operation trigger.
         :keyword str post_trigger_include: trigger id to be used as post operation trigger.
         :keyword str session_token: Token for use with Session consistency.
