@@ -3,6 +3,7 @@
 ## 1.1.0b3 (Unreleased)
 
 ### Features Added
+- Supported uploading and downding large OCI artifact blobs in synchronous and asynchronous `ContainerRegistryClient`.
 
 ### Breaking Changes
 - Suppress the response error with status code `404` in `delete_blob()`.
@@ -11,6 +12,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Published generated model `Annotation`, `Descriptor` and `OCIManifest`.
 
 ## 1.1.0b2 (2023-03-24)
 
@@ -28,7 +30,7 @@
 ## 1.1.0b1 (2022-05-10)
 
 ### Features Added
-- Supported uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`. ([#24004](https://github.com/Azure/azure-sdk-for-python/pull/24004))
+- Supported uploading and downloading OCI manifests and artifact blobs in synchronous `ContainerRegistryClient`.
 ### Other Changes
 
 - Fixed a spell error in a property of `RepositoryProperties` to `last_updated_on`.
