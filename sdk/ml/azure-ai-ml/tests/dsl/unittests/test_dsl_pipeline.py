@@ -3235,7 +3235,7 @@ class TestDSLPipeline:
         premium_high_node_dict = pipeline_job_dict["properties"]["jobs"]["premium_high_node"]
         assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
         assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
-        # more resources configured
+        # properties
         node_with_properties_dict = pipeline_job_dict["properties"]["jobs"]["node_with_properties"]
         assert node_with_properties_dict["resources"] == {
             "instance_count": 2,
