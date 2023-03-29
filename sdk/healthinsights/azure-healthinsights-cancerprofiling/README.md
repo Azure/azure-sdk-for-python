@@ -5,6 +5,7 @@
 The [Cancer Profiling model][cancer_profiling_docs] receives clinical records of oncology patients and outputs cancer staging, such as clinical stage TNM categories and pathologic stage TNM categories as well as tumor site, histology.
 
 
+[Source code][hi_source_code] | [Package (PyPI)][hi_pypi] | [API reference documentation][cancer_profiling_api_documentation] | [Product documentation][product_docs] | [Samples][hi_samples]
 
 ## Getting started
 
@@ -18,7 +19,7 @@ The [Cancer Profiling model][cancer_profiling_docs] receives clinical records of
 ### Install the package
 
 ```bash
-python -m pip install azure-healthinsights-cancerprofiling
+pip install azure-healthinsights-cancerprofiling
 ```
 
 This table shows the relationship between SDK versions and supported API versions of the service:
@@ -54,11 +55,14 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 Once you have the value for the API key, you can pass it as a string into an instance of **AzureKeyCredential**. Use the key as the credential parameter to authenticate the client:
 
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.cancerprofiling import CancerProfilingClient
+from azure.healthinsights.cancerprofiling.aio import CancerProfilingClient
 
-credential = AzureKeyCredential("<api_key>")
-client = CancerProfilingClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
+KEY = os.environ["HEALTHINSIGHTS_KEY"]
+ENDPOINT = os.environ["HEALTHINSIGHTS_ENDPOINT"]
+
+cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
 ```
 
 ### Long-Running Operations
@@ -78,28 +82,38 @@ The Cancer Profiling model allows you to infer cancer attributes such as tumor s
 
 ## Examples
 
-The following section (#cancer-profiling) provides code snippets that demonstrate usage of the CancerProfilingClient
-<!-- - See: [Cancer Profiling Samples][samples_location]-->
+The following section provides several code snippets covering some of the most common Health Insights - Cancer Profiling service tasks, including:
+- [Cancer Profiling](#cancer-profiling "Cancer Profiling")
 
 ### Cancer Profiling
 
 Infer key cancer attributes such as tumor site, histology, clinical stage TNM categories and pathologic stage TNM categories from a patient's unstructured clinical documents.
 
 ```python
+import asyncio
+import os
+import datetime
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.cancerprofiling.models import *
-from azure.healthinsights.cancerprofiling import CancerProfilingClient
+from azure.healthinsights.cancerprofiling.aio import CancerProfilingClient
+from azure.healthinsights.cancerprofiling import models
 
+KEY = os.environ["HEALTHINSIGHTS_KEY"]
+ENDPOINT = os.environ["HEALTHINSIGHTS_ENDPOINT"]
 
-KEY = os.getenv("HEALTHINSIGHTS_KEY") or "0"
-ENDPOINT = os.getenv("HEALTHINSIGHTS_ENDPOINT") or "0"
-
+# Create an Onco Phenotype client
+# <client>
 cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT,
                                                 credential=AzureKeyCredential(KEY))
+# </client>
 
-patient_info = PatientInfo(sex=PatientInfoSex.FEMALE, birth_date=datetime.date(1979, 10, 8))
-patient1 = PatientRecord(id="patient_id", info=patient_info)
+# Construct patient
+# <PatientConstructor>
+patient_info = models.PatientInfo(sex=models.PatientInfoSex.FEMALE, birth_date=datetime.date(1979, 10, 8))
+patient1 = models.PatientRecord(id="patient_id", info=patient_info)
+# </PatientConstructor>
 
+# Add document list
+# <DocumentList>
 doc_content1 = """
             15.8.2021
             Jane Doe 091175-8967
@@ -122,13 +136,14 @@ doc_content1 = """
             Findings are suggestive of a working diagnosis of pneumonia. The patient is referred to a
             follow-up CXR in 2 weeks."""
 
-patient_document1 = PatientDocument(type=DocumentType.NOTE,
-                                    id="doc1",
-                                    content=DocumentContent(source_type=DocumentContentSourceType.INLINE,
-                                                            value=doc_content1),
-                                    clinical_type=ClinicalDocumentType.IMAGING,
-                                    language="en",
-                                    created_date_time=datetime.datetime(2021, 8, 15))
+patient_document1 = models.PatientDocument(type=models.DocumentType.NOTE,
+                                           id="doc1",
+                                           content=models.DocumentContent(
+                                               source_type=models.DocumentContentSourceType.INLINE,
+                                               value=doc_content1),
+                                           clinical_type=models.ClinicalDocumentType.IMAGING,
+                                           language="en",
+                                           created_date_time=datetime.datetime(2021, 8, 15))
 
 doc_content2 = """
             Oncology Clinic
@@ -136,7 +151,7 @@ doc_content2 = """
             Jane Doe 091175-8967
             42-year-old healthy female who works as a nurse in the ER of this hospital.
             First menstruation at 11 years old. First delivery- 27 years old. She has 3 children.
-            Didn’t breastfeed.
+            Didn't breastfeed.
             Contraception- Mirena.
             Smoking- 10 pack years.
             Mother- Belarusian. Father- Georgian. 
@@ -158,13 +173,14 @@ doc_content2 = """
             Could benefit from biological therapy.
             Different treatment options were explained- the patient wants to get a second opinion."""
 
-patient_document2 = PatientDocument(type=DocumentType.NOTE,
-                                    id="doc2",
-                                    content=DocumentContent(source_type=DocumentContentSourceType.INLINE,
-                                                            value=doc_content2),
-                                    clinical_type=ClinicalDocumentType.PATHOLOGY,
-                                    language="en",
-                                    created_date_time=datetime.datetime(2021, 10, 20))
+patient_document2 = models.PatientDocument(type=models.DocumentType.NOTE,
+                                           id="doc2",
+                                           content=models.DocumentContent(
+                                               source_type=models.DocumentContentSourceType.INLINE,
+                                               value=doc_content2),
+                                           clinical_type=models.ClinicalDocumentType.PATHOLOGY,
+                                           language="en",
+                                           created_date_time=datetime.datetime(2021, 10, 20))
 
 doc_content3 = """
             PATHOLOGY REPORT
@@ -188,20 +204,45 @@ doc_content3 = """
             Blocks with invasive carcinoma:  A1
             Special studies: Pending"""
 
-patient_document3 = PatientDocument(type=DocumentType.NOTE,
-                                    id="doc3",
-                                    content=DocumentContent(source_type=DocumentContentSourceType.INLINE,
-                                                            value=doc_content3),
-                                    clinical_type=ClinicalDocumentType.PATHOLOGY,
-                                    language="en",
-                                    created_date_time=datetime.datetime(2022, 1, 1))
+patient_document3 = models.PatientDocument(type=models.DocumentType.NOTE,
+                                           id="doc3",
+                                           content=models.DocumentContent(
+                                               source_type=models.DocumentContentSourceType.INLINE,
+                                               value=doc_content3),
+                                           clinical_type=models.ClinicalDocumentType.PATHOLOGY,
+                                           language="en",
+                                           created_date_time=datetime.datetime(2022, 1, 1))
 
 patient_doc_list = [patient_document1, patient_document2, patient_document3]
 patient1.data = patient_doc_list
-    configuration = OncoPhenotypeModelConfiguration(include_evidence=True)
-cancer_profiling_data = OncoPhenotypeData(patients=[patient1], configuration=configuration)
+# <\DocumentList>
+
+# Set configuration to include evidence for the cancer staging inferences
+configuration = models.OncoPhenotypeModelConfiguration(include_evidence=True)
+
+# Construct the request with the patient and configuration
+cancer_profiling_data = models.OncoPhenotypeData(patients=[patient1], configuration=configuration)
 
 poller = await cancer_profiling_client.begin_infer_cancer_profile(cancer_profiling_data)
+cancer_profiling_result = await poller.result()
+if cancer_profiling_result.status == models.JobStatus.SUCCEEDED:
+    results = cancer_profiling_result.results
+    for patient_result in results.patients:
+        print(f"\n==== Inferences of Patient {patient_result.id} ====")
+        for inference in patient_result.inferences:
+            print(
+                f"\n=== Clinical Type: {str(inference.type)} Value: {inference.value}\
+                    ConfidenceScore: {inference.confidence_score} ===")
+            for evidence in inference.evidence:
+                data_evidence = evidence.patient_data_evidence
+                print(
+                    f"Evidence {data_evidence.id} {data_evidence.offset} {data_evidence.length}\
+                        {data_evidence.text}")
+else:
+    errors = cancer_profiling_result.errors
+    if errors is not None:
+        for error in errors:
+            print(f"{error.code} : {error.message}")
 ```
 
 ## Troubleshooting
@@ -254,8 +295,9 @@ additional questions or comments.
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
 [azure_cli]: https://learn.microsoft.com/cli/azure/
 [cancer_profiling_docs]: https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/oncophenotype/overview?branch=main
+[cancer_profiling_api_documentation]: https://review.learn.microsoft.com/rest/api/cognitiveservices/healthinsights/onco-phenotype?branch=healthin202303
+[hi_pypi]: https://pypi.org/project/azure-healthinsights-cancerprofiling/
+[product_docs]:https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/oncophenotype/?branch=main
 
-<!--
-[samples_location]: https://github.com/azure/azure-sdk-for-python/tree/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples
-[infer_cancer_profiling]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples/sample_infer_cancer_profiling.py
--->
+<!-- [hi_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples
+[hi_source_code]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/azure/healthinsights/cancerprofiling -->

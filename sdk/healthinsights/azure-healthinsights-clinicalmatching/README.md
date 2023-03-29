@@ -3,6 +3,7 @@
 [Health Insights](https://review.learn.microsoft.com/azure/azure-health-insights/?branch=release-azure-health-insights) is an Azure Applied AI Service built with the Azure Cognitive Services Framework, that leverages multiple Cognitive Services, Healthcare API services and other Azure resources.
 The [Clinical Matching model][clinical_matching_docs] receives patients data and clinical trials protocols, and provides relevant clinical trials based on eligibility criteria.
 
+[Source code][hi_source_code] | [Package (PyPI)][hi_pypi] | [API reference documentation][clinical_matching_api_documentation] | [Product documentation][product_docs] | [Samples][hi_samples]
 
 ## Getting started
 
@@ -16,14 +17,14 @@ The [Clinical Matching model][clinical_matching_docs] receives patients data and
 ### Install the package
 
 ```bash
-python -m pip install azure-healthinsights-clinicalmatching
+pip install azure-healthinsights-clinicalmatching
 ```
 
 This table shows the relationship between SDK versions and supported API versions of the service:
 
-|SDK version|Supported API version of service |
-|-------------|---------------|
-|1.0.0b1 | 2023-03-01-preview|
+| SDK version | Supported API version of service |
+|-------------|----------------------------------|
+| 1.0.0b1     | 2023-03-01-preview               |
 
 
 ### Authenticate the client
@@ -52,11 +53,14 @@ az cognitiveservices account keys list --resource-group <your-resource-group-nam
 Once you have the value for the API key, you can pass it as a string into an instance of **AzureKeyCredential**. Use the key as the credential parameter to authenticate the client:
 
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
 from azure.healthinsights.clinicalmatching import ClinicalMatchingClient
 
-credential = AzureKeyCredential("<api_key>")
-client = ClinicalMatchingClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
+KEY = os.environ["HEALTHINSIGHTS_KEY"]
+ENDPOINT = os.environ["HEALTHINSIGHTS_ENDPOINT"]
+
+trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
 ```
 
 ### Long-Running Operations
@@ -78,67 +82,95 @@ Trial Matcher provides the user of the services two main modes of operation: pat
 
 ## Examples
 
-<!--  
-[Match Trials - Find potential eligible trials for a patient (async)][match_trials_sample_async]
-[Match Trials - Find potential eligible trials for a patient (sync)][match_trials_sample_sync]
-[Match trials with FHIR data][sample_match_trials_fhir]
-[Match trials unstructured clinical note][sample_match_trials_unstructured_clinical_note]
- -->
+The following section provides several code snippets covering some of the most common Health Insights - Clinical Matching service tasks, including:
+
+- [Match trials](#match-trials "Match trials")
 
 ### Match trials
 
 Finding potential eligible trials for a patient.
 
 ```python
+import os
+import datetime
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.clinicalmatching import ClinicalMatchingClient
+from azure.healthinsights.clinicalmatching import ClinicalMatchingClient, models
 
-KEY = os.getenv("HEALTHINSIGHTS_KEY") or "0"
-ENDPOINT = os.getenv("HEALTHINSIGHTS_ENDPOINT") or "0"
+KEY = os.environ["HEALTHINSIGHTS_KEY"]
+ENDPOINT = os.environ["HEALTHINSIGHTS_ENDPOINT"]
 
+# Create a Trial Matcher client
+# <client>
 trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT,
                                               credential=AzureKeyCredential(KEY))
+# </client>
 
-clinical_info_list = [ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C0006826",
-                                            name="Malignant Neoplasms",
-                                            value="true"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C1522449",
-                                            name="Therapeutic radiology procedure",
-                                            value="true"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C1512162",
-                                            name="Eastern Cooperative Oncology Group",
-                                            value="1"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C0019693",
-                                            name="HIV Infections",
-                                            value="false"),
-                        ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
-                                            code="C1300072",
-                                            name="Tumor stage",
-                                            value="2")]
+# Create clinical info list
+# <clinicalInfo>
+clinical_info_list = [models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                                  code="C0032181",
+                                                  name="Platelet count",
+                                                  value="250000"),
+                      models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                                  code="C0002965",
+                                                  name="Unstable Angina",
+                                                  value="true"),
+                      models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                                  code="C1522449",
+                                                  name="Radiotherapy",
+                                                  value="false"),
+                      models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                                  code="C0242957",
+                                                  name="GeneOrProtein-Expression",
+                                                  value="Negative;EntityType:GENEORPROTEIN-EXPRESSION"),
+                      models.ClinicalCodedElement(system="http://www.nlm.nih.gov/research/umls",
+                                                  code="C1300072",
+                                                  name="cancer stage",
+                                                  value="2")]
 
-patient1 = self.get_patient_from_fhir_patient()
+# </clinicalInfo>
+
+# Construct Patient
+# <PatientConstructor>
+patient_info = models.PatientInfo(sex=models.PatientInfoSex.MALE, birth_date=datetime.date(1965, 12, 26),
+                                  clinical_info=clinical_info_list)
+patient1 = models.PatientRecord(id="patient_id", info=patient_info)
+# </PatientConstructor>
+
 # Create registry filter
-registry_filters = ClinicalTrialRegistryFilter()
+registry_filters = models.ClinicalTrialRegistryFilter()
 # Limit the trial to a specific patient condition ("Non-small cell lung cancer")
-registry_filters.conditions = ["Non-small cell lung cancer"]
-# Limit the clinical trial to a certain phase, phase 1
-registry_filters.phases = [ClinicalTrialPhase.PHASE1]
+registry_filters.conditions = ["non small cell lung cancer (nsclc)"]
 # Specify the clinical trial registry source as ClinicalTrials.Gov
-registry_filters.sources = [ClinicalTrialSource.CLINICALTRIALS_GOV]
+registry_filters.sources = [models.ClinicalTrialSource.CLINICALTRIALS_GOV]
 # Limit the clinical trial to a certain location, in this case California, USA
-registry_filters.facility_locations = [GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
-# Limit the trial to a specific study type, interventional
-registry_filters.study_types = [ClinicalTrialStudyType.INTERVENTIONAL]
+registry_filters.facility_locations = [
+    models.GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
+# Limit the trial to a specific recruitment status
+registry_filters.recruitment_statuses = [models.ClinicalTrialRecruitmentStatus.RECRUITING]
 
-clinical_trials = ClinicalTrials(registry_filters=[registry_filters])
-configuration = TrialMatcherModelConfiguration(clinical_trials=clinical_trials)
-trial_matcher_data = TrialMatcherData(patients=[patient1], configuration=configuration)
+# Construct ClinicalTrial instance and attach the registry filter to it.
+clinical_trials = models.ClinicalTrials(registry_filters=[registry_filters])
 
-poller = await trial_matcher_client.begin_match_trials(trial_matcher_data)
+# Create TrialMatcherRequest
+configuration = models.TrialMatcherModelConfiguration(clinical_trials=clinical_trials)
+trial_matcher_data = models.TrialMatcherData(patients=[patient1], configuration=configuration)
+
+poller = trial_matcher_client.begin_match_trials(trial_matcher_data)
+trial_matcher_result = poller.result()
+if trial_matcher_result.status == models.JobStatus.SUCCEEDED:
+    tm_results = trial_matcher_result.results
+    for patient_result in tm_results.patients:
+        print(f"Inferences of Patient {patient_result.id}")
+        for tm_inferences in patient_result.inferences:
+            print(f"Trial Id {tm_inferences.id}")
+            print(f"Type: {str(tm_inferences.type)}  Value: {tm_inferences.value}")
+            print(f"Description {tm_inferences.description}")
+else:
+    tm_errors = trial_matcher_result.errors
+    if tm_errors is not None:
+        for error in tm_errors:
+            print(f"{error.code} : {error.message}")
 ```
 
 ## Troubleshooting
@@ -192,10 +224,9 @@ additional questions or comments.
 [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
 [azure_cli]: https://learn.microsoft.com/cli/azure/
 [clinical_matching_docs]: https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/trial-matcher/overview?branch=main
+[hi_pypi]: https://pypi.org/project/azure-healthinsights-clinicalmatching/
+[product_docs]: https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/trial-matcher/?branch=main
+[clinical_matching_api_documentation]: https://review.learn.microsoft.com/rest/api/cognitiveservices/healthinsights/trial-matcher?branch=healthin202303
 
-<!--
-[match_trials_sample_async]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_structured_coded_elements.py
-[match_trials_sample_sync]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_structured_coded_elements_sync.py
-[sample_match_trials_fhir]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_fhir.py
-[sample_match_trials_unstructured_clinical_note]: https://github.com/Azure/azure-sdk-for-java/tree/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_unstructured_clinical_note.py
--->
+<!-- [hi_samples]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples
+[hi_source_code]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/healthinsights/clinicalmatching -->

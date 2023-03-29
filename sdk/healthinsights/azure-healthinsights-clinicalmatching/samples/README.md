@@ -18,15 +18,12 @@ These sample programs show common scenarios for the Health Insights Clinical Mat
 |**File Name**|**Description**|
 |----------------|-------------|
 <!--
-|[sample_match_trials_fhir.py][sample_match_trials_fhir] |Match trials fhir.|
-|[sample_match_trials_structured_coded_elements.py][sample_match_trials_structured_coded_elements] |Match trials structured coded elements.|
-|[sample_match_trials_structured_coded_elements_sync.py][sample_match_trials_structured_coded_elements_sync] |Match trials structured coded elements sync.|
-|[sample_match_trials_unstructured_clinical_note.py][sample_match_trials_unstructured_clinical_note] |Match trials unstructured clinical note.|
+|[sample_match_trials_fhir.py][sample_match_trials_fhir] and [sample_match_trials_fhir_async.py][sample_match_trials_fhir_async]|Match trials fhir.|
+|[sample_match_trials_structured_coded_elements.py][sample_match_trials_structured_coded_elements] and [sample_match_trials_structured_coded_elements_async.py][sample_match_trials_structured_coded_elements_async] |Match trials structured coded elements.|
 -->
 
 ## Prerequisites
 * Python 3.7 or later is required to use this package.
-* The Pandas data analysis library.
 * You must have an [Azure subscription][azure_subscription] and an [Azure Health Insights account][azure_healthinsights_account] to run these samples.
 
 ## Setup
@@ -54,9 +51,10 @@ what you can do with the Health Insights client library.
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/cognitive-services
 <!---
-[azure_healthinsights_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
-[sample_match_trials_fhir]: https://github.com/Azure/azure-sdk-for-python-pr/blob/feature/reutgross/sdk_python/sdk/healthdecisionsupport/azure-ai-healthdecisionsupport/samples/sample_match_trials_fhir.py
-[sample_match_trials_structured_coded_elements]: https://github.com/Azure/azure-sdk-for-python-pr/blob/feature/reutgross/sdk_python/sdk/healthdecisionsupport/azure-ai-healthdecisionsupport/samples/sample_match_trials_structured_coded_elements.py
-[sample_match_trials_structured_coded_elements_sync]: https://github.com/Azure/azure-sdk-for-python-pr/blob/feature/reutgross/sdk_python/sdk/healthdecisionsupport/azure-ai-healthdecisionsupport/samples/sample_match_trials_structured_coded_elements_sync.py
-[sample_match_trials_unstructured_clinical_note]: https://github.com/Azure/azure-sdk-for-python-pr/blob/feature/reutgross/sdk_python/sdk/healthdecisionsupport/azure-ai-healthdecisionsupport/samples/sample_match_trials_unstructured_clinical_note.py
+[azure_healthinsights_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
+[sample_match_trials_fhir]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_fhir.py
+[sample_match_trials_fhir_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/async_samples/sample_match_trials_fhir_async.py
+[sample_match_trials_structured_coded_elements]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/sample_match_trials_structured_coded_elements.py
+[sample_match_trials_structured_coded_elements_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-clinicalmatching/samples/async_samples/sample_match_trials_structured_coded_elements_async.py
+
 -->

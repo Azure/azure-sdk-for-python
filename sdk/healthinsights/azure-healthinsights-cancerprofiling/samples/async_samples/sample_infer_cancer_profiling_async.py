@@ -1,14 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import asyncio
 import os
 import datetime
 
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.cancerprofiling import CancerProfilingClient, models
+from azure.healthinsights.cancerprofiling.aio import CancerProfilingClient
+from azure.healthinsights.cancerprofiling import models
 
 """
-FILE: sample_infer_cancer_profiling.py
+FILE: sample_infer_cancer_profiling_async.py
 
 DESCRIPTION:
     Infer key cancer attributes such as tumor site, histology, clinical stage TNM categories and pathologic stage TNM 
@@ -20,7 +22,7 @@ DESCRIPTION:
 
 
 USAGE:
-    python sample_infer_cancer_profiling.py
+    python sample_infer_cancer_profiling_async.py
 
     Set the environment variables with your own values before running the sample:
     1) HEALTHINSIGHTS_KEY - your source from Health Insights API key.
@@ -29,7 +31,7 @@ USAGE:
 
 
 class HealthInsightsSamples:
-    def infer_cancer_profiling(self) -> None:
+    async def infer_cancer_profiling_async(self) -> None:
         KEY = os.environ["HEALTHINSIGHTS_KEY"]
         ENDPOINT = os.environ["HEALTHINSIGHTS_ENDPOINT"]
 
@@ -158,8 +160,8 @@ class HealthInsightsSamples:
 
         # Health Insights Infer Oncology Phenotyping
         try:
-            poller = cancer_profiling_client.begin_infer_cancer_profile(cancer_profiling_data)
-            cancer_profiling_result = poller.result()
+            poller = await cancer_profiling_client.begin_infer_cancer_profile(cancer_profiling_data)
+            cancer_profiling_result = await poller.result()
             self.print_inferences(cancer_profiling_result)
         except Exception as ex:
             print(str(ex))
@@ -188,6 +190,10 @@ class HealthInsightsSamples:
                     print(f"{error.code} : {error.message}")
 
 
-if __name__ == "__main__":
+async def main():
     sample = HealthInsightsSamples()
-    sample.infer_cancer_profiling()
+    await sample.infer_cancer_profiling_async()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

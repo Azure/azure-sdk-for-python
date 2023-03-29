@@ -1,14 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import asyncio
 import os
 import datetime
 
 from azure.core.credentials import AzureKeyCredential
-from azure.healthinsights.clinicalmatching import ClinicalMatchingClient, models
+from azure.healthinsights.clinicalmatching.aio import ClinicalMatchingClient
+from azure.healthinsights.clinicalmatching import models
 
 """
-FILE: sample_match_trials_fhir.py
+FILE: sample_match_trials_fhir_async.py
 
 DESCRIPTION:
     Trial Eligibility Assessment for a Custom Trial.
@@ -19,12 +21,12 @@ DESCRIPTION:
     the Trial Matcher. 
 
     In this use case, the patient clinical information is provided to the Trial Matcher as a FHIR bundle. 
-    Note that the Trial Matcher configuration include reference to the FHIR Server where the patient FHIR bundle is
+    Note that the Trial Matcher configuration include reference to the FHIR Server where the patient FHIR bundle is 
     located.
 
 
 USAGE:
-    python sample_match_trials_fhir.py
+    python sample_match_trials_fhir_async.py
 
     Set the environment variables with your own values before running the sample:
     1) HEALTHINSIGHTS_KEY - your source from Health Insights API key.
@@ -33,11 +35,11 @@ USAGE:
 
 
 class HealthInsightsSamples:
-    def match_trials(self) -> None:
+    async def match_trials_async(self) -> None:
         KEY = os.environ["HEALTHINSIGHTS_KEY"]
         ENDPOINT = os.environ["HEALTHINSIGHTS_ENDPOINT"]
 
-        # Create a Trial Matcher client
+        # Create aTrial Matcher client
         # <client>
         trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT,
                                                       credential=AzureKeyCredential(KEY))
@@ -57,8 +59,9 @@ class HealthInsightsSamples:
         # Specify the clinical trial registry source as ClinicalTrials.Gov
         registry_filters.sources = [models.ClinicalTrialSource.CLINICALTRIALS_GOV]
         # Limit the clinical trial to a certain location, in this case California, USA
-        registry_filters.facility_locations = [
-            models.GeographicLocation(country_or_region="United States", city="Gilbert", state="Arizona")]
+        registry_filters.facility_locations = [models.GeographicLocation(country_or_region="United States",
+                                                                         city="Gilbert",
+                                                                         state="Arizona")]
         # Limit the trial to a specific study type, interventional
         registry_filters.study_types = [models.ClinicalTrialStudyType.INTERVENTIONAL]
 
@@ -71,8 +74,8 @@ class HealthInsightsSamples:
 
         # Health Insights Trial match trials
         try:
-            poller = trial_matcher_client.begin_match_trials(trial_matcher_data)
-            trial_matcher_result = poller.result()
+            poller = await trial_matcher_client.begin_match_trials(trial_matcher_data)
+            trial_matcher_result = await poller.result()
             self.print_results(trial_matcher_result)
         except Exception as ex:
             print(str(ex))
@@ -108,12 +111,16 @@ class HealthInsightsSamples:
     @staticmethod
     def get_patient_doc_content() -> str:
         samples_dir = os.path.dirname(os.path.realpath(__file__))
-        data_location = os.path.join(samples_dir, "sample_data/match_trial_fhir_data.json")
+        data_location = os.path.join(samples_dir, "../sample_data/match_trial_fhir_data.json")
         with open(data_location, 'r', encoding='utf-8-sig') as f:
             content = f.read()
         return content
 
 
-if __name__ == "__main__":
+async def main():
     sample = HealthInsightsSamples()
-    sample.match_trials()
+    await sample.match_trials_async()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

@@ -17,11 +17,10 @@ These sample programs show common scenarios for the Health Insights Cancer Profi
 
 |**File Name**|**Description**|
 |----------------|-------------|
-|[sample_infer_cancer_profiling.py][sample_infer_cancer_profiling] |Infer cancer profiling.|
+|[sample_infer_cancer_profiling.py][sample_infer_cancer_profiling] and [sample_infer_cancer_profiling_async.py][sample_infer_cancer_profiling_async]|Infer cancer profiling.|
 
 ## Prerequisites
 * Python 3.7 or later is required to use this package.
-* The Pandas data analysis library.
 * You must have an [Azure subscription][azure_subscription] and an [Azure Health Insights account][azure_healthinsights_account] to run these samples.
 
 ## Setup
@@ -49,6 +48,7 @@ what you can do with the Health Insights client library.
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/cognitive-services
 <!---
-[azure_healthinsights_account]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
-[sample_infer_cancer_profiling]: https://github.com/Azure/azure-sdk-for-python-pr/blob/feature/reutgross/sdk_python/sdk/healthdecisionsupport/azure-ai-healthdecisionsupport/samples/sample_infer_cancer_profiling.py
+[azure_healthinsights_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
+[sample_infer_cancer_profiling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples/sample_infer_cancer_profiling.py
+[sample_infer_cancer_profiling_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples/async_samples/sample_infer_cancer_profiling_async.py
 -->
