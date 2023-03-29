@@ -11,7 +11,7 @@ import sys
 import logging
 import threading
 import urllib.parse
-import websocket  # type: ignore
+import websocket  # pylint: disable=import-error
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.policies import RetryMode
 
@@ -59,7 +59,7 @@ class WebPubSubClientCredential:
         ...
 
     @overload
-    def __init__(self, client_access_url_provider: Callable[[Any], str]) -> None:
+    def __init__(self, client_access_url_provider: Callable[[], str]) -> None:
         ...
 
     def __init__(self, client_access_url_provider: Union[str, Callable]) -> None:
@@ -272,7 +272,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         event_name: str,
         content: Any,
-        data_type: WebPubSubDataType,
+        data_type: Union[WebPubSubDataType, str],
         **kwargs: Any,
     ) -> None:
         """Send custom event to server
@@ -281,7 +281,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :param content: The data content. Required.
         :type content: Any.
         :param data_type: The data type. Required.
-        :type data_type: Any.
+        :type data_type: Union[WebPubSubDataType, str].
         :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage
          will be returned from the service.
@@ -310,7 +310,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self,
         group_name: str,
         content: Any,
-        data_type: WebPubSubDataType,
+        data_type: Union[WebPubSubDataType, str],
         **kwargs: Any,
     ) -> None:
         """Send message to group.
@@ -357,7 +357,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 _LOGGER.debug("will retry %sth times after %s seconds", retry_attempt, delay_seconds)
                 delay(delay_seconds)
 
-    def _call_back(self, callback_type: CallBackType, *args):
+    def _call_back(self, callback_type: Union[CallBackType, str], *args):
         for func in self._handler[callback_type]:
             # _call_back works in listener thread which must not be blocked so we have to execute the func
             # in new thread to avoid dead lock
@@ -402,14 +402,17 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._state = WebPubSubClientState.DISCONNECTED
         self._call_back(
             CallBackType.DISCONNECTED,
-            OnDisconnectedArgs(connection_id=self._connection_id, message=self._last_disconnected_message),
+            OnDisconnectedArgs(
+                connection_id=self._connection_id,
+                message=self._last_disconnected_message.message if self._last_disconnected_message else None,
+            ),
         )
         if self._auto_reconnect:
             self._handle_auto_reconnect()
         else:
             self._handle_connection_stopped()
 
-    def _build_recovery_url(self):
+    def _build_recovery_url(self) -> Union[str, None]:
         if self._connection_id and self._reconnection_token and self._url:
             params = {"awps_connection_id": self._connection_id, "awps_reconnection_token": self._reconnection_token}
             url_parse = urllib.parse.urlparse(self._url)
@@ -418,7 +421,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             new_query = urllib.parse.urlencode(url_dict)
             url_parse = url_parse._replace(query=new_query)
             new_url = urllib.parse.urlunparse(url_parse)
-            return new_url
+            return str(new_url)
         return None
 
     def _is_connected(self) -> bool:
@@ -602,7 +605,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 while self._is_connected():
                     try:
                         is_updated, seq_id = self._sequence_id.try_get_sequence_id()
-                        if is_updated:
+                        if is_updated and seq_id is not None:
                             self._send_message(SequenceAckMessage(sequence_id=seq_id))
                     finally:
                         delay(1.0)
@@ -669,7 +672,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         _LOGGER.info("stop client successfully")
 
     @overload
-    def on(self, event: Literal[CallBackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:
+    def on(
+        self, event: Union[Literal[CallBackType.CONNECTED], str], listener: Callable[[OnConnectedArgs], None]
+    ) -> None:
         """Add handler for connected event.
         :param event: The event name. Required.
         :type event: str
@@ -678,7 +683,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def on(self, event: Literal[CallBackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]) -> None:
+    def on(
+        self, event: Union[Literal[CallBackType.DISCONNECTED], str], listener: Callable[[OnDisconnectedArgs], None]
+    ) -> None:
         """Add handler for disconnected event.
         :param event: The event name. Required.
         :type event: str
@@ -687,7 +694,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def on(self, event: Literal[CallBackType.STOPPED], listener: Callable[[], None]) -> None:
+    def on(self, event: Union[Literal[CallBackType.STOPPED], str], listener: Callable[[], None]) -> None:
         """Add handler for stopped event.
         :param event: The event name. Required.
         :type event: str
@@ -697,7 +704,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def on(
-        self, event: Literal[CallBackType.SERVER_MESSAGE], listener: Callable[[OnServerDataMessageArgs], None]
+        self,
+        event: Union[Literal[CallBackType.SERVER_MESSAGE], str],
+        listener: Callable[[OnServerDataMessageArgs], None],
     ) -> None:
         """Add handler for server messages.
         :param event: The event name. Required.
@@ -708,7 +717,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def on(
-        self, event: Literal[CallBackType.GROUP_MESSAGE], listener: Callable[[OnGroupDataMessageArgs], None]
+        self, event: Union[Literal[CallBackType.GROUP_MESSAGE], str], listener: Callable[[OnGroupDataMessageArgs], None]
     ) -> None:
         """Add handler for group messages.
         :param event: The event name. Required.
@@ -719,7 +728,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def on(
-        self, event: Literal[CallBackType.REJOIN_GROUP_FAILED], listener: Callable[[OnRejoinGroupFailedArgs], None]
+        self,
+        event: Union[Literal[CallBackType.REJOIN_GROUP_FAILED], str],
+        listener: Callable[[OnRejoinGroupFailedArgs], None],
     ) -> None:
         """Add handler for rejoining group failed.
         :param event: The event name. Required.
@@ -729,14 +740,18 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @distributed_trace
-    def on(self, event: CallBackType, listener: Callable) -> None:
+    def on(
+        self, event: Union[CallBackType, str], listener: Callable, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         if event in self._handler:
             self._handler[event].append(listener)
         else:
             _LOGGER.error("wrong event type: %s", event)
 
     @overload
-    def off(self, event: Literal[CallBackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:
+    def off(
+        self, event: Union[Literal[CallBackType.CONNECTED], str], listener: Callable[[OnConnectedArgs], None]
+    ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
         :type event: str
@@ -745,7 +760,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def off(self, event: Literal[CallBackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]) -> None:
+    def off(
+        self, event: Union[Literal[CallBackType.DISCONNECTED], str], listener: Callable[[OnDisconnectedArgs], None]
+    ) -> None:
         """Remove handler for connected event.
         :param event: The event name. Required.
         :type event: str
@@ -754,7 +771,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @overload
-    def off(self, event: Literal[CallBackType.STOPPED], listener: Callable[[], None]) -> None:
+    def off(self, event: Union[Literal[CallBackType.STOPPED], str], listener: Callable[[], None]) -> None:
         """Remove handler for stopped event.
         :param event: The event name. Required.
         :type event: str
@@ -764,7 +781,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def off(
-        self, event: Literal[CallBackType.SERVER_MESSAGE], listener: Callable[[OnServerDataMessageArgs], None]
+        self,
+        event: Union[Literal[CallBackType.SERVER_MESSAGE], str],
+        listener: Callable[[OnServerDataMessageArgs], None],
     ) -> None:
         """Remove handler for server message.
         :param event: The event name. Required.
@@ -775,7 +794,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def off(
-        self, event: Literal[CallBackType.GROUP_MESSAGE], listener: Callable[[OnGroupDataMessageArgs], None]
+        self, event: Union[Literal[CallBackType.GROUP_MESSAGE], str], listener: Callable[[OnGroupDataMessageArgs], None]
     ) -> None:
         """Remove handler for group message.
         :param event: The event name. Required.
@@ -786,7 +805,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def off(
-        self, event: Literal[CallBackType.REJOIN_GROUP_FAILED], listener: Callable[[OnRejoinGroupFailedArgs], None]
+        self,
+        event: Union[Literal[CallBackType.REJOIN_GROUP_FAILED], str],
+        listener: Callable[[OnRejoinGroupFailedArgs], None],
     ) -> None:
         """Remove handler for rejoining group failed.
         :param event: The event name. Required.
@@ -796,7 +817,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """
 
     @distributed_trace
-    def off(self, event: CallBackType, listener: Callable) -> None:
+    def off(
+        self, event: Union[CallBackType, str], listener: Callable, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
         if event in self._handler:
             if listener in self._handler[event]:
                 self._handler[event].remove(listener)
