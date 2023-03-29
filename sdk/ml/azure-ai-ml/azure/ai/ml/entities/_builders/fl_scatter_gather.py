@@ -16,10 +16,11 @@ from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._validation import MutableValidationResult
-from .subcomponents import create_scatter_output_table
-from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._do_while import do_while
-from azure.ai.ml import Input
+from azure.ai.ml.dsl import pipeline
+from .subcomponents import create_scatter_output_table
+
+
 
 # TODO 2293610: add support for more types of outputs besides uri_folder and mltable
 # Likely types that ought to be mergeable: string, int, uri_file
@@ -148,8 +149,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
 
             silo_outputs = []
             # TODO 2293586 replace this for-loop with a parallel-for node
-            for i in range(len(self.silo_configs)):
-                silo_config = self.silo_configs[i]
+            for silo_config in self.silo_configs:
                 silo_inputs.update(silo_config.inputs)
                 executed_silo_component = self.silo_component(**silo_inputs)
                 for v, k in executed_silo_component.inputs.items():
@@ -210,7 +210,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 )
             return executed_aggregation_component.outputs
 
-        @pipeline(name="Scatter gather graph")
         def create_scatter_gather_graph():
             """
             Creates a scatter-gather graph by executing the scatter_gather_iteration_body
@@ -241,7 +240,7 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
                 mapping=do_while_mapping,
                 max_iteration_count=self.max_iterations,
             )
-            return scatter_gather_body.outputs
+            return scatter_gather_body
 
         return create_scatter_gather_graph()
 
