@@ -16,7 +16,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._hub.lean import _LeanWorkspace
+from azure.ai.ml.entities._hub.lean import LeanWorkspace
 
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities._hub._constants import LEAN_KIND
@@ -52,27 +52,27 @@ class LeanOperations(WorkspaceOperationsBase):
         )
 
     # @monitor_with_activity(logger, "Lean.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[_LeanWorkspace]:
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[LeanWorkspace]:
         """List all lean workspaces that the user has access to in the current
         resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
-        :return: An iterator like instance of _LeanWorkspace objects
-        :rtype: ~azure.core.paging.ItemPaged[_LeanWorkspace]
+        :return: An iterator like instance of LeanWorkspace objects
+        :rtype: ~azure.core.paging.ItemPaged[LeanWorkspace]
         """
 
         if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
                 cls=lambda objs: [
-                    _LeanWorkspace._from_rest_object(filterObj)
+                    LeanWorkspace._from_rest_object(filterObj)
                     for filterObj in filter(lambda ws: ws.kind.lower() == LEAN_KIND, objs)
                 ]
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
-                _LeanWorkspace._from_rest_object(filterObj)
+                LeanWorkspace._from_rest_object(filterObj)
                 for filterObj in filter(lambda ws: ws.kind.lower() == LEAN_KIND, objs)
             ],
         )
@@ -80,20 +80,20 @@ class LeanOperations(WorkspaceOperationsBase):
     # @monitor_with_activity(logger, "Lean.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Dict) -> _LeanWorkspace:
+    def get(self, name: str, **kwargs: Dict) -> LeanWorkspace:
         """Get a Lean workspace by name.
 
         :param name: Name of the lean workspace.
         :type name: str
         :return: The lean workspace with the provided name.
-        :rtype: _LeanWorkspace
+        :rtype: LeanWorkspace
         """
 
         Lean_workspace = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == LEAN_KIND:
-            Lean_workspace = _LeanWorkspace._from_rest_object(rest_workspace_obj)
+            Lean_workspace = LeanWorkspace._from_rest_object(rest_workspace_obj)
 
         return Lean_workspace
 
@@ -102,19 +102,19 @@ class LeanOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-differ
     def begin_create(
         self,
-        Lean: _LeanWorkspace,
+        Lean: LeanWorkspace,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller[_LeanWorkspace]:
+    ) -> LROPoller[LeanWorkspace]:
         """Create a new Lean workspace.
 
         Returns the Lean workspace if already exists.
 
         :param Lean: Lean workspace definition.
-        :type Lean: _LeanWorkspace
+        :type Lean: LeanWorkspace
         :type update_dependent_resources: boolean
-        :return: An instance of LROPoller that returns a _LeanWorkspace.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._LeanWorkspace]
+        :return: An instance of LROPoller that returns a LeanWorkspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.LeanWorkspace]
         """
 
         def get_callback():
@@ -132,15 +132,15 @@ class LeanOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-renamed
     def begin_update(
         self,
-        Lean: _LeanWorkspace,
+        Lean: LeanWorkspace,
         **kwargs: Dict,
-    ) -> LROPoller[_LeanWorkspace]:
+    ) -> LROPoller[LeanWorkspace]:
         """Update friendly name, description, tags, of a Lean workspace.
 
         :param Lean: Lean resource.
-        :type Lean: _LeanWorkspace
-        :return: An instance of LROPoller that returns a _LeanWorkspace.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities._LeanWorkspace]
+        :type Lean: LeanWorkspace
+        :return: An instance of LROPoller that returns a LeanWorkspace.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.LeanWorkspace]
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, Lean.name)
@@ -150,7 +150,7 @@ class LeanOperations(WorkspaceOperationsBase):
             raise ValidationError("{0} is not a Lean workspace".format(Lean.name))
 
         def deserialize_callback(rest_obj):
-            return _LeanWorkspace._from_rest_object(rest_obj=rest_obj)
+            return LeanWorkspace._from_rest_object(rest_obj=rest_obj)
 
         return super().begin_update(
             workspace=Lean,

@@ -78,7 +78,7 @@ from azure.ai.ml.entities import (
     OnlineDeployment,
     OnlineEndpoint,
     Registry,
-    Workspace,
+    Workspace
 )
 from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -97,6 +97,8 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    HubOperations,
+    LeanOperations
 )
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -333,6 +335,13 @@ class MLClient:
             **kwargs,
         )
 
+        self._service_client_04_2023_preview = ServiceClient042023Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._rp_service_client,
@@ -530,10 +539,29 @@ class MLClient:
             self._operation_scope, self._operation_config, self._service_client_02_2023_preview, **ops_kwargs
         )
 
+        self._hubs = HubOperations(
+             self._operation_scope,
+            self._service_client_04_2023_preview,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.HUB_WORKSPACE, self._hubs)
+
+        self._leans = LeanOperations(
+             self._operation_scope,
+            self._service_client_04_2023_preview,
+            self._operation_container,
+            self._credential,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.LEAN_WORKSPACE, self._leans)
+
         if is_private_preview_enabled():
             self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
             self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
             self._operation_container.add(AzureMLResourceType.FEATURE_STORE_ENTITY, self._featurestoreentities)
+
 
     @classmethod
     def from_config(
@@ -692,6 +720,22 @@ class MLClient:
         if is_private_preview_enabled():
             return self._featurestoreentities
         raise Exception("feature store entity operations not supported")
+
+    @property
+    def hubs(self) -> HubOperations:
+        """A collection of hub related operations.
+        :return: Hub operations
+        :rtype: HubOperations
+        """
+        return self._hubs
+    
+    @property
+    def leans(self) -> LeanOperations:
+        """A collection of hub related operations.
+        :return: Hub operations
+        :rtype: HubOperations
+        """
+        return self._leans
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:

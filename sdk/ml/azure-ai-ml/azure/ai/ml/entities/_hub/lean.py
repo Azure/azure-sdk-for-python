@@ -20,10 +20,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 
 from ._constants import LEAN_KIND
 
-
-
-@experimental
-class _LeanWorkspace(Workspace):
+class LeanWorkspace(Workspace):
     def __init__(
         self,
         *,
@@ -86,13 +83,13 @@ class _LeanWorkspace(Workspace):
         self.identity = identity
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "_LeanWorkspace":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "LeanWorkspace":
         if not rest_obj:
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
 
-        return _LeanWorkspace(
+        return LeanWorkspace(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
@@ -112,7 +109,7 @@ class _LeanWorkspace(Workspace):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "_LeanWorkspace":
+    ) -> "LeanWorkspace":
         data = data or {}
         params_override = params_override or []
         context = {
@@ -120,8 +117,8 @@ class _LeanWorkspace(Workspace):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(LeanSchema, data, context, **kwargs)
-        return _LeanWorkspace(**loaded_schema)
+        return LeanWorkspace(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return _LeanWorkspace(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return LeanWorkspace(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

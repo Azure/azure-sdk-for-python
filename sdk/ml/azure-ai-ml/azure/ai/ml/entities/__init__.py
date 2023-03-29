@@ -155,6 +155,9 @@ from ._assets._artifacts._package.model_package import (
 )
 
 
+from ._hub.hub import HubWorkspace
+from ._hub.lean import LeanWorkspace
+
 from ._assets._artifacts.feature_set import _FeatureSet
 from ._workspace.compute_runtime import _ComputeRuntime
 from ._workspace.feature_store_settings import _FeatureStoreSettings
@@ -324,6 +327,8 @@ __all__ = [
     "_Notification",
     "_FeatureSetBackfillResponse",
     "_FeatureSetMaterializationResponse",
+    "HubWorkspace",
+    "LeanWorkspace",
     # builders
     "Command",
     "Parallel",

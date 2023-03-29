@@ -22,10 +22,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 
 from ._constants import HUB_KIND
 
-
-
-@experimental
-class _HubWorkspace(Workspace):
+class HubWorkspace(Workspace):
     def __init__(
         self,
         *,
@@ -103,21 +100,20 @@ class _HubWorkspace(Workspace):
             primary_user_assigned_identity=primary_user_assigned_identity,
             managed_network=managed_network,
             hub_storageaccounts=hub_storageaccounts,
-            hub_containerregistry=hub_containerregistries,
+            hub_containerregistries=hub_containerregistries,
             hub_keyvaults=hub_keyvaults,
-            hub_existingworkspaces=hub_existingworkspaces
+            hub_existingworkspaces=hub_existingworkspaces,
             **kwargs,
         )
-        self.identity = identity
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "_HubWorkspace":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "HubWorkspace":
         if not rest_obj:
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
 
-        return _HubWorkspace(
+        return HubWorkspace(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
@@ -143,7 +139,7 @@ class _HubWorkspace(Workspace):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "_HubWorkspace":
+    ) -> "HubWorkspace":
         data = data or {}
         params_override = params_override or []
         context = {
@@ -151,8 +147,8 @@ class _HubWorkspace(Workspace):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(HubSchema, data, context, **kwargs)
-        return _HubWorkspace(**loaded_schema)
+        return HubWorkspace(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return _HubWorkspace(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return HubWorkspace(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
