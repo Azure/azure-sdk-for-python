@@ -8,7 +8,7 @@ import time
 import types
 from functools import partial
 from inspect import Parameter, signature
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -629,40 +629,28 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @classmethod
     def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
-        """Traverse the pipeline component and divide nodes to resolve into layers. Will also return all leaf nodes to
-        resolve.
+        """Traverse the pipeline component and divide nodes to resolve into layers.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
          /|\
         B C D
         | |
         E F
-        |
-        G
-        returned layers will be:
+        return value will be:
         [
           [("B", B), ("C", C), ("D", D)],
           [("E", E), ("F", F)],
-          [("G", G)],
-        ]
-        returned leaf nodes will be:
-        [
-          ("D", D),
-          ("F", F),
-          ("G", G),
         ]
 
         :param component: The pipeline component to resolve.
         :type component: PipelineComponent
         :param extra_operations: Extra operations to apply on nodes during the traversing.
         :type extra_operations: List[Callable]
-        :return: A list of layers of nodes to resolve and a list of leaf nodes.
-        :rtype: Tuple[List[List[Tuple[str, BaseNode]]], List[Tuple[str, BaseNode]]]
+        :return: A list of layers of nodes to resolve.
+        :rtype: List[List[Tuple[str, BaseNode]]]
         """
         # add an empty layer to mark the end of the first layer
-        layers: List[List[Tuple[str, BaseNode]]] = [list(component.jobs.items()), []]
-        cur_layer_head, cur_layer = 0, 0
-        leaf_nodes: List[Tuple[str, BaseNode]] = []
+        layers, cur_layer_head, cur_layer = [list(component.jobs.items()), []], 0, 0
 
         while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
             key, job_instance = layers[cur_layer][cur_layer_head]
@@ -679,9 +667,6 @@ class ComponentOperations(_ScopeDependentOperations):
                 if cur_layer + 1 == len(layers):
                     layers.append([])
                 layers[cur_layer + 1].extend(job_instance.component.jobs.items())
-            else:
-                # record leaf nodes here in case LoopNode is a leaf node
-                leaf_nodes.append((key, job_instance))
 
             if cur_layer_head == len(layers[cur_layer]):
                 cur_layer += 1
@@ -691,7 +676,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if len(layers[-1]) == 0:
             layers.pop()
 
-        return layers, leaf_nodes
+        return layers
 
     def _resolve_dependencies_for_pipeline_component_jobs(
         self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
@@ -717,7 +702,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # This is a preparation for concurrent resolution. Nodes will be resolved later layer by layer
         # from bottom to top, as hash calculation of a parent node will be impacted by resolution
         # of its child nodes.
-        layers, leaf_nodes = self._divide_nodes_to_resolve_into_layers(
+        layers = self._divide_nodes_to_resolve_into_layers(
             component,
             extra_operations=[
                 # no need to do this as we now keep the original component name for anonymous components
@@ -728,8 +713,6 @@ class ComponentOperations(_ScopeDependentOperations):
                 # should we resolve code here after we do extra operations concurrently?
             ],
         )
-        # add leaf nodes as last layer and resolve them first concurrently
-        layers.append(leaf_nodes)
 
         # cache anonymous component only for now
         # request level in-memory cache can be a better solution for other type of assets as they are
