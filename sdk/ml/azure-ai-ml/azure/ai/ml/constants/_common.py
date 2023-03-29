@@ -35,9 +35,10 @@ DATASTORE_RESOURCE_ID = (
 PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
-SINGULARITY_ID_FORMAT = (
-    "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
+SINGULARITY_FULL_NAME_FORMAT = (
+    "^/+subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
 )
+SINGULARITY_SHORT_NAME_FORMAT = "^/+virtualclusters/.*"
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"

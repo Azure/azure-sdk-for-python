@@ -124,9 +124,12 @@ class OperationOrchestrator(object):
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
             or is_registry_id_for_resource(asset)
-            or is_singularity_id_for_resource(asset)
         ):
             return asset
+        if is_singularity_id_for_resource(asset):
+            # Singularity compute may have one "/" or double "/" (e.g. azureml://...),
+            # so we need a normalization here.
+            return "/" + asset.lstrip("/")
         if isinstance(asset, str):
             if azureml_type in AzureMLResourceType.NAMED_TYPES:
                 return NAMED_RESOURCE_ID_FORMAT.format(

@@ -19,7 +19,8 @@ from azure.ai.ml.constants._common import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
-    SINGULARITY_ID_FORMAT,
+    SINGULARITY_FULL_NAME_FORMAT,
+    SINGULARITY_SHORT_NAME_FORMAT,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -333,7 +334,10 @@ def is_registry_id_for_resource(name: Any) -> bool:
 
 
 def is_singularity_id_for_resource(name: Any) -> bool:
-    if isinstance(name, str) and re.match(SINGULARITY_ID_FORMAT, name, re.IGNORECASE):
+    if isinstance(name, str) and (
+        re.match(SINGULARITY_FULL_NAME_FORMAT, name, re.IGNORECASE)
+        or re.match(SINGULARITY_SHORT_NAME_FORMAT, name, re.IGNORECASE)
+    ):
         return True
     return False
 
