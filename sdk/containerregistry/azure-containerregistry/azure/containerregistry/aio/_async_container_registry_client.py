@@ -889,3 +889,4 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
+            raise
