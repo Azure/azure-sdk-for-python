@@ -271,15 +271,13 @@ class RoomsClient(object):
             room_id=room_id, **kwargs)
         return get_participants_response
 
-    def _convert_room_participants_to_dictionary_for_upsert(self, room_participants : List[InvitedRoomParticipant]
-                                                           ) -> Dict[str, ParticipantProperties] :
+    def _convert_room_participants_to_dictionary_for_upsert(self, room_participants : List[InvitedRoomParticipant]):
         upsert_dictionary = dict()
         for participant in room_participants:
             upsert_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(role=participant.role)
         return upsert_dictionary
 
-    def _convert_communication_identifiers_to_dictionary_for_remove(self, communication_identifiers : List[CommunicationIdentifier]
-                                                           ) -> Dict[str, ParticipantProperties] :
+    def _convert_communication_identifiers_to_dictionary_for_remove(self, communication_identifiers : List[CommunicationIdentifier]):
         remove_dictionary = dict()
         for identifier in communication_identifiers:
             remove_dictionary[identifier.raw_id] = None
