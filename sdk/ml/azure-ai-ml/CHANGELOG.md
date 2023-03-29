@@ -13,9 +13,13 @@
 - Fixed issue of spark input/output mode validation doesn't take effect because of wrong type assertion
 - Fixed the bug when setting `node.limits.timeout` to a pipeline input.
 
+### Breaking Changes
+
+- Renamed `JobServiceBase.job_service_type` to `type`
+
 ### Other Changes
 
-- 
+-
 
 ## 1.5.0 (2023-03-20)
 
