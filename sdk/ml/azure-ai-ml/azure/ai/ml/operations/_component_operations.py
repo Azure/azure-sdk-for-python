@@ -629,9 +629,8 @@ class ComponentOperations(_ScopeDependentOperations):
 
     @classmethod
     def _divide_nodes_to_resolve_into_layers(cls, component: PipelineComponent, extra_operations: List[Callable]):
-        """Traverse the pipeline component and divide nodes to resolve into layers.
-        Layers are divided by depth of the nodes by default, except that all leaf nodes will be in the last layer.
-        Given only leaf nodes may involve code resolution, all code resolution will happen concurrently.
+        """Traverse the pipeline component and divide nodes to resolve into layers. Will also return all leaf nodes to
+        resolve.
         For example, for below pipeline component, assuming that all nodes need to be resolved:
           A
          /|\
@@ -640,23 +639,30 @@ class ComponentOperations(_ScopeDependentOperations):
         E F
         |
         G
-        return value will be:
+        returned layers will be:
         [
-          [("B", B), ("C", C)],
-          [("E", E)],
-          [("G", G), ("F", F), ("D", D)],
+          [("B", B), ("C", C), ("D", D)],
+          [("E", E), ("F", F)],
+          [("G", G)],
+        ]
+        returned leaf nodes will be:
+        [
+          ("D", D),
+          ("F", F),
+          ("G", G),
         ]
 
         :param component: The pipeline component to resolve.
         :type component: PipelineComponent
         :param extra_operations: Extra operations to apply on nodes during the traversing.
         :type extra_operations: List[Callable]
-        :return: A list of layers of nodes to resolve.
-        :rtype: List[List[Tuple[str, BaseNode]]]
+        :return: A list of layers of nodes to resolve and a list of leaf nodes.
+        :rtype: Tuple[List[List[Tuple[str, BaseNode]]], List[Tuple[str, BaseNode]]]
         """
         # add an empty layer to mark the end of the first layer
         layers: List[List[Tuple[str, BaseNode]]] = [list(component.jobs.items()), []]
         cur_layer_head, cur_layer = 0, 0
+        leaf_nodes: List[Tuple[str, BaseNode]] = []
 
         while cur_layer < len(layers) and cur_layer_head < len(layers[cur_layer]):
             key, job_instance = layers[cur_layer][cur_layer_head]
@@ -673,6 +679,9 @@ class ComponentOperations(_ScopeDependentOperations):
                 if cur_layer + 1 == len(layers):
                     layers.append([])
                 layers[cur_layer + 1].extend(job_instance.component.jobs.items())
+            else:
+                # record leaf nodes here in case LoopNode is a leaf node
+                leaf_nodes.append((key, job_instance))
 
             if cur_layer_head == len(layers[cur_layer]):
                 cur_layer += 1
@@ -682,17 +691,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if len(layers[-1]) == 0:
             layers.pop()
 
-        # move all leaf nodes to the last layer
-        for i in range(len(layers) - 1):
-            pipeline_nodes = []
-            for key, node in layers[i]:
-                if isinstance(node, BaseNode) and isinstance(node._component, PipelineComponent):
-                    pipeline_nodes.append((key, node))
-                else:
-                    layers[-1].append((key, node))
-            layers[i] = pipeline_nodes
-
-        return layers
+        return layers, leaf_nodes
 
     def _resolve_dependencies_for_pipeline_component_jobs(
         self, component: Union[Component, str], resolver: Callable, *, resolve_inputs: bool = True
@@ -718,7 +717,7 @@ class ComponentOperations(_ScopeDependentOperations):
         # This is a preparation for concurrent resolution. Nodes will be resolved later layer by layer
         # from bottom to top, as hash calculation of a parent node will be impacted by resolution
         # of its child nodes.
-        layers = self._divide_nodes_to_resolve_into_layers(
+        layers, leaf_nodes = self._divide_nodes_to_resolve_into_layers(
             component,
             extra_operations=[
                 # no need to do this as we now keep the original component name for anonymous components
@@ -729,6 +728,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 # should we resolve code here after we do extra operations concurrently?
             ],
         )
+        # add leaf nodes as last layer and resolve them first concurrently
+        layers.append(leaf_nodes)
 
         # cache anonymous component only for now
         # request level in-memory cache can be a better solution for other type of assets as they are
