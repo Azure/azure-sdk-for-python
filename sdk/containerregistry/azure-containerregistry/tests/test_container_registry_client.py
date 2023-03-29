@@ -7,7 +7,7 @@ from datetime import datetime
 import os
 import pytest
 import six
-
+import hashlib
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -568,6 +568,15 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             # Cleanup
             client.delete_repository(repo)
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        hash_value = hashlib.sha256(b"test").hexdigest()
+        digest = f"sha256:{hash_value}"
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            client.delete_blob(repo, digest)
 
     @acr_preparer()
     @recorded_by_proxy

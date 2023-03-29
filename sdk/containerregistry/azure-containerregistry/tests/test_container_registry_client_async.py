@@ -6,7 +6,7 @@
 from datetime import datetime
 import pytest
 import six
-
+import hashlib
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -450,6 +450,15 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 last_udpated_on = properties.last_udpated_on
             last_updated_on = properties.last_updated_on
             assert last_udpated_on == last_updated_on
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        hash_value = hashlib.sha256(b"test").hexdigest()
+        digest = f"sha256:{hash_value}"
+        async with self.create_registry_client(containerregistry_endpoint) as client:
+            await client.delete_blob(repo, digest)
     
     @acr_preparer()
     @recorded_by_proxy_async
