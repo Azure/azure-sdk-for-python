@@ -133,6 +133,7 @@ class LeanOperations(WorkspaceOperationsBase):
     def begin_update(
         self,
         Lean: LeanWorkspace,
+        update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[LeanWorkspace]:
         """Update friendly name, description, tags, of a Lean workspace.
@@ -154,7 +155,7 @@ class LeanOperations(WorkspaceOperationsBase):
 
         return super().begin_update(
             workspace=Lean,
-            update_dependent_resources=False,
+            update_dependent_resources=update_dependent_resources,
             deserialize_callback=deserialize_callback,
             **kwargs,
         )

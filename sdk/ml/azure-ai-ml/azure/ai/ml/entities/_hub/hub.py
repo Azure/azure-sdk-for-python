@@ -130,6 +130,7 @@ class HubWorkspace(Workspace):
             hub_containerregistries=workspace_object.hub_containerregistries,
             hub_existingworkspaces=workspace_object.hub_existingworkspaces,
             workspace_id=rest_obj.workspace_id,
+            id=rest_obj.id,
         )
 
     @classmethod

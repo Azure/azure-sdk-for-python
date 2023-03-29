@@ -31,7 +31,7 @@ class LeanWorkspace(Workspace):
         location: Optional[str] = None,
         resource_group: Optional[str] = None,
         application_insights: Optional[str] = None,
-        hub_resourceid: Optional[str] = None,
+        hub_resource_id: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
@@ -77,7 +77,7 @@ class LeanWorkspace(Workspace):
             application_insights = application_insights,
             identity=identity,
             primary_user_assigned_identity=primary_user_assigned_identity,
-            hub_resourceid=hub_resourceid,
+            hub_resource_id=hub_resource_id,
             **kwargs,
         )
         self.identity = identity
@@ -97,9 +97,10 @@ class LeanWorkspace(Workspace):
             location=workspace_object.location,
             resource_group=workspace_object.resource_group,
             identity=workspace_object.identity,
-            hub_resourceid=workspace_object.hub_resourceid,
+            hub_resource_id=workspace_object.hub_resource_id,
             application_insights = workspace_object.application_insights,
             workspace_id=rest_obj.workspace_id,
+            id=rest_obj.id,
         )
 
     @classmethod

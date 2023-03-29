@@ -259,11 +259,15 @@ class WorkspaceOperationsBase:
         workspace = self.get(name, **kwargs)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        # prevent dependent resource delete for lean workspace
+        # prevent dependent resource delete for lean workspace, only delete appinsight
         if workspace._kind == LEAN_KIND:
-            delete_dependent_resources = False
-
-        if delete_dependent_resources:
+            delete_resource_by_arm_id(
+                self._credentials,
+                self._subscription_id,
+                workspace.application_insights,
+                ArmConstants.AZURE_MGMT_APPINSIGHT_API_VERSION,
+            )
+        elif delete_dependent_resources:
             delete_resource_by_arm_id(
                 self._credentials,
                 self._subscription_id,
@@ -288,28 +292,31 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
-            for storageaccount in workspace.hub_storageaccounts:
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    storageaccount,
-                    ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
-                )
+            if workspace.hub_storageaccounts is not  None:            
+                for storageaccount in workspace.hub_storageaccounts:
+                    delete_resource_by_arm_id(
+                        self._credentials,
+                        self._subscription_id,
+                        storageaccount,
+                        ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
+                    )
+            if workspace.hub_keyvaults is not  None:
+                for keyvault in workspace.hub_keyvaults:
+                    delete_resource_by_arm_id(
+                        self._credentials,
+                        self._subscription_id,
+                        keyvault,
+                        ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
+                    )
+            if workspace.hub_containerregistries is not  None:
+                for containerregistry in workspace.hub_containerregistries:
+                    delete_resource_by_arm_id(
+                        self._credentials,
+                        self._subscription_id,
+                        containerregistry,
+                        ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
+                    )     
 
-            for keyvault in workspace.hub_keyvaults:
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    keyvault,
-                    ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
-                )
-            for containerregistry in workspace.hub_containerregistries:
-                delete_resource_by_arm_id(
-                    self._credentials,
-                    self._subscription_id,
-                    containerregistry,
-                    ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
-                )
         poller = self._operation.begin_delete(
             resource_group_name=resource_group,
             workspace_name=name,
@@ -500,8 +507,8 @@ class WorkspaceOperationsBase:
             _set_val(param["existing_workspaces"], workspace.hub_existingworkspaces)
 
         #Lean related param
-        if workspace.hub_resourceid:
-            _set_val(param["hub_resource_id"], workspace.hub_resourceid)
+        if workspace.hub_resource_id:
+            _set_val(param["hub_resource_id"], workspace.hub_resource_id)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

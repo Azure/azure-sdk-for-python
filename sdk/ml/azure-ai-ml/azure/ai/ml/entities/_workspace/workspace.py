@@ -49,7 +49,7 @@ class Workspace(Resource):
         hub_keyvaults: Optional[List[str]] = None,
         hub_containerregistries: Optional[List[str]] = None,
         hub_existingworkspaces: Optional[List[str]] = None,
-        hub_resourceid: Optional[str] = None,
+        hub_resource_id: Optional[str] = None,
         **kwargs,
     ):
         """Azure ML workspace.
@@ -134,7 +134,7 @@ class Workspace(Resource):
         self.hub_keyvaults = hub_keyvaults
         self.hub_containerregistries = hub_containerregistries
         self.hub_existingworkspaces = hub_existingworkspaces
-        self.hub_resourceid = hub_resourceid
+        self.hub_resource_id = hub_resource_id
 
     @property
     def discovery_url(self) -> str:
@@ -260,7 +260,7 @@ class Workspace(Resource):
             hub_keyvaults=rest_obj.key_vaults,
             hub_containerregistries=rest_obj.container_registries,
             hub_existingworkspaces=rest_obj.existing_workspaces,
-            hub_resourceid=rest_obj.hub_resource_id
+            hub_resource_id=rest_obj.hub_resource_id
         )
 
     def _to_rest_object(self) -> RestWorkspace:
@@ -294,5 +294,5 @@ class Workspace(Resource):
             container_registries=self.hub_containerregistries,
             key_vaults=self.hub_keyvaults,
             existing_workspaces=self.hub_existingworkspaces,
-            hub_resource_id=self.hub_resourceid
+            hub_resource_id=self.hub_resource_id
         )
