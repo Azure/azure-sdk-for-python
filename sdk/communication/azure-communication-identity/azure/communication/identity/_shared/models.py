@@ -92,11 +92,13 @@ class CommunicationUserIdentifier(object):
     def __eq__(self, other):
         try:
             return self.raw_id == other.properties['id']
-        except TypeError or KeyError or AttributeError:
+        except Exception:
             return False
 
 
 def _communication_user_raw_id(identifier: CommunicationUserIdentifier) -> str:
+    if identifier.raw_id:
+        return identifier.raw_id
     return identifier.properties['id']
 
 
@@ -127,10 +129,15 @@ class PhoneNumberIdentifier(object):
             self.raw_id = _phone_number_raw_id(self)
 
     def __eq__(self, other):
-        return self.raw_id == _phone_number_raw_id(other)
+        try:
+            return self.raw_id == _phone_number_raw_id(other)
+        except Exception:
+            return False
 
 
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
+    if identifier.raw_id:
+        return identifier.raw_id
     value = identifier.properties['value']
     # We just assume correct E.164 format here because
     # validation should only happen server-side, not client-side.
@@ -142,6 +149,8 @@ class UnknownIdentifier(object):
 
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
+
+    It is not advisable to rely on this type of identifier, as UnknownIdentifier could become a new or existing distinct type in the future.
 
     :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
@@ -156,7 +165,10 @@ class UnknownIdentifier(object):
         self.properties = {}
 
     def __eq__(self, other):
-        return self.raw_id == other.raw_id
+        try:
+            return self.raw_id == other.raw_id
+        except Exception:
+            return False
 
 
 MicrosoftTeamsUserProperties = TypedDict(
@@ -199,10 +211,15 @@ class MicrosoftTeamsUserIdentifier(object):
             self.raw_id = _microsoft_teams_user_raw_id(self)
 
     def __eq__(self, other):
-        return self.raw_id == _microsoft_teams_user_raw_id(other)
+        try:
+            return self.raw_id == _microsoft_teams_user_raw_id(other)
+        except Exception:
+            return False
 
 
 def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> str:
+    if identifier.raw_id:
+        return identifier.raw_id
     user_id = identifier.properties['user_id']
     if identifier.properties['is_anonymous']:
         return f'{TEAMS_USER_ANONYMOUS_PREFIX}{user_id}'
@@ -247,19 +264,24 @@ class MicrosoftBotIdentifier(object):
 
     def __init__(self, bot_id: str, **kwargs: Any) -> None:
         self.raw_id = kwargs.get('raw_id')
-        self.properties = MicrosoftBotProperties(
+        self.properties: MicrosoftBotProperties = MicrosoftBotProperties(
             bot_id=bot_id,
             is_resource_account_configured=kwargs.get('is_resource_account_configured', True),
             cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
-        )  # type: MicrosoftBotProperties
+        )
         if self.raw_id is None:
             self.raw_id = _microsoft_bot_raw_id(self)
 
     def __eq__(self, other):
-        return self.raw_id == _microsoft_bot_raw_id(other)
+        try:
+            return self.raw_id == _microsoft_bot_raw_id(other)
+        except Exception:
+            return False
 
 
 def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
+    if identifier.raw_id:
+        return identifier.raw_id
     bot_id = identifier.properties['bot_id']
     cloud = identifier.properties['cloud']
     if identifier.properties['is_resource_account_configured'] is False:
@@ -286,7 +308,8 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
         return PhoneNumberIdentifier(
-            value=raw_id[len(PHONE_NUMBER_PREFIX):]
+            value=raw_id[len(PHONE_NUMBER_PREFIX):],
+            raw_id=raw_id
         )
 
     segments = raw_id.split(':', maxsplit=2)
