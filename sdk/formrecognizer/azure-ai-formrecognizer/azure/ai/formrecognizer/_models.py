@@ -1980,7 +1980,12 @@ class BoundingRegion:
 
 
 class AddressValue:
-    """An address field value."""
+    """An address field value.
+
+    .. versionadded:: 2023-02-28-preview
+        The *unit*, *city_district*, *state_district*, *suburb*, *house*,
+        and *level*  properties.
+    """
 
     house_number: Optional[str]
     """House or building number."""
@@ -1999,6 +2004,19 @@ class AddressValue:
     street_address: Optional[str]
     """Street-level address, excluding city, state, countryRegion, and
      postalCode."""
+    unit: Optional[str]
+    """Apartment or office number"""
+    city_district: Optional[str]
+    """Districts or boroughs within a city, such as Brooklyn in New York City or City 
+    of Westminster in London."""
+    state_district: Optional[str]
+    """Second-level administrative division used in certain locales."""
+    suburb: Optional[str]
+    """Unofficial neighborhood name, like Chinatown."""
+    house: Optional[str]
+    """Build name, such as World Trade Center."""
+    level: Optional[str]
+    """Floor number, such as 3F."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.house_number = kwargs.get("house_number", None)
@@ -2009,9 +2027,21 @@ class AddressValue:
         self.postal_code = kwargs.get("postal_code", None)
         self.country_region = kwargs.get("country_region", None)
         self.street_address = kwargs.get("street_address", None)
+        self.unit = kwargs.get("unit", None)
+        self.city_district = kwargs.get("city_district", None)
+        self.state_district = kwargs.get("state_district", None)
+        self.suburb = kwargs.get("suburb", None)
+        self.house = kwargs.get("house", None)
+        self.level = kwargs.get("level", None)
 
     @classmethod
     def _from_generated(cls, data):
+        unit = data.unit if hasattr(data, "unit") else None
+        city_district = data.city_district if hasattr(data, "city_district") else None
+        state_district = data.state_district if hasattr(data, "state_district") else None
+        suburb = data.suburb if hasattr(data, "suburb") else None
+        house = data.house if hasattr(data, "house") else None
+        level = data.level if hasattr(data, "level") else None
         return cls(
             house_number=data.house_number,
             po_box=data.po_box,
@@ -2021,13 +2051,21 @@ class AddressValue:
             postal_code=data.postal_code,
             country_region=data.country_region,
             street_address=data.street_address,
+            unit=unit,
+            city_district=city_district,
+            state_district=state_district,
+            suburb=suburb,
+            house=house,
+            level=level
         )
 
     def __repr__(self) -> str:
         return (
             f"AddressValue(house_number={self.house_number}, po_box={self.po_box}, road={self.road}, "
             f"city={self.city}, state={self.state}, postal_code={self.postal_code}, "
-            f"country_region={self.country_region}, street_address={self.street_address})"
+            f"country_region={self.country_region}, street_address={self.street_address}, "
+            f"unit={self.unit}, city_district={self.city_district}, state_district={self.state_district}, "
+            f"suburb={self.suburb}, house={self.house}, level={self.level})"
         )
 
     def to_dict(self) -> Dict:
@@ -2041,6 +2079,12 @@ class AddressValue:
             "postal_code": self.postal_code,
             "country_region": self.country_region,
             "street_address": self.street_address,
+            "unit": self.unit,
+            "city_district": self.city_district,
+            "state_district": self.state_district,
+            "suburb": self.suburb,
+            "house": self.house,
+            "level": self.level,
         }
 
     @classmethod
@@ -2060,6 +2104,12 @@ class AddressValue:
             postal_code=data.get("postal_code", None),
             country_region=data.get("country_region", None),
             street_address=data.get("street_address", None),
+            unit=data.get("unit", None),
+            city_district=data.get("city_district", None),
+            state_district=data.get("state_district", None),
+            suburb=data.get("suburb", None),
+            house=data.get("house", None),
+            level=data.get("level", None)
         )
 
 
