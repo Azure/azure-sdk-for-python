@@ -104,3 +104,42 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
             time.sleep(0.001)
             client.send_to_group(group_name, name, "text")
         assert name not in TEST_RESULT
+
+    # test on_stop
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_on_stop(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string)
+        def on_stop():
+            client._start()
+        with client:
+            # start client again after stop
+            client.on("stopped", on_stop)
+            assert client._is_connected()
+            client._stop()
+            time.sleep(1.0)
+            assert client._is_connected()
+
+            # remove stopped event and stop again
+            client.off("stopped", on_stop)
+            client._stop()
+            time.sleep(1.0)
+            assert not client._is_connected()
+
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_duplicated_start(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string)
+        with pytest.raises(Exception):
+            with client:
+                client._start()
+        assert not client._is_connected()
+
+
+    @WebpubsubClientPowerShellPreparer()
+    @recorded_by_proxy
+    def test_duplicated_stop(self, webpubsubclient_connection_string):
+        client = self.create_client(connection_string=webpubsubclient_connection_string)
+        with client:
+            client._stop()
+        assert not client._is_connected()

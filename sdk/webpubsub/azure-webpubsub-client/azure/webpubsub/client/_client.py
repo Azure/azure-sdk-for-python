@@ -108,6 +108,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :keyword str user_agent: The user agent to be used for the request. If specified, this will be added in front of
      the default user agent string.
     :keyword bool logging_enable: Whether to output network trace logs to the logger. Default is `False`.
+    :keyword float ack_timeout: Time limit to wait for ack message from server. The default value is 30.0 seconds.
+    :keyword float start_timeout: Time limit to wait for successful client start. The default value is 30.0 seconds.
     """
 
     def __init__(
@@ -171,7 +173,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._thread_seq_ack: Optional[threading.Thread] = None
         self._thread: Optional[threading.Thread] = None
         self._ack_timeout: float = kwargs.pop("ack_timeout", 30.0)
-        self._start_timeout: float = kwargs.pop("start_timeout", 60.0)
+        self._start_timeout: float = kwargs.pop("start_timeout", 30.0)
         self._user_agent: Optional[str] = kwargs.pop("user_agent", None)
         self._logging_enable: bool = kwargs.pop("logging_enable", False)
 
@@ -625,7 +627,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._connect(self._url)
 
     @distributed_trace
-    def start(self) -> None:
+    def _start(self) -> None:
         """start the client and connect to service"""
 
         if self._is_stopping:
@@ -641,26 +643,28 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             raise e
 
     @distributed_trace
-    def stop(self) -> None:
+    def _stop(self) -> None:
         """stop the client"""
 
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
             return
         self._is_stopping = True
 
+        old_thread = self._thread
+        old_thread_seq_ack = self._thread_seq_ack
+
         # we can't use self._ws.close otherwise on_close may not be triggered
         # (realted issue: https://github.com/websocket-client/websocket-client/issues/899)
         if self._ws and self._ws.sock:
             self._ws.sock.close()
 
-        if self._thread_seq_ack and self._thread_seq_ack.is_alive():
+        # users may call start the client again after stop so we need to wait for old thread join
+        if old_thread_seq_ack and old_thread_seq_ack.is_alive():
             _LOGGER.debug("wait for seq thread stop")
-            self._thread_seq_ack.join()
-        if self._thread and self._thread.is_alive():
+            old_thread_seq_ack.join()
+        if old_thread and old_thread.is_alive():
             _LOGGER.debug("wait for listener thread stop")
-            self._thread.join()
-        self._thread_seq_ack = None
-        self._thread = None
+            old_thread.join()
 
         _LOGGER.info("stop client successfully")
 
@@ -802,7 +806,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             _LOGGER.error("wrong event type: %s", event)
 
     def __enter__(self):
-        self.start()
+        self._start()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.stop()
+        self._stop()

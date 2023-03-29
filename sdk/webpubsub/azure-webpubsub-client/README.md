@@ -1,10 +1,11 @@
-# Web PubSub client library for Python
+# Azure Web PubSub client library for Python
 
 [Azure Web PubSub](https://aka.ms/awps/doc) is a cloud service that helps developers easily build real-time features in web applications with publish-subscribe patterns at scale.
 
 Any scenario that requires real-time messaging between server and clients or among clients following publish-subscribe patterns can benefit from using Web PubSub. Developers no longer need to poll the server by sending repeated HTTP requests at intervals, which is wasteful and hard-to-scale.
 
 As shown in the diagram below, your clients establish WebSocket connections with your Web PubSub resource. This client library:
+
 - simplifies managing client connections
 - simplifies sending messages among clients
 - automatically retries after unintended drops of client connection
@@ -197,17 +198,20 @@ Each of the Web PubSub clients is safe to cache and be used as a singleton for t
 
 This library uses the standard [logging](https://docs.python.org/3/library/logging.html) library for logging. If you want detailed `DEBUG` level logging, including payload of request, you can set `logging_enable=True` in client or per-operation
 
+## Next steps
+
+You can also find [more samples here](https://github.com/Azure/azure-webpubsub/tree/main/samples/python).
+
 ## Additional resources
+
 - Learn more about client permission, see [permissions](https://learn.microsoft.com/azure/azure-web-pubsub/reference-json-reliable-webpubsub-subprotocol#permissions)
 
 - [Product documentation](https://aka.ms/awps/doc)
-- [Samples][samples_ref]
 
 ## Contributing
 
 If you'd like to contribute to this library, please read the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md) to learn more about how to build and test the code.
 
 [azure_sub]: https://azure.microsoft.com/free/
-[samples_ref]: https://github.com/Azure/azure-webpubsub/tree/main/samples/python/
 [create_instance]: https://learn.microsoft.com/azure/azure-web-pubsub/howto-develop-create-instance
 [pypi]: https://pypi.org/

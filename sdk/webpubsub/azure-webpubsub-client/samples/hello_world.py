@@ -53,10 +53,6 @@ def main():
         content = memoryview("hello binary".encode())
         client.send_to_group(group_name, content, "binary")
 
-    # you can also start/stop client manually like:
-    # client.start()
-    # ...
-    # client.stop()
 
 if __name__ == "__main__":
     main()
