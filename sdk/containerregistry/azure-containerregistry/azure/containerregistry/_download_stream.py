@@ -4,32 +4,43 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import Iterator, ContextManager, Callable
-from typing_extensions import Self
+from typing import Iterator, ContextManager, Callable, TypeVar
+
+T = TypeVar('T', bound='DownloadBlobStream')
 
 
 class DownloadBlobStream(
     Iterator[bytes],
-    ContextManager[Self],
+    ContextManager[T],
 ):
     """Protocol for methods to provide streamed responses."""
 
-    def __init__(self, **kwargs) -> None:
-        self._response: Iterator[bytes] = kwargs.get('response')
-        self._next: Callable[[str], Iterator[bytes]] = kwargs.get('next')
-        self._blob_size: int = kwargs.get('blob_size')
-        self._downloaded: int = kwargs.get('downloaded')
+    def __init__(
+        self,
+        *,
+        response: Iterator[bytes],
+        next: Callable[[str], Iterator[bytes]],
+        blob_size: int,
+        downloaded: int,
+        digest: str,
+        chunk_size: int,
+        **kwargs
+    ) -> None:
+        self._response = response
+        self._next = next
+        self._blob_size = blob_size
+        self._downloaded = downloaded
+        self._digest = digest
+        self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
-        self._digest: str = kwargs.get('digest')
-        self._chunk_size: int = kwargs.get('chunk_size')
 
-    def __enter__(self) -> Self:
+    def __enter__(self) -> T:
         return self
 
     def __exit__(self, *args) -> None:
-        self.close()
+        return None
 
-    def __iter__(self) -> Self:
+    def __iter__(self) -> T:
         return self
 
     def _yield_data(self) -> bytes:
@@ -55,6 +66,3 @@ class DownloadBlobStream(
                 raise
             self._response = self._download_chunk()
             return self._yield_data()
-
-    def close(self) -> None:
-        self._response.close()

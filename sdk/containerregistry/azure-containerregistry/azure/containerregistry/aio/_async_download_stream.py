@@ -4,32 +4,43 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import AsyncIterator, AsyncContextManager, Callable, Awaitable
-from typing_extensions import Self
+from typing import AsyncIterator, AsyncContextManager, Callable, Awaitable, TypeVar
+
+T = TypeVar('T', bound='AsyncDownloadBlobStream')
 
 
 class AsyncDownloadBlobStream(
     AsyncIterator[bytes],
-    AsyncContextManager[Self],
+    AsyncContextManager[T],
 ):
     """Protocol for methods to provide streamed responses."""
 
-    def __init__(self, **kwargs) -> None:
-        self._response: AsyncIterator[bytes] = kwargs.get('response')
-        self._next: Callable[[str], Awaitable[AsyncIterator[bytes]]] = kwargs.get('next')
-        self._blob_size: int = kwargs.get('blob_size')
-        self._downloaded: int = kwargs.get('downloaded')
+    def __init__(
+        self,
+        *,
+        response: AsyncIterator[bytes],
+        next: Callable[[str], Awaitable[AsyncIterator[bytes]]],
+        blob_size: int,
+        downloaded: int,
+        digest: str,
+        chunk_size: int,
+        **kwargs
+    ) -> None:
+        self._response = response
+        self._next = next
+        self._blob_size = blob_size
+        self._downloaded = downloaded
+        self._digest = digest
+        self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
-        self._digest: str = kwargs.get('digest')
-        self._chunk_size: int = kwargs.get('chunk_size')
 
-    async def __aenter__(self) -> Self:
+    async def __aenter__(self) -> T:
         return self
 
     async def __aexit__(self, *args) -> None:
-        await self.close()
+        return None
 
-    def __aiter__(self) -> Self:
+    def __aiter__(self) -> T:
         return self
 
     async def _yield_data(self) -> bytes:
@@ -55,6 +66,3 @@ class AsyncDownloadBlobStream(
                 raise
             self._response = await self._download_chunk()
             return await self._yield_data()
-
-    async def close(self) -> None:
-        await self._response.close()
