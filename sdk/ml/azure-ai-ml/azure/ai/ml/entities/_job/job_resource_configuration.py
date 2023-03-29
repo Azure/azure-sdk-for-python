@@ -51,10 +51,13 @@ class BaseProperty(dict):
     @classmethod
     def _to_dict(cls, obj: Any) -> Any:
         if isinstance(obj, dict):
+            need_key_mapping = getattr(obj, "_NEED_KEY_MAPPING", False)
             result = {}
             for key, value in obj.items():
                 if value is None:
                     continue
+                if need_key_mapping and key.lower() in obj._KEY_MAPPING:
+                    key = obj._KEY_MAPPING[key.lower()]
                 if isinstance(value, dict):
                     result[key] = cls._to_dict(value)
                 else:
