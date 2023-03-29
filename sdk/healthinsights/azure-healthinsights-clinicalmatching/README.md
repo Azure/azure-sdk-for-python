@@ -221,10 +221,10 @@ additional questions or comments.
 [azure_core]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [azure_sub]: https://azure.microsoft.com/free/
-[azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights
+<!-- [azure_portal]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesHealthInsights -->
 [azure_cli]: https://learn.microsoft.com/cli/azure/
 [clinical_matching_docs]: https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/trial-matcher/overview?branch=main
-[hi_pypi]: https://pypi.org/project/azure-healthinsights-clinicalmatching/
+<!-- [hi_pypi]: https://pypi.org/project/azure-healthinsights-clinicalmatching/ -->
 [product_docs]: https://review.learn.microsoft.com/azure/cognitive-services/health-decision-support/trial-matcher/?branch=main
 [clinical_matching_api_documentation]: https://review.learn.microsoft.com/rest/api/cognitiveservices/healthinsights/trial-matcher?branch=healthin202303
 
