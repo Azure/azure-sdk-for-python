@@ -35,8 +35,7 @@ class HealthInsightsSamples:
 
         # Create an Onco Phenotype client
         # <client>
-        cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT,
-                                                        credential=AzureKeyCredential(KEY))
+        cancer_profiling_client = CancerProfilingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # </client>
 
         # Construct patient
@@ -175,12 +174,14 @@ class HealthInsightsSamples:
                 for inference in patient_result.inferences:
                     print(
                         f"\n=== Clinical Type: {str(inference.type)} Value: {inference.value}\
-                            ConfidenceScore: {inference.confidence_score} ===")
+                            ConfidenceScore: {inference.confidence_score} ==="
+                    )
                     for evidence in inference.evidence:
                         data_evidence = evidence.patient_data_evidence
                         print(
                             f"Evidence {data_evidence.id} {data_evidence.offset} {data_evidence.length}\
-                                {data_evidence.text}")
+                                {data_evidence.text}"
+                        )
         else:
             errors = cancer_profiling_result.errors
             if errors is not None:

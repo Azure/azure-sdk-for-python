@@ -13,7 +13,7 @@ from setuptools import setup, find_packages
 
 
 PACKAGE_NAME = "azure-healthinsights-cancerprofiling"
-PACKAGE_PPRINT_NAME = "None"
+PACKAGE_PPRINT_NAME = "Cognitive Services Health Insights Cancer Profilings"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace("-", "/")

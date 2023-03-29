@@ -39,8 +39,7 @@ class HealthInsightsSamples:
 
         # Create a Trial Matcher client
         # <client>
-        trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT,
-                                                      credential=AzureKeyCredential(KEY))
+        trial_matcher_client = ClinicalMatchingClient(endpoint=ENDPOINT, credential=AzureKeyCredential(KEY))
         # </client>
 
         # Construct Patient
