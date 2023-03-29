@@ -59,9 +59,9 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
 
     # pylint:disable=unused-argument
     async def on_challenge(
-            self,
-            request: PipelineRequest[HTTPRequestType],
-            response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType],
     ) -> bool:
         """Authorize request according to an ARM authentication challenge
 
@@ -80,7 +80,8 @@ class AsyncARMChallengeAuthenticationPolicy(AsyncBearerTokenCredentialPolicy):
 
 
 class AsyncAuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase, AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
+    _AuxiliaryAuthenticationPolicyBase,
+    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType],
 ):
     async def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
@@ -105,9 +106,9 @@ class AsyncAuxiliaryAuthenticationPolicy(
         self._update_headers(request.http_request.headers)
 
     def on_response(
-            self,
-            request: PipelineRequest[HTTPRequestType],
-            response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, AsyncHTTPResponseType],
     ) -> Optional[Awaitable[None]]:
         """Executed after the request comes back from the next policy.
 
@@ -129,8 +130,7 @@ class AsyncAuxiliaryAuthenticationPolicy(
         return
 
     async def send(
-            self,
-            request: PipelineRequest[HTTPRequestType]
+        self, request: PipelineRequest[HTTPRequestType]
     ) -> PipelineResponse[HTTPRequestType, AsyncHTTPResponseType]:
         """Authorize request with a bearer token and send it to the next policy
 

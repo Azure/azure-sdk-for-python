@@ -35,6 +35,7 @@ from azure.core.exceptions import ServiceRequestError
 HTTPRequestType = TypeVar("HTTPRequestType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 
+
 class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
     """Adds a bearer token Authorization header to requests.
 
@@ -46,9 +47,9 @@ class ARMChallengeAuthenticationPolicy(BearerTokenCredentialPolicy):
     """
 
     def on_challenge(
-            self,
-            request: PipelineRequest[HTTPRequestType],
-            response: PipelineResponse[HTTPRequestType, HTTPResponseType]
+        self,
+        request: PipelineRequest[HTTPRequestType],
+        response: PipelineResponse[HTTPRequestType, HTTPResponseType],
     ) -> bool:
         """Authorize request according to an ARM authentication challenge
 
@@ -76,7 +77,10 @@ class _AuxiliaryAuthenticationPolicyBase:
     """
 
     def __init__(
-            self, auxiliary_credentials, *scopes, **kwargs  # pylint: disable=unused-argument
+        self,
+        auxiliary_credentials,
+        *scopes,
+        **kwargs  # pylint: disable=unused-argument
     ):
         self._auxiliary_credentials = auxiliary_credentials
         self._scopes = scopes
@@ -119,7 +123,8 @@ class _AuxiliaryAuthenticationPolicyBase:
 
 
 class AuxiliaryAuthenticationPolicy(
-    _AuxiliaryAuthenticationPolicyBase, SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]
+    _AuxiliaryAuthenticationPolicyBase,
+    SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType],
 ):
     def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
@@ -167,7 +172,9 @@ def _parse_claims_challenge(challenge: str) -> Optional[str]:
 
     padding_needed = -len(encoded_claims) % 4
     try:
-        decoded_claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
+        decoded_claims = base64.urlsafe_b64decode(
+            encoded_claims + "=" * padding_needed
+        ).decode()
         return decoded_claims
     except Exception:  # pylint:disable=broad-except
         return None
