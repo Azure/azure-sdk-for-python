@@ -124,34 +124,10 @@ credential = DefaultAzureCredential()
 
 client = PurviewSharingClient(endpoint=endpoint, credential=credential)
 
-artifact = {
-    "properties": {
-        "paths": [
-            {
-                "containerName": "container-name",
-                "receiverPath": "shared-file-name.txt",
-                "senderPath": "original/file-name.txt"
-            }
-        ]
-    },
-    "storeKind": "AdlsGen2Account",
-    "storeReference": {
-        "referenceName": "/subscriptions/{subscription-id}/resourceGroups/provider-storage-rg/providers/Microsoft.Storage/storageAccounts/providerstorage",
-        "type": "ArmResourceReference"
-    }
-}
-
-sent_share = {
-    "properties": {
-        "artifact": artifact,
-        "displayName": "sample=share",
-        "description": "A sample share"
-    },
-    "shareKind": "InPlace"
-}
+provider_storage_account_resource_id = "/subscriptions/{subscription-id}/resourceGroups/provider-storage-rg/providers/Microsoft.Storage/storageAccounts/providerstorage"
 
 list_request = client.sent_shares.list(
-    reference_name=str(sent_share["properties.artifact.storeReference.referenceName"]),
+    reference_name=provider_storage_account_resource_id,
     orderby="properties/createdAt desc")
 
 list_response = list_request.result()
