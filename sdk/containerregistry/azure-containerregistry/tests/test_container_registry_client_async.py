@@ -466,6 +466,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 digest, size = await client.upload_blob(repo, stream)
             assert digest == f"sha256:{blob}"
             
+            await client.delete_blob(repo, digest)
+            
             # Cleanup
             await client.delete_repository(repo)
 
