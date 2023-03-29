@@ -6,8 +6,6 @@
 
 import logging
 
-from typing import Any, Callable, Optional, Union
-
 
 from azure.ai.ml.entities import BatchDeployment, OnlineDeployment, Deployment
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
@@ -70,7 +68,7 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
         packaged_env = model_ops.begin_package(
             model_name, model_version, package_request=package_request, skip_to_rest=True
         )
-    except Exception as e:
+    except Exception:
         raise
     deployment.environment = packaged_env.id
     deployment.model = None

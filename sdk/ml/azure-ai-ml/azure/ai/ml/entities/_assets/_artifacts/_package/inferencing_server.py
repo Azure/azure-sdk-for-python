@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---
 
+# pylint: disable=protected-access
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import (
     AzureMLOnlineInferencingServer as RestAzureMLOnlineInferencingServer,
@@ -33,8 +34,8 @@ class AzureMLOnlineInferencingServer:
 @experimental
 class AzureMLBatchInferencingServer:
     def __init__(self, type: str = None, code_configuration: str = None):
-        """AzureMLBatchInferencingServer Variables are only populated by the server, and will be ignored when sending a
-        request."""
+        """AzureMLBatchInferencingServer Variables are only populated by the server,
+        and will be ignored when sending a request."""
         self.type = type
         self.code_configuration = code_configuration
 
@@ -49,7 +50,8 @@ class AzureMLBatchInferencingServer:
 @experimental
 class TritonInferencingServer:
     def __init__(self, inference_configuration: str = None):
-        """TritonInferencingServer Variables are only populated by the server, and will be ignored when sending a request."""
+        """TritonInferencingServer Variables are only populated by the server,
+        and will be ignored when sending a request."""
         self.type = type
         self.inference_configuration = inference_configuration
 

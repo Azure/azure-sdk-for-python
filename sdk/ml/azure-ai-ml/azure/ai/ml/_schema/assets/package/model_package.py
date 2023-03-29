@@ -9,12 +9,12 @@ import logging
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.schema import PathAwareSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml._schema.core.fields import VersionField, NestedField
 from .inference_server import InferenceServerSchema
 from .model_configuration import ModelConfigurationSchema
 from .model_package_input import ModelPackageInputSchema
 from .base_environment_source import BaseEnvironmentSourceSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml._schema.core.fields import VersionField, NestedField
 
 module_logger = logging.getLogger(__name__)
 

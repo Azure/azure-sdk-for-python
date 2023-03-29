@@ -6,7 +6,7 @@
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Dict, Union
 from urllib.parse import urlparse
 
 import yaml

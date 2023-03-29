@@ -7,8 +7,8 @@
 import logging
 from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.fields import NestedField
-from .route import RouteSchema
 from azure.ai.ml._schema.core.schema import PathAwareSchema
+from .route import RouteSchema
 
 
 module_logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ class OnlineInferenceConfigurationSchema(PathAwareSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets._artifacts._package.custom_inferencing_server import (
+        from azure.ai.ml.entities._assets._artifacts._package.inferencing_server import (
             OnlineInferenceConfiguration,
         )
 

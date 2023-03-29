@@ -1,6 +1,9 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, List, Dict, Optional, Union
@@ -31,7 +34,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class PackageInputPathId:
-    def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None, **kwargs):
+    def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
         self.input_path_type = input_path_type
         self.resource_id = resource_id
 
@@ -56,7 +59,6 @@ class PackageInputPathVersion:
         input_path_type: Optional[str] = None,
         resource_name: Optional[str] = None,
         resource_version: Optional[str] = None,
-        **kwargs,
     ):
         self.input_path_type = input_path_type
         self.resource_name = resource_name
@@ -82,7 +84,7 @@ class PackageInputPathVersion:
 
 @experimental
 class PackageInputPathUrl:
-    def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None, **kwargs):
+    def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None):
         self.input_path_type = input_path_type
         self.url = url
 
@@ -124,7 +126,6 @@ class ModelPackageInput:
         path: Optional[Union[PackageInputPathId, PackageInputPathUrl, PackageInputPathVersion]] = None,
         mode: Optional[str] = None,
         mount_path: Optional[str] = None,
-        **kwargs,
     ):
         self.type = type
         self.path = path
@@ -132,9 +133,6 @@ class ModelPackageInput:
         self.mount_path = mount_path
 
     def _to_rest_object(self) -> RestModelPackageInput:
-        # import debugpy
-        # debugpy.connect(("localhost", 5678))
-        # debugpy.breakpoint()
         return RestModelPackageInput(
             input_type=snake_to_pascal(self.type),
             path=self.path._to_rest_object(),

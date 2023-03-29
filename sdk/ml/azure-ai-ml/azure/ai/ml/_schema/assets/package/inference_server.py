@@ -8,11 +8,11 @@ import logging
 from typing import Any
 
 from marshmallow import post_load
-from .online_inference_configuration import OnlineInferenceConfigurationSchema
 from azure.ai.ml._schema._deployment.code_configuration_schema import CodeConfigurationSchema
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, NestedField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._common import InferenceServerType
+from .online_inference_configuration import OnlineInferenceConfigurationSchema
 
 
 module_logger = logging.getLogger(__name__)
@@ -59,4 +59,5 @@ class InferenceServerSchema(PathAwareSchema):
             return AzureMLBatchInferencingServer(**data)
         elif data["type"] == InferenceServerType.CUSTOM:
             return CustomInferencingServer(**data)
-        return TritonInferencingServer(**data)
+        elif data["type"] == InferenceServerType.TRITON:
+            return TritonInferencingServer(**data)
