@@ -5,14 +5,22 @@
 # --------------------------------------------------------------------------
 # pylint: disable=unused-argument
 
-from azure.core.exceptions import ResourceExistsError
+from typing import Any, Dict, TYPE_CHECKING
 
+from azure.core.exceptions import ResourceExistsError
 from ._shared.models import StorageErrorCode
 from ._models import QueueProperties
 from ._shared.response_handlers import deserialize_metadata
 
+if TYPE_CHECKING:
+    from azure.core.pipeline import PipelineResponse
 
-def deserialize_queue_properties(response, obj, headers):
+
+def deserialize_queue_properties(
+    response: "PipelineResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> QueueProperties:
     metadata = deserialize_metadata(response, obj, headers)
     queue_properties = QueueProperties(
         metadata=metadata,
@@ -21,7 +29,11 @@ def deserialize_queue_properties(response, obj, headers):
     return queue_properties
 
 
-def deserialize_queue_creation(response, obj, headers):
+def deserialize_queue_creation(
+    response: "PipelineResponse",
+    obj: Any,
+    headers: Dict[str, Any]
+) -> Dict[str, Any]:
     response = response.http_response
     if response.status_code == 204:
         error_code = StorageErrorCode.queue_already_exists
