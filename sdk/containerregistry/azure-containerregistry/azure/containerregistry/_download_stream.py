@@ -34,13 +34,13 @@ class DownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    def __enter__(self) -> T:
+    def __enter__(self) -> "DownloadBlobStream":
         return self
 
     def __exit__(self, *args) -> None:
         return None
 
-    def __iter__(self) -> T:
+    def __iter__(self) -> "DownloadBlobStream":
         return self
 
     def _yield_data(self) -> bytes:

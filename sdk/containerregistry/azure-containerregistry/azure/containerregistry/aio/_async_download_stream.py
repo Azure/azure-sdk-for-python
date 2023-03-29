@@ -34,13 +34,13 @@ class AsyncDownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    async def __aenter__(self) -> T:
+    async def __aenter__(self) -> "AsyncDownloadBlobStream":
         return self
 
     async def __aexit__(self, *args) -> None:
         return None
 
-    def __aiter__(self) -> T:
+    def __aiter__(self) -> "AsyncDownloadBlobStream":
         return self
 
     async def _yield_data(self) -> bytes:

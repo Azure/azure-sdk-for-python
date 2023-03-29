@@ -6,7 +6,7 @@
 import hashlib
 import functools
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, AsyncIterator
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
@@ -916,12 +916,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or digest is None.
         """
         chunk_size = DEFAULT_CHUNK_SIZE  # TODO: We should support client and operation-level overrides
-        first_chunk, headers = await self._client.container_registry_blob.get_chunk(
-            repository,
-            digest,
-            range=f"bytes=0-{chunk_size}",
-            cls=_return_deserialized_and_headers,
-            **kwargs
+        first_chunk, headers = cast(
+            Tuple[AsyncIterator[bytes], Dict[str, str]],
+            await self._client.container_registry_blob.get_chunk(
+                repository,
+                digest,
+                range=f"bytes=0-{chunk_size}",
+                cls=_return_deserialized_and_headers,
+                **kwargs
+            )
         )
         return AsyncDownloadBlobStream(
             response=first_chunk,
@@ -931,7 +934,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 name=repository,
                 digest=digest,
                 cls=_return_deserialized_and_headers,
-                **kwargs),
+                **kwargs
+            ),
             blob_size=int(headers["Content-Range"].split("/")[1]),
             downloaded=headers["Content-Length"],
             chunk_size=chunk_size
