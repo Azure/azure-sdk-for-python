@@ -3191,3 +3191,45 @@ class TestDSLPipeline:
             )
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
+
+    def test_pipeline_singularity_strong_type(self, singularity_compute_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        @dsl.pipeline
+        def pipeline_func():
+            # basic job_tier + Low priority
+            basic_low_node = component_func()
+            basic_low_node.resources = JobResourceConfiguration(
+                instance_count=2, instance_type="Singularity.ND40rs_v2"
+            )
+            basic_low_node.queue_settings = QueueSettings(job_tier="basic", priority="low")
+            # standard job_tier + Medium priority
+            standard_medium_node = component_func()
+            standard_medium_node.resources = JobResourceConfiguration(
+                instance_count=2, instance_type="Singularity.ND40rs_v2"
+            )
+            standard_medium_node.queue_settings = QueueSettings(job_tier="standard", priority="medium")
+            # premium job_tier + High priority
+            premium_high_node = component_func()
+            premium_high_node.resources = JobResourceConfiguration(
+                instance_count=2, instance_type="Singularity.ND40rs_v2"
+            )
+            premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = singularity_compute_id
+
+        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        # basic job_tier + Low priority
+        basic_low_node_dict = pipeline_job_dict["properties"]["jobs"]["basic_low_node"]
+        assert basic_low_node_dict["queue_settings"] == {"job_tier": "Basic", "priority": 1}
+        assert basic_low_node_dict["resources"] == {"instance_count": 2, "instance_type": "Singularity.ND40rs_v2"}
+        # standard job_tier + Medium priority
+        standard_medium_node_dict = pipeline_job_dict["properties"]["jobs"]["standard_medium_node"]
+        assert standard_medium_node_dict["queue_settings"] == {"job_tier": "Standard", "priority": 2}
+        assert standard_medium_node_dict["resources"] == {"instance_count": 2, "instance_type": "Singularity.ND40rs_v2"}
+        # premium job_tier + High priority
+        premium_high_node_dict = pipeline_job_dict["properties"]["jobs"]["premium_high_node"]
+        assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
+        assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": "Singularity.ND40rs_v2"}
