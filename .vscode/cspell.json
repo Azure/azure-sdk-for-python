@@ -417,7 +417,7 @@
         "Phong"
       ]
     },
-    {              
+    {
       "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
       "words": [
         "isfork",
@@ -738,7 +738,7 @@
       "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
       "words": [
         "Syms",
-        "Updation",
+        "Updation"
       ]
     },
     {
@@ -929,7 +929,8 @@
         "SEPS",
         "wargs",
         "pycache",
-        "ruamel"
+        "ruamel",
+        "reprcrash"
       ]
     },
     {
