@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import TypeVar, Optional
+from typing import TypeVar, Awaitable, Optional
 import inspect
 
 from azure.core.pipeline.policies import (
