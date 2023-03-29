@@ -13,7 +13,6 @@ from typing import Union
 
 import yaml
 
-from ..._artifacts._constants import PROCESSES_PER_CORE
 from ..._utils._asset_utils import IgnoreFile, traverse_directory
 from ..._utils.utils import is_concurrent_component_registration_enabled, is_private_preview_enabled
 from ...entities._util import _general_copy
@@ -346,7 +345,10 @@ class _AdditionalIncludes:
             additional_includes_configs = additional_includes_configs.get(ADDITIONAL_INCLUDES_KEY, [])
 
         additional_includes, conflict_files = [], {}
-        num_threads = int(cpu_count()) * PROCESSES_PER_CORE
+        # Unlike component registration, artifact downloading is a pure download progress; so we can use
+        # more threads to speed up the downloading process.
+        # We use 5 threads per CPU core plus 5 extra threads, and the max number of threads is 64.
+        num_threads = min(64, (int(cpu_count()) * 5) + 5)
         if (
             len(additional_includes_configs) > 1
             and is_concurrent_component_registration_enabled()
