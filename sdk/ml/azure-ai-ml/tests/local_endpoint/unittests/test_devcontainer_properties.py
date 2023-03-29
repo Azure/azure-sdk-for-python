@@ -23,8 +23,8 @@ from azure.ai.ml._local_endpoints.vscode_debug.devcontainer_properties import (
 @pytest.mark.unittest
 class TestDevContainerProperties:
     def test_image(self):
-        prop = Image("ubuntu:18.04")
-        assert {"image": "ubuntu:18.04"} == prop.to_dict()
+        prop = Image("ubuntu:20.04")
+        assert {"image": "ubuntu:20.04"} == prop.to_dict()
 
     def test_build(self):
         prop = Build(

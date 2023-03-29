@@ -24,7 +24,7 @@ Please refer to the [troubleshooting guide][troubleshooting] if you have any iss
 - [Advanced details](#advanced-details)
   - [What does the test proxy do?](#what-does-the-test-proxy-do)
   - [How does the test proxy know when and what to record or play back?](#how-does-the-test-proxy-know-when-and-what-to-record-or-play-back)
-  - [Start the proxy manually](#start-the-proxy-manually)
+  - [Use pytest.mark.parametrize with migrated tests](#use-pytestmarkparametrize-with-migrated-tests)
 
 ## Update existing tests
 
@@ -96,10 +96,7 @@ Resource preparers need a management client to function, so test classes that us
 
 ### Perform one-time setup
 
-1. Docker (or Podman) is a requirement for using the test proxy. You can install Docker from [docs.docker.com][docker_install], or install Podman at [podman.io][podman]. To use Podman, set an alias for `podman` to replace the `docker` command.
-2. After installing, make sure Docker/Podman is running and is using Linux containers before running tests.
-3. Follow the instructions [here][proxy_cert_docs] to complete setup. You need to trust a certificate on your machine in
-order to communicate with the test proxy over a secure connection.
+The test proxy uses a self-signed certificate to communicate with HTTPS. Follow the general setup instructions [here][proxy_cert_docs] to trust this certificate locally.
 
 ### Start the proxy server
 
@@ -120,8 +117,8 @@ def start_proxy(test_proxy):
     return
 ```
 
-The `test_proxy` fixture will fetch the test proxy Docker image and create a new container called
-`ambitious_azsdk_test_proxy`, which will be deleted after test execution unless interrupted.
+The `test_proxy` fixture will download a test proxy executable if one isn't available locally, start the tool, and stop
+it after tests complete.
 
 If your tests already use an `autouse`d, session-level fixture for tests, you can accept the `test_proxy` parameter in
 that existing fixture instead of adding a new one. For an example, see the [Register sanitizers](#register-sanitizers)
@@ -141,6 +138,9 @@ Recordings for a given package will end up in that package's `/tests/recordings`
 do. Recordings that use the test proxy are `.json` files instead of `.yml` files, so migrated test suites no longer
 need old `.yml` recordings.
 
+After migrating to use the test proxy, libraries can and are encouraged to use out-of-repo recordings. For more
+information, refer to the [recording migration guide][recording_migration].
+
 > **Note:** support for configuring live or playback tests with a `testsettings_local.cfg` file has been
 > deprecated in favor of using just `AZURE_TEST_RUN_LIVE`.
 
@@ -153,7 +153,7 @@ Instead, sanitizers (as well as matchers and transforms) can be registered on th
 `add_general_string_sanitizer`. Other sanitizers are available for more specific scenarios and can be found at
 [devtools_testutils/sanitizers.py][py_sanitizers].
 
-Sanitizers, matchers, and transforms remain registered until the proxy container is stopped, so for any sanitizers that
+Sanitizers, matchers, and transforms remain registered until the proxy tool is stopped, so for any sanitizers that
 are shared by different tests, using a session fixture declared in a `conftest.py` file is recommended. Please refer to
 [pytest's scoped fixture documentation][pytest_fixtures] for more details.
 
@@ -403,36 +403,6 @@ Running tests in playback follows the same pattern, except that requests will be
 The `recorded_by_proxy` and `recorded_by_proxy_async` decorators send the appropriate requests at the start and end of
 each test case.
 
-### Start the proxy manually
-
-There are two options for manually starting and stopping the test proxy: one uses a PowerShell command, and one uses
-methods from `devtools_testutils`.
-
-#### PowerShell
-
-There is a [PowerShell script][docker_start_proxy] in `eng/common/testproxy` that will fetch the proxy Docker image if
-you don't already have it, and will start or stop a container running the image for you. You can run the following
-command from the root of the `azure-sdk-for-python` directory to start the container whenever you want to make the test
-proxy available for running tests:
-
-```powershell
-.\eng\common\testproxy\docker-start-proxy.ps1 "start"
-```
-
-Note that the proxy is available as long as the container is running. In other words, you don't need to start and
-stop the container for each test run or between tests for different SDKs. You can run the above command in the morning
-and just stop the container whenever you'd like. To stop the container, run the same command but with `"stop"` in place
-of `"start"`.
-
-#### Python
-
-There are two methods in `devtools_testutils`, [start_test_proxy][start_test_proxy] and
-[stop_test_proxy][stop_test_proxy], that can be used to manually start and stop the test proxy. Like
-`docker-start-proxy.ps1`, `start_test_proxy` will automatically fetch the proxy Docker image for you and start the
-container if it's not already running.
-
-For more details on proxy startup, please refer to the [proxy documentation][detailed_docs].
-
 ### Use `pytest.mark.parametrize` with migrated tests
 
 Migrating tests to use basic `pytest` tools allows us to take advantage of helpful features such as
@@ -493,12 +463,10 @@ client to the test.
 
 
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
-[docker_install]: https://docs.docker.com/get-docker/
-[docker_start_proxy]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/docker-start-proxy.ps1
 
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
 
-[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/README.md
+[general_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/Azure.Sdk.Tools.TestProxy/README.md
 
 [mgmt_recorded_test_case]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_recorded_testcase.py
 
@@ -507,7 +475,6 @@ client to the test.
 [parametrize_class]: https://github.com/Azure/azure-sdk-for-python/blob/d92b63b9976b0025b274016c49a250fb7c4d7333/sdk/keyvault/azure-keyvault-keys/tests/_test_case.py#L59
 [pipelines_ci]: https://github.com/Azure/azure-sdk-for-python/blob/5ba894966ed6b0e1ee8d854871f8c2da36a73d79/sdk/eventgrid/ci.yml#L30
 [pipelines_live]: https://github.com/Azure/azure-sdk-for-python/blob/e2b5852deaef04752c1323d2ab0958f83b98858f/sdk/textanalytics/tests.yml#L26-L27
-[podman]: https://podman.io/
 [proxy_cert_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/test-proxy/trusting-cert-per-language.md
 [py_sanitizers]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/sanitizers.py
 [pytest_collection]: https://docs.pytest.org/latest/goodpractices.html#test-discovery

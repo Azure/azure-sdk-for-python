@@ -14,8 +14,10 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
@@ -24,8 +26,10 @@ from .registry_support_classes import RegistryRegionDetails
 
 CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
+INTELLECTUAL_PROPERTY = "intellectual_property"
 
 
+@experimental
 class Registry(Resource):
     def __init__(
         self,
@@ -36,7 +40,7 @@ class Registry(Resource):
         tags: Optional[Dict[str, str]] = None,
         public_network_access: Optional[str] = None,
         discovery_url: Optional[str] = None,
-        intellectual_property_publisher: Optional[str] = None,
+        intellectual_property: Optional[IntellectualProperty] = None,
         managed_resource_group: Optional[str] = None,
         mlflow_registry_uri: Optional[str] = None,
         replication_locations: List[RegistryRegionDetails],
@@ -75,7 +79,7 @@ class Registry(Resource):
         self.identity = identity
         self.replication_locations = replication_locations
         self.public_network_access = public_network_access
-        self.intellectual_property_publisher = intellectual_property_publisher
+        self.intellectual_property = intellectual_property
         self.managed_resource_group = managed_resource_group
         self.discovery_url = discovery_url
         self.mlflow_registry_uri = mlflow_registry_uri
@@ -162,7 +166,9 @@ class Registry(Resource):
             location=rest_obj.location,
             public_network_access=real_registry.public_network_access,
             discovery_url=real_registry.discovery_url,
-            intellectual_property_publisher=real_registry.intellectual_property_publisher,
+            intellectual_property=IntellectualProperty(publisher=real_registry.intellectual_property_publisher)
+            if real_registry.intellectual_property_publisher
+            else None,
             managed_resource_group=real_registry.managed_resource_group,
             mlflow_registry_uri=real_registry.ml_flow_registry_uri,
             replication_locations=replication_locations,
@@ -214,7 +220,9 @@ class Registry(Resource):
             properties=RegistryProperties(
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,
-                intellectual_property_publisher=self.intellectual_property_publisher,
+                intellectual_property_publisher=(self.intellectual_property.publisher)
+                if self.intellectual_property
+                else None,
                 managed_resource_group=self.managed_resource_group,
                 ml_flow_registry_uri=self.mlflow_registry_uri,
                 region_details=replication_locations,

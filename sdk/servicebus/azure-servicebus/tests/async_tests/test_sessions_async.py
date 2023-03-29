@@ -32,13 +32,14 @@ from azure.servicebus.exceptions import (
     MessageAlreadySettled,
     AutoLockRenewTimeout
 )
-from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
     ServiceBusTopicPreparer,
     ServiceBusQueuePreparer,
-    ServiceBusSubscriptionPreparer
+    ServiceBusSubscriptionPreparer,
+    CachedServiceBusResourceGroupPreparer
 )
 from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
 
@@ -52,7 +53,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -107,7 +108,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True, lock_duration='PT10S')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -148,7 +149,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -192,7 +193,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -209,7 +210,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -232,7 +233,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -273,7 +274,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -323,7 +324,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -361,7 +362,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -395,7 +396,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -440,7 +441,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -476,7 +477,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -503,7 +504,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -548,7 +549,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True, lock_duration='PT5S')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -617,7 +618,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True, lock_duration='PT10S')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -713,7 +714,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -739,7 +740,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -780,7 +781,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -819,7 +820,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -861,7 +862,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -897,7 +898,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -924,7 +925,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -954,7 +955,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -986,7 +987,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -1017,7 +1018,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug")
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -1059,7 +1060,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest', requires_session=True)
@@ -1091,7 +1092,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @pytest.mark.xfail(reason="'Cannot open log' error, potential service bug", raises=ServiceBusError)
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -1132,7 +1133,7 @@ class TestServiceBusAsyncSession(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', requires_session=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)

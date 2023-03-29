@@ -1,7 +1,5 @@
 import os
-import shutil
 import sys
-import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -14,8 +12,8 @@ from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.entities import Component, CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -419,7 +417,6 @@ class TestCommandComponentEntity:
         assert not validation_result.passed
         assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
-    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_primitive_output(self):
         expected_rest_component = {
             "command": "echo Hello World",
@@ -452,7 +449,6 @@ class TestCommandComponentEntity:
         actual_component_dict1 = pydash.omit(
             component1._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
-
         assert actual_component_dict1 == expected_rest_component
 
         # from CLASS
@@ -483,7 +479,6 @@ class TestCommandComponentEntity:
         )
         assert actual_component_dict2 == expected_rest_component
 
-    @pytest.mark.usefixtures("enable_private_preview_schema_features")
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
         component = load_component(yaml_path)
@@ -537,3 +532,52 @@ class TestCommandComponentEntity:
             "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx",
         }
         assert component_dict == expected_dict
+
+    @pytest.mark.usefixtures("enable_private_preview_schema_features")
+    def test_component_with_ipp_fields(self):
+        # code is specified in yaml, value is respected
+        component_yaml = "./tests/test_configs/components/component_ipp.yml"
+
+        command_component = load_component(
+            source=component_yaml,
+        )
+
+        expected_output_dict = {
+            "model_output_not_ipp": {
+                "type": "path",
+                "intellectual_property": {"protection_level": "none"},
+            },
+            "model_output_ipp": {
+                "type": "path",
+                "intellectual_property": {"protection_level": "all"},
+            },
+        }
+
+        # check top-level component
+        assert command_component._intellectual_property
+        assert command_component._intellectual_property.publisher == "contoso"
+        assert command_component._intellectual_property.protection_level == "all"
+
+        rest_component = command_component._to_rest_object()
+
+        assert rest_component.properties.component_spec["intellectualProperty"]
+        assert rest_component.properties.component_spec["intellectualProperty"] == {
+            "publisher": "contoso",
+            "protectionLevel": "all",
+        }
+        assert rest_component.properties.component_spec["outputs"] == expected_output_dict
+
+        # because there's a mismatch between what the service accepts for IPP fields and what it returns
+        # (accepts camelCase for IPP, returns snake_case IPP), mock out the service response
+
+        rest_component.properties.component_spec.pop("intellectualProperty")
+        yaml_dict = {
+            "publisher": "contoso",
+            "protection_level": "all",
+        }
+        rest_component.properties.component_spec["intellectual_property"] = yaml_dict
+
+        from_rest_dict = Component._from_rest_object(rest_component)._to_dict()
+        assert from_rest_dict["intellectual_property"]
+        assert from_rest_dict["intellectual_property"] == yaml_dict
+        assert from_rest_dict["outputs"] == expected_output_dict

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, Any
+from typing import Optional, Any, Tuple
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -79,8 +79,10 @@ class AuthorizationCodeCredential(GetTokenMixin):
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
-        return self._client.get_cached_access_token(scopes, **kwargs)
+    def _acquire_token_silently(
+        self, *scopes: str, **kwargs
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
     def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         if self._authorization_code:

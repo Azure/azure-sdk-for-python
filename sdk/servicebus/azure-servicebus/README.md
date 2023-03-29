@@ -11,7 +11,13 @@ Use the Service Bus client library for Python to communicate between application
 * Send and receive messages within your Service Bus channels.
 * Utilize message locks, sessions, and dead letter functionality to implement complex messaging patterns.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/) | [Package (PyPi)][pypi] | [API reference documentation][api_docs] | [Product documentation][product_docs] | [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples) | [Changelog](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/CHANGELOG.md)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/)
+| [Package (PyPi)][pypi]
+| [Package (Conda)](https://anaconda.org/microsoft/azure-servicebus)
+| [API reference documentation][api_docs]
+| [Product documentation][product_docs]
+| [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/samples)
+| [Changelog](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/servicebus/azure-servicebus/CHANGELOG.md)
 
 **NOTE**: If you are using version 0.50 or lower and want to migrate to the latest version
 of this package please look at our [migration guide to move from Service Bus V0.50 to Service Bus V7][migration_guide].

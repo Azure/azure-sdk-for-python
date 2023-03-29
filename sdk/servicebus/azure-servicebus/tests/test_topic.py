@@ -11,7 +11,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 
 from azure.servicebus import ServiceBusClient
 from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
@@ -20,7 +20,9 @@ from servicebus_preparer import (
     ServiceBusNamespacePreparer,
     ServiceBusTopicPreparer,
     CachedServiceBusNamespacePreparer,
-    CachedServiceBusTopicPreparer
+    CachedServiceBusTopicPreparer,
+    CachedServiceBusResourceGroupPreparer,
+    SERVICEBUS_ENDPOINT_SUFFIX
 )
 from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasser
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
@@ -32,7 +34,7 @@ _logger = get_logger(logging.DEBUG)
 class TestServiceBusTopics(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
@@ -50,13 +52,13 @@ class TestServiceBusTopics(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_topic_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
-        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(

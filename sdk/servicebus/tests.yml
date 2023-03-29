@@ -7,18 +7,25 @@ stages:
       TestTimeoutInMinutes: 360
       BuildTargetingString: azure-servicebus*
       EnvVars:
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_SUBSCRIPTION_ID: $(SERVICEBUS_SUBSCRIPTION_ID)
+        AZURE_TENANT_ID: $(SERVICEBUS_TENANT_ID)
+        AZURE_CLIENT_ID: $(SERVICEBUS_CLIENT_ID)
+        AZURE_CLIENT_SECRET: $(SERVICEBUS_CLIENT_SECRET)
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_SKIP_LIVE_RECORDING: 'True'
       MatrixFilters:
         - PythonVersion=^(?!pypy3).*
       Clouds: 'Public,Canary'
+      SupportedClouds: 'Public,UsGov,China'
       CloudConfig:
         Public:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
         Canary:
           SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
           Location: 'centraluseuap'
+        UsGov:
+          SubscriptionConfiguration: $(sub-config-gov-test-resources)
+          Location: 'usgovarizona'
+        China:
+          SubscriptionConfiguration: $(sub-config-cn-test-resources)
+          Location: 'chinanorth2'

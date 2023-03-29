@@ -16,13 +16,15 @@ from azure.servicebus._base_handler import ServiceBusSharedKeyCredential
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import ServiceBusSubQueue
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer,
     CachedServiceBusSubscriptionPreparer,
     ServiceBusTopicPreparer,
-    ServiceBusSubscriptionPreparer
+    ServiceBusSubscriptionPreparer,
+    CachedServiceBusResourceGroupPreparer,
+    SERVICEBUS_ENDPOINT_SUFFIX
 )
 from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasser
 uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
@@ -35,7 +37,7 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
@@ -80,14 +82,14 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_subscription_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
-        fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
             credential=ServiceBusSharedKeyCredential(
@@ -141,7 +143,7 @@ class TestServiceBusSubscription(AzureMgmtRecordedTestCase):
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
-    @CachedResourceGroupPreparer(name_prefix='servicebustest')
+    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
