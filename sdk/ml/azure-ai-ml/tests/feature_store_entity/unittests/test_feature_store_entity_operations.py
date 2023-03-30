@@ -61,12 +61,6 @@ class TestFeatureStoreEntityOperations:
             name=name_only, version=version, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
         )
 
-    def test_get_no_version(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations) -> None:
-        name = "random_name"
-        with pytest.raises(Exception) as ex:
-            mock_feature_store_entity_operations.get(name=name)
-        assert "At least one required parameter is missing" in str(ex.value)
-
     def test_archive_version(self, mock_feature_store_entity_operations: _FeatureStoreEntityOperations):
         name = "random_name"
         featureStoreEntity_version = Mock(

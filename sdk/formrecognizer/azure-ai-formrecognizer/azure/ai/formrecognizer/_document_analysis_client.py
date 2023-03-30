@@ -77,7 +77,8 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         :param str model_id: A unique model identifier can be passed in as a string.
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
-        :param document: JPEG, PNG, PDF, TIFF, BMP, or HEIF type file stream or bytes.
+        :param document: File stream or bytes. For service supported file types,
+            see: https://aka.ms/azsdk/formrecognizer/supportedfiles.
         :type document: bytes or IO[bytes]
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
@@ -153,8 +154,8 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             Use this to specify the custom model ID or prebuilt model ID. Prebuilt model IDs supported
             can be found here: https://aka.ms/azsdk/formrecognizer/models
         :param str document_url: The URL of the document to analyze. The input must be a valid, properly
-            encoded  (i.e. encode special characters, such as empty spaces), and publicly accessible URL
-            of one of the supported formats: JPEG, PNG, PDF, TIFF, BMP, or HEIF.
+            encoded  (i.e. encode special characters, such as empty spaces), and publicly accessible URL.
+            For service supported file types, see: https://aka.ms/azsdk/formrecognizer/supportedfiles.
         :keyword str pages: Custom page numbers for multi-page documents(PDF/TIFF). Input the page numbers
             and/or ranges of pages you want to get in the result. For a range of pages, use a hyphen, like
             `pages="1-3, 5-6"`. Separate each page number or range with a comma.
@@ -212,6 +213,110 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
+            continuation_token=continuation_token,
+            cls=cls,
+            **kwargs
+        )
+
+    @distributed_trace
+    def begin_classify_document(
+        self, classifier_id: str, document: Union[bytes, IO[bytes]], **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
+        """Classify a document using a document classifier. For more information on how to build
+        a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
+
+        :param str classifier_id: A unique document classifier identifier can be passed in as a string.
+        :param document: File stream or bytes. For service supported file types, see:
+            https://aka.ms/azsdk/formrecognizer/supportedfiles.
+        :type document: bytes or IO[bytes]
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *begin_classify_document* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/sample_classify_document.py
+                :start-after: [START classify_document]
+                :end-before: [END classify_document]
+                :language: python
+                :dedent: 4
+                :caption: Classify a document. For more samples see the `samples` folder.
+        """
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'begin_classify_document()' is only available for API version "
+                             "V2023_02_28_PREVIEW and later")
+
+        cls = kwargs.pop("cls", self._analyze_document_callback)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        if continuation_token is None and not classifier_id:
+            raise ValueError("classifier_id cannot be None or empty.")
+
+        return self._client.document_classifiers.begin_classify_document(  # type: ignore
+            classifier_id=classifier_id,
+            content_type="application/octet-stream",
+            string_index_type="unicodeCodePoint",
+            classify_request=document,  # type: ignore
+            continuation_token=continuation_token,
+            cls=cls,
+            **kwargs
+        )
+
+    @distributed_trace
+    def begin_classify_document_from_url(
+        self, classifier_id: str, document_url: str, **kwargs: Any
+    ) -> LROPoller[AnalyzeResult]:
+        """Classify a given document with a document classifier. For more information on how to build
+        a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
+        The input must be the location (URL) of the document to be classified.
+
+        :param str classifier_id: A unique document classifier identifier can be passed in as a string.
+        :param str document_url: The URL of the document to classify. The input must be a valid, properly
+            encoded  (i.e. encode special characters, such as empty spaces), and publicly accessible URL
+            of one of the supported formats: https://aka.ms/azsdk/formrecognizer/supportedfiles.
+        :return: An instance of an LROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *begin_classify_document_from_url* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/TODO.py
+                :start-after: [START TODO]
+                :end-before: [END TODO]
+                :language: python
+                :dedent: 4
+                :caption: Classify a document. For more samples see the `samples` folder.
+        """
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'begin_classify_document_from_url()' is only available for API version "
+                             "V2023_02_28_PREVIEW and later")
+        cls = kwargs.pop("cls", self._analyze_document_callback)
+        continuation_token = kwargs.pop("continuation_token", None)
+
+        if continuation_token is None:
+            if not classifier_id:
+                raise ValueError("classifier_id cannot be None or empty.")
+
+            if not isinstance(document_url, str):
+                raise ValueError(
+                    "'document_url' needs to be of type 'str'. "
+                    "Please see `begin_classify_document()` to pass a byte stream."
+                )
+
+        return self._client.document_classifiers.begin_classify_document(  # type: ignore
+            classifier_id=classifier_id,
+            string_index_type="unicodeCodePoint",
+            classify_request={"urlSource": document_url},  # type: ignore
             continuation_token=continuation_token,
             cls=cls,
             **kwargs
