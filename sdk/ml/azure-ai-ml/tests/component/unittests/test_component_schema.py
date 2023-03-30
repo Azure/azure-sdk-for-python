@@ -119,7 +119,7 @@ class TestCommandComponent:
             "id",
         )
         assert component_dict == expected_dict
-        assert component_entity.code
+        assert component_entity.code is None
         assert component_entity.environment == "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
 
     def test_serialize_deserialize_environment_no_version(self, mock_machinelearning_client: MLClient):
@@ -199,9 +199,7 @@ class TestCommandComponent:
     def test_serialize_deserialize_default_code(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
-        # make sure default code has generated with name and version as content
-        assert component_entity.code
-        assert component_entity.code == COMPONENT_CODE_PLACEHOLDER
+        assert component_entity.code is None
 
     def test_serialize_deserialize_input_output_path(self, mock_machinelearning_client: MLClient):
         expected_value_dict = {

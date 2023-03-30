@@ -221,6 +221,7 @@ class AzureResourceId:
             if match:
                 self.subscription_id = match.group(1)
                 self.resource_group_name = match.group(2)
+                self.provider_namespace_with_type = match.group(3) + match.group(4)
                 self.asset_type = match.group(4)
                 self.asset_name = match.group(5)
             elif rg_match:

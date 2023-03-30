@@ -4,25 +4,22 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING, Any, Union, Optional
+from typing import Union, Optional
 from io import SEEK_SET, UnsupportedOperation
 
+from azure.core.credentials import TokenCredential
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 
 from ._anonymous_exchange_client import AnonymousACRExchangeClient
 from ._exchange_client import ACRExchangeClient
 from ._helpers import _enforce_https
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
-
 
 class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential, endpoint, **kwargs):
-        # type: (Optional[TokenCredential], str, **Any) -> None
+    def __init__(self, credential: Optional[TokenCredential], endpoint: str, **kwargs) -> None:
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
@@ -30,18 +27,18 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         """Called before the policy sends a request.
         The base implementation authorizes the request with a bearer token.
+
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
         # Future caching implementation will be included here
         pass  # pylint: disable=unnecessary-pass
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: PipelineRequest) -> PipelineResponse:
         """Authorizes a request with a bearer token, possibly handling an authentication challenge
+
         :param ~azure.core.pipeline.PipelineRequest request: the request
         """
         _enforce_https(request)
@@ -65,16 +62,16 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
 
         return response
 
-    def on_challenge(self, request, response, challenge):
-        # type: (PipelineRequest, PipelineResponse, str) -> bool
+    def on_challenge(self, request: PipelineRequest, response: PipelineResponse, challenge: str) -> bool:
         """Authorize request according to an authentication challenge
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
+
         :param ~azure.core.pipeline.PipelineRequest request: the request which elicited an authentication challenge
         :param ~azure.core.pipeline.PipelineResponse response: the resource provider's response
         :param str challenge: response's WWW-Authenticate header, unparsed. It may contain multiple challenges.
         :returns: a bool indicating whether the policy should send the request
         """
-        # pylint:disable=unused-argument,no-self-use
+        # pylint:disable=unused-argument, no-self-use
 
         access_token = self._exchange_client.get_acr_access_token(challenge)
         if access_token is not None:

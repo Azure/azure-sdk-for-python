@@ -293,9 +293,7 @@ class DataOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "data", name, version),
                 )
-                if not sas_uri:
-                    module_logger.debug("Getting the existing asset name: %s, version: %s", name, version)
-                    return self.get(name=name, version=version)
+
             referenced_uris = self._validate(data)
             if referenced_uris:
                 data._referenced_uris = referenced_uris
@@ -370,8 +368,8 @@ class DataOperations(_ScopeDependentOperations):
 
         experiment_name = "data_import_" + data_import.name
         data_import.type = AssetTypes.MLTABLE if isinstance(data_import.source, Database) else AssetTypes.URI_FOLDER
-        if "{name}" not in data_import.path:
-            data_import.path = data_import.path.rstrip("/") + "/{name}"
+        if "${{name}}" not in data_import.path:
+            data_import.path = data_import.path.rstrip("/") + "/${{name}}"
         import_job = import_data_func(
             description=data_import.description or experiment_name,
             display_name=experiment_name,

@@ -3,15 +3,23 @@
 ## 1.6.0 (Unreleased)
 
 ### Features Added
+- Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
 - Added support to make JobService and ServiceInstance objects serializable when printed
+- Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
 
 ### Bugs Fixed
 
 - Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
+- Fixed issue of spark input/output mode validation doesn't take effect because of wrong type assertion
+- Fixed the bug when setting `node.limits.timeout` to a pipeline input.
+
+### Breaking Changes
+
+- Renamed `JobServiceBase.job_service_type` to `type`
 
 ### Other Changes
 
-- 
+- Remove the default placeholder for CommandComponent.code
 
 ## 1.5.0 (2023-03-20)
 
@@ -19,10 +27,9 @@
 - Added support for `tags` on Compute Resources.
 - Added support for promoting data asset from a workspace to a registry
 - Added support for registering named asset from job output or node output by specifying name and version settings.
-- Removed Experimental Tag from Image Metadata on Compute Instances.
 - Added support for data binding on outputs inside dynamic arguments for dsl pipeline
 - Added support for serverless compute in pipeline, command, automl and sweep job
-- Added support for `job_tier` and `priority` in job
+- Added support for `job_tier` and `priority` in standalone job
 - Added support for passing `locations` via command function and set it to `JobResourceConfiguration.locations`
 - Added support for modifying SSH key values after creation on Compute Resources.
 - Added WorkspaceConnection types `s3`, `snowflake`, `azure_sql_db`, `azure_synapse_analytics`, `azure_my_sql_db`, `azure_postgres_db`

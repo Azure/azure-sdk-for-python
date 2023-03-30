@@ -164,6 +164,24 @@ def foo(
     ...
 ```
 
+- Do use `Optional` if a parameter can be typed as `Any` or `None`. `Optional[Any]`, or `Union[Any, None]`, is __not__ equal to `Any`.
+
+```python
+from typing import Optional, Any
+
+# Yes
+def foo(
+    bar: Optional[Any] = None,
+) -> None:
+    bar.append(1)  # error caught at type checking time: Item "None" of "Optional[Any]" has no attribute "append"
+
+# No
+def foo(
+    bar: Any = None,
+) -> None:
+    bar.append(1)  # error caught at runtime: AttributeError: 'NoneType' object has no attribute 'append'
+```
+
 ### Collections
 
 - Do familiarize yourself with the supported operations of various abstract collections in the [collections.abc](https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes) docs.

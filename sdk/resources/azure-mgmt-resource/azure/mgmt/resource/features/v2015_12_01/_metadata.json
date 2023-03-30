@@ -110,6 +110,8 @@
     "operation_mixins": {
         "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Iterable\"]}}, \"regular\": {\"local\": {\".\": [[\"models\", \"_models\"]]}, \"azurecore\": {\"azure.core.paging\": [\"ItemPaged\"]}}}",
         "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"AsyncIterable\"]}}, \"regular\": {\"local\": {\"..\": [[\"models\", \"_models\"]]}, \"azurecore\": {\"azure.core.async_paging\": [\"AsyncItemPaged\"]}}}",
+        "sync_mixin_typing_definitions": "",
+        "async_mixin_typing_definitions": "",
         "operations": {
             "list_operations" : {
                 "sync": {

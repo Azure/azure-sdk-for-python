@@ -46,8 +46,6 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
                                 stored_procedure_params=stored_procedure_params,
                                 connection='azureml:my_azuresql_connection')
 
-    :param type: The type of the data input. Possible values include: 'file_system', 'database'.
-    :type type: str
     :param query: The sql query to get data from database
     :type query: str
     :param table_name: The database table name
@@ -68,7 +66,6 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     def __init__(
         self,
         *,
-        type: Optional[str] = ExternalDataType.DATABASE,  # pylint: disable=redefined-builtin
         query: Optional[str] = None,
         table_name: Optional[str] = None,
         stored_procedure: Optional[str] = None,
@@ -77,8 +74,8 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     ):
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
-        self.type = type
         self.name = None
+        self.type = ExternalDataType.DATABASE
         self.connection = connection
         self.query = query
         self.table_name = table_name
@@ -87,7 +84,15 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
 
     def _to_dict(self, remove_name=True):
         """Convert the Source object to a dict."""
-        keys = ["name", "type", "query", "stored_procedure", "stored_procedure_params", "connection", "table_name"]
+        keys = [
+            "name",
+            "type",
+            "query",
+            "stored_procedure",
+            "stored_procedure_params",
+            "connection",
+            "table_name",
+        ]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
@@ -130,9 +135,6 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
 
     e.g. source_s3 = FileSystem(path='s3://my_bucket/my_folder', connection='azureml:my_s3_connection')
 
-    The init function of Group will be 'def __init__(self, *, int_param0, int_param3, int_param1=1)'.
-    :param type: The type of the data input. Possible values include: 'file_system', 'database'.
-    :type type: str
     :param path: The path to which the input is pointing. Could be pointing to the path of file system.
     :type path: str
     :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
@@ -147,11 +149,10 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     def __init__(
         self,
         *,
-        type: Optional[str] = ExternalDataType.FILE_SYSTEM,  # pylint: disable=redefined-builtin
         path: Optional[str] = None,
         connection: Optional[str] = None,
     ):
-        self.type = type
+        self.type = ExternalDataType.FILE_SYSTEM
         self.name = None
         self.connection = connection
 
