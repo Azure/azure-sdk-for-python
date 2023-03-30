@@ -93,7 +93,8 @@ class AzureMessagingEventGridClient(ServiceClientGenerated):
             self.publish_batch_of_cloud_events(topic_name, internal_body_list, **kwargs)
     
     @distributed_trace
-    def receive(self,
+    def receive(
+        self,
         topic_name: str,
         event_subscription_name: str,
         *,
@@ -102,6 +103,7 @@ class AzureMessagingEventGridClient(ServiceClientGenerated):
         **kwargs:Any
         ) -> List[ReceiveResponse]:
         """Receive Cloud Events from namespace topic."""
+
         deserialized_response = []
         received_response = self.receive_batch_of_cloud_events(topic_name, event_subscription_name, max_events=max_events, timeout=timeout, **kwargs)
         for detail_item in received_response.get("value"):
