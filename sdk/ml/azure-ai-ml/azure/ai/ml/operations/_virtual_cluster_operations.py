@@ -118,6 +118,7 @@ class VirtualClusterOperations:
         ]
         index_entities_request = IndexEntitiesRequest(filters=filters, order=order)
 
+        # cspell:ignore entites
         return self._index_service.index_entities.get_entites_cross_region(
             body=CrossRegionIndexEntitiesRequest(index_entities_request=index_entities_request),
             cls=lambda objs: [index_entity_response_to_job(obj) for obj in objs],
