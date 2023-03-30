@@ -25,7 +25,12 @@
 
 import unittest
 
-from azure.mgmt.core.tools import parse_resource_id, is_valid_resource_id, resource_id, is_valid_resource_name
+from azure.mgmt.core.tools import (
+    parse_resource_id,
+    is_valid_resource_id,
+    resource_id,
+    is_valid_resource_name,
+)
 
 
 class TestTools(unittest.TestCase):
@@ -190,15 +195,18 @@ class TestTools(unittest.TestCase):
                     "child_namespace_2": "Microsoft.Provider3",
                     "child_type_2": "resourceType3",
                     "child_name_2": "name3",
-                    "child_parent_2": "resourceType1/name1/resourceType2/name2/" "providers/Microsoft.Provider3/",
-                    "resource_parent": "resourceType1/name1/resourceType2/name2/" "providers/Microsoft.Provider3/",
+                    "child_parent_2": "resourceType1/name1/resourceType2/name2/"
+                    "providers/Microsoft.Provider3/",
+                    "resource_parent": "resourceType1/name1/resourceType2/name2/"
+                    "providers/Microsoft.Provider3/",
                     "resource_namespace": "Microsoft.Provider1",
                     "resource_type": "resourceType3",
                     "resource_name": "name3",
                 },
             },
             {
-                "resource_id": "/subscriptions/fakesub/providers/Microsoft.Authorization" "/locks/foo",
+                "resource_id": "/subscriptions/fakesub/providers/Microsoft.Authorization"
+                "/locks/foo",
                 "expected": {
                     "name": "foo",
                     "type": "locks",
@@ -207,7 +215,8 @@ class TestTools(unittest.TestCase):
                 },
             },
             {
-                "resource_id": "/Subscriptions/fakesub/providers/Microsoft.Authorization" "/locks/foo",
+                "resource_id": "/Subscriptions/fakesub/providers/Microsoft.Authorization"
+                "/locks/foo",
                 "expected": {
                     "name": "foo",
                     "type": "locks",
@@ -287,8 +296,13 @@ class TestTools(unittest.TestCase):
                 },
             },
             {
-                "resource_id": "/subscriptions/mySub/resourceGroups/myRg/" "providers/Microsoft.Provider1",
-                "id_args": {"subscription": "mySub", "resource_group": "myRg", "namespace": "Microsoft.Provider1"},
+                "resource_id": "/subscriptions/mySub/resourceGroups/myRg/"
+                "providers/Microsoft.Provider1",
+                "id_args": {
+                    "subscription": "mySub",
+                    "resource_group": "myRg",
+                    "namespace": "Microsoft.Provider1",
+                },
             },
             {
                 "resource_id": "/subscriptions/mySub/resourceGroups/myRg",
