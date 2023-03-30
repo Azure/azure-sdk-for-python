@@ -8,7 +8,7 @@
 
 #### Bugs Fixed
 * Fixed bug in method `create_container_if_not_exists()` of async database client for unexpected kwargs being passed into `read()` method used internally.
-* Fixed bug with method `query_items()` of our async container class, where partition key and cross partition headers would both be set when using partition keys.
+* Fixed bug with method `query_items()` of our async container class, where partition key and cross partition headers would both be set when using partition keys. See [PR 29366](https://github.com/Azure/azure-sdk-for-python/pull/29366/).
 
 #### Other Changes
 
