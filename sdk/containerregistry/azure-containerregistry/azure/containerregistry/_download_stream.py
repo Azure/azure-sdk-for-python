@@ -11,7 +11,7 @@ T = TypeVar('T', bound='DownloadBlobStream')
 
 
 class GetNext(Protocol):
-    def __call__(self, *args: Any, range: str) -> Iterator[bytes]:
+    def __call__(self, *args: Any, range_header: str) -> Iterator[bytes]:
         pass
 
 
@@ -58,7 +58,7 @@ class DownloadBlobStream(
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = cast(
             Tuple[Iterator[bytes], Dict[str, str]],
-            self._next(range=range_header)
+            self._next(range_header=range_header)
         )
         self._downloaded += int(headers["Content-Length"])
         return next_chunk

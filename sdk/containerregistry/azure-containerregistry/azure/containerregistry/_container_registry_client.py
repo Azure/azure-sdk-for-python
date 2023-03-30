@@ -1000,7 +1000,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             self._client.container_registry_blob.get_chunk(
                 repository,
                 digest,
-                range=f"bytes=0-{chunk_size}",
+                range_header=f"bytes=0-{chunk_size}",
                 cls=_return_deserialized_and_headers,
                 **kwargs
             )
