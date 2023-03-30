@@ -31,7 +31,7 @@ outputs:
     type: path
     intellectual_property:
       protection_level: all
-environment: azureml://registries/azureml/environments/sklearn-1.1/versions/3
+environment: azureml://registries/azureml-dev/environments/sklearn-1.1/versions/2-azureml-dev.858142
 resources:
   instance_count: 1
 command: ls
