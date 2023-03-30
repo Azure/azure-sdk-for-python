@@ -173,7 +173,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
 
     async def _incoming_attach(self, frame):
         try:
-            self._input_handles[frame[1]] = self.links[frame[0]]  # name and handle
+            self._input_handles[frame[1]] = self.links[frame[0].decode("utf-8")]  # name and handle
             await self._input_handles[frame[1]]._incoming_attach(frame)  # pylint: disable=protected-access
         except KeyError:
             try:
@@ -184,7 +184,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     extra=self.network_trace_params
                 )
                 # detach the link that would have been set.
-                await self.links[frame[0]].detach(
+                await self.links[frame[0].decode("utf-8")].detach(
                     error=AMQPError(
                         condition=ErrorCondition.LinkDetachForced,
                         description=f"Cannot allocate more handles, the max number of handles is {self.handle_max}. Detaching link", # pylint: disable=line-too-long
