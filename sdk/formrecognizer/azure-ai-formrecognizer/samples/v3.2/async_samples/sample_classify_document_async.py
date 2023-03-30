@@ -11,21 +11,26 @@ FILE: sample_classify_document_async.py
 
 DESCRIPTION:
     This sample demonstrates how to classify a document using a trained document classifier.
+    To learn how to build your custom classifier, see sample_build_classifier_async.py.
+
+    More details on building a classifier and labeling your data can be found here:
+    https://aka.ms/azsdk/formrecognizer/buildclassifiermodel
 
 USAGE:
     python sample_classify_document_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
+    1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource
     2) AZURE_FORM_RECOGNIZER_KEY - your Form Recognizer API key
     3) CLASSIFIER_ID - the ID of your trained document classifier
         -OR-
-       CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container with your training files.
-       A document classifier will be built and used to run the sample.
+       CLASSIFIER_CONTAINER_SAS_URL - The shared access signature (SAS) Url of your Azure Blob Storage container
+       with your training files. A document classifier will be built and used to run the sample.
 """
 
 import os
 import asyncio
+
 
 async def classify_document_async(classifier_id):
     path_to_sample_documents = os.path.abspath(
@@ -34,7 +39,7 @@ async def classify_document_async(classifier_id):
             "..",
             "..",
             "..",
-            "./sample_forms/forms/Form_1.jpg",
+            "./sample_forms/forms/IRS-1040.pdf",
         )
     )
 
@@ -58,36 +63,49 @@ async def classify_document_async(classifier_id):
 
     print("----Classified documents----")
     for doc in result.documents:
-        print("Found document of type '{}' with confidence of {}".format(doc.doc_type or "N/A", doc.confidence))
-
-    print("----------------------------------------")
+        print(f"Found document of type '{doc.doc_type or 'N/A'}' with a confidence of {doc.confidence} contained on "
+              f"the following pages: {[region.page_number for region in doc.bounding_regions]}")
     # [END classify_document_async]
 
 
 async def main():
     classifier_id = None
-    if os.getenv("CONTAINER_SAS_URL") and not os.getenv("CLASSIFIER_ID"):
+    if os.getenv("CLASSIFIER_CONTAINER_SAS_URL") and not os.getenv("CLASSIFIER_ID"):
 
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
+        from azure.ai.formrecognizer import (
+            DocumentModelAdministrationClient,
+            ClassifierDocumentTypeDetails,
+            AzureBlobContentSource
+        )
 
-        endpoint = os.getenv("AZURE_FORM_RECOGNIZER_ENDPOINT")
-        key = os.getenv("AZURE_FORM_RECOGNIZER_KEY")
-
-        if not endpoint or not key:
-            raise ValueError("Please provide endpoint and API key to run the samples.")
+        endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
+        key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
+        blob_container_sas_url = os.environ["CLASSIFIER_CONTAINER_SAS_URL"]
 
         document_model_admin_client = DocumentModelAdministrationClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with document_model_admin_client:
-            blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
-            if blob_container_sas_url is not None:
-                poller = await document_model_admin_client.begin_build_document_classifier(
-                    blob_container_url=blob_container_sas_url
-                )
-                classifier = await poller.result()
-                classifier_id = classifier.model_id
+            poller = await document_model_admin_client.begin_build_document_classifier(
+                doc_types={
+                    "IRS-1040-A": ClassifierDocumentTypeDetails(
+                        azure_blob_source=AzureBlobContentSource(
+                            container_url=blob_container_sas_url,
+                            prefix="IRS-1040-A/train"
+                        )
+                    ),
+                    "IRS-1040-D": ClassifierDocumentTypeDetails(
+                        azure_blob_source=AzureBlobContentSource(
+                            container_url=blob_container_sas_url,
+                            prefix="IRS-1040-D/train"
+                        )
+                    ),
+                },
+            )
+            classifier = await poller.result()
+            classifier_id = classifier.model_id
 
     await classify_document_async(classifier_id)
 
