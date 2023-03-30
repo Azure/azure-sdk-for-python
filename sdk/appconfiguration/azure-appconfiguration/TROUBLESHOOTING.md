@@ -28,7 +28,7 @@ See full Python SDK logging documentation with examples [here](https://docs.micr
 
 ## Troubleshooting authentication issues
 
-In addition to connection strings, Azure App Configuration supports [role-based access control](https://learn.microsoft.com/azure/role-based-access-control/overview) (RBAC) using Azure Active Directory authentication. For more details on getting started, see the [README](https://learn.microsoft.com/en-us/python/api/overview/azure/appconfiguration-readme?view=azure-python) of Azure App Configuration library. For details on the credential types supported in `azure.identity`, see the [Azure Identity documentation](https://learn.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python).
+In addition to connection strings, Azure App Configuration supports [role-based access control](https://learn.microsoft.com/azure/role-based-access-control/overview) (RBAC) using Azure Active Directory authentication. For more details on getting started, see the [README](https://learn.microsoft.com/python/api/overview/azure/appconfiguration-readme?view=azure-python) of Azure App Configuration library. For details on the credential types supported in `azure.identity`, see the [Azure Identity documentation](https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python).
 
 When authentication or authorization fail, you're most likely to see one of the following errors:
 
