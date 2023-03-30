@@ -36,8 +36,8 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
             endpoint="$cbs",
             on_amqp_management_open_complete=self._on_amqp_management_open_complete,
             on_amqp_management_error=self._on_amqp_management_error,
-            status_code_field=b"status-code",
-            status_description_field=b"status-description",
+            status_code_field="status-code",
+            status_description_field="status-description",
         )  # type: ManagementLink
 
         # if not auth.get_token or not asyncio.iscoroutinefunction(auth.get_token):
