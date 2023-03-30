@@ -1,10 +1,18 @@
 # Release History
 
-## 1.1.0b2 (Unreleased)
+## 1.1.0b3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
+- Suppress the response error with status code `404` in `delete_blob()`.
+- Added to return blob size in bytes in `upload_blob()`.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b2 (2023-03-24)
 
 ### Bugs Fixed
 - Fixed a `TypeError` when call `list_tag()` in an empty repository. ([#28234](https://github.com/Azure/azure-sdk-for-python/issues/28234))
@@ -14,7 +22,8 @@
 - Added default value `"https://management.azure.com"` to kwarg `audience` in `ContainerRegistryClient`. ([#22229](https://github.com/Azure/azure-sdk-for-python/issues/22229))
 - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 - Bumped minimum dependency on `azure-core` to `>=1.24.0`
-- Bumped minimum dependency on `msrest` to `>=0.7.1`
+- Dropped `msrest` requirement.
+- Added dependency `isodate` with version range `>=0.6.0`(`isodate` was required by `msrest`).
 
 ## 1.1.0b1 (2022-05-10)
 

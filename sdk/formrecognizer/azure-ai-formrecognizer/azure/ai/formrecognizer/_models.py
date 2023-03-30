@@ -11,6 +11,7 @@ from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.v2023_02_28_preview.models import DocumentModelDetails as ModelDetails, Error
+from ._generated.models import ClassifierDocumentTypeDetails
 from ._helpers import (
     adjust_value_type,
     adjust_confidence,
@@ -160,6 +161,20 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
     if value.type == "countryRegion":
         return value.value_country_region
     return None
+
+
+class AnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Document analysis features to enable."""
+
+    #: Perform OCR at a higher resolution to handle documents with fine print.
+    OCR_HIGH_RESOLUTION = "ocr.highResolution"
+    #: Enable the detection of mathematical expressions the document.
+    OCR_FORMULA = "ocr.formula"
+    #: Enable the recognition of various font styles.
+    OCR_FONT = "ocr.font"
+    #: Enable extraction of additional fields via the queryFields query parameter.
+    QUERY_FIELDS_PREMIUM = "queryFields.premium"
+
 
 class ModelBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used when building custom models.
@@ -2887,10 +2902,26 @@ class DocumentPage:
 
 
 class DocumentStyle:
-    """An object representing observed text styles."""
+    """An object representing observed text styles.
+
+    .. versionadded:: 2023-02-28-preview
+        The *similar_font_family*, *font_style*, *font_weight*, *color*, and *background_color* properties.
+    """
 
     is_handwritten: Optional[bool]
     """Indicates if the content is handwritten."""
+    similar_font_family: Optional[str]
+    """Visually most similar font from among the set of supported font
+    families, with fallback fonts following CSS convention (ex. 'Arial, sans-serif').
+    """
+    font_style: Optional[str]
+    """Font style. Known values are: "normal", "italic"."""
+    font_weight: Optional[str]
+    """Font weight. Known values are: "normal", "bold"."""
+    color: Optional[str]
+    """Foreground color in #rrggbb hexadecimal format."""
+    background_color: Optional[str]
+    """Background color in #rrggbb hexadecimal format."""
     spans: List[DocumentSpan]
     """Location of the text elements in the concatenated content the style
      applies to."""
@@ -2899,13 +2930,29 @@ class DocumentStyle:
 
     def __init__(self, **kwargs: Any) -> None:
         self.is_handwritten = kwargs.get("is_handwritten", None)
+        self.similar_font_family = kwargs.get("similar_font_family", None)
+        self.font_style = kwargs.get("font_style", None)
+        self.font_weight = kwargs.get("font_weight", None)
+        self.color = kwargs.get("color", None)
+        self.background_color = kwargs.get("background_color", None)
         self.spans = kwargs.get("spans", None)
         self.confidence = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, style):
+        # multi-api compatibility
+        similar_font_family = style.similar_font_family if hasattr(style, "similar_font_family") else None
+        font_style = style.font_style if hasattr(style, "font_style") else None
+        font_weight = style.font_weight if hasattr(style, "font_weight") else None
+        color = style.color if hasattr(style, "color") else None
+        background_color = style.background_color if hasattr(style, "background_color") else None
         return cls(
             is_handwritten=style.is_handwritten,
+            similar_font_family=similar_font_family,
+            font_style=font_style,
+            font_weight=font_weight,
+            color=color,
+            background_color=background_color,
             spans=[DocumentSpan._from_generated(span) for span in style.spans]
             if style.spans
             else [],
@@ -2915,13 +2962,20 @@ class DocumentStyle:
     def __repr__(self) -> str:
         return (
             f"DocumentStyle(is_handwritten={self.is_handwritten}, spans={repr(self.spans)}, "
-            f"confidence={self.confidence})"
+            f"confidence={self.confidence}, similar_font_family={self.similar_font_family}, "
+            f"font_style={self.font_style}, font_weight={self.font_weight}, color={self.color}, "
+            f"background_color={self.background_color})"
         )
 
     def to_dict(self) -> Dict:
         """Returns a dict representation of DocumentStyle."""
         return {
             "is_handwritten": self.is_handwritten,
+            "similar_font_family": self.similar_font_family,
+            "font_style": self.font_style,
+            "font_weight": self.font_weight,
+            "color": self.color,
+            "background_color": self.background_color,
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
             else [],
@@ -2938,6 +2992,11 @@ class DocumentStyle:
         """
         return cls(
             is_handwritten=data.get("is_handwritten", None),
+            similar_font_family=data.get("similar_font_family", None),
+            font_style=data.get("font_style", None),
+            font_weight=data.get("font_weight", None),
+            color=data.get("color", None),
+            background_color=data.get("background_color", None),
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
             else [],
@@ -3254,6 +3313,84 @@ class DocumentModelSummary:
             created_on=data.get("created_on", None),
             api_version=data.get("api_version", None),
             tags=data.get("tags", {})
+        )
+
+
+class DocumentClassifierDetails:
+    """Document classifier information. Includes the doc types that the model can classify."""
+
+    classifier_id: str
+    """Unique document classifier name."""
+    description: Optional[str]
+    """Document classifier description."""
+    created_date_time: datetime.datetime
+    """Date and time (UTC) when the document classifier was created."""
+    expiration_date_time: Optional[datetime.datetime]
+    """Date and time (UTC) when the document classifier will expire."""
+    api_version: str
+    """API version used to create this document classifier."""
+    doc_types: Dict[str, ClassifierDocumentTypeDetails]
+    """List of document types to classify against."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.classifier_id = kwargs.get("classifier_id", None)
+        self.description = kwargs.get("description", None)
+        self.created_date_time = kwargs.get("created_date_time", None)
+        self.expiration_date_time = kwargs.get("expiration_date_time", None)
+        self.api_version = kwargs.get("api_version", None)
+        self.doc_types = kwargs.get("doc_types", None)
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentClassifierDetails(classifier_id={self.classifier_id}, description={self.description}, "
+            f"created_date_time={self.created_date_time}, expiration_date_time={self.expiration_date_time}, "
+            f"api_version={self.api_version}, doc_types={repr(self.doc_types)})"
+        )
+
+    @classmethod
+    def _from_generated(cls, model):
+        return cls(
+            classifier_id=model.classifier_id,
+            description=model.description,
+            created_date_time=model.created_date_time,
+            expiration_date_time=model.expiration_date_time,
+            api_version=model.api_version,
+            doc_types={k: ClassifierDocumentTypeDetails._from_generated(v) for k, v in model.doc_types.items()}
+            if model.doc_types else {}
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentClassifierDetails."""
+        return {
+            "classifier_id": self.classifier_id,
+            "description": self.description,
+            "created_date_time": self.created_date_time,
+            "expiration_date_time": self.expiration_date_time,
+            "api_version": self.api_version,
+            "doc_types": {k: v.to_dict() for k, v in self.doc_types.items()} if self.doc_types else {}  # type: ignore
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentClassifierDetails":
+        """Converts a dict in the shape of a DocumentClassifierDetails to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentClassifierDetails.
+        :return: DocumentClassifierDetails
+        :rtype: DocumentClassifierDetails
+        """
+        return cls(
+            classifier_id=data.get("classifier_id", None),
+            description=data.get("description", None),
+            created_date_time=data.get("created_date_time", None),
+            expiration_date_time=data.get("expiration_date_time", None),
+            api_version=data.get("api_version", None),
+            doc_types={k: ClassifierDocumentTypeDetails.from_dict(v)
+                       for k, v in data.get("doc_types").items()}  # type: ignore
+            if data.get("doc_types")
+            else {},
         )
 
 

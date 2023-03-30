@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import cast, Optional, Any
+from typing import cast, Optional, Any, Tuple
 
 from azure.core.credentials import AccessToken
 from ..._exceptions import CredentialUnavailableError
@@ -69,9 +69,11 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, AsyncContextManager, Get
 
         return await super().get_token(*scopes, **kwargs)
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
+    async def _acquire_token_silently(
+        self, *scopes: str, **kwargs: Any
+    ) -> Tuple[Optional[AccessToken], Optional[int]]:
         self._client = cast(AadClient, self._client)
-        return self._client.get_cached_access_token(scopes, **kwargs)
+        return self._client.get_cached_access_token(scopes, **kwargs), None
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         refresh_token = self._get_refresh_token()
