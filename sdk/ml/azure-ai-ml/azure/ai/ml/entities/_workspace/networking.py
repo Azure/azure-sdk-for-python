@@ -189,9 +189,7 @@ class ManagedNetwork:
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
         from_rest_outbound_rules = (
             [
-                OutboundRule._from_rest_object(  # pylint: disable=protected-access
-                    obj.outbound_rules[name], name=name
-                )
+                OutboundRule._from_rest_object(obj.outbound_rules[name], name=name)  # pylint: disable=protected-access
                 for name in obj.outbound_rules
             ]
             if obj.outbound_rules

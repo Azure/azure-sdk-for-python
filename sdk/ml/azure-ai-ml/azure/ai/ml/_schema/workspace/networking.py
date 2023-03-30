@@ -116,9 +116,7 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
         casing_transform=camel_to_snake,
         metadata={"description": "isolation mode for the workspace managed network."},
     )
-    outbound_rules = fields.List(
-        NestedField(OutboundRuleSchema, allow_none=False), allow_none=True
-    )
+    outbound_rules = fields.List(NestedField(OutboundRuleSchema, allow_none=False), allow_none=True)
     network_id = fields.Str(required=False)
 
     @post_load

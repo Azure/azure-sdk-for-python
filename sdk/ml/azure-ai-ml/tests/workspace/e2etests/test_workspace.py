@@ -370,10 +370,10 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.display_name == wps_display_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
         rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
-        assert len(rules)==1
+        assert len(rules) == 1
         assert isinstance(rules[0], ServiceTagDestination)
         rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
-        assert len(rules)==1
+        assert len(rules) == 1
         assert isinstance(rules[0], FqdnDestination)
 
         # test get
@@ -382,10 +382,10 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.name == wps_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
         rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
-        assert len(rules)==1
+        assert len(rules) == 1
         assert isinstance(rules[0], ServiceTagDestination)
         rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
-        assert len(rules)==1
+        assert len(rules) == 1
         assert isinstance(rules[0], FqdnDestination)
 
         # test workspace deletion
