@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 import dotenv
@@ -73,7 +74,7 @@ def update_dot_env_file(env_override):
                 f.write(origin_env_content)
 
 
-def run_simple(tests_to_run, working_dir, extra_params, is_live_and_recording):
+def run_simple(tests_to_run, working_dir, extra_params, *, is_live_and_recording, log_file_path=None):
     print(f"Running {len(tests_to_run)} tests under {working_dir}: ")
     for test_name in tests_to_run:
         print(test_name)
@@ -85,6 +86,7 @@ def run_simple(tests_to_run, working_dir, extra_params, is_live_and_recording):
             print(
                 f"pytest {test_name} {' '.join(extra_params)} in {'live' if is_live_and_recording else 'playback'} mode..."
             )
+            stdout = open(log_file_path, "wb", encoding="utf-8") if log_file_path else None
             subprocess.run(
                 [
                     sys.executable,
@@ -94,7 +96,10 @@ def run_simple(tests_to_run, working_dir, extra_params, is_live_and_recording):
                 ]
                 + extra_params,
                 cwd=working_dir,
+                stdout=stdout,
             )
+            if log_file_path:
+                stdout.close()
 
 
 def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=False, is_live_and_recording=False):
@@ -153,7 +158,16 @@ def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=Fal
                 )
 
             # re-run the original tests to check if they are still failing
-            run_simple(tests_to_run, working_dir, extras, is_live_and_recording=False)
+            run_simple(
+                tests_to_run,
+                working_dir,
+                extras,
+                is_live_and_recording=False,
+                log_file_path=working_dir
+                / "scripts"
+                / "tmp"
+                / "pytest.{}.log".format(datetime.now().strftime("%Y%m%d%H%M%S")),
+            )
     else:
         run_simple(tests_to_run, working_dir, extras, is_live_and_recording=is_live_and_recording)
 
