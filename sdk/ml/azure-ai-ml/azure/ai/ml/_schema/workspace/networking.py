@@ -52,7 +52,6 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def predump(self, data, **kwargs):
-        print("in predump", data)
         if data and isinstance(data, FqdnDestination):
             data.destination = self.fqdn_dest2dict(data.destination)
         if data and isinstance(data, PrivateEndpointDestination):
