@@ -18480,16 +18480,9 @@ class OutboundRuleBasicResource(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
-    :ivar type_properties_type: Required. Type of a managed network Outbound Rule of a machine
-     learning workspace.Constant filled by server. Possible values include: "FQDN",
-     "PrivateEndpoint", "ServiceTag".
-    :vartype type_properties_type: str or ~azure.mgmt.machinelearningservices.models.RuleType
-    :ivar status: Status of a managed network Outbound Rule of a machine learning workspace.
-     Possible values include: "Inactive", "Active".
-    :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
-    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
-     Possible values include: "Required", "Recommended", "UserDefined".
-    :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar properties: Required. Outbound Rule for the managed network of a machine learning
+     workspace.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.OutboundRule
     """
 
     _validation = {
@@ -18497,7 +18490,7 @@ class OutboundRuleBasicResource(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'system_data': {'readonly': True},
-        'type_properties_type': {'required': True},
+        'properties': {'required': True},
     }
 
     _attribute_map = {
@@ -18505,30 +18498,22 @@ class OutboundRuleBasicResource(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'category': {'key': 'properties.category', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'OutboundRule'},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "RuleStatus"]] = None,
-        category: Optional[Union[str, "RuleCategory"]] = None,
+        properties: "OutboundRule",
         **kwargs
     ):
         """
-        :keyword status: Status of a managed network Outbound Rule of a machine learning workspace.
-         Possible values include: "Inactive", "Active".
-        :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
-        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
-         Possible values include: "Required", "Recommended", "UserDefined".
-        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+        :keyword properties: Required. Outbound Rule for the managed network of a machine learning
+         workspace.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.OutboundRule
         """
         super(OutboundRuleBasicResource, self).__init__(**kwargs)
-        self.type_properties_type = None  # type: Optional[str]
-        self.status = status
-        self.category = category
+        self.properties = properties
 
 
 class OutboundRuleListResult(msrest.serialization.Model):

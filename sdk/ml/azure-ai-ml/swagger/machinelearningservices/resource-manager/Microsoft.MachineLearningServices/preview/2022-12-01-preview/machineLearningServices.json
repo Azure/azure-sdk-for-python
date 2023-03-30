@@ -6397,8 +6397,7 @@
       ],
       "properties": {
         "properties": {
-          "$ref": "#/definitions/OutboundRule",
-          "x-ms-client-flatten": true
+          "$ref": "#/definitions/OutboundRule"
         }
       },
       "additionalProperties": false

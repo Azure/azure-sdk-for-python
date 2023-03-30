@@ -32,7 +32,6 @@ class WorkspaceOutboundRuleOperations:
         self._default_workspace_name = operation_scope.workspace_name
         self._all_operations = all_operations
         self._rule_operation = service_client.managed_network_settings_rule
-        self._network_operation = service_client.managed_network_settings
         self._credentials = credentials
         self._init_kwargs = kwargs
 
@@ -42,7 +41,7 @@ class WorkspaceOutboundRuleOperations:
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
-        return OutboundRule._from_rest_object(obj, name=outbound_rule_name)  # pylint: disable=protected-access
+        return OutboundRule._from_rest_object(obj.properties, name=obj.name)  # pylint: disable=protected-access
 
     @monitor_with_activity(logger, "WorkspaceOutboundRule.List", ActivityType.PUBLICAPI)
     def list(self, resource_group: str, ws_name: str, **kwargs) -> Iterable[OutboundRule]:
@@ -51,11 +50,13 @@ class WorkspaceOutboundRuleOperations:
 
         rest_rules = self._rule_operation.list(resource_group, workspace_name)
 
+        # cls=lambda objs: [OutboundRule._from_rest_object(obj) for obj in objs]
+
         result = [
             OutboundRule._from_rest_object(  # pylint: disable=protected-access
-                rest_obj=rest_rules[rule_name], name=rule_name
+                rest_obj=obj.properties, name=obj.name
             )
-            for rule_name in rest_rules.keys()
+            for obj in rest_rules
         ]
         return result
 
