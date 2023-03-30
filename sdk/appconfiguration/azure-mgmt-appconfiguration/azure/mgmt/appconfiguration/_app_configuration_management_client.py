@@ -53,12 +53,11 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no Retry-After header is present.
     """
 
-    DEFAULT_API_VERSION = '2022-05-01'
+    DEFAULT_API_VERSION = '2023-03-01'
     _PROFILE_TAG = "azure.mgmt.appconfiguration.AppConfigurationManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'replicas': '2022-03-01-preview',
         }},
         _PROFILE_TAG + " latest"
     )
@@ -89,12 +88,16 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :mod:`v2022_03_01_preview.models<azure.mgmt.appconfiguration.v2022_03_01_preview.models>`
            * 2022-05-01: :mod:`v2022_05_01.models<azure.mgmt.appconfiguration.v2022_05_01.models>`
+           * 2023-03-01: :mod:`v2023_03_01.models<azure.mgmt.appconfiguration.v2023_03_01.models>`
         """
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview import models
             return models
         elif api_version == '2022-05-01':
             from .v2022_05_01 import models
+            return models
+        elif api_version == '2023-03-01':
+            from .v2023_03_01 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
 
@@ -104,12 +107,15 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`ConfigurationStoresOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.operations.ConfigurationStoresOperations>`
            * 2022-05-01: :class:`ConfigurationStoresOperations<azure.mgmt.appconfiguration.v2022_05_01.operations.ConfigurationStoresOperations>`
+           * 2023-03-01: :class:`ConfigurationStoresOperations<azure.mgmt.appconfiguration.v2023_03_01.operations.ConfigurationStoresOperations>`
         """
         api_version = self._get_api_version('configuration_stores')
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview.operations import ConfigurationStoresOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import ConfigurationStoresOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from .v2023_03_01.operations import ConfigurationStoresOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'configuration_stores'".format(api_version))
         self._config.api_version = api_version
@@ -121,12 +127,15 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`KeyValuesOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.operations.KeyValuesOperations>`
            * 2022-05-01: :class:`KeyValuesOperations<azure.mgmt.appconfiguration.v2022_05_01.operations.KeyValuesOperations>`
+           * 2023-03-01: :class:`KeyValuesOperations<azure.mgmt.appconfiguration.v2023_03_01.operations.KeyValuesOperations>`
         """
         api_version = self._get_api_version('key_values')
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview.operations import KeyValuesOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import KeyValuesOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from .v2023_03_01.operations import KeyValuesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'key_values'".format(api_version))
         self._config.api_version = api_version
@@ -138,12 +147,15 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`Operations<azure.mgmt.appconfiguration.v2022_03_01_preview.operations.Operations>`
            * 2022-05-01: :class:`Operations<azure.mgmt.appconfiguration.v2022_05_01.operations.Operations>`
+           * 2023-03-01: :class:`Operations<azure.mgmt.appconfiguration.v2023_03_01.operations.Operations>`
         """
         api_version = self._get_api_version('operations')
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview.operations import Operations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import Operations as OperationClass
+        elif api_version == '2023-03-01':
+            from .v2023_03_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
         self._config.api_version = api_version
@@ -155,12 +167,15 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.operations.PrivateEndpointConnectionsOperations>`
            * 2022-05-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.appconfiguration.v2022_05_01.operations.PrivateEndpointConnectionsOperations>`
+           * 2023-03-01: :class:`PrivateEndpointConnectionsOperations<azure.mgmt.appconfiguration.v2023_03_01.operations.PrivateEndpointConnectionsOperations>`
         """
         api_version = self._get_api_version('private_endpoint_connections')
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview.operations import PrivateEndpointConnectionsOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import PrivateEndpointConnectionsOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from .v2023_03_01.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
         self._config.api_version = api_version
@@ -172,12 +187,15 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-03-01-preview: :class:`PrivateLinkResourcesOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.operations.PrivateLinkResourcesOperations>`
            * 2022-05-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.appconfiguration.v2022_05_01.operations.PrivateLinkResourcesOperations>`
+           * 2023-03-01: :class:`PrivateLinkResourcesOperations<azure.mgmt.appconfiguration.v2023_03_01.operations.PrivateLinkResourcesOperations>`
         """
         api_version = self._get_api_version('private_link_resources')
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview.operations import PrivateLinkResourcesOperations as OperationClass
         elif api_version == '2022-05-01':
             from .v2022_05_01.operations import PrivateLinkResourcesOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from .v2023_03_01.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
         self._config.api_version = api_version
@@ -188,10 +206,13 @@ class AppConfigurationManagementClient(MultiApiClientMixin, _SDKClient):
         """Instance depends on the API version:
 
            * 2022-03-01-preview: :class:`ReplicasOperations<azure.mgmt.appconfiguration.v2022_03_01_preview.operations.ReplicasOperations>`
+           * 2023-03-01: :class:`ReplicasOperations<azure.mgmt.appconfiguration.v2023_03_01.operations.ReplicasOperations>`
         """
         api_version = self._get_api_version('replicas')
         if api_version == '2022-03-01-preview':
             from .v2022_03_01_preview.operations import ReplicasOperations as OperationClass
+        elif api_version == '2023-03-01':
+            from .v2023_03_01.operations import ReplicasOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'replicas'".format(api_version))
         self._config.api_version = api_version

@@ -165,9 +165,6 @@ class ModelOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "models", model.name, model.version),
                 )
-                if not sas_uri:
-                    module_logger.debug("Getting the existing asset name: %s, version: %s", model.name, model.version)
-                    return self.get(name=model.name, version=model.version)
 
             model, indicator_file = _check_and_upload_path(
                 artifact=model,
