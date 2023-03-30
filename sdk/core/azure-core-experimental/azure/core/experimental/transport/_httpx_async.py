@@ -61,9 +61,22 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
 
 # pylint: disable=unused-argument
 class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
+    """Generator for streaming response data.
+    
+    :param pipeline: The pipeline object
+    :param response: The response object.
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the *content-encoding* header.
+    """
     def __init__(self, pipeline: Pipeline, response: AsyncHttpXTransportResponse, *_, **kwargs) -> None:
+        self.pipeline = pipeline
         self.response = response
-        self.iter_bytes_func = self.response.internal_response.aiter_bytes()
+        decompress = kwargs.pop("decompress", True)
+        
+        if decompress:
+            self.iter_content_func = self.response.internal_response.aiter_bytes()
+        else:
+            self.iter_content_func = self.response.internal_response.aiter_raw()
 
     async def __len__(self) -> int:
         return self.response.internal_response.headers["content-length"]

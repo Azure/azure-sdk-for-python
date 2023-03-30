@@ -56,16 +56,29 @@ class HttpXTransportResponse(HttpResponseImpl):
 
 # pylint: disable=unused-argument
 class HttpXStreamDownloadGenerator:
-    def __init__(self, pipeline: Pipeline, response: HttpXTransportResponse, *_, **kwargs) -> None:
+    """Generator for streaming response data.
+    
+    :param pipeline: The pipeline object
+    :param response: The response object.
+    :keyword bool decompress: If True which is default, will attempt to decode the body based
+        on the *content-encoding* header.
+    """
+    def __init__(self, pipeline: Pipeline, response: HttpXTransportResponse, **kwargs) -> None:
+        self.pipeline = pipeline
         self.response = response
-        self.iter_bytes_func = self.response.internal_response.iter_bytes()
+        decompress = kwargs.pop("decompress", True)
+        
+        if decompress:
+            self.iter_content_func = self.response.internal_response.iter_bytes()
+        else:
+            self.iter_content_func = self.response.internal_response.iter_raw()
 
     def __iter__(self) -> "HttpXStreamDownloadGenerator":
         return self
 
     def __next__(self):
         try:
-            return next(self.iter_bytes_func)
+            return next(self.iter_content_func)
         except StopIteration:
             self.response.stream_contextmanager.__exit__(None, None, None)
             raise
