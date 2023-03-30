@@ -44,15 +44,22 @@ class ARMPipelineClient(PipelineClient):
     def __init__(self, base_url, **kwargs):
         if "policies" not in kwargs:
             if "config" not in kwargs:
-                raise ValueError("Current implementation requires to pass 'config' if you don't pass 'policies'")
+                raise ValueError(
+                    "Current implementation requires to pass 'config' if you don't pass 'policies'"
+                )
             per_call_policies = kwargs.get("per_call_policies", [])
             if isinstance(per_call_policies, Iterable):
                 per_call_policies.append(ARMAutoResourceProviderRegistrationPolicy())
             else:
-                per_call_policies = [per_call_policies, ARMAutoResourceProviderRegistrationPolicy()]
+                per_call_policies = [
+                    per_call_policies,
+                    ARMAutoResourceProviderRegistrationPolicy(),
+                ]
             kwargs["per_call_policies"] = per_call_policies
             config = kwargs.get("config")
             if not config.http_logging_policy:
-                config.http_logging_policy = kwargs.get("http_logging_policy", ARMHttpLoggingPolicy(**kwargs))
+                config.http_logging_policy = kwargs.get(
+                    "http_logging_policy", ARMHttpLoggingPolicy(**kwargs)
+                )
             kwargs["config"] = config
         super(ARMPipelineClient, self).__init__(base_url, **kwargs)
