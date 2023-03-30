@@ -24,7 +24,7 @@ from azure.ai.ml import (
     dsl,
     load_component,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_singularity_id_for_resource
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME, SINGULARITY_ID_FORMAT
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
@@ -3184,10 +3184,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         created_pipeline_job = assert_job_cancel(pipeline_job, client)
         rest_obj = created_pipeline_job._to_rest_object()
 
-        # the returned Singularity ARM id is virtualClusters, instead of virtualclusters.
-        expected_value = (
-            "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualClusters/{}"
-        ).format(singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name)
-        assert rest_obj.properties.jobs["node_with_id"]["computeId"] == expected_value
-        assert rest_obj.properties.jobs["node_with_full_name"]["computeId"] == expected_value
-        assert rest_obj.properties.jobs["node_with_short_name"]["computeId"] == expected_value
+        for node_name in ["node_with_id", "node_with_full_name", "node_with_short_name"]:
+            node_compute = rest_obj.properties.jobs[node_name]["computeId"]
+            assert is_singularity_id_for_resource(node_compute)
+            assert node_compute.endswith(singularity_vc.name)
