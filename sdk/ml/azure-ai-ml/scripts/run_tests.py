@@ -8,7 +8,7 @@ import os
 import re
 import subprocess
 import sys
-from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 import dotenv
@@ -20,27 +20,36 @@ def normalize_test_name(test_name):
     return test_name.strip()
 
 
-def extract_test_location(location):
+def location_to_test_name(location):
     test_path, line_no, test_func = location
     test_class_name, test_func_name = test_func.split(".", 1)
     test_class = test_path.split(os.path.sep, 3)[-1] + "::" + test_class_name
-    m = re.match(r"(\w+)\[(\w+)]", test_func_name)
-    if m:
-        test_func_name, test_param = m.groups()
+    return test_class + "::" + test_func_name
+
+
+def extract_test_location(test_name):
+    splitor_num = test_name.count("::")
+    if splitor_num <= 1:
+        return test_name, None, None
+    elif splitor_num == 2:
+        test_class, test_func_name = test_name.rsplit("::", 1)
+        m = re.match(r"(\w+)\[(\w+)]", test_func_name)
+        if m:
+            test_func_name, test_param = m.groups()
+        else:
+            test_param = None
+        return test_class, test_func_name, test_param
     else:
-        test_param = None
-    return test_class, test_func_name, test_param
+        raise ValueError(f"Invalid test name: {test_name}")
 
 
 def load_tests_from_file(input_file):
     tests_to_run = set()
     with open(input_file, "r") as f:
-
         for line in f:
             if len(line) < 1 or line[0] in ["#", ";"]:
                 continue
-            line = normalize_test_name(line)
-            tests_to_run.add(line)
+            tests_to_run.add(line.strip())
     return tests_to_run
 
 
@@ -73,51 +82,114 @@ def update_dot_env_file(env_override):
                 f.write(origin_env_content)
 
 
-def run_simple(tests_to_run, working_dir, extra_params, is_live_and_recording):
+def run_simple(
+    tests_to_run,
+    working_dir,
+    extra_params,
+    *,
+    is_live_and_recording,
+    log_file_path=None,
+    log_in_json=False,
+):
     print(f"Running {len(tests_to_run)} tests under {working_dir}: ")
     for test_name in tests_to_run:
         print(test_name)
 
+    if log_in_json or log_file_path is None:
+        stdout = None
+    else:
+        stdout = open(log_file_path, "wb")
     with update_dot_env_file(
         {"AZURE_TEST_RUN_LIVE": is_live_and_recording, "AZURE_SKIP_LIVE_RECORDING": not is_live_and_recording},
     ):
-        for test_name in tests_to_run:
-            print(
-                f"pytest {test_name} {' '.join(extra_params)} in {'live' if is_live_and_recording else 'playback'} mode..."
-            )
+        for test_class, keyword_param in reorganize_tests(tests_to_run):
+            tmp_extra_params = extra_params + keyword_param
+            if log_in_json:
+                temp_log_file_path = log_file_path.with_stem("temp")
+                tmp_extra_params += ["--report-log", temp_log_file_path.as_posix()]
+
             subprocess.run(
                 [
                     sys.executable,
                     "-m",
                     "pytest",
-                    test_name,
+                    test_class,
                 ]
-                + extra_params,
+                + tmp_extra_params,
                 cwd=working_dir,
+                stdout=stdout,
             )
+            if log_in_json:
+                with open(log_file_path, "a", encoding="utf-8") as f:
+                    f.write(temp_log_file_path.read_text())
+    if stdout is not None:
+        stdout.close()
+
+
+def reorganize_tests(tests_to_run):
+    reorganized_tests = {}
+    for test_name in tests_to_run:
+        test_class, test_func_name, test_param = extract_test_location(test_name)
+
+        if test_func_name is None:
+            # Register all tests in test_class
+            reorganized_tests[test_class] = None
+            continue
+        elif test_class not in reorganized_tests:
+            reorganized_tests[test_class] = {}
+        elif reorganized_tests[test_class] is None:
+            # All tests in test_class have been registered
+            continue
+
+        if test_param is None:
+            # Register all params for test_class::test_func_name
+            reorganized_tests[test_class][test_func_name] = None
+            continue
+        elif test_func_name not in reorganized_tests[test_class]:
+            reorganized_tests[test_class][test_func_name] = []
+        elif reorganized_tests[test_class][test_func_name] is None:
+            # All params for test_class::test_func_name have been registered
+            continue
+
+        reorganized_tests[test_class][test_func_name].append(test_param)
+
+    # re-run the tests with recording mismatch in live mode
+    for test_class, test_info in reorganized_tests.items():
+        if test_info is None:
+            yield test_class, []
+            continue
+        keys = []
+        for test_func_name, test_params in test_info.items():
+            if test_params is not None:
+                keys.append(f"{test_func_name}[{'-'.join(test_params)}]")
+            else:
+                keys.append(test_func_name)
+        keyword_param = ["-k", " or ".join(keys)]
+        yield test_class, keyword_param
 
 
 def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=False, is_live_and_recording=False):
     working_dir = Path(__file__).parent.parent
+    log_file_path = working_dir / "scripts" / "tmp" / "pytest_first_run.log"
+    log_file_path.parent.mkdir(parents=True, exist_ok=True)
+    if record_mismatch and not skip_first_run:
+        # reset the log file
+        log_file_path.unlink(missing_ok=True)
+
+    if not (record_mismatch and skip_first_run):
+        # first run
+        run_simple(
+            tests_to_run,
+            working_dir,
+            extras + ["--disable-warnings", "--disable-pytest-warnings"],
+            # first run in record-mismatch mode is always in playback mode
+            is_live_and_recording=is_live_and_recording and not record_mismatch,
+            log_file_path=log_file_path if record_mismatch else None,
+            log_in_json=record_mismatch,
+        )
+
     if record_mismatch:
-        log_file_path = working_dir / "scripts" / "tmp" / "pytest_log.json"
-        log_file_path.parent.mkdir(parents=True, exist_ok=True)
-
-        if not skip_first_run:
-            run_simple(
-                tests_to_run,
-                working_dir,
-                extra_params=[
-                    "--disable-warnings",
-                    "--disable-pytest-warnings",
-                    "--report-log",
-                    log_file_path.as_posix(),
-                ]
-                + extras,
-                is_live_and_recording=False,
-            )
-
-        tests_failed_with_recording_mismatch = defaultdict(dict)
+        tests_failed_with_recording_mismatch = []
         with open(log_file_path, "r") as f:
             for line in f:
                 node = json.loads(line)
@@ -125,50 +197,48 @@ def run_tests(tests_to_run, extras, *, skip_first_run=False, record_mismatch=Fal
                     continue
                 if node["outcome"] != "failed":
                     continue
-                test_class, test_name, test_param = extract_test_location(node["location"])
-
                 msg = node["longrepr"]["reprcrash"]["message"]
                 if "ResourceNotFoundError" in msg:
-                    if test_param is None:
-                        tests_failed_with_recording_mismatch[test_class][test_name] = None
-                    elif test_name not in tests_failed_with_recording_mismatch[test_class]:
-                        tests_failed_with_recording_mismatch[test_class][test_name] = [test_param]
-                    else:
-                        tests_failed_with_recording_mismatch[test_class][test_name].append(test_param)
+                    tests_failed_with_recording_mismatch.append(location_to_test_name(node["location"]))
 
         if tests_failed_with_recording_mismatch:
-            # re-run the tests with recording mismatch in live mode
-            for test_class, test_info in tests_failed_with_recording_mismatch.items():
-                keys = []
-                for test_name, test_params in test_info.items():
-                    if test_params is not None:
-                        keys.append(f"{test_name}[{'-'.join(test_params)}]")
-                    else:
-                        keys.append(test_name)
-                run_simple(
-                    [test_class],
-                    working_dir,
-                    ["-k", " or ".join(keys), "--tb=line"],
-                    is_live_and_recording=True,
-                )
+            print("Re-do live mode recording for tests: \n", json.dumps(tests_failed_with_recording_mismatch, indent=2))
+            run_simple(
+                tests_failed_with_recording_mismatch,
+                working_dir,
+                extra_params=["--tb=line"],
+                is_live_and_recording=True,
+            )
 
-            # re-run the original tests to check if they are still failing
-            run_simple(tests_to_run, working_dir, extras, is_live_and_recording=False)
-    else:
-        run_simple(tests_to_run, working_dir, extras, is_live_and_recording=is_live_and_recording)
+            # re-run the original tests to check if they are still failures and output the log
+            run_simple(
+                tests_to_run,
+                working_dir,
+                extras + ["--disable-warnings", "--disable-pytest-warnings"],
+                is_live_and_recording=False,
+                log_file_path=working_dir
+                / "scripts"
+                / "tmp"
+                / "pytest.{}.log".format(datetime.now().strftime("%Y%m%d%H%M%S")),
+            )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--file",
+        "-f",
         type=str,
         help="File containing tests to run, each line is a test name",
     )
     parser.add_argument(
         "--name",
+        "-n",
         type=str,
-        help="Name of the test to run. Format is aligned with pytest, e.g. 'tests/pipeline_job/'.",
+        help="Name of the test to run. Usual pytest formats are supported, e.g., 'tests/pipeline_job/' "
+        "and 'tests/pipeline_job/e2etests/test_pipeline_job.py::TestPipelineJob'."
+        "Test param specification is also supported, e.g., 'tests/pipeline_job/e2etests/"
+        "test_pipeline_job.py::TestPipelineJob::test_pipeline_job_with_data_binding_expression[0-input_basic.yml]'",
     )
     parser.add_argument(
         "--record-mismatch",
@@ -183,7 +253,8 @@ if __name__ == "__main__":
         "--skip-first-run",
         "-s",
         action="store_true",
-        help="If specified, will skip the first run in record-mismatch mode.",
+        help="If specified, will skip the first run in record-mismatch mode. Failed tests will be loaded from "
+        "tmp/pytest_first_run.log generated in previous record-mismatch mode first run.",
     )
 
     _args, _extras = parser.parse_known_args()
