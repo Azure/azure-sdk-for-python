@@ -96,7 +96,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -160,7 +160,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -181,7 +181,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
+        :param event_subscription_name: Event subscription name. Required.
         :type event_subscription_name: str
         :keyword max_events: Max Events count to be received. Default value is None.
         :paramtype max_events: int
@@ -250,7 +250,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
+        :param event_subscription_name: Event subscription name. Required.
         :type event_subscription_name: str
         :param lock_tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
@@ -322,7 +322,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
 
         :param topic_name: Topic Name. Required.
         :type topic_name: str
-        :param event_subscription_name: Event Subscription Name. Required.
+        :param event_subscription_name: Event subscription name. Required.
         :type event_subscription_name: str
         :param tokens: Array of LockTokens for the corresponding received Cloud Events to be
          acknowledged. Required.
