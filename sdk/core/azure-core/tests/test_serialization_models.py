@@ -1828,10 +1828,10 @@ def test_readonly():
 
 def test_readonly_set():
     model = ModelWithReadonly({"normalProperty": "normal", "readonlyProperty": "readonly"})
-    assert model.normal_property == model["normalProperty"] == "set"
-    assert model.readonly_property == model["readonlyProperty"] == "set"
+    assert model.normal_property == model["normalProperty"] == "normal"
+    assert model.readonly_property == model["readonlyProperty"] == "readonly"
 
-    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "set"}
+    assert json.loads(json.dumps(model, cls=AzureJSONEncoder)) == {"normalProperty": "normal"}
 
     model["normalProperty"] = "setWithDict"
     model["readonlyProperty"] = "setWithDict"
