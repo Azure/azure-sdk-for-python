@@ -3028,7 +3028,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
         assert pipeline_job.jobs["node_1"].limits.timeout == 1
 
-    def test_pipeline_singularity_strong_type(self, client: MLClient, mock_singularity_arm_id: str):
+    def test_pipeline_singularity_strong_type_submission(self, client: MLClient, mock_singularity_arm_id: str):
         component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
         component_func = load_component(component_yaml)
 
@@ -3048,10 +3048,69 @@ class TestDSLPipeline(AzureRecordedTestCase):
             premium_high_node = component_func()
             premium_high_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
             premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
+            # properties
+            node_with_properties = component_func()
+            properties = {"Singularity": {"imageVersion": "", "interactive": False}}
+            node_with_properties.resources = JobResourceConfiguration(
+                instance_count=2, instance_type=instance_type, properties=properties
+            )
 
         pipeline_job = pipeline_func()
         pipeline_job.settings.default_compute = mock_singularity_arm_id
+        # this pipeline job is expected to fail as Singularity is mocked, focus on REST object assertion
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.settings["default_compute"] == mock_singularity_arm_id
+        # basic job_tier + Low priority
+        basic_low_node_dict = rest_obj.properties.jobs["basic_low_node"]
+        assert basic_low_node_dict["queue_settings"] == {"job_tier": "Basic", "priority": 1}
+        assert basic_low_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # standard job_tier + Medium priority
+        standard_medium_node_dict = rest_obj.properties.jobs["standard_medium_node"]
+        assert standard_medium_node_dict["queue_settings"] == {"job_tier": "Standard", "priority": 2}
+        assert standard_medium_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # premium job_tier + High priority
+        premium_high_node_dict = rest_obj.properties.jobs["premium_high_node"]
+        assert premium_high_node_dict["queue_settings"] == {"job_tier": "Premium", "priority": 3}
+        assert premium_high_node_dict["resources"] == {"instance_count": 2, "instance_type": instance_type}
+        # properties
+        node_with_properties_dict = rest_obj.properties.jobs["node_with_properties"]
+        assert node_with_properties_dict["resources"] == {
+            "instance_count": 2,
+            "instance_type": instance_type,
+            # the mapping Singularity => AISuperComputer is expected
+            "properties": {"AISuperComputer": {"imageVersion": "", "interactive": False}},
+        }
 
-        created_pipeline_job = client.create_or_update(pipeline_job)
-        # created_pipeline_job = assert_job_cancel(pipeline_job, client)
-        print(created_pipeline_job)
+    def test_pipeline_singularity_property_bag_submission(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # property bag is supported, with lower priority than strong type
+        vc_config = {
+            "instance_type": "Singularity.ND40rs_v2",
+            "instance_count": 2,
+            "properties": {
+                "AISuperComputer": {
+                    "interactive": False,
+                    "imageVersion": "pytorch",
+                    "slaTier": "Premium",
+                    "tensorboardLogDirectory": "/scratch/tensorboard_logs",
+                }
+            }
+        }
+
+        @dsl.pipeline
+        def pipeline_func():
+            node = component_func()
+            node.resources = vc_config
+            node.compute = mock_singularity_arm_id
+
+        pipeline_job = pipeline_func()
+        # as Singularity is mocked and expected to fail validation, skip it for submission;
+        # then manually cancel it as other tests.
+        created_pipeline_job = client.create_or_update(pipeline_job, skip_validation=True)
+        client.jobs.begin_cancel(created_pipeline_job.name).result()
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["computeId"] == mock_singularity_arm_id
+        assert rest_obj.properties.jobs["node"]["resources"] == vc_config
