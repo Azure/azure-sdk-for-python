@@ -25,7 +25,7 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME, SINGULARITY_ID_FORMAT
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
@@ -3097,7 +3097,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "slaTier": "Premium",
                     "tensorboardLogDirectory": "/scratch/tensorboard_logs",
                 }
-            }
+            },
         }
 
         @dsl.pipeline
@@ -3114,3 +3114,41 @@ class TestDSLPipeline(AzureRecordedTestCase):
         rest_obj = created_pipeline_job._to_rest_object()
         assert rest_obj.properties.jobs["node"]["computeId"] == mock_singularity_arm_id
         assert rest_obj.properties.jobs["node"]["resources"] == vc_config
+
+    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
+    def test_pipeline_singularity_live(self, client: MLClient, singularity_vc):
+        # full name and short name are syntax sugar, SDK will resolve it to Singularity ARM id before request,
+        # this needs client to get & search available VCs - that's why we place this test in end-to-end test -
+        # and compute values in returned REST object should all be ARM id.
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        # generate Singularity ARM id, full name and short name from VC
+        arm_id = SINGULARITY_ID_FORMAT.format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        short_name = f"azureml://virtualclusters/{singularity_vc.name}"
+
+        @dsl.pipeline
+        def pipeline_func():
+            node_with_id = component_func()
+            node_with_id.compute = arm_id
+            node_with_full_name = component_func()
+            node_with_full_name.compute = full_name
+            node_with_short_name = component_func()
+            node_with_short_name.compute = short_name
+
+        pipeline_job = pipeline_func()
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+
+        # the returned Singularity ARM id is virtualClusters, instead of virtualclusters.
+        expected_value = (
+            "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/virtualClusters/{}"
+        ).format(singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name)
+        assert rest_obj.properties.jobs["node_with_id"]["computeId"] == expected_value
+        assert rest_obj.properties.jobs["node_with_full_name"]["computeId"] == expected_value
+        assert rest_obj.properties.jobs["node_with_short_name"]["computeId"] == expected_value
