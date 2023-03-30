@@ -58,6 +58,7 @@ class TestIfElse(TestControlFlowPipeline):
         )
         def condition_pipeline():
             result = basic_component()
+            result.outputs.output.mode = "mount"
 
             node1 = hello_world_component_no_paths(component_in_number=1)
             node2 = hello_world_component_no_paths(component_in_number=2)
