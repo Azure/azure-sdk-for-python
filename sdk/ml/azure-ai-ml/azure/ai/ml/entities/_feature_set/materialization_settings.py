@@ -78,7 +78,9 @@ class _MaterializationSettings(RestTranslatableMixin):
         if not obj:
             return None
         return _MaterializationSettings(
-            schedule=RecurrenceTrigger._from_rest_object(obj.schedule) if obj.schedule else None,  # pylint: disable=protected-access
+            schedule=RecurrenceTrigger._from_rest_object(obj.schedule)  # pylint: disable=protected-access
+            if obj.schedule
+            else None,
             notification=_Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
             resource=_MaterializationComputeResource._from_rest_object(  # pylint: disable=protected-access
                 obj.resource
