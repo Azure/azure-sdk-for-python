@@ -3027,3 +3027,41 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = assert_job_cancel(pipeline, client)
         assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
         assert pipeline_job.jobs["node_1"].limits.timeout == 1
+
+    def test_pipeline_component_primitive_type_consumption(self, client: MLClient):
+        baisc_component_func = load_component(
+            "./tests/test_configs/dsl_pipeline/primitive_type_components/basic_component.yml"
+        )
+        boolean_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/boolean.yml")
+        integer_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/integer.yml")
+        number_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/number.yml")
+        string_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/string.yml")
+
+        @dsl.pipeline
+        def pipeline_component_func(bool_param: bool, int_param: int, float_param: float, str_param: str):
+            baisc_component_func(
+                bool_param=bool_param,
+                int_param=int_param,
+                float_param=float_param,
+                str_param=str_param,
+            )
+
+        @dsl.pipeline
+        def pipeline_func():
+            # components return primitive type outputs
+            bool_node = boolean_func()
+            int_node = integer_func()
+            float_node = number_func()
+            str_node = string_func()
+            # pipeline component consume above primitive type outputs
+            pipeline_node = pipeline_component_func(  # noqa: F841
+                bool_param=bool_node.outputs.output,
+                int_param=int_node.outputs.output,
+                float_param=float_node.outputs.output,
+                str_param=str_node.outputs.output,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        assert_job_cancel(pipeline_job, client)
