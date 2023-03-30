@@ -16,6 +16,7 @@ class TestProvisioningClientInitialization(object):
         with pytest.raises(TypeError):
             ProvisioningServiceClient(endpoint=endpoint, credential=True)
 
+    @pytest.mark.asyncio
     async def test_client_init_errors_async(self):
         with pytest.raises(ValueError):
             AsyncProvisioningServiceClient(["bad_endpoint"])

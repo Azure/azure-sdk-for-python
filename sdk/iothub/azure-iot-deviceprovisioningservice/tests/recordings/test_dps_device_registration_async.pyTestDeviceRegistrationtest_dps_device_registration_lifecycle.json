@@ -1,0 +1,271 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "189",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fazure-devices-provisioning.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "95",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:07 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14990.5 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/reg_enroll_grp_5fca3ff3?api-version=2021-10-01",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "354",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "enrollmentGroupId": "reg_enroll_grp_5fca3ff3",
+        "attestation": {
+          "type": "symmetricKey",
+          "symmetricKey": {
+            "primaryKey": null,
+            "secondaryKey": null
+          }
+        },
+        "allocationPolicy": "static",
+        "capabilities": null,
+        "provisioningStatus": null,
+        "reprovisionPolicy": null,
+        "iotHubs": null,
+        "iotHubHostName": null,
+        "initialTwin": null,
+        "customAllocationDefinition": null
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:06 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "enrollmentGroupId": "reg_enroll_grp_5fca3ff3",
+        "attestation": {
+          "type": "symmetricKey",
+          "symmetricKey": {
+            "primaryKey": "primaryKey",
+            "secondaryKey": "secondaryKey"
+          }
+        },
+        "etag": "IjJiMDU2YmQ2LTAwMDAtMDgwMC0wMDAwLTY0MjRkZGViMDAwMCI=",
+        "provisioningStatus": null,
+        "createdDateTimeUtc": "2023-03-30T00:55:07.4541097Z",
+        "lastUpdatedDateTimeUtc": "2023-03-30T00:55:07.4541097Z",
+        "allocationPolicy": "static"
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/registrations/reg_enroll_grp_5fca3ff3/query?api-version=2021-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:07 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-item-type": "DeviceRegistration"
+      },
+      "ResponseBody": "[]"
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "189",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.0 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fazure-devices-provisioning.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "95",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:07 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14990.5 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "access_token"
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/reg_enroll_grp_5fca3ff3/attestationmechanism?api-version=2021-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:07 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "type": "symmetricKey",
+        "symmetricKey": {
+          "primaryKey": "primaryKey",
+          "secondaryKey": "secondaryKey"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/registrations/device-5fca3ff3?api-version=2021-10-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:09 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked"
+      },
+      "ResponseBody": {
+        "registrationId": "device-5fca3ff3",
+        "createdDateTimeUtc": "2023-03-30T00:55:08.4695045Z",
+        "assignedHub": "rk-cli-test-hub.azure-devices.net",
+        "deviceId": "device-5fca3ff3",
+        "status": "assigned",
+        "substatus": "reprovisionedToInitialAssignment",
+        "lastUpdatedDateTimeUtc": "2023-03-30T00:55:08.7054378Z",
+        "etag": "IjQwMDY4MmYwLTAwMDAtMDgwMC0wMDAwLTY0MjRkZGVjMDAwMCI="
+      }
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/registrations/reg_enroll_grp_5fca3ff3/query?api-version=2021-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:09 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-item-type": "DeviceRegistration"
+      },
+      "ResponseBody": "[{\u0022registrationId\u0022:\u0022device-5fca3ff3\u0022,\u0022createdDateTimeUtc\u0022:\u00222023-03-30T00:55:08.4695045Z\u0022,\u0022assignedHub\u0022:\u0022rk-cli-test-hub.azure-devices.net\u0022,\u0022deviceId\u0022:\u0022device-5fca3ff3\u0022,\u0022status\u0022:\u0022assigned\u0022,\u0022substatus\u0022:\u0022reprovisionedToInitialAssignment\u0022,\u0022lastUpdatedDateTimeUtc\u0022:\u00222023-03-30T00:55:08.7054378Z\u0022,\u0022etag\u0022:\u0022IjQwMDY4MmYwLTAwMDAtMDgwMC0wMDAwLTY0MjRkZGVjMDAwMCI=\u0022}]"
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/registrations/device-5fca3ff3?api-version=2021-10-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Date": "Thu, 30 Mar 2023 00:55:09 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/registrations/reg_enroll_grp_5fca3ff3/query?api-version=2021-10-01",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 30 Mar 2023 00:55:09 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-item-type": "DeviceRegistration"
+      },
+      "ResponseBody": "[]"
+    },
+    {
+      "RequestUri": "https://fake-resource.azure-devices-provisioning.net/enrollmentGroups/reg_enroll_grp_5fca3ff3?api-version=2021-10-01",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-az-iot-dps-python/1.0.0b1 Python/3.8.3 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Date": "Thu, 30 Mar 2023 00:55:10 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
