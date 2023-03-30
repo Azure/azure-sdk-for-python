@@ -85,10 +85,7 @@ class AsyncAuxiliaryAuthenticationPolicy(
 ):
     async def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
-            return [
-                await cred.get_token(*scopes, **kwargs)
-                for cred in self._auxiliary_credentials
-            ]
+            return [await cred.get_token(*scopes, **kwargs) for cred in self._auxiliary_credentials]
         return None
 
     async def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:

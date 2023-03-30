@@ -76,9 +76,7 @@ def test_auxiliary_authentication_policy():
     second_token = AccessToken("second", int(time.time()) + 3600)
 
     def verify_authorization_header(request):
-        assert request.http_request.headers[
-            "x-ms-authorization-auxiliary"
-        ] == ", ".join(
+        assert request.http_request.headers["x-ms-authorization-auxiliary"] == ", ".join(
             "Bearer {}".format(token.token) for token in [first_token, second_token]
         )
         return Mock()

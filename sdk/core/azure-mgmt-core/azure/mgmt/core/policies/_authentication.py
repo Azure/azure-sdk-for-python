@@ -76,12 +76,7 @@ class _AuxiliaryAuthenticationPolicyBase:
     :param str scopes: required authentication scopes
     """
 
-    def __init__(
-        self,
-        auxiliary_credentials,
-        *scopes,
-        **kwargs  # pylint: disable=unused-argument
-    ):
+    def __init__(self, auxiliary_credentials, *scopes, **kwargs):  # pylint: disable=unused-argument
         self._auxiliary_credentials = auxiliary_credentials
         self._scopes = scopes
         self._aux_tokens = None
@@ -128,10 +123,7 @@ class AuxiliaryAuthenticationPolicy(
 ):
     def _get_auxiliary_tokens(self, *scopes, **kwargs):
         if self._auxiliary_credentials:
-            return [
-                cred.get_token(*scopes, **kwargs)
-                for cred in self._auxiliary_credentials
-            ]
+            return [cred.get_token(*scopes, **kwargs) for cred in self._auxiliary_credentials]
         return None
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
@@ -172,9 +164,7 @@ def _parse_claims_challenge(challenge: str) -> Optional[str]:
 
     padding_needed = -len(encoded_claims) % 4
     try:
-        decoded_claims = base64.urlsafe_b64decode(
-            encoded_claims + "=" * padding_needed
-        ).decode()
+        decoded_claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode()
         return decoded_claims
     except Exception:  # pylint:disable=broad-except
         return None

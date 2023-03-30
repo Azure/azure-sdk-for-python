@@ -129,9 +129,7 @@ async def test_auxiliary_authentication_policy():
     second_token = AccessToken("second", int(time.time()) + 3600)
 
     async def verify_authorization_header(request):
-        assert request.http_request.headers[
-            "x-ms-authorization-auxiliary"
-        ] == ", ".join(
+        assert request.http_request.headers["x-ms-authorization-auxiliary"] == ", ".join(
             "Bearer {}".format(token.token) for token in [first_token, second_token]
         )
         return Mock()
@@ -152,9 +150,7 @@ async def test_auxiliary_authentication_policy():
     fake_credential1 = Mock(get_token=get_token1)
     fake_credential2 = Mock(get_token=get_token2)
     policies = [
-        AsyncAuxiliaryAuthenticationPolicy(
-            [fake_credential1, fake_credential2], "scope"
-        ),
+        AsyncAuxiliaryAuthenticationPolicy([fake_credential1, fake_credential2], "scope"),
         Mock(send=verify_authorization_header),
     ]
 

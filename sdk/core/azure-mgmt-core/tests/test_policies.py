@@ -168,9 +168,7 @@ def test_register_failed_policy():
         "providers/Microsoft.Sql/register?api-version=2016-02-01"
     )
 
-    httpretty.register_uri(
-        httpretty.POST, register_post_url, status=409, content_type="application/json"
-    )
+    httpretty.register_uri(httpretty.POST, register_post_url, status=409, content_type="application/json")
 
     request = HttpRequest("PUT", provider_url)
     policies = [
@@ -186,14 +184,8 @@ def test_default_http_logging_policy():
     config = Configuration()
     pipeline_client = ARMPipelineClient(base_url="test", config=config)
     http_logging_policy = pipeline_client._pipeline._impl_policies[-1]._policy
-    assert (
-        http_logging_policy.allowed_header_names
-        == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
-    )
-    assert (
-        http_logging_policy.allowed_header_names
-        == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
-    )
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
 
 
 def test_pass_in_http_logging_policy():
@@ -204,11 +196,9 @@ def test_pass_in_http_logging_policy():
 
     pipeline_client = ARMPipelineClient(base_url="test", config=config)
     http_logging_policy = pipeline_client._pipeline._impl_policies[-1]._policy
-    assert (
-        http_logging_policy.allowed_header_names
-        == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union({"x-ms-added-header"})
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.union(
+        {"x-ms-added-header"}
     )
-    assert (
-        http_logging_policy.allowed_header_names
-        == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union({"x-ms-added-header"})
+    assert http_logging_policy.allowed_header_names == ARMHttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST.union(
+        {"x-ms-added-header"}
     )
