@@ -6,6 +6,7 @@
 
 import pytest
 import functools
+import sys
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.formrecognizer._generated.models import AnalyzeResultOperation
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
@@ -25,8 +26,8 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
     async def test_document_query_fields(self, client, **kwargs):
-        if self.is_live and kwargs.pop("formrecognizer_region", None) != "eastus":
-            pytest.skip("query_fields is only supported in eastus.")
+        if self.is_live and sys.version_info > (3, 10):
+            pytest.skip("query_fields is run on fewer versions to not incur too much cost.")
 
         with open(self.invoice_pdf, "rb") as fd:
             document = fd.read()
