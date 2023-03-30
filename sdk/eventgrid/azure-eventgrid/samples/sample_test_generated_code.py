@@ -1,5 +1,5 @@
-from azuremessagingeventgrid import AzureMessagingEventGridClient
-from azuremessagingeventgrid.models import *
+from azure.eventgrid import AzureMessagingEventGridClient
+from azure.eventgrid.models import *
 from azure.core.credentials import AzureKeyCredential
 
 ENDPOINT = "https://{my_endpoint_here}.centraluseuap-1.eventgrid.azure.net"
