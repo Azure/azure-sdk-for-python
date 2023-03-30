@@ -19,7 +19,7 @@ class ReceiveDetails(ReceiveDetailsInternal):
     :ivar broker_properties: The Event Broker details. Required.
     :vartype broker_properties: ~azuremessagingeventgrid.models.BrokerProperties
     :ivar event: Cloud Event details. Required.
-    :vartype event: ~azuremessagingeventgrid.models.CloudEventEvent
+    :vartype event: ~azure.core.messaging.CloudEvent
     """
 
     @overload
