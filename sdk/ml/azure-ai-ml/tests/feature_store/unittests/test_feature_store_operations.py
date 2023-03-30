@@ -5,10 +5,10 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
-    FeatureStore,
+    _FeatureStore,
     Workspace,
 )
-from azure.ai.ml.operations import FeatureStoreOperations
+from azure.ai.ml.operations._feature_store_operations import _FeatureStoreOperations
 from azure.core.polling import LROPoller
 
 
@@ -23,8 +23,8 @@ def mock_feature_store_operation(
     mock_aml_services_2022_12_01_preview: Mock,
     mock_machinelearning_client: Mock,
     mock_credential: Mock,
-) -> FeatureStoreOperations:
-    yield FeatureStoreOperations(
+) -> _FeatureStoreOperations:
+    yield _FeatureStoreOperations(
         operation_scope=mock_workspace_scope,
         service_client=mock_aml_services_2022_12_01_preview,
         all_operations=mock_machinelearning_client._operation_container,
@@ -36,31 +36,32 @@ def mock_feature_store_operation(
 @pytest.mark.data_experiences_test
 class TestFeatureStoreOperation:
     @pytest.mark.parametrize("arg", ["resource_group", "subscription", "other_rand_str"])
-    def test_list(self, arg: str, mock_feature_store_operation: FeatureStoreOperations) -> None:
+    def test_list(self, arg: str, mock_feature_store_operation: _FeatureStoreOperations) -> None:
         mock_feature_store_operation.list(scope=arg)
         if arg == "subscription":
             mock_feature_store_operation._operation.list_by_subscription.assert_called_once()
         else:
             mock_feature_store_operation._operation.list_by_resource_group.assert_called_once()
 
-    def test_get(self, mock_feature_store_operation: FeatureStoreOperations) -> None:
+    def test_get(self, mock_feature_store_operation: _FeatureStoreOperations) -> None:
         mock_feature_store_operation.get("random_name")
         mock_feature_store_operation._operation.get.assert_called_once()
 
     def test_begin_create(
         self,
-        mock_feature_store_operation: FeatureStoreOperations,
+        mock_feature_store_operation: _FeatureStoreOperations,
         mocker: MockFixture,
     ):
-        mocker.patch("azure.ai.ml.operations.FeatureStoreOperations.get", return_value=None)
+        mocker.patch("azure.ai.ml.operations._feature_store_operations._FeatureStoreOperations.get", return_value=None)
         mocker.patch(
-            "azure.ai.ml.operations.FeatureStoreOperations._populate_arm_paramaters", return_value=({}, {}, {})
+            "azure.ai.ml.operations._feature_store_operations._FeatureStoreOperations._populate_arm_paramaters",
+            return_value=({}, {}, {}),
         )
         mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
-        mock_feature_store_operation.begin_create(feature_store=FeatureStore(name="name"))
+        mock_feature_store_operation.begin_create(feature_store=_FeatureStore(name="name"))
 
-    def test_update(self, mock_feature_store_operation: FeatureStoreOperations) -> None:
-        fs = FeatureStore(
+    def test_update(self, mock_feature_store_operation: _FeatureStoreOperations) -> None:
+        fs = _FeatureStore(
             name="name",
             description="description",
         )
@@ -81,7 +82,7 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation.begin_update(fs, update_dependent_resources=True)
         mock_feature_store_operation._operation.begin_update.assert_called()
 
-    def test_delete(self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture) -> None:
+    def test_delete(self, mock_feature_store_operation: _FeatureStoreOperations, mocker: MockFixture) -> None:
         def outgoing_call(rg, name):
             return Workspace(name=name, kind="featurestore")._to_rest_object()
 
@@ -91,7 +92,7 @@ class TestFeatureStoreOperation:
         mock_feature_store_operation._operation.begin_delete.assert_called_once()
 
     def test_delete_non_feature_store_kind(
-        self, mock_feature_store_operation: FeatureStoreOperations, mocker: MockFixture
+        self, mock_feature_store_operation: _FeatureStoreOperations, mocker: MockFixture
     ) -> None:
         def outgoing_call(rg, name):
             return Workspace(name=name)._to_rest_object()

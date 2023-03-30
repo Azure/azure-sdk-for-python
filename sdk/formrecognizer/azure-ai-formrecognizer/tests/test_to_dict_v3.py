@@ -795,6 +795,11 @@ class TestToDict(FormRecognizerTest):
                 ),
             ],
             confidence=1.0,
+            similar_font_family="Arial",
+            font_style="italic",
+            font_weight="bold",
+            color="#FF0000",
+            background_color="#FFFFFF"
         )
 
         d = model.to_dict()
@@ -808,6 +813,11 @@ class TestToDict(FormRecognizerTest):
                 }
             ],
             "confidence": 1.0,
+            'similar_font_family': 'Arial',
+            'font_style': 'italic',
+            'font_weight': 'bold',
+            'color': '#FF0000',
+            'background_color': '#FFFFFF',
         }
 
         assert d == final
@@ -1235,6 +1245,12 @@ class TestToDict(FormRecognizerTest):
                         ),
                     ],
                     confidence=1.0,
+                    similar_font_family="Arial",
+                    font_style="italic",
+                    font_weight="bold",
+                    color="#FF0000",
+                    background_color="#FFFFFF"
+
                 ),
             ],
             documents=[
@@ -1514,6 +1530,11 @@ class TestToDict(FormRecognizerTest):
                         }
                     ],
                     "confidence": 1.0,
+                    'similar_font_family': 'Arial',
+                    'font_style': 'italic',
+                    'font_weight': 'bold',
+                    'color': '#FF0000',
+                    'background_color': '#FFFFFF',
                 },
             ],
             "documents": [

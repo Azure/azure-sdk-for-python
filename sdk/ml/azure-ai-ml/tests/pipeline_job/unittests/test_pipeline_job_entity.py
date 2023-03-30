@@ -1381,9 +1381,12 @@ class TestPipelineJobEntity:
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
         job = load_job(test_path)
-        with pytest.raises(ValidationException) as ve:
-            job._to_rest_object().as_dict()
-            assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
+        result = job._validate()
+        assert (
+            "jobs.hello_world" in result.error_messages
+            and "Should not specify min or max executors when dynamic allocation is disabled."
+            == result.error_messages["jobs.hello_world"]
+        )
 
     def test_spark_node_in_pipeline_with_invalid_code(
         self,
@@ -1399,6 +1402,75 @@ class TestPipelineJobEntity:
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_git_code.yml"
         job = load_job(test_path)
         job._validate()
+
+    def test_spark_node_with_remote_component_in_pipeline(
+        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+    ):
+        test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/kmeans_sample/pipeline.yml"
+
+        job = load_job(test_path)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, Spark)
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+        result = job._validate()
+        assert result.passed is True
+        rest_job_dict = job._to_rest_object().as_dict()
+        actual_dict = rest_job_dict["properties"]["jobs"]["kmeans_cluster"]
+
+        expected_dict = {
+            "_source": "REMOTE.WORKSPACE.COMPONENT",
+            "componentId": "",
+            "computeId": "",
+            "identity": {"identity_type": "Managed"},
+            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            "name": "kmeans_cluster",
+            "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+            "resources": {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
+            "type": "spark",
+        }
+        assert actual_dict == expected_dict
+
+    @pytest.mark.parametrize(
+        "test_path, error_messages",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
+                "Input 'file_input1' is using 'None' mode, only 'direct' is supported for Spark job",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
+                "Input 'input1' is using 'mount' mode, only 'direct' is supported for Spark job",
+            ),
+        ],
+    )
+    def test_spark_node_in_pipeline_with_invalid_input_mode(self, test_path, error_messages):
+        job = load_job(test_path)
+        result = job._validate()
+        assert error_messages == result.error_messages["jobs.hello_world"]
+
+    @pytest.mark.parametrize(
+        "test_path, error_messages",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_output_mode.yml",
+                "Output 'output' is using 'None' mode, only 'direct' is supported for Spark job",
+            ),
+            (
+                "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_output_mode.yml",
+                "Output 'output1' is using 'upload' mode, only 'direct' is supported for Spark job",
+            ),
+        ],
+    )
+    def test_spark_node_in_pipeline_with_invalid_output_mode(self, test_path, error_messages):
+        job = load_job(test_path)
+        result = job._validate()
+        assert error_messages == result.error_messages["jobs.hello_world"]
 
     def test_infer_pipeline_output_type_as_node_type(
         self,
@@ -1998,3 +2070,25 @@ class TestPipelineJobEntity:
         rest_obj = pipeline._to_rest_object()
         expect_resource = {"instance_count": "${{parent.inputs.integer}}", "shm_size": "${{parent.inputs.shm_size}}"}
         assert rest_obj.properties.jobs["component"]["resources"] == expect_resource
+
+    def test_pipeline_job_serverless_compute_with_job_tier(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/pipeline_with_job_tier.yml"
+        pipeline_job = load_job(yaml_path)
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["spot_job_tier"]["queue_settings"] == {"job_tier": "Spot"}
+        assert rest_obj.properties.jobs["standard_job_tier"]["queue_settings"] == {"job_tier": "Standard"}
+
+    def test_pipeline_job_sweep_with_job_tier_in_pipeline(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/sweep_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        # for sweep job, its job_tier value will be lowercase due to its implementation,
+        # and service side shall accept both capital and lowercase, so it is expected for now.
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["node"]["queue_settings"] == {"job_tier": "standard"}
+
+    def test_pipeline_job_automl_with_job_tier_in_pipeline(self) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/job_tier/automl_in_pipeline/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        # similar to sweep job, automl job job_tier value is also lowercase.
+        rest_obj = pipeline_job._to_rest_object()
+        assert rest_obj.properties.jobs["text_ner_node"]["queue_settings"] == {"job_tier": "spot"}

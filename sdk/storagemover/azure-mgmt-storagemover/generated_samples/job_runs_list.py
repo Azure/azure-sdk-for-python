@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/preview/2022-07-01-preview/examples/JobRuns_List.json
+# x-ms-original-file: specification/storagemover/resource-manager/Microsoft.StorageMover/stable/2023-03-01/examples/JobRuns_List.json
 if __name__ == "__main__":
     main()

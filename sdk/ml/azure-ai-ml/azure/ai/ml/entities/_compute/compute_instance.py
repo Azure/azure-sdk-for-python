@@ -22,14 +22,12 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
-from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
@@ -144,9 +142,9 @@ class ComputeInstance(Compute):
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Default Value: True.
     :type enable_node_public_ip: Optional[bool], optional
-    :param setup_scripts: Experimental. Details of customized scripts to execute for setting up the cluster.
+    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
-    :param custom_applications: Experimental. List of custom applications and their endpoints
+    :param custom_applications: List of custom applications and their endpoints
         for the compute instance.
     :type custom_applications: Optional[List[CustomApplications]], optional
     """
@@ -225,7 +223,6 @@ class ComputeInstance(Compute):
         """
         return self._state
 
-    @experimental
     @property
     def os_image_metadata(self) -> ImageMetadata:
         """Metadata about the operating system image for this compute instance.
@@ -240,23 +237,15 @@ class ComputeInstance(Compute):
             subnet_resource = ResourceId(id=self.subnet)
         else:
             subnet_resource = None
-        if self.ssh_public_access_enabled and not (self.ssh_settings and self.ssh_settings.ssh_key_value):
-            msg = "ssh_key_value is required when ssh_public_access_enabled = True."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPUTE,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+
         ssh_settings = None
-        if self.ssh_settings and self.ssh_settings.ssh_key_value:
-            ssh_settings = CiSShSettings(
-                admin_public_key=self.ssh_settings.ssh_key_value,
+        if self.ssh_public_access_enabled is not None or self.ssh_settings is not None:
+            ssh_settings = CiSShSettings()
+            ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
+            ssh_settings.admin_public_key = (
+                self.ssh_settings.ssh_key_value if self.ssh_settings and self.ssh_settings.ssh_key_value else None
             )
-            if self.ssh_public_access_enabled is not None:
-                ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
-            else:
-                ssh_settings.ssh_public_access = "NotSpecified"
+
         personal_compute_instance_settings = None
         if self.create_on_behalf_of:
             personal_compute_instance_settings = PersonalComputeInstanceSettings(

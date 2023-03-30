@@ -1,5 +1,12 @@
 # Release History
 
+## 3.1.0 (2023-03-20)
+
+### Features Added
+
+  - Model AzureBlobFSLinkedService has a new parameter sas_token
+  - Model AzureBlobFSLinkedService has a new parameter sas_uri
+
 ## 3.0.0 (2023-02-20)
 
 ### Features Added

@@ -46,6 +46,7 @@ def assert_dsl_curated(pipeline: PipelineJob, job_yaml, omit_fields):
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "recorded_test",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
@@ -357,13 +358,37 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         }
 
     @pytest.mark.e2etest
+    def test_spark_job_with_builder_in_pipeline_with_dynamic_allocation_disabled(
+        self,
+        client: MLClient,
+    ) -> None:
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.invalid_pipeline import (
+            generate_dsl_pipeline_from_builder_with_dynamic_allocation_disabled as spark_job_in_pipeline,
+        )
+
+        pipeline = spark_job_in_pipeline()
+        with pytest.raises(Exception) as ex:
+            created_job = client.jobs.create_or_update(pipeline)
+
+        assert (
+            '{\n  "result": "Failed",\n  "errors": [\n    {\n      "message": "Should not specify min or max '
+            'executors when dynamic allocation is disabled.",\n' in str(ex.value)
+        )
+
+        validation_result = client.jobs.validate(pipeline)
+        assert validation_result.passed is False
+        assert validation_result.error_messages == {
+            "jobs.add_greeting_column": "Should not specify min or max executors when dynamic allocation is disabled.",
+        }
+
+    @pytest.mark.e2etest
     def test_data_transfer_copy_2urifolder_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
             generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        assert_job_cancel(pipeline, client)
+        assert_job_cancel(pipeline, client, skip_cancel=True)
 
     @pytest.mark.e2etest
     def test_data_transfer_copy_2urifolder_job_with_builder_in_pipeline(self, client: MLClient) -> None:

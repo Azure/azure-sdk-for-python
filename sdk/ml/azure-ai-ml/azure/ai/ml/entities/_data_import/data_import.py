@@ -74,6 +74,7 @@ class DataImport(Data):
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
+
         data_import = DataImport._load_from_dict(yaml_data=data, context=context, **kwargs)
 
         return data_import

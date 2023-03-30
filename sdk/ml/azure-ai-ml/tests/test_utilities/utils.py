@@ -291,11 +291,13 @@ def assert_job_cancel(
     *,
     experiment_name=None,
     check_before_cancelled: Callable[[Job], bool] = None,
+    skip_cancel=False,
 ) -> Job:
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
-    cancel_job(client, created_job)
+    if skip_cancel is False:
+        cancel_job(client, created_job)
     return created_job
 
 
