@@ -61,13 +61,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
     ) -> None:
         id = IdentityConfiguration(
             type=IdentityConfigurationType.MANAGED,
-            user_assigned_identities=[
-                ManagedIdentityConfiguration(
-                    client_id="3adff742-0142-45a6-8142-3d94f944cafb"
-                )
-            ],
+            user_assigned_identities=[ManagedIdentityConfiguration(client_id="3adff742-0142-45a6-8142-3d94f944cafb")],
         )
 
+        # To support dsl pipeline kwargs
+        os.environ["AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"] = "True"
         compute_names = [
             "siloCompute1",
             "siloCompute2",
@@ -78,9 +76,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         for name in compute_names:
             try:
                 extant_compute = client.compute.get(name)
-                print(
-                    f"Found existing compute '{name}', using that instead of creating it."
-                )
+                print(f"Found existing compute '{name}', using that instead of creating it.")
                 computes.append(extant_compute)
             except ResourceNotFoundError as e:
                 raise (e)
@@ -96,30 +92,22 @@ class TestDSLPipeline(AzureRecordedTestCase):
         for datastore_name in datastore_names:
             try:
                 extant_ds = client.datastores.get(datastore_name)
-                print(
-                    f"Found existing datastore '{datastore_name}', using that instead of creating it."
-                )
+                print(f"Found existing datastore '{datastore_name}', using that instead of creating it.")
                 datastores.append(extant_ds)
             except ResourceNotFoundError as e:
                 raise (e)
 
         # Load components from local configs
         preprocessing_component = load_component(
-            source=os.path.join(
-                federated_learning_components_folder, "preprocessing", "spec.yaml"
-            )
+            source=os.path.join(federated_learning_components_folder, "preprocessing", "spec.yaml")
         )
 
         training_component = load_component(
-            source=os.path.join(
-                federated_learning_components_folder, "training", "spec.yaml"
-            )
+            source=os.path.join(federated_learning_components_folder, "training", "spec.yaml")
         )
 
         aggregate_component = load_component(
-            source=os.path.join(
-                federated_learning_components_folder, "aggregate", "spec.yaml"
-            )
+            source=os.path.join(federated_learning_components_folder, "aggregate", "spec.yaml")
         )
 
         # Use a nested pipeline for the silo step
@@ -169,17 +157,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo1_input1.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input1.txt"),
                         datastore=datastores[0].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo1_input2.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input2.txt"),
                         datastore=datastores[0].name,
                     ),
                 },
@@ -191,17 +175,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo2_input1.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input1.txt"),
                         datastore=datastores[1].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo2_input2.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input2.txt"),
                         datastore=datastores[1].name,
                     ),
                 },
@@ -213,17 +193,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(
-                            FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input1.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo3_input1.txt"),
                         datastore=datastores[2].name,
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(
-                            FL_TESTING_LOCAL_DATA_FOLDER, "silo3_input2.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo3_input2.txt"),
                         datastore=datastores[2].name,
                     ),
                 },
@@ -266,14 +242,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert "scatter_gather_body" in subgraph
         scatter_gather_body = subgraph["scatter_gather_body"]
         assert scatter_gather_body.type == "pipeline"
-        assert all(
-            silo_input in scatter_gather_body.inputs for silo_input in silo_kwargs
-        )
-        assert all(
-            silo_input in scatter_gather_body.inputs
-            for silo_input in aggregation_to_silo_argument_map.values()
-        )
-        assert all(
-            agg_output in scatter_gather_body.outputs
-            for agg_output in aggregation_to_silo_argument_map
-        )
+        assert all(silo_input in scatter_gather_body.inputs for silo_input in silo_kwargs)
+        assert all(silo_input in scatter_gather_body.inputs for silo_input in aggregation_to_silo_argument_map.values())
+        assert all(agg_output in scatter_gather_body.outputs for agg_output in aggregation_to_silo_argument_map)

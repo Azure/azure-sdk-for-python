@@ -25,21 +25,15 @@ class TestDSLPipeline:
         os.environ["AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"] = "True"
 
         preprocessing_component = load_component(
-            source=os.path.join(
-                federated_learning_components_folder, "preprocessing", "spec.yaml"
-            )
+            source=os.path.join(federated_learning_components_folder, "preprocessing", "spec.yaml")
         )
 
         training_component = load_component(
-            source=os.path.join(
-                federated_learning_components_folder, "training", "spec.yaml"
-            )
+            source=os.path.join(federated_learning_components_folder, "training", "spec.yaml")
         )
 
         aggregate_component = load_component(
-            source=os.path.join(
-                federated_learning_components_folder, "aggregate", "spec.yaml"
-            )
+            source=os.path.join(federated_learning_components_folder, "aggregate", "spec.yaml")
         )
 
         aggregation_step = aggregate_component
@@ -100,17 +94,13 @@ class TestDSLPipeline:
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo1_input1.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input1.txt"),
                         datastore=datastore_names[0],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo1_input2.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo1_input2.txt"),
                         datastore=datastore_names[0],
                     ),
                 },
@@ -122,17 +112,13 @@ class TestDSLPipeline:
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo2_input1.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input1.txt"),
                         datastore=datastore_names[1],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="direct",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo2_input2.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo2_input2.txt"),
                         datastore=datastore_names[1],
                     ),
                 },
@@ -144,17 +130,13 @@ class TestDSLPipeline:
                     "raw_train_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo3_input1.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo3_input1.txt"),
                         datastore=datastore_names[2],
                     ),
                     "raw_test_data": Input(
                         type=AssetTypes.URI_FILE,
                         mode="mount",
-                        path=os.path.join(
-                            federated_learning_local_data_folder, "silo3_input2.txt"
-                        ),
+                        path=os.path.join(federated_learning_local_data_folder, "silo3_input2.txt"),
                         datastore=datastore_names[2],
                     ),
                 },
@@ -186,9 +168,7 @@ class TestDSLPipeline:
 
         # Validate scatter-gather graph
         assert fl_node.scatter_gather_graph.type == "pipeline"
-        scatter_gather_body = fl_node.scatter_gather_graph.component.jobs[
-            "scatter_gather_body"
-        ]
+        scatter_gather_body = fl_node.scatter_gather_graph.component.jobs["scatter_gather_body"]
         assert scatter_gather_body
 
         silo_idx = 0
@@ -199,9 +179,7 @@ class TestDSLPipeline:
             ]:
                 # Validate Merge and Aggregation component
                 assert job_body.compute == aggregation_compute
-                assert (
-                    aggregation_datastore in job_body.outputs["aggregated_output"].path
-                )
+                assert aggregation_datastore in job_body.outputs["aggregated_output"].path
             else:
                 # Validate silo component
 
@@ -292,9 +270,7 @@ class TestDSLPipeline:
 
         # succeed once inputs have static kwargs
         silo_comp = create_component_with_io(inputs=["some_input"], outputs=["in_out"])
-        agg_comp = create_component_with_io(
-            inputs=["another_input"], outputs=["agg_out"]
-        )
+        agg_comp = create_component_with_io(inputs=["another_input"], outputs=["agg_out"])
         validation_result = try_validate()
         assert validation_result.passed
 
@@ -364,13 +340,9 @@ class TestDSLPipeline:
         validation_result = try_validate()
         assert not validation_result.passed
         assert (
-            "Silo at index 1 has is missing inputs named 'input1'"
-            in validation_result.error_messages["silo_configs"]
+            "Silo at index 1 has is missing inputs named 'input1'" in validation_result.error_messages["silo_configs"]
         )
-        assert (
-            "Silo at index 1 has 0 inputs"
-            in validation_result.error_messages["silo_configs"]
-        )
+        assert "Silo at index 1 has 0 inputs" in validation_result.error_messages["silo_configs"]
 
         silo_configs[1] = FederatedLearningSilo(
             compute="com1",
@@ -382,10 +354,7 @@ class TestDSLPipeline:
         )
         validation_result = try_validate()
         assert not validation_result.passed
-        assert (
-            "Silo at index 1 has 2 inputs"
-            in validation_result.error_messages["silo_configs"]
-        )
+        assert "Silo at index 1 has 2 inputs" in validation_result.error_messages["silo_configs"]
 
         silo_configs[1] = FederatedLearningSilo(
             compute="com1",
@@ -448,9 +417,7 @@ class TestDSLPipeline:
                 name="example_comp",
                 display_name="test component",
                 environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-                command=(
-                    "echo unit test example component. Why was this actually run?"
-                ),
+                command=("echo unit test example component. Why was this actually run?"),
                 inputs={},
                 outputs={"output": Output(type="uri_folder", mode="rw_mount", path="")},
             )
@@ -459,20 +426,14 @@ class TestDSLPipeline:
                 name="example_comp",
                 display_name="test component",
                 environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-                command=(
-                    "echo unit test example component. Why was this actually run?"
-                ),
+                command=("echo unit test example component. Why was this actually run?"),
                 inputs={"input": Input(type="uri_folder", mode="rw_mount", path="")},
                 outputs={
                     "output2": Output(type="uri_folder", mode="rw_mount", path=""),
-                    "other_output": Output(
-                        type=AssetTypes.MLTABLE, path="this-should-not-change"
-                    ),
+                    "other_output": Output(type=AssetTypes.MLTABLE, path="this-should-not-change"),
                 },
             )
-            executed_subcomponent2 = subcomponent2(
-                input=executed_subcomponent1.outputs["output"]
-            )
+            executed_subcomponent2 = subcomponent2(input=executed_subcomponent1.outputs["output"])
             return {
                 "pipeline_output": executed_subcomponent2.outputs["output2"],
                 "pipeline_output2": executed_subcomponent2.outputs["other_output"],
@@ -481,40 +442,19 @@ class TestDSLPipeline:
         compute_name = "a_compute"
         local_ds_name = "local_datastore"
         orch_ds_name = "orchestrator_datastore"
-        executed_pipeline = test_pipeline_func(
-            x=Input(type="uri_folder", mode="mount", path="hello")
-        )
+        executed_pipeline = test_pipeline_func(x=Input(type="uri_folder", mode="mount", path="hello"))
         FLScatterGather._anchor_step(
             pipeline_step=executed_pipeline,
             compute=compute_name,
             internal_datastore=local_ds_name,
             orchestrator_datastore=orch_ds_name,
         )
-        assert (
-            executed_pipeline.component.jobs["executed_subcomponent1"].compute
-            == compute_name
-        )
-        assert (
-            executed_pipeline.component.jobs["executed_subcomponent2"].compute
-            == compute_name
-        )
-        assert (
-            local_ds_name
-            in executed_pipeline.component.jobs["executed_subcomponent1"]
-            .outputs["output"]
-            .path
-        )
-        assert (
-            orch_ds_name
-            in executed_pipeline.component.jobs["executed_subcomponent2"]
-            .outputs["output2"]
-            .path
-        )
+        assert executed_pipeline.component.jobs["executed_subcomponent1"].compute == compute_name
+        assert executed_pipeline.component.jobs["executed_subcomponent2"].compute == compute_name
+        assert local_ds_name in executed_pipeline.component.jobs["executed_subcomponent1"].outputs["output"].path
+        assert orch_ds_name in executed_pipeline.component.jobs["executed_subcomponent2"].outputs["output2"].path
         assert orch_ds_name in executed_pipeline.outputs["pipeline_output"].path
-        assert (
-            executed_pipeline.outputs["pipeline_output2"].path
-            == "this-should-not-change"
-        )
+        assert executed_pipeline.outputs["pipeline_output2"].path == "this-should-not-change"
 
     def test_import_requirement(self) -> None:
         with pytest.raises(ImportError):
