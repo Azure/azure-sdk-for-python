@@ -70,15 +70,15 @@ class AzureMessagingEventGridClient(ServiceClientGenerated):
 
 
     @overload
-    def publish(self, topic_name: str, body: List[CloudEvent], *, content_type: str = "application/cloudevents-batch+json; charset=utf-8", **kwargs: Any):
+    def publish(self, topic_name: str, body: List[CloudEvent], *, content_type: str = "application/cloudevents-batch+json; charset=utf-8", **kwargs: Any) -> None:
         """Publish Batch of Cloud Events to namespace topic."""
 
     @overload
-    def publish(self, topic_name: str, body: CloudEvent, *, content_type: str = "application/cloudevents+json; charset=utf-8", **kwargs: Any):
+    def publish(self, topic_name: str, body: CloudEvent, *, content_type: str = "application/cloudevents+json; charset=utf-8", **kwargs: Any) -> None:
         """Publish Single Cloud Event to namespace topic."""
 
     @distributed_trace
-    def publish(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs):
+    def publish(self, topic_name: str, body: Union[List[CloudEvent], CloudEvent], **kwargs) -> None:
         """Publish Cloud Events to namespace topic."""
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
