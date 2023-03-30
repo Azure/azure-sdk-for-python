@@ -4,9 +4,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import AsyncIterator, AsyncContextManager, Callable, Awaitable, TypeVar, cast, Tuple, Dict
+from typing import AsyncIterator, AsyncContextManager, Awaitable, TypeVar, cast, Tuple, Dict, Any
+from typing_extensions import Protocol
 
 T = TypeVar('T', bound='AsyncDownloadBlobStream')
+
+
+class GetNext(Protocol):
+    def __call__(self, *args: Any, range: str) -> Awaitable[AsyncIterator[bytes]]:
+        pass
 
 
 class AsyncDownloadBlobStream(
@@ -19,7 +25,7 @@ class AsyncDownloadBlobStream(
         self,
         *,
         response: AsyncIterator[bytes],
-        get_next: Callable[[str], Awaitable[AsyncIterator[bytes]]],
+        get_next: GetNext,
         blob_size: int,
         downloaded: int,
         digest: str,
@@ -52,7 +58,7 @@ class AsyncDownloadBlobStream(
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = cast(
             Tuple[AsyncIterator[bytes], Dict[str, str]],
-            await self._next(range=range_header) # type: ignore
+            await self._next(range=range_header)
         )
         self._downloaded += int(headers["Content-Length"])
         return next_chunk
