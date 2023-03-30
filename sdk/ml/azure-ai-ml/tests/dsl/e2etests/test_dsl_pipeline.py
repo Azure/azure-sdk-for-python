@@ -6,10 +6,6 @@ from unittest.mock import patch
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
-from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
-
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -25,7 +21,7 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml.constants._common import ANONYMOUS_COMPONENT_NAME, AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
@@ -33,8 +29,11 @@ from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
+from devtools_testutils import AzureRecordedTestCase, is_live
+from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -2656,6 +2655,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
+    @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
@@ -2964,7 +2964,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         subgraph_id = pipeline_job.jobs["subgraph"].component
         subgraph_id = subgraph_id.split(":")
         subgraph = client.components.get(name=subgraph_id[0], version=subgraph_id[1])
-        check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
+        # TODO: enable this check in playback mode after pipeline_component.jobs is opened in all subscriptions
+        if is_live():
+            check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
 
     @pytest.mark.disable_mock_code_hash
     # without this mark, the code would be passed with different id even when we upload the same component,

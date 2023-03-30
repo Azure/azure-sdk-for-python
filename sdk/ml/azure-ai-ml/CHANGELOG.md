@@ -19,7 +19,7 @@
 
 ### Other Changes
 
--
+- Remove the default placeholder for CommandComponent.code
 
 ## 1.5.0 (2023-03-20)
 
