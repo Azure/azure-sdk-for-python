@@ -8,7 +8,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, sleep_if_live, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, is_singularity_id_for_resource
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -1396,26 +1396,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-    def test_pipeline_job_with_singularity_compute(self, client: MLClient, randstr: Callable[[str], str]):
-        params_override = [{"name": randstr("job_name")}]
-        pipeline_job: PipelineJob = load_job(
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_singularity_compute.yml",
-            params_override=params_override,
-        )
-
-        singularity_compute_id = (
-            f"/subscriptions/{client.subscription_id}/resourceGroups/{client.resource_group_name}/"
-            f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
-        )
-        pipeline_job.settings.default_compute = singularity_compute_id
-        pipeline_job.jobs["hello_job"].compute = singularity_compute_id
-
-        assert pipeline_job._customized_validate().passed is True
-
-        created_pipeline_job: PipelineJob = assert_job_cancel(pipeline_job, client)
-        assert created_pipeline_job.settings.default_compute == singularity_compute_id
-        assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
-
     def test_register_output_yaml(
         self,
         client: MLClient,
@@ -1857,6 +1837,62 @@ class TestPipelineJob(AzureRecordedTestCase):
         # To register a binding NodeOutput, define name and version in pipeline level is more expected.
         assert pipeline_job.outputs.regression_node_2.name == None
         assert pipeline_job.outputs.regression_node_2.version == None
+
+    def test_(self, client: MLClient, singularity_vc):
+        print(singularity_vc.subscription_id)
+        print(singularity_vc.resource_group_name)
+        print(singularity_vc.name)
+
+    def test_pipeline_job_singularity_no_compute_in_yaml(self, client: MLClient, mock_singularity_arm_id: str) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_no_compute.yml"
+        pipeline_job = load_job(yaml_path)
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        assert rest_obj.properties.settings["default_compute"] == mock_singularity_arm_id
+        assert rest_obj.properties.jobs["low_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Basic",
+                    "priority": "Low",
+                }
+            },
+        }
+        assert rest_obj.properties.jobs["medium_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Standard",
+                    "priority": "Medium",
+                }
+            },
+        }
+        assert rest_obj.properties.jobs["high_node"]["resources"] == {
+            "instance_type": "Singularity.ND40rs_v2",
+            "properties": {
+                "AISuperComputer": {
+                    "imageVersion": "",
+                    "slaTier": "Premium",
+                    "priority": "High",
+                }
+            },
+        }
+
+    def test_pipeline_job_singularity_short_name(self, client: MLClient) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_short_name.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+        default_compute = rest_obj.properties.settings["default_compute"]
+        assert is_singularity_id_for_resource(default_compute)
+        assert default_compute.endswith("SingularityTestVC")
+        node_compute = rest_obj.properties.jobs["hello_world"]["computeId"]
+        assert is_singularity_id_for_resource(node_compute)
+        assert node_compute.endswith("centeuapvc")
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

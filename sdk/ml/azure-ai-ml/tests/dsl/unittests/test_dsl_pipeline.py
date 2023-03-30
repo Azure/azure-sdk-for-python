@@ -3192,7 +3192,7 @@ class TestDSLPipeline:
         # check if all the fields are correctly serialized
         pipeline_job.component._get_anonymous_hash()
 
-    def test_pipeline_singularity_strong_type(self, singularity_compute_id: str):
+    def test_pipeline_singularity_strong_type(self, mock_singularity_arm_id: str):
         component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
         component_func = load_component(component_yaml)
 
@@ -3220,7 +3220,7 @@ class TestDSLPipeline:
             )
 
         pipeline_job = pipeline_func()
-        pipeline_job.settings.default_compute = singularity_compute_id
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
 
         pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
         # basic job_tier + Low priority

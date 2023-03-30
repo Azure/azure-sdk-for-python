@@ -32,7 +32,7 @@ from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities import Data, PipelineJob
+from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob, QueueSettings
 from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 
@@ -3027,3 +3027,31 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = assert_job_cancel(pipeline, client)
         assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
         assert pipeline_job.jobs["node_1"].limits.timeout == 1
+
+    def test_pipeline_singularity_strong_type(self, client: MLClient, mock_singularity_arm_id: str):
+        component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
+        component_func = load_component(component_yaml)
+
+        instance_type = "Singularity.ND40rs_v2"
+
+        @dsl.pipeline
+        def pipeline_func():
+            # basic job_tier + Low priority
+            basic_low_node = component_func()
+            basic_low_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            basic_low_node.queue_settings = QueueSettings(job_tier="basic", priority="low")
+            # standard job_tier + Medium priority
+            standard_medium_node = component_func()
+            standard_medium_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            standard_medium_node.queue_settings = QueueSettings(job_tier="standard", priority="medium")
+            # premium job_tier + High priority
+            premium_high_node = component_func()
+            premium_high_node.resources = JobResourceConfiguration(instance_count=2, instance_type=instance_type)
+            premium_high_node.queue_settings = QueueSettings(job_tier="premium", priority="high")
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = mock_singularity_arm_id
+
+        created_pipeline_job = client.create_or_update(pipeline_job)
+        # created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        print(created_pipeline_job)

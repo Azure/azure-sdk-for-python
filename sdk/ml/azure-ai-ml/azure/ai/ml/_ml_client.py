@@ -484,6 +484,7 @@ class MLClient:
             from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
 
             self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
+            self._operation_container.add(AzureMLResourceType.VIRTUALCLUSTER, self._virtual_clusters)
         except Exception as ex:  # pylint: disable=broad-except
             module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 
