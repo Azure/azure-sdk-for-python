@@ -37,6 +37,7 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PURGE = "purge"
     BACKUP = "backup"
     RESTORE = "restore"
+    IMPORT_ENUM = "import"
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -77,6 +78,7 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORE = "restore"
     RECOVER = "recover"
     PURGE = "purge"
+    IMPORT_ENUM = "import"
 
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):

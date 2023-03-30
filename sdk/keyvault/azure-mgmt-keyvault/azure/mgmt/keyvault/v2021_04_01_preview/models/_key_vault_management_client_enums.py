@@ -43,6 +43,7 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PURGE = "purge"
     BACKUP = "backup"
     RESTORE = "restore"
+    IMPORT_ENUM = "import"
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -93,6 +94,7 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOVER = "recover"
     PURGE = "purge"
     RELEASE = "release"
+    IMPORT_ENUM = "import"
 
 
 class ManagedHsmSkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
