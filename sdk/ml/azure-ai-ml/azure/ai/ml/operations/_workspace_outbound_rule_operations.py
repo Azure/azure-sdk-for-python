@@ -50,8 +50,6 @@ class WorkspaceOutboundRuleOperations:
 
         rest_rules = self._rule_operation.list(resource_group, workspace_name)
 
-        # cls=lambda objs: [OutboundRule._from_rest_object(obj) for obj in objs]
-
         result = [
             OutboundRule._from_rest_object(  # pylint: disable=protected-access
                 rest_obj=obj.properties, name=obj.name

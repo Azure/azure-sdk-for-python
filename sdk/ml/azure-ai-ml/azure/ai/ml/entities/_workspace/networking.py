@@ -8,9 +8,9 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     ManagedNetworkSettings as RestManagedNetwork,
     FqdnOutboundRule as RestFqdnOutboundRule,
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
-    PrivateEndpointOutboundRuleDestination as RestPrivateEndpointOutboundRuleDestination,
+    PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
     ServiceTagOutboundRule as RestServiceTagOutboundRule,
-    ServiceTagOutboundRuleDestination as RestServiceTagOutboundRuleDestination,
+    ServiceTagDestination as RestServiceTagOutboundRuleDestination,
 )
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 

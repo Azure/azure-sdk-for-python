@@ -359,8 +359,6 @@ class TestWorkspace(AzureRecordedTestCase):
         ]
         wps = load_workspace("./tests/test_configs/workspace/workspace_mvnet.yaml", params_override=params_override)
 
-        wps.managed_network.outbound_rules.pop("my-storage")
-
         # test creation
         workspace_poller = client.workspaces.begin_create(workspace=wps)
         assert isinstance(workspace_poller, LROPoller)
@@ -371,20 +369,24 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.description == wps_description
         assert workspace.display_name == wps_display_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
-        assert "my-service" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
-        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
+        assert len(rules)==1
+        assert isinstance(rules[0], ServiceTagDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
+        assert len(rules)==1
+        assert isinstance(rules[0], FqdnDestination)
 
         # test get
         workspace = client.workspaces.get(name=wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
         assert workspace.managed_network.isolation_mode == IsolationMode.ALLOW_ONLY_APPROVED_OUTBOUND
-        assert "my-service" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["my-service"], ServiceTagDestination)
-        assert "pytorch" in workspace.managed_network.outbound_rules.keys()
-        assert isinstance(workspace.managed_network.outbound_rules["pytorch"], FqdnDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "my-service"]
+        assert len(rules)==1
+        assert isinstance(rules[0], ServiceTagDestination)
+        rules = [rule for rule in workspace.managed_network.outbound_rules if rule.name == "pytorch"]
+        assert len(rules)==1
+        assert isinstance(rules[0], FqdnDestination)
 
         # test workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
