@@ -42,7 +42,6 @@ def index_entity_response_to_job(entity: IndexEntityResponse) -> Job:
         if "compute" in properties.additional_properties
         else None,
     )
-    return entity
 
 
 __all__ = [

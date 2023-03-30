@@ -25,7 +25,11 @@ from azure.ai.ml._utils.azure_resource_utils import (
     get_virtual_cluster_by_name,
     get_virtual_clusters_from_subscriptions,
 )
-from azure.ai.ml.constants._common import Scope
+from azure.ai.ml.constants._common import (
+    AZUREML_RESOURCE_PROVIDER,
+    LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT,
+    Scope,
+)
 from azure.ai.ml.entities import Job
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
@@ -96,15 +100,15 @@ class VirtualClusterOperations:
         :rtype: Iterable[Job]
         """
 
+        def make_id(entity_type: str) -> str:
+            """Helper function to make virtual cluster id for search query"""
+            return LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT.format(
+                self._subscription_id, self._resource_group_name, AZUREML_RESOURCE_PROVIDER, entity_type, name
+            )
+
         # List of virtual cluster ids to match
         # Needs to include several capitalizations for historical reasons. Will be fixed in a service side change
-        vc_ids = [
-            f"/subscriptions/{self._subscription_id}/resourceGroups/{self._resource_group_name}/providers/Microsoft.MachineLearningServices/virtualClusters/{name}",
-            # The word 'virtualclusters' is lowercased
-            f"/subscriptions/{self._subscription_id}/resourceGroups/{self._resource_group_name}/providers/Microsoft.MachineLearningServices/virtualclusters/{name}",
-            # entire id is lowercased
-            f"/subscriptions/{self._subscription_id}/resourcegroups/{self._resource_group_name}/providers/microsoft.machinelearningservices/virtualclusters/{name}".lower(),
-        ]
+        vc_ids = [make_id("virtualClusters"), make_id("virtualclusters"), make_id("virtualClusters").lower()]
 
         filters = [
             IndexEntitiesRequestFilter(field="type", operator="eq", values=["runs"]),
