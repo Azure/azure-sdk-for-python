@@ -1041,7 +1041,8 @@
         "wargs",
         "pycache",
         "ruamel",
-        "reprcrash"
+        "reprcrash",
+        "etests"
       ]
     },
     {
