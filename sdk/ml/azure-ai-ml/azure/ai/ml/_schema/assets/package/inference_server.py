@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use
+# pylint: disable=unused-argument,no-self-use,redefined-builtin,no-else-return
 
 import logging
 from typing import Any
@@ -30,19 +30,6 @@ class InferenceServerSchema(PathAwareSchema):
     )
     code_configuration = NestedField(CodeConfigurationSchema)  # required for batch and online
     inference_configuration = NestedField(OnlineInferenceConfigurationSchema)  # required for custom and Triton
-
-    ## This is evolving so might need to be uncommented later
-
-    # @pre_load
-    # def pre_load(self, data, **kwargs):
-    #     if data["type"] == InferenceServerType.AZUREML_ONLINE or data["type"] == InferenceServerType.AZUREML_BATCH:
-    #         if "code_configuration" not in data:
-    #             raise ValidationError("code_configuration is required for online and batch inference servers")
-
-    #     if data["type"] == InferenceServerType.CUSTOM or data["type"] == InferenceServerType.TRITON:
-    #         if "inference_configuration" not in data:
-    #             raise ValidationError("inference_configuration is required for custom and triton inference servers")
-    #     return data
 
     @post_load
     def make(self, data, **kwargs):

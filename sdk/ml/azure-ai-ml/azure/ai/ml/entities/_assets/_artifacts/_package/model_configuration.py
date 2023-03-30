@@ -10,7 +10,13 @@ from azure.ai.ml._utils._experimental import experimental
 @experimental
 class ModelConfiguration:
     def __init__(self, mode: str = None, mount_path: str = None):
-        """ModelConfiguration Variables are only populated by the server, and will be ignored when sending a request."""
+        """ModelConfiguration.
+
+        :param mode: The mode of the model.
+        :type mode: str
+        :param mount_path: The mount path of the model.
+        :type mount_path: str
+        """
         self.mode = mode
         self.mount_path = mount_path
 

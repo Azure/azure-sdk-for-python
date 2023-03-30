@@ -14,7 +14,6 @@ from typing import Any, Optional, Tuple, TypeVar, Union
 
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
-from azure.ai.ml._utils.utils import is_private_preview_enabled
 
 from azure.ai.ml._azure_environments import (
     CloudArgumentKeys,

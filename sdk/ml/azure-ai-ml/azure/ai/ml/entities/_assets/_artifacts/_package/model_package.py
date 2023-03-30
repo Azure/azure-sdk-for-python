@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, redefined-builtin
 
 from os import PathLike
 from pathlib import Path
@@ -28,13 +28,20 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
 )
-from azure.ai.ml._utils.utils import snake_to_pascal
+from azure.ai.ml._utils.utils import snake_to_pascal, dump_yaml_to_file
 from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
 class PackageInputPathId:
     def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
+        """PackageInputPathId.
+
+        :param input_path_type: The type of the input path.
+        :type input_path_type: str
+        :param resource_id: The resource id of the input path.
+        :type resource_id: str
+        """
         self.input_path_type = input_path_type
         self.resource_id = resource_id
 
@@ -60,6 +67,15 @@ class PackageInputPathVersion:
         resource_name: Optional[str] = None,
         resource_version: Optional[str] = None,
     ):
+        """PackageInputPathVersion.
+
+        :param input_path_type: The type of the input path.
+        :type input_path_type: str
+        :param resource_name: The resource name of the input path.
+        :type resource_name: str
+        :param resource_version: The resource version of the input path.
+        :type resource_version: str
+        """
         self.input_path_type = input_path_type
         self.resource_name = resource_name
         self.resource_version = resource_version
@@ -85,6 +101,13 @@ class PackageInputPathVersion:
 @experimental
 class PackageInputPathUrl:
     def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None):
+        """PackageInputPathUrl.
+
+        :param input_path_type: The type of the input path.
+        :type input_path_type: str
+        :param url: The url of the input path.
+        :type url: str
+        """
         self.input_path_type = input_path_type
         self.url = url
 
@@ -106,18 +129,14 @@ class PackageInputPathUrl:
 class ModelPackageInput:
     """Model package input.
 
-    :param type: The storage format for this entity. Used for NCD. Possible values include:
-     "custom_model", "mlflow_model", "triton_model".
+    :param type: The type of the input.
     :type type: str
-    :param path: A remote uri or a local path pointing at a model.
-        Example: "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
-    :type path: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :param path: The path of the input.
+    :type path: azure.ai.ml.entities.PackageInputPathId or azure.ai.ml.entities.PackageInputPathUrl or azure.ai.ml.entities.PackageInputPathVersion
+    :param mode: The mode of the input.
+    :type mode: str
+    :param mount_path: The mount path of the input.
+    :type mount_path: str
     """
 
     def __init__(
@@ -152,32 +171,24 @@ class ModelPackageInput:
 
 @experimental
 class ModelPackage(Resource, PackageRequest):
-    """Model for training and scoring.
+    """Model package.
 
-    :param name: Name of the resource.
+    :param name: The name of the model package.
     :type name: str
-    :param version: Version of the resource.
+    :param version: The version of the model package.
     :type version: str
-    :param type: The storage format for this entity. Used for NCD. Possible values include:
-     "custom_model", "mlflow_model", "triton_model".
-    :type type: str
-    :param utc_time_created: Date and time when the model was created, in
-        UTC ISO 8601 format. (e.g. '2020-10-19 17:44:02.096572')
-    :type utc_time_created: str
-    :param flavors: The flavors in which the model can be interpreted.
-        e.g. {sklearn: {sklearn_version: 0.23.2}, python_function: {loader_module: office.plrmodel, python_version: 3.6}
-    :type flavors: Dict[str, Any]
-    :param path: A remote uri or a local path pointing at a model.
-        Example: "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/path_on_datastore/"
-    :type path: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param kwargs: A dictionary of additional configuration parameters.
-    :type kwargs: dict
+    :param inferencing_server: The inferencing server of the model package.
+    :type inferencing_server: azure.ai.ml.entities.InferencingServer
+    :param base_environment_source: The base environment source of the model package.
+    :type base_environment_source: azure.ai.ml.entities.BaseEnvironmentSource
+    :param environment_variables: The environment variables of the model package.
+    :type environment_variables: dict
+    :param inputs: The inputs of the model package.
+    :type inputs: list[azure.ai.ml.entities.ModelPackageInput]
+    :param model_configuration: The model configuration of the model package.
+    :type model_configuration: azure.ai.ml.entities.ModelConfiguration
+    :param tags: The tags of the model package.
+    :type tags: dict
     """
 
     def __init__(

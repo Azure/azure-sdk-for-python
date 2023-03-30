@@ -18,8 +18,13 @@ from azure.ai.ml._utils._experimental import experimental
 @experimental
 class AzureMLOnlineInferencingServer:
     def __init__(self, type: str = None, code_configuration: str = None):
-        """AzureMLOnlineInferencingServer Variables are only populated by the server, and will be ignored when sending a
-        request."""
+        """Azure ML online inferencing configurations.
+
+        :param type: The type of the inferencing server.
+        :type type: str
+        :param code_configuration: The code configuration of the inferencing server.
+        :type code_configuration: str
+        """
         self.type = type
         self.code_configuration = code_configuration
 
@@ -34,8 +39,13 @@ class AzureMLOnlineInferencingServer:
 @experimental
 class AzureMLBatchInferencingServer:
     def __init__(self, type: str = None, code_configuration: str = None):
-        """AzureMLBatchInferencingServer Variables are only populated by the server,
-        and will be ignored when sending a request."""
+        """Azure ML batch inferencing configurations.
+
+        :param type: The type of the inferencing server.
+        :type type: str
+        :param code_configuration: The code configuration of the inferencing server.
+        :type code_configuration: str
+        """
         self.type = type
         self.code_configuration = code_configuration
 
@@ -50,8 +60,13 @@ class AzureMLBatchInferencingServer:
 @experimental
 class TritonInferencingServer:
     def __init__(self, inference_configuration: str = None):
-        """TritonInferencingServer Variables are only populated by the server,
-        and will be ignored when sending a request."""
+        """Azure ML batch inferencing configurations.
+
+        :param type: The type of the inferencing server.
+        :type type: str
+        :param inference_configuration: The inference configuration of the inferencing server.
+        :type inference_configuration: str
+        """
         self.type = type
         self.inference_configuration = inference_configuration
 
@@ -68,7 +83,13 @@ class TritonInferencingServer:
 @experimental
 class Route:
     def __init__(self, port: str = None, path: str = None):
-        """Route Variables are only populated by the server, and will be ignored when sending a request."""
+        """Route.
+
+        :param port: The port of the route.
+        :type port: str
+        :param path: The path of the route.
+        :type path: str
+        """
         self.port = port
         self.path = path
 
@@ -119,6 +140,13 @@ class OnlineInferenceConfiguration:
 @experimental
 class CustomInferencingServer:
     def __init__(self, type: str = None, inference_configuration: OnlineInferenceConfiguration = None):
+        """Custom inferencing configurations.
+
+        :param type: The type of the inferencing server.
+        :type type: str
+        :param inference_configuration: The inference configuration of the inferencing server.
+        :type inference_configuration: OnlineInferenceConfiguration
+        """
         self.type = type
         self.inference_configuration = inference_configuration
 

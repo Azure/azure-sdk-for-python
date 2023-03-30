@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---
 
+# pylint: redefined-builtin
+
 from typing import Dict
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import BaseEnvironmentId as RestBaseEnvironmentId
@@ -12,10 +14,18 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class BaseEnvironmentId:
-    def __init__(self, type: str = None, resource_id: str = None):
-        """Compute node information related to a AmlCompute Variables are only populated by the server, and will be
-        ignored when sending a request."""
+    """Base environment type.
 
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: The type of the base environment.
+    :type type: str
+    :param resource_id: The resource id of the base environment.
+    :type resource_id: str
+
+    """
+
+    def __init__(self, type, resource_id: str = None):
         self.type = type
         self.resource_id = resource_id
 
