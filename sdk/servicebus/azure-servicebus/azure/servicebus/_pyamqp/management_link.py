@@ -60,8 +60,8 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
         self._on_amqp_management_error = kwargs.get('on_amqp_management_error')
         self._on_amqp_management_open_complete = kwargs.get('on_amqp_management_open_complete')
 
-        self._status_code_field = kwargs.get('status_code_field', b'statusCode')
-        self._status_description_field = kwargs.get('status_description_field', b'statusDescription')
+        self._status_code_field = kwargs.get('status_code_field', 'statusCode')
+        self._status_description_field = kwargs.get('status_description_field', 'statusDescription')
 
         self._sender_connected = False
         self._receiver_connected = False
@@ -154,7 +154,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
                 status_code,
                 status_description,
                 message,
-                response_detail.get(b'error-condition')
+                response_detail.get('error-condition')
             )
             self._pending_operations.remove(to_remove_operation)
 
