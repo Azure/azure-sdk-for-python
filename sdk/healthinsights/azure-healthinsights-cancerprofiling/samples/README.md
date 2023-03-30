@@ -47,8 +47,7 @@ what you can do with the Health Insights client library.
 
 [pip]: https://pypi.org/project/pip/
 [azure_subscription]: https://azure.microsoft.com/free/cognitive-services
-<!---
 [azure_healthinsights_account]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=singleservice%2Cwindows
 [sample_infer_cancer_profiling]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples/sample_infer_cancer_profiling.py
 [sample_infer_cancer_profiling_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/healthinsights/azure-healthinsights-cancerprofiling/samples/async_samples/sample_infer_cancer_profiling_async.py
--->
+
