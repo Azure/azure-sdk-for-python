@@ -151,6 +151,10 @@ def _decode_binary_small(buffer):
     length_index = buffer[0] + 1
     return buffer[length_index:], buffer[1:length_index].tobytes()
 
+def _decode_string(buffer: memoryview) -> Tuple[memoryview, str]:
+    length_index = buffer[0] + 1
+    return buffer[length_index:], buffer[1:length_index].tobytes().decode()
+
 
 def _decode_binary_large(buffer):
     # type: (memoryview) -> Tuple[memoryview, bytes]
@@ -336,7 +340,7 @@ _DECODE_BY_CONSTRUCTOR[130] = _decode_double
 _DECODE_BY_CONSTRUCTOR[131] = _decode_timestamp
 _DECODE_BY_CONSTRUCTOR[152] = _decode_uuid
 _DECODE_BY_CONSTRUCTOR[160] = _decode_binary_small
-_DECODE_BY_CONSTRUCTOR[161] = _decode_binary_small
+_DECODE_BY_CONSTRUCTOR[161] = _decode_string
 _DECODE_BY_CONSTRUCTOR[163] = _decode_binary_small
 _DECODE_BY_CONSTRUCTOR[176] = _decode_binary_large
 _DECODE_BY_CONSTRUCTOR[177] = _decode_binary_large
