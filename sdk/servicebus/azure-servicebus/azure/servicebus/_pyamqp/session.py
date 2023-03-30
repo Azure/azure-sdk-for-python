@@ -191,7 +191,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
     def _incoming_attach(self, frame):
         try:
             self._input_handles[frame[1]] = self.links[
-                frame[0].decode("utf-8")
+                frame[0]
             ]  # name and handle
             self._input_handles[frame[1]]._incoming_attach(  # pylint: disable=protected-access
                 frame
@@ -205,7 +205,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                     extra=self.network_trace_params
                 )
                 # detach the link that would have been set.
-                self.links[frame[0].decode("utf-8")].detach(
+                self.links[frame[0]].detach(
                     error=AMQPError(
                         condition=ErrorCondition.LinkDetachForced,
                         description="""Cannot allocate more handles, """
