@@ -24,7 +24,7 @@ from typing import (
     cast
 )
 from contextlib import contextmanager
-from msrest.serialization import TZ_UTC
+from datetime import timezone
 
 try:
     from urlparse import urlparse
@@ -81,11 +81,11 @@ _log = logging.getLogger(__name__)
 
 
 def utc_from_timestamp(timestamp):
-    return datetime.datetime.fromtimestamp(timestamp, tz=TZ_UTC)
+    return datetime.datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
 
 def utc_now():
-    return datetime.datetime.now(TZ_UTC)
+    return datetime.datetime.now(timezone.utc)
 
 
 def build_uri(address, entity):

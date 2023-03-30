@@ -12,7 +12,7 @@ from uuid import UUID
 from marshmallow import Schema
 
 from ... import Input, Output
-from ..._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
+from ..._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
 from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
@@ -182,7 +182,7 @@ class InternalComponent(Component):
         return validation_result
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # put it here as distribution is shared by some components, e.g. command
         distribution = obj.properties.component_spec.pop("distribution", None)
         init_kwargs = super()._from_rest_object_to_init_params(obj)
@@ -190,18 +190,18 @@ class InternalComponent(Component):
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
 
-    def _to_rest_object(self) -> ComponentVersionData:
+    def _to_rest_object(self) -> ComponentVersion:
         component = convert_ordered_dict_to_dict(self._to_dict())
         component["_source"] = self._source
 
-        properties = ComponentVersionDetails(
+        properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
             properties=self.properties,
             tags=self.tags,
         )
-        result = ComponentVersionData(properties=properties)
+        result = ComponentVersion(properties=properties)
         result.name = self.name
         return result
 

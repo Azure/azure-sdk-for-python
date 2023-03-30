@@ -299,7 +299,8 @@ class PrivateEndpointConnectionOperations:
         :type factory_name: str
         :param private_endpoint_connection_name: The private endpoint connection name. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_wrapper: Is either a model type or a IO type. Required.
+        :param private_endpoint_wrapper: Is either a PrivateLinkConnectionApprovalRequestResource type
+         or a IO type. Required.
         :type private_endpoint_wrapper:
          ~azure.mgmt.datafactory.models.PrivateLinkConnectionApprovalRequestResource or IO
         :param if_match: ETag of the private endpoint connection entity.  Should only be specified for

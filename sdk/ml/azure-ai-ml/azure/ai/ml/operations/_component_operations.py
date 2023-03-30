@@ -8,7 +8,7 @@ import time
 import types
 from functools import partial
 from inspect import Parameter, signature
-from typing import Callable, Dict, Iterable, Optional, Union, List, Any
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
@@ -21,12 +21,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-
-from azure.ai.ml._telemetry import (
-    ActivityType,
-    monitor_with_activity,
-    monitor_with_telemetry_mixin,
-)
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -45,8 +40,8 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
-from .._utils._cache_utils import CachedNodeResolver
 
+from .._utils._cache_utils import CachedNodeResolver
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
 from ..entities._builders import BaseNode
@@ -317,7 +312,9 @@ class ComponentOperations(_ScopeDependentOperations):
             self._validate(component, raise_on_failure=True)
 
         # Create all dependent resources
-        self._resolve_arm_id_or_upload_dependencies(component)
+        # Only upload dependencies if component is NOT IPP
+        if not component._intellectual_property:
+            self._resolve_arm_id_or_upload_dependencies(component)
 
         name, version = component._get_rest_name_version()
         rest_component_resource = component._to_rest_object()

@@ -143,13 +143,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         environment.version,
                     ),
                 )
-                if not sas_uri:  # This means the env already exists and we just get the env
-                    module_logger.debug(
-                        "Getting the existing asset name: %s, version: %s", environment.name, environment.version
-                    )
-                    return self.get(name=environment.name, version=environment.version)
 
-            environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
+            environment = _check_and_upload_env_build_context(
+                environment=environment, operations=self, sas_uri=sas_uri, show_progress=self._show_progress
+            )
             env_version_resource = environment._to_rest_object()
             env_rest_obj = (
                 self._version_operations.begin_create_or_update(
@@ -376,6 +373,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             self._version_operations,
             self._resource_group_name,
             self._workspace_name,
+            self._registry_name,
         )
         return Environment._from_rest_object(result)
 
