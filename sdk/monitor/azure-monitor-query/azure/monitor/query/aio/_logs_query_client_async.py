@@ -175,7 +175,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
 
         Returns all the Azure Monitor logs matching the given Kusto query for an Azure resource.
 
-        :param resource_id:  The identifier of the resource. The expected format is
+        :param resource_id: The identifier of the resource. The expected format is
          '/subscriptions/<sid>/resourceGroups/<rg>/providers/<providerName>/<resourceType>/<resourceName>'.
         :type resource_id: str
         :param query: The Kusto query. Learn more about the `Kusto query syntax
