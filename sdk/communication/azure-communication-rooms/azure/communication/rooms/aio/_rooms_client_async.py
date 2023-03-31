@@ -202,6 +202,21 @@ class RoomsClient(object):
         return CommunicationRoom._from_room_response(get_room_response) # pylint: disable=protected-access
 
     @distributed_trace_async
+    async def list_rooms(
+        self,
+        **kwargs
+    ): # type:(...) -> AsyncItemPaged[CommunicationRoom]
+        """List all rooms
+
+        :returns: An iterator like instance of CommunicationRoom.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.rooms.CommunicationRoom]
+        :raises: ~azure.core.exceptions.HttpResponseError
+
+        """
+        return await self._rooms_service_client.rooms.list(**kwargs)
+
+
+    @distributed_trace_async
     async def upsert_participants(
         self,
         *,
@@ -216,7 +231,8 @@ class RoomsClient(object):
         :type room_id: str
         :param participants: Required. Collection of identities to be updated
         :type participants: List[~azure.communication.rooms.InvitedRoomParticipant]
-        :return: object
+        :return: Upsert participants result
+        :rtype: ~azure.communication.rooms.UpsertParticipantsResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         update_participants_request = UpdateParticipantsRequest(
@@ -240,7 +256,8 @@ class RoomsClient(object):
         :type room_id: str
         :param participants: Required. Collection of identities to be removed from the room.
         :type participants: List[~azure.communication.rooms._shared.models.CommunicationIdentifier]
-        :return: object
+        :return: Upsert participants result
+        :rtype: ~azure.communication.rooms.RemoveParticipantsResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
         remove_participants_request = UpdateParticipantsRequest(
@@ -259,8 +276,8 @@ class RoomsClient(object):
         """Get participants of a room
         :param room_id: Required. Id of room whose participants to be fetched.
         :type room_id: str
-        :returns: ParticipantsCollection containing all participants in the room.
-        :rtype: ~azure.communication.rooms.ParticipantsCollection
+        :returns: An iterator like instance of RoomParticipant.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.communication.rooms.RoomParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         get_participants_response = await self._rooms_service_client.participants.list(

@@ -20,8 +20,8 @@ class CommunicationRoom():
 
     :ivar id: Unique identifier of a room. This id is server generated.
     :vartype id: str
-    :ivar created_on: The timestamp when the room was created at the server.
-    :vartype created_on: ~datetime.datetime
+    :ivar created_at: The timestamp when the room was created at the server.
+    :vartype created_at: ~datetime.datetime
     :ivar valid_from: The timestamp from when the room is open for joining.
     :vartype valid_from: ~datetime.datetime
     :ivar valid_until: The timestamp from when the room can no longer be joined.
@@ -32,7 +32,7 @@ class CommunicationRoom():
         self,
         *,
         id: str, #pylint: disable=redefined-builtin
-        created_on: datetime,
+        created_at: datetime,
         valid_from: datetime,
         valid_until: datetime,
         **kwargs
@@ -40,8 +40,8 @@ class CommunicationRoom():
         """
         :param id: Unique identifier of a room. This id is server generated.
         :type id: str
-        :param created_on: The timestamp when the room was created at the server.
-        :type created_on: ~datetime.datetime
+        :param created_at: The timestamp when the room was created at the server.
+        :type created_at: ~datetime.datetime
         :param valid_from: The timestamp from when the room is open for joining.
         :type valid_from: ~datetime.datetime
         :param valid_until: The timestamp from when the room can no longer be joined.
@@ -49,7 +49,7 @@ class CommunicationRoom():
         """
         super(CommunicationRoom, self).__init__(**kwargs)
         self.id = id
-        self.created_on = created_on
+        self.created_at = created_at
         self.valid_from = valid_from
         self.valid_until = valid_until
 
@@ -66,7 +66,7 @@ class CommunicationRoom():
 
         return cls(
             id=get_room_response.id,
-            created_on=get_room_response.created_date_time,
+            created_at=get_room_response.created_at,
             valid_from=get_room_response.valid_from,
             valid_until=get_room_response.valid_until,
             **kwargs
@@ -88,7 +88,7 @@ class RoomParticipant():
     :vartype communication_identifier:
     ~azure.communication.rooms._shared.models.CommunicationIdentifier
     :ivar role: Role Name.
-    :vartype role: Union[str, RoleType]
+    :vartype role: Union[str, ParticipantRole]
     """
     def __init__(self, *, raw_id: str, role: Union[str, ParticipantRole], **kwargs: Any) -> None:
         """
@@ -122,8 +122,8 @@ class InvitedRoomParticipant():
     union: Apart from rawId, at most one further property may be set. Required.
     :vartype communication_identifier:
     ~azure.communication.rooms._shared.models.CommunicationIdentifier
-    :ivar role: Role Name.
-    :vartype role: Optional[Union[str, RoleType]
+    :ivar role: Participant Role.
+    :vartype role: Optional[Union[str, ParticipantRole]
     """
 
     def __init__(self, *, communication_identifier: CommunicationIdentifier, role: Optional[Union[str, ParticipantRole]], **kwargs: Any) -> None:
