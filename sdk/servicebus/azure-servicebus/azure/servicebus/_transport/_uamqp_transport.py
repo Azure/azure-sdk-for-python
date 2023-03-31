@@ -1023,7 +1023,7 @@ try:
         def _handle_amqp_exception_without_condition(
             logger: "Logger", exception: "AMQPError"
         ) -> "ServiceBusError":
-            error_cls: Type[ServiceBusError]
+            error_cls: Type[ServiceBusError] = ServiceBusError
             if isinstance(exception, AMQPConnectionError):
                 logger.info("AMQP Connection error occurred: (%r).", exception)
                 error_cls = ServiceBusConnectionError
