@@ -110,7 +110,7 @@ class OperationOrchestrator(object):
         azureml_type: str,
         register_asset: bool = True,
         sub_workspace_resource: bool = True,
-    ) -> Optional[Union[str, Asset]]:  # pylint: disable=too-many-return-statements
+    ) -> Optional[Union[str, Asset]]:
         """This method converts AzureML Id to ARM Id. Or if the given asset is entity object, it tries to
         register/upload the asset based on register_asset and azureml_type.
 
@@ -129,6 +129,7 @@ class OperationOrchestrator(object):
         :return: The ARM Id or entity object
         :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
         """
+        # pylint: disable=too-many-return-statements, too-many-branches
         if (
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
