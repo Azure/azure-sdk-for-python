@@ -6,15 +6,10 @@
 
 from inspect import isclass
 
+from azure.ai.ml._schema import ExperimentalField, UnionField, YamlFileSchema
 from marshmallow import Schema, fields, missing
 from marshmallow.class_registry import get_class
 from marshmallow_jsonschema import JSONSchema
-
-from azure.ai.ml._schema import (
-    ExperimentalField,
-    UnionField,
-    YamlFileSchema,
-)
 
 
 class PatchedJSONSchema(JSONSchema):
@@ -59,7 +54,7 @@ class PatchedJSONSchema(JSONSchema):
             if isinstance(field, UnionField):
                 schema = self._get_schema_for_union_field(obj, field)
             elif isinstance(field, ExperimentalField):
-                schema = self._get_schema_for_field(obj, field._experimental_field)  # pylint: disable=protected-access
+                schema = self._get_schema_for_field(obj, field.experimental_field)
             elif isinstance(field, fields.Constant):
                 schema = {"const": field.constant}
             else:

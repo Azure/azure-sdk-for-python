@@ -4,7 +4,7 @@
 
 import json
 import logging
-from typing import Any, Dict, Optional, List
+from typing import Any, Dict, List, Optional
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
@@ -150,6 +150,8 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
     def _from_rest_object(cls, obj: Optional[RestJobResourceConfiguration]) -> Optional["JobResourceConfiguration"]:
         if obj is None:
             return None
+        if isinstance(obj, dict):
+            return cls(**obj)
         return JobResourceConfiguration(
             locations=obj.locations,
             instance_count=obj.instance_count,

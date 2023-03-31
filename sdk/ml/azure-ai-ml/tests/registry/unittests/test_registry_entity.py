@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrA
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount, UserCreatedStorageAccount
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount
 from azure.ai.ml.constants._registry import StorageAccountType
 
 # from azure.ai.ml.entities._util import load_from_dict
@@ -106,7 +106,7 @@ class TestRegistryEntity:
         assert registry_entity.tags == exterior_tags
         assert registry_entity.public_network_access == pna
         assert registry_entity.discovery_url == discovery_url
-        assert registry_entity.intellectual_property_publisher == ipp
+        assert registry_entity.intellectual_property.publisher == ipp
         assert registry_entity.managed_resource_group == mrg
         assert registry_entity.mlflow_registry_uri == registry_uri
 
