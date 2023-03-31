@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Union, TYPE_CHECKING, Dict, Optional, List, Any, Callable
+from typing import Union, TYPE_CHECKING, Dict, Any, Callable
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
@@ -22,8 +22,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     MAX_FRAME_SIZE_BYTES: int
     MAX_MESSAGE_LENGTH_BYTES: int
     TIMEOUT_FACTOR: int
-    #CONNECTION_CLOSING_STATES: Tuple
     TRANSPORT_IDENTIFIER: str
+
+    ServiceBusToAMQPReceiveModeMap: Dict[str, Any]
 
     # define symbols
     PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
@@ -32,8 +33,9 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
     USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
     PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    AMQP_LONG_VALUE: Union[uamqp_types.AMQPLong, Dict[str, str]]
-    AMQP_ARRAY_VALUE: Union[uamqp_types.AMQPArray, Dict[str, str]]
+    AMQP_LONG_VALUE: Callable
+    AMQP_ARRAY_VALUE: Callable
+    AMQP_UINT_VALUE: Callable
 
     @staticmethod
     @abstractmethod
@@ -45,7 +47,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def build_batch_message(**kwargs):
+    def build_batch_message(data):
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
         :rtype: uamqp.BatchMessage or pyamqp.BatchMessage

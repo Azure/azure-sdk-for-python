@@ -947,8 +947,17 @@ class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-i
             message_repr += ", locked_until_utc=<read-error>"
         return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
 
-    @property
+    @property # type: ignore[misc]  # TODO: ignoring error to copy over setter, since it's inherited
     def message(self) -> LegacyMessage:
+        """DEPRECATED: Get the underlying LegacyMessage.
+         This is deprecated and will be removed in a later release.
+
+        :rtype: LegacyMessage
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         if not self._uamqp_message:
             if not self._settled:
                 settler = self._receiver._handler # pylint:disable=protected-access

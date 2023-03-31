@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import uuid
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from ..exceptions import MessageAlreadySettled
 from .constants import (
@@ -15,10 +15,11 @@ from .constants import (
 
 if TYPE_CHECKING:
     from .._transport._base import AmqpTransport
+    from ..aio._transport._base_async import AmqpTransportAsync
 
 class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_attributes(self, **kwargs):
-        self._amqp_transport: "AmqpTransport"
+        self._amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"]
         if kwargs.get("subscription_name"):
             self._subscription_name = kwargs.get("subscription_name")
             self._is_subscription = True

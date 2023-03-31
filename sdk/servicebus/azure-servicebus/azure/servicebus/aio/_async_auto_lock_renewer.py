@@ -112,7 +112,7 @@ class AutoLockRenewer:
         starttime: datetime.datetime,
         max_lock_renewal_duration: float,
         on_lock_renew_failure: Optional[AsyncLockRenewFailureCallback] = None,
-        renew_period_override: float = None,
+        renew_period_override: Optional[float] = None,
     ) -> None:
         # pylint: disable=protected-access
         _log.debug(

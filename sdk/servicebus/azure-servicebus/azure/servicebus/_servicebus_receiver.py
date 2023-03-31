@@ -340,7 +340,7 @@ class ServiceBusReceiver(
         if self._prefetch_count == 1:
             # pylint: disable=protected-access
             self._handler._message_received = functools.partial(
-                self._amqp_transport.enhanced_message_received,
+                self._amqp_transport.enhanced_message_received, # type: ignore[attr-defined]
                 self
             )
 

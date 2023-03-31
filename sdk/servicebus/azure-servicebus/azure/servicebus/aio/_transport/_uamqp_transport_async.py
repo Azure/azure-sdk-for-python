@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional, Any, Callable
+from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
 
 try:
     from uamqp import (
@@ -16,29 +16,23 @@ try:
     from uamqp.authentication import JWTTokenAsync as JWTTokenAuthAsync
     from uamqp.async_ops import ConnectionAsync
     from ..._transport._uamqp_transport import UamqpTransport
+    from ._base_async import AmqpTransportAsync
+    from .._async_utils import get_running_loop
+    from ..._common.utils import (
+        get_receive_links,
+        receive_trace_context_manager
+    )
+    from ..._common.constants import ServiceBusReceiveMode
+
     if TYPE_CHECKING:
         from uamqp import AMQPClientAsync, Message
-    uamqp_installed = True
-except ImportError:
-    uamqp_installed = False
+        from logging import Logger
+        from .._servicebus_receiver_async import ServiceBusReceiver
+        from .._servicebus_sender_async import ServiceBusSender
+        from ..._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
+        from ..._common._configuration import Configuration
 
-from ._base_async import AmqpTransportAsync
-from .._async_utils import get_running_loop
-from ..._common.utils import (
-    get_receive_links,
-    receive_trace_context_manager
-)
-from ..._common.constants import ServiceBusReceiveMode
 
-if TYPE_CHECKING:
-    from logging import Logger
-    from ...amqp import AmqpAnnotatedMessage
-    from ..._servicebus_receiver import ServiceBusReceiver
-    from ..._servicebus_sender import ServiceBusSender
-    from ..._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
-    from ..._common._configuration import Configuration
-
-if uamqp_installed:
     class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
         """
         Class which defines uamqp-based methods used by the sender and receiver.
@@ -73,7 +67,7 @@ if uamqp_installed:
             await connection.destroy_async()
 
         @staticmethod
-        def create_send_client(
+        def create_send_client_async(
             config: "Configuration", **kwargs: Any
         ) -> "SendClientAsync":
             """
@@ -105,7 +99,7 @@ if uamqp_installed:
         @staticmethod
         async def send_messages_async(
             sender: "ServiceBusSender",
-            message: "Message",
+            message: Union["ServiceBusMessage", "ServiceBusMessageBatch"],
             logger: "Logger",
             timeout: int,
             last_exception: Optional[Exception]
@@ -121,15 +115,15 @@ if uamqp_installed:
             """
             # pylint: disable=protected-access
             await sender._open()
-            default_timeout = sender._handler._msg_timeout
+            default_timeout = cast("SendClientAsync", sender._handler)._msg_timeout
             try:
                 UamqpTransportAsync.set_msg_timeout(sender, logger, timeout, last_exception)
-                await sender._handler.send_message_async(message._message)
-            finally:  # reset the timeout of the handler back to the default value
+                await cast("SendClientAsync", sender._handler).send_message_async(message._message)
+            finally:  # reset the timeout of )the handler back to the default value
                 UamqpTransportAsync.set_msg_timeout(sender, logger, default_timeout, None)
 
         @staticmethod
-        def create_receive_client(
+        def create_receive_client_async(
             receiver: "ServiceBusReceiver", **kwargs: Any
         ) -> "ReceiveClientAsync":
             """
@@ -178,7 +172,7 @@ if uamqp_installed:
         @staticmethod
         async def iter_contextual_wrapper_async(
             receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
-        ) -> "ServiceBusReceivedMessage":
+        ) -> AsyncIterator["ServiceBusReceivedMessage"]:
             """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
             and per-iter argument passing that requires the former."""
             # pylint: disable=protected-access
@@ -213,8 +207,8 @@ if uamqp_installed:
                 receiver._receive_context.set()
                 await receiver._open()
                 if not receiver._message_iter:
-                    receiver._message_iter = receiver._handler.receive_messages_iter_async()
-                uamqp_message = await receiver._message_iter.__anext__()
+                    receiver._message_iter = cast("ReceiveClientAsync", receiver._handler).receive_messages_iter_async()
+                uamqp_message = await cast(AsyncIterator, receiver._message_iter).__anext__()
                 message = receiver._build_received_message(uamqp_message)
                 if (
                     receiver._auto_lock_renewer
@@ -231,7 +225,8 @@ if uamqp_installed:
 
         @staticmethod
         def set_handler_message_received_async(receiver: "ServiceBusReceiver") -> None:
-            receiver._handler._message_received = functools.partial(
+            # reassigning default _message_received method in ReceiveClient
+            receiver._handler._message_received = functools.partial(  # type: ignore[assignment]
                 UamqpTransportAsync.enhanced_message_received_async,
                 receiver
             )
@@ -335,3 +330,5 @@ if uamqp_installed:
                 timeout=timeout * UamqpTransportAsync.TIMEOUT_FACTOR if timeout else None,
                 callback=functools.partial(callback, amqp_transport=UamqpTransportAsync)
             )
+except ImportError:
+    pass

@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import functools
-from typing import TYPE_CHECKING, Optional, Any, Callable
+from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
 import time
 
 from ..._pyamqp import constants
@@ -46,12 +46,11 @@ from ...exceptions import (
 
 if TYPE_CHECKING:
     from logging import Logger
-    from ...amqp import AmqpAnnotatedMessage
     from ..._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
     from ..._common._configuration import Configuration
     from .._servicebus_receiver_async import ServiceBusReceiver
     from .._servicebus_sender_async import ServiceBusSender
-    from ..._pyamqp.performatives import AttachFrame, TransferFrame
+    from ..._pyamqp.performatives import AttachFrame
     from ..._pyamqp.message import Message
     from ..._pyamqp.aio._client_async import AMQPClientAsync
 
@@ -86,7 +85,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client(
+    def create_send_client_async(
         config: "Configuration", **kwargs: Any
     ) -> "SendClientAsync":
         """
@@ -119,7 +118,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     @staticmethod
     async def send_messages_async(
         sender: "ServiceBusSender",
-        message: "Message",
+        message: Union["ServiceBusMessage", "ServiceBusMessageBatch"],
         logger: "Logger",
         timeout: int,
         last_exception: Optional[Exception]
@@ -147,7 +146,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             raise PyamqpTransportAsync.create_servicebus_exception(logger, e)
 
     @staticmethod
-    def create_receive_client(
+    def create_receive_client_async(
         receiver: "ServiceBusReceiver", **kwargs: Any
     ) -> "ReceiveClientAsync":  # pylint:disable=unused-argument
         """
@@ -195,7 +194,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     @staticmethod
     async def iter_contextual_wrapper_async(
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
-    ) -> "ServiceBusReceivedMessage":
+    ) -> AsyncIterator["ServiceBusReceivedMessage"]:
         while True:
             try:
                 message = await receiver._inner_anext(wait_time=max_wait_time)
@@ -215,7 +214,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             await receiver._open()
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
-            pyamqp_message = await receiver._message_iter.__anext__()
+            pyamqp_message = await cast(AsyncIterator, receiver._message_iter).__anext__()
             message = receiver._build_received_message(pyamqp_message)
             if (
                 receiver._auto_lock_renewer
@@ -241,8 +240,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             await receiver._handler.settle_messages_async(frame[1], 'released')
 
     @staticmethod
-    def set_handler_message_received_async(receiver: ServiceBusReceiver) -> None:
-        receiver._handler._message_received_async = functools.partial(
+    def set_handler_message_received_async(receiver: "ServiceBusReceiver") -> None:
+        # reassigning default _message_received method in ReceiveClient
+        receiver._handler._message_received_async = functools.partial(  # type: ignore[assignment]
             PyamqpTransportAsync.enhanced_message_received_async,
             receiver
         )
@@ -261,7 +261,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
-        handler: "ServiceBusReceiver",
+        handler: "ReceiveClientAsync",
         message: "ServiceBusReceivedMessage",
         settle_operation: str,
         dead_letter_reason: Optional[str] = None,

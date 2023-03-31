@@ -7,7 +7,7 @@ import functools
 import time
 import datetime
 from datetime import timezone
-from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict
+from typing import Optional, Tuple, cast, List, TYPE_CHECKING, Any, Callable, Dict, Union, Iterator, Type
 
 from .._pyamqp import (
     utils,
@@ -93,7 +93,7 @@ from ..exceptions import (
 
 if TYPE_CHECKING:
     from logging import Logger
-    from ..amqp import AmqpAnnotatedMessage
+    from ..amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
     from .._servicebus_receiver import ServiceBusReceiver
     from .._servicebus_sender import ServiceBusSender
     from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
@@ -183,9 +183,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     #ERROR_CONDITIONS = [condition.value for condition in ErrorCondition]
 
     # amqp value types
-    AMQP_LONG_VALUE = amqp_long_value
-    AMQP_ARRAY_VALUE = amqp_array_value
-    AMQP_UINT_VALUE = amqp_uint_value
+    AMQP_LONG_VALUE: Callable = amqp_long_value
+    AMQP_ARRAY_VALUE: Callable = amqp_array_value
+    AMQP_UINT_VALUE: Callable = amqp_uint_value
 
     # errors
     TIMEOUT_ERROR = TimeoutError
@@ -243,7 +243,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         ttl_set = False
         header_vals = annotated_message.header.values() if annotated_message.header else None
         # If header and non-None header values, create outgoing header.
-        if annotated_message.header and header_vals.count(None) != len(header_vals):
+        if header_vals and header_vals.count(None) != len(header_vals):
+            annotated_message.header = cast("AmqpMessageHeader", annotated_message.header)
             message_header = Header(
                 delivery_count=annotated_message.header.delivery_count,
                 ttl=annotated_message.header.time_to_live,
@@ -264,7 +265,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         message_properties = None
         properties_vals = annotated_message.properties.values() if annotated_message.properties else None
         # If properties and non-None properties values, create outgoing properties.
-        if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
+        if properties_vals and properties_vals.count(None) != len(properties_vals):
+            annotated_message.properties = cast("AmqpMessageProperties", annotated_message.properties)
             creation_time = None
             absolute_expiry_time = None
             if ttl_set:
@@ -292,7 +294,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 reply_to_group_id=annotated_message.properties.reply_to_group_id,
             )
         elif ttl_set:
-            message_properties = Properties(
+            message_properties = Properties(    # type: ignore[call-arg]
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
@@ -457,7 +459,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def send_messages(
         sender: "ServiceBusSender",
-        message: "Message",
+        message: Union["ServiceBusMessage", "ServiceBusMessageBatch"],
         logger: "Logger",
         timeout: int,
         last_exception: Optional[Exception]
@@ -507,7 +509,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param bytes session_filter: Required.
         """
         filter_map = {SESSION_FILTER: session_filter}
-        source = Source(address=source, filters=filter_map)
+        source = Source(address=source, filters=filter_map) # type: ignore[call-arg]
         return source
 
     @staticmethod
@@ -584,7 +586,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def iter_contextual_wrapper(
         receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
-    ) -> "ServiceBusReceivedMessage":
+    ) -> Iterator["ServiceBusReceivedMessage"]:
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former."""
         while True:
@@ -609,7 +611,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._open()
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
-            pyamqp_message = next(receiver._message_iter)
+            pyamqp_message = next(
+                cast(Iterator["Message"], receiver._message_iter)
+            )
             message = receiver._build_received_message(pyamqp_message)
             if (
                 receiver._auto_lock_renewer
@@ -640,7 +644,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def build_received_message(
         receiver: "ServiceBusReceiver",
-        message_type: "ServiceBusReceivedMessage",
+        message_type: Type["ServiceBusReceivedMessage"],
         received: "Message"
     ) -> "ServiceBusReceivedMessage":
         """
@@ -656,7 +660,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def get_current_time(
         handler: "ReceiveClient"
-    ) -> int:  # pylint: disable=unused-argument
+    ) -> float:  # pylint: disable=unused-argument
         """
         Gets the current time.
         """
@@ -717,7 +721,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def parse_received_message(
-        message: "Message", message_type: "ServiceBusReceivedMessage", **kwargs: Any
+        message: "Message",
+        message_type: Type["ServiceBusReceivedMessage"],
+        **kwargs: Any
     ) -> List["ServiceBusReceivedMessage"]:
         """
         Parses peek/deferred op messages into ServiceBusReceivedMessage.
@@ -836,10 +842,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     @staticmethod
     def _handle_amqp_exception_with_condition(
         logger: "Logger",
-        condition: "ErrorCondition",
+        condition: Optional["ErrorCondition"],
         description: str,
-        exception: "AMQPException" = None,
-        status_code: str = None
+        exception: Optional["AMQPException"] = None,
+        status_code: Optional[str] = None
     ) -> "ServiceBusError":
         # handling AMQP Errors that have the condition field or the mgmt handler
         logger.info(
@@ -848,6 +854,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             condition,
             description,
         )
+        error_cls: Type["ServiceBusError"]
         if isinstance(exception, AuthenticationException):
             logger.info("AMQP Connection authentication error occurred: (%r).", exception)
             error_cls = ServiceBusAuthenticationError
@@ -870,7 +877,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         elif condition == ErrorCondition.UnknownError or isinstance(exception, AMQPConnectionError):
             error_cls = ServiceBusConnectionError
         else:
-            error_cls = _ERROR_CODE_TO_ERROR_MAPPING.get(condition, ServiceBusError)
+            error_cls = _ERROR_CODE_TO_ERROR_MAPPING.get(cast(bytes, condition), ServiceBusError)
 
         error = error_cls(
             message=description,
@@ -889,9 +896,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     def handle_amqp_mgmt_error(
         logger: "Logger",
         error_description: "str",
-        condition: "ErrorCondition" = None,
-        description: str = None,
-        status_code: str = None
+        condition: Optional["ErrorCondition"] = None,
+        description: Optional[str] = None,
+        status_code: Optional[str] = None
     ) -> "ServiceBusError":
         if description:
             error_description += f" {description}."

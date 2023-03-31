@@ -179,7 +179,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self, auth: Union["uamqp_JWTTokenAuthAsync", "pyamqp_JWTTokenAuthAsync"]
     ) -> None:
 
-        self._handler = self._amqp_transport.create_send_client(
+        self._handler = self._amqp_transport.create_send_client_async(
             config=self._config,
             target=self._entity_uri,
             auth=auth,
@@ -213,7 +213,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self,
         message: Union[ServiceBusMessage, ServiceBusMessageBatch],
         timeout: Optional[float] = None,
-        last_exception: Exception = None
+        last_exception: Optional[Exception] = None
     ) -> None:
         await self._amqp_transport.send_messages_async(
             self, message, _LOGGER, timeout=timeout, last_exception=last_exception
@@ -369,11 +369,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise ValueError("The timeout must be greater than 0.")
 
         try:  # Short circuit noop if an empty list or batch is provided.
-            if len(message) == 0:  # pylint: disable=len-as-condition
+            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:  # pylint: disable=len-as-condition
                 return
         except TypeError:   # continue if ServiceBusMessage
             pass
 
+        obj_message: Union[ServiceBusMessage, ServiceBusMessageBatch]
         with send_trace_context_manager() as send_span:
             if isinstance(message, ServiceBusMessageBatch):
                 # If AmqpTransports are not the same, create batch with correct BatchMessage.
@@ -383,7 +384,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch._from_list(message._messages, send_span)  # type: ignore
                     obj_message = batch
                 else:
-                    obj_message: "MessageObjTypes" = message
+                    obj_message = message
             else:
                 obj_message = transform_outbound_messages(  # type: ignore
                     message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message

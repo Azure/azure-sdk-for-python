@@ -75,6 +75,7 @@ if TYPE_CHECKING:
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
     from .._transport._base import AmqpTransport
+    from ..aio._transport._base_async import AmqpTransportAsync
 
     MessagesType = Union[
         Mapping[str, Any],
@@ -304,7 +305,7 @@ def receive_trace_context_manager(
 
 def trace_message(
     message: Union["uamqp_Message", "pyamqp_Message"],
-    amqp_transport: "AmqpTransport",
+    amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
     parent_span: Optional["AbstractSpan"] = None
 ) -> Union["uamqp_Message", "pyamqp_Message"]:
     """Add tracing information to this message.

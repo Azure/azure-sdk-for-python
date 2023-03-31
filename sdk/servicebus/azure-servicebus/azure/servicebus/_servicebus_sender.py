@@ -409,11 +409,12 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             raise ValueError("The timeout must be greater than 0.")
 
         try:  # Short circuit noop if an empty list or batch is provided.
-            if len(message) == 0:  # pylint: disable=len-as-condition
+            if len(cast(Union[List, ServiceBusMessageBatch], message)) == 0:  # pylint: disable=len-as-condition
                 return
         except TypeError:   # continue if ServiceBusMessage
             pass
 
+        obj_message: Union[ServiceBusMessage, ServiceBusMessageBatch]
         with send_trace_context_manager() as send_span:
             if isinstance(message, ServiceBusMessageBatch):
                 # If AmqpTransports are not the same, create batch with correct BatchMessage.
@@ -423,7 +424,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch._from_list(message._messages, send_span)  # type: ignore
                     obj_message = batch
                 else:
-                    obj_message: "MessageObjTypes" = message
+                    obj_message = message
             else:
                 obj_message = transform_outbound_messages(  # type: ignore
                     message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
@@ -439,7 +440,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                         parent_span=send_span
                     )
 
-            obj_message = cast(Union[ServiceBusMessage, ServiceBusMessageBatch], obj_message)
             if send_span:
                 self._add_span_request_attributes(send_span)
             self._do_retryable_operation(

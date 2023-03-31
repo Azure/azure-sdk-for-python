@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Tuple, Union, TYPE_CHECKING
+from typing import Tuple, Union, TYPE_CHECKING, Any, Dict, Callable
 from typing_extensions import Literal
 
 if TYPE_CHECKING:
@@ -25,6 +25,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     TIMEOUT_FACTOR: int
     CONNECTION_CLOSING_STATES: Tuple
 
+    ServiceBusToAMQPReceiveModeMap: Dict[str, Any]
+
     # define symbols
     PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["product"]]
     VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["version"]]
@@ -32,7 +34,9 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["platform"]]
     USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["user-agent"]]
     PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal[b'x-opt-partition-key']]
-
+    AMQP_LONG_VALUE: Callable
+    AMQP_ARRAY_VALUE: Callable
+    AMQP_UINT_VALUE: Callable
 
     @staticmethod
     @abstractmethod
@@ -44,7 +48,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def build_batch_message(**kwargs):
+    def build_batch_message(data):
         """
         Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
         :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
@@ -56,6 +60,17 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         """
         Converts an AmqpAnnotatedMessage into an Amqp Message.
         :param AmqpAnnotatedMessage annotated_message: AmqpAnnotatedMessage to convert.
+        :rtype: uamqp.Message or pyamqp.Message
+        """
+
+    @staticmethod
+    @abstractmethod
+    def update_message_app_properties(message, key, value):
+        """
+        Adds the given key/value to the application properties of the message.
+        :param uamqp.Message or pyamqp.Message message: Message.
+        :param str key: Key to set in application properties.
+        :param str Value: Value to set for key in application properties.
         :rtype: uamqp.Message or pyamqp.Message
         """
 
@@ -105,7 +120,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_send_client(*, config, **kwargs):
+    def create_send_client_async(config, **kwargs):
         """
         Creates and returns the send client.
         :param Configuration config: The configuration.
@@ -134,7 +149,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_source(source, offset, selector):
+    def create_source(source, session_filter):
         """
         Creates and returns the Source.
 
@@ -145,7 +160,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_receive_client(*, config, **kwargs):
+    def create_receive_client_async(receiver, **kwargs):
         """
         Creates and returns the receive client.
         :param Configuration config: The configuration.
@@ -164,6 +179,82 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         :keyword streaming_receive: Required.
         :keyword message_received_callback: Required.
         :keyword timeout: Required.
+        """
+
+    @staticmethod
+    @abstractmethod
+    async def iter_contextual_wrapper_async(
+        receiver, max_wait_time=None
+    ):
+        """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
+        and per-iter argument passing that requires the former."""
+
+    @staticmethod
+    @abstractmethod
+    async def iter_next_async(
+        receiver, wait_time=None
+    ):
+        """
+        Used to iterate through received messages.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def build_received_message(receiver, message_type, received):
+        """
+        Build ServiceBusReceivedMessage.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def set_handler_message_received_async(receiver):
+        """
+        Sets _message_received on async handler.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def get_current_time(handler):
+        """
+        Gets the current time.
+        """
+
+    @staticmethod
+    @abstractmethod
+    async def reset_link_credit_async(
+        handler, link_credit
+    ):
+        """
+        Resets the link credit on the link.
+        :param ReceiveClientAsync handler: Client with link to reset link credit.
+        :param int link_credit: Link credit needed.
+        :rtype: None
+        """
+
+    @staticmethod
+    @abstractmethod
+    async def settle_message_via_receiver_link_async(
+        handler,
+        message,
+        settle_operation,
+        dead_letter_reason=None,
+        dead_letter_error_description=None,
+    ) -> None:
+        """
+        Settles message.
+        """
+
+    @staticmethod
+    @abstractmethod
+    def parse_received_message(message, message_type, **kwargs):
+        """
+        Parses peek/deferred op messages into ServiceBusReceivedMessage.
+        :param Message message: Message to parse.
+        :param ServiceBusReceivedMessage message_type: Parse messages to return.
+        :keyword ServiceBusReceiver receiver: Required.
+        :keyword bool is_peeked_message: Optional. For peeked messages.
+        :keyword bool is_deferred_message: Optional. For deferred messages.
+        :keyword ServiceBusReceiveMode receive_mode: Optional.
         """
 
     @staticmethod

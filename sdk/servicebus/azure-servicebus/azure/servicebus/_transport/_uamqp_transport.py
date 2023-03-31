@@ -8,7 +8,19 @@ import time
 import functools
 import datetime
 from datetime import timezone
-from typing import Optional, List, TYPE_CHECKING, Any, Callable, Dict
+from typing import (
+    Optional,
+    List,
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    Union,
+    Iterator,
+    Type,
+    cast,
+    Iterable
+)
 
 try:
     from uamqp import (
@@ -41,78 +53,74 @@ try:
         MessageContentTooLarge,
         MessageException,
     )
+    from ._base import AmqpTransport
+    from ..amqp._constants import AmqpMessageBodyType
+    from .._common.utils import (
+        utc_from_timestamp,
+        utc_now,
+        get_receive_links,
+        receive_trace_context_manager
+    )
+    from .._common.constants import (
+        UAMQP_LIBRARY,
+        DATETIMEOFFSET_EPOCH,
+        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+        RECEIVER_LINK_DEAD_LETTER_REASON,
+        DEADLETTERNAME,
+        MAX_ABSOLUTE_EXPIRY_TIME,
+        MAX_DURATION_VALUE,
+        MESSAGE_COMPLETE,
+        MESSAGE_ABANDON,
+        MESSAGE_DEFER,
+        MESSAGE_DEAD_LETTER,
+        SESSION_FILTER,
+        SESSION_LOCKED_UNTIL,
+        ERROR_CODE_SESSION_LOCK_LOST,
+        ERROR_CODE_MESSAGE_LOCK_LOST,
+        ERROR_CODE_MESSAGE_NOT_FOUND,
+        ERROR_CODE_TIMEOUT,
+        ERROR_CODE_AUTH_FAILED,
+        ERROR_CODE_SESSION_CANNOT_BE_LOCKED,
+        ERROR_CODE_SERVER_BUSY,
+        ERROR_CODE_ARGUMENT_ERROR,
+        ERROR_CODE_OUT_OF_RANGE,
+        ERROR_CODE_ENTITY_DISABLED,
+        ERROR_CODE_ENTITY_ALREADY_EXISTS,
+        ERROR_CODE_PRECONDITION_FAILED,
+        ServiceBusReceiveMode,
+    )
+
+    from ..exceptions import (
+        MessageSizeExceededError,
+        ServiceBusQuotaExceededError,
+        ServiceBusAuthorizationError,
+        ServiceBusError,
+        ServiceBusConnectionError,
+        ServiceBusCommunicationError,
+        MessageAlreadySettled,
+        MessageLockLostError,
+        MessageNotFoundError,
+        MessagingEntityDisabledError,
+        MessagingEntityNotFoundError,
+        MessagingEntityAlreadyExistsError,
+        ServiceBusServerBusyError,
+        ServiceBusAuthenticationError,
+        SessionCannotBeLockedError,
+        SessionLockLostError,
+        OperationTimeoutError
+    )
     if TYPE_CHECKING:
         from uamqp import AMQPClient
+        from logging import Logger
+        from .._pyamqp.aio import SendClientAsync
+        from ..amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
+        from .._servicebus_receiver import ServiceBusReceiver
+        from .._servicebus_sender import ServiceBusSender
+        from ..aio._servicebus_sender_async import ServiceBusSender as ServiceBusSenderAsync
+        from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
+        from .._common._configuration import Configuration
+        
 
-    uamqp_installed = True
-except ImportError:
-    uamqp_installed = False
-
-from ._base import AmqpTransport
-from ..amqp._constants import AmqpMessageBodyType
-from .._common.utils import (
-    utc_from_timestamp,
-    utc_now,
-    get_receive_links,
-    receive_trace_context_manager
-)
-from .._common.constants import (
-    UAMQP_LIBRARY,
-    DATETIMEOFFSET_EPOCH,
-    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
-    RECEIVER_LINK_DEAD_LETTER_REASON,
-    DEADLETTERNAME,
-    MAX_ABSOLUTE_EXPIRY_TIME,
-    MAX_DURATION_VALUE,
-    MESSAGE_COMPLETE,
-    MESSAGE_ABANDON,
-    MESSAGE_DEFER,
-    MESSAGE_DEAD_LETTER,
-    SESSION_FILTER,
-    SESSION_LOCKED_UNTIL,
-    ERROR_CODE_SESSION_LOCK_LOST,
-    ERROR_CODE_MESSAGE_LOCK_LOST,
-    ERROR_CODE_MESSAGE_NOT_FOUND,
-    ERROR_CODE_TIMEOUT,
-    ERROR_CODE_AUTH_FAILED,
-    ERROR_CODE_SESSION_CANNOT_BE_LOCKED,
-    ERROR_CODE_SERVER_BUSY,
-    ERROR_CODE_ARGUMENT_ERROR,
-    ERROR_CODE_OUT_OF_RANGE,
-    ERROR_CODE_ENTITY_DISABLED,
-    ERROR_CODE_ENTITY_ALREADY_EXISTS,
-    ERROR_CODE_PRECONDITION_FAILED,
-    ServiceBusReceiveMode,
-)
-
-from ..exceptions import (
-    MessageSizeExceededError,
-    ServiceBusQuotaExceededError,
-    ServiceBusAuthorizationError,
-    ServiceBusError,
-    ServiceBusConnectionError,
-    ServiceBusCommunicationError,
-    MessageAlreadySettled,
-    MessageLockLostError,
-    MessageNotFoundError,
-    MessagingEntityDisabledError,
-    MessagingEntityNotFoundError,
-    MessagingEntityAlreadyExistsError,
-    ServiceBusServerBusyError,
-    ServiceBusAuthenticationError,
-    SessionCannotBeLockedError,
-    SessionLockLostError,
-    OperationTimeoutError
-)
-if TYPE_CHECKING:
-    from logging import Logger
-    from ..amqp import AmqpAnnotatedMessage
-    from .._servicebus_receiver import ServiceBusReceiver
-    from .._servicebus_sender import ServiceBusSender
-    from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
-    from .._common._configuration import Configuration
-
-if uamqp_installed:
     _NO_RETRY_CONDITION_ERROR_CODES = (
         constants.ErrorCodes.DecodeError,
         constants.ErrorCodes.LinkMessageSizeExceeded,
@@ -242,9 +250,9 @@ if uamqp_installed:
         USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
 
         # amqp value types
-        AMQP_LONG_VALUE = types.AMQPLong
-        AMQP_ARRAY_VALUE = types.AMQPArray
-        AMQP_UINT_VALUE = types.AMQPuInt
+        AMQP_LONG_VALUE: Callable = types.AMQPLong
+        AMQP_ARRAY_VALUE: Callable = types.AMQPArray
+        AMQP_UINT_VALUE: Callable = types.AMQPuInt
 
         # errors
         TIMEOUT_ERROR = compat.TimeoutException
@@ -302,7 +310,8 @@ if uamqp_installed:
             ttl_set = False
             header_vals = annotated_message.header.values() if annotated_message.header else None
             # If header and non-None header values, create outgoing header.
-            if annotated_message.header and header_vals.count(None) != len(header_vals):
+            if header_vals and header_vals.count(None) != len(header_vals):
+                annotated_message.header = cast("AmqpMessageHeader", annotated_message.header)
                 message_header = MessageHeader()
                 message_header.delivery_count = annotated_message.header.delivery_count
                 message_header.time_to_live = annotated_message.header.time_to_live
@@ -322,7 +331,8 @@ if uamqp_installed:
             message_properties = None
             properties_vals = annotated_message.properties.values() if annotated_message.properties else None
             # If properties and non-None properties values, create outgoing properties.
-            if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
+            if properties_vals and properties_vals.count(None) != len(properties_vals):
+                annotated_message.properties = cast("AmqpMessageProperties", annotated_message.properties)
                 creation_time = None
                 absolute_expiry_time = None
                 if ttl_set:
@@ -360,10 +370,10 @@ if uamqp_installed:
             amqp_body_type = annotated_message.body_type
             if amqp_body_type == AmqpMessageBodyType.DATA:
                 amqp_body_type = MessageBodyType.Data
-                amqp_body = list(annotated_message._data_body)
+                amqp_body = list(cast(Iterable, annotated_message._data_body))
             elif amqp_body_type == AmqpMessageBodyType.SEQUENCE:
                 amqp_body_type = MessageBodyType.Sequence
-                amqp_body = list(annotated_message._sequence_body)
+                amqp_body = list(cast(Iterable,annotated_message._sequence_body))
             else:
                 amqp_body_type = MessageBodyType.Value
                 amqp_body = annotated_message._value_body
@@ -386,7 +396,7 @@ if uamqp_installed:
             :param ServiceBusMessage message: Message.
             :rtype: bytes
             """
-            return message._message.encode_message()
+            return cast("Message", message._message).encode_message()
 
         @staticmethod
         def update_message_app_properties(
@@ -407,7 +417,7 @@ if uamqp_installed:
             return message
 
         @staticmethod
-        def get_batch_message_encoded_size(message: List[bytes]) -> int:
+        def get_batch_message_encoded_size(message: "BatchMessage") -> int:
             """
             Gets the batch message encoded size given an underlying Message.
             :param uamqp.BatchMessage message: Message to get encoded size of.
@@ -515,14 +525,14 @@ if uamqp_installed:
 
         @staticmethod
         def set_msg_timeout(
-            sender: "ServiceBusSender",
+            sender: Union["ServiceBusSender", "ServiceBusSenderAsync"],
             logger: "Logger",
             timeout: int,
             last_exception: Optional[Exception]
         ) -> None:
             # pylint: disable=protected-access
             if not timeout:
-                sender._handler._msg_timeout = 0
+                cast("SendClient", sender._handler)._msg_timeout = 0
                 return
             if timeout <= 0.0:
                 if last_exception:
@@ -531,12 +541,14 @@ if uamqp_installed:
                     error = OperationTimeoutError(message="Send operation timed out")
                 logger.info("%r send operation timed out. (%r)", sender._name, error)
                 raise error
-            sender._handler._msg_timeout = timeout * UamqpTransport.TIMEOUT_FACTOR # type: ignore
+            cast("SendClient", sender._handler)._msg_timeout = (
+                timeout * UamqpTransport.TIMEOUT_FACTOR # type: ignore
+            )
 
         @staticmethod
         def send_messages(
             sender: "ServiceBusSender",
-            message: "Message",
+            message: Union["ServiceBusMessage", "ServiceBusMessageBatch"],
             logger: "Logger",
             timeout: int,
             last_exception: Optional[Exception]
@@ -553,7 +565,7 @@ if uamqp_installed:
             """
             # pylint: disable=protected-access
             sender._open()
-            default_timeout = sender._handler._msg_timeout
+            default_timeout = cast("SendClient", sender._handler)._msg_timeout
             try:
                 UamqpTransport.set_msg_timeout(sender, logger, timeout, last_exception)
                 sender._handler.send_message(message._message)
@@ -662,7 +674,7 @@ if uamqp_installed:
         @staticmethod
         def iter_contextual_wrapper(
             receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
-        ) -> "ServiceBusReceivedMessage":
+        ) -> Iterator["ServiceBusReceivedMessage"]:
             """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
             and per-iter argument passing that requires the former."""
             # pylint: disable=protected-access
@@ -698,7 +710,7 @@ if uamqp_installed:
                 receiver._open()
                 if not receiver._message_iter:
                     receiver._message_iter = receiver._handler.receive_messages_iter()
-                uamqp_message = next(receiver._message_iter)
+                uamqp_message = next(cast(Iterator["ServiceBusReceivedMessage"], receiver._message_iter))
                 message = receiver._build_received_message(uamqp_message)
                 if (
                     receiver._auto_lock_renewer
@@ -719,7 +731,7 @@ if uamqp_installed:
             Receiver enhanced_message_received callback.
             """
             # pylint: disable=protected-access
-            receiver._handler._was_message_received = True
+            cast("ReceiveClient", receiver._handler)._was_message_received = True
             if receiver._receive_context.is_set():
                 receiver._handler._received_messages.put(message)
             else:
@@ -728,7 +740,7 @@ if uamqp_installed:
         @staticmethod
         def build_received_message(
             receiver: "ServiceBusReceiver",
-            message_type: "ServiceBusReceivedMessage",
+            message_type: Type["ServiceBusReceivedMessage"],
             received: "Message"
         ) -> "ServiceBusReceivedMessage":
             # pylint: disable=protected-access
@@ -742,7 +754,7 @@ if uamqp_installed:
         @staticmethod
         def get_current_time(
             handler: "ReceiveClient"
-        ) -> int:
+        ) -> float:
 
             """
             Gets the current time.
@@ -767,7 +779,7 @@ if uamqp_installed:
         # May be able to remove and just call methods in private method.
         @staticmethod
         def settle_message_via_receiver_link(
-            handler: ReceiveClient,
+            handler: "ReceiveClient",
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
@@ -790,6 +802,7 @@ if uamqp_installed:
             dead_letter_error_description: Optional[str] = None,
         ) -> Callable:  # pylint: disable=unused-argument
             # pylint: disable=protected-access
+            message._message = cast(Message, message._message)
             if settle_operation == MESSAGE_COMPLETE:
                 return functools.partial(message._message.accept)
             if settle_operation == MESSAGE_ABANDON:
@@ -812,7 +825,7 @@ if uamqp_installed:
 
         @staticmethod
         def parse_received_message(
-            message: "Message", message_type: "ServiceBusReceivedMessage", **kwargs: Any
+            message: "Message", message_type: Type["ServiceBusReceivedMessage"], **kwargs: Any
         ) -> List["ServiceBusReceivedMessage"]:
             """
             Parses peek/deferred op messages into ServiceBusReceivedMessage.
@@ -935,10 +948,10 @@ if uamqp_installed:
         @staticmethod
         def _handle_amqp_exception_with_condition(
             logger: "Logger",
-            condition: "AMQPErrorCodes",
+            condition: Optional["AMQPErrorCodes"],
             description: str,
-            exception: "AMQPError" = None,
-            status_code: str = None
+            exception: Optional["AMQPError"] = None,
+            status_code: Optional[str] = None
         ) -> "ServiceBusError":
             # handling AMQP Errors that have the condition field or the mgmt handler
             logger.info(
@@ -947,6 +960,7 @@ if uamqp_installed:
                 condition,
                 description,
             )
+            error_cls: Type["ServiceBusError"]
             if condition == AMQPErrorCodes.NotFound:
                 # handle NotFound error code
                 error_cls = (
@@ -980,7 +994,7 @@ if uamqp_installed:
         def _handle_amqp_exception_without_condition(
             logger: "Logger", exception: "AMQPError"
         ) -> "ServiceBusError":
-            error_cls = ServiceBusError
+            error_cls: Type[ServiceBusError]
             if isinstance(exception, AMQPConnectionError):
                 logger.info("AMQP Connection error occurred: (%r).", exception)
                 error_cls = ServiceBusConnectionError
@@ -1005,9 +1019,9 @@ if uamqp_installed:
         def handle_amqp_mgmt_error(
             logger: "Logger",
             error_description: "str",
-            condition: "AMQPErrorCodes" = None,
-            description: str = None,
-            status_code: str = None
+            condition: Optional["AMQPErrorCodes"] = None,
+            description: Optional[str] = None,
+            status_code: Optional[str] = None
         ) -> "ServiceBusError":
             if description:
                 error_description += f" {description}."
@@ -1044,3 +1058,6 @@ if uamqp_installed:
                 )
 
             return exception
+
+except ImportError:
+    pass
