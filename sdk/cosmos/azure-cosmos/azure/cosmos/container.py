@@ -288,7 +288,7 @@ class ContainerProxy(object):
             This is used to process the change feed in parallel across multiple consumers.
         :param partition_key: partition key at which ChangeFeed requests are targetted.
         :param is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default it's start from current (false).
+            beginning (true) or from current (false). By default, it's start from current (false).
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
@@ -299,7 +299,7 @@ class ContainerProxy(object):
         response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
-        partition_key = kwargs.pop("partitionKey", None)
+        partition_key = kwargs.pop("partitionKey", kwargs.pop("partition_key", None))
         if partition_key is not None:
             feed_options["partitionKey"] = partition_key
         if is_start_from_beginning is not None:
