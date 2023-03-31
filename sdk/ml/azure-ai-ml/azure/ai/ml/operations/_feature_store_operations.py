@@ -264,8 +264,10 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     not existing_offline_store_connection.properties
                     or existing_offline_store_connection.properties.target != offline_store.target
                 ):
-                    module_logger.warning(
-                        "Warning: You have changed the offline store connection, any data that was materialized/backfilled earlier will not be available. You have to run backfill again."
+                    module_logger.info(
+                        "Warning: You have changed the offline store connection, "
+                        "any data that was materialized/backfilled "
+                        "earlier will not be available. You have to run backfill again."
                     )
             else:
                 if not materialization_identity:
@@ -286,8 +288,10 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                     not existing_online_store_connection.properties
                     or existing_online_store_connection.properties.target != online_store.target
                 ):
-                    module_logger.warning(
-                        "Warning: You have changed the online store connection, any data that was materialized/backfilled earlier will not be available. You have to run backfill again."
+                    module_logger.info(
+                        "Warning: You have changed the online store connection, "
+                        "any data that was materialized/backfilled earlier "
+                        "will not be available. You have to run backfill again."
                     )
             else:
                 if not materialization_identity:
