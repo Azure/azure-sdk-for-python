@@ -31,7 +31,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
             raise ValueError("Identifier cannot be None")
         return self._format_string(''.join(filter(str.isalnum, identifier)))
     
-    def message_handler(self, message: Any) -> None:
+    def _message_handler(self, message: Any) -> None:
         body = message.body
         body_bytes = b''.join(body)
         body_str = body_bytes.decode('utf-8')
@@ -79,7 +79,7 @@ class CallAutomationAutomatedLiveTestBase(AsyncCommunicationTestCase):
         while datetime.now() < time_out_time:
             received_messages = service_bus_receiver.receive_messages(max_wait_time=5)
             for msg in received_messages:
-                self.message_handler(msg)
+                self._message_handler(msg)
                 service_bus_receiver.complete_message(msg)
             if not received_messages:
                 time.sleep(1)
