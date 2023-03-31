@@ -1,5 +1,12 @@
 [tool.azure-sdk-build]
-mypy = false
+mypy = true
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[tool.mypy]
+exclude = ["setup.py", "tests", "scripts", "samples", "azure/ai/ml/_restclient"]
+
+[tool.interrogate]
+fail-under = 95
+exclude = ["setup.py", "tests", "scripts", "samples", "azure/ai/ml/_restclient"]
