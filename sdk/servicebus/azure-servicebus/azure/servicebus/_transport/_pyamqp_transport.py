@@ -100,7 +100,7 @@ if TYPE_CHECKING:
     from .._common._configuration import Configuration
     from .._pyamqp.performatives import AttachFrame, TransferFrame
     from .._pyamqp.client import AMQPClient
-    
+
 
 class _ServiceBusErrorPolicy(RetryPolicy):
 
@@ -381,6 +381,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param AMQPClient handler: Client to get name of link from.
         :rtype: str
         """
+        # pylint: disable=protected-access
         return handler._link.name
 
     @staticmethod
@@ -565,7 +566,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     ) -> None:
         """
         Receiver on_attach callback.
-        
+
         :param ServiceBusReceiver receiver: Required.
         :param AttachFrame attach_frame: Required.
         """
@@ -591,6 +592,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         and per-iter argument passing that requires the former."""
         while True:
             try:
+                # pylint: disable=protected-access
                 message = receiver._inner_next(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
@@ -686,6 +688,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
+        # pylint: disable=protected-access
         if settle_operation == MESSAGE_COMPLETE:
             return handler.settle_messages(message._delivery_id, 'accepted')
         if settle_operation == MESSAGE_ABANDON:

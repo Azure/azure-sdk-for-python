@@ -226,6 +226,7 @@ try:
         @staticmethod
         def set_handler_message_received_async(receiver: "ServiceBusReceiver") -> None:
             # reassigning default _message_received method in ReceiveClient
+            # pylint: disable=protected-access
             receiver._handler._message_received = functools.partial(  # type: ignore[assignment]
                 UamqpTransportAsync.enhanced_message_received_async,
                 receiver

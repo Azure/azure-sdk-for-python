@@ -197,6 +197,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     ) -> AsyncIterator["ServiceBusReceivedMessage"]:
         while True:
             try:
+                # pylint: disable=protected-access
                 message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
@@ -242,6 +243,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     @staticmethod
     def set_handler_message_received_async(receiver: "ServiceBusReceiver") -> None:
         # reassigning default _message_received method in ReceiveClient
+        # pylint: disable=protected-access
         receiver._handler._message_received_async = functools.partial(  # type: ignore[assignment]
             PyamqpTransportAsync.enhanced_message_received_async,
             receiver
@@ -267,6 +269,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         dead_letter_reason: Optional[str] = None,
         dead_letter_error_description: Optional[str] = None,
     ) -> None:
+        # pylint: disable=protected-access
         if settle_operation == MESSAGE_COMPLETE:
             return await handler.settle_messages_async(message._delivery_id, 'accepted')
         if settle_operation == MESSAGE_ABANDON:

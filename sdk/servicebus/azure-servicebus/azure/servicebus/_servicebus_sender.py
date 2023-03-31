@@ -91,6 +91,7 @@ class SenderMixin(object):
                 ServiceBusMessage,
                 to_outgoing_amqp_message=amqp_transport.to_outgoing_amqp_message
             )
+            # pylint: disable=protected-access
             message._message = trace_message(message._message, amqp_transport=amqp_transport, parent_span=send_span)
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -99,7 +100,7 @@ class SenderMixin(object):
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             message_data[MGMT_REQUEST_MESSAGE] = bytearray(
-                amqp_transport.encode_message(message)  # pylint: disable=protected-access
+                amqp_transport.encode_message(message)
             )
             request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body
@@ -434,6 +435,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
                     obj_message = batch
                 except TypeError:  # Message was not a list or generator. Do needed tracing.
+                    # pylint: disable=protected-access
                     obj_message._message = trace_message(
                         obj_message._message,
                         amqp_transport=self._amqp_transport,

@@ -29,7 +29,7 @@ from ..exceptions import (
 
 if TYPE_CHECKING:
     try:
-        from uamqp.async_ops import AMQPClientAsync as uamqp_AMQPClientAsync
+        from uamqp.async_ops.client_async import AMQPClientAsync as uamqp_AMQPClientAsync
     except ImportError:
         pass
     from .._pyamqp.aio._client_async import AMQPClientAsync as pyamqp_AMQPClientAsync
@@ -261,6 +261,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             except StopAsyncIteration:
                 raise
             except ImportError:
+                # If dependency is not installed, do not retry.
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 last_exception = await self._handle_exception(exception)

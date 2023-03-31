@@ -19,7 +19,7 @@ from typing import (
     Iterator,
     Type,
     cast,
-    Iterable
+    Iterable,
 )
 
 try:
@@ -59,7 +59,7 @@ try:
         utc_from_timestamp,
         utc_now,
         get_receive_links,
-        receive_trace_context_manager
+        receive_trace_context_manager,
     )
     from .._common.constants import (
         UAMQP_LIBRARY,
@@ -107,19 +107,29 @@ try:
         ServiceBusAuthenticationError,
         SessionCannotBeLockedError,
         SessionLockLostError,
-        OperationTimeoutError
+        OperationTimeoutError,
     )
+
     if TYPE_CHECKING:
         from uamqp import AMQPClient
         from logging import Logger
         from .._pyamqp.aio import SendClientAsync
-        from ..amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties
+        from ..amqp import (
+            AmqpAnnotatedMessage,
+            AmqpMessageHeader,
+            AmqpMessageProperties,
+        )
         from .._servicebus_receiver import ServiceBusReceiver
         from .._servicebus_sender import ServiceBusSender
-        from ..aio._servicebus_sender_async import ServiceBusSender as ServiceBusSenderAsync
-        from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
+        from ..aio._servicebus_sender_async import (
+            ServiceBusSender as ServiceBusSenderAsync,
+        )
+        from .._common.message import (
+            ServiceBusReceivedMessage,
+            ServiceBusMessage,
+            ServiceBusMessageBatch,
+        )
         from .._common._configuration import Configuration
-        
 
     _NO_RETRY_CONDITION_ERROR_CODES = (
         constants.ErrorCodes.DecodeError,
@@ -193,7 +203,6 @@ try:
             return ErrorAction(retry=False)
         return ErrorAction(retry=True)
 
-
     class _ServiceBusErrorPolicy(ErrorPolicy):
         def __init__(self, max_retries=3, is_session=False):
             self._is_session = is_session
@@ -216,18 +225,18 @@ try:
                 return ErrorAction(retry=False)
             return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
-
-    class UamqpTransport(AmqpTransport):    # pylint: disable=too-many-public-methods
+    class UamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         """
         Class which defines uamqp-based methods used by the sender and receiver.
         """
+
         KIND = "uamqp"
 
         # define constants
         MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
         MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
         TIMEOUT_FACTOR = 1000
-        #CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
+        # CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
         #        c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
         #        c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
         #        c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
@@ -299,7 +308,7 @@ try:
 
         @staticmethod
         def to_outgoing_amqp_message(
-            annotated_message: "AmqpAnnotatedMessage"
+            annotated_message: "AmqpAnnotatedMessage",
         ) -> "Message":
             """
             Converts an AmqpAnnotatedMessage into an Amqp Message.
@@ -308,31 +317,48 @@ try:
             """
             message_header = None
             ttl_set = False
-            header_vals = annotated_message.header.values() if annotated_message.header else None
+            header_vals = (
+                annotated_message.header.values() if annotated_message.header else None
+            )
             # If header and non-None header values, create outgoing header.
             if header_vals and header_vals.count(None) != len(header_vals):
-                annotated_message.header = cast("AmqpMessageHeader", annotated_message.header)
+                annotated_message.header = cast(
+                    "AmqpMessageHeader", annotated_message.header
+                )
                 message_header = MessageHeader()
                 message_header.delivery_count = annotated_message.header.delivery_count
                 message_header.time_to_live = annotated_message.header.time_to_live
                 message_header.first_acquirer = annotated_message.header.first_acquirer
                 message_header.durable = annotated_message.header.durable
                 message_header.priority = annotated_message.header.priority
-                if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
+                if (
+                    annotated_message.header.time_to_live
+                    and annotated_message.header.time_to_live != MAX_DURATION_VALUE
+                ):
                     ttl_set = True
-                    creation_time_from_ttl = int(time.mktime(
-                        datetime.datetime.now(timezone.utc).timetuple()) * UamqpTransport.TIMEOUT_FACTOR
+                    creation_time_from_ttl = int(
+                        time.mktime(datetime.datetime.now(timezone.utc).timetuple())
+                        * UamqpTransport.TIMEOUT_FACTOR
                     )
-                    absolute_expiry_time_from_ttl = int(min(
-                        MAX_ABSOLUTE_EXPIRY_TIME,
-                        creation_time_from_ttl + annotated_message.header.time_to_live
-                    ))
+                    absolute_expiry_time_from_ttl = int(
+                        min(
+                            MAX_ABSOLUTE_EXPIRY_TIME,
+                            creation_time_from_ttl
+                            + annotated_message.header.time_to_live,
+                        )
+                    )
 
             message_properties = None
-            properties_vals = annotated_message.properties.values() if annotated_message.properties else None
+            properties_vals = (
+                annotated_message.properties.values()
+                if annotated_message.properties
+                else None
+            )
             # If properties and non-None properties values, create outgoing properties.
             if properties_vals and properties_vals.count(None) != len(properties_vals):
-                annotated_message.properties = cast("AmqpMessageProperties", annotated_message.properties)
+                annotated_message.properties = cast(
+                    "AmqpMessageProperties", annotated_message.properties
+                )
                 creation_time = None
                 absolute_expiry_time = None
                 if ttl_set:
@@ -342,7 +368,9 @@ try:
                     if annotated_message.properties.creation_time:
                         creation_time = int(annotated_message.properties.creation_time)
                     if annotated_message.properties.absolute_expiry_time:
-                        absolute_expiry_time = int(annotated_message.properties.absolute_expiry_time)
+                        absolute_expiry_time = int(
+                            annotated_message.properties.absolute_expiry_time
+                        )
 
                 message_properties = MessageProperties(
                     message_id=annotated_message.properties.message_id,
@@ -358,12 +386,14 @@ try:
                     group_id=annotated_message.properties.group_id,
                     group_sequence=annotated_message.properties.group_sequence,
                     reply_to_group_id=annotated_message.properties.reply_to_group_id,
-                    encoding=annotated_message._encoding    # pylint: disable=protected-access
+                    encoding=annotated_message._encoding,  # pylint: disable=protected-access
                 )
             elif ttl_set:
                 message_properties = MessageProperties(
                     creation_time=creation_time_from_ttl if ttl_set else None,
-                    absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
+                    absolute_expiry_time=absolute_expiry_time_from_ttl
+                    if ttl_set
+                    else None,
                 )
 
             # pylint: disable=protected-access
@@ -373,7 +403,7 @@ try:
                 amqp_body = list(cast(Iterable, annotated_message._data_body))
             elif amqp_body_type == AmqpMessageBodyType.SEQUENCE:
                 amqp_body_type = MessageBodyType.Sequence
-                amqp_body = list(cast(Iterable,annotated_message._sequence_body))
+                amqp_body = list(cast(Iterable, annotated_message._sequence_body))
             else:
                 amqp_body_type = MessageBodyType.Value
                 amqp_body = annotated_message._value_body
@@ -386,7 +416,7 @@ try:
                 application_properties=annotated_message.application_properties,
                 annotations=annotated_message.annotations,
                 delivery_annotations=annotated_message.delivery_annotations,
-                footer=annotated_message.footer
+                footer=annotated_message.footer,
             )
 
         @staticmethod
@@ -400,9 +430,7 @@ try:
 
         @staticmethod
         def update_message_app_properties(
-            message: "Message",
-            key: str,
-            value: str
+            message: "Message", key: str, value: str
         ) -> "Message":
             """
             Adds the given key/value to the application properties of the message.
@@ -441,7 +469,9 @@ try:
             :param AMQPClient handler: Client to get remote max message size on link from.
             :rtype: int
             """
-            return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
+            return (
+                handler.message_handler._link.peer_max_message_size
+            )  # pylint:disable=protected-access
 
         @staticmethod
         def get_handler_link_name(handler: "AMQPClient") -> str:
@@ -463,7 +493,9 @@ try:
             :keyword bool is_session: Is session enabled.
             """
             # TODO: What's the retry overlap between servicebus and pyamqp?
-            return _ServiceBusErrorPolicy(max_retries=config.retry_total, is_session=is_session)
+            return _ServiceBusErrorPolicy(
+                max_retries=config.retry_total, is_session=is_session
+            )
 
         @staticmethod
         def create_connection(
@@ -475,10 +507,14 @@ try:
             :param JWTTokenAuth auth: The auth, used by uamqp.
             :param bool network_trace: Required.
             """
-            custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
-            ssl_opts = kwargs.pop("ssl_opts") # pylint:disable=unused-variable
-            transport_type = kwargs.pop("transport_type") # pylint:disable=unused-variable
-            http_proxy = kwargs.pop("http_proxy") # pylint:disable=unused-variable
+            custom_endpoint_address = kwargs.pop(  # pylint:disable=unused-variable
+                "custom_endpoint_address"
+            )
+            ssl_opts = kwargs.pop("ssl_opts")  # pylint:disable=unused-variable
+            transport_type = kwargs.pop(  # pylint:disable=unused-variable
+                "transport_type"
+            )
+            http_proxy = kwargs.pop("http_proxy")  # pylint:disable=unused-variable
             return Connection(
                 hostname=host,
                 sasl=auth,
@@ -494,9 +530,7 @@ try:
             connection.destroy()
 
         @staticmethod
-        def create_send_client(
-            config: "Configuration", **kwargs: Any
-        ) -> "SendClient":
+        def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient":
             """
             Creates and returns the uamqp SendClient.
             :param ~azure.servicebus._common._configuration.Configuration config:
@@ -520,7 +554,7 @@ try:
                 error_policy=retry_policy,
                 keep_alive_interval=config.keep_alive,
                 encoding=config.encoding,
-                **kwargs
+                **kwargs,
             )
 
         @staticmethod
@@ -528,7 +562,7 @@ try:
             sender: Union["ServiceBusSender", "ServiceBusSenderAsync"],
             logger: "Logger",
             timeout: int,
-            last_exception: Optional[Exception]
+            last_exception: Optional[Exception],
         ) -> None:
             # pylint: disable=protected-access
             if not timeout:
@@ -542,7 +576,7 @@ try:
                 logger.info("%r send operation timed out. (%r)", sender._name, error)
                 raise error
             cast("SendClient", sender._handler)._msg_timeout = (
-                timeout * UamqpTransport.TIMEOUT_FACTOR # type: ignore
+                timeout * UamqpTransport.TIMEOUT_FACTOR  # type: ignore
             )
 
         @staticmethod
@@ -551,8 +585,8 @@ try:
             message: Union["ServiceBusMessage", "ServiceBusMessageBatch"],
             logger: "Logger",
             timeout: int,
-            last_exception: Optional[Exception]
-        ) -> None:    # pylint: disable=unused-argument
+            last_exception: Optional[Exception],
+        ) -> None:  # pylint: disable=unused-argument
             """
             Handles sending of service bus messages.
             :param ~azure.servicebus.ServiceBusSender sender: The sender with handler
@@ -574,7 +608,8 @@ try:
 
         @staticmethod
         def add_batch(
-            sb_message_batch: "ServiceBusMessageBatch", outgoing_sb_message: "ServiceBusMessage"
+            sb_message_batch: "ServiceBusMessageBatch",
+            outgoing_sb_message: "ServiceBusMessage",
         ) -> None:  # pylint: disable=unused-argument
             """
             Add ServiceBusMessage to the data body of the BatchMessage.
@@ -583,9 +618,7 @@ try:
             :rtype: None
             """
             # pylint: disable=protected-access
-            sb_message_batch._message._body_gen.append(
-                outgoing_sb_message._message
-            )
+            sb_message_batch._message._body_gen.append(outgoing_sb_message._message)
 
         @staticmethod
         def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
@@ -635,25 +668,24 @@ try:
                 error_policy=retry_policy,
                 prefetch=link_credit,
                 auto_complete=False,
-                receive_settle_mode=UamqpTransport.ServiceBusToAMQPReceiveModeMap[receive_mode],
+                receive_settle_mode=UamqpTransport.ServiceBusToAMQPReceiveModeMap[
+                    receive_mode
+                ],
                 send_settle_mode=constants.SenderSettleMode.Settled
                 if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
                 else None,
-                on_attach=functools.partial(
-                    UamqpTransport.on_attach,
-                    receiver
-                ),
-                **kwargs
+                on_attach=functools.partial(UamqpTransport.on_attach, receiver),
+                **kwargs,
             )
 
         @staticmethod
-        def on_attach(
+        def on_attach(  # pylint: disable=unused-argument
             receiver: "ServiceBusReceiver",
             source: "Source",
             target: "Target",
             properties: Dict[str, Any],
-            error: Exception
-        ) -> None: # pylint: disable=unused-argument
+            error: Exception,
+        ) -> None:
             """
             Receiver on_attach callback.
             """
@@ -666,7 +698,9 @@ try:
                     expiry_in_seconds = (
                         expiry_in_seconds - DATETIMEOFFSET_EPOCH
                     ) / 10000000
-                    receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
+                    receiver._session._locked_until_utc = utc_from_timestamp(
+                        expiry_in_seconds
+                    )
                 session_filter = source.get_filter(name=SESSION_FILTER)
                 receiver._session_id = session_filter.decode(receiver._config.encoding)
                 receiver._session._session_id = receiver._session_id
@@ -684,7 +718,9 @@ try:
                 # different max_wait_times to different iterators and uses them in concert.
                 if max_wait_time:
                     original_timeout = receiver._handler._timeout
-                    receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
+                    receiver._handler._timeout = (
+                        max_wait_time * UamqpTransport.TIMEOUT_FACTOR
+                    )
                 try:
                     message = receiver._inner_next()
                     links = get_receive_links(message)
@@ -703,19 +739,22 @@ try:
         @staticmethod
         def iter_next(
             receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
-        ) -> "ServiceBusReceivedMessage": # pylint: disable=unused-argument
+        ) -> "ServiceBusReceivedMessage":  # pylint: disable=unused-argument
             # pylint: disable=protected-access
             try:
                 receiver._receive_context.set()
                 receiver._open()
                 if not receiver._message_iter:
                     receiver._message_iter = receiver._handler.receive_messages_iter()
-                uamqp_message = next(cast(Iterator["ServiceBusReceivedMessage"], receiver._message_iter))
+                uamqp_message = next(
+                    cast(Iterator["ServiceBusReceivedMessage"], receiver._message_iter)
+                )
                 message = receiver._build_received_message(uamqp_message)
                 if (
                     receiver._auto_lock_renewer
                     and not receiver._session
-                    and receiver._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+                    and receiver._receive_mode
+                    != ServiceBusReceiveMode.RECEIVE_AND_DELETE
                 ):
                     receiver._auto_lock_renewer.register(receiver, message)
                 return message
@@ -724,8 +763,7 @@ try:
 
         @staticmethod
         def enhanced_message_received(
-            receiver: "ServiceBusReceiver",
-            message: "Message"
+            receiver: "ServiceBusReceiver", message: "Message"
         ) -> None:
             """
             Receiver enhanced_message_received callback.
@@ -741,7 +779,7 @@ try:
         def build_received_message(
             receiver: "ServiceBusReceiver",
             message_type: Type["ServiceBusReceivedMessage"],
-            received: "Message"
+            received: "Message",
         ) -> "ServiceBusReceivedMessage":
             # pylint: disable=protected-access
             message = message_type(
@@ -752,21 +790,16 @@ try:
             return message
 
         @staticmethod
-        def get_current_time(
-            handler: "ReceiveClient"
-        ) -> float:
-
+        def get_current_time(handler: "ReceiveClient") -> float:
             """
             Gets the current time.
             :param ReceiveClient handler: Handler with counter to get time.
             :rtype: int
             """
-            return handler._counter.get_current_ms()    # pylint: disable=protected-access
+            return handler._counter.get_current_ms()  # pylint: disable=protected-access
 
         @staticmethod
-        def reset_link_credit(
-            handler: "ReceiveClient", link_credit: int
-        ) -> None:
+        def reset_link_credit(handler: "ReceiveClient", link_credit: int) -> None:
             """
             Resets the link credit on the link.
             :param ReceiveClient handler: Client with link to reset link credit.
@@ -790,7 +823,7 @@ try:
                 message,
                 settle_operation,
                 dead_letter_reason,
-                dead_letter_error_description
+                dead_letter_error_description,
             )()
 
         @staticmethod
@@ -819,13 +852,13 @@ try:
                 )
             if settle_operation == MESSAGE_DEFER:
                 return functools.partial(message._message.modify, True, True)
-            raise ValueError(
-                f"Unsupported settle operation type: {settle_operation}"
-            )
+            raise ValueError(f"Unsupported settle operation type: {settle_operation}")
 
         @staticmethod
         def parse_received_message(
-            message: "Message", message_type: Type["ServiceBusReceivedMessage"], **kwargs: Any
+            message: "Message",
+            message_type: Type["ServiceBusReceivedMessage"],
+            **kwargs: Any,
         ) -> List["ServiceBusReceivedMessage"]:
             """
             Parses peek/deferred op messages into ServiceBusReceivedMessage.
@@ -839,11 +872,7 @@ try:
             parsed = []
             for m in message.get_data()[b"messages"]:
                 wrapped = Message.decode_from_bytes(bytearray(m[b"message"]))
-                parsed.append(
-                    message_type(
-                        wrapped, **kwargs
-                    )
-                )
+                parsed.append(message_type(wrapped, **kwargs))
             return parsed
 
         @staticmethod
@@ -856,7 +885,7 @@ try:
             get_token: Callable,
             token_type: bytes,
             config: "Configuration",
-            **kwargs: Any
+            **kwargs: Any,
         ) -> "JWTTokenAuth":
             """
             Creates the JWTTokenAuth.
@@ -883,7 +912,7 @@ try:
                 custom_endpoint_hostname=config.custom_endpoint_hostname,
                 port=config.connection_port,
                 verify=config.connection_verify,
-                refresh_window=refresh_window
+                refresh_window=refresh_window,
             )
             if update_token:
                 token_auth.update_token()
@@ -893,9 +922,9 @@ try:
         def create_mgmt_msg(
             message: "Message",
             application_properties: Dict[str, Any],
-            config: "Configuration", # pylint:disable=unused-argument
+            config: "Configuration",  # pylint:disable=unused-argument
             reply_to: str,
-            **kwargs: Any
+            **kwargs: Any,
         ) -> "Message":
             """
             :param message: The message to send in the management request.
@@ -905,12 +934,10 @@ try:
             :param str reply_to: Reply to.
             :rtype: uamqp.Message
             """
-            return Message( # type: ignore # TODO: fix mypy error
+            return Message(  # type: ignore # TODO: fix mypy error
                 body=message,
                 properties=MessageProperties(
-                    reply_to=reply_to,
-                    encoding=config.encoding,
-                    **kwargs
+                    reply_to=reply_to, encoding=config.encoding, **kwargs
                 ),
                 application_properties=application_properties,
             )
@@ -924,7 +951,7 @@ try:
             operation_type: bytes,
             node: bytes,
             timeout: int,
-            callback: Callable
+            callback: Callable,
         ) -> "ServiceBusReceivedMessage":
             """
             Send mgmt request and return result of callback.
@@ -942,7 +969,7 @@ try:
                 op_type=operation_type,
                 node=node,
                 timeout=timeout * UamqpTransport.TIMEOUT_FACTOR if timeout else None,
-                callback=functools.partial(callback, amqp_transport=UamqpTransport)
+                callback=functools.partial(callback, amqp_transport=UamqpTransport),
             )
 
         @staticmethod
@@ -951,7 +978,7 @@ try:
             condition: Optional["AMQPErrorCodes"],
             description: str,
             exception: Optional["AMQPError"] = None,
-            status_code: Optional[str] = None
+            status_code: Optional[str] = None,
         ) -> "ServiceBusError":
             # handling AMQP Errors that have the condition field or the mgmt handler
             logger.info(
@@ -968,10 +995,14 @@ try:
                     if isinstance(exception, AMQPConnectionError)
                     else MessagingEntityNotFoundError
                 )
-            elif condition == AMQPErrorCodes.ClientError and "timed out" in str(exception):
+            elif condition == AMQPErrorCodes.ClientError and "timed out" in str(
+                exception
+            ):
                 # handle send timeout
                 error_cls = OperationTimeoutError
-            elif condition == AMQPErrorCodes.UnknownError and isinstance(exception, AMQPConnectionError):
+            elif condition == AMQPErrorCodes.UnknownError and isinstance(
+                exception, AMQPConnectionError
+            ):
                 error_cls = ServiceBusConnectionError
             else:
                 # handle other error codes
@@ -986,7 +1017,7 @@ try:
             if condition in _NO_RETRY_CONDITION_ERROR_CODES:
                 error._retryable = False  # pylint: disable=protected-access
             else:
-                error._retryable = True # pylint: disable=protected-access
+                error._retryable = True  # pylint: disable=protected-access
 
             return error
 
@@ -999,7 +1030,9 @@ try:
                 logger.info("AMQP Connection error occurred: (%r).", exception)
                 error_cls = ServiceBusConnectionError
             elif isinstance(exception, AuthenticationException):
-                logger.info("AMQP Connection authentication error occurred: (%r).", exception)
+                logger.info(
+                    "AMQP Connection authentication error occurred: (%r).", exception
+                )
                 error_cls = ServiceBusAuthenticationError
             elif isinstance(exception, MessageException):
                 logger.info("AMQP Message error occurred: (%r).", exception)
@@ -1009,7 +1042,8 @@ try:
                     error_cls = MessageSizeExceededError
             else:
                 logger.info(
-                    "Unexpected AMQP error occurred (%r). Handler shutting down.", exception
+                    "Unexpected AMQP error occurred (%r). Handler shutting down.",
+                    exception,
                 )
 
             error = error_cls(message=str(exception), error=exception)
@@ -1021,7 +1055,7 @@ try:
             error_description: "str",
             condition: Optional["AMQPErrorCodes"] = None,
             description: Optional[str] = None,
-            status_code: Optional[str] = None
+            status_code: Optional[str] = None,
         ) -> "ServiceBusError":
             if description:
                 error_description += f" {description}."
@@ -1048,7 +1082,9 @@ try:
                     )
                 except AttributeError:
                     # handling AMQP Errors that don't have the condition field
-                    exception = UamqpTransport._handle_amqp_exception_without_condition(logger, exception)
+                    exception = UamqpTransport._handle_amqp_exception_without_condition(
+                        logger, exception
+                    )
             elif not isinstance(exception, ServiceBusError):
                 logger.exception(
                     "Unexpected error occurred (%r). Handler shutting down.", exception

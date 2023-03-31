@@ -394,6 +394,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
                     obj_message = batch
                 except TypeError:  # Message was not a list or generator.
+                    # pylint: disable=protected-access
                     obj_message._message = trace_message(
                         obj_message._message,
                         amqp_transport=self._amqp_transport,
