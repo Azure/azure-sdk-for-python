@@ -27,11 +27,14 @@ Clone the repository and udpate the following file of your package:
    > For migration instructions, see the [migration guide](https://aka.ms/azsdk/python/migrate/my-new-package).
 
 - `azure/mypackage/_version.py` : Change the version to the one used in the changelog (for instance `"1.2.3.post1"`
+- `sdk_packaging.toml` : You need to add `auto_update = false` if not already present to avoid the bot overriding your changes
 
 Do a PR targeting the `main` branch. Post your PR in our [review channel for Python](https://teams.microsoft.com/l/channel/19%3a4175567f1e154a80ab5b88cbd22ea92f%40thread.skype/Language%2520-%2520Python%2520-%2520Reviews?groupId=3e17dcb0-4257-4a30-b843-77f47f1d4121&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47)
 
 You're responsible to fix any CI issue related to this PR, if any. Note that `Inactive` packages are disabled from most CI verificiation, therefore the CI should be faster and
 have less requirements.
+
+An example of PR can be found the [deprecation of application insights](https://github.com/Azure/azure-sdk-for-python/pull/23024/files)
 
 Once the PR is merged, move to the next step.
 
