@@ -2792,7 +2792,11 @@ class DocumentLine:
 
 
 class DocumentParagraph:
-    """A paragraph object generally consisting of contiguous lines with common alignment and spacing."""
+    """A paragraph object generally consisting of contiguous lines with common alignment and spacing.
+
+    .. versionadded:: 2023-02-28-preview
+        The `formulaBlock` role.
+    """
 
     role: Optional[str]
     """Semantic role of the paragraph. Known values are: "pageHeader", "pageFooter",
@@ -3697,6 +3701,9 @@ class OperationSummary:
     Note that operation information only persists for 24 hours. If the operation was successful,
     the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
+
+    .. versionadded:: 2023-02-28-preview
+        The `documentClassifierBuild` kind.
     """
     operation_id: str
     """Operation ID."""
@@ -3793,6 +3800,9 @@ class OperationDetails(OperationSummary):
 
     Note that operation information only persists for 24 hours. If the operation was successful,
     the model can also be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
+
+    .. versionadded:: 2023-02-28-preview
+        The `documentClassifierBuild` kind.
     """
     operation_id: str
     """Operation ID."""
@@ -3807,7 +3817,7 @@ class OperationDetails(OperationSummary):
     """Date and time (UTC) when the operation was last updated."""
     kind: str
     """Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo"."""
+        "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild"."""
     resource_location: str
     """URL of the resource targeted by this operation."""
     error: Optional[DocumentAnalysisError]
