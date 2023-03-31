@@ -21,7 +21,12 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import ANONYMOUS_COMPONENT_NAME, AssetTypes, InputOutputModes, is_singularity_id_for_resource
+from azure.ai.ml.constants._common import (
+    ANONYMOUS_COMPONENT_NAME,
+    AssetTypes,
+    InputOutputModes,
+    is_singularity_id_for_resource,
+)
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
