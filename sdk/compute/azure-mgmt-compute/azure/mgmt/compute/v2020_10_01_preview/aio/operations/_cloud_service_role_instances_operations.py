@@ -83,9 +83,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -101,8 +99,9 @@ class CloudServiceRoleInstancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -145,9 +144,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -224,9 +221,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[_models.RoleInstance] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -243,8 +238,9 @@ class CloudServiceRoleInstancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -292,9 +288,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[_models.RoleInstanceView] = kwargs.pop("cls", None)
 
         request = build_get_instance_view_request(
@@ -310,8 +304,9 @@ class CloudServiceRoleInstancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -359,9 +354,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[_models.RoleInstanceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -416,8 +409,9 @@ class CloudServiceRoleInstancesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -447,9 +441,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_restart_request(
@@ -465,8 +457,9 @@ class CloudServiceRoleInstancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -510,9 +503,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -567,9 +558,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_reimage_request(
@@ -585,8 +574,9 @@ class CloudServiceRoleInstancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -630,9 +620,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -687,9 +675,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_rebuild_request(
@@ -705,8 +691,9 @@ class CloudServiceRoleInstancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -751,9 +738,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -822,9 +807,7 @@ class CloudServiceRoleInstancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-10-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", "2020-10-01-preview")
-        )
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-10-01-preview"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         request = build_get_remote_desktop_file_request(
@@ -840,8 +823,9 @@ class CloudServiceRoleInstancesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=True, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
