@@ -361,6 +361,7 @@ class JobOperations(_ScopeDependentOperations):
         return results
 
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
+        # pylint: disable=too-many-return-statements
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # DataFactory 'clusterless' job
         if str(compute) == ComputeType.ADF:
