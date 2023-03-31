@@ -13,7 +13,7 @@ from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-iot-deviceprovisioningservice"
-PACKAGE_PPRINT_NAME = "IoT Device Provisioning Service"
+PACKAGE_PPRINT_NAME = "IoT Hub Device Provisioning Service"
 
 # a-b-c => a/b/c
 package_folder_path = PACKAGE_NAME.replace('-', '/')
@@ -60,10 +60,11 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=[
         'tests',
-        'samples',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
+        'azure.iot',
     ]),
+    python_requires=">=3.7"
     include_package_data=True,
     package_data={
         'pytyped': ['py.typed'],
@@ -73,5 +74,9 @@ setup(
         "isodate<1.0.0,>=0.6.1",
         "typing-extensions>=4.3.0",
     ],
-    python_requires=">=3.7"
+    extras_require={
+        "aio": [
+            "azure-core[aio]<2.0.0,>=1.24.0",
+        ],
+    },
 )
