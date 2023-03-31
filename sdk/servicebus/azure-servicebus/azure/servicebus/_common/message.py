@@ -51,13 +51,10 @@ from .utils import (
 )
 
 if TYPE_CHECKING:
-    try:
-        from uamqp import (
-            Message,
-            BatchMessage
-        )
-    except ImportError:
-        pass
+    from uamqp import (
+        Message,
+        BatchMessage
+    )
     from .._pyamqp.performatives import TransferFrame
     from azure.core.tracing import AbstractSpan
     from ..aio._servicebus_receiver_async import (

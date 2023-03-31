@@ -56,14 +56,11 @@ from .constants import (
 from ..amqp import AmqpAnnotatedMessage
 
 if TYPE_CHECKING:
-    try:
-        from uamqp import (
-            Message as uamqp_Message,
-            types as uamqp_types
-        )
-        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
-    except ImportError:
-        pass
+    from uamqp import (
+        Message as uamqp_Message,
+        types as uamqp_types
+    )
+    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     from .._pyamqp.message import Message as pyamqp_Message
     from .._pyamqp.authentication import JWTTokenAuth as pyamqp_JWTTokenAuth
     from .message import (

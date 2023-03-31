@@ -34,11 +34,8 @@ from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    try:
-        from uamqp.async_ops.client_async import SendClientAsync as uamqp_SendClientAsync
-        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
-    except ImportError:
-        pass
+    from uamqp.async_ops.client_async import SendClientAsync as uamqp_SendClientAsync
+    from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
     from .._pyamqp.aio import SendClientAsync as pyamqp_SendClientAsync
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync as pyamqp_JWTTokenAuthAsync
     from ._transport._base_async import AmqpTransportAsync

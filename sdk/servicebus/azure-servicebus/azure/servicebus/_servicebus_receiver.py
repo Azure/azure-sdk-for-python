@@ -52,11 +52,8 @@ from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
-    try:
-        from uamqp import ReceiveClient as uamqp_ReceiveClientSync, Message as uamqp_Message
-        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
-    except ImportError:
-        pass
+    from uamqp import ReceiveClient as uamqp_ReceiveClientSync, Message as uamqp_Message
+    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     from ._transport._base import AmqpTransport
     from ._pyamqp.client import ReceiveClient as pyamqp_ReceiveClientSync
     from ._pyamqp.message import Message as pyamqp_Message

@@ -32,7 +32,6 @@ try:
         SendClient,
         ReceiveClient,
         Source,
-        Target,
         compat,
         Connection,
         __version__,
@@ -111,9 +110,8 @@ try:
     )
 
     if TYPE_CHECKING:
-        from uamqp import AMQPClient
+        from uamqp import AMQPClient, Target
         from logging import Logger
-        from .._pyamqp.aio import SendClientAsync
         from ..amqp import (
             AmqpAnnotatedMessage,
             AmqpMessageHeader,
