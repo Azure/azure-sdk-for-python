@@ -103,7 +103,7 @@ if __name__ == "__main__":
                 },
             )
             classifier = poller.result()
-            classifier_id = classifier.model_id
+            classifier_id = classifier.classifier_id
         classify_document(classifier_id)
     except HttpResponseError as error:
         print("For more information about troubleshooting errors, see the following guide: "
