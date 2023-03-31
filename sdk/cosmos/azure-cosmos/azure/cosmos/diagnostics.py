@@ -48,7 +48,7 @@ class RecordDiagnostics(object):
         "x-ms-activity-id",
         "x-ms-session-token",
         "x-ms-item-count",
-        "x-ms-request-quota",
+        "x-ms-resource-quota",
         "x-ms-resource-usage",
         "x-ms-retry-after-ms",
     }
