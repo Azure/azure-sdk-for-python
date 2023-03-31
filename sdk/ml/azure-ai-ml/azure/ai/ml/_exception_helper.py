@@ -15,7 +15,12 @@ from azure.ai.ml.constants._common import (
     SCHEMA_VALIDATION_ERROR_TEMPLATE,
     YAML_CREATION_ERROR_DESCRIPTION,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    ErrorCategory,
+    ValidationErrorType,
+    ValidationException,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -279,17 +284,26 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
             formatted_error = format_create_validation_error(error.messages[0], yaml_operation=yaml_operation)
         except NotImplementedError:
             formatted_error = error
+
+        raise Exception(formatted_error)
     elif isinstance(error, ValidationException):
         module_logger.debug(traceback.format_exc())
+        entity_type = get_entity_type(error)[0]
+
         try:
             error_type = error.error_type
             if error_type == ValidationErrorType.GENERIC:
-                formatted_error = error
+                formatted_error = error.message
             else:
                 formatted_error = format_create_validation_error(error, yaml_operation=yaml_operation)
         except NotImplementedError:
             formatted_error = error
+
+        raise ValidationException(
+            message=formatted_error,
+            no_personal_data_message=formatted_error,
+            target=entity_type,
+            error_category=ErrorCategory.USER_ERROR,
+        )
     else:
         raise error
-
-    raise formatted_error
