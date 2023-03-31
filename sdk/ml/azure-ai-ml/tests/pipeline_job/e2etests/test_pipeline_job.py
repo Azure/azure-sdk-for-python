@@ -1889,6 +1889,46 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert is_singularity_id_for_resource(node_compute)
         assert node_compute.endswith("centeuapvc")
 
+    @pytest.mark.skipif(condition=not is_live(), reason="recording will expose Singularity information")
+    def test_pipeline_job_singularity_live(self, client: MLClient, tmp_path: Path, singularity_vc):
+        full_name = "azureml://subscriptions/{}/resourceGroups/{}/virtualclusters/{}".format(
+            singularity_vc.subscription_id, singularity_vc.resource_group_name, singularity_vc.name
+        )
+        short_name = f"azureml://virtualclusters/{singularity_vc.name}"
+
+        pipeline_yaml_template = """
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: full name & short name
+experiment_name: Singularity in pipeline
+jobs:
+  full_name:
+    command: echo full name
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    compute: {{singularity-full-name}}
+    resources:
+      instance_type: Singularity.ND40rs_v2
+  short_name:
+    command: echo short name
+    environment:
+      image: singularitybase.azurecr.io/base/job/deepspeed/0.4-pytorch-1.7.0-cuda11.0-cudnn8-devel:20221017T152225334
+    compute: {{singularity-short-name}}
+    resources:
+      instance_type: Singularity.ND40rs_v2
+        """
+        pipeline_yaml_content = pipeline_yaml_template.replace("{{singularity-full-name}}", full_name).replace("{{singularity-short-name}}", short_name)
+        pipeline_yaml_path = tmp_path / "pipeline.yml"
+        pipeline_yaml_path.write_text(pipeline_yaml_content)
+        pipeline_job = load_job(pipeline_yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        rest_obj = created_pipeline_job._to_rest_object()
+
+        assert is_singularity_id_for_resource(rest_obj.properties.jobs["full_name"]["computeId"])
+        assert rest_obj.properties.jobs["full_name"]["computeId"].endswith(singularity_vc.name)
+        assert is_singularity_id_for_resource(rest_obj.properties.jobs["short_name"]["computeId"])
+        assert rest_obj.properties.jobs["short_name"]["computeId"].endswith(singularity_vc.name)
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
