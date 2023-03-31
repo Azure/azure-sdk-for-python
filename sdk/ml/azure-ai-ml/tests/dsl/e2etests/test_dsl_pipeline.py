@@ -20,12 +20,12 @@ from azure.ai.ml import (
     dsl,
     load_component,
 )
-from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
+from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_singularity_id_for_resource
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     AssetTypes,
     InputOutputModes,
-    is_singularity_id_for_resource,
+    SINGULARITY_ID_FORMAT,
 )
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
@@ -33,7 +33,7 @@ from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
-from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob
+from azure.ai.ml.entities import Data, JobResourceConfiguration, PipelineJob, QueueSettings
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from devtools_testutils import AzureRecordedTestCase, is_live

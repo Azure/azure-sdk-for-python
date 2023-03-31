@@ -38,7 +38,6 @@ from azure.ai.ml.entities import (
     JobResourceConfiguration,
     PipelineJob,
     QueueSettings,
-    SparkJobEntry,
     SparkResourceConfiguration,
 )
 from azure.ai.ml.entities._builders import Command, DataTransferCopy, Spark
