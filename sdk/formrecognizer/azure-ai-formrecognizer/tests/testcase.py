@@ -729,6 +729,8 @@ class FormRecognizerTest(AzureRecordedTestCase):
             assert document_field.value == expected.value_country_region
         if field_type == "signature":
             assert document_field.value == expected.value_signature
+        if field_type == "boolean":
+            assert document_field.value == expected.value_boolean
         if field_type == "array":
             for i in range(len(expected.value_array)):
                 self.assertDocumentFieldValueTransformCorrect(document_field.value[i], expected.value_array[i])

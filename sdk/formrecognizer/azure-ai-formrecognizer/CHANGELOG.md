@@ -15,6 +15,7 @@
 - Added property `common_name` to `DocumentKeyValuePair`.
 - Added property `code` to `CurrencyValue`.
 - Added properties `unit`, `city_district`, `state_district`, `suburb`, `house`, and `level` to `AddressValue`.
+- Added "boolean" `value_type` and `bool` `value` to `DocumentField`.
 
 ### Breaking Changes
 

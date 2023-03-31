@@ -160,6 +160,8 @@ def get_field_value_v3(value):  # pylint: disable=too-many-return-statements
         return value.value_selection_mark
     if value.type == "countryRegion":
         return value.value_country_region
+    if value.type == "boolean":
+        return value.value_boolean
     return None
 
 
@@ -2227,13 +2229,17 @@ class DocumentLanguage:
 
 
 class DocumentField:
-    """An object representing the content and location of a document field value."""
+    """An object representing the content and location of a document field value.
+
+    .. versionadded:: 2023-02-28-preview
+        The `boolean` value_type and `bool` value
+    """
 
     value_type: str
     """The type of `value` found on DocumentField. Possible types include:
      "string", "date", "time", "phoneNumber", "float", "integer", "selectionMark", "countryRegion",
-     "signature", "currency", "address", "list", "dictionary"."""
-    value: Optional[Union[str, int, float, datetime.date, datetime.time,
+     "signature", "currency", "address", "boolean", "list", "dictionary"."""
+    value: Optional[Union[str, int, float, bool, datetime.date, datetime.time,
         CurrencyValue, AddressValue, Dict[str, "DocumentField"], List["DocumentField"]]]
     """The value for the recognized field. Its semantic data type is described by `value_type`.
         If the value is extracted from the document, but cannot be normalized to its type,
