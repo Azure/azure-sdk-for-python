@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models import BrokerProperties
-from ._models import CloudEventEvent
 from ._models import FailedLockToken
 from ._models import LockToken
 from ._models import LockTokenInput
@@ -21,7 +20,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "BrokerProperties",
-    "CloudEventEvent",
     "FailedLockToken",
     "LockToken",
     "LockTokenInput",

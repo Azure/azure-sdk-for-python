@@ -40,8 +40,8 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 
 class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClientMixinABC):
     @distributed_trace_async
-    async def publish_cloud_event(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, event: _models.CloudEventEvent, **kwargs: Any
+    async def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+        self, topic_name: str, event: _models._models.CloudEventEvent, **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic.
 
@@ -104,8 +104,8 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, events: List[_models.CloudEventEvent], **kwargs: Any
+    async def _publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
+        self, topic_name: str, events: List[_models._models.CloudEventEvent], **kwargs: Any
     ) -> None:
         """Publish Batch of Cloud Events to namespace topic.
 
@@ -168,7 +168,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def receive_batch_of_cloud_events(
+    async def _receive_batch_of_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,

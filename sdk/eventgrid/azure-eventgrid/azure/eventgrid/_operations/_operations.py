@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import json
-import sys
 from typing import Any, Callable, Dict, List, Optional, TypeVar
 
 from azure.core.exceptions import (
@@ -29,10 +28,6 @@ from .._model_base import AzureJSONEncoder, _deserialize
 from .._serialization import Serializer
 from .._vendor import AzureMessagingEventGridClientMixinABC, _format_url_section
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -41,15 +36,13 @@ _SERIALIZER.client_side_validation = False
 
 
 def build_azure_messaging_event_grid_publish_cloud_event_request(
-    topic_name: str, *, content: _models.CloudEventEvent, **kwargs: Any
+    topic_name: str, *, content: _models._models.CloudEventEvent, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: Literal["2023-06-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-06-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
     # Construct URL
     _url = "/topics/{topicName}:publish"
     path_format_arguments = {
@@ -68,15 +61,13 @@ def build_azure_messaging_event_grid_publish_cloud_event_request(
 
 
 def build_azure_messaging_event_grid_publish_batch_of_cloud_events_request(
-    topic_name: str, *, content: List[_models.CloudEventEvent], **kwargs: Any
+    topic_name: str, *, content: List[_models._models.CloudEventEvent], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: Literal["2023-06-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-06-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
     # Construct URL
     _url = "/topics/{topicName}:publish"
     path_format_arguments = {
@@ -105,9 +96,7 @@ def build_azure_messaging_event_grid_receive_batch_of_cloud_events_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-06-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-06-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -139,9 +128,7 @@ def build_azure_messaging_event_grid_acknowledge_batch_of_cloud_events_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: Literal["2023-06-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-06-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -170,9 +157,7 @@ def build_azure_messaging_event_grid_release_batch_of_cloud_events_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: Literal["2023-06-01-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2023-06-01-preview")
-    )
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -196,8 +181,8 @@ def build_azure_messaging_event_grid_release_batch_of_cloud_events_request(
 
 class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClientMixinABC):
     @distributed_trace
-    def publish_cloud_event(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, event: _models.CloudEventEvent, **kwargs: Any
+    def _publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+        self, topic_name: str, event: _models._models.CloudEventEvent, **kwargs: Any
     ) -> None:
         """Publish Single Cloud Event to namespace topic.
 
@@ -260,8 +245,8 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
-        self, topic_name: str, events: List[_models.CloudEventEvent], **kwargs: Any
+    def _publish_batch_of_cloud_events(  # pylint: disable=inconsistent-return-statements
+        self, topic_name: str, events: List[_models._models.CloudEventEvent], **kwargs: Any
     ) -> None:
         """Publish Batch of Cloud Events to namespace topic.
 
@@ -324,7 +309,7 @@ class AzureMessagingEventGridClientOperationsMixin(AzureMessagingEventGridClient
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def receive_batch_of_cloud_events(
+    def _receive_batch_of_cloud_events(
         self,
         topic_name: str,
         event_subscription_name: str,

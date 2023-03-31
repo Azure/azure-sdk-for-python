@@ -28,7 +28,7 @@ class BrokerProperties(_model_base.Model):
     """
 
     lock_token: "_models.LockToken" = rest_field(name="lockToken")
-    """The token used to lock the event. Required. """
+    """The token used to lock the event. Required."""
 
     @overload
     def __init__(
@@ -81,52 +81,28 @@ class CloudEventEvent(_model_base.Model):
     """
 
     id: str = rest_field()
-    """An identifier for the event. The combination of id and source must be unique for each distinct event. Required. """
+    """An identifier for the event. The combination of id and source must be unique for each distinct
+     event. Required."""
     source: str = rest_field()
-    """Identifies the context in which an event happened. The combination of id and source must be unique for each distinct event. Required. """
+    """Identifies the context in which an event happened. The combination of id and source must be
+     unique for each distinct event. Required."""
     data: Optional["_models.object"] = rest_field()
-    """Event data specific to the event type. """
+    """Event data specific to the event type."""
     data_base64: Optional[bytes] = rest_field()
-    """Event data specific to the event type, encoded as a base64 string. """
+    """Event data specific to the event type, encoded as a base64 string."""
     type: str = rest_field()
-    """Type of event related to the originating occurrence. Required. """
+    """Type of event related to the originating occurrence. Required."""
     time: Optional[datetime.datetime] = rest_field()
-    """The time (in UTC) the event was generated, in RFC3339 format. """
+    """The time (in UTC) the event was generated, in RFC3339 format."""
     specversion: str = rest_field()
-    """The version of the CloudEvents specification which the event uses. Required. """
+    """The version of the CloudEvents specification which the event uses. Required."""
     dataschema: Optional[str] = rest_field()
-    """Identifies the schema that data adheres to. """
+    """Identifies the schema that data adheres to."""
     datacontenttype: Optional[str] = rest_field()
-    """Content type of data value. """
+    """Content type of data value."""
     subject: Optional[str] = rest_field()
-    """This describes the subject of the event in the context of the event producer (identified by source). """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        source: str,
-        type: str,
-        specversion: str,
-        data: Optional["_models.object"] = None,
-        data_base64: Optional[bytes] = None,
-        time: Optional[datetime.datetime] = None,
-        dataschema: Optional[str] = None,
-        datacontenttype: Optional[str] = None,
-        subject: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
+    """This describes the subject of the event in the context of the event producer (identified by
+     source)."""
 
 
 class FailedLockToken(_model_base.Model):
@@ -143,11 +119,11 @@ class FailedLockToken(_model_base.Model):
     """
 
     lock_token: "_models.LockToken" = rest_field(name="lockToken")
-    """LockToken value. Required. """
+    """LockToken value. Required."""
     error_code: int = rest_field(name="errorCode")
-    """Error code. Required. """
+    """Error code. Required."""
     error_description: str = rest_field(name="errorDescription")
-    """Description of the error. Required. """
+    """Description of the error. Required."""
 
     @overload
     def __init__(
@@ -180,7 +156,7 @@ class LockToken(_model_base.Model):
     """
 
     lock_token: str = rest_field(name="lockToken")
-    """The token used to lock the event. Required. """
+    """The token used to lock the event. Required."""
 
     @overload
     def __init__(
@@ -211,7 +187,7 @@ class LockTokenInput(_model_base.Model):
     """
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
-    """LockTokens. Required. """
+    """LockTokens. Required."""
 
     @overload
     def __init__(
@@ -245,9 +221,9 @@ class LockTokensResponse(_model_base.Model):
     """
 
     failed_lock_tokens: List["_models.FailedLockToken"] = rest_field(name="failedLockTokens")
-    """Array of LockToken values for failed cloud events. Required. """
+    """Array of LockToken values for failed cloud events. Required."""
     succeeded_lock_tokens: List[str] = rest_field(name="succeededLockTokens")
-    """Array of LockToken values for succeeded cloud events. Required. """
+    """Array of LockToken values for succeeded cloud events. Required."""
 
     @overload
     def __init__(
@@ -285,16 +261,16 @@ class ReceiveDetails(_model_base.Model):
     """
 
     broker_properties: "_models.BrokerProperties" = rest_field(name="brokerProperties")
-    """The Event Broker details. Required. """
-    event: "_models.CloudEventEvent" = rest_field()
-    """Cloud Event details. Required. """
+    """The Event Broker details. Required."""
+    event: "_models._models.CloudEventEvent" = rest_field()
+    """Cloud Event details. Required."""
 
     @overload
     def __init__(
         self,
         *,
         broker_properties: "_models.BrokerProperties",
-        event: "_models.CloudEventEvent",
+        event: "_models._models.CloudEventEvent",
     ):
         ...
 
@@ -319,7 +295,7 @@ class ReceiveResponse(_model_base.Model):
     """
 
     value: List["_models.ReceiveDetails"] = rest_field()
-    """Array of receive responses, one per cloud event. Required. """
+    """Array of receive responses, one per cloud event. Required."""
 
     @overload
     def __init__(
