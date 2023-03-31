@@ -285,9 +285,9 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/TODO.py
-                :start-after: [START TODO]
-                :end-before: [END TODO]
+            .. literalinclude:: ../samples/v3.2/sample_classify_document_from_url.py
+                :start-after: [START classify_document_from_url]
+                :end-before: [END classify_document_from_url]
                 :language: python
                 :dedent: 4
                 :caption: Classify a document. For more samples see the `samples` folder.
