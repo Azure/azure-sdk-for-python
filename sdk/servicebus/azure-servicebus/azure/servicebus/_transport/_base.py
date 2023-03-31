@@ -186,8 +186,8 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
         Creates and returns the Source.
 
-        :param str source: Required.
-        :param int or None session_id: Required.
+        :param Source source: Required.
+        :param str or None session_id: Required.
         """
 
     @staticmethod

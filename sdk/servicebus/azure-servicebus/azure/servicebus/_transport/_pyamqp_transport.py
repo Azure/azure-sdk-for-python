@@ -506,8 +506,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Creates and returns the Source.
 
-        :param str source: Required.
-        :param bytes session_filter: Required.
+        :param Source source: Required.
+        :param str or None session_id: Required.
         """
         filter_map = {SESSION_FILTER: session_filter}
         source = Source(address=source, filters=filter_map) # type: ignore[call-arg]

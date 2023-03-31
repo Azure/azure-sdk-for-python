@@ -144,7 +144,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         **kwargs: Any
     ) -> None:
         self._session_id = None
-        self._message_iter: Optional[AsyncIterator[ServiceBusReceivedMessage]] = (
+        self._message_iter: Optional[AsyncIterator[Union["uamqp_Message", "pyamqp_Message"]]] = (
             None
         )
         self._amqp_transport: "AmqpTransportAsync"

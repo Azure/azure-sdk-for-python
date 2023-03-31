@@ -207,8 +207,8 @@ try:
                 receiver._receive_context.set()
                 await receiver._open()
                 if not receiver._message_iter:
-                    receiver._message_iter = cast("ReceiveClientAsync", receiver._handler).receive_messages_iter_async()
-                uamqp_message = await cast(AsyncIterator, receiver._message_iter).__anext__()
+                    receiver._message_iter = receiver._handler.receive_messages_iter_async()
+                uamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
                 message = receiver._build_received_message(uamqp_message)
                 if (
                     receiver._auto_lock_renewer

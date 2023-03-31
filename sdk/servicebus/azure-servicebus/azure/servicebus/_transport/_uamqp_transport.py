@@ -623,8 +623,8 @@ try:
             """
             Creates and returns the Source.
 
-            :param str source: Required.
-            :param int or None session_id: Required.
+            :param Source source: Required.
+            :param str or None session_id: Required.
             """
             source = Source(source)
             source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
@@ -745,7 +745,7 @@ try:
                 if not receiver._message_iter:
                     receiver._message_iter = receiver._handler.receive_messages_iter()
                 uamqp_message = next(
-                    cast(Iterator["ServiceBusReceivedMessage"], receiver._message_iter)
+                    cast(Iterator["Message"], receiver._message_iter)
                 )
                 message = receiver._build_received_message(uamqp_message)
                 if (

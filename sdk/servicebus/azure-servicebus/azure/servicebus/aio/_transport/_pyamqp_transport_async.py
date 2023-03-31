@@ -215,7 +215,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             await receiver._open()
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = await receiver._handler.receive_messages_iter_async(timeout=wait_time)
-            pyamqp_message = await cast(AsyncIterator, receiver._message_iter).__anext__()
+            pyamqp_message = await cast(AsyncIterator["Message"], receiver._message_iter).__anext__()
             message = receiver._build_received_message(pyamqp_message)
             if (
                 receiver._auto_lock_renewer

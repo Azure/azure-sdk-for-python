@@ -153,9 +153,8 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
         """
         Creates and returns the Source.
 
-        :param str source: Required.
-        :param int offset: Required.
-        :param bytes selector: Required.
+        :param Source source: Required.
+        :param str or None session_id: Required.
         """
 
     @staticmethod
