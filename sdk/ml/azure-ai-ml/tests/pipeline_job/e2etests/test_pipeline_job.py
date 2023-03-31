@@ -1917,7 +1917,9 @@ jobs:
     resources:
       instance_type: Singularity.ND40rs_v2
         """
-        pipeline_yaml_content = pipeline_yaml_template.replace("{{singularity-full-name}}", full_name).replace("{{singularity-short-name}}", short_name)
+        pipeline_yaml_content = pipeline_yaml_template.replace("{{singularity-full-name}}", full_name).replace(
+            "{{singularity-short-name}}", short_name
+        )
         pipeline_yaml_path = tmp_path / "pipeline.yml"
         pipeline_yaml_path.write_text(pipeline_yaml_content)
         pipeline_job = load_job(pipeline_yaml_path)
