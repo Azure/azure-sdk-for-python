@@ -1838,11 +1838,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_job.outputs.regression_node_2.name == None
         assert pipeline_job.outputs.regression_node_2.version == None
 
-    def test_(self, client: MLClient, singularity_vc):
-        print(singularity_vc.subscription_id)
-        print(singularity_vc.resource_group_name)
-        print(singularity_vc.name)
-
     def test_pipeline_job_singularity_no_compute_in_yaml(self, client: MLClient, mock_singularity_arm_id: str) -> None:
         yaml_path = "./tests/test_configs/pipeline_jobs/singularity/pipeline_job_no_compute.yml"
         pipeline_job = load_job(yaml_path)

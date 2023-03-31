@@ -3066,7 +3066,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         assert_job_cancel(pipeline_job, client)
 
-
     def test_pipeline_singularity_strong_type_submission(self, client: MLClient, mock_singularity_arm_id: str):
         component_yaml = "./tests/test_configs/components/helloworld_component_singularity.yml"
         component_func = load_component(component_yaml)
