@@ -75,7 +75,6 @@ async def main():
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import DocumentModelAdministrationClient
         from azure.ai.formrecognizer import (
-            DocumentModelAdministrationClient,
             ClassifierDocumentTypeDetails,
             AzureBlobContentSource
         )
@@ -105,7 +104,7 @@ async def main():
                 },
             )
             classifier = await poller.result()
-            classifier_id = classifier.model_id
+            classifier_id = classifier.classifier_id
 
     await classify_document_async(classifier_id)
 
