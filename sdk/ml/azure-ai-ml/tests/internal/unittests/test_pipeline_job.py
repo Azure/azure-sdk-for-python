@@ -278,6 +278,8 @@ class TestPipelineJob:
             regions=["eastus2euap"],  # runsettings.target_selector.regions
             my_resource_only=True,  # runsettings.target_selector.my_resource_only
             allow_spot_vm=True,  # runsettings.target_selector.allow_spot_vm
+            vc_block_list=["vc1", "vc2"],  # runsettings.target_selector.vc_block_list
+            cluster_block_list=["cluster1", "cluster2"],  # runsettings.target_selector.cluster_block_list
         )
         node.resources.properties["target_selector"] = ts
 
@@ -289,6 +291,8 @@ class TestPipelineJob:
                 "regions": ["eastus2euap"],
                 "my_resource_only": True,
                 "allow_spot_vm": True,
+                "vc_block_list": ["vc1", "vc2"],
+                "cluster_block_list": ["cluster1", "cluster2"],
             }
         }
 

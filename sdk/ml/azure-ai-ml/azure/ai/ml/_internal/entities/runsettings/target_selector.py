@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from ....entities._job.job_resource_configuration import BaseProperty
 
@@ -17,6 +17,8 @@ class TargetSelector(BaseProperty):
         regions: Optional[List[str]] = None,
         my_resource_only: Optional[bool] = None,
         allow_spot_vm: Optional[bool] = None,
+        vc_block_list: Union[List[str], str, None] = None,
+        cluster_block_list: Union[List[str], str, None] = None,
         **kwargs,
     ):
         """
@@ -38,6 +40,12 @@ class TargetSelector(BaseProperty):
         :param allow_spot_vm: Flag to enable target selector service to send job to low priority VM.
         Currently it only works for ITP.
         :type allow_spot_vm: bool
+        :param vc_block_list: List of vc names that job could not use. If no vc_block_list is
+        specified, all vcs are allowed. Example value: ["vc1", "vc2"].
+        :type vc_block_list: List[str]
+        :param cluster_block_list: List of cluster names that job could not use. If no
+        cluster_block_list is specified, all clusters are allowed. Example value: ["cluster1",
+        "cluster2"].
         """
         super().__init__(**kwargs)
         self.compute_type = compute_type
@@ -45,3 +53,5 @@ class TargetSelector(BaseProperty):
         self.regions = regions
         self.my_resource_only = my_resource_only
         self.allow_spot_vm = allow_spot_vm
+        self.vc_block_list = vc_block_list
+        self.cluster_block_list = cluster_block_list
