@@ -46,7 +46,7 @@ def init_new_service(package_name, folder_name, is_typespec = False):
             if not ci.exists():
                 with open("ci_template.yml", "r") as file_in:
                     content = file_in.readlines()
-                name = package_name.replace("azure-", "").replace("mgmt-", "")
+                name = Path(folder_name).parts[-1]
                 content = [line.replace("MyService", name) for line in content]
                 with open(str(ci), "w") as file_out:
                     file_out.writelines(content)
