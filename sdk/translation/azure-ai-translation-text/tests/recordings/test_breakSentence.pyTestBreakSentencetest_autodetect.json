@@ -18,10 +18,10 @@
         "Access-Control-Expose-Headers": "X-RequestId",
         "Content-Length": "67",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 28 Mar 2023 16:25:28 GMT",
+        "Date": "Fri, 31 Mar 2023 16:00:36 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "X-RequestId": "BKST.MW1P.99BD.0328T1625.92EA2CF"
+        "X-RequestId": "BKST.MW1P.99BF.0331T1600.6E49DA5"
       },
       "ResponseBody": "[{\u0022detectedLanguage\u0022:{\u0022language\u0022:\u0022en\u0022,\u0022score\u0022:1.0},\u0022sentLen\u0022:[11]}]"
     }

@@ -21,12 +21,12 @@
         ],
         "Content-Length": "164",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 28 Mar 2023 16:25:31 GMT",
+        "Date": "Fri, 31 Mar 2023 16:00:42 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Metered-Usage": "110",
         "X-MT-System": "Microsoft",
-        "X-RequestId": "TRAN.MW1P.99BD.0328T1625.92EA95B"
+        "X-RequestId": "TRAN.MW1P.99BF.0331T1600.6E4A42D"
       },
       "ResponseBody": "[{\u0022translations\u0022:[{\u0022text\u0022:\u0022La palabra \u003C mstrans:dictionary translation =\\\u0022wordomatic\\\u0022\u003Ewordomatic\u003C/mstrans:dictionary\u003E es una entrada de diccionario.\u0022,\u0022to\u0022:\u0022es\u0022}]}]"
     }

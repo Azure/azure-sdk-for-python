@@ -16,16 +16,16 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Access-Control-Expose-Headers": "X-RequestId,X-Metered-Usage",
-        "apim-request-id": "87f91588-4ef7-48c0-8bfa-9eb95d9a128e",
+        "apim-request-id": "bb154370-e9e5-47c6-b46b-2035ebf94154",
         "Content-Length": "117",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 28 Mar 2023 16:25:33 GMT",
+        "Date": "Fri, 31 Mar 2023 16:00:44 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "X-Metered-Usage": "25",
         "x-ms-region": "West US 2",
         "X-MT-System": "Microsoft",
-        "X-RequestId": "TRAN.MW1P.99BE.0328T1625.913F961"
+        "X-RequestId": "TRAN.MW1P.99BE.0331T1600.70E36FE"
       },
       "ResponseBody": "[{\u0022detectedLanguage\u0022:{\u0022language\u0022:\u0022en\u0022,\u0022score\u0022:1.0},\u0022translations\u0022:[{\u0022text\u0022:\u0022C\u2019est une belle matin\u00E9e\u0022,\u0022to\u0022:\u0022fr\u0022}]}]"
     }
