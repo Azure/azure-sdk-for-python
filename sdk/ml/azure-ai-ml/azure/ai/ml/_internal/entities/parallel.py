@@ -27,6 +27,8 @@ class Parallel(Command):
         self._partition_keys = kwargs.pop("partition_keys", None)
         self._logging_level = kwargs.pop("logging_level", None)
         self._retry_settings = kwargs.pop("retry_settings", BatchRetrySettings())
+        self._partition_keys = kwargs.pop("partition_keys", None)
+        self._version = kwargs.pop("version", None)
         self._init = False
 
     @property
@@ -80,6 +82,24 @@ class Parallel(Command):
     def retry_settings(self, value: BatchRetrySettings):
         self._retry_settings = value
 
+    @property
+    def partition_keys(self) -> List[str]:
+        """The partition keys for the dataset."""
+        return self._partition_keys
+
+    @partition_keys.setter
+    def partition_keys(self, value: List[str]):
+        self._partition_keys = value
+
+    @property
+    def version(self) -> str:
+        """The version of the component."""
+        return self._version
+
+    @version.setter
+    def version(self, value: str):
+        self._version = value
+
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return Command._picked_fields_from_dict_to_rest_object() + [
@@ -88,6 +108,8 @@ class Parallel(Command):
             "logging_level",
             "retry_settings",
             "mini_batch_size",
+            "partition_keys",
+            "version",
         ]
 
     @classmethod

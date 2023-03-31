@@ -42,3 +42,4 @@ class ParallelSchema(InternalBaseNodeSchema, ParameterizedParallelSchema):
     compute = fields.Str()
     environment = fields.Str()
     limits = NestedField(CommandJobLimitsSchema)
+    version = fields.Str()

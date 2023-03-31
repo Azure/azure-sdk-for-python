@@ -70,7 +70,8 @@ PARAMETERS_TO_TEST = [
             "logging_level": "DEBUG",  # runsettings.parallel.logging_level
             "retry_settings.timeout": 300,  # runsettings.parallel.run_invocation_timeout
             "retry_settings.max_retries": 2,  # runsettings.parallel.run_max_try
-            # runsettings.parallel.partition_keys/version are not exposed
+            "partition_keys": ["foo", "bar"],  # runsettings.parallel.partition_keys
+            "version": "2",  # runsettings.parallel.version
         },
         {
             "default_compute": "cpu-cluster",

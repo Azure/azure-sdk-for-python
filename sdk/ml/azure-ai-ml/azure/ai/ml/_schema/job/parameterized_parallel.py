@@ -4,15 +4,13 @@
 
 from marshmallow import INCLUDE, fields
 
-from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
-from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.core.fields import DumpableEnumField, NestedField
-from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.job.input_output_entry import InputLiteralValueSchema
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
-from azure.ai.ml.constants._common import LoggingLevel
-
-from ..core.fields import UnionField
+from ...constants._common import LoggingLevel
+from ..component.parallel_task import ComponentParallelTaskSchema
+from ..component.retry_settings import RetrySettingsSchema
+from ..core.fields import DumpableEnumField, NestedField, UnionField
+from ..core.schema import PathAwareSchema
+from ..job.input_output_entry import InputLiteralValueSchema
+from ..job_resource_configuration import JobResourceConfigurationSchema
 
 
 class ParameterizedParallelSchema(PathAwareSchema):
@@ -63,6 +61,7 @@ class ParameterizedParallelSchema(PathAwareSchema):
             )
         },
     )
+    # is this attribute available in ParallelComponent?
     environment_variables = UnionField(
         [
             fields.Dict(keys=fields.Str(), values=fields.Str()),
