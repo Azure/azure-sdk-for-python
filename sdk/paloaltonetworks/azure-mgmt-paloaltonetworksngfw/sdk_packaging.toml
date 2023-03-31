@@ -1,0 +1,11 @@
+[packaging]
+package_name = "azure-mgmt-paloaltonetworksngfw"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Paloaltonetworksngfw Management"
+package_doc_id = ""
+is_stable = false
+is_arm = true
+need_msrestazure = false
+need_azuremgmtcore = true
+sample_link = ""
+title = "PaloAltoNetworksNgfwMgmtClient"
