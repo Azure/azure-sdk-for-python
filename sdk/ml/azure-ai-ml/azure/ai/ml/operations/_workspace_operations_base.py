@@ -9,7 +9,8 @@ from typing import Callable, Dict, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+#from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
@@ -57,7 +58,7 @@ class WorkspaceOperationsBase:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient042023Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -507,6 +508,8 @@ class WorkspaceOperationsBase:
         else:
             managed_network = ManagedNetwork(IsolationMode.DISABLED)._to_rest_object()
         _set_val(param["managedNetwork"], managed_network)
+        if workspace.enable_data_isolation:
+            _set_val(param["enableDataIsolation"], "true")
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

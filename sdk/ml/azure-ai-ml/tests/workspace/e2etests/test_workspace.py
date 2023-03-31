@@ -46,6 +46,7 @@ class TestWorkspace(AzureRecordedTestCase):
             {"location": location},
             {"description": wps_description},
             {"display_name": wps_display_name},
+            {"enable_data_isolation": True},
         ]
 
         # only test simple aspects of both a pointer and path-loaded workspace
@@ -60,6 +61,7 @@ class TestWorkspace(AzureRecordedTestCase):
             assert workspace.description == wps_description
             assert workspace.display_name == wps_display_name
             assert workspace.public_network_access == PublicNetworkAccess.ENABLED
+            # assert workspace.enable_data_isolation == True # only visible for Microsoft internal Tenants now
 
         workspace = verify_entity_load_and_dump(
             load_workspace,

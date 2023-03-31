@@ -22,6 +22,8 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -40,6 +42,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -55,6 +58,8 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -69,6 +74,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         """
         super(WorkspaceConnectionPropertiesV2, self).__init__(**kwargs)
         self.auth_type = None  # type: Optional[str]
+        self.expiry_time = kwargs.get('expiry_time', None)
         self.category = kwargs.get('category', None)
         self.target = kwargs.get('target', None)
         self.value = kwargs.get('value', None)
@@ -84,6 +90,8 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -104,6 +112,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -116,6 +125,8 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -7449,9 +7460,9 @@ class ComputeStartStopSchedule(msrest.serialization.Model):
      "Recurrence", "Cron".
     :vartype trigger_type: str or ~azure.mgmt.machinelearningservices.models.TriggerType
     :ivar recurrence: Required if triggerType is Recurrence.
-    :vartype recurrence: ~azure.mgmt.machinelearningservices.models.RecurrenceTrigger
+    :vartype recurrence: ~azure.mgmt.machinelearningservices.models.Recurrence
     :ivar cron: Required if triggerType is Cron.
-    :vartype cron: ~azure.mgmt.machinelearningservices.models.CronTrigger
+    :vartype cron: ~azure.mgmt.machinelearningservices.models.Cron
     :ivar schedule: [Deprecated] Not used any more.
     :vartype schedule: ~azure.mgmt.machinelearningservices.models.ScheduleBase
     """
@@ -7467,8 +7478,8 @@ class ComputeStartStopSchedule(msrest.serialization.Model):
         'status': {'key': 'status', 'type': 'str'},
         'action': {'key': 'action', 'type': 'str'},
         'trigger_type': {'key': 'triggerType', 'type': 'str'},
-        'recurrence': {'key': 'recurrence', 'type': 'RecurrenceTrigger'},
-        'cron': {'key': 'cron', 'type': 'CronTrigger'},
+        'recurrence': {'key': 'recurrence', 'type': 'Recurrence'},
+        'cron': {'key': 'cron', 'type': 'Cron'},
         'schedule': {'key': 'schedule', 'type': 'ScheduleBase'},
     }
 
@@ -7486,9 +7497,9 @@ class ComputeStartStopSchedule(msrest.serialization.Model):
          "Recurrence", "Cron".
         :paramtype trigger_type: str or ~azure.mgmt.machinelearningservices.models.TriggerType
         :keyword recurrence: Required if triggerType is Recurrence.
-        :paramtype recurrence: ~azure.mgmt.machinelearningservices.models.RecurrenceTrigger
+        :paramtype recurrence: ~azure.mgmt.machinelearningservices.models.Recurrence
         :keyword cron: Required if triggerType is Cron.
-        :paramtype cron: ~azure.mgmt.machinelearningservices.models.CronTrigger
+        :paramtype cron: ~azure.mgmt.machinelearningservices.models.Cron
         :keyword schedule: [Deprecated] Not used any more.
         :paramtype schedule: ~azure.mgmt.machinelearningservices.models.ScheduleBase
         """
@@ -7670,6 +7681,47 @@ class CreateMonitorAction(ScheduleActionBase):
         super(CreateMonitorAction, self).__init__(**kwargs)
         self.action_type = 'CreateMonitor'  # type: str
         self.monitor_definition = kwargs['monitor_definition']
+
+
+class Cron(msrest.serialization.Model):
+    """The workflow trigger cron for ComputeStartStop schedule type.
+
+    :ivar start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+    :vartype start_time: str
+    :ivar time_zone: Specifies time zone in which the schedule runs.
+     TimeZone should follow Windows time zone format. Refer:
+     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+    :vartype time_zone: str
+    :ivar expression: [Required] Specifies cron expression of schedule.
+     The expression should follow NCronTab format.
+    :vartype expression: str
+    """
+
+    _attribute_map = {
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'expression': {'key': 'expression', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+        :paramtype start_time: str
+        :keyword time_zone: Specifies time zone in which the schedule runs.
+         TimeZone should follow Windows time zone format. Refer:
+         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+        :paramtype time_zone: str
+        :keyword expression: [Required] Specifies cron expression of schedule.
+         The expression should follow NCronTab format.
+        :paramtype expression: str
+        """
+        super(Cron, self).__init__(**kwargs)
+        self.start_time = kwargs.get('start_time', None)
+        self.time_zone = kwargs.get('time_zone', "UTC")
+        self.expression = kwargs.get('expression', None)
 
 
 class TriggerBase(msrest.serialization.Model):
@@ -17915,6 +17967,8 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -17936,6 +17990,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -17948,6 +18003,8 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -19748,6 +19805,8 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -19766,6 +19825,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -19777,6 +19837,8 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -21442,6 +21504,8 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -21463,6 +21527,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -21475,6 +21540,8 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -22475,6 +22542,59 @@ class Ray(DistributionConfiguration):
         self.worker_node_additional_args = kwargs.get('worker_node_additional_args', None)
 
 
+class Recurrence(msrest.serialization.Model):
+    """The workflow trigger recurrence for ComputeStartStop schedule type.
+
+    :ivar frequency: [Required] The frequency to trigger schedule. Possible values include:
+     "Minute", "Hour", "Day", "Week", "Month".
+    :vartype frequency: str or ~azure.mgmt.machinelearningservices.models.RecurrenceFrequency
+    :ivar interval: [Required] Specifies schedule interval in conjunction with frequency.
+    :vartype interval: int
+    :ivar start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+    :vartype start_time: str
+    :ivar time_zone: Specifies time zone in which the schedule runs.
+     TimeZone should follow Windows time zone format. Refer:
+     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+    :vartype time_zone: str
+    :ivar schedule: [Required] The recurrence schedule.
+    :vartype schedule: ~azure.mgmt.machinelearningservices.models.RecurrenceSchedule
+    """
+
+    _attribute_map = {
+        'frequency': {'key': 'frequency', 'type': 'str'},
+        'interval': {'key': 'interval', 'type': 'int'},
+        'start_time': {'key': 'startTime', 'type': 'str'},
+        'time_zone': {'key': 'timeZone', 'type': 'str'},
+        'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword frequency: [Required] The frequency to trigger schedule. Possible values include:
+         "Minute", "Hour", "Day", "Week", "Month".
+        :paramtype frequency: str or ~azure.mgmt.machinelearningservices.models.RecurrenceFrequency
+        :keyword interval: [Required] Specifies schedule interval in conjunction with frequency.
+        :paramtype interval: int
+        :keyword start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
+        :paramtype start_time: str
+        :keyword time_zone: Specifies time zone in which the schedule runs.
+         TimeZone should follow Windows time zone format. Refer:
+         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
+        :paramtype time_zone: str
+        :keyword schedule: [Required] The recurrence schedule.
+        :paramtype schedule: ~azure.mgmt.machinelearningservices.models.RecurrenceSchedule
+        """
+        super(Recurrence, self).__init__(**kwargs)
+        self.frequency = kwargs.get('frequency', None)
+        self.interval = kwargs.get('interval', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.time_zone = kwargs.get('time_zone', "UTC")
+        self.schedule = kwargs.get('schedule', None)
+
+
 class RecurrenceSchedule(msrest.serialization.Model):
     """RecurrenceSchedule.
 
@@ -23401,6 +23521,8 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -23422,6 +23544,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -23434,6 +23557,8 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -23965,6 +24090,8 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -23986,6 +24113,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -23998,6 +24126,8 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -27537,6 +27667,8 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
      server. Possible values include: "PAT", "ManagedIdentity", "UsernamePassword", "None", "SAS",
      "ServicePrincipal", "AccessKey".
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
+    :ivar expiry_time:
+    :vartype expiry_time: str
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
      "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -27558,6 +27690,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
 
     _attribute_map = {
         'auth_type': {'key': 'authType', 'type': 'str'},
+        'expiry_time': {'key': 'expiryTime', 'type': 'str'},
         'category': {'key': 'category', 'type': 'str'},
         'target': {'key': 'target', 'type': 'str'},
         'value': {'key': 'value', 'type': 'str'},
@@ -27570,6 +27703,8 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         **kwargs
     ):
         """
+        :keyword expiry_time:
+        :paramtype expiry_time: str
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
          "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
@@ -28201,6 +28336,9 @@ class Workspace(Resource):
      ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
     :ivar soft_delete_retention_in_days: Retention time in days after workspace get soft deleted.
     :vartype soft_delete_retention_in_days: int
+    :ivar enable_data_isolation: A flag to determine if workspace has data isolation enabled. The
+     flag can only be set at the creation phase, it can't be updated.
+    :vartype enable_data_isolation: bool
     """
 
     _validation = {
@@ -28261,6 +28399,7 @@ class Workspace(Resource):
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
         'soft_delete_retention_in_days': {'key': 'properties.softDeleteRetentionInDays', 'type': 'int'},
+        'enable_data_isolation': {'key': 'properties.enableDataIsolation', 'type': 'bool'},
     }
 
     def __init__(
@@ -28332,6 +28471,9 @@ class Workspace(Resource):
         :keyword soft_delete_retention_in_days: Retention time in days after workspace get soft
          deleted.
         :paramtype soft_delete_retention_in_days: int
+        :keyword enable_data_isolation: A flag to determine if workspace has data isolation enabled.
+         The flag can only be set at the creation phase, it can't be updated.
+        :paramtype enable_data_isolation: bool
         """
         super(Workspace, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
@@ -28369,6 +28511,7 @@ class Workspace(Resource):
         self.system_datastores_auth_mode = kwargs.get('system_datastores_auth_mode', None)
         self.feature_store_settings = kwargs.get('feature_store_settings', None)
         self.soft_delete_retention_in_days = kwargs.get('soft_delete_retention_in_days', None)
+        self.enable_data_isolation = kwargs.get('enable_data_isolation', False)
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
