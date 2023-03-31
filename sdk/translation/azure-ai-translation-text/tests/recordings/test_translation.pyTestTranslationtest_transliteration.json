@@ -21,12 +21,12 @@
         ],
         "Content-Length": "179",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 16:00:42 GMT",
+        "Date": "Fri, 31 Mar 2023 23:29:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Metered-Usage": "15",
         "X-MT-System": "Microsoft",
-        "X-RequestId": "TRAN.MW1P.99BF.0331T1600.6E4A476"
+        "X-RequestId": "TRAN.MW1P.9A67.0331T2329.76643B3"
       },
       "ResponseBody": "[{\u0022sourceText\u0022:{\u0022text\u0022:\u0022\u0647\u0630\u0627 \u0627\u062E\u062A\u0628\u0627\u0631.\u0022},\u0022translations\u0022:[{\u0022text\u0022:\u0022\u8FD9\u662F\u4E2A\u6D4B\u8BD5\u3002\u0022,\u0022transliteration\u0022:{\u0022text\u0022:\u0022zh\u00E8 sh\u00ECg\u00E8 c\u00E8sh\u00EC\u3002\u0022,\u0022script\u0022:\u0022Latn\u0022},\u0022to\u0022:\u0022zh-Hans\u0022}]}]"
     }

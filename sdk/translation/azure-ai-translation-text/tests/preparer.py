@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import os
 import functools
 from devtools_testutils import EnvironmentVariableLoader
 

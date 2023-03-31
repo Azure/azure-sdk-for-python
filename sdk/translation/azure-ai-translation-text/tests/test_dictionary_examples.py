@@ -5,15 +5,16 @@
 
 from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, PowerShellPreparer
 from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
-from azure.ai.translation.text.models import InputTextItem
+from azure.ai.translation.text.models import DictionaryExampleTextItem
 from tests.preparer import TextTranslationPreparer
 from tests.testcase import TextTranslationTest
-    
-class TestDictionaryLookup(TextTranslationTest):
+
+
+class TestDictionaryExamples(TextTranslationTest):
 
     @TextTranslationPreparer()
     @recorded_by_proxy
-    def test_single_input_element(self, **kwargs):      
+    def test_single_input_element(self, **kwargs):
         endpoint = kwargs.get("text_translation_endpoint")
         apikey = kwargs.get("text_translation_apikey")
         region = kwargs.get("text_translation_region")
@@ -21,16 +22,20 @@ class TestDictionaryLookup(TextTranslationTest):
 
         source_language = "en"
         target_language = "es"
-        input_text_elements = [ InputTextItem(text = "fly") ]
+        input_text_elements = [DictionaryExampleTextItem(
+            text="fly", translation="volar")]
 
-        response = client.lookup_dictionary_entries(content = input_text_elements, from_parameter = source_language, to = target_language)
+        response = client.lookup_dictionary_examples(
+            content=input_text_elements,
+            from_parameter=source_language,
+            to=target_language)
         assert response is not None
         assert response[0].normalized_source == "fly"
-        assert response[0].display_source == "fly"
+        assert response[0].normalized_target == "volar"
 
     @TextTranslationPreparer()
     @recorded_by_proxy
-    def test_multiple_input_elements(self, **kwargs):      
+    def test_multiple_input_elements(self, **kwargs):
         endpoint = kwargs.get("text_translation_endpoint")
         apikey = kwargs.get("text_translation_apikey")
         region = kwargs.get("text_translation_region")
@@ -38,12 +43,17 @@ class TestDictionaryLookup(TextTranslationTest):
 
         source_language = "en"
         target_language = "es"
-        input_text_elements = [ InputTextItem(text = "fly"), InputTextItem(text = "fox") ]
+        input_text_elements = [DictionaryExampleTextItem(
+            text="fly", translation="volar"),
+            DictionaryExampleTextItem(text="beef", translation="came")]
 
-        response = client.lookup_dictionary_entries(content = input_text_elements, from_parameter = source_language, to = target_language)
+        response = client.lookup_dictionary_examples(
+            content=input_text_elements,
+            from_parameter=source_language,
+            to=target_language)
         assert response is not None
         assert len(response) == 2
         assert response[0].normalized_source == "fly"
-        assert response[0].display_source == "fly"
-        assert response[1].normalized_source == "fox"
-        assert response[1].display_source == "fox"
+        assert response[0].normalized_target == "volar"
+        assert response[1].normalized_source == "beef"
+        assert response[1].normalized_target == "came"

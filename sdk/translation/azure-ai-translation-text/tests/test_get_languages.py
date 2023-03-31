@@ -6,7 +6,8 @@
 from devtools_testutils import recorded_by_proxy
 from tests.preparer import TextTranslationPreparer
 from tests.testcase import TextTranslationTest
-    
+
+
 class TestGetLanguages(TextTranslationTest):
 
     @TextTranslationPreparer()
@@ -28,7 +29,7 @@ class TestGetLanguages(TextTranslationTest):
         response = client.get_languages(scope="translation")
 
         assert len(response.translation) > 0
-        translations = response.translation["af"]        
+        translations = response.translation["af"]
         assert translations.dir is not None
         assert translations.name is not None
         assert translations.native_name is not None
@@ -67,7 +68,7 @@ class TestGetLanguages(TextTranslationTest):
         response = client.get_languages(scope="transliteration")
 
         assert len(response.transliteration) > 0
-        transliterations = response.transliteration["zh-Hant"]        
+        transliterations = response.transliteration["zh-Hant"]
         assert transliterations.name is not None
         assert transliterations.native_name is not None
         assert transliterations.scripts is not None
@@ -84,7 +85,7 @@ class TestGetLanguages(TextTranslationTest):
         response = client.get_languages(scope="dictionary")
 
         assert len(response.dictionary) > 0
-        dictionaries = response.dictionary["de"]        
+        dictionaries = response.dictionary["de"]
         assert dictionaries.name is not None
         assert dictionaries.native_name is not None
 
@@ -102,7 +103,7 @@ class TestGetLanguages(TextTranslationTest):
         response = client.get_languages(scope="dictionary")
 
         assert len(response.dictionary) > 0
-        dictionaries = response.dictionary["en"]        
+        dictionaries = response.dictionary["en"]
         assert dictionaries.name is not None
         assert dictionaries.native_name is not None
 
@@ -125,4 +126,4 @@ class TestGetLanguages(TextTranslationTest):
         translations = response.translation["en"]
         assert translations.dir is not None
         assert translations.name is not None
-        assert translations.native_name is not None 
+        assert translations.native_name is not None
