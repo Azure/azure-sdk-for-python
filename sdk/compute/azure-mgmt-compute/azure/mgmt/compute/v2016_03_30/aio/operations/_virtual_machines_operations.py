@@ -77,7 +77,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get_extensions(
-        self, resource_group_name: str, vm_name: str, expand: Optional[str] = None, **kwargs: Any
+        self, resource_group_name: str, vm_name: str, *, expand: Optional[str] = None, **kwargs: Any
     ) -> _models.VirtualMachineExtensionsListResult:
         """The operation to get all extensions of a Virtual Machine.
 
@@ -85,8 +85,8 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine containing the extension. Required.
         :type vm_name: str
-        :param expand: The expand expression to apply on the operation. Default value is None.
-        :type expand: str
+        :keyword expand: The expand expression to apply on the operation. Default value is None.
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualMachineExtensionsListResult or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2016_03_30.models.VirtualMachineExtensionsListResult
@@ -103,7 +103,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.VirtualMachineExtensionsListResult] = kwargs.pop("cls", None)
 
         request = build_get_extensions_request(
@@ -119,8 +119,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -158,7 +159,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.VirtualMachineCaptureResult]] = kwargs.pop("cls", None)
 
@@ -185,8 +186,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -320,7 +322,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineCaptureResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -382,7 +384,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
 
@@ -409,8 +411,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -539,7 +542,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -598,7 +601,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[Optional[_models.OperationStatusResponse]] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -613,8 +616,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -663,7 +667,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.OperationStatusResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -707,7 +711,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, vm_name: str, expand: Literal["instanceView"] = "instanceView", **kwargs: Any
+        self, resource_group_name: str, vm_name: str, *, expand: Literal["instanceView"] = "instanceView", **kwargs: Any
     ) -> _models.VirtualMachine:
         """Retrieves information about the model view or the instance view of a virtual machine.
 
@@ -715,9 +719,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vm_name: The name of the virtual machine. Required.
         :type vm_name: str
-        :param expand: The expand expression to apply on the operation. Known values are "instanceView"
-         and None. Default value is "instanceView".
-        :type expand: str
+        :keyword expand: The expand expression to apply on the operation. Known values are
+         "instanceView" and None. Default value is "instanceView".
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualMachine or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2016_03_30.models.VirtualMachine
@@ -734,7 +738,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.VirtualMachine] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -750,8 +754,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -785,7 +790,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[Optional[_models.OperationStatusResponse]] = kwargs.pop("cls", None)
 
         request = build_deallocate_request(
@@ -800,8 +805,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -851,7 +857,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.OperationStatusResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -922,7 +928,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.OperationStatusResponse] = kwargs.pop("cls", None)
 
         request = build_generalize_request(
@@ -937,8 +943,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -974,7 +981,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1027,8 +1034,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1058,7 +1066,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.VirtualMachineListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1110,8 +1118,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1145,7 +1154,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.VirtualMachineSizeListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1199,8 +1208,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1230,7 +1240,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[Optional[_models.OperationStatusResponse]] = kwargs.pop("cls", None)
 
         request = build_power_off_request(
@@ -1245,8 +1255,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1296,7 +1307,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.OperationStatusResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1355,7 +1366,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[Optional[_models.OperationStatusResponse]] = kwargs.pop("cls", None)
 
         request = build_restart_request(
@@ -1370,8 +1381,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1420,7 +1432,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.OperationStatusResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1479,7 +1491,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[Optional[_models.OperationStatusResponse]] = kwargs.pop("cls", None)
 
         request = build_start_request(
@@ -1494,8 +1506,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1544,7 +1557,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.OperationStatusResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1603,7 +1616,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[Optional[_models.OperationStatusResponse]] = kwargs.pop("cls", None)
 
         request = build_redeploy_request(
@@ -1618,8 +1631,9 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1668,7 +1682,7 @@ class VirtualMachinesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-03-30"] = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-30"))
         cls: ClsType[_models.OperationStatusResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

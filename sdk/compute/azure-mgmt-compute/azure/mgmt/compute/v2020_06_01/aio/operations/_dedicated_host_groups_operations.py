@@ -161,7 +161,7 @@ class DedicatedHostGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DedicatedHostGroup] = kwargs.pop("cls", None)
 
@@ -188,8 +188,9 @@ class DedicatedHostGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -303,7 +304,7 @@ class DedicatedHostGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DedicatedHostGroup] = kwargs.pop("cls", None)
 
@@ -330,8 +331,9 @@ class DedicatedHostGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -377,7 +379,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -392,8 +394,9 @@ class DedicatedHostGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -414,6 +417,7 @@ class DedicatedHostGroupsOperations:
         self,
         resource_group_name: str,
         host_group_name: str,
+        *,
         expand: Literal["instanceView"] = "instanceView",
         **kwargs: Any
     ) -> _models.DedicatedHostGroup:
@@ -423,10 +427,10 @@ class DedicatedHostGroupsOperations:
         :type resource_group_name: str
         :param host_group_name: The name of the dedicated host group. Required.
         :type host_group_name: str
-        :param expand: The expand expression to apply on the operation. The response shows the list of
-         instance view of the dedicated hosts under the dedicated host group. Known values are
+        :keyword expand: The expand expression to apply on the operation. The response shows the list
+         of instance view of the dedicated hosts under the dedicated host group. Known values are
          "instanceView" and None. Default value is "instanceView".
-        :type expand: str
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DedicatedHostGroup or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2020_06_01.models.DedicatedHostGroup
@@ -443,7 +447,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
         cls: ClsType[_models.DedicatedHostGroup] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -459,8 +463,9 @@ class DedicatedHostGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -498,7 +503,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
         cls: ClsType[_models.DedicatedHostGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -551,8 +556,9 @@ class DedicatedHostGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -582,7 +588,7 @@ class DedicatedHostGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2020-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-06-01"))
         cls: ClsType[_models.DedicatedHostGroupListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -634,8 +640,9 @@ class DedicatedHostGroupsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

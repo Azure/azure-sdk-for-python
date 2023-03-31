@@ -1,5 +1,19 @@
 # Release History
 
+## 29.2.0 (2023-03-31)
+
+### Features Added
+
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter computer_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter hyper_v_generation
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_name
+  - Model VirtualMachineScaleSetVMInstanceView has a new parameter os_version
+
+### Breaking Changes
+
+  - Model VirtualMachineScaleSetIPConfiguration no longer has parameter id
+  - Model VirtualMachineScaleSetNetworkConfiguration no longer has parameter id
+
 ## 29.2.0b1 (2023-02-20)
 
 ### Features Added

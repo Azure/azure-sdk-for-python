@@ -49,7 +49,7 @@ def build_reimage_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -80,7 +80,7 @@ def build_reimage_all_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -106,7 +106,7 @@ def build_deallocate_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -133,7 +133,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -167,7 +167,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -200,7 +200,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -234,7 +234,7 @@ def build_get_instance_view_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -273,7 +273,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -317,7 +317,7 @@ def build_power_off_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -345,7 +345,7 @@ def build_restart_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -371,7 +371,7 @@ def build_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -397,7 +397,7 @@ def build_redeploy_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -423,7 +423,7 @@ def build_perform_maintenance_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -449,7 +449,7 @@ def build_simulate_eviction_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -476,7 +476,7 @@ def build_run_command_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json, text/json")
 
@@ -543,7 +543,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -574,8 +574,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -707,7 +708,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -765,7 +766,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_reimage_all_request(
@@ -781,8 +782,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -826,7 +828,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -881,7 +883,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_deallocate_request(
@@ -897,8 +899,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -943,7 +946,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1003,7 +1006,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSetVM] = kwargs.pop("cls", None)
 
@@ -1031,8 +1034,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1179,7 +1183,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualMachineScaleSetVM] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
@@ -1239,7 +1243,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -1255,8 +1259,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1299,7 +1304,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1346,6 +1351,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
+        *,
         expand: Literal["instanceView"] = "instanceView",
         **kwargs: Any
     ) -> _models.VirtualMachineScaleSetVM:
@@ -1357,9 +1363,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param expand: The expand expression to apply on the operation. Known values are "instanceView"
-         and None. Default value is "instanceView".
-        :type expand: str
+        :keyword expand: The expand expression to apply on the operation. Known values are
+         "instanceView" and None. Default value is "instanceView".
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: VirtualMachineScaleSetVM or the result of cls(response)
         :rtype: ~azure.mgmt.compute.v2019_12_01.models.VirtualMachineScaleSetVM
@@ -1376,7 +1382,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVM] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -1393,8 +1399,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1442,7 +1449,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVMInstanceView] = kwargs.pop("cls", None)
 
         request = build_get_instance_view_request(
@@ -1458,8 +1465,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1484,6 +1492,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         self,
         resource_group_name: str,
         virtual_machine_scale_set_name: str,
+        *,
         filter: Optional[str] = None,
         select: Optional[str] = None,
         expand: Optional[str] = None,
@@ -1495,16 +1504,16 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :type resource_group_name: str
         :param virtual_machine_scale_set_name: The name of the VM scale set. Required.
         :type virtual_machine_scale_set_name: str
-        :param filter: The filter to apply to the operation. Allowed values are
+        :keyword filter: The filter to apply to the operation. Allowed values are
          'startswith(instanceView/statuses/code, 'PowerState') eq true', 'properties/latestModelApplied
          eq true', 'properties/latestModelApplied eq false'. Default value is None.
-        :type filter: str
-        :param select: The list parameters. Allowed values are 'instanceView', 'instanceView/statuses'.
-         Default value is None.
-        :type select: str
-        :param expand: The expand expression to apply to the operation. Allowed values are
+        :paramtype filter: str
+        :keyword select: The list parameters. Allowed values are 'instanceView',
+         'instanceView/statuses'. Default value is None.
+        :paramtype select: str
+        :keyword expand: The expand expression to apply to the operation. Allowed values are
          'instanceView'. Default value is None.
-        :type expand: str
+        :paramtype expand: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either VirtualMachineScaleSetVM or the result of
          cls(response)
@@ -1515,7 +1524,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[_models.VirtualMachineScaleSetVMListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1572,8 +1581,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1594,6 +1604,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
+        *,
         skip_shutdown: bool = False,
         **kwargs: Any
     ) -> None:
@@ -1608,7 +1619,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_power_off_request(
@@ -1625,8 +1636,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1648,6 +1660,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         resource_group_name: str,
         vm_scale_set_name: str,
         instance_id: str,
+        *,
         skip_shutdown: bool = False,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -1661,10 +1674,10 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         :type vm_scale_set_name: str
         :param instance_id: The instance ID of the virtual machine. Required.
         :type instance_id: str
-        :param skip_shutdown: The parameter to request non-graceful VM shutdown. True value for this
+        :keyword skip_shutdown: The parameter to request non-graceful VM shutdown. True value for this
          flag indicates non-graceful shutdown whereas false indicates otherwise. Default value for this
          flag is false if not specified. Default value is False.
-        :type skip_shutdown: bool
+        :paramtype skip_shutdown: bool
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -1680,7 +1693,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1736,7 +1749,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_restart_request(
@@ -1752,8 +1765,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1796,7 +1810,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1851,7 +1865,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_start_request(
@@ -1867,8 +1881,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1911,7 +1926,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1966,7 +1981,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_redeploy_request(
@@ -1982,8 +1997,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2027,7 +2043,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2082,7 +2098,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_perform_maintenance_request(
@@ -2098,8 +2114,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2143,7 +2160,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2213,7 +2230,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_simulate_eviction_request(
@@ -2229,8 +2246,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2265,7 +2283,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[Optional[_models.RunCommandResult]] = kwargs.pop("cls", None)
 
@@ -2293,8 +2311,9 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2431,7 +2450,7 @@ class VirtualMachineScaleSetVMsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2019-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2019-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RunCommandResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
