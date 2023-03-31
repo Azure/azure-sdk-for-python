@@ -1,12 +1,10 @@
 # Release History
 
-## 1.3.3 (Unreleased)
+## 1.4.0 (Unreleased)
 
-### Features Added
+### Features
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added AuxiliaryAuthenticationPolicy
 
 ### Other Changes
 
