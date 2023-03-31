@@ -35,7 +35,7 @@ have less requirements.
 
 Once the PR is merged, move to the next step.
 
-Step 2: Trigger a release 
+# Step 2: Trigger a release 
 
 A release here is the same as usual, triggering the release pipeline of you SDK. More instruction can be found at: https://aka.ms/azsdk/release-checklist
 
