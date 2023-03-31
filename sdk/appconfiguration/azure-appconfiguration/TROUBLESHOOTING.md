@@ -53,7 +53,7 @@ except ClientAuthenticationError as ex:
 
 ### CredentialUnavailableError
 
-The `CredentialUnavailableError` is a special error type derived from `ClientAuthenticationError`. This error type is used to indicate that the credential can't authenticate in the current environment, due to lack of required configuration or setup. This error is also used as a signal to chained credential types, such as `DefaultAzureCredential` and `ChainedTokenCredential`, that the chained credential should continue to try other credential types later in the chain.
+The `CredentialUnavailableError` is a specific error type derived from `ClientAuthenticationError`. This error type is used to indicate that the credential can't authenticate in the current environment, due to missing required configuration or setup. This error is also used as an indication for chained credential types, such as `DefaultAzureCredential` and `ChainedTokenCredential`, that the chained credential should continue to attempt other credential types later in the chain.
 
 ### Permission issues
 
