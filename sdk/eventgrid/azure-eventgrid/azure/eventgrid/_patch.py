@@ -29,11 +29,10 @@ def _cloud_event_to_generated(cloud_event, **kwargs):
         source=cloud_event.source,
         type=cloud_event.type,
         specversion=cloud_event.specversion,
-        # data_base64=data_base64,
-        # time=cloud_event.time,
-        # dataschema=cloud_event.dataschema,
-        # datacontenttype=cloud_event.datacontenttype,
-        # subject=cloud_event.subject,
+        time=cloud_event.time,
+        dataschema=cloud_event.dataschema,
+        datacontenttype=cloud_event.datacontenttype,
+        subject=cloud_event.subject,
         **data_kwargs,
         **kwargs
     )
@@ -84,13 +83,13 @@ class AzureMessagingEventGridClient(ServiceClientGenerated):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             internal_body = _cloud_event_to_generated(body)
             # if None 
-            self.publish_cloud_event(topic_name, internal_body, **kwargs)
+            self._publish_cloud_event(topic_name, internal_body, **kwargs)
         else:
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
             internal_body_list = []
             for item in body:
                 internal_body_list.append(_cloud_event_to_generated(item))
-            self.publish_batch_of_cloud_events(topic_name, internal_body_list, **kwargs)
+            self._publish_batch_of_cloud_events(topic_name, internal_body_list, **kwargs)
     
     @distributed_trace
     def receive(
@@ -105,7 +104,7 @@ class AzureMessagingEventGridClient(ServiceClientGenerated):
         """Receive Cloud Events from namespace topic."""
 
         deserialized_response = []
-        received_response = self.receive_batch_of_cloud_events(topic_name, event_subscription_name, max_events=max_events, timeout=timeout, **kwargs)
+        received_response = self._receive_batch_of_cloud_events(topic_name, event_subscription_name, max_events=max_events, timeout=timeout, **kwargs)
         for detail_item in received_response.get("value"):
             deserialized_cloud_event = CloudEvent.from_dict(detail_item.get("event"))
             detail_item["event"] = deserialized_cloud_event
