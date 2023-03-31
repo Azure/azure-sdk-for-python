@@ -222,7 +222,7 @@ class TestPipelineJob:
         pipeline_job = pipeline_func()
         rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
         assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
-            "data_any_file": {"mode": "ReadWriteMount"}
+            "data_any_file": {"mode": "ReadWriteMount", "job_output_type": "uri_file"}
         }
 
     def test_internal_component_output_as_pipeline_component_output(self):

@@ -307,7 +307,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
 
-    @pytest.mark.skip("TODO(2320232): enable when backend support")
     def test_internal_component_node_output_type(self, client):
         from azure.ai.ml._utils.utils import try_enable_internal_components
 
@@ -324,5 +323,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         pipeline_job = pipeline_func()
         rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {"output": {"mode": "ReadWriteMount"}}
+        assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
+            "output": {"job_output_type": "uri_file", "mode": "ReadWriteMount"}
+        }
         assert_job_cancel(pipeline_job, client)
