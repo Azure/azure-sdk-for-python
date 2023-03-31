@@ -147,7 +147,7 @@ message = {
     "attachments": [
         {
             "name": "attachment.txt",
-            "attachmentType": "text/plain",
+            "contentType": "text/plain",
             "contentInBase64": file_bytes_b64.decode()
         }
     ]
