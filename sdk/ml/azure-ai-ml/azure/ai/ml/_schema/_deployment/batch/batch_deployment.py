@@ -6,6 +6,7 @@
 
 import logging
 from typing import Any
+from azure.ai.ml._schema.job.creation_context import CreationContextSchema
 
 from marshmallow import fields, post_load
 
@@ -56,6 +57,8 @@ class BatchDeploymentSchema(DeploymentSchema):
     type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL])
 
     job_definition = ExperimentalField(NestedField(JobDefinitionSchema))
+    creation_context = NestedField(CreationContextSchema, dump_only=True)
+    provisioning_state = fields.Str(dump_only=True)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
