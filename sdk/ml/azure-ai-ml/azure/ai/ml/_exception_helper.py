@@ -285,7 +285,6 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
         except NotImplementedError:
             formatted_error = error
 
-        raise Exception(formatted_error)
     elif isinstance(error, ValidationException):
         module_logger.debug(traceback.format_exc())
         entity_type = get_entity_type(error)[0]
@@ -307,3 +306,5 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
         )
     else:
         raise error
+
+    raise Exception(formatted_error)
