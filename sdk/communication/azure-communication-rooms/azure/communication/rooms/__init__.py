@@ -7,9 +7,9 @@ from ._rooms_client import RoomsClient
 
 from ._generated.models import (
     ParticipantRole,
+    CommunicationRoom
 )
 from ._models import (
-    CommunicationRoom,
     RoomParticipant,
     InvitedRoomParticipant,
     UpsertParticipantsResult,

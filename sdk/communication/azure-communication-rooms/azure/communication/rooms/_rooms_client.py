@@ -12,7 +12,6 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from azure.communication.rooms._models import (
-    CommunicationRoom,
     RoomParticipant,
     InvitedRoomParticipant,
     UpsertParticipantsResult,
@@ -22,6 +21,7 @@ from azure.communication.rooms._shared.models import CommunicationIdentifier
 from azure.communication.rooms._shared.policy import HMACCredentialsPolicy
 from ._generated._client import AzureCommunicationRoomsService
 from ._generated.models import (
+    CommunicationRoom,
     CreateRoomRequest,
     ParticipantProperties,
     UpdateRoomRequest,
@@ -135,7 +135,7 @@ class RoomsClient(object):
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
             **kwargs)
-        return CommunicationRoom._from_room_response(create_room_response) # pylint: disable=protected-access
+        return create_room_response # pylint: disable=protected-access
 
     @distributed_trace
     def delete_room(
@@ -183,9 +183,9 @@ class RoomsClient(object):
             valid_until=valid_until
         )
         update_room_response = self._rooms_service_client.rooms.update(
-            room_id=room_id, patch_room_request=update_room_request, **kwargs)
+            room_id=room_id, update_room_request=update_room_request, **kwargs)
         # pylint: disable=protected-access
-        return CommunicationRoom._from_room_response(update_room_response)
+        return update_room_response
 
     @distributed_trace
     def get_room(
@@ -203,7 +203,7 @@ class RoomsClient(object):
 
         """
         get_room_response = self._rooms_service_client.rooms.get(room_id=room_id, **kwargs)
-        return CommunicationRoom._from_room_response(get_room_response) # pylint: disable=protected-access
+        return get_room_response # pylint: disable=protected-access
 
     @distributed_trace
     def list_rooms(
@@ -265,7 +265,7 @@ class RoomsClient(object):
             participants=self._convert_communication_identifiers_to_dictionary_for_remove(communication_identifiers)
         )
         self._rooms_service_client.participants.update(
-            room_id=room_id, remove_participants_request=remove_participants_request, **kwargs)
+            room_id=room_id, update_participants_request=remove_participants_request, **kwargs)
         return RemoveParticipantsResult()
 
     @distributed_trace
@@ -281,18 +281,17 @@ class RoomsClient(object):
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.rooms.RoomParticipant]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        get_participants_response = self._rooms_service_client.participants.list(
+        return self._rooms_service_client.participants.list(
             room_id=room_id, **kwargs)
-        return get_participants_response
 
     def _convert_room_participants_to_dictionary_for_upsert(self, room_participants : List[InvitedRoomParticipant]):
         upsert_dictionary = dict()
-        for participant in room_participants:
+        for participant in room_participants or []:
             upsert_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(role=participant.role)
         return upsert_dictionary
 
     def _convert_communication_identifiers_to_dictionary_for_remove(self, communication_identifiers : List[CommunicationIdentifier]):
         remove_dictionary = dict()
-        for identifier in communication_identifiers:
+        for identifier in communication_identifiers or []:
             remove_dictionary[identifier.raw_id] = None
         return remove_dictionary

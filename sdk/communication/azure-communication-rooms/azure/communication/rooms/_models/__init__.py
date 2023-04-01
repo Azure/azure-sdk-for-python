@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._models import (
-    CommunicationRoom,
     RoomParticipant,
     InvitedRoomParticipant,
     UpsertParticipantsResult,
@@ -15,7 +14,6 @@ from ._models import (
 )
 
 __all__ = [
-    "CommunicationRoom",
     "RoomParticipant",
     "InvitedRoomParticipant",
     "UpsertParticipantsResult",

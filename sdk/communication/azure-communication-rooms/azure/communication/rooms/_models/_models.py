@@ -6,76 +6,12 @@
 from datetime import datetime
 from typing import Any, Optional, Union
 from .._generated.models import (
-    RoomModel,
     ParticipantRole
 )
 from .._shared.models import (
     CommunicationIdentifier,
     identifier_from_raw_id
 )
-
-
-class CommunicationRoom():
-    """The response object from rooms service.
-
-    :ivar id: Unique identifier of a room. This id is server generated.
-    :vartype id: str
-    :ivar created_at: The timestamp when the room was created at the server.
-    :vartype created_at: ~datetime.datetime
-    :ivar valid_from: The timestamp from when the room is open for joining.
-    :vartype valid_from: ~datetime.datetime
-    :ivar valid_until: The timestamp from when the room can no longer be joined.
-    :vartype valid_until: ~datetime.datetime
-    """
-
-    def __init__(
-        self,
-        *,
-        id: str, #pylint: disable=redefined-builtin
-        created_at: datetime,
-        valid_from: datetime,
-        valid_until: datetime,
-        **kwargs
-    ):
-        """
-        :param id: Unique identifier of a room. This id is server generated.
-        :type id: str
-        :param created_at: The timestamp when the room was created at the server.
-        :type created_at: ~datetime.datetime
-        :param valid_from: The timestamp from when the room is open for joining.
-        :type valid_from: ~datetime.datetime
-        :param valid_until: The timestamp from when the room can no longer be joined.
-        :type valid_until: ~datetime.datetime
-        """
-        super(CommunicationRoom, self).__init__(**kwargs)
-        self.id = id
-        self.created_at = created_at
-        self.valid_from = valid_from
-        self.valid_until = valid_until
-
-    @classmethod
-    def _from_room_response(cls, get_room_response: RoomModel,
-            **kwargs
-    ) -> 'CommunicationRoom':
-        """Create CommunicationRoom from the internal RoomModel.
-        :param RoomModel get_room_response:
-            Response from get_room API.
-        :returns: Instance of CommunicationRoom.
-        :rtype: ~azure.communication.rooms.CommunicationRoom
-        """
-
-        return cls(
-            id=get_room_response.id,
-            created_at=get_room_response.created_at,
-            valid_from=get_room_response.valid_from,
-            valid_until=get_room_response.valid_until,
-            **kwargs
-        )
-
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        return False
 
 class RoomParticipant():
     """A participant of the room.
