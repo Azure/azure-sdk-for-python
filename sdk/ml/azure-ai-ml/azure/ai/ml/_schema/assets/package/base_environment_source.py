@@ -5,10 +5,7 @@
 # pylint: disable=unused-argument,no-self-use
 
 import logging
-from typing import Any
-
 from marshmallow import fields, post_load
-
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 
 

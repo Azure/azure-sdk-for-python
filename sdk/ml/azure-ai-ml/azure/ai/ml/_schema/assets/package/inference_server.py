@@ -5,7 +5,6 @@
 # pylint: disable=unused-argument,no-self-use,redefined-builtin,no-else-return
 
 import logging
-from typing import Any
 
 from marshmallow import post_load
 from azure.ai.ml._schema._deployment.code_configuration_schema import CodeConfigurationSchema

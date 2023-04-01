@@ -132,7 +132,8 @@ class ModelPackageInput:
     :param type: The type of the input.
     :type type: str
     :param path: The path of the input.
-    :type path: azure.ai.ml.entities.PackageInputPathId or azure.ai.ml.entities.PackageInputPathUrl or azure.ai.ml.entities.PackageInputPathVersion
+    :type path: azure.ai.ml.entities.PackageInputPathId
+     or azure.ai.ml.entities.PackageInputPathUrl or azure.ai.ml.entities.PackageInputPathVersion
     :param mode: The mode of the input.
     :type mode: str
     :param mount_path: The mount path of the input.

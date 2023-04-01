@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: redefined-builtin
+# pylint: disable=redefined-builtin
 
 from typing import Dict
 
