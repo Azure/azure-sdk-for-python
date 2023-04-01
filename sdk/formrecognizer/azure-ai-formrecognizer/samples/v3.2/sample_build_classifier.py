@@ -10,7 +10,8 @@
 FILE: sample_build_classifier.py
 
 DESCRIPTION:
-    This sample demonstrates how to build a classifier model.
+    This sample demonstrates how to build a classifier model. For this sample, you can use the training
+    documents found in https://aka.ms/azsdk/formrecognizer/sampleclassifierfiles
 
     More details on building a classifier and labeling your data can be found here:
     https://aka.ms/azsdk/formrecognizer/buildclassifiermodel
@@ -51,16 +52,10 @@ def sample_build_classifier():
                     prefix="IRS-1040-A/train"
                 )
             ),
-            "IRS-1040-B": ClassifierDocumentTypeDetails(
-                azure_blob_source=AzureBlobContentSource(
-                    container_url=container_sas_url,
-                    prefix="IRS-1040-B/train"
-                )
-            ),
-            "IRS-1040-C": ClassifierDocumentTypeDetails(
+            "IRS-1040-D": ClassifierDocumentTypeDetails(
                 azure_blob_file_list_source=AzureBlobFileListSource(
                     container_url=container_sas_url,
-                    file_list="IRS-1040-C.jsonl"
+                    file_list="IRS-1040-D.jsonl"
                 )
             ),
         },
