@@ -222,7 +222,7 @@ class ServiceBusAdministrationClient:  # pylint:disable=too-many-public-methods
         kwargs["headers"] = kwargs.get("headers", {})
 
         async def _populate_header_within_kwargs(uri, header):
-            token = (await self._credential.get_token(uri)).token.decode()
+            token = (await self._credential.get_token(uri)).token
             if not isinstance(
                 self._credential,
                 (ServiceBusSASTokenCredential, ServiceBusSharedKeyCredential),

@@ -21,7 +21,8 @@ from typing import (
     TYPE_CHECKING,
     Union,
     Tuple,
-    cast
+    cast,
+    Callable
 )
 from contextlib import contextmanager
 from datetime import timezone
@@ -34,7 +35,6 @@ except ImportError:
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
-from .._pyamqp import authentication
 from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,
@@ -56,6 +56,13 @@ from .constants import (
 from ..amqp import AmqpAnnotatedMessage
 
 if TYPE_CHECKING:
+    from uamqp import (
+        Message as uamqp_Message,
+        types as uamqp_types
+    )
+    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+    from .._pyamqp.message import Message as pyamqp_Message
+    from .._pyamqp.authentication import JWTTokenAuth as pyamqp_JWTTokenAuth
     from .message import (
         ServiceBusReceivedMessage,
         ServiceBusMessage,
@@ -64,6 +71,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureSasCredential
     from .receiver_mixins import ReceiverMixin
     from .._servicebus_session import BaseSession
+    from .._transport._base import AmqpTransport
+    from ..aio._transport._base_async import AmqpTransportAsync
 
     MessagesType = Union[
         Mapping[str, Any],
@@ -97,8 +106,9 @@ def build_uri(address, entity):
     return address
 
 
-def create_properties(user_agent=None):
-    # type: (Optional[str]) -> Dict[str, str]
+def create_properties(
+    user_agent: Optional[str] = None, *, amqp_transport: "AmqpTransport"
+) -> Union[Dict["uamqp_types.AMQPSymbol", str], Dict[str, str]]:
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
@@ -108,23 +118,22 @@ def create_properties(user_agent=None):
 
     :rtype: dict
     """
-    properties = {}
-    properties["product"] = USER_AGENT_PREFIX
-    properties["version"] = VERSION
-    framework = "Python/{}.{}.{}".format(
-        sys.version_info[0], sys.version_info[1], sys.version_info[2]
-    )
-    properties["framework"] = framework
+    properties: Dict[Any, str] = {}
+    properties[amqp_transport.PRODUCT_SYMBOL] = USER_AGENT_PREFIX
+    properties[amqp_transport.VERSION_SYMBOL] = VERSION
+    framework = f"Python/{sys.version_info[0]}.{sys.version_info[1]}.{sys.version_info[2]}"
+    properties[amqp_transport.FRAMEWORK_SYMBOL] = framework
     platform_str = platform.platform()
-    properties["platform"] = platform_str
+    properties[amqp_transport.PLATFORM_SYMBOL] = platform_str
 
-    final_user_agent = "{}/{} {} ({})".format(
-        USER_AGENT_PREFIX, VERSION, framework, platform_str
+    final_user_agent = (
+        f"{USER_AGENT_PREFIX}/{VERSION} {amqp_transport.TRANSPORT_IDENTIFIER} "
+        f"{framework} ({platform_str})"
     )
     if user_agent:
-        final_user_agent = "{} {}".format(user_agent, final_user_agent)
+        final_user_agent = f"{user_agent} {final_user_agent}"
 
-    properties["user-agent"] = final_user_agent
+    properties[amqp_transport.USER_AGENT_SYMBOL] = final_user_agent
     return properties
 
 
@@ -142,8 +151,9 @@ def get_renewable_start_time(renewable):
         )
 
 
-def get_renewable_lock_duration(renewable):
-    # type: (Union[ServiceBusReceivedMessage, BaseSession]) -> datetime.timedelta
+def get_renewable_lock_duration(
+    renewable: Union["ServiceBusReceivedMessage", "BaseSession"]
+) -> datetime.timedelta:
     # pylint: disable=protected-access
     try:
         return max(
@@ -156,7 +166,7 @@ def get_renewable_lock_duration(renewable):
         )
 
 
-def create_authentication(client):
+def create_authentication(client) -> Union["uamqp_JWTTokenAuth", "pyamqp_JWTTokenAuth"]:
     # pylint: disable=protected-access
     try:
         # ignore mypy's warning because token_type is Optional
@@ -164,24 +174,20 @@ def create_authentication(client):
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:
-        return authentication.JWTTokenAuth(
+        return client._amqp_transport.create_token_auth(
             client._auth_uri,
-            client._auth_uri,
-            functools.partial(client._credential.get_token, client._auth_uri),
-            custom_endpoint_hostname=client._config.custom_endpoint_hostname,
-            port=client._config.connection_port,
-            verify=client._config.connection_verify
+            get_token=functools.partial(client._credential.get_token, client._auth_uri),
+            token_type=token_type,
+            config=client._config,
+            update_token=True
         )
-    return authentication.JWTTokenAuth(
-        client._auth_uri,
-        client._auth_uri,
-        functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
-        token_type=token_type,
-        timeout=client._config.auth_timeout,
-        custom_endpoint_hostname=client._config.custom_endpoint_hostname,
-        port=client._config.connection_port,
-        verify=client._config.connection_verify
-    )
+    return client._amqp_transport.create_token_auth(
+            client._auth_uri,
+            get_token=functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
+            token_type=token_type,
+            config=client._config,
+            update_token=False,
+        )
 
 
 def generate_dead_letter_entity_name(
@@ -192,40 +198,52 @@ def generate_dead_letter_entity_name(
         if queue_name
         else (topic_name + "/Subscriptions/" + subscription_name)
     )
-    entity_name = "{}{}".format(
-        entity_name,
-        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
-        if transfer_deadletter
-        else DEAD_LETTER_QUEUE_SUFFIX,
+    entity_name = (
+        f"{entity_name}"
+        f"{TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX}"
     )
 
     return entity_name
 
 
-def _convert_to_single_service_bus_message(message, message_type):
-    # type: (SingleMessageType, Type[ServiceBusMessage]) -> ServiceBusMessage
-    # pylint: disable=protected-access
+def _convert_to_single_service_bus_message(
+    message: "SingleMessageType",
+    message_type: Type["ServiceBusMessage"],
+    to_outgoing_amqp_message: Callable
+) -> "ServiceBusMessage":
     try:
         # ServiceBusMessage/ServiceBusReceivedMessage
-        return message._to_outgoing_message()  # type: ignore
-    except TypeError:
-        # AmqpAnnotatedMessage
-        return message._to_outgoing_message(message_type)  # type: ignore
+        message = cast("ServiceBusMessage", message)
+        # pylint: disable=protected-access
+        message._message = to_outgoing_amqp_message(message.raw_amqp_message)
+        return message
+    except AttributeError:
+        # AmqpAnnotatedMessage or Mapping representation
+        pass
+    try:
+        message = cast(AmqpAnnotatedMessage, message)
+        amqp_message = to_outgoing_amqp_message(message)
+        return message_type(body=None, message=amqp_message, raw_amqp_message=message)
     except AttributeError:
         # Mapping representing
         pass
-
     try:
-        return message_type(**cast(Mapping[str, Any], message))._to_outgoing_message()
+        # pylint: disable=protected-access
+        message = message_type(**cast(Mapping[str, Any], message))
+        message._message = to_outgoing_amqp_message(message.raw_amqp_message)
+        return message
     except TypeError:
         raise TypeError(
-            "Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
-            "Received instead: {}".format(message.__class__.__name__)
+            f"Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
+            f"Received instead: {message.__class__.__name__}"
         )
 
 
-def transform_messages_if_needed(messages, message_type):
-    # type: (MessagesType, Type[ServiceBusMessage]) -> Union[ServiceBusMessage, List[ServiceBusMessage]]
+def transform_outbound_messages(
+    messages: "MessagesType",
+    message_type: Type["ServiceBusMessage"],
+    to_outgoing_amqp_message: Callable
+) -> Union["ServiceBusMessage", List["ServiceBusMessage"]]:
     """
     This method serves multiple goals:
     1. convert dict representations of one or more messages to
@@ -240,13 +258,12 @@ def transform_messages_if_needed(messages, message_type):
     """
     if isinstance(messages, list):
         return [
-            _convert_to_single_service_bus_message(m, message_type) for m in messages
+            _convert_to_single_service_bus_message(m, message_type, to_outgoing_amqp_message) for m in messages
         ]
-    return _convert_to_single_service_bus_message(messages, message_type)
+    return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
 
 
-def strip_protocol_from_uri(uri):
-    # type: (str) -> str
+def strip_protocol_from_uri(uri: str) -> str:
     """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN."""
     left_slash_pos = uri.find("//")
     if left_slash_pos != -1:
@@ -256,7 +273,7 @@ def strip_protocol_from_uri(uri):
 
 @contextmanager
 def send_trace_context_manager(span_name=SPAN_NAME_SEND):
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
 
     if span_impl_type is not None:
         with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
@@ -272,7 +289,7 @@ def receive_trace_context_manager(
     links: Optional[List[Link]] = None
 ) -> Iterator[None]:
     """Tracing"""
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
     if span_impl_type is None:
         yield
     else:
@@ -282,14 +299,18 @@ def receive_trace_context_manager(
         with receive_span:
             yield
 
-def trace_message(message, parent_span=None):
-    # type: (ServiceBusMessage, Optional[AbstractSpan]) -> None
+
+def trace_message(
+    message: Union["uamqp_Message", "pyamqp_Message"],
+    amqp_transport: Union["AmqpTransport", "AmqpTransportAsync"],
+    parent_span: Optional["AbstractSpan"] = None
+) -> Union["uamqp_Message", "pyamqp_Message"]:
     """Add tracing information to this message.
     Will open and close a "Azure.Servicebus.message" span, and
     add the "DiagnosticId" as app properties of the message.
     """
     try:
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        span_impl_type: Type["AbstractSpan"] = settings.tracing_implementation()
         if span_impl_type is not None:
             current_span = parent_span or span_impl_type(
                 span_impl_type.get_current_span()
@@ -299,14 +320,15 @@ def trace_message(message, parent_span=None):
             })
             with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
-                if not message.application_properties:
-                    message.application_properties = dict()
-                message.application_properties.setdefault(
+                message = amqp_transport.update_message_app_properties(
+                    message,
                     TRACE_PARENT_PROPERTY,
                     message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING),
                 )
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_message had an exception %r", exp)
+
+    return message
 
 
 def get_receive_links(messages):
@@ -334,8 +356,7 @@ def get_receive_links(messages):
     return links
 
 
-def parse_sas_credential(credential):
-    # type: (AzureSasCredential) -> Tuple
+def parse_sas_credential(credential: "AzureSasCredential") -> Tuple:
     sas = credential.signature
     parsed_sas = sas.split('&')
     expiry = None

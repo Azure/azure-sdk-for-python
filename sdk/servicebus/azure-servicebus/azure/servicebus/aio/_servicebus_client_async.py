@@ -10,7 +10,11 @@ import certifi
 
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
-from .._pyamqp.aio import Connection
+try:
+    from ._transport._uamqp_transport_async import UamqpTransportAsync
+except ImportError:
+    pass
+from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 from .._base_handler import _parse_conn_str
 from ._base_handler_async import (
     ServiceBusSharedKeyCredential,
@@ -36,7 +40,7 @@ NextAvailableSessionType = Literal[ServiceBusSessionFilter.NEXT_AVAILABLE]
 _LOGGER = logging.getLogger(__name__)
 
 
-class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The ServiceBusClient class defines a high level interface for
     getting ServiceBusSender and ServiceBusReceiver.
 
@@ -103,6 +107,10 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         retry_mode: str = "exponential",
         **kwargs: Any
     ) -> None:
+        uamqp_transport = kwargs.pop("uamqp_transport", False)
+        if uamqp_transport and UamqpTransportAsync is None:
+            raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.")
+        self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
@@ -113,41 +121,40 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_factor=retry_backoff_factor,
             retry_backoff_max=retry_backoff_max,
             retry_mode=retry_mode,
+            hostname=self.fully_qualified_namespace,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
         self._entity_name = kwargs.get("entity_name")
-        self._auth_uri = "sb://{}".format(self.fully_qualified_namespace)
+        self._auth_uri = f"sb://{self.fully_qualified_namespace}"
         if self._entity_name:
-            self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
+            self._auth_uri = f"{self._auth_uri}/{self._entity_name}"
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
-        self._handlers = WeakSet()  # type: WeakSet
+        self._handlers: WeakSet = WeakSet()
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
-        self._connection_verify = kwargs.get("connection_verify")
-
-        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
 
     async def __aenter__(self):
         if self._connection_sharing:
-            await self._create_uamqp_connection()
+            await self._create_connection()
         return self
 
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _create_uamqp_connection(self):
+    async def _create_connection(self):
         auth = await create_authentication(self)
-        self._connection = self._connection = Connection(
-            endpoint=self.fully_qualified_namespace,
-            sasl_credential=auth.sasl,
+        self._connection = self._amqp_transport.create_connection_async(
+            host=self.fully_qualified_namespace,
+            auth=auth.sasl,
             network_trace=self._config.logging_enable,
             custom_endpoint_address=self._custom_endpoint_address,
             ssl_opts={'ca_certs':self._connection_verify or certifi.where()},
             transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy,
+            http_proxy=self._config.http_proxy
         )
 
     @classmethod
@@ -284,6 +291,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._handlers.add(handler)
@@ -397,6 +405,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             prefetch_count=prefetch_count,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._handlers.add(handler)
@@ -443,6 +452,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
             retry_backoff_max=self._config.retry_backoff_max,
             custom_endpoint_address=self._custom_endpoint_address,
             connection_verify=self._connection_verify,
+            amqp_transport=self._amqp_transport,
             **kwargs
         )
         self._handlers.add(handler)
@@ -556,6 +566,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                amqp_transport=self._amqp_transport,
                 **kwargs
             )
         except ValueError:
@@ -585,6 +596,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
                 prefetch_count=prefetch_count,
                 custom_endpoint_address=self._custom_endpoint_address,
                 connection_verify=self._connection_verify,
+                amqp_transport=self._amqp_transport,
                 **kwargs
             )
         self._handlers.add(handler)

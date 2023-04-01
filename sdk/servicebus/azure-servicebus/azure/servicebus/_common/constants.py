@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
-from .._pyamqp import constants
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -60,6 +59,8 @@ CONTAINER_PREFIX = "servicebus.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
 USER_AGENT_PREFIX = "azsdk-python-servicebus"
 CONSUMER_IDENTIFIER = VENDOR + b":receiver-name"
+UAMQP_LIBRARY = "uamqp"
+PYAMQP_LIBRARY = "pyamqp"
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
@@ -178,12 +179,6 @@ class ServiceBusMessageState(int, Enum):
     DEFERRED = 1
     SCHEDULED = 2
 
-# To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
-ServiceBusToAMQPReceiveModeMap = {
-    ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.Second,
-    ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.First,
-}
-
 
 class ServiceBusSessionFilter(Enum):
     NEXT_AVAILABLE = 0
@@ -195,3 +190,17 @@ class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE
+
+## all below - previously uamqp
+class TransportType(Enum):
+    """Transport type
+    The underlying transport protocol type:
+     Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
+     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
+     port 443.
+    """
+    Amqp = 1
+    AmqpOverWebsocket = 2
+
+DEFAULT_AMQPS_PORT = 5671
+DEFAULT_AMQP_WSS_PORT = 443

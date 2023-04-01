@@ -17,7 +17,7 @@ from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredenti
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import ServiceBusSubQueue
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer,
@@ -27,13 +27,15 @@ from servicebus_preparer import (
     CachedServiceBusResourceGroupPreparer,
     SERVICEBUS_ENDPOINT_SUFFIX
 )
-from utilities import get_logger, print_message
+from utilities import get_logger, print_message, uamqp_transport as get_uamqp_transport, ArgPasserAsync
+
+uamqp_transport_params, uamqp_transport_ids = get_uamqp_transport()
 
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
-    
+class TestServiceBusSubscriptionAsync(AzureMgmtRecordedTestCase):
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -41,11 +43,14 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
-    async def test_subscription_by_subscription_client_conn_str_receive_basic(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_subscription_by_subscription_client_conn_str_receive_basic(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
 
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
-                logging_enable=False
+                logging_enable=False,
+                uamqp_transport=uamqp_transport
         ) as sb_client:
             async with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
                 message = ServiceBusMessage(b"Sample topic message")
@@ -84,7 +89,9 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
-    async def test_subscription_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, servicebus_subscription, **kwargs):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_subscription_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
         fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
         async with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -92,7 +99,8 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
                 policy=servicebus_namespace_key_name,
                 key=servicebus_namespace_primary_key
             ),
-            logging_enable=False
+            logging_enable=False,
+            uamqp_transport=uamqp_transport
         ) as sb_client:
 
             async with sb_client.get_topic_sender(topic_name=servicebus_topic.name) as sender:
@@ -118,11 +126,13 @@ class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusTopicPreparer(name_prefix='servicebustest')
     @ServiceBusSubscriptionPreparer(name_prefix='servicebustest')
-    async def test_topic_by_servicebus_client_receive_batch_with_deadletter(self, servicebus_namespace_connection_string, servicebus_topic, servicebus_subscription, **kwargs):
-
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
+    async def test_topic_by_servicebus_client_receive_batch_with_deadletter(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, servicebus_subscription=None, **kwargs):
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
-                logging_enable=False
+                logging_enable=False,
+                uamqp_transport=uamqp_transport
         ) as sb_client:
 
             async with sb_client.get_subscription_receiver(

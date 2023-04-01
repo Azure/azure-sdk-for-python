@@ -6,17 +6,14 @@
 
 import logging
 
-from .._pyamqp._decode import decode_payload
-
 from .message import ServiceBusReceivedMessage
-from ..exceptions import _handle_amqp_mgmt_error
 from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
 
 _LOGGER = logging.getLogger(__name__)
 
 
 def default(  # pylint: disable=inconsistent-return-statements
-    status_code, message, description
+    status_code, message, description, amqp_transport
 ):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
@@ -24,13 +21,13 @@ def default(  # pylint: disable=inconsistent-return-statements
     if status_code == 200:
         return message.value
 
-    _handle_amqp_mgmt_error(
+    amqp_transport.handle_amqp_mgmt_error( # pylint: disable=protected-access
         _LOGGER, "Service request failed.", condition, description, status_code
     )
 
 
 def session_lock_renew_op(  # pylint: disable=inconsistent-return-statements
-    status_code, message, description
+    status_code, message, description, amqp_transport
 ):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
@@ -38,64 +35,62 @@ def session_lock_renew_op(  # pylint: disable=inconsistent-return-statements
     if status_code == 200:
         return message.value
 
-    _handle_amqp_mgmt_error(
+    amqp_transport.handle_amqp_mgmt_error( # pylint: disable=protected-access
         _LOGGER, "Session lock renew failed.", condition, description, status_code
     )
 
 
 def message_lock_renew_op(  # pylint: disable=inconsistent-return-statements
-    status_code, message, description
+    status_code, message, description, amqp_transport
 ):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
+        # TODO: will this always be body type ValueType?
         return message.value
 
-    _handle_amqp_mgmt_error(
+    amqp_transport.handle_amqp_mgmt_error( # pylint: disable=protected-access
         _LOGGER, "Message lock renew failed.", condition, description, status_code
     )
 
 
 def peek_op(  # pylint: disable=inconsistent-return-statements
-    status_code, message, description, receiver
+    status_code, message, description, receiver, amqp_transport
 ):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        parsed = []
-        for m in message.value[b"messages"]:
-            wrapped = decode_payload(memoryview(m[b"message"]))
-            parsed.append(
-                ServiceBusReceivedMessage(
-                    wrapped, is_peeked_message=True, receiver=receiver
-                )
+        return amqp_transport.parse_received_message(
+            message,
+            message_type=ServiceBusReceivedMessage,
+            receiver=receiver,
+            is_peeked_message=True
             )
-        return parsed
     if status_code in [202, 204]:
         return []
 
-    _handle_amqp_mgmt_error(
+    amqp_transport.handle_amqp_mgmt_error( # pylint: disable=protected-access
         _LOGGER, "Message peek failed.", condition, description, status_code
     )
 
 
 def list_sessions_op(  # pylint: disable=inconsistent-return-statements
-    status_code, message, description
+    status_code, message, description, amqp_transport
 ):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
         parsed = []
-        for m in message.value[b"sessions-ids"]:
+        for m in amqp_transport.get_message_value(message)[b"sessions-ids"]:
             parsed.append(m.decode("UTF-8"))
         return parsed
     if status_code in [202, 204]:
         return []
 
-    _handle_amqp_mgmt_error(
+    amqp_transport.handle_amqp_mgmt_error(
         _LOGGER, "List sessions failed.", condition, description, status_code
     )
 
@@ -105,6 +100,7 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
     message,
     description,
     receiver,
+    amqp_transport,
     receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
     message_type=ServiceBusReceivedMessage,
 ):
@@ -112,19 +108,17 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        parsed = []
-        for m in message.value[b"messages"]:
-            wrapped = decode_payload(memoryview(m[b"message"]))
-            parsed.append(
-                message_type(
-                    wrapped, receive_mode, is_deferred_message=True, receiver=receiver
-                )
+        return amqp_transport.parse_received_message(
+            message,
+            message_type=message_type,
+            receiver=receiver,
+            receive_mode=receive_mode,
+            is_deferred_message=True
             )
-        return parsed
     if status_code in [202, 204]:
         return []
 
-    _handle_amqp_mgmt_error(
+    amqp_transport.handle_amqp_mgmt_error(
         _LOGGER,
         "Retrieving deferred messages failed.",
         condition,
@@ -134,7 +128,7 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
 
 
 def schedule_op(  # pylint: disable=inconsistent-return-statements
-    status_code, message, description
+    status_code, message, description, amqp_transport
 ):
     condition = message.application_properties.get(
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
@@ -142,6 +136,6 @@ def schedule_op(  # pylint: disable=inconsistent-return-statements
     if status_code == 200:
         return message.value[b"sequence-numbers"]
 
-    _handle_amqp_mgmt_error(
+    amqp_transport.handle_amqp_mgmt_error(
         _LOGGER, "Scheduling messages failed.", condition, description, status_code
     )

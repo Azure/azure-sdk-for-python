@@ -7,15 +7,14 @@
 
 from __future__ import annotations
 import time
+import warnings
 import datetime
 import uuid
 from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
 
-from .._pyamqp.message import Message, BatchMessage
-from .._pyamqp.performatives import TransferFrame
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
-from .._pyamqp.utils import add_batch, get_message_encoded_size
-from .._pyamqp._encode import encode_payload
+from .._pyamqp.message import Message as pyamqp_Message
+from .._transport._pyamqp_transport import PyamqpTransport
 
 from .constants import (
     _BATCH_MESSAGE_OVERHEAD_COST,
@@ -48,10 +47,15 @@ from .utils import (
     utc_from_timestamp,
     utc_now,
     trace_message,
-    transform_messages_if_needed,
+    transform_outbound_messages,
 )
 
 if TYPE_CHECKING:
+    from uamqp import (
+        Message,
+        BatchMessage
+    )
+    from .._pyamqp.performatives import TransferFrame
     from azure.core.tracing import AbstractSpan
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
@@ -122,15 +126,18 @@ class ServiceBusMessage(
         # Although we might normally thread through **kwargs this causes
         # problems as MessageProperties won't absorb spurious args.
         self._encoding = kwargs.pop("encoding", "UTF-8")
-        self._uamqp_message = None
+        self._uamqp_message: Optional[Union[LegacyMessage, "Message"]] = None
+        self._message: Union["Message", "pyamqp_Message"] = None # type: ignore
 
-        if "raw_amqp_message" in kwargs:
-            # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
-            self._raw_amqp_message = kwargs["raw_amqp_message"]
-        elif "message" in kwargs:
-            self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
+        # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
+        if "message" in kwargs:
+            self._message = kwargs["message"]
+            if "raw_amqp_message" in kwargs:
+                self._raw_amqp_message = kwargs["raw_amqp_message"]
+            else:
+                self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
         else:
-            self._build_message(body)
+            self._build_annotated_message(body)
             self.application_properties = application_properties
             self.session_id = session_id
             self.message_id = message_id
@@ -202,7 +209,7 @@ class ServiceBusMessage(
             message_repr += ", scheduled_enqueue_time_utc=<read-error>"
         return "ServiceBusMessage({})".format(message_repr)[:1024]
 
-    def _build_message(self, body):
+    def _build_annotated_message(self, body):
         if not (
             isinstance(body, (str, bytes)) or (body is None)
         ):
@@ -228,19 +235,35 @@ class ServiceBusMessage(
         else:
             self._raw_amqp_message.annotations[key] = value
 
-    def _to_outgoing_message(self) -> "ServiceBusMessage":
-        return self
-
-    def _encode_message(self):
-        output = bytearray()
-        encode_payload(output, self.raw_amqp_message._to_outgoing_amqp_message())  # pylint: disable=protected-access
-        return output
-
+    # TODO: test these
     @property
-    def message(self) -> LegacyMessage:
+    def message(self) -> Union["Message", LegacyMessage]:
+        """DEPRECATED: Get the underlying uamqp.Message or LegacyMessage.
+         This is deprecated and will be removed in a later release.
+
+        :rtype: uamqp.Message or LegacyMessage
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         if not self._uamqp_message:
-            self._uamqp_message = LegacyMessage(self._raw_amqp_message)
+            self._uamqp_message = LegacyMessage(
+                self._raw_amqp_message,
+                to_outgoing_amqp_message=PyamqpTransport.to_outgoing_amqp_message
+            )
         return self._uamqp_message
+
+    @message.setter
+    def message(self, value: "Message") -> None:
+        """DEPRECATED: Set the underlying Message.
+        This is deprecated and will be removed in a later release.
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
+        self._uamqp_message = value
 
     @property
     def raw_amqp_message(self) -> AmqpAnnotatedMessage:
@@ -626,11 +649,16 @@ class ServiceBusMessageBatch(object):
      can hold.
     """
 
-    def __init__(self, max_size_in_bytes: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        max_size_in_bytes: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
+
         self._max_size_in_bytes = max_size_in_bytes or MAX_MESSAGE_LENGTH_BYTES
-        self._message = cast(List, [None] * 9)
-        self._message[5] = []
-        self._size = get_message_encoded_size(BatchMessage(*self._message))
+        self._message = self._amqp_transport.build_batch_message([])
+        self._size = self._amqp_transport.get_batch_message_encoded_size(self._message)
         self._count = 0
         self._messages: List[ServiceBusMessage] = []
         self._uamqp_message: Optional[LegacyBatchMessage] = None
@@ -654,16 +682,21 @@ class ServiceBusMessageBatch(object):
         parent_span: Optional["AbstractSpan"] = None
     ) -> None:
         """Actual add implementation.  The shim exists to hide the internal parameters such as parent_span."""
-        message = transform_messages_if_needed(add_message, ServiceBusMessage)
-        message = cast(ServiceBusMessage, message)
-        trace_message(
-            message, parent_span
+        outgoing_sb_message = transform_outbound_messages(
+            add_message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
+        )
+        outgoing_sb_message = cast(ServiceBusMessage, outgoing_sb_message)
+        # pylint: disable=protected-access
+        outgoing_sb_message._message = trace_message(
+            outgoing_sb_message._message,
+            amqp_transport=self._amqp_transport,
+            parent_span=parent_span
         )  # parent_span is e.g. if built as part of a send operation.
-        message_size = get_message_encoded_size(
-            message.raw_amqp_message._to_outgoing_amqp_message()  # pylint: disable=protected-access
+        message_size = self._amqp_transport.get_message_encoded_size(
+            outgoing_sb_message._message  # pylint: disable=protected-access
         )
 
-        # For a ServiceBusMessageBatch, if the encoded_message_size of event_data is < 256, then the overhead cost to
+        # For a ServiceBusMessageBatch, if the encoded_message_size of message is < 256, then the overhead cost to
         # encode that message into the ServiceBusMessageBatch would be 5 bytes, if >= 256, it would be 8 bytes.
         size_after_add = (
             self._size
@@ -673,21 +706,45 @@ class ServiceBusMessageBatch(object):
 
         if size_after_add > self.max_size_in_bytes:
             raise MessageSizeExceededError(
-                message="ServiceBusMessageBatch has reached its size limit: {}".format(
-                    self.max_size_in_bytes
-                )
+                message=f"ServiceBusMessageBatch has reached its size limit: {self.max_size_in_bytes}"
             )
-        add_batch(self._message, message.raw_amqp_message._to_outgoing_amqp_message())  # pylint: disable=protected-access
+        self._amqp_transport.add_batch(self, outgoing_sb_message)  # pylint: disable=protected-access
         self._size = size_after_add
         self._count += 1
-        self._messages.append(message)
+        self._messages.append(outgoing_sb_message)
 
     @property
-    def message(self) -> LegacyBatchMessage:
+    def message(self) -> Union["BatchMessage", LegacyBatchMessage]:
+        """DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.
+         This is deprecated and will be removed in a later release.
+
+        :rtype: uamqp.BatchMessage or LegacyBatchMessage
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         if not self._uamqp_message:
-            message = AmqpAnnotatedMessage(message=Message(*self._message))
-            self._uamqp_message = LegacyBatchMessage(message)
+            if self._amqp_transport.KIND == "pyamqp":
+                message = AmqpAnnotatedMessage(message=pyamqp_Message(*self._message))
+                self._uamqp_message = LegacyBatchMessage(
+                    message,
+                    to_outgoing_amqp_message=PyamqpTransport.to_outgoing_amqp_message,
+                )
+            else:
+                self._uamqp_message = self._message
         return self._uamqp_message
+
+    @message.setter
+    def message(self, value: "BatchMessage") -> None:
+        """DEPRECATED: Set the underlying BatchMessage.
+        This is deprecated and will be removed in a later release.
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
+        self._uamqp_message = value
 
     @property
     def max_size_in_bytes(self) -> int:
@@ -721,7 +778,7 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
 
-class ServiceBusReceivedMessage(ServiceBusMessage):
+class ServiceBusReceivedMessage(ServiceBusMessage): # pylint: disable=too-many-instance-attributes
     """
     A Service Bus Message received from service side.
 
@@ -741,30 +798,34 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
 
     def __init__(
             self,
-            message: Message,
+            message: Union["Message", "pyamqp_Message"],
             receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
-            frame: Optional[TransferFrame] = None,
+            frame: Optional["TransferFrame"] = None,
             **kwargs
     ) -> None:
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
+        if self._amqp_transport != PyamqpTransport:
+            self._uamqp_message = message
+        self._message = message
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        self._delivery_tag = frame[2] if frame else None
-        self.delivery_id = frame[1] if frame else None
+        self._delivery_tag = self._amqp_transport.get_message_delivery_tag(message, frame)
+        self._delivery_id = self._amqp_transport.get_message_delivery_id(message, frame)    # only used by pyamqp
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
-        self.auto_renew_error = None  # type: Optional[Exception]
+        self.auto_renew_error: Optional[Exception]= None
         try:
-            self._receiver = kwargs.pop(
+            self._receiver: Union["ServiceBusReceiver", "AsyncServiceBusReceiver"] = kwargs.pop(
                 "receiver"
-            )  # type: Union[ServiceBusReceiver, AsyncServiceBusReceiver]
+            )
         except KeyError:
             raise TypeError(
                 "ServiceBusReceivedMessage requires a receiver to be initialized. "
                 + "This class should never be initialized by a user; "
                 + "for outgoing messages, the ServiceBusMessage class should be utilized instead."
             )
-        self._expiry = None  # type: Optional[datetime.datetime]
+        self._expiry: Optional[datetime.datetime] = None
 
     @property
     def _lock_expired(self) -> bool:
@@ -783,10 +844,6 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
         if self.locked_until_utc and self.locked_until_utc <= utc_now():
             return True
         return False
-
-    def _to_outgoing_message(self) -> ServiceBusMessage:
-        # pylint: disable=protected-access
-        return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
 
     def __repr__(self) -> str:  # pylint: disable=too-many-branches,too-many-statements
         # pylint: disable=bare-except
@@ -887,8 +944,17 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             message_repr += ", locked_until_utc=<read-error>"
         return "ServiceBusReceivedMessage({})".format(message_repr)[:1024]
 
-    @property
+    @property # type: ignore[misc]  # TODO: ignoring error to copy over setter, since it's inherited
     def message(self) -> LegacyMessage:
+        """DEPRECATED: Get the underlying LegacyMessage.
+         This is deprecated and will be removed in a later release.
+
+        :rtype: LegacyMessage
+        """
+        warnings.warn(
+            "The `message` property is deprecated and will be removed in future versions.",
+            DeprecationWarning,
+        )
         if not self._uamqp_message:
             if not self._settled:
                 settler = self._receiver._handler # pylint:disable=protected-access
@@ -896,10 +962,12 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
                 settler = None
             self._uamqp_message = LegacyMessage(
                 self._raw_amqp_message,
-                delivery_no=self.delivery_id,
+                delivery_no=self._delivery_id,
                 delivery_tag=self._delivery_tag,
                 settler=settler,
-                encoding=self._encoding)
+                encoding=self._encoding,
+                to_outgoing_amqp_message=PyamqpTransport.to_outgoing_amqp_message
+                )
         return self._uamqp_message
 
     @property
@@ -1057,7 +1125,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     def locked_until_utc(self) -> Optional[datetime.datetime]:
         """
         The UTC datetime until which the message will be locked in the queue/subscription.
-        When the lock expires, delivery count of hte message is incremented and the message
+        When the lock expires, delivery count of the message is incremented and the message
         is again available for retrieval.
 
         :rtype: datetime.datetime

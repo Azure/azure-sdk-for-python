@@ -9,16 +9,9 @@ import collections
 import datetime
 import functools
 import logging
-import time
 import warnings
 from enum import Enum
-from typing import Any, List, Optional, AsyncIterator, Union, Callable, TYPE_CHECKING, cast
-
-from .._pyamqp.error import AMQPError
-from .._pyamqp.message import Message
-from .._pyamqp.constants import SenderSettleMode
-from .._pyamqp.aio import ReceiveClientAsync
-from .._pyamqp import utils
+from typing import Any, List, Optional, AsyncIterator, Union, TYPE_CHECKING, cast
 
 from ..exceptions import ServiceBusError
 from ._servicebus_session_async import ServiceBusSession
@@ -26,9 +19,6 @@ from ._base_handler_async import BaseHandler
 from .._common.message import ServiceBusReceivedMessage
 from .._common.receiver_mixins import ReceiverMixin
 from .._common.constants import (
-    DEADLETTERNAME,
-    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
-    RECEIVER_LINK_DEAD_LETTER_REASON,
     CONSUMER_IDENTIFIER,
     REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION,
     REQUEST_RESPONSE_PEEK_OPERATION,
@@ -52,21 +42,23 @@ from .._common.constants import (
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
     SPAN_NAME_RECEIVE_DEFERRED,
     SPAN_NAME_PEEK,
-    ServiceBusToAMQPReceiveModeMap,
-    SESSION_FILTER,
-    SESSION_LOCKED_UNTIL,
-    DATETIMEOFFSET_EPOCH
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
     receive_trace_context_manager,
     utc_from_timestamp,
     get_receive_links,
-    utc_now
 )
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
+    from uamqp.async_ops.client_async import ReceiveClientAsync as uamqp_ReceiveClientAsync
+    from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
+    from uamqp.message import Message as uamqp_Message
+    from ._transport._base_async import AmqpTransportAsync
+    from .._pyamqp.message import Message as pyamqp_Message
+    from .._pyamqp.aio import ReceiveClientAsync as pyamqp_ReceiveClientAsync
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync as pyamqp_JWTTokenAuthAsync
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
     from .._common.auto_lock_renewer import AutoLockRenewer
@@ -152,9 +144,10 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         **kwargs: Any
     ) -> None:
         self._session_id = None
-        self._message_iter = (
+        self._message_iter: Optional[AsyncIterator[Union["uamqp_Message", "pyamqp_Message"]]] = (
             None
-        )  # type: Optional[AsyncIterator[ServiceBusReceivedMessage]]
+        )
+        self._amqp_transport: "AmqpTransportAsync"
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -212,17 +205,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             None if self._session_id is None else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = asyncio.Event()
-        self._handler: ReceiveClientAsync
+        self._handler: Union["pyamqp_ReceiveClientAsync", "uamqp_ReceiveClientAsync"]
+        self._build_received_message = functools.partial(
+            self._amqp_transport.build_received_message,
+            self,
+            ServiceBusReceivedMessage
+        )
 
-    async def _iter_contextual_wrapper(self, max_wait_time=None):
-        while True:
-            try:
-                message = await self._inner_anext(wait_time=max_wait_time)
-                links = get_receive_links(message)
-                with receive_trace_context_manager(self, links=links):
-                    yield message
-            except StopAsyncIteration:
-                break
+        self._iter_contextual_wrapper = functools.partial(
+            self._amqp_transport.iter_contextual_wrapper_async, self
+        )
+        self._iter_next = functools.partial(
+            self._amqp_transport.iter_next_async,
+            self
+        )
 
     def __aiter__(self):
         return self._iter_contextual_wrapper()
@@ -244,24 +240,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             links = get_receive_links(message)
             with receive_trace_context_manager(self, links=links):
                 return message
-        finally:
-            self._receive_context.clear()
-
-    async def _iter_next(self, wait_time=None): # pylint: disable=protected-access
-        try:
-            self._receive_context.set()
-            await self._open()
-            if not self._message_iter or wait_time:
-                self._message_iter = await self._handler.receive_messages_iter_async(timeout=wait_time)
-            pyamqp_message = await self._message_iter.__anext__()
-            message = self._build_message(pyamqp_message)
-            if (
-                self._auto_lock_renewer
-                and not self._session
-                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            ):
-                self._auto_lock_renewer.register(self, message)
-            return message
         finally:
             self._receive_context.clear()
 
@@ -326,44 +304,20 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             )
         return cls(**constructor_args)
 
-    async def _on_attach(self, attach_frame):
-        # pylint: disable=protected-access, unused-argument
-        if self._session and attach_frame.source.address.decode(self._config.encoding) == self._entity_uri:
-            # This has to live on the session object so that autorenew has access to it.
-            self._session._session_start = utc_now()
-            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (
-                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
-                ) / 10000000
-                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = attach_frame.source.filters[SESSION_FILTER]
-            self._session_id = session_filter.decode(self._config.encoding)
-            self._session._session_id = self._session_id
+    def _create_handler(self, auth: Union["pyamqp_JWTTokenAuthAsync", "uamqp_JWTTokenAuthAsync"]) -> None:
 
-    def _create_handler(self, auth):
-        custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
-        transport_type = self._config.transport_type # pylint:disable=protected-access
-        hostname = self.fully_qualified_namespace
-        if transport_type.name == 'AmqpOverWebsocket':
-            hostname += '/$servicebus/websocket/'
-            if custom_endpoint_address:
-                custom_endpoint_address += '/$servicebus/websocket/'
-
-        self._handler = ReceiveClientAsync(
-            hostname,
-            self._get_source(),
+        self._handler = self._amqp_transport.create_receive_client_async(
+            receiver=self,
+            source=self._get_source(),
             auth=auth,
             network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,
             client_name=self._name,
-            on_attach=self._on_attach,
-            receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
-            send_settle_mode=SenderSettleMode.Settled
-            if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            else SenderSettleMode.Unsettled,
-            timeout=self._max_wait_time * 1 if self._max_wait_time else 0,
+            receive_mode=self._receive_mode,
+            timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
+            if self._max_wait_time
+            else 0,
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
@@ -373,7 +327,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
         if self._prefetch_count == 1:
-            self._handler._message_received_async = self._enhanced_message_received_async  # pylint: disable=protected-access
+            # pylint: disable=protected-access
+            self._amqp_transport.set_handler_message_received_async(self)
 
     async def _open(self):
         # pylint: disable=protected-access
@@ -395,8 +350,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
 
-    async def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
+    async def _receive(
+        self, max_message_count: Optional[int] = None, timeout: Optional[float] = None
+    ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
@@ -406,33 +362,37 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
-                timeout or self._max_wait_time
+                self._amqp_transport.TIMEOUT_FACTOR * (timeout or self._max_wait_time)
                 if (timeout or self._max_wait_time)
                 else 0
             )
             abs_timeout = (
-                time.time() + timeout_seconds
+                self._amqp_transport.get_current_time(amqp_receive_client) + timeout_seconds
                 if timeout_seconds
                 else 0
             )
 
-            batch = []  # type: List[Message]
+            batch: Union[List["uamqp_Message"], List["pyamqp_Message"]] = []
             while not received_messages_queue.empty() and len(batch) < max_message_count:
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
             if len(batch) >= max_message_count:
-                return [self._build_message(message) for message in batch]
+                return [self._build_received_message(message) for message in batch]
 
             # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
             if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
                 link_credit_needed = max_message_count - len(batch)
-                await amqp_receive_client._link.flow(link_credit=link_credit_needed)
+                await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
 
             first_message_received = expired = False
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
-                    if abs_timeout and time.time() > abs_timeout:
+                    if (
+                        abs_timeout
+                        and self._amqp_transport.get_current_time(amqp_receive_client)
+                        > abs_timeout
+                    ):
                         expired = True
                         break
                     before = received_messages_queue.qsize()
@@ -445,13 +405,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                     ):
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout = time.time() + self._further_pull_receive_timeout
+                        abs_timeout = (
+                            self._amqp_transport.get_current_time(amqp_receive_client)
+                            + self._further_pull_receive_timeout
+                        )
                 while (
                     not received_messages_queue.empty() and len(batch) < max_message_count
                 ):
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
-            return [self._build_message(message) for message in batch]
+            return [self._build_received_message(message) for message in batch]
         finally:
             self._receive_context.clear()
 
@@ -493,47 +456,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         )
         message._settled = True
 
-    async def _settle_message_via_receiver_link(
-        self,
-        message,
-        settle_operation,
-        dead_letter_reason=None,
-        dead_letter_error_description=None,
-    ):
-        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
-        if settle_operation == MESSAGE_COMPLETE:
-            return await self._handler.settle_messages_async(message.delivery_id, 'accepted') # pylint:disable=line-too-long
-        if settle_operation == MESSAGE_ABANDON:
-            return await self._handler.settle_messages_async(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return await self._handler.settle_messages_async(
-                message.delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
-                )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return await self._handler.settle_messages_async(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
-        raise ValueError(
-            "Unsupported settle operation type: {}".format(settle_operation)
-        )
-
     async def _settle_message(  # type: ignore
         self,
         message: ServiceBusReceivedMessage,
@@ -545,7 +467,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         try:
             if not message._is_deferred_message:
                 try:
-                    await self._settle_message_via_receiver_link(
+                    await self._amqp_transport.settle_message_via_receiver_link_async(
+                        self._handler,
                         message,
                         settle_operation,
                         dead_letter_reason=dead_letter_reason,
@@ -586,7 +509,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     ):
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
-            MGMT_REQUEST_LOCK_TOKENS: utils.amqp_array_value(lock_tokens),
+            MGMT_REQUEST_LOCK_TOKENS: self._amqp_transport.AMQP_ARRAY_VALUE(lock_tokens),
         }
 
         self._populate_message_properties(message)
@@ -597,9 +520,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
         )
 
-    async def _renew_locks(self, *lock_tokens, timeout=None):
-        # type: (str, Optional[float]) -> Any
-        message = {MGMT_REQUEST_LOCK_TOKENS: utils.amqp_array_value(lock_tokens)}
+    async def _renew_locks(self, *lock_tokens: str, timeout: Optional[float] = None) -> Any:
+        message = {MGMT_REQUEST_LOCK_TOKENS: self._amqp_transport.AMQP_ARRAY_VALUE(lock_tokens)}
         return await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
@@ -754,16 +676,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         if len(sequence_numbers) == 0:
             return []  # no-op on empty list.
         await self._open()
-        uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
+        uamqp_receive_mode = self._amqp_transport.ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
             receive_mode = cast(Enum, uamqp_receive_mode).value
         except AttributeError:
             receive_mode = int(uamqp_receive_mode)
         message = {
-            MGMT_REQUEST_SEQUENCE_NUMBERS: utils.amqp_array_value(
-                [utils.amqp_long_value(s) for s in sequence_numbers]
+            MGMT_REQUEST_SEQUENCE_NUMBERS: self._amqp_transport.AMQP_ARRAY_VALUE(
+                [self._amqp_transport.AMQP_LONG_VALUE(s) for s in sequence_numbers]
             ),
-            MGMT_REQUEST_RECEIVER_SETTLE_MODE: utils.amqp_uint_value(receive_mode),
+            MGMT_REQUEST_RECEIVER_SETTLE_MODE: self._amqp_transport.AMQP_UINT_VALUE(receive_mode),
         }
 
         self._populate_message_properties(message)
@@ -771,8 +693,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         handler = functools.partial(
             mgmt_handlers.deferred_message_op,
             receive_mode=self._receive_mode,
-            message_type=ServiceBusReceivedMessage,
             receiver=self,
+            amqp_transport=self._amqp_transport,
         )
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -830,12 +752,12 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         await self._open()
 
         message = {
-            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: utils.amqp_long_value(sequence_number),
+            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: self._amqp_transport.AMQP_LONG_VALUE(sequence_number),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
         }
 
         self._populate_message_properties(message)
-        handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
+        handler = functools.partial(mgmt_handlers.peek_op, receiver=self, amqp_transport=self._amqp_transport)
         messages = await self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )

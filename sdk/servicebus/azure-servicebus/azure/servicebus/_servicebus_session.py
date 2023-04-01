@@ -29,19 +29,21 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class BaseSession(object):
-    def __init__(self, session_id, receiver):
-        # type: (str, Union[ServiceBusReceiver, ServiceBusReceiverAsync]) -> None
+    def __init__(
+        self,
+        session_id: str,
+        receiver: Union["ServiceBusReceiver", "ServiceBusReceiverAsync"]
+    ) -> None:
         self._session_id = session_id
         self._receiver = receiver
         self._encoding = "UTF-8"
         self._session_start = None
-        self._locked_until_utc = None  # type: Optional[datetime.datetime]
+        self._locked_until_utc: Optional[datetime.datetime] = None
         self._lock_lost = False
         self.auto_renew_error = None
 
     @property
-    def _lock_expired(self):
-        # type: () -> bool
+    def _lock_expired(self) -> bool:
         """Whether the receivers lock on a particular session has expired.
 
         :rtype: bool
@@ -49,8 +51,7 @@ class BaseSession(object):
         return bool(self._locked_until_utc and self._locked_until_utc <= utc_now())
 
     @property
-    def session_id(self):
-        # type: () -> str
+    def session_id(self) -> str:
         """
         Session id of the current session.
 
@@ -59,8 +60,7 @@ class BaseSession(object):
         return self._session_id
 
     @property
-    def locked_until_utc(self):
-        # type: () -> Optional[datetime.datetime]
+    def locked_until_utc(self) -> Optional[datetime.datetime]:
         """The time at which this session's lock will expire.
 
         :rtype: datetime.datetime
