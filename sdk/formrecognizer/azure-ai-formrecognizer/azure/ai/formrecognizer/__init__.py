@@ -67,6 +67,10 @@ from ._models import (
     DocumentAnalysisError,
     DocumentAnalysisInnerError,
     TargetAuthorization,
+    DocumentFormula,
+    DocumentImage,
+    DocumentBarcode,
+    DocumentAnnotation,
 )
 from ._generated.models import (  # patched models
     ClassifierDocumentTypeDetails,
@@ -144,6 +148,10 @@ __all__ = [
     "ClassifierDocumentTypeDetails",
     "AzureBlobFileListSource",
     "AzureBlobContentSource",
+    "DocumentFormula",
+    "DocumentImage",
+    "DocumentBarcode",
+    "DocumentAnnotation",
 ]
 
 __VERSION__ = VERSION

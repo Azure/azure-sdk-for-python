@@ -2781,8 +2781,287 @@ class DocumentParagraph:
         )
 
 
+class DocumentAnnotation:
+    """An annotation object that represents a visual annotation in the document,
+    such as checks ✓ and crosses X.
+    """
+
+    kind: str
+    """Annotation kind. Known values are: "check", "cross"."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the annotation."""
+    confidence: float
+    """Confidence of correctly extracting the annotation."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, annotation):
+        return cls(
+            kind=annotation.kind,
+            polygon=get_polygon(annotation.polygon),
+            confidence=annotation.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentAnnotation(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentAnnotation."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentAnnotation":
+        """Converts a dict in the shape of a DocumentAnnotation to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentAnnotation.
+        :return: DocumentAnnotation
+        :rtype: DocumentAnnotation
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+        )
+
+
+class DocumentBarcode:
+    """A barcode object."""
+
+    kind: str
+    """Barcode kind. Known values are "QRCode", "PDF417", "UPCA", "UPCE",
+     "Code39", "Code128", "EAN8", "EAN13", "DataBar", "Code93", "Codabar", "DataBarExpanded", "ITF",
+     "MicroQRCode", "Aztec", "DataMatrix", "MaxiCode"."""
+    value: str
+    """Barcode value."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the barcode."""
+    span: DocumentSpan
+    """Location of the barcode in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly extracting the barcode."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.value = kwargs.get("value", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, barcode):
+        return cls(
+            kind=barcode.kind,
+            value=barcode.value,
+            span=DocumentSpan._from_generated(barcode.span)
+            if barcode.span
+            else None,
+            polygon=get_polygon(barcode.polygon),
+            confidence=barcode.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentBarcode(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"value={self.value}, span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentBarcode."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+            "value": self.value,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentBarcode":
+        """Converts a dict in the shape of a DocumentBarcode to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentBarcode.
+        :return: DocumentBarcode
+        :rtype: DocumentBarcode
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            value=data.get("value", None),
+        )
+
+
+class DocumentFormula:
+    """A formula object."""
+
+    kind: str
+    """Formula kind. Known values are "inline", "display"."""
+    value: str
+    """LaTex expression describing the formula."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the formula."""
+    span: DocumentSpan
+    """Location of the formula in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly extracting the formula."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.kind = kwargs.get("kind", None)
+        self.value = kwargs.get("value", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, formula):
+        return cls(
+            kind=formula.kind,
+            value=formula.value,
+            span=DocumentSpan._from_generated(formula.span)
+            if formula.span
+            else None,
+            polygon=get_polygon(formula.polygon),
+            confidence=formula.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentFormula(kind={self.kind}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"value={self.value}, span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentFormula."""
+        return {
+            "kind": self.kind,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+            "value": self.value,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentFormula":
+        """Converts a dict in the shape of a DocumentFormula to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentFormula.
+        :return: DocumentFormula
+        :rtype: DocumentFormula
+        """
+        return cls(
+            kind=data.get("kind", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+            value=data.get("value", None),
+        )
+
+
+class DocumentImage:
+    """An image object detected in the page."""
+
+    page_number: int
+    """1-based page number of the page that contains the image."""
+    polygon: Sequence[Point]
+    """Bounding polygon of the image."""
+    span: DocumentSpan
+    """Location of the image in the reading order concatenated content."""
+    confidence: float
+    """Confidence of correctly identifying the image."""
+
+    def __init__(
+        self,
+        **kwargs: Any
+    ) -> None:
+        self.page_number = kwargs.get("page_number", None)
+        self.polygon = kwargs.get("polygon", None)
+        self.span = kwargs.get("span", None)
+        self.confidence = kwargs.get("confidence", None)
+
+    @classmethod
+    def _from_generated(cls, image):
+        return cls(
+            page_number=image.page_number,
+            span=DocumentSpan._from_generated(image.span)
+            if image.span
+            else None,
+            polygon=get_polygon(image.polygon),
+            confidence=image.confidence
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"DocumentImage(page_number={self.page_number}, polygon={self.polygon}, confidence={self.confidence}, "
+            f"span={repr(self.span)})"
+        )
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Returns a dict representation of DocumentImage."""
+        return {
+            "page_number": self.page_number,
+            "polygon": [f.to_dict() for f in self.polygon]
+            if self.polygon
+            else [],
+            "confidence": self.confidence,
+            "span": self.span.to_dict() if self.span else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentImage":
+        """Converts a dict in the shape of a DocumentImage to the model itself.
+
+        :param Dict data: A dictionary in the shape of DocumentImage.
+        :return: DocumentImage
+        :rtype: DocumentImage
+        """
+        return cls(
+            page_number=data.get("page_number", None),
+            polygon=[Point.from_dict(v) for v in data.get("polygon")]  # type: ignore
+            if len(data.get("polygon", [])) > 0
+            else [],
+            confidence=data.get("confidence", None),
+            span=DocumentSpan.from_dict(data.get("span")) if data.get("span") else None,  # type: ignore
+        )
+
+
 class DocumentPage:
-    """Content and layout elements extracted from a page of the input."""
+    """Content and layout elements extracted from a page of the input.
+
+    .. versionadded:: 2023-02-28-preview
+        The *kind*, *annotations*, *barcodes*, *formulas*, and *images* properties.
+    """
 
     page_number: int
     """1-based page number in the input document."""
@@ -2806,6 +3085,17 @@ class DocumentPage:
     lines: Optional[List[DocumentLine]]
     """Extracted lines from the page, potentially containing both textual and
      visual elements."""
+    kind: str
+    """Kind of document page. Known values are: "document", "sheet", "slide",
+     "image"."""
+    annotations: List[DocumentAnnotation]
+    """Extracted annotations from the page."""
+    barcodes: List[DocumentBarcode]
+    """Extracted barcodes from the page."""
+    formulas: List[DocumentFormula]
+    """Extracted formulas from the page"""
+    images: List[DocumentImage]
+    """Extracted images from the page."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.page_number = kwargs.get("page_number", None)
@@ -2817,9 +3107,20 @@ class DocumentPage:
         self.words = kwargs.get("words", None)
         self.selection_marks = kwargs.get("selection_marks", None)
         self.lines = kwargs.get("lines", None)
+        self.kind = kwargs.get("kind", None)
+        self.annotations = kwargs.get("annotations", None)
+        self.barcodes = kwargs.get("barcodes", None)
+        self.formulas = kwargs.get("formulas", None)
+        self.images = kwargs.get("images", None)
 
     @classmethod
     def _from_generated(cls, page):
+        kind = page.kind if hasattr(page, "kind") else None
+        annotations = DocumentAnnotation._from_generated(page.annotations) if hasattr(page, "annotations") else []
+        barcodes = DocumentBarcode._from_generated(page.barcodes) if hasattr(page, "barcodes") else []
+        formulas = DocumentFormula._from_generated(page.formulas) if hasattr(page, "formulas") else []
+        images = DocumentImage._from_generated(page.images) if hasattr(page, "images") else []
+
         return cls(
             page_number=page.page_number,
             angle=adjust_text_angle(page.angle)
@@ -2840,6 +3141,11 @@ class DocumentPage:
             if page.selection_marks
             else [],
             spans=prepare_document_spans(page.spans),
+            kind=kind,
+            annotations=annotations,
+            barcodes=barcodes,
+            formulas=formulas,
+            images=images,
         )
 
     def __repr__(self) -> str:
@@ -2847,7 +3153,8 @@ class DocumentPage:
             f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
             f"words={repr(self.words)}, selection_marks={repr(self.selection_marks)}, "
-            f"spans={repr(self.spans)})"
+            f"spans={repr(self.spans)}, kind={self.kind}, annotations={repr(self.annotations)}, "
+            f"barcodes={repr(self.barcodes)}, formulas={repr(self.formulas)}, images={repr(self.images)})"
         )
 
     def to_dict(self) -> Dict:
@@ -2869,6 +3176,19 @@ class DocumentPage:
             else [],
             "spans": [f.to_dict() for f in self.spans]
             if self.spans
+            else [],
+            "kind": self.kind,
+            "annotations": [f.to_dict() for f in self.annotations]
+            if self.annotations
+            else [],
+            "barcodes": [f.to_dict() for f in self.barcodes]
+            if self.barcodes
+            else [],
+            "formulas": [f.to_dict() for f in self.formulas]
+            if self.formulas
+            else [],
+            "images": [f.to_dict() for f in self.images]
+            if self.images
             else [],
         }
 
@@ -2897,6 +3217,19 @@ class DocumentPage:
             else [],
             spans=[DocumentSpan.from_dict(v) for v in data.get("spans")]  # type: ignore
             if len(data.get("spans", [])) > 0
+            else [],
+            kind=data.get("kind", None),
+            annotations=[DocumentAnnotation.from_dict(v) for v in data.get("annotations")]  # type: ignore
+            if len(data.get("annotations", [])) > 0
+            else [],
+            barcodes=[DocumentBarcode.from_dict(v) for v in data.get("barcodes")]  # type: ignore
+            if len(data.get("barcodes", [])) > 0
+            else [],
+            formulas=[DocumentFormula.from_dict(v) for v in data.get("formulas")]  # type: ignore
+            if len(data.get("formulas", [])) > 0
+            else [],
+            images=[DocumentImage.from_dict(v) for v in data.get("images")]  # type: ignore
+            if len(data.get("images", [])) > 0
             else [],
         )
 

@@ -10,6 +10,8 @@
 - Added support for custom document classification on `DocumentModelAdministrationClient`: `begin_build_document_classifier`, 
   `list_document_classifiers`, `get_document_classifier`, and `delete_document_classifier`.
 - Added support for classifying documents on `DocumentAnalysisClient`: `begin_classify_document` and `begin_classify_document_from_url`.
+- Added properties `annotations`, `images`, `formulas`, and `barcodes` to `DocumentPage`. 
+- Added models `DocumentAnnotation`, `DocumentImage`, `DocumentFormula`, and `DocumentBarcode`.
 
 ### Breaking Changes
 
