@@ -224,7 +224,7 @@ class RoomsClient(object):
         self,
         *,
         room_id: str,
-        participants: List[RoomParticipant],
+        participants: List[InvitedRoomParticipant],
         **kwargs
     ) -> UpsertParticipantsResult:
         """Update participants to a room. It looks for the room participants based on their
@@ -233,7 +233,7 @@ class RoomsClient(object):
         :param room_id: Required. Id of room to be updated
         :type room_id: str
         :param participants: Required. Collection of identities invited to be updated
-        :type participants: List[~azure.communication.rooms.RoomParticipant]
+        :type participants: List[~azure.communication.rooms.InvitedRoomParticipant]
         :return: UpsertParticipantsResult
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
         """
@@ -282,7 +282,9 @@ class RoomsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._rooms_service_client.participants.list(
-            room_id=room_id, **kwargs)
+            room_id=room_id,
+            cls=lambda objs: [RoomParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            **kwargs)
 
     def _convert_room_participants_to_dictionary_for_upsert(self, room_participants : List[InvitedRoomParticipant]):
         upsert_dictionary = dict()

@@ -282,7 +282,9 @@ class RoomsClient(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         return self._rooms_service_client.participants.list(
-            room_id=room_id, **kwargs)
+            room_id=room_id,
+            cls=lambda objs: [RoomParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
+            **kwargs)
 
     def _convert_room_participants_to_dictionary_for_upsert(self, room_participants : List[InvitedRoomParticipant]):
         upsert_dictionary = dict()

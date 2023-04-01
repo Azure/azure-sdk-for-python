@@ -48,6 +48,13 @@ class RoomParticipant():
             return self.__dict__ == other.__dict__
         return False
 
+    @classmethod
+    def _from_generated(cls, room_participant):
+        return cls(
+            raw_id=room_participant.raw_id,
+            role=room_participant.role
+        )
+
 class InvitedRoomParticipant():
     """An invited participant of the room.
 
