@@ -80,6 +80,7 @@ def main():
                     "type": "Public",
                 },
                 "osType": "Linux",
+                "provisioningTimeoutInSeconds": 600,
                 "subnetIds": [
                     {
                         "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
@@ -106,6 +107,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2022-10-01-preview/examples/ContainerGroupsCreateOrUpdate.json
+# x-ms-original-file: specification/containerinstance/resource-manager/Microsoft.ContainerInstance/preview/2023-02-01-preview/examples/ContainerGroupsCreateOrUpdate.json
 if __name__ == "__main__":
     main()
