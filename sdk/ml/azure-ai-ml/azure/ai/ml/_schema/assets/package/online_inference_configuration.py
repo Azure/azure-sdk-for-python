@@ -19,7 +19,7 @@ class OnlineInferenceConfigurationSchema(PathAwareSchema):
     readiness_route = NestedField(RouteSchema)
     scoring_route = NestedField(RouteSchema)
     entry_script = fields.Str()
-    configuration = dict()
+    configuration = fields.Dict()
 
     @post_load
     def make(self, data, **kwargs):
