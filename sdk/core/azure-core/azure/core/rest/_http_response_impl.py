@@ -41,6 +41,7 @@ from ._rest_py3 import (
     HttpResponse as _HttpResponse,
     HttpRequest as _HttpRequest,
 )
+from .._stream import Streamable, StreamContentType
 from ..utils._utils import case_insensitive_dict
 from ..utils._pipeline_transport_rest_shared import (
     _pad_attr_name,
@@ -49,6 +50,32 @@ from ..utils._pipeline_transport_rest_shared import (
     _get_raw_parts_helper,
     _parts_helper,
 )
+
+
+class _Stream(Streamable[StreamContentType]):
+
+    def __init__(self, **kwargs):
+        self._response: "HttpResponseImpl" = kwargs.pop("repsonse")
+        self._generator: Iterator[StreamContentType] = kwargs.pop("generator")
+
+    def __enter__(self) -> "_Stream":
+        return self
+
+    def __exit__(self, *args) -> None:
+        self.close()
+
+    def __iter__(self) -> "_Stream":
+        return self
+
+    def __next__(self) -> StreamContentType:
+        try:
+            return next(self._generator)
+        except StopAsyncIteration:
+            self.close()
+            raise
+
+    async def close(self) -> None:
+        await self._response.close()
 
 
 class _HttpResponseBackcompatMixinBase:
@@ -365,7 +392,7 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         self._set_read_checks()
         return self.content
 
-    def iter_bytes(self, **kwargs) -> Iterator[bytes]:
+    def iter_bytes(self, **kwargs) -> Streamable[bytes]:
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -373,28 +400,31 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
         """
         if self._content is not None:
             chunk_size = cast(int, self._block_size)
-            for i in range(0, len(self.content), chunk_size):
-                yield self.content[i : i + chunk_size]
+            content_gen = (self.content[i : i + chunk_size] for i in range(0, len(self.content), chunk_size))
+            return _Stream(response=self, generator=content_gen)
+
         else:
             self._stream_download_check()
-            for part in self._stream_download_generator(
+            return _Stream(
                 response=self,
-                pipeline=None,
-                decompress=True,
-            ):
-                yield part
-        self.close()
+                generator=self._stream_download_generator(
+                    response=self,
+                    pipeline=None,
+                    decompress=True,
+                )
+            )
 
-    def iter_raw(self, **kwargs) -> Iterator[bytes]:
+    def iter_raw(self, **kwargs) -> Streamable[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
         :rtype: Iterator[str]
         """
         self._stream_download_check()
-        for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
-            yield part
-        self.close()
+        return _Stream(
+            response=self,
+            generator=self._stream_download_generator(response=self, pipeline=None, decompress=False)
+        )
 
 
 class _RestHttpClientTransportResponseBackcompatBaseMixin(_HttpResponseBackcompatMixinBase):

@@ -30,8 +30,35 @@ from ._http_response_impl import (
     _HttpResponseBackcompatMixinBase,
     _RestHttpClientTransportResponseBase,
 )
+from .._stream import AsyncStreamable, StreamContentType
 from ..utils._pipeline_transport_rest_shared import _pad_attr_name
 from ..utils._pipeline_transport_rest_shared_async import _PartGenerator
+
+
+class _AsyncStream(AsyncStreamable[StreamContentType]):
+
+    def __init__(self, **kwargs):
+        self._response: "AsyncHttpResponseImpl" = kwargs.pop("repsonse")
+        self._generator: AsyncIterator[StreamContentType] = kwargs.pop("generator")
+
+    async def __aenter__(self) -> "_AsyncStream":
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self.close()
+
+    def __aiter__(self) -> "_AsyncStream":
+        return self
+
+    async def __anext__(self) -> StreamContentType:
+        try:
+            return await self._generator.__anext__()
+        except StopAsyncIteration:
+            await self.close()
+            raise
+
+    async def close(self) -> None:
+        await self._response.close()
 
 
 class AsyncHttpResponseBackcompatMixin(_HttpResponseBackcompatMixinBase):
@@ -91,29 +118,31 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         await self._set_read_checks()
         return self._content
 
-    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
         :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
+        :rtype: AsyncStreamable[bytes]
         """
         self._stream_download_check()
-        async for part in self._stream_download_generator(response=self, pipeline=None, decompress=False):
-            yield part
-        await self.close()
+        return _AsyncStream(
+            response=self,
+            generator=self._stream_download_generator(response=self, pipeline=None, decompress=False)
+        )
 
-    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
         :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
+        :rtype: AsyncStreamable[bytes]
         """
         if self._content is not None:
-            for i in range(0, len(self.content), self._block_size):
-                yield self.content[i : i + self._block_size]
+            gen = (self.content[i : i + self._block_size] for i in range(0, len(self.content, self._block_size)))
+            return _AsyncStream(response=self, generator=gen)
         else:
             self._stream_download_check()
-            async for part in self._stream_download_generator(response=self, pipeline=None, decompress=True):
-                yield part
-            await self.close()
+            return _AsyncStream(
+                response=self,
+                generator=self.self._stream_download_generator(response=self, pipeline=None, decompress=True)
+            )
 
     async def close(self) -> None:
         """Close the response.

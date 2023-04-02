@@ -39,6 +39,7 @@ from typing import (
 )
 
 from ..utils._utils import case_insensitive_dict
+from .._stream import Streamable, AsyncStreamable
 
 from ._helpers import (
     ParamsType,
@@ -349,7 +350,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def iter_raw(self, **kwargs: Any) -> Iterator[bytes]:
+    def iter_raw(self, **kwargs: Any) -> Streamable[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -358,7 +359,7 @@ class HttpResponse(_HttpResponseBase):
         ...
 
     @abc.abstractmethod
-    def iter_bytes(self, **kwargs: Any) -> Iterator[bytes]:
+    def iter_bytes(self, **kwargs: Any) -> Streamable[bytes]:
         """Iterates over the response's bytes. Will decompress in the process.
 
         :return: An iterator of bytes from the response
@@ -396,7 +397,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         ...
 
     @abc.abstractmethod
-    async def iter_raw(self, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process.
 
         :return: An async iterator of bytes from the response
@@ -407,7 +408,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         yield  # pylint: disable=unreachable
 
     @abc.abstractmethod
-    async def iter_bytes(self, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process.
 
         :return: An async iterator of bytes from the response
