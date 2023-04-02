@@ -38,7 +38,7 @@ from ..utils._pipeline_transport_rest_shared_async import _PartGenerator
 class _AsyncStream(AsyncStreamable[StreamContentType]):
 
     def __init__(self, **kwargs):
-        self._response: "AsyncHttpResponseImpl" = kwargs.pop("repsonse")
+        self._response: "AsyncHttpResponseImpl" = kwargs.pop("response")
         self._generator: AsyncIterator[StreamContentType] = kwargs.pop("generator")
 
     async def __aenter__(self) -> "_AsyncStream":

@@ -55,7 +55,7 @@ from ..utils._pipeline_transport_rest_shared import (
 class _Stream(Streamable[StreamContentType]):
 
     def __init__(self, **kwargs):
-        self._response: "HttpResponseImpl" = kwargs.pop("repsonse")
+        self._response: "HttpResponseImpl" = kwargs.pop("response")
         self._generator: Iterator[StreamContentType] = kwargs.pop("generator")
 
     def __enter__(self) -> "_Stream":
