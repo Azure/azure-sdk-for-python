@@ -569,7 +569,7 @@ def encode_application_properties(value):
         return {TYPE: AMQPTypes.null, VALUE: None}
     fields = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
     for key, data in value.items():
-        cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.string, VALUE: key}, data.decode("utf-8") if type(data) == bytes else data))
+        cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.string, VALUE: key}, data)
     return fields
 
 
