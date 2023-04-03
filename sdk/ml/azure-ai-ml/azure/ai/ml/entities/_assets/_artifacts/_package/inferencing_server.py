@@ -17,14 +17,15 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class AzureMLOnlineInferencingServer:
-    def __init__(self, type: str = None, code_configuration: str = None):
-        """Azure ML online inferencing configurations.
+    """Azure ML online inferencing configurations.
 
-        :param type: The type of the inferencing server.
-        :type type: str
-        :param code_configuration: The code configuration of the inferencing server.
-        :type code_configuration: str
-        """
+    :param type: The type of the inferencing server.
+    :type type: str
+    :param code_configuration: The code configuration of the inferencing server.
+    :type code_configuration: str
+    """
+
+    def __init__(self, type: str = None, code_configuration: str = None):
         self.type = type
         self.code_configuration = code_configuration
 
@@ -38,14 +39,15 @@ class AzureMLOnlineInferencingServer:
 
 @experimental
 class AzureMLBatchInferencingServer:
-    def __init__(self, type: str = None, code_configuration: str = None):
-        """Azure ML batch inferencing configurations.
+    """Azure ML batch inferencing configurations.
 
-        :param type: The type of the inferencing server.
-        :type type: str
-        :param code_configuration: The code configuration of the inferencing server.
-        :type code_configuration: str
-        """
+    :param type: The type of the inferencing server.
+    :type type: str
+    :param code_configuration: The code configuration of the inferencing server.
+    :type code_configuration: str
+    """
+
+    def __init__(self, type: str = None, code_configuration: str = None):
         self.type = type
         self.code_configuration = code_configuration
 
@@ -59,14 +61,15 @@ class AzureMLBatchInferencingServer:
 
 @experimental
 class TritonInferencingServer:
-    def __init__(self, inference_configuration: str = None):
-        """Azure ML batch inferencing configurations.
+    """Azure ML triton inferencing configurations.
 
-        :param type: The type of the inferencing server.
-        :type type: str
-        :param inference_configuration: The inference configuration of the inferencing server.
-        :type inference_configuration: str
-        """
+    :param type: The type of the inferencing server.
+    :type type: str
+    :param inference_configuration: The inference configuration of the inferencing server.
+    :type inference_configuration: str
+    """
+
+    def __init__(self, type: str = None, inference_configuration: str = None):
         self.type = type
         self.inference_configuration = inference_configuration
 
@@ -82,14 +85,15 @@ class TritonInferencingServer:
 
 @experimental
 class Route:
-    def __init__(self, port: str = None, path: str = None):
-        """Route.
+    """Route.
 
-        :param port: The port of the route.
-        :type port: str
-        :param path: The path of the route.
-        :type path: str
-        """
+    :param port: The port of the route.
+    :type port: str
+    :param path: The path of the route.
+    :type path: str
+    """
+
+    def __init__(self, port: str = None, path: str = None):
         self.port = port
         self.path = path
 
@@ -103,6 +107,20 @@ class Route:
 
 @experimental
 class OnlineInferenceConfiguration:
+    """Online inference configurations.
+
+    :param liveness_route: The liveness route of the online inference configuration.
+    :type liveness_route: Route
+    :param readiness_route: The readiness route of the online inference configuration.
+    :type readiness_route: Route
+    :param scoring_route: The scoring route of the online inference configuration.
+    :type scoring_route: Route
+    :param entry_script: The entry script of the online inference configuration.
+    :type entry_script: str
+    :param configuration: The configuration of the online inference configuration.
+    :type configuration: dict
+    """
+
     def __init__(
         self,
         liveness_route: Route = None,
@@ -139,14 +157,15 @@ class OnlineInferenceConfiguration:
 
 @experimental
 class CustomInferencingServer:
-    def __init__(self, type: str = None, inference_configuration: OnlineInferenceConfiguration = None):
-        """Custom inferencing configurations.
+    """Custom inferencing configurations.
 
-        :param type: The type of the inferencing server.
-        :type type: str
-        :param inference_configuration: The inference configuration of the inferencing server.
-        :type inference_configuration: OnlineInferenceConfiguration
-        """
+    :param type: The type of the inferencing server.
+    :type type: str
+    :param inference_configuration: The inference configuration of the inferencing server.
+    :type inference_configuration: OnlineInferenceConfiguration
+    """
+
+    def __init__(self, type: str = None, inference_configuration: OnlineInferenceConfiguration = None):
         self.type = type
         self.inference_configuration = inference_configuration
 

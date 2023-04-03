@@ -34,14 +34,16 @@ from azure.ai.ml._utils._experimental import experimental
 
 @experimental
 class PackageInputPathId:
-    def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
-        """PackageInputPathId.
 
-        :param input_path_type: The type of the input path.
-        :type input_path_type: str
-        :param resource_id: The resource id of the input path.
-        :type resource_id: str
-        """
+    """Package input path specified with a resource id.
+
+    :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
+    :type input_path_type: str
+    :param resource_id: The resource id of the input path. e.g. azureml://subscriptions/<>/resourceGroups/<>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>
+    :type resource_id: str
+    """
+
+    def __init__(self, input_path_type: Optional[str] = None, resource_id: Optional[str] = None):
         self.input_path_type = input_path_type
         self.resource_id = resource_id
 
@@ -61,21 +63,23 @@ class PackageInputPathId:
 
 @experimental
 class PackageInputPathVersion:
+    """Package input path specified with a resource name and version.
+
+    :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
+    :type input_path_type: str
+    :param resource_name: The resource name of the input path.
+    :type resource_name: str
+    :param resource_version: The resource version of the input path.
+    :type resource_version: str
+    """
+
     def __init__(
         self,
         input_path_type: Optional[str] = None,
         resource_name: Optional[str] = None,
         resource_version: Optional[str] = None,
     ):
-        """PackageInputPathVersion.
 
-        :param input_path_type: The type of the input path.
-        :type input_path_type: str
-        :param resource_name: The resource name of the input path.
-        :type resource_name: str
-        :param resource_version: The resource version of the input path.
-        :type resource_version: str
-        """
         self.input_path_type = input_path_type
         self.resource_name = resource_name
         self.resource_version = resource_version
@@ -100,14 +104,15 @@ class PackageInputPathVersion:
 
 @experimental
 class PackageInputPathUrl:
-    def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None):
-        """PackageInputPathUrl.
+    """Package input path specified with a url.
 
-        :param input_path_type: The type of the input path.
-        :type input_path_type: str
-        :param url: The url of the input path.
-        :type url: str
-        """
+    :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
+    :type input_path_type: str
+    :param url: The url of the input path. e.g. https://<>/data/<>/versions/<>
+    :type url: str
+    """
+
+    def __init__(self, input_path_type: Optional[str] = None, url: Optional[str] = None):
         self.input_path_type = input_path_type
         self.url = url
 

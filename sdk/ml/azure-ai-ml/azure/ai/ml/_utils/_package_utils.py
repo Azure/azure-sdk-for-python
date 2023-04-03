@@ -55,19 +55,17 @@ def package_deployment(deployment: Deployment, all_ops) -> Deployment:
         base_environment_source=base_environment_source,
         inferencing_server=inferencing_server,
     )
+    if deployment.environment:
+        package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
+    if deployment.code_configuration:
+        package_request.inferencing_server.code_configuration.code_id = "azureml:/" + deployment.code_configuration.code
     try:
-        if deployment.environment:
-            package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
-        if deployment.code_configuration:
-            package_request.inferencing_server.code_configuration.code_id = (
-                "azureml:/" + deployment.code_configuration.code
-            )
         packaged_env = model_ops.begin_package(
             model_name, model_version, package_request=package_request, skip_to_rest=True
         )
+        deployment.environment = packaged_env.id
+        deployment.model = None
+        deployment.code_configuration = None
     except Exception:
         raise
-    deployment.environment = packaged_env.id
-    deployment.model = None
-    deployment.code_configuration = None
     return deployment
