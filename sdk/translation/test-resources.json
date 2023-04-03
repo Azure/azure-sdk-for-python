@@ -136,7 +136,7 @@
         }
     },
     "variables": {
-		"txtUniqueSubDomainName": "[format('{0}', parameters('baseName'))]",
+        "txtUniqueSubDomainName": "[format('{0}', parameters('baseName'))]",
         "txtEndpointValue": "[format('https://api.cognitive.microsofttranslator.com')]",
         "txtCustomEndpointValue": "[format('https://{0}.cognitiveservices.azure.com', parameters('baseName'))]",
         "txtRegionValue": "[format('{0}', parameters('location'))]",
@@ -165,7 +165,7 @@
         }
     },
     "resources": [
-		{
+        {
             "type": "Microsoft.CognitiveServices/accounts",
             "apiVersion": "2017-04-18",
             "name": "[variables('txtUniqueSubDomainName')]",
@@ -368,17 +368,17 @@
             "type": "string",
             "value": "[listKeys(resourceId('Microsoft.CognitiveServices/accounts', variables('txtUniqueSubDomainName')), '2017-04-18').key1]"
         },
-		"TEXT_TRANSLATION_ENDPOINT": {
-			"type": "string",
-			"value": "[variables('txtEndpointValue')]"
-		},
-		"TEXT_TRANSLATION_CUSTOM_ENDPOINT": {
-		    "type": "string",
-			"value": "[variables('txtCustomEndpointValue')]"
-		},
-		"TEXT_TRANSLATION_REGION": {
-			"type": "string",
-			"value": "[variables('txtRegionValue')]"
-		}															
+        "TEXT_TRANSLATION_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('txtEndpointValue')]"
+        },
+        "TEXT_TRANSLATION_CUSTOM_ENDPOINT": {
+            "type": "string",
+            "value": "[variables('txtCustomEndpointValue')]"
+        },
+        "TEXT_TRANSLATION_REGION": {
+            "type": "string",
+            "value": "[variables('txtRegionValue')]"
+        }
     }
 }
