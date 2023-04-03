@@ -273,8 +273,9 @@ class TestDMACTrainingAsync(AsyncFormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
     async def test_build_model_file_list_source(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
+        set_bodiless_matcher()
         async with client:
-            poller = client.begin_build_document_model(
+            poller = await client.begin_build_document_model(
                 build_mode="template",
                 blob_container_url=formrecognizer_selection_mark_storage_container_sas_url,
                 file_list="filelist.jsonl"
