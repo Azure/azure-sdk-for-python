@@ -429,6 +429,12 @@
       ]
     },
     {
+      "filename": "doc/esrp_release.md",
+      "words": [
+        "ESRP"
+      ]
+    },
+    {
       "filename": "sdk/core/azure-core/tests/test_serialization.py",
       "words": [
         "Rlcw",
