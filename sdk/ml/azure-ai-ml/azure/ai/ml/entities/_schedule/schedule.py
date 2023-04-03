@@ -30,7 +30,28 @@ from .._builders import BaseNode
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
-class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Resource, TelemetryMixin):
+class Schedule(Resource):
+    def __init__(
+        self,
+        *,
+        name: str,
+        trigger: Union[CronTrigger, RecurrenceTrigger],
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
+        **kwargs,
+    ):
+        is_enabled = kwargs.pop("is_enabled", None)
+        provisioning_state = kwargs.pop("provisioning_state", None)
+        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
+        self.trigger = trigger
+        self.display_name = display_name
+        self._is_enabled = is_enabled
+        self._provisioning_state = provisioning_state
+
+
+class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
     """JobSchedule object.
 
     :param name: Name of the schedule.
@@ -61,14 +82,17 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         properties: Optional[Dict] = None,
         **kwargs,
     ):
-        is_enabled = kwargs.pop("is_enabled", None)
-        provisioning_state = kwargs.pop("provisioning_state", None)
-        super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
-        self.trigger = trigger
-        self.display_name = display_name
+        super().__init__(
+            name=name,
+            trigger=trigger,
+            display_name=display_name,
+            description=description,
+            tags=tags,
+            properties=properties,
+            description=description,
+            **kwargs,
+        )
         self.create_job = create_job
-        self._is_enabled = is_enabled
-        self._provisioning_state = provisioning_state
 
     @property
     def is_enabled(self):
