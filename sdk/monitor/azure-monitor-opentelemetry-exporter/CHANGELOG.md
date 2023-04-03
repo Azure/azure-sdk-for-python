@@ -6,8 +6,10 @@
 
 - Enable AAD Credentials
     ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
-- Enable AAD Credentials
+- Upgrading to OpenTelemetry SDK/API 1.17
     ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
+- Updating sdkVersion prefix according to new spec. Using agents folder for marker.
+    ([#29730](https://github.com/Azure/azure-sdk-for-python/pull/29730))
 
 ### Breaking Changes
 
