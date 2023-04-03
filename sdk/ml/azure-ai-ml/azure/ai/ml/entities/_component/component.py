@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import re
-import tempfile
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
@@ -571,17 +570,7 @@ class Component(
             # git also need to be resolved into arm id
             yield Code(path=code, is_remote=True)
         elif code is None:
-            # Hack: when code not specified, we generated a file which contains
-            # COMPONENT_PLACEHOLDER as code
-            # This hack was introduced because job does not allow running component without a
-            # code, and we need to make sure when component updated some field(eg: description),
-            # the code remains the same. Benefit of using a constant code for all components
-            # without code is this will generate same code for anonymous components which
-            # enables component reuse
-            with tempfile.TemporaryDirectory() as tmp_dir:
-                code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
-                with open(code, "w") as f:
-                    f.write(COMPONENT_CODE_PLACEHOLDER)
-                yield Code(base_path=self._base_path, path=code)
+            # server-side will handle how to run component without a code.
+            yield None
         else:
             yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile(code))

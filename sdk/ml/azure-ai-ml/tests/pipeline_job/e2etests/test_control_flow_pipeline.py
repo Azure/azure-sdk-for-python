@@ -1,19 +1,15 @@
 from typing import Callable
 
 import pytest
-
-from azure.ai.ml.exceptions import ValidationException
-from devtools_testutils import AzureRecordedTestCase, is_live
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
-
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
+from devtools_testutils import AzureRecordedTestCase
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 from .test_pipeline_job import assert_job_cancel
-from test_utilities.utils import omit_with_wildcard
 
 omit_fields = [
     "name",
@@ -217,11 +213,6 @@ def assert_foreach(client: MLClient, job_name, source, expected_node, yaml_node=
     assert yaml_job_dict["jobs"]["parallel_node"] == yaml_node
 
 
-@pytest.mark.skipif(
-    condition=is_live(),
-    # TODO: reopen live test when parallel_for deployed to canary
-    reason="parallel_for is not available in canary.",
-)
 class TestParallelFor(TestConditionalNodeInPipeline):
     def test_simple_foreach_string_item(self, client: MLClient, randstr: Callable):
         source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml"
