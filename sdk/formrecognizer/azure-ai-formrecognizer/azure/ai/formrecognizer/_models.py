@@ -1981,7 +1981,7 @@ class BoundingRegion:
         )
 
 
-class AddressValue:
+class AddressValue:  # pylint: disable=too-many-instance-attributes
     """An address field value.
 
     .. versionadded:: 2023-02-28-preview
@@ -2009,7 +2009,7 @@ class AddressValue:
     unit: Optional[str]
     """Apartment or office number"""
     city_district: Optional[str]
-    """Districts or boroughs within a city, such as Brooklyn in New York City or City 
+    """Districts or boroughs within a city, such as Brooklyn in New York City or City
     of Westminster in London."""
     state_district: Optional[str]
     """Second-level administrative division used in certain locales."""

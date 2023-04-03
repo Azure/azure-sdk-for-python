@@ -98,7 +98,6 @@ class TestManagement(FormRecognizerTest):
         assert model.model_id == "prebuilt-invoice"
         assert model.description is not None
         assert model.created_on
-        assert model.expires_on
         assert model.api_version
         assert model.tags == {}
         for name, doc_type in model.doc_types.items():
@@ -134,7 +133,6 @@ class TestManagement(FormRecognizerTest):
         for model in models_list:
             assert model.model_id
             assert model.created_on
-            assert model.expires_on
 
         client.delete_document_model(model.model_id)
 

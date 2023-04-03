@@ -157,8 +157,15 @@ def address_value():
         postal_code="98052",
         country_region="USA",
         street_address="123 Contoso Ave",
+        unit="unit",
+        city_district="city_district",
+        state_district="state_district",
+        suburb="suburb",
+        house="house",
+        level="level"
     )
-    model_repr = "AddressValue(house_number={}, po_box={}, road={}, city={}, state={}, postal_code={}, country_region={}, street_address={})".format(
+    model_repr = "AddressValue(house_number={}, po_box={}, road={}, city={}, state={}, postal_code={}, country_region={}, street_address={}, " \
+                 "unit={}, city_district={}, state_district={}, suburb={}, house={}, level={})".format(
         "123",
         "4567",
         "Contoso Ave",
@@ -167,6 +174,12 @@ def address_value():
         "98052",
         "USA",
         "123 Contoso Ave",
+        "unit",
+        "city_district",
+        "state_district",
+        "suburb",
+        "house",
+        "level"
     )
     assert repr(model) == model_repr
     return model, model_repr
@@ -221,8 +234,8 @@ def document_key_value_element(bounding_region, document_span):
 
 @pytest.fixture
 def document_key_value_pair(document_key_value_element):
-    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98)
-    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={})".format(document_key_value_element[1], document_key_value_element[1], 0.98)
+    model = _models.DocumentKeyValuePair(key=document_key_value_element[0], value=document_key_value_element[0], confidence=0.98, common_name="Charges")
+    model_repr = "DocumentKeyValuePair(key={}, value={}, confidence={}, common_name={})".format(document_key_value_element[1], document_key_value_element[1], 0.98, "Charges")
     assert repr(model) == model_repr
     return model, model_repr
 
@@ -390,16 +403,18 @@ def document_model(doc_type_info):
             tags={"awesome": "tag"},
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             doc_types={"prebuilt-invoice": doc_type_info[0]}
     )
-    model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+    model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}}, expires_on={})".format(
                 "prebuilt-invoice",
                 "my description",
                 datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
                 "2022-08-31",
                 {"awesome": "tag"},
-                doc_type_info[1]
+                doc_type_info[1],
+                datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             )
     assert repr(model) == model_repr
     return model, model_repr
@@ -573,6 +588,7 @@ class TestRepr():
         model = _models.DocumentModelDetails(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
@@ -580,13 +596,14 @@ class TestRepr():
                 "prebuilt-invoice": doc_type_info[0],
             }
         )
-        model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}})".format(
+        model_repr = "DocumentModelDetails(model_id={}, description={}, created_on={}, api_version={}, tags={}, doc_types={{'prebuilt-invoice': {}}}, expires_on={})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             "2022-08-31",
             {"test": "value"},
-            doc_type_info[1]
+            doc_type_info[1],
+            datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
         )
         assert repr(model) == model_repr
 
@@ -594,16 +611,18 @@ class TestRepr():
         model = _models.DocumentModelSummary(
             description="my description",
             created_on=datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
+            expires_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
             model_id="prebuilt-invoice",
             api_version="2022-08-31",
             tags={"test": "value"},
         )
-        model_repr = "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={})".format(
+        model_repr = "DocumentModelSummary(model_id={}, description={}, created_on={}, api_version={}, tags={}, expires_on={})".format(
             "prebuilt-invoice",
             "my description",
             datetime.datetime(2021, 9, 16, 10, 10, 59, 342380),
             "2022-08-31",
             {"test": "value"},
+            datetime.datetime(2024, 9, 16, 10, 10, 59, 342380),
         )
         assert repr(model) == model_repr
 
@@ -611,10 +630,16 @@ class TestRepr():
         model = _models.ResourceDetails(
             custom_document_models=_models.CustomDocumentModelsDetails(
                 limit=5000, count=10
+            ),
+            custom_neural_document_model_builds=_models.QuotaDetails(
+                used=0,
+                quota=20,
+                quota_resets_on=datetime.datetime(2024, 9, 16, 10, 10, 59, 342380)
             )
         )
-        model_repr = "ResourceDetails(custom_document_models={})".format(
-            "CustomDocumentModelsDetails(count=10, limit=5000)"
+        model_repr = "ResourceDetails(custom_document_models={}, custom_neural_document_model_builds={})".format(
+            "CustomDocumentModelsDetails(count=10, limit=5000)",
+            "QuotaDetails(used=0, quota=20, quota_resets_on=2024-09-16 10:10:59.342380)"
         )
         assert repr(model) == model_repr
 

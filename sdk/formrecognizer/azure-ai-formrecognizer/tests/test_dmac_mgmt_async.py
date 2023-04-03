@@ -107,7 +107,6 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             assert model.model_id == "prebuilt-invoice"
             assert model.description is not None
             assert model.created_on
-            assert model.expires_on
             for name, doc_type in model.doc_types.items():
                 assert name
                 for key, field in doc_type.field_schema.items():
