@@ -112,13 +112,13 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         """
         if self._content is None:
             parts = []
-            async for part in await self.iter_bytes():
+            async for part in self.iter_bytes():
                 parts.append(part)
             self._content = b"".join(parts)
         await self._set_read_checks()
         return self._content
 
-    async def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
+    def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process
         :return: An async iterator of bytes from the response
         :rtype: AsyncStreamable[bytes]
@@ -129,13 +129,15 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
             generator=self._stream_download_generator(response=self, pipeline=None, decompress=False)
         )
 
-    async def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
+    def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process
         :return: An async iterator of bytes from the response
         :rtype: AsyncStreamable[bytes]
         """
         if self._content is not None:
-            content_gen = (self.content[i : i + self._block_size] for i in range(0, len(self.content), self._block_size))
+            content_gen = (
+                self.content[i : i + self._block_size] for i in range(0, len(self.content), self._block_size)
+            )
             return _AsyncStream(response=self, generator=content_gen)
         self._stream_download_check()
         return _AsyncStream(

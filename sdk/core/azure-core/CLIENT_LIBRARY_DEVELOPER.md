@@ -325,10 +325,10 @@ class AsyncHttpResponse:
     async def read(self) -> bytes:
         """Read the response's bytes into memory."""
 
-    async def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
+    def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process."""
 
-    async def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
+    def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process."""
 ```
 
