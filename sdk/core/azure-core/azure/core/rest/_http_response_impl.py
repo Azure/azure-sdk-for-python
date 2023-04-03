@@ -41,7 +41,7 @@ from ._rest_py3 import (
     HttpResponse as _HttpResponse,
     HttpRequest as _HttpRequest,
 )
-from .._stream import Streamable, StreamContentType
+from .._stream import Streamable, _StreamContentType_co
 from ..utils._utils import case_insensitive_dict
 from ..utils._pipeline_transport_rest_shared import (
     _pad_attr_name,
@@ -52,30 +52,30 @@ from ..utils._pipeline_transport_rest_shared import (
 )
 
 
-class _Stream(Streamable[StreamContentType]):
+class _Stream(Streamable[_StreamContentType_co]):
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self._response: "HttpResponseImpl" = kwargs.pop("response")
-        self._generator: Iterator[StreamContentType] = kwargs.pop("generator")
+        self._generator: Iterator[_StreamContentType_co] = kwargs.pop("generator")
 
     def __enter__(self) -> "_Stream":
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: object) -> None:
         self.close()
 
     def __iter__(self) -> "_Stream":
         return self
 
-    def __next__(self) -> StreamContentType:
+    def __next__(self) -> _StreamContentType_co:
         try:
             return next(self._generator)
         except StopAsyncIteration:
             self.close()
             raise
 
-    async def close(self) -> None:
-        await self._response.close()
+    def close(self) -> None:
+        self._response.close()
 
 
 class _HttpResponseBackcompatMixinBase:
@@ -402,17 +402,15 @@ class HttpResponseImpl(_HttpResponseBaseImpl, _HttpResponse, HttpResponseBackcom
             chunk_size = cast(int, self._block_size)
             content_gen = (self.content[i : i + chunk_size] for i in range(0, len(self.content), chunk_size))
             return _Stream(response=self, generator=content_gen)
-
-        else:
-            self._stream_download_check()
-            return _Stream(
+        self._stream_download_check()
+        return _Stream(
+            response=self,
+            generator=self._stream_download_generator(
                 response=self,
-                generator=self._stream_download_generator(
-                    response=self,
-                    pipeline=None,
-                    decompress=True,
-                )
+                pipeline=None,
+                decompress=True,
             )
+        )
 
     def iter_raw(self, **kwargs) -> Streamable[bytes]:
         """Iterates over the response's bytes. Will not decompress in the process.

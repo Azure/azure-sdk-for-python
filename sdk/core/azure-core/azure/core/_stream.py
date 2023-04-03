@@ -4,40 +4,50 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import (
-    Iterable,
-    AsyncIterable,
-    ContextManager,
-    AsyncContextManager,
+    Iterator,
+    AsyncIterator,
+    # ContextManager,
+    # AsyncContextManager,
     Generic,
     TypeVar
 )
 from typing_extensions import Protocol, runtime_checkable, Self
 
 
-StreamContentType = TypeVar("StreamContentType")
+_StreamContentType_co = TypeVar("StreamContentType", covariant=True)
 
 
 @runtime_checkable
 class Streamable(
-    Iterable[StreamContentType],
-    ContextManager[Self],
-    Generic[StreamContentType],
+    Iterator[_StreamContentType_co],
+    # ContextManager["Streamable"],  # Not supported in Python 3.7
+    Generic[_StreamContentType_co],
     Protocol
 ):
     """Protocol for methods to provide streamed responses."""
+    def __enter__(self) -> Self:
+        ...
+
+    def __exit__(self, *args) -> None:
+        ...
 
     def close(self) -> None:
-        pass
+        ...
 
 
 @runtime_checkable
 class AsyncStreamable(
-    AsyncIterable[StreamContentType],
-    AsyncContextManager[Self],
-    Generic[StreamContentType],
+    AsyncIterator[_StreamContentType_co],
+    # AsyncContextManager["AsyncStreamable"],    # Not supported in Python 3.7
+    Generic[_StreamContentType_co],
     Protocol
 ):
     """Protocol for methods to provide async streamed responses."""
+    async def __aenter__(self) -> Self:
+        ...
+
+    async def __aexit__(self, *args) -> None:
+        ...
 
     async def close(self) -> None:
-        pass
+        ...

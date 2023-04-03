@@ -28,9 +28,7 @@ import copy
 from typing import (
     Any,
     AsyncIterable,
-    AsyncIterator,
     Iterable,
-    Iterator,
     Optional,
     Union,
     MutableMapping,
@@ -401,22 +399,18 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         """Asynchronously iterates over the response's bytes. Will not decompress in the process.
 
         :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
+        :rtype: AsyncStreamable[bytes]
         """
         raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
 
     @abc.abstractmethod
     async def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process.
 
         :return: An async iterator of bytes from the response
-        :rtype: AsyncIterator[bytes]
+        :rtype: AsyncStreamable[bytes]
         """
         raise NotImplementedError()
-        # getting around mypy behavior, see https://github.com/python/mypy/issues/10732
-        yield  # pylint: disable=unreachable
 
     @abc.abstractmethod
     async def close(self) -> None:

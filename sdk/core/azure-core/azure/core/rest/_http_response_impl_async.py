@@ -30,16 +30,16 @@ from ._http_response_impl import (
     _HttpResponseBackcompatMixinBase,
     _RestHttpClientTransportResponseBase,
 )
-from .._stream import AsyncStreamable, StreamContentType
+from .._stream import AsyncStreamable, _StreamContentType_co
 from ..utils._pipeline_transport_rest_shared import _pad_attr_name
 from ..utils._pipeline_transport_rest_shared_async import _PartGenerator
 
 
-class _AsyncStream(AsyncStreamable[StreamContentType]):
+class _AsyncStream(AsyncStreamable[_StreamContentType_co]):
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self._response: "AsyncHttpResponseImpl" = kwargs.pop("response")
-        self._generator: AsyncIterator[StreamContentType] = kwargs.pop("generator")
+        self._generator: AsyncIterator[_StreamContentType_co] = kwargs.pop("generator")
 
     async def __aenter__(self) -> "_AsyncStream":
         return self
@@ -50,7 +50,7 @@ class _AsyncStream(AsyncStreamable[StreamContentType]):
     def __aiter__(self) -> "_AsyncStream":
         return self
 
-    async def __anext__(self) -> StreamContentType:
+    async def __anext__(self) -> _StreamContentType_co:
         try:
             return await self._generator.__anext__()
         except StopAsyncIteration:
@@ -112,7 +112,7 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         """
         if self._content is None:
             parts = []
-            async for part in self.iter_bytes():
+            async for part in await self.iter_bytes():
                 parts.append(part)
             self._content = b"".join(parts)
         await self._set_read_checks()
@@ -135,14 +135,13 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
         :rtype: AsyncStreamable[bytes]
         """
         if self._content is not None:
-            gen = (self.content[i : i + self._block_size] for i in range(0, len(self.content, self._block_size)))
-            return _AsyncStream(response=self, generator=gen)
-        else:
-            self._stream_download_check()
-            return _AsyncStream(
-                response=self,
-                generator=self.self._stream_download_generator(response=self, pipeline=None, decompress=True)
-            )
+            content_gen = (self.content[i : i + self._block_size] for i in range(0, len(self.content), self._block_size))
+            return _AsyncStream(response=self, generator=content_gen)
+        self._stream_download_check()
+        return _AsyncStream(
+            response=self,
+            generator=self._stream_download_generator(response=self, pipeline=None, decompress=True)
+        )
 
     async def close(self) -> None:
         """Close the response.
@@ -165,10 +164,10 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
 class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
     """Create a Rest HTTPResponse from an http.client response."""
 
-    async def iter_bytes(self, **kwargs):
+    async def iter_bytes(self, **kwargs) -> AsyncStreamable[bytes]:
         raise TypeError("We do not support iter_bytes for this transport response")
 
-    async def iter_raw(self, **kwargs):
+    async def iter_raw(self, **kwargs) -> AsyncStreamable[bytes]:
         raise TypeError("We do not support iter_raw for this transport response")
 
     async def read(self):
