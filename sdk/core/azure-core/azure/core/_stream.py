@@ -4,8 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 from typing import (
-    Iterator,
-    AsyncIterator,
+    Iterable,
+    AsyncIterable,
     # ContextManager,
     # AsyncContextManager,
     Generic,
@@ -14,12 +14,12 @@ from typing import (
 from typing_extensions import Protocol, runtime_checkable, Self
 
 
-_StreamContentType_co = TypeVar("StreamContentType", covariant=True)
+_StreamContentType_co = TypeVar("_StreamContentType_co", covariant=True)
 
 
 @runtime_checkable
 class Streamable(
-    Iterator[_StreamContentType_co],
+    Iterable[_StreamContentType_co],
     # ContextManager["Streamable"],  # Not supported in Python 3.7
     Generic[_StreamContentType_co],
     Protocol
@@ -37,7 +37,7 @@ class Streamable(
 
 @runtime_checkable
 class AsyncStreamable(
-    AsyncIterator[_StreamContentType_co],
+    AsyncIterable[_StreamContentType_co],
     # AsyncContextManager["AsyncStreamable"],    # Not supported in Python 3.7
     Generic[_StreamContentType_co],
     Protocol
