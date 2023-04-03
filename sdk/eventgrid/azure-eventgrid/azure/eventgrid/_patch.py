@@ -82,7 +82,6 @@ class AzureMessagingEventGridClient(ServiceClientGenerated):
         if isinstance(body, CloudEvent):
             kwargs["content_type"] = "application/cloudevents+json; charset=utf-8"
             internal_body = _cloud_event_to_generated(body)
-            # if None 
             self._publish_cloud_event(topic_name, internal_body, **kwargs)
         else:
             kwargs["content_type"] = "application/cloudevents-batch+json; charset=utf-8"
