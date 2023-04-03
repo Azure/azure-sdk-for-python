@@ -259,19 +259,19 @@ class OperationOrchestrator(object):
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
             sas_info = get_storage_info_for_non_registry_asset(
-                        service_client=self._service_client,
-                        workspace_name=self._workspace_name,
-                        name=code_asset.name,
-                        version=code_asset.version,
-                        resource_group=self._resource_group_name
-                    )            
+                service_client=self._service_client,
+                workspace_name=self._workspace_name,
+                name=code_asset.name,
+                version=code_asset.version,
+                resource_group=self._resource_group_name,
+            )
             uploaded_code_asset, _ = _check_and_upload_path(
                 artifact=code_asset,
                 sas_uri=sas_info["sas_uri"],
                 asset_operations=self._code_assets,
                 artifact_type=ErrorTarget.CODE,
                 show_progress=self._operation_config.show_progress,
-                blob_uri=sas_info["blob_uri"]
+                blob_uri=sas_info["blob_uri"],
             )
             uploaded_code_asset._id = get_arm_id_with_version(
                 self._operation_scope,

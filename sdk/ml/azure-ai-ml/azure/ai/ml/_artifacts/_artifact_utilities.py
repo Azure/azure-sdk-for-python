@@ -372,7 +372,7 @@ def _check_and_upload_path(
     datastore_name: Optional[str] = None,
     sas_uri: Optional[str] = None,
     show_progress: bool = True,
-    blob_uri = None,
+    blob_uri=None,
 ) -> Tuple[T, str]:
     """Checks whether `artifact` is a path or a uri and uploads it to the datastore if necessary.
 

@@ -992,7 +992,7 @@ def get_storage_info_for_non_registry_asset(service_client, workspace_name, name
 
     sas_info = {
         "sas_uri": response.blob_reference_for_consumption.credential.sas_uri,
-        "blob_uri": response.blob_reference_for_consumption.blob_uri
+        "blob_uri": response.blob_reference_for_consumption.blob_uri,
     }
 
     return sas_info
@@ -1001,7 +1001,7 @@ def get_storage_info_for_non_registry_asset(service_client, workspace_name, name
 def _get_existing_asset_name_and_version(existing_asset):
     import re
 
-    regex = r'/codes/([^/]+)/versions/([^/]+)'
+    regex = r"/codes/([^/]+)/versions/([^/]+)"
 
     arm_id = existing_asset.id
     match = re.search(regex, arm_id)

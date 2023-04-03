@@ -12,7 +12,11 @@ from azure.ai.ml._artifacts._artifact_utilities import (
     _check_and_upload_path,
     _get_snapshot_path_info,
 )
-from azure.ai.ml._utils._asset_utils import get_content_hash_version, get_storage_info_for_non_registry_asset, _get_existing_asset_name_and_version
+from azure.ai.ml._utils._asset_utils import (
+    get_content_hash_version,
+    get_storage_info_for_non_registry_asset,
+    _get_existing_asset_name_and_version,
+)
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -105,7 +109,7 @@ class CodeOperations(_ScopeDependentOperations):
                     workspace_name=self._workspace_name,
                     name=name,
                     hash=asset_hash,
-                    hash_version=str(get_content_hash_version())
+                    hash_version=str(get_content_hash_version()),
                 )
 
                 try:
@@ -119,11 +123,11 @@ class CodeOperations(_ScopeDependentOperations):
                         workspace_name=self._workspace_name,
                         name=name,
                         version=version,
-                        resource_group=self._resource_group_name
+                        resource_group=self._resource_group_name,
                     )
                     sas_uri = sas_info["sas_uri"]
                     blob_uri = sas_info["blob_uri"]
-                
+
             code, _ = _check_and_upload_path(
                 artifact=code,
                 asset_operations=self,
