@@ -5,9 +5,9 @@
 
 from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.text.models import InputTextItem
-from tests.preparer import TextTranslationPreparer
-from tests.test_helper import TestHelper
-from tests.testcase import TextTranslationTest
+from preparer import TextTranslationPreparer
+from test_helper import TestHelper
+from testcase import TextTranslationTest
 
 
 class TestTransliteration(TextTranslationTest, TestHelper):

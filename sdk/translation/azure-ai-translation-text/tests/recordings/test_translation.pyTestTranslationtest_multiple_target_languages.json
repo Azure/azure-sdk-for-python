@@ -10,7 +10,7 @@
         "Content-Length": "29",
         "Content-Type": "application/json",
         "Ocp-Apim-Subscription-Region": "fakeregion",
-        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.11.2 (Windows-10-10.0.19042-SP0)"
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.10.10 (Windows-10-10.0.19042-SP0)"
       },
       "RequestBody": "[{\u0022text\u0022: \u0022This is a test.\u0022}]",
       "StatusCode": 200,
@@ -21,12 +21,12 @@
         ],
         "Content-Length": "186",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 31 Mar 2023 23:29:13 GMT",
+        "Date": "Mon, 03 Apr 2023 21:49:53 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Metered-Usage": "45",
         "X-MT-System": "Microsoft,Microsoft,Microsoft",
-        "X-RequestId": "TRAN.MW1P.9A67.0331T2329.76643FA"
+        "X-RequestId": "TRAN.MW1P.99BE.0403T2149.2FCA687"
       },
       "ResponseBody": "[{\u0022detectedLanguage\u0022:{\u0022language\u0022:\u0022en\u0022,\u0022score\u0022:1.0},\u0022translations\u0022:[{\u0022text\u0022:\u0022Tohle je test.\u0022,\u0022to\u0022:\u0022cs\u0022},{\u0022text\u0022:\u0022Esto es una prueba.\u0022,\u0022to\u0022:\u0022es\u0022},{\u0022text\u0022:\u0022Dies ist ein Test.\u0022,\u0022to\u0022:\u0022de\u0022}]}]"
     }

@@ -5,8 +5,8 @@
 
 from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.text.models import InputTextItem
-from tests.preparer import TextTranslationPreparer
-from tests.testcase import TextTranslationTest
+from preparer import TextTranslationPreparer
+from testcase import TextTranslationTest
 
 class TestDictionaryLookup(TextTranslationTest):
 

@@ -3,11 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, PowerShellPreparer
-from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
+from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.text.models import DictionaryExampleTextItem
-from tests.preparer import TextTranslationPreparer
-from tests.testcase import TextTranslationTest
+from preparer import TextTranslationPreparer
+from testcase import TextTranslationTest
 
 
 class TestDictionaryExamples(TextTranslationTest):

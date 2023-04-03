@@ -7,7 +7,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.11.2 (Windows-10-10.0.19042-SP0)"
+        "User-Agent": "azsdk-python-ai-translation-text/1.0.0b1 Python/3.10.10 (Windows-10-10.0.19042-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -16,11 +16,11 @@
         "Content-Encoding": "gzip",
         "Content-Length": "10722",
         "Content-Type": "application/json",
-        "Date": "Fri, 31 Mar 2023 23:29:11 GMT",
+        "Date": "Mon, 03 Apr 2023 21:49:52 GMT",
         "ETag": "\u0022O9/lTodTxeM22O9Zx2E5QRj\u002B2mdNnueZdwfjziTuhgI=\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "X-RequestId": "LANG.MW1P.9A67.0331T2329.76642C4"
+        "X-RequestId": "LANG.MW1P.99BE.0403T2149.2FCA59A"
       },
       "ResponseBody": {
         "dictionary": {

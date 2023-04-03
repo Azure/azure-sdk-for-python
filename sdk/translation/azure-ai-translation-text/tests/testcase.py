@@ -6,7 +6,7 @@
 from devtools_testutils import AzureRecordedTestCase
 from azure.ai.translation.text import TextTranslationClient, TranslatorCredential
 
-from tests.static_access_token_credential import StaticAccessTokenCredential
+from static_access_token_credential import StaticAccessTokenCredential
 
 
 class TextTranslationTest(AzureRecordedTestCase):
