@@ -1,5 +1,16 @@
 # Release History
 
+## 4.0.0b9 (2023-03-24)
+
+### Features Added
+
+  - Model ElasticPool has a new parameter availability_zone
+  - Model ElasticPool has a new parameter min_capacity
+  - Model ElasticPool has a new parameter preferred_enclave_type
+  - Model ElasticPoolUpdate has a new parameter availability_zone
+  - Model ElasticPoolUpdate has a new parameter min_capacity
+  - Model ElasticPoolUpdate has a new parameter preferred_enclave_type
+
 ## 4.0.0b8 (2023-02-17)
 
 ### Features Added

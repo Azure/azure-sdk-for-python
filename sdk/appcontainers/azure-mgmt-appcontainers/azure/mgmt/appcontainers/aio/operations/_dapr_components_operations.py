@@ -316,8 +316,8 @@ class DaprComponentsOperations:
         :type environment_name: str
         :param component_name: Name of the Dapr Component. Required.
         :type component_name: str
-        :param dapr_component_envelope: Configuration details of the Dapr Component. Is either a model
-         type or a IO type. Required.
+        :param dapr_component_envelope: Configuration details of the Dapr Component. Is either a
+         DaprComponent type or a IO type. Required.
         :type dapr_component_envelope: ~azure.mgmt.appcontainers.models.DaprComponent or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

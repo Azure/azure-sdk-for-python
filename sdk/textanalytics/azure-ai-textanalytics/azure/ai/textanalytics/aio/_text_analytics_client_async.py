@@ -26,10 +26,9 @@ from .._response_handlers import (
     language_result,
     pii_entities_result,
     _get_result_from_continuation_token,
-    dynamic_classification_result,
 )
 from ._response_handlers_async import healthcare_paged_result, analyze_paged_result
-from .._generated.models import HealthcareDocumentType, ClassificationType
+from .._generated.models import HealthcareDocumentType
 from .._models import (
     DetectLanguageInput,
     TextDocumentInput,
@@ -57,7 +56,6 @@ from .._models import (
     ExtractSummaryResult,
     AbstractiveSummaryAction,
     AbstractiveSummaryResult,
-    DynamicClassificationResult,
     PiiEntityDomain,
     PiiEntityCategory,
 )
@@ -1715,99 +1713,6 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 )
             )
 
-        except HttpResponseError as error:
-            return process_http_response_error(error)
-
-    @distributed_trace_async
-    @validate_multiapi_args(
-        version_method_added="2022-10-01-preview",
-    )
-    async def dynamic_classification(
-        self,
-        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-        categories: List[str],
-        *,
-        classification_type: Optional[Union[str, ClassificationType]] = None,
-        disable_service_logs: Optional[bool] = None,
-        language: Optional[str] = None,
-        model_version: Optional[str] = None,
-        show_stats: Optional[bool] = None,
-        **kwargs: Any,
-    ) -> List[Union[DynamicClassificationResult, DocumentError]]:
-        """Perform dynamic classification on a batch of documents.
-
-        On the fly classification of the input documents into one or multiple categories.
-        Assigns either one or multiple categories per document. This type of classification
-        doesn't require model training.
-
-        .. note:: The dynamic classification feature is part of a gated preview. Request access here:
-            https://aka.ms/applyforgatedlanguagefeature
-
-        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
-
-        :param documents: The set of documents to process as part of this batch.
-            If you wish to specify the ID and language on a per-item basis you must
-            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list
-            of dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`,
-            like `{"id": "1", "language": "en", "text": "hello world"}`.
-        :type documents:
-            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
-        :param list[str] categories: A list of categories to which input is classified to.
-        :keyword classification_type: Specifies either one or multiple categories per document. Defaults
-            to multi classification which may return more than one class for each document. Known values
-            are: "Single" and "Multi".
-        :paramtype classification_type: str or ~azure.ai.textanalytics.ClassificationType
-        :keyword str language: The 2 letter ISO 639-1 representation of language for the
-            entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Language API.
-        :keyword str model_version: This value indicates which model will
-            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
-            is not specified, the API will default to the latest, non-preview version.
-            See here for more info: https://aka.ms/text-analytics-model-versioning
-        :keyword bool show_stats: If set to true, response will contain document
-            level statistics in the `statistics` field of the document-level response.
-        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
-            logged on the service side for troubleshooting. By default, the Language service logs your
-            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
-            the service's natural language processing functions. Setting this parameter to true,
-            disables input logging and may limit our ability to remediate issues that occur. Please see
-            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
-            additional details, and Microsoft Responsible AI principles at
-            https://www.microsoft.com/ai/responsible-ai.
-        :return: The combined list of :class:`~azure.ai.textanalytics.DynamicClassificationResult` and
-            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
-            were passed in.
-        :rtype: list[~azure.ai.textanalytics.DynamicClassificationResult or ~azure.ai.textanalytics.DocumentError]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        .. versionadded:: 2022-10-01-preview
-            The *dynamic_classification* client method.
-        """
-
-        language_arg = language if language is not None else self._default_language
-        docs = _validate_input(documents, "language", language_arg)
-
-        try:
-            models = self._client.models(api_version=self._api_version)
-            return cast(
-                List[Union[DynamicClassificationResult, DocumentError]],
-                await self._client.analyze_text(
-                    body=models.AnalyzeTextDynamicClassificationInput(
-                        analysis_input={"documents": docs},
-                        parameters=models.DynamicClassificationTaskParameters(
-                            categories=categories,
-                            logging_opt_out=disable_service_logs,
-                            model_version=model_version,
-                            classification_type=classification_type,
-                        )
-                    ),
-                    show_stats=show_stats,
-                    cls=kwargs.pop("cls", dynamic_classification_result),
-                    **kwargs
-                )
-            )
         except HttpResponseError as error:
             return process_http_response_error(error)
 

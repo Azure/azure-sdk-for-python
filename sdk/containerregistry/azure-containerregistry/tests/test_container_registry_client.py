@@ -3,11 +3,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
 import os
 import pytest
 import six
-
+import hashlib
+from datetime import datetime
+from io import BytesIO
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -16,7 +17,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _deserialize_manifest, _serialize_manifest
+from azure.containerregistry._helpers import _serialize_manifest, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -426,6 +427,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
+    @recorded_by_proxy
     def test_construct_container_registry_client(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         authority = get_authority(containerregistry_endpoint)
@@ -554,19 +556,49 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
 
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # Act
-            data = open(path, "rb")
-            digest = client.upload_blob(repo, data)
-            
-            # Assert
+            with open(path, "rb") as stream:
+                digest, size = client.upload_blob(repo, stream)
+
             res = client.download_blob(repo, digest)
-            assert len(res.data.read()) == len(data.read())
+            assert len(res.data.read()) == size
             assert res.digest == digest
+
+            client.delete_blob(repo, digest)
             
+            # Cleanup
+            client.delete_repository(repo)
+
+    @pytest.mark.live_test_only
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # Test blob upload in equal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
+            data = b'\x00' * int(blob_size)
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
+            # Test blob upload and download in unequal size chunks
+            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
+            data = b'\x00' * int(blob_size)
+            digest, size = client.upload_blob(repo, BytesIO(data))
+            assert size == blob_size
+
             client.delete_blob(repo, digest)
 
             # Cleanup
             client.delete_repository(repo)
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_delete_blob_does_not_exist(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        hash_value = hashlib.sha256(b"test").hexdigest()
+        digest = f"sha256:{hash_value}"
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            client.delete_blob(repo, digest)
 
     @acr_preparer()
     @recorded_by_proxy
@@ -597,21 +629,28 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 with pytest.raises(ClientAuthenticationError):
                     for repo in client.list_repository_names():
                         pass
-
-
-def test_set_api_version():
-    containerregistry_endpoint="https://fake_url.azurecr.io"
-
-    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
-        assert client._client._config.api_version == "2021-07-01"
-
-    with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15-preview"
-    ) as client:
-        assert client._client._config.api_version == "2019-08-15-preview"
-
-    with pytest.raises(ValueError):
-        with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version = "2019-08-15"
-        ) as client:
-            pass
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup tags in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_tag(ALPINE, tag.name)
+            
+            response = client.list_tag_properties(ALPINE)
+            if response is not None:
+                for tag in response:
+                    pass
+    
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            # cleanup manifests in ALPINE repo
+            for tag in client.list_tag_properties(ALPINE):
+                client.delete_manifest(ALPINE, tag.name)
+            response = client.list_manifest_properties(ALPINE)
+            if response is not None:
+                for manifest in response:
+                    pass

@@ -1,14 +1,20 @@
 # Release History
 
-## 7.8.4 (Unreleased)
-
-### Features Added
+## 7.9.0 (Unreleased)
 
 ### Breaking Changes
 
+- Client side validation of input is now disabled by default for the sync and async `ServiceBusAdministrationClient`. This means there will be no `msrest.exceptions.ValidationError` raised by the `ServiceBusAdministrationClient` in the case of malformed input. An `azure.core.exceptions.HttpResponseError` may now be raised if the server refuses the request.
+
 ### Bugs Fixed
 
+- Fixed a bug where enum members in `azure.servicebus.management` were not following uppercase convention.
+
 ### Other Changes
+
+- Updated minimum `azure-core` version to 1.24.0.
+- Removed `msrest` dependency.
+- Removed `azure-common` dependency.
 
 ## 7.8.3 (2023-03-09)
 

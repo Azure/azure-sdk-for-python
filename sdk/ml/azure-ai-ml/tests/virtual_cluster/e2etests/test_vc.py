@@ -16,6 +16,11 @@ class TestVirtualCluster(AzureRecordedTestCase):
         test_vc_name = "SingularityTestVC"
         singularity_test_vc = [vc for vc in vc_list if vc["name"] == test_vc_name][0]
 
+        # Test get by ARM id
+        vc = client._virtual_clusters.get(singularity_test_vc["id"])
+        assert test_vc_name == vc["name"]
+
+        # Test get by name
         REGEX_PATTERN = "^/?subscriptions/([^/]+)/resourceGroups/([^/]+)/providers/Microsoft.MachineLearningServices/virtualclusters/([^/]+)"
         match = re.match(REGEX_PATTERN, singularity_test_vc["id"])
         subscription_id = match.group(1)

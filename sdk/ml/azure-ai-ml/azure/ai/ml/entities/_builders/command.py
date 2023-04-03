@@ -14,10 +14,7 @@ from typing import Dict, List, Optional, Union
 from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2023_02_01_preview.models import CommandJobLimits as RestCommandJobLimits
 from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_02_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
-from azure.ai.ml._restclient.v2023_02_01_preview.models import QueueSettings as RestQueueSettings
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
@@ -45,8 +42,8 @@ from azure.ai.ml.entities._job.distribution import (
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.job_service import (
-    JobServiceBase,
     JobService,
+    JobServiceBase,
     JupyterLabJobService,
     SshJobService,
     TensorBoardJobService,
@@ -392,6 +389,12 @@ class Command(BaseNode):
             self.limits = CommandJobLimits(timeout=timeout)
 
     def set_queue_settings(self, *, job_tier: Optional[str] = None, priority: Optional[str] = None):
+        """Set QueueSettings for the job.
+        :param job_tier: determines the job tier.
+        :type job_tier: str
+        :param priority: controls the priority on the compute.
+        :type priority: str
+        """
         if isinstance(self.queue_settings, QueueSettings):
             self.queue_settings.job_tier = job_tier
             self.queue_settings.priority = priority
@@ -422,6 +425,8 @@ class Command(BaseNode):
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
+        job_tier: Optional[str] = None,
+        priority: Optional[str] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The command component in current Command
         node will be used as its trial component. A command node can sweep for multiple times, and the generated sweep
@@ -456,6 +461,10 @@ class Command(BaseNode):
             UserIdentityConfiguration]
         :param queue_settings: Queue settings for the job.
         :type queue_settings: QueueSettings
+        :param job_tier: **Experimental** determines the job tier.
+        :type job_tier: str
+        :param priority: **Experimental** controls the priority on the compute.
+        :type priority: str
         :return: A sweep node with component from current Command node as its trial component.
         :rtype: Sweep
         """
@@ -465,6 +474,13 @@ class Command(BaseNode):
         inputs, inputs_search_space = Sweep._get_origin_inputs_and_search_space(self.inputs)
         if search_space:
             inputs_search_space.update(search_space)
+
+        if not queue_settings:
+            queue_settings = self.queue_settings
+        if job_tier is not None:
+            queue_settings.job_tier = job_tier
+        if priority is not None:
+            queue_settings.priority = priority
 
         sweep_node = Sweep(
             trial=copy.deepcopy(
@@ -485,7 +501,7 @@ class Command(BaseNode):
             experiment_name=self.experiment_name,
             identity=self.identity if not identity else identity,
             _from_component_func=True,
-            queue_settings=self.queue_settings if queue_settings is None else queue_settings,
+            queue_settings=queue_settings,
         )
         sweep_node.set_limits(
             max_total_trials=max_total_trials,
@@ -535,7 +551,7 @@ class Command(BaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["resources", "distribution", "limits", "environment_variables"]
+        return ["resources", "distribution", "limits", "environment_variables", "queue_settings"]
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
@@ -573,8 +589,7 @@ class Command(BaseNode):
         obj = BaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
+            obj["resources"] = JobResourceConfiguration._from_rest_object(obj["resources"])
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
@@ -590,15 +605,13 @@ class Command(BaseNode):
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
-            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+            obj["limits"] = CommandJobLimits._from_rest_object(obj["limits"])
 
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
 
         if "queue_settings" in obj and obj["queue_settings"]:
-            queue_settings = RestQueueSettings.from_dict(obj["queue_settings"])
-            obj["queue_settings"] = QueueSettings._from_rest_object(queue_settings)
+            obj["queue_settings"] = QueueSettings._from_rest_object(obj["queue_settings"])
 
         return obj
 

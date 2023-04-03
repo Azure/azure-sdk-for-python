@@ -80,6 +80,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         :class:`~azure.identity.VisualStudioCodeCredential`. Defaults to the "Azure: Tenant" setting in VS Code's user
         settings or, when that setting has no value, the "organizations" tenant, which supports only Azure Active
         Directory work or school accounts.
+    :keyword int developer_credential_timeout: The timeout in seconds to use for developer credentials that run
+        subprocesses (e.g. AzureCliCredential, AzurePowerShellCredential). Defaults to **10** seconds.
     """
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-statements
@@ -116,6 +118,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             "shared_cache_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
+        developer_credential_timeout = kwargs.pop("developer_credential_timeout", 10)
+
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
@@ -138,7 +142,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_managed_identity_credential:
             credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
         if not exclude_azd_cli_credential:
-            credentials.append(AzureDeveloperCliCredential())
+            credentials.append(AzureDeveloperCliCredential(process_timeout=developer_credential_timeout))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
@@ -151,9 +155,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
-            credentials.append(AzureCliCredential())
+            credentials.append(AzureCliCredential(process_timeout=developer_credential_timeout))
         if not exclude_powershell_credential:
-            credentials.append(AzurePowerShellCredential())
+            credentials.append(AzurePowerShellCredential(process_timeout=developer_credential_timeout))
         if not exclude_interactive_browser_credential:
             if interactive_browser_client_id:
                 credentials.append(

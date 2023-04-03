@@ -183,7 +183,8 @@ class BackupCrrJobsOperations:
 
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
-        :param parameters: Backup CRR Job request. Is either a model type or a IO type. Required.
+        :param parameters: Backup CRR Job request. Is either a CrrJobRequest type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.recoveryservicesbackup.passivestamp.models.CrrJobRequest or IO
         :param filter: OData filter options. Default value is None.
         :type filter: str
@@ -269,8 +270,9 @@ class BackupCrrJobsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
