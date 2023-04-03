@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Optional, TypeVar, Any, Tuple
+from typing import Optional, TypeVar, Any
 
 import msal
 
