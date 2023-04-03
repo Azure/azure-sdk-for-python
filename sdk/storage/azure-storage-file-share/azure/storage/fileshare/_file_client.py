@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines, too-many-public-methods
 import functools
+import sys
 import time
 from datetime import datetime
 from io import BytesIO
@@ -39,6 +40,11 @@ from ._serialize import (
 from ._deserialize import deserialize_file_properties, deserialize_file_stream, get_file_ranges_result
 from ._models import HandlesPaged
 from ._download import StorageStreamDownloader
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -125,6 +131,16 @@ class ShareFileClient(StorageAccountHostsMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :keyword token_intent:
+        Required when using `TokenCredential` for authentication and ignored for other forms of authentication.
+        Specifies the intent for all requests when using `TokenCredential` authentication. Possible values are:
+
+        backup - Specifies requests are intended for backup/admin type operations, meaning that all file/directory
+                 ACLs are bypassed and full permissions are granted. User must also have required RBAC permission.
+
+    :paramtype token_intent: Literal['backup']
+    :keyword bool allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
+    :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source URI.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -141,6 +157,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             file_path: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            *,
+            token_intent: Optional[Literal['backup']] = None,
             **kwargs: Any
         ) -> None:
         try:
@@ -153,8 +171,6 @@ class ShareFileClient(StorageAccountHostsMixin):
             raise ValueError("Please specify a share name and file name.")
         if not parsed_url.netloc:
             raise ValueError("Invalid URL: {}".format(account_url))
-        if hasattr(credential, 'get_token'):
-            raise ValueError("Token credentials not supported by the File service.")
 
         path_snapshot = None
         path_snapshot, sas_token = parse_query(parsed_url.query)
@@ -177,12 +193,18 @@ class ShareFileClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline)
+        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
+        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        self.file_request_intent = token_intent
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
+                                        allow_trailing_dot=self.allow_trailing_dot,
+                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
+                                        file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
     def from_file_url(
-            cls, file_url: str,  # type: str
+            cls, file_url: str,
             snapshot: Optional[Union[str, Dict[str, Any]]] = None,
             credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
             **kwargs: Any
@@ -938,7 +960,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode
+            _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))

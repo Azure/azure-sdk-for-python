@@ -119,8 +119,9 @@ class FleetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -260,7 +261,7 @@ class FleetsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Fleet resource. Required.
         :type fleet_name: str
-        :param parameters: The Fleet to create or update. Is either a model type or a IO type.
+        :param parameters: The Fleet to create or update. Is either a Fleet type or a IO type.
          Required.
         :type parameters: ~azure.mgmt.containerservice.v2022_07_02_preview.models.Fleet or IO
         :param if_match: Omit this value to always overwrite the current resource. Specify the
@@ -431,8 +432,8 @@ class FleetsOperations:
          last-seen ETag value to prevent accidentally overwriting concurrent changes. Default value is
          None.
         :type if_match: str
-        :param parameters: The properties of a Fleet to update. Is either a model type or a IO type.
-         Default value is None.
+        :param parameters: The properties of a Fleet to update. Is either a FleetPatch type or a IO
+         type. Default value is None.
         :type parameters: ~azure.mgmt.containerservice.v2022_07_02_preview.models.FleetPatch or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -486,8 +487,9 @@ class FleetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -552,8 +554,9 @@ class FleetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -606,8 +609,9 @@ class FleetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -774,8 +778,9 @@ class FleetsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -861,8 +866,9 @@ class FleetsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -923,8 +929,9 @@ class FleetsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

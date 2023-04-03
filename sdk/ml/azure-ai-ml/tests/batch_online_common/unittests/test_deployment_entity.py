@@ -211,7 +211,7 @@ class TestBatchDeploymentSDK:
             code_path="tests/test_configs/deployments/model-1/onlinescoring",
             scoring_script="score.py",
             environment="env",
-            compute="batch-cluster",
+            compute="cpu-cluster",
             instance_count=2,
             max_concurrency_per_instance=2,
             mini_batch_size=10,
@@ -222,7 +222,7 @@ class TestBatchDeploymentSDK:
 
         assert isinstance(deployment.code_configuration, CodeConfiguration)
         assert deployment.code_configuration.scoring_script == "score.py"
-        assert deployment.compute == "batch-cluster"
+        assert deployment.compute == "cpu-cluster"
 
     def test_batch_deployment_regular_properties(self) -> None:
         deployment = BatchDeployment(
@@ -234,7 +234,7 @@ class TestBatchDeploymentSDK:
                 code="tests/test_configs/deployments/model-2/onlinescoring", scoring_script="score1.py"
             ),
             environment="env",
-            compute="batch-cluster",
+            compute="cpu-cluster",
             instance_count=2,
             max_concurrency_per_instance=2,
             mini_batch_size=10,
@@ -245,7 +245,7 @@ class TestBatchDeploymentSDK:
 
         assert isinstance(deployment.code_configuration, CodeConfiguration)
         assert deployment.code_configuration.scoring_script == "score1.py"
-        assert deployment.compute == "batch-cluster"
+        assert deployment.compute == "cpu-cluster"
 
     def test_batch_deployment_except_promoted_proterties(self) -> None:
         with pytest.raises(Exception):
@@ -260,7 +260,7 @@ class TestBatchDeploymentSDK:
                 code_path="tests/test_configs/deployments/model-1/onlinescoring",
                 scoring_script="score2.py",
                 environment="env",
-                compute="batch-cluster",
+                compute="cpu-cluster",
                 instance_count=2,
                 max_concurrency_per_instance=2,
                 mini_batch_size=10,

@@ -113,8 +113,9 @@ class SyncAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -183,8 +184,9 @@ class SyncAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -305,7 +307,7 @@ class SyncAgentsOperations:
         :type server_name: str
         :param sync_agent_name: The name of the sync agent. Required.
         :type sync_agent_name: str
-        :param parameters: The requested sync agent resource state. Is either a model type or a IO
+        :param parameters: The requested sync agent resource state. Is either a SyncAgent type or a IO
          type. Required.
         :type parameters: ~azure.mgmt.sql.models.SyncAgent or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -407,8 +409,9 @@ class SyncAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -559,8 +562,9 @@ class SyncAgentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -623,8 +627,9 @@ class SyncAgentsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -712,8 +717,9 @@ class SyncAgentsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

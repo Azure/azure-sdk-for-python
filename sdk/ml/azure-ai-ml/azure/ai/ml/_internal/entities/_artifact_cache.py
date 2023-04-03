@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import tempfile
 import zipfile
+from collections import defaultdict
 from io import BytesIO
 from pathlib import Path
 from threading import Lock
@@ -20,8 +21,9 @@ _logger = logging.getLogger(__name__)
 
 
 class ArtifactCache:
-    """
-    Disk cache of azure artifact packages. The key of the cache is path of artifact packages in local, like this
+    """Disk cache of azure artifact packages.
+
+    The key of the cache is path of artifact packages in local, like this
     azure-ai-ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}.
     The value is the files/folders in this cache folder.
     """
@@ -38,27 +40,35 @@ class ArtifactCache:
     _instance = None
 
     def __new__(cls):
-        """Singleton creation disk cache"""
+        """Singleton creation disk cache."""
         if cls._instance is None:
             with cls._instance_lock:
                 if cls._instance is None:
                     cls._instance = object.__new__(cls)
+                    cls.check_artifact_extension()
         return cls._instance
 
-    def __init__(self, cache_directory=None):
-        self._cache_directory = cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY
-        Path(self._cache_directory).mkdir(exist_ok=True, parents=True)
-        # check az extension azure-devops installed
+    @staticmethod
+    def check_artifact_extension():
+        # check az extension azure-devops installed. Install it if not installed.
         process = subprocess.Popen(
-            "az artifacts --help",
+            "az artifacts --help --yes",
             shell=True,  # nosec B602
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
         process.communicate()
         if process.returncode != 0:
-            subprocess.check_call("az extension add --name azure-devops", shell=True)
+            raise RuntimeError(
+                "Auto-installation failed. Please install azure-devops "
+                "extension by 'az extension add --name azure-devops'."
+            )
+
+    def __init__(self, cache_directory=None):
+        self._cache_directory = cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY
+        Path(self._cache_directory).mkdir(exist_ok=True, parents=True)
         self._artifacts_tool_path = None
+        self._download_locks = defaultdict(Lock)
 
     @property
     def cache_directory(self):
@@ -84,11 +94,9 @@ class ArtifactCache:
 
     @staticmethod
     def get_organization_project_by_git():
-        """
-        Get organization and project from git remote url.
-        For example, the git remote url is
-            "https://organization.visualstudio.com/xxx/project_name/_git/repositry_name" or
-            "https://dev.azure.com/{organization}/project"
+        """Get organization and project from git remote url. For example, the git remote url is
+        "https://organization.visualstudio.com/xxx/project_name/_git/repositry_name" or
+        "https://dev.azure.com/{organization}/project".
 
         :return organization_url, project: organization_url, project
         :rtype organization_url, project: str, str
@@ -137,8 +145,8 @@ class ArtifactCache:
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
     def _redirect_artifacts_tool_path(self, organization):
-        """To avoid the transient issue when download artifacts,
-        download the artifacts tool and redirect az artifact command to it."""
+        """To avoid the transient issue when download artifacts, download the artifacts tool and redirect az artifact
+        command to it."""
         from azure.identity import DefaultAzureCredential
 
         if not organization:
@@ -206,11 +214,11 @@ class ArtifactCache:
                 return
 
     def _check_artifacts(self, artifact_package_path):
-        """
-        Check the artifact folder is legal.
-        If the artifact folder or checksum file does not exist, return false.
-        If the checksum file exists and does not equal to the hash of artifact folder, return False.
-        If the checksum file equals to the hash of artifact folder, return true.
+        """Check the artifact folder is legal.
+
+        If the artifact folder or checksum file does not exist, return false. If the checksum file exists and does not
+        equal to the hash of artifact folder, return False. If the checksum file equals to the hash of artifact folder,
+        return true.
         """
         path = Path(artifact_package_path)
         if not path.exists():
@@ -225,12 +233,10 @@ class ArtifactCache:
         return False
 
     def get(self, feed, name, version, scope, organization=None, project=None, resolve=True):
-        """
-        Get the catch path of artifact package. Package path like this
-        azure-ai-ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}.
-        If the path exits, it will return the package path.
-        If the path not exist and resolve=True, it will download the artifact package and return package path.
-        If the path not exist and resolve=False, it will return None.
+        """Get the catch path of artifact package. Package path like this azure-ai-
+        ml/components/additional_includes/artifacts/{organization}/{project}/{feed}/{package_name}/{version}. If the
+        path exits, it will return the package path. If the path not exist and resolve=True, it will download the
+        artifact package and return package path. If the path not exist and resolve=False, it will return None.
 
         :param feed: Name or ID of the feed.
         :param name: Name of the package.
@@ -253,33 +259,34 @@ class ArtifactCache:
             / name
             / version
         )
-        if self._check_artifacts(artifact_package_path):
-            # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
-            return artifact_package_path.absolute().resolve()
-        if resolve:
-            check_sum_path = self._get_checksum_path(artifact_package_path)
-            if Path(check_sum_path).exists():
-                os.unlink(check_sum_path)
-            if artifact_package_path.exists():
-                # Remove invalid artifact package to avoid affecting download artifact.
-                temp_folder = tempfile.mktemp()  # nosec B306
-                os.rename(artifact_package_path, temp_folder)
-                shutil.rmtree(temp_folder)
-            # Download artifact
-            return self.set(
-                feed=feed,
-                name=name,
-                version=version,
-                organization=organization,
-                project=project,
-                scope=scope,
-            )
+        # Use lock to avoid downloading the same package at the same time.
+        with self._download_locks[artifact_package_path]:
+            if self._check_artifacts(artifact_package_path):
+                # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
+                return artifact_package_path.absolute().resolve()
+            if resolve:
+                check_sum_path = self._get_checksum_path(artifact_package_path)
+                if Path(check_sum_path).exists():
+                    os.unlink(check_sum_path)
+                if artifact_package_path.exists():
+                    # Remove invalid artifact package to avoid affecting download artifact.
+                    temp_folder = tempfile.mktemp()  # nosec B306
+                    os.rename(artifact_package_path, temp_folder)
+                    shutil.rmtree(temp_folder)
+                # Download artifact
+                return self.set(
+                    feed=feed,
+                    name=name,
+                    version=version,
+                    organization=organization,
+                    project=project,
+                    scope=scope,
+                )
         return None
 
     def set(self, feed, name, version, scope, organization=None, project=None):
-        """
-        Set the artifact package to the cache. The key of the cache is path of artifact packages in local.
-        The value is the files/folders in this cache folder. If package path exists, directly return package path.
+        """Set the artifact package to the cache. The key of the cache is path of artifact packages in local. The value
+        is the files/folders in this cache folder. If package path exists, directly return package path.
 
         :param feed: Name or ID of the feed.
         :param name: Name of the package.

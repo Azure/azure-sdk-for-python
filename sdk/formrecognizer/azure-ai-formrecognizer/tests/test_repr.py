@@ -313,12 +313,27 @@ def document_page(document_span, document_word, document_selection_mark, documen
 
 @pytest.fixture
 def document_style(document_span):
-    model = _models.DocumentStyle(is_handwritten=True, spans=[document_span[0]], confidence=0.98)
-    model_repr = "DocumentStyle(is_handwritten={}, spans=[{}], confidence={})".format(
-            True,
-            document_span[1],
-            0.98,
-        )
+    model = _models.DocumentStyle(
+        is_handwritten=True,
+        spans=[document_span[0]],
+        confidence=0.98,
+        similar_font_family="Arial",
+        font_style="italic",
+        font_weight="bold",
+        color="#FF0000",
+        background_color="#FFFFFF"
+    )
+    model_repr = "DocumentStyle(is_handwritten={}, spans=[{}], confidence={}, similar_font_family={}, font_style={}, " \
+                 "font_weight={}, color={}, background_color={})".format(
+                    True,
+                    document_span[1],
+                    0.98,
+                    "Arial",
+                    "italic",
+                    "bold",
+                    "#FF0000",
+                    "#FFFFFF"
+                )
     assert repr(model) == model_repr
     return model, model_repr
 

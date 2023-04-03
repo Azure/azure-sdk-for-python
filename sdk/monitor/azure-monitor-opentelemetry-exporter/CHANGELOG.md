@@ -4,6 +4,11 @@
 
 ### Features Added
 
+- Enable AAD Credentials
+    ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+- Enable AAD Credentials
+    ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -16,6 +21,8 @@
 
 - Add sdkVersion prefix during App Service attach
     ([#28637](https://github.com/Azure/azure-sdk-for-python/pull/28637))
+- Correcting sdkVersion prefix
+    ([#29227](https://github.com/Azure/azure-sdk-for-python/pull/29227))
 
 ### Bugs Fixed
 

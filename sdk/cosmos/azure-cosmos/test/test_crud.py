@@ -1347,10 +1347,12 @@ class CRUDTests(unittest.TestCase):
             return entities
 
         # Client without any authorization will fail.
-        client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
-        self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
-                                           list,
-                                           client.list_databases())
+        try:
+            cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
+            raise Exception("Test did not fail as expected.")
+        except exceptions.CosmosHttpResponseError as error:
+            self.assertEqual(error.status_code, StatusCodes.UNAUTHORIZED)
+
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
                                             CRUDTests.masterKey,

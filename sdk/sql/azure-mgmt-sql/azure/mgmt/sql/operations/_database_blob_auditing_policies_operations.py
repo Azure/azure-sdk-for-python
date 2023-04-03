@@ -236,8 +236,9 @@ class DatabaseBlobAuditingPoliciesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -305,8 +306,9 @@ class DatabaseBlobAuditingPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -412,8 +414,8 @@ class DatabaseBlobAuditingPoliciesOperations:
         :type server_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The database blob auditing policy. Is either a model type or a IO type.
-         Required.
+        :param parameters: The database blob auditing policy. Is either a DatabaseBlobAuditingPolicy
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.DatabaseBlobAuditingPolicy or IO
         :keyword blob_auditing_policy_name: The name of the blob auditing policy. Default value is
          "default". Note that overriding this default value may result in unsupported behavior.
@@ -469,8 +471,9 @@ class DatabaseBlobAuditingPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

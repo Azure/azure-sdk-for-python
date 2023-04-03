@@ -10945,6 +10945,114 @@ class FQDNEndpointsProperties(msrest.serialization.Model):
         self.endpoints = endpoints
 
 
+class OutboundRule(msrest.serialization.Model):
+    """Outbound Rule for the managed network of a machine learning workspace.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FqdnOutboundRule, PrivateEndpointOutboundRule, ServiceTagOutboundRule.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+     workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
+     "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
+    :ivar status: Status of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Inactive", "Active".
+    :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'FQDN': 'FqdnOutboundRule', 'PrivateEndpoint': 'PrivateEndpointOutboundRule', 'ServiceTag': 'ServiceTagOutboundRule'}
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "RuleStatus"]] = None,
+        category: Optional[Union[str, "RuleCategory"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Status of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Inactive", "Active".
+        :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+        """
+        super(OutboundRule, self).__init__(**kwargs)
+        self.type = None  # type: Optional[str]
+        self.status = status
+        self.category = category
+
+
+class FqdnOutboundRule(OutboundRule):
+    """FQDN Outbound Rule for the managed network of a machine learning workspace.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+     workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
+     "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
+    :ivar status: Status of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Inactive", "Active".
+    :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar destination:
+    :vartype destination: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "RuleStatus"]] = None,
+        category: Optional[Union[str, "RuleCategory"]] = None,
+        destination: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Status of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Inactive", "Active".
+        :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+        :keyword destination:
+        :paramtype destination: str
+        """
+        super(FqdnOutboundRule, self).__init__(status=status, category=category, **kwargs)
+        self.type = 'FQDN'  # type: str
+        self.destination = destination
+
+
 class GridSamplingAlgorithm(SamplingAlgorithm):
     """Defines a Sampling Algorithm that exhaustively generates every value combination in the space.
 
@@ -16134,6 +16242,119 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         self.credentials = credentials
 
 
+class ManagedNetworkProvisionOptions(msrest.serialization.Model):
+    """Managed Network Provisioning options for managed network of a machine learning workspace.
+
+    :ivar include_spark:
+    :vartype include_spark: bool
+    """
+
+    _attribute_map = {
+        'include_spark': {'key': 'includeSpark', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        include_spark: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword include_spark:
+        :paramtype include_spark: bool
+        """
+        super(ManagedNetworkProvisionOptions, self).__init__(**kwargs)
+        self.include_spark = include_spark
+
+
+class ManagedNetworkProvisionStatus(msrest.serialization.Model):
+    """Status of the Provisioning for the managed network of a machine learning workspace.
+
+    :ivar status: Status for the managed network of a machine learning workspace. Possible values
+     include: "Inactive", "Active".
+    :vartype status: str or ~azure.mgmt.machinelearningservices.models.ManagedNetworkStatus
+    :ivar spark_ready:
+    :vartype spark_ready: bool
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'spark_ready': {'key': 'sparkReady', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "ManagedNetworkStatus"]] = None,
+        spark_ready: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Status for the managed network of a machine learning workspace. Possible
+         values include: "Inactive", "Active".
+        :paramtype status: str or ~azure.mgmt.machinelearningservices.models.ManagedNetworkStatus
+        :keyword spark_ready:
+        :paramtype spark_ready: bool
+        """
+        super(ManagedNetworkProvisionStatus, self).__init__(**kwargs)
+        self.status = status
+        self.spark_ready = spark_ready
+
+
+class ManagedNetworkSettings(msrest.serialization.Model):
+    """Managed Network settings for a machine learning workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar isolation_mode: Isolation mode for the managed network of a machine learning workspace.
+     Possible values include: "Disabled", "AllowInternetOutbound", "AllowOnlyApprovedOutbound".
+    :vartype isolation_mode: str or ~azure.mgmt.machinelearningservices.models.IsolationMode
+    :ivar network_id:
+    :vartype network_id: str
+    :ivar outbound_rules: Dictionary of :code:`<OutboundRule>`.
+    :vartype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+    :ivar status: Status of the Provisioning for the managed network of a machine learning
+     workspace.
+    :vartype status: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionStatus
+    """
+
+    _validation = {
+        'network_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'isolation_mode': {'key': 'isolationMode', 'type': 'str'},
+        'network_id': {'key': 'networkId', 'type': 'str'},
+        'outbound_rules': {'key': 'outboundRules', 'type': '{OutboundRule}'},
+        'status': {'key': 'status', 'type': 'ManagedNetworkProvisionStatus'},
+    }
+
+    def __init__(
+        self,
+        *,
+        isolation_mode: Optional[Union[str, "IsolationMode"]] = None,
+        outbound_rules: Optional[Dict[str, "OutboundRule"]] = None,
+        status: Optional["ManagedNetworkProvisionStatus"] = None,
+        **kwargs
+    ):
+        """
+        :keyword isolation_mode: Isolation mode for the managed network of a machine learning
+         workspace. Possible values include: "Disabled", "AllowInternetOutbound",
+         "AllowOnlyApprovedOutbound".
+        :paramtype isolation_mode: str or ~azure.mgmt.machinelearningservices.models.IsolationMode
+        :keyword outbound_rules: Dictionary of :code:`<OutboundRule>`.
+        :paramtype outbound_rules: dict[str, ~azure.mgmt.machinelearningservices.models.OutboundRule]
+        :keyword status: Status of the Provisioning for the managed network of a machine learning
+         workspace.
+        :paramtype status: ~azure.mgmt.machinelearningservices.models.ManagedNetworkProvisionStatus
+        """
+        super(ManagedNetworkSettings, self).__init__(**kwargs)
+        self.isolation_mode = isolation_mode
+        self.network_id = None
+        self.outbound_rules = outbound_rules
+        self.status = status
+
+
 class ManagedOnlineDeployment(OnlineDeploymentProperties):
     """Properties specific to a ManagedOnlineDeployment.
 
@@ -18241,6 +18462,96 @@ class OnlineRequestSettings(msrest.serialization.Model):
         self.request_timeout = request_timeout
 
 
+class OutboundRuleBasicResource(Resource):
+    """Outbound Rule Basic Resource for the managed network of a machine learning workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
+    :ivar properties: Required. Outbound Rule for the managed network of a machine learning
+     workspace.
+    :vartype properties: ~azure.mgmt.machinelearningservices.models.OutboundRule
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'system_data': {'readonly': True},
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        'properties': {'key': 'properties', 'type': 'OutboundRule'},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: "OutboundRule",
+        **kwargs
+    ):
+        """
+        :keyword properties: Required. Outbound Rule for the managed network of a machine learning
+         workspace.
+        :paramtype properties: ~azure.mgmt.machinelearningservices.models.OutboundRule
+        """
+        super(OutboundRuleBasicResource, self).__init__(**kwargs)
+        self.properties = properties
+
+
+class OutboundRuleListResult(msrest.serialization.Model):
+    """List of outbound rules for the managed network of a machine learning workspace.
+
+    :ivar value: The list of machine learning workspaces. Since this list may be incomplete, the
+     nextLink field should be used to request the next list of machine learning workspaces.
+    :vartype value: list[~azure.mgmt.machinelearningservices.models.OutboundRuleBasicResource]
+    :ivar next_link: The link to the next page constructed using the continuationToken.  If null,
+     there are no additional pages.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[OutboundRuleBasicResource]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[List["OutboundRuleBasicResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword value: The list of machine learning workspaces. Since this list may be incomplete, the
+         nextLink field should be used to request the next list of machine learning workspaces.
+        :paramtype value: list[~azure.mgmt.machinelearningservices.models.OutboundRuleBasicResource]
+        :keyword next_link: The link to the next page constructed using the continuationToken.  If
+         null, there are no additional pages.
+        :paramtype next_link: str
+        """
+        super(OutboundRuleListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class OutputPathAssetReference(AssetReferenceBase):
     """Reference to an asset via its path in a job output.
 
@@ -19035,6 +19346,109 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         """
         super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
         self.value = value
+
+
+class PrivateEndpointDestination(msrest.serialization.Model):
+    """Private Endpoint destination for a Private Endpoint Outbound Rule for the managed network of a machine learning workspace.
+
+    :ivar service_resource_id:
+    :vartype service_resource_id: str
+    :ivar subresource_target:
+    :vartype subresource_target: str
+    :ivar spark_enabled:
+    :vartype spark_enabled: bool
+    :ivar spark_status: Status of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Inactive", "Active".
+    :vartype spark_status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+    """
+
+    _attribute_map = {
+        'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
+        'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
+        'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
+        'spark_status': {'key': 'sparkStatus', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_resource_id: Optional[str] = None,
+        subresource_target: Optional[str] = None,
+        spark_enabled: Optional[bool] = None,
+        spark_status: Optional[Union[str, "RuleStatus"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_resource_id:
+        :paramtype service_resource_id: str
+        :keyword subresource_target:
+        :paramtype subresource_target: str
+        :keyword spark_enabled:
+        :paramtype spark_enabled: bool
+        :keyword spark_status: Status of a managed network Outbound Rule of a machine learning
+         workspace. Possible values include: "Inactive", "Active".
+        :paramtype spark_status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+        """
+        super(PrivateEndpointDestination, self).__init__(**kwargs)
+        self.service_resource_id = service_resource_id
+        self.subresource_target = subresource_target
+        self.spark_enabled = spark_enabled
+        self.spark_status = spark_status
+
+
+class PrivateEndpointOutboundRule(OutboundRule):
+    """Private Endpoint Outbound Rule for the managed network of a machine learning workspace.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+     workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
+     "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
+    :ivar status: Status of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Inactive", "Active".
+    :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar destination: Private Endpoint destination for a Private Endpoint Outbound Rule for the
+     managed network of a machine learning workspace.
+    :vartype destination: ~azure.mgmt.machinelearningservices.models.PrivateEndpointDestination
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'PrivateEndpointDestination'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "RuleStatus"]] = None,
+        category: Optional[Union[str, "RuleCategory"]] = None,
+        destination: Optional["PrivateEndpointDestination"] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Status of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Inactive", "Active".
+        :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+        :keyword destination: Private Endpoint destination for a Private Endpoint Outbound Rule for the
+         managed network of a machine learning workspace.
+        :paramtype destination: ~azure.mgmt.machinelearningservices.models.PrivateEndpointDestination
+        """
+        super(PrivateEndpointOutboundRule, self).__init__(status=status, category=category, **kwargs)
+        self.type = 'PrivateEndpoint'  # type: str
+        self.destination = destination
 
 
 class PrivateLinkResource(Resource):
@@ -21085,6 +21499,100 @@ class ServicePrincipalDatastoreSecrets(DatastoreSecrets):
         super(ServicePrincipalDatastoreSecrets, self).__init__(**kwargs)
         self.secrets_type = 'ServicePrincipal'  # type: str
         self.client_secret = client_secret
+
+
+class ServiceTagDestination(msrest.serialization.Model):
+    """Service Tag destination for a Service Tag Outbound Rule for the managed network of a machine learning workspace.
+
+    :ivar service_tag:
+    :vartype service_tag: str
+    :ivar protocol:
+    :vartype protocol: str
+    :ivar port_ranges:
+    :vartype port_ranges: str
+    """
+
+    _attribute_map = {
+        'service_tag': {'key': 'serviceTag', 'type': 'str'},
+        'protocol': {'key': 'protocol', 'type': 'str'},
+        'port_ranges': {'key': 'portRanges', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        *,
+        service_tag: Optional[str] = None,
+        protocol: Optional[str] = None,
+        port_ranges: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword service_tag:
+        :paramtype service_tag: str
+        :keyword protocol:
+        :paramtype protocol: str
+        :keyword port_ranges:
+        :paramtype port_ranges: str
+        """
+        super(ServiceTagDestination, self).__init__(**kwargs)
+        self.service_tag = service_tag
+        self.protocol = protocol
+        self.port_ranges = port_ranges
+
+
+class ServiceTagOutboundRule(OutboundRule):
+    """Service Tag Outbound Rule for the managed network of a machine learning workspace.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar type: Required. Type of a managed network Outbound Rule of a machine learning
+     workspace.Constant filled by server. Possible values include: "FQDN", "PrivateEndpoint",
+     "ServiceTag".
+    :vartype type: str or ~azure.mgmt.machinelearningservices.models.RuleType
+    :ivar status: Status of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Inactive", "Active".
+    :vartype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+    :ivar category: Category of a managed network Outbound Rule of a machine learning workspace.
+     Possible values include: "Required", "Recommended", "UserDefined".
+    :vartype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+    :ivar destination: Service Tag destination for a Service Tag Outbound Rule for the managed
+     network of a machine learning workspace.
+    :vartype destination: ~azure.mgmt.machinelearningservices.models.ServiceTagDestination
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'destination': {'key': 'destination', 'type': 'ServiceTagDestination'},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "RuleStatus"]] = None,
+        category: Optional[Union[str, "RuleCategory"]] = None,
+        destination: Optional["ServiceTagDestination"] = None,
+        **kwargs
+    ):
+        """
+        :keyword status: Status of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Inactive", "Active".
+        :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RuleStatus
+        :keyword category: Category of a managed network Outbound Rule of a machine learning workspace.
+         Possible values include: "Required", "Recommended", "UserDefined".
+        :paramtype category: str or ~azure.mgmt.machinelearningservices.models.RuleCategory
+        :keyword destination: Service Tag destination for a Service Tag Outbound Rule for the managed
+         network of a machine learning workspace.
+        :paramtype destination: ~azure.mgmt.machinelearningservices.models.ServiceTagDestination
+        """
+        super(ServiceTagOutboundRule, self).__init__(status=status, category=category, **kwargs)
+        self.type = 'ServiceTag'  # type: str
+        self.destination = destination
 
 
 class SetupScripts(msrest.serialization.Model):
@@ -25234,6 +25742,8 @@ class Workspace(Resource):
     :ivar feature_store_settings: Settings for feature store type workspace.
     :vartype feature_store_settings:
      ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+    :ivar managed_network: Managed Network settings for a machine learning workspace.
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
     """
 
     _validation = {
@@ -25293,6 +25803,7 @@ class Workspace(Resource):
         'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'str'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
     }
 
     def __init__(
@@ -25321,6 +25832,7 @@ class Workspace(Resource):
         v1_legacy_mode: Optional[bool] = False,
         system_datastores_auth_mode: Optional[str] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
+        managed_network: Optional["ManagedNetworkSettings"] = None,
         **kwargs
     ):
         """
@@ -25385,6 +25897,8 @@ class Workspace(Resource):
         :keyword feature_store_settings: Settings for feature store type workspace.
         :paramtype feature_store_settings:
          ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+        :keyword managed_network: Managed Network settings for a machine learning workspace.
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
         """
         super(Workspace, self).__init__(**kwargs)
         self.identity = identity
@@ -25421,6 +25935,7 @@ class Workspace(Resource):
         self.scheduled_purge_date = None
         self.system_datastores_auth_mode = system_datastores_auth_mode
         self.feature_store_settings = feature_store_settings
+        self.managed_network = managed_network
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
@@ -25768,6 +26283,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :ivar feature_store_settings: Settings for feature store type workspace.
     :vartype feature_store_settings:
      ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+    :ivar managed_network: Managed Network settings for a machine learning workspace.
+    :vartype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
     """
 
     _attribute_map = {
@@ -25784,6 +26301,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionUpdateProperties'},
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'ManagedNetworkSettings'},
     }
 
     def __init__(
@@ -25802,6 +26320,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         container_registry: Optional[str] = None,
         encryption: Optional["EncryptionUpdateProperties"] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
+        managed_network: Optional["ManagedNetworkSettings"] = None,
         **kwargs
     ):
         """
@@ -25837,6 +26356,8 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :keyword feature_store_settings: Settings for feature store type workspace.
         :paramtype feature_store_settings:
          ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+        :keyword managed_network: Managed Network settings for a machine learning workspace.
+        :paramtype managed_network: ~azure.mgmt.machinelearningservices.models.ManagedNetworkSettings
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = tags
@@ -25852,3 +26373,4 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.container_registry = container_registry
         self.encryption = encryption
         self.feature_store_settings = feature_store_settings
+        self.managed_network = managed_network

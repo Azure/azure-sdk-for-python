@@ -276,8 +276,9 @@ class BackupShortTermRetentionPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -348,8 +349,9 @@ class BackupShortTermRetentionPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -476,8 +478,8 @@ class BackupShortTermRetentionPoliciesOperations:
         :type database_name: str
         :param policy_name: The policy name. Should always be "default". "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is either a model type or a IO type.
-         Required.
+        :param parameters: The short term retention policy info. Is either a
+         BackupShortTermRetentionPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -598,8 +600,9 @@ class BackupShortTermRetentionPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -726,8 +729,8 @@ class BackupShortTermRetentionPoliciesOperations:
         :type database_name: str
         :param policy_name: The policy name. Should always be "default". "default" Required.
         :type policy_name: str or ~azure.mgmt.sql.models.ShortTermRetentionPolicyName
-        :param parameters: The short term retention policy info. Is either a model type or a IO type.
-         Required.
+        :param parameters: The short term retention policy info. Is either a
+         BackupShortTermRetentionPolicy type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.BackupShortTermRetentionPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -865,8 +868,9 @@ class BackupShortTermRetentionPoliciesOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

@@ -636,6 +636,14 @@ class InstanceSegmentationPrimaryMetrics(with_metaclass(CaseInsensitiveEnumMeta,
     #: AP is calculated for each class and averaged to get the MAP.
     MEAN_AVERAGE_PRECISION = "MeanAveragePrecision"
 
+class IsolationMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Isolation mode for the managed network of a machine learning workspace.
+    """
+
+    DISABLED = "Disabled"
+    ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
+    ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
+
 class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the Job Input Type.
     """
@@ -769,6 +777,13 @@ class LogVerbosity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ERROR = "Error"
     #: Only critical statements logged.
     CRITICAL = "Critical"
+
+class ManagedNetworkStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status for the managed network of a machine learning workspace.
+    """
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
 
 class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
@@ -1141,6 +1156,29 @@ class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, E
     ENABLED = "Enabled"
     DISABLED = "Disabled"
     NOT_SPECIFIED = "NotSpecified"
+
+class RuleCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Category of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    REQUIRED = "Required"
+    RECOMMENDED = "Recommended"
+    USER_DEFINED = "UserDefined"
+
+class RuleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Status of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    INACTIVE = "Inactive"
+    ACTIVE = "Active"
+
+class RuleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Type of a managed network Outbound Rule of a machine learning workspace.
+    """
+
+    FQDN = "FQDN"
+    PRIVATE_ENDPOINT = "PrivateEndpoint"
+    SERVICE_TAG = "ServiceTag"
 
 class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 

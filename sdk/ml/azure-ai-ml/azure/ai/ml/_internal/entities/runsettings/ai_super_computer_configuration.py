@@ -4,7 +4,7 @@
 
 from typing import Dict, List, Optional
 
-from azure.ai.ml.entities._job.job_resource_configuration import BaseProperty
+from ....entities._job.job_resource_configuration import BaseProperty
 
 
 class AISuperComputerStorageReferenceConfiguration(BaseProperty):

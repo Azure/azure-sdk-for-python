@@ -246,7 +246,7 @@ class GalleryImagesOperations:
          middle. The maximum length is 80 characters. Required.
         :type gallery_image_name: str
         :param gallery_image: Parameters supplied to the create or update gallery image operation. Is
-         either a model type or a IO type. Required.
+         either a GalleryImage type or a IO type. Required.
         :type gallery_image: ~azure.mgmt.compute.v2021_10_01.models.GalleryImage or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -484,7 +484,7 @@ class GalleryImagesOperations:
          maximum length is 80 characters. Required.
         :type gallery_image_name: str
         :param gallery_image: Parameters supplied to the update gallery image operation. Is either a
-         model type or a IO type. Required.
+         GalleryImageUpdate type or a IO type. Required.
         :type gallery_image: ~azure.mgmt.compute.v2021_10_01.models.GalleryImageUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

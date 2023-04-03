@@ -1,0 +1,165 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/57734197-13dd-45f0-aa78-082bb55ed768?api-version=2023-02-15-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "500",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-purview-sharing/1.0.0b1 Python/3.10.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "artifact": {
+            "properties": {
+              "paths": [
+                {
+                  "containerName": "container1",
+                  "receiverPath": "t1/dbtGen2Pqt.parquet",
+                  "senderPath": "t1/dbtGen2Pqt.parquet"
+                }
+              ]
+            },
+            "storeKind": "AdlsGen2Account",
+            "storeReference": {
+              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftsharersan",
+              "type": "ArmResourceReference"
+            }
+          },
+          "displayName": "sentShare-Test",
+          "description": "A sample share"
+        },
+        "shareKind": "InPlace"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-02-15-preview",
+        "Content-Length": "700",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Mar 2023 20:55:14 GMT",
+        "Location": "/sentShares/57734197-13dd-45f0-aa78-082bb55ed768/57734197-13dd-45f0-aa78-082bb55ed768",
+        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-02-15-preview",
+        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-02-15-preview",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "417389c5-b8dc-453b-88fb-15530753b6b5"
+      },
+      "ResponseBody": {
+        "properties": {
+          "displayName": "sentShare-Test",
+          "description": "A sample share",
+          "artifact": {
+            "properties": {
+              "paths": [
+                {
+                  "containerName": "container1",
+                  "senderPath": "t1/dbtGen2Pqt.parquet",
+                  "receiverPath": "t1/dbtGen2Pqt.parquet"
+                }
+              ],
+              "location": "southafricanorth"
+            },
+            "storeKind": "AdlsGen2Account",
+            "storeReference": {
+              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftsharersan",
+              "type": "ArmResourceReference"
+            }
+          },
+          "state": "Succeeded",
+          "createdAt": "2023-03-14T20:55:14.5719034Z",
+          "dependsOn": [],
+          "senderName": "SyMS",
+          "senderTenantName": "Microsoft"
+        },
+        "shareKind": "InPlace",
+        "id": "57734197-13dd-45f0-aa78-082bb55ed768",
+        "type": "SentShare"
+      }
+    },
+    {
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/57734197-13dd-45f0-aa78-082bb55ed768/sentShareInvitations/8c35d372-a90d-4e5b-93cc-c18ad525bb44?api-version=2023-02-15-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "170",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-purview-sharing/1.0.0b1 Python/3.10.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "invitationKind": "Service",
+        "properties": {
+          "targetActiveDirectoryId": "19513734-8215-4190-bd7e-ff6cbed36fbe",
+          "targetObjectId": "ebf435a4-3f8d-4ed1-843b-e598e2916a3e"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "385",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Mar 2023 20:55:15 GMT",
+        "Location": "/sentShares/57734197-13dd-45f0-aa78-082bb55ed768/sentShareInvitations/8c35d372-a90d-4e5b-93cc-c18ad525bb44/8c35d372-a90d-4e5b-93cc-c18ad525bb44",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "7a9108a2-a2b5-49b4-8675-14cfe94af898"
+      },
+      "ResponseBody": {
+        "properties": {
+          "targetActiveDirectoryId": "19513734-8215-4190-bd7e-ff6cbed36fbe",
+          "targetObjectId": "ebf435a4-3f8d-4ed1-843b-e598e2916a3e",
+          "shareStatus": "Detached",
+          "sentAt": "2023-03-14T20:55:15.2550783Z",
+          "senderName": "SyMS",
+          "senderTenantName": "Microsoft",
+          "state": "Succeeded"
+        },
+        "invitationKind": "Service",
+        "id": "8c35d372-a90d-4e5b-93cc-c18ad525bb44",
+        "type": "sentShares/sentShareInvitations"
+      }
+    },
+    {
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/57734197-13dd-45f0-aa78-082bb55ed768/sentShareInvitations?api-version=2023-02-15-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-purview-sharing/1.0.0b1 Python/3.10.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Content-Length": "397",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Mar 2023 20:55:15 GMT",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "613c5315-b639-4f5d-a2f4-ca25590607b9"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "properties": {
+              "targetActiveDirectoryId": "19513734-8215-4190-bd7e-ff6cbed36fbe",
+              "targetObjectId": "ebf435a4-3f8d-4ed1-843b-e598e2916a3e",
+              "shareStatus": "Detached",
+              "sentAt": "2023-03-14T20:55:15.2550783Z",
+              "senderName": "SyMS",
+              "senderTenantName": "Microsoft",
+              "state": "Succeeded"
+            },
+            "invitationKind": "Service",
+            "id": "8c35d372-a90d-4e5b-93cc-c18ad525bb44",
+            "type": "sentShares/sentShareInvitations"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -140,8 +140,9 @@ class ManagedInstanceTdeCertificatesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -242,8 +243,8 @@ class ManagedInstanceTdeCertificatesOperations:
         :type resource_group_name: str
         :param managed_instance_name: The name of the managed instance. Required.
         :type managed_instance_name: str
-        :param parameters: The requested TDE certificate to be created or updated. Is either a model
-         type or a IO type. Required.
+        :param parameters: The requested TDE certificate to be created or updated. Is either a
+         TdeCertificate type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.TdeCertificate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

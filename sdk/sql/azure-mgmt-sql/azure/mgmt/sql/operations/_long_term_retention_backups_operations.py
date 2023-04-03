@@ -760,8 +760,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -888,7 +889,7 @@ class LongTermRetentionBackupsOperations:
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: The parameters needed for long term retention copy request. Is either a
-         model type or a IO type. Required.
+         CopyLongTermRetentionBackupParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1010,8 +1011,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1137,8 +1139,8 @@ class LongTermRetentionBackupsOperations:
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: The requested backup resource state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested backup resource state. Is either a
+         UpdateLongTermRetentionBackupParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1263,8 +1265,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1322,8 +1325,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1498,8 +1502,9 @@ class LongTermRetentionBackupsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1588,8 +1593,9 @@ class LongTermRetentionBackupsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1682,8 +1688,9 @@ class LongTermRetentionBackupsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1752,8 +1759,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1892,7 +1900,7 @@ class LongTermRetentionBackupsOperations:
         :param backup_name: The backup name. Required.
         :type backup_name: str
         :param parameters: The parameters needed for long term retention copy request. Is either a
-         model type or a IO type. Required.
+         CopyLongTermRetentionBackupParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.CopyLongTermRetentionBackupParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2017,8 +2025,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2156,8 +2165,8 @@ class LongTermRetentionBackupsOperations:
         :type long_term_retention_database_name: str
         :param backup_name: The backup name. Required.
         :type backup_name: str
-        :param parameters: The requested backup resource state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested backup resource state. Is either a
+         UpdateLongTermRetentionBackupParameters type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.UpdateLongTermRetentionBackupParameters or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -2288,8 +2297,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2349,8 +2359,9 @@ class LongTermRetentionBackupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -2535,8 +2546,9 @@ class LongTermRetentionBackupsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2630,8 +2642,9 @@ class LongTermRetentionBackupsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -2729,8 +2742,9 @@ class LongTermRetentionBackupsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
