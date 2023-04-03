@@ -7,37 +7,43 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DatasetConsumptionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DatasetConsumptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DatasetConsumptionType."""
 
     RUN_INPUT = "RunInput"
     REFERENCE = "Reference"
 
-class DatasetDeliveryMechanism(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DatasetDeliveryMechanism(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DatasetDeliveryMechanism."""
 
     DIRECT = "Direct"
     MOUNT = "Mount"
     DOWNLOAD = "Download"
     HDFS = "Hdfs"
 
-class DatasetOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DatasetOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DatasetOutputType."""
 
     RUN_OUTPUT = "RunOutput"
     REFERENCE = "Reference"
 
-class ExperimentViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """ViewType filters experiments by their archived state. Default is ActiveOnly
-    """
+
+class ExperimentViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ViewType filters experiments by their archived state. Default is ActiveOnly."""
 
     DEFAULT = "Default"
     ALL = "All"
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
 
-class MetricValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class MetricValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MetricValueType."""
 
     INT = "Int"
     DOUBLE = "Double"
@@ -45,7 +51,8 @@ class MetricValueType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     BOOL = "Bool"
     ARTIFACT = "Artifact"
 
-class RunStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class RunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets span status.
     OpenTelemetry sets it to
     https://github.com/open-telemetry/opentelemetry-dotnet/blob/master/src/OpenTelemetry.Api/Trace/Status.cs
@@ -66,12 +73,16 @@ class RunStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class SortOrderDirection(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SortOrderDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SortOrderDirection."""
 
     ASC = "Asc"
     DESC = "Desc"
 
-class StoredProcedureParameterType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class StoredProcedureParameterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StoredProcedureParameterType."""
 
     STRING = "String"
     INT = "Int"

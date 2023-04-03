@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class BatchLoggingLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Log verbosity for batch inferencing.
     Increasing verbosity order for logging is : Warning, Info and Debug.
     The default value is Info.
@@ -21,29 +20,33 @@ class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     DEBUG = "Debug"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DatasetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DatasetType."""
 
     SIMPLE = "Simple"
     DATAFLOW = "Dataflow"
 
-class InferenceDataInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class InferenceDataInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """InferenceDataInputType."""
 
     DATASET_VERSION = "DatasetVersion"
     DATASET_ID = "DatasetId"
     DATA_URL = "DataUrl"
 
-class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the input data delivery mode.
-    """
+
+class InputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the input data delivery mode."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
     READ_WRITE_MOUNT = "ReadWriteMount"
@@ -52,9 +55,9 @@ class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EVAL_MOUNT = "EvalMount"
     EVAL_DOWNLOAD = "EvalDownload"
 
-class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the Job Input Type.
-    """
+
+class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the Job Input Type."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
@@ -64,9 +67,9 @@ class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ML_FLOW_MODEL = "MLFlowModel"
     TRITON_MODEL = "TritonModel"
 
-class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the Job Output Type.
-    """
+
+class JobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the Job Output Type."""
 
     URI_FILE = "UriFile"
     URI_FOLDER = "UriFolder"
@@ -75,16 +78,18 @@ class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ML_FLOW_MODEL = "MLFlowModel"
     TRITON_MODEL = "TritonModel"
 
-class JobProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JobProvisioningState."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
     IN_PROGRESS = "InProgress"
 
-class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of a job.
-    """
+
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a job."""
 
     NOT_STARTED = "NotStarted"
     STARTING = "Starting"
@@ -101,9 +106,9 @@ class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     PAUSED = "Paused"
     UNKNOWN = "Unknown"
 
-class OutputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Output data delivery mode enums.
-    """
+
+class OutputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Output data delivery mode enums."""
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"

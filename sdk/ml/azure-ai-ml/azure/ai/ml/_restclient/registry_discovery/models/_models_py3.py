@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,12 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
-import msrest.serialization
+from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class DebugInfoResponse(msrest.serialization.Model):
+class DebugInfoResponse(_serialization.Model):
     """DebugInfoResponse.
 
     :ivar type:
@@ -30,12 +35,12 @@ class DebugInfoResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'stack_trace': {'key': 'stackTrace', 'type': 'str'},
-        'inner_exception': {'key': 'innerException', 'type': 'DebugInfoResponse'},
-        'data': {'key': 'data', 'type': '{object}'},
-        'error_response': {'key': 'errorResponse', 'type': 'ErrorResponse'},
+        "type": {"key": "type", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "stack_trace": {"key": "stackTrace", "type": "str"},
+        "inner_exception": {"key": "innerException", "type": "DebugInfoResponse"},
+        "data": {"key": "data", "type": "{object}"},
+        "error_response": {"key": "errorResponse", "type": "ErrorResponse"},
     }
 
     def __init__(
@@ -44,11 +49,11 @@ class DebugInfoResponse(msrest.serialization.Model):
         type: Optional[str] = None,
         message: Optional[str] = None,
         stack_trace: Optional[str] = None,
-        inner_exception: Optional["DebugInfoResponse"] = None,
+        inner_exception: Optional["_models.DebugInfoResponse"] = None,
         data: Optional[Dict[str, Any]] = None,
-        error_response: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
+        error_response: Optional["_models.ErrorResponse"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type:
         :paramtype type: str
@@ -63,7 +68,7 @@ class DebugInfoResponse(msrest.serialization.Model):
         :keyword error_response:
         :paramtype error_response: ~azure.mgmt.machinelearningservices.models.ErrorResponse
         """
-        super(DebugInfoResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.message = message
         self.stack_trace = stack_trace
@@ -72,7 +77,7 @@ class DebugInfoResponse(msrest.serialization.Model):
         self.error_response = error_response
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """ErrorAdditionalInfo.
 
     :ivar type:
@@ -82,29 +87,23 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        info: Optional[Any] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[str] = None, info: Optional[Any] = None, **kwargs: Any) -> None:
         """
         :keyword type:
         :paramtype type: str
         :keyword info: Anything.
         :paramtype info: any
         """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.info = info
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """ErrorResponse.
 
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
@@ -125,27 +124,27 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'error': {'key': 'error', 'type': 'RootError'},
-        'correlation': {'key': 'correlation', 'type': '{str}'},
-        'environment': {'key': 'environment', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'component_name': {'key': 'componentName', 'type': 'str'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "error": {"key": "error", "type": "RootError"},
+        "correlation": {"key": "correlation", "type": "{str}"},
+        "environment": {"key": "environment", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "component_name": {"key": "componentName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         additional_properties: Optional[Dict[str, Any]] = None,
-        error: Optional["RootError"] = None,
+        error: Optional["_models.RootError"] = None,
         correlation: Optional[Dict[str, str]] = None,
         environment: Optional[str] = None,
         location: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
         component_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -163,7 +162,7 @@ class ErrorResponse(msrest.serialization.Model):
         :keyword component_name:
         :paramtype component_name: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.error = error
         self.correlation = correlation
@@ -173,7 +172,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.component_name = component_name
 
 
-class InnerErrorResponse(msrest.serialization.Model):
+class InnerErrorResponse(_serialization.Model):
     """InnerErrorResponse.
 
     :ivar code:
@@ -183,29 +182,25 @@ class InnerErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
+        "code": {"key": "code", "type": "str"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        inner_error: Optional["InnerErrorResponse"] = None,
-        **kwargs
-    ):
+        self, *, code: Optional[str] = None, inner_error: Optional["_models.InnerErrorResponse"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
         :keyword inner_error:
         :paramtype inner_error: ~azure.mgmt.machinelearningservices.models.InnerErrorResponse
         """
-        super(InnerErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.inner_error = inner_error
 
 
-class RegistryDiscoveryDto(msrest.serialization.Model):
+class RegistryDiscoveryDto(_serialization.Model):
     """RegistryDiscoveryDto.
 
     :ivar registry_name:
@@ -227,14 +222,14 @@ class RegistryDiscoveryDto(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry_name': {'key': 'registryName', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'primary_region': {'key': 'primaryRegion', 'type': 'str'},
-        'regions': {'key': 'regions', 'type': '[str]'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'workspace_name': {'key': 'workspaceName', 'type': 'str'},
-        'primary_region_resource_provider_uri': {'key': 'primaryRegionResourceProviderUri', 'type': 'str'},
+        "registry_name": {"key": "registryName", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "primary_region": {"key": "primaryRegion", "type": "str"},
+        "regions": {"key": "regions", "type": "[str]"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "workspace_name": {"key": "workspaceName", "type": "str"},
+        "primary_region_resource_provider_uri": {"key": "primaryRegionResourceProviderUri", "type": "str"},
     }
 
     def __init__(
@@ -248,8 +243,8 @@ class RegistryDiscoveryDto(msrest.serialization.Model):
         resource_group: Optional[str] = None,
         workspace_name: Optional[str] = None,
         primary_region_resource_provider_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword registry_name:
         :paramtype registry_name: str
@@ -268,7 +263,7 @@ class RegistryDiscoveryDto(msrest.serialization.Model):
         :keyword primary_region_resource_provider_uri:
         :paramtype primary_region_resource_provider_uri: str
         """
-        super(RegistryDiscoveryDto, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.registry_name = registry_name
         self.tenant_id = tenant_id
         self.primary_region = primary_region
@@ -279,7 +274,7 @@ class RegistryDiscoveryDto(msrest.serialization.Model):
         self.primary_region_resource_provider_uri = primary_region_resource_provider_uri
 
 
-class RootError(msrest.serialization.Model):
+class RootError(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """RootError.
 
     :ivar code:
@@ -309,18 +304,18 @@ class RootError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'message_format': {'key': 'messageFormat', 'type': 'str'},
-        'message_parameters': {'key': 'messageParameters', 'type': '{str}'},
-        'reference_code': {'key': 'referenceCode', 'type': 'str'},
-        'details_uri': {'key': 'detailsUri', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[RootError]'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
-        'debug_info': {'key': 'debugInfo', 'type': 'DebugInfoResponse'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "severity": {"key": "severity", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "message_format": {"key": "messageFormat", "type": "str"},
+        "message_parameters": {"key": "messageParameters", "type": "{str}"},
+        "reference_code": {"key": "referenceCode", "type": "str"},
+        "details_uri": {"key": "detailsUri", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[RootError]"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
+        "debug_info": {"key": "debugInfo", "type": "DebugInfoResponse"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
     def __init__(
@@ -334,12 +329,12 @@ class RootError(msrest.serialization.Model):
         reference_code: Optional[str] = None,
         details_uri: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["RootError"]] = None,
-        inner_error: Optional["InnerErrorResponse"] = None,
-        debug_info: Optional["DebugInfoResponse"] = None,
-        additional_info: Optional[List["ErrorAdditionalInfo"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.RootError"]] = None,
+        inner_error: Optional["_models.InnerErrorResponse"] = None,
+        debug_info: Optional["_models.DebugInfoResponse"] = None,
+        additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -367,7 +362,7 @@ class RootError(msrest.serialization.Model):
         :paramtype additional_info:
          list[~azure.mgmt.machinelearningservices.models.ErrorAdditionalInfo]
         """
-        super(RootError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.severity = severity
         self.message = message

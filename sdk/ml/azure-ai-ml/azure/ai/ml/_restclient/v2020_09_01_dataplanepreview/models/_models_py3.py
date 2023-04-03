@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,58 +8,55 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._azure_machine_learning_workspaces_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AssetJobInput(msrest.serialization.Model):
+class AssetJobInput(_serialization.Model):
     """Asset input type.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", "EvalMount", and "EvalDownload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    :ivar uri: Required. Input Asset URI.
+    :ivar uri: Input Asset URI. Required.
     :vartype uri: str
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        uri: str,
-        mode: Optional[Union[str, "InputDeliveryMode"]] = None,
-        **kwargs
-    ):
+        self, *, uri: str, mode: Optional[Union[str, "_models.InputDeliveryMode"]] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
+        :keyword mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+         "Download", "Direct", "EvalMount", and "EvalDownload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-        :keyword uri: Required. Input Asset URI.
+        :keyword uri: Input Asset URI. Required.
         :paramtype uri: str
         """
-        super(AssetJobInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.mode = mode
         self.uri = uri
 
 
-class AssetJobOutput(msrest.serialization.Model):
+class AssetJobOutput(_serialization.Model):
     """Asset output type.
 
-    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
     :ivar uri: Output Asset URI. This will have a default value of
      "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
@@ -66,30 +64,30 @@ class AssetJobOutput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
+        mode: Optional[Union[str, "_models.OutputDeliveryMode"]] = None,
         uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :keyword mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
         :keyword uri: Output Asset URI. This will have a default value of
          "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
         :paramtype uri: str
         """
-        super(AssetJobOutput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.mode = mode
         self.uri = uri
 
 
-class BatchJob(msrest.serialization.Model):
+class BatchJob(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Batch endpoint job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -111,15 +109,15 @@ class BatchJob(msrest.serialization.Model):
     :ivar interaction_endpoints: Dictonary of endpoint URIs, keyed by enumerated job endpoints.
     :vartype interaction_endpoints: dict[str,
      ~azure.mgmt.machinelearningservices.models.JobEndpoint]
-    :ivar logging_level: Logging level for batch inference operation. Possible values include:
-     "Info", "Warning", "Debug".
+    :ivar logging_level: Logging level for batch inference operation. Known values are: "Info",
+     "Warning", and "Debug".
     :vartype logging_level: str or ~azure.mgmt.machinelearningservices.models.BatchLoggingLevel
     :ivar max_concurrency_per_instance: Indicates maximum number of parallelism per instance.
     :vartype max_concurrency_per_instance: int
     :ivar mini_batch_size: Size of the mini-batch passed to each batch invocation.
      For FileDataset, this is the number of files per mini-batch.
      For TabularDataset, this is the size of the records in bytes, per mini-batch.
-    :vartype mini_batch_size: long
+    :vartype mini_batch_size: int
     :ivar name:
     :vartype name: str
     :ivar output: Location of the job output logs and artifacts.
@@ -139,71 +137,71 @@ class BatchJob(msrest.serialization.Model):
     :vartype partition_keys: list[str]
     :ivar properties: The asset property dictionary.
     :vartype properties: dict[str, str]
-    :ivar provisioning_state: Possible values include: "Succeeded", "Failed", "Canceled",
+    :ivar provisioning_state: Known values are: "Succeeded", "Failed", "Canceled", and
      "InProgress".
     :vartype provisioning_state: str or
      ~azure.mgmt.machinelearningservices.models.JobProvisioningState
     :ivar retry_settings: Retry Settings for the batch inference operation.
     :vartype retry_settings: ~azure.mgmt.machinelearningservices.models.BatchRetrySettings
-    :ivar status: Status of the job. Possible values include: "NotStarted", "Starting",
-     "Provisioning", "Preparing", "Queued", "Running", "Finalizing", "CancelRequested", "Completed",
-     "Failed", "Canceled", "NotResponding", "Paused", "Unknown".
+    :ivar status: Status of the job. Known values are: "NotStarted", "Starting", "Provisioning",
+     "Preparing", "Queued", "Running", "Finalizing", "CancelRequested", "Completed", "Failed",
+     "Canceled", "NotResponding", "Paused", and "Unknown".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.JobStatus
-    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'interaction_endpoints': {'readonly': True},
-        'output': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
+        "interaction_endpoints": {"readonly": True},
+        "output": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'compute': {'key': 'compute', 'type': 'ComputeConfiguration'},
-        'dataset': {'key': 'dataset', 'type': 'InferenceDataInputBase'},
-        'description': {'key': 'description', 'type': 'str'},
-        'error_threshold': {'key': 'errorThreshold', 'type': 'int'},
-        'input_data': {'key': 'inputData', 'type': '{JobInput}'},
-        'interaction_endpoints': {'key': 'interactionEndpoints', 'type': '{JobEndpoint}'},
-        'logging_level': {'key': 'loggingLevel', 'type': 'str'},
-        'max_concurrency_per_instance': {'key': 'maxConcurrencyPerInstance', 'type': 'int'},
-        'mini_batch_size': {'key': 'miniBatchSize', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'str'},
-        'output': {'key': 'output', 'type': 'JobOutputArtifacts'},
-        'output_data': {'key': 'outputData', 'type': '{JobOutputV2}'},
-        'output_dataset': {'key': 'outputDataset', 'type': 'DataVersion'},
-        'output_file_name': {'key': 'outputFileName', 'type': 'str'},
-        'partition_keys': {'key': 'partitionKeys', 'type': '[str]'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'retry_settings': {'key': 'retrySettings', 'type': 'BatchRetrySettings'},
-        'status': {'key': 'status', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "compute": {"key": "compute", "type": "ComputeConfiguration"},
+        "dataset": {"key": "dataset", "type": "InferenceDataInputBase"},
+        "description": {"key": "description", "type": "str"},
+        "error_threshold": {"key": "errorThreshold", "type": "int"},
+        "input_data": {"key": "inputData", "type": "{JobInput}"},
+        "interaction_endpoints": {"key": "interactionEndpoints", "type": "{JobEndpoint}"},
+        "logging_level": {"key": "loggingLevel", "type": "str"},
+        "max_concurrency_per_instance": {"key": "maxConcurrencyPerInstance", "type": "int"},
+        "mini_batch_size": {"key": "miniBatchSize", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "output": {"key": "output", "type": "JobOutputArtifacts"},
+        "output_data": {"key": "outputData", "type": "{JobOutputV2}"},
+        "output_dataset": {"key": "outputDataset", "type": "DataVersion"},
+        "output_file_name": {"key": "outputFileName", "type": "str"},
+        "partition_keys": {"key": "partitionKeys", "type": "[str]"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "retry_settings": {"key": "retrySettings", "type": "BatchRetrySettings"},
+        "status": {"key": "status", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        compute: Optional["ComputeConfiguration"] = None,
-        dataset: Optional["InferenceDataInputBase"] = None,
+        compute: Optional["_models.ComputeConfiguration"] = None,
+        dataset: Optional["_models.InferenceDataInputBase"] = None,
         description: Optional[str] = None,
         error_threshold: Optional[int] = None,
-        input_data: Optional[Dict[str, "JobInput"]] = None,
-        logging_level: Optional[Union[str, "BatchLoggingLevel"]] = None,
+        input_data: Optional[Dict[str, "_models.JobInput"]] = None,
+        logging_level: Optional[Union[str, "_models.BatchLoggingLevel"]] = None,
         max_concurrency_per_instance: Optional[int] = None,
         mini_batch_size: Optional[int] = None,
         name: Optional[str] = None,
-        output_data: Optional[Dict[str, "JobOutputV2"]] = None,
-        output_dataset: Optional["DataVersion"] = None,
+        output_data: Optional[Dict[str, "_models.JobOutputV2"]] = None,
+        output_dataset: Optional["_models.DataVersion"] = None,
         output_file_name: Optional[str] = None,
         partition_keys: Optional[List[str]] = None,
         properties: Optional[Dict[str, str]] = None,
-        retry_settings: Optional["BatchRetrySettings"] = None,
+        retry_settings: Optional["_models.BatchRetrySettings"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword compute: Compute configuration used to set instance count.
         :paramtype compute: ~azure.mgmt.machinelearningservices.models.ComputeConfiguration
@@ -219,15 +217,15 @@ class BatchJob(msrest.serialization.Model):
         :paramtype error_threshold: int
         :keyword input_data: Input data for the job.
         :paramtype input_data: dict[str, ~azure.mgmt.machinelearningservices.models.JobInput]
-        :keyword logging_level: Logging level for batch inference operation. Possible values include:
-         "Info", "Warning", "Debug".
+        :keyword logging_level: Logging level for batch inference operation. Known values are: "Info",
+         "Warning", and "Debug".
         :paramtype logging_level: str or ~azure.mgmt.machinelearningservices.models.BatchLoggingLevel
         :keyword max_concurrency_per_instance: Indicates maximum number of parallelism per instance.
         :paramtype max_concurrency_per_instance: int
         :keyword mini_batch_size: Size of the mini-batch passed to each batch invocation.
          For FileDataset, this is the number of files per mini-batch.
          For TabularDataset, this is the size of the records in bytes, per mini-batch.
-        :paramtype mini_batch_size: long
+        :paramtype mini_batch_size: int
         :keyword name:
         :paramtype name: str
         :keyword output_data: Job output data location
@@ -247,10 +245,10 @@ class BatchJob(msrest.serialization.Model):
         :paramtype properties: dict[str, str]
         :keyword retry_settings: Retry Settings for the batch inference operation.
         :paramtype retry_settings: ~azure.mgmt.machinelearningservices.models.BatchRetrySettings
-        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
         :paramtype tags: dict[str, str]
         """
-        super(BatchJob, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.compute = compute
         self.dataset = dataset
         self.description = description
@@ -273,7 +271,7 @@ class BatchJob(msrest.serialization.Model):
         self.tags = tags
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -289,24 +287,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -327,44 +321,39 @@ class BatchJobResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar properties: Required. [Required] Additional attributes of the entity.
+    :ivar properties: [Required] Additional attributes of the entity. Required.
     :vartype properties: ~azure.mgmt.machinelearningservices.models.BatchJob
     :ivar system_data: System data associated with resource provider.
     :vartype system_data: ~azure.mgmt.machinelearningservices.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'properties': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "properties": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BatchJob'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "BatchJob"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "BatchJob",
-        **kwargs
-    ):
+    def __init__(self, *, properties: "_models.BatchJob", **kwargs: Any) -> None:
         """
-        :keyword properties: Required. [Required] Additional attributes of the entity.
+        :keyword properties: [Required] Additional attributes of the entity. Required.
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.BatchJob
         """
-        super(BatchJobResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
         self.system_data = None
 
 
-class BatchJobResourceArmPaginatedResult(msrest.serialization.Model):
+class BatchJobResourceArmPaginatedResult(_serialization.Model):
     """A paginated list of BatchJob entities.
 
     :ivar next_link: The link to the next page of BatchJob objects. If null, there are no
@@ -375,17 +364,17 @@ class BatchJobResourceArmPaginatedResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[BatchJobResource]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[BatchJobResource]"},
     }
 
     def __init__(
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["BatchJobResource"]] = None,
-        **kwargs
-    ):
+        value: Optional[List["_models.BatchJobResource"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link to the next page of BatchJob objects. If null, there are no
          additional pages.
@@ -393,12 +382,12 @@ class BatchJobResourceArmPaginatedResult(msrest.serialization.Model):
         :keyword value: An array of objects of type BatchJob.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.BatchJobResource]
         """
-        super(BatchJobResourceArmPaginatedResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class BatchRetrySettings(msrest.serialization.Model):
+class BatchRetrySettings(_serialization.Model):
     """Retry settings for a batch inference operation.
 
     :ivar max_retries: Maximum retry count for a mini-batch.
@@ -408,29 +397,25 @@ class BatchRetrySettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'max_retries': {'key': 'maxRetries', 'type': 'int'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
+        "max_retries": {"key": "maxRetries", "type": "int"},
+        "timeout": {"key": "timeout", "type": "duration"},
     }
 
     def __init__(
-        self,
-        *,
-        max_retries: Optional[int] = None,
-        timeout: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        self, *, max_retries: Optional[int] = None, timeout: Optional[datetime.timedelta] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword max_retries: Maximum retry count for a mini-batch.
         :paramtype max_retries: int
         :keyword timeout: Invocation timeout for a mini-batch, in ISO 8601 format.
         :paramtype timeout: ~datetime.timedelta
         """
-        super(BatchRetrySettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.max_retries = max_retries
         self.timeout = timeout
 
 
-class ComputeConfiguration(msrest.serialization.Model):
+class ComputeConfiguration(_serialization.Model):
     """Configuration for compute binding.
 
     :ivar instance_count: Number of instances or nodes.
@@ -449,12 +434,12 @@ class ComputeConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'instance_type': {'key': 'instanceType', 'type': 'str'},
-        'is_local': {'key': 'isLocal', 'type': 'bool'},
-        'location': {'key': 'location', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'target': {'key': 'target', 'type': 'str'},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "instance_type": {"key": "instanceType", "type": "str"},
+        "is_local": {"key": "isLocal", "type": "bool"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
@@ -466,8 +451,8 @@ class ComputeConfiguration(msrest.serialization.Model):
         location: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         target: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword instance_count: Number of instances or nodes.
         :paramtype instance_count: int
@@ -483,7 +468,7 @@ class ComputeConfiguration(msrest.serialization.Model):
          will be deployed as Managed.
         :paramtype target: str
         """
-        super(ComputeConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.instance_count = instance_count
         self.instance_type = instance_type
         self.is_local = is_local
@@ -492,205 +477,210 @@ class ComputeConfiguration(msrest.serialization.Model):
         self.target = target
 
 
-class JobInput(msrest.serialization.Model):
+class JobInput(_serialization.Model):
     """Job input definition.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CustomModelJobInput, LiteralJobInput, MLFlowModelJobInput, MLTableJobInput, TritonModelJobInput, UriFileJobInput, UriFolderJobInput.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CustomModelJobInput, LiteralJobInput, MLFlowModelJobInput, MLTableJobInput,
+    TritonModelJobInput, UriFileJobInput, UriFolderJobInput
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
     """
 
     _validation = {
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_input_type': {'CustomModel': 'CustomModelJobInput', 'Literal': 'LiteralJobInput', 'MLFlowModel': 'MLFlowModelJobInput', 'MLTable': 'MLTableJobInput', 'TritonModel': 'TritonModelJobInput', 'UriFile': 'UriFileJobInput', 'UriFolder': 'UriFolderJobInput'}
+        "job_input_type": {
+            "CustomModel": "CustomModelJobInput",
+            "Literal": "LiteralJobInput",
+            "MLFlowModel": "MLFlowModelJobInput",
+            "MLTable": "MLTableJobInput",
+            "TritonModel": "TritonModelJobInput",
+            "UriFile": "UriFileJobInput",
+            "UriFolder": "UriFolderJobInput",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: Description for the input.
         :paramtype description: str
         """
-        super(JobInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.description = description
-        self.job_input_type = None  # type: Optional[str]
+        self.job_input_type: Optional[str] = None
 
 
-class CustomModelJobInput(JobInput, AssetJobInput):
+class CustomModelJobInput(AssetJobInput, JobInput):
     """CustomModelJobInput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    :ivar uri: Required. Input Asset URI.
-    :vartype uri: str
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", "EvalMount", and "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Input Asset URI. Required.
+    :vartype uri: str
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         uri: str,
-        mode: Optional[Union[str, "InputDeliveryMode"]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.InputDeliveryMode"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-        :keyword uri: Required. Input Asset URI.
-        :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
+        :keyword mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+         "Download", "Direct", "EvalMount", and "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Input Asset URI. Required.
+        :paramtype uri: str
         """
-        super(CustomModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_input_type: str = "CustomModel"
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'CustomModel'  # type: str
-        self.description = description
 
 
-class JobOutputV2(msrest.serialization.Model):
+class JobOutputV2(_serialization.Model):
     """Job output definition container information on where to find the job output.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: CustomModelJobOutput, MLFlowModelJobOutput, MLTableJobOutput, TritonModelJobOutput, UriFileJobOutput, UriFolderJobOutput.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    CustomModelJobOutput, MLFlowModelJobOutput, MLTableJobOutput, TritonModelJobOutput,
+    UriFileJobOutput, UriFolderJobOutput
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar description: Description for the output.
     :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
+    :ivar job_output_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_output_type': {'CustomModel': 'CustomModelJobOutput', 'MLFlowModel': 'MLFlowModelJobOutput', 'MLTable': 'MLTableJobOutput', 'TritonModel': 'TritonModelJobOutput', 'UriFile': 'UriFileJobOutput', 'UriFolder': 'UriFolderJobOutput'}
+        "job_output_type": {
+            "CustomModel": "CustomModelJobOutput",
+            "MLFlowModel": "MLFlowModelJobOutput",
+            "MLTable": "MLTableJobOutput",
+            "TritonModel": "TritonModelJobOutput",
+            "UriFile": "UriFileJobOutput",
+            "UriFolder": "UriFolderJobOutput",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: Description for the output.
         :paramtype description: str
         """
-        super(JobOutputV2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.description = description
-        self.job_output_type = None  # type: Optional[str]
+        self.job_output_type: Optional[str] = None
 
 
-class CustomModelJobOutput(JobOutputV2, AssetJobOutput):
+class CustomModelJobOutput(AssetJobOutput, JobOutputV2):
     """CustomModelJobOutput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "CustomModel", "MLFlowModel", and "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
     :ivar uri: Output Asset URI. This will have a default value of
      "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
     :vartype uri: str
-    :ivar description: Description for the output.
-    :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
-    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
-        uri: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.OutputDeliveryMode"]] = None,
+        uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :keyword description: Description for the output.
+        :paramtype description: str
+        :keyword mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
         :keyword uri: Output Asset URI. This will have a default value of
          "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
         :paramtype uri: str
-        :keyword description: Description for the output.
-        :paramtype description: str
         """
-        super(CustomModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_output_type: str = "CustomModel"
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'CustomModel'  # type: str
-        self.description = description
 
 
-class DataVersion(msrest.serialization.Model):
+class DataVersion(_serialization.Model):
     """Data asset version details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar dataset_type: The Format of dataset. Possible values include: "Simple", "Dataflow".
+    :ivar dataset_type: The Format of dataset. Known values are: "Simple" and "Dataflow".
     :vartype dataset_type: str or ~azure.mgmt.machinelearningservices.models.DatasetType
     :ivar datastore_id: ARM resource ID of the datastore where the asset is located.
     :vartype datastore_id: str
@@ -698,42 +688,42 @@ class DataVersion(msrest.serialization.Model):
     :vartype description: str
     :ivar is_anonymous: If the name version are system generated (anonymous registration).
     :vartype is_anonymous: bool
-    :ivar path: Required. [Required] The path of the file/directory in the datastore.
+    :ivar path: [Required] The path of the file/directory in the datastore. Required.
     :vartype path: str
     :ivar properties: The asset property dictionary.
     :vartype properties: dict[str, str]
-    :ivar tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+    :ivar tags: Tag dictionary. Tags can be added, removed, and updated.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'path': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "path": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'dataset_type': {'key': 'datasetType', 'type': 'str'},
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'is_anonymous': {'key': 'isAnonymous', 'type': 'bool'},
-        'path': {'key': 'path', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "dataset_type": {"key": "datasetType", "type": "str"},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "is_anonymous": {"key": "isAnonymous", "type": "bool"},
+        "path": {"key": "path", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         path: str,
-        dataset_type: Optional[Union[str, "DatasetType"]] = None,
+        dataset_type: Optional[Union[str, "_models.DatasetType"]] = None,
         datastore_id: Optional[str] = None,
         description: Optional[str] = None,
         is_anonymous: Optional[bool] = None,
         properties: Optional[Dict[str, str]] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword dataset_type: The Format of dataset. Possible values include: "Simple", "Dataflow".
+        :keyword dataset_type: The Format of dataset. Known values are: "Simple" and "Dataflow".
         :paramtype dataset_type: str or ~azure.mgmt.machinelearningservices.models.DatasetType
         :keyword datastore_id: ARM resource ID of the datastore where the asset is located.
         :paramtype datastore_id: str
@@ -741,14 +731,14 @@ class DataVersion(msrest.serialization.Model):
         :paramtype description: str
         :keyword is_anonymous: If the name version are system generated (anonymous registration).
         :paramtype is_anonymous: bool
-        :keyword path: Required. [Required] The path of the file/directory in the datastore.
+        :keyword path: [Required] The path of the file/directory in the datastore. Required.
         :paramtype path: str
         :keyword properties: The asset property dictionary.
         :paramtype properties: dict[str, str]
-        :keyword tags: A set of tags. Tag dictionary. Tags can be added, removed, and updated.
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
         :paramtype tags: dict[str, str]
         """
-        super(DataVersion, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dataset_type = dataset_type
         self.datastore_id = datastore_id
         self.description = description
@@ -758,46 +748,40 @@ class DataVersion(msrest.serialization.Model):
         self.tags = tags
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """Error detail information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar code: Required. Error code.
+    :ivar code: Error code. Required.
     :vartype code: str
-    :ivar message: Required. Error message.
+    :ivar message: Error message. Required.
     :vartype message: str
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        **kwargs
-    ):
+    def __init__(self, *, code: str, message: str, **kwargs: Any) -> None:
         """
-        :keyword code: Required. Error code.
+        :keyword code: Error code. Required.
         :paramtype code: str
-        :keyword message: Required. Error message.
+        :keyword message: Error message. Required.
         :paramtype message: str
         """
-        super(ErrorDetail, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -811,63 +795,59 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.details = None
 
 
-class InferenceDataInputBase(msrest.serialization.Model):
+class InferenceDataInputBase(_serialization.Model):
     """InferenceDataInputBase.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: InferenceDataUrlInput, InferenceDatasetIdInput, InferenceDatasetInput.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    InferenceDataUrlInput, InferenceDatasetIdInput, InferenceDatasetInput
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_input_type: Required. Constant filled by server. Possible values include:
-     "DatasetVersion", "DatasetId", "DataUrl".
+    :ivar data_input_type: Required. Known values are: "DatasetVersion", "DatasetId", and
+     "DataUrl".
     :vartype data_input_type: str or
      ~azure.mgmt.machinelearningservices.models.InferenceDataInputType
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
     }
 
     _subtype_map = {
-        'data_input_type': {'DataUrl': 'InferenceDataUrlInput', 'DatasetId': 'InferenceDatasetIdInput', 'DatasetVersion': 'InferenceDatasetInput'}
+        "data_input_type": {
+            "DataUrl": "InferenceDataUrlInput",
+            "DatasetId": "InferenceDatasetIdInput",
+            "DatasetVersion": "InferenceDatasetInput",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(InferenceDataInputBase, self).__init__(**kwargs)
-        self.data_input_type = None  # type: Optional[str]
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.data_input_type: Optional[str] = None
 
 
 class InferenceDatasetIdInput(InferenceDataInputBase):
@@ -875,8 +855,8 @@ class InferenceDatasetIdInput(InferenceDataInputBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_input_type: Required. Constant filled by server. Possible values include:
-     "DatasetVersion", "DatasetId", "DataUrl".
+    :ivar data_input_type: Required. Known values are: "DatasetVersion", "DatasetId", and
+     "DataUrl".
     :vartype data_input_type: str or
      ~azure.mgmt.machinelearningservices.models.InferenceDataInputType
     :ivar dataset_id: ARM ID of the input dataset.
@@ -884,26 +864,21 @@ class InferenceDatasetIdInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'dataset_id': {'key': 'datasetId', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "dataset_id": {"key": "datasetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        dataset_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, dataset_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword dataset_id: ARM ID of the input dataset.
         :paramtype dataset_id: str
         """
-        super(InferenceDatasetIdInput, self).__init__(**kwargs)
-        self.data_input_type = 'DatasetId'  # type: str
+        super().__init__(**kwargs)
+        self.data_input_type: str = "DatasetId"
         self.dataset_id = dataset_id
 
 
@@ -912,8 +887,8 @@ class InferenceDatasetInput(InferenceDataInputBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_input_type: Required. Constant filled by server. Possible values include:
-     "DatasetVersion", "DatasetId", "DataUrl".
+    :ivar data_input_type: Required. Known values are: "DatasetVersion", "DatasetId", and
+     "DataUrl".
     :vartype data_input_type: str or
      ~azure.mgmt.machinelearningservices.models.InferenceDataInputType
     :ivar dataset_name: Name of the input dataset.
@@ -923,30 +898,26 @@ class InferenceDatasetInput(InferenceDataInputBase):
     """
 
     _validation = {
-        'data_input_type': {'required': True},
+        "data_input_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'dataset_name': {'key': 'datasetName', 'type': 'str'},
-        'dataset_version': {'key': 'datasetVersion', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "dataset_name": {"key": "datasetName", "type": "str"},
+        "dataset_version": {"key": "datasetVersion", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        dataset_name: Optional[str] = None,
-        dataset_version: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, dataset_name: Optional[str] = None, dataset_version: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword dataset_name: Name of the input dataset.
         :paramtype dataset_name: str
         :keyword dataset_version: Version of the input dataset.
         :paramtype dataset_version: str
         """
-        super(InferenceDatasetInput, self).__init__(**kwargs)
-        self.data_input_type = 'DatasetVersion'  # type: str
+        super().__init__(**kwargs)
+        self.data_input_type: str = "DatasetVersion"
         self.dataset_name = dataset_name
         self.dataset_version = dataset_version
 
@@ -956,40 +927,35 @@ class InferenceDataUrlInput(InferenceDataInputBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar data_input_type: Required. Constant filled by server. Possible values include:
-     "DatasetVersion", "DatasetId", "DataUrl".
+    :ivar data_input_type: Required. Known values are: "DatasetVersion", "DatasetId", and
+     "DataUrl".
     :vartype data_input_type: str or
      ~azure.mgmt.machinelearningservices.models.InferenceDataInputType
-    :ivar path: Required. Asset path to the input data, say a blob URL.
+    :ivar path: Asset path to the input data, say a blob URL. Required.
     :vartype path: str
     """
 
     _validation = {
-        'data_input_type': {'required': True},
-        'path': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "data_input_type": {"required": True},
+        "path": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'data_input_type': {'key': 'dataInputType', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "data_input_type": {"key": "dataInputType", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        path: str,
-        **kwargs
-    ):
+    def __init__(self, *, path: str, **kwargs: Any) -> None:
         """
-        :keyword path: Required. Asset path to the input data, say a blob URL.
+        :keyword path: Asset path to the input data, say a blob URL. Required.
         :paramtype path: str
         """
-        super(InferenceDataUrlInput, self).__init__(**kwargs)
-        self.data_input_type = 'DataUrl'  # type: str
+        super().__init__(**kwargs)
+        self.data_input_type: str = "DataUrl"
         self.path = path
 
 
-class JobEndpoint(msrest.serialization.Model):
+class JobEndpoint(_serialization.Model):
     """Job endpoint definition.
 
     :ivar endpoint: Url for endpoint.
@@ -1003,10 +969,10 @@ class JobEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'job_endpoint_type': {'key': 'jobEndpointType', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "job_endpoint_type": {"key": "jobEndpointType", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -1016,8 +982,8 @@ class JobEndpoint(msrest.serialization.Model):
         job_endpoint_type: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword endpoint: Url for endpoint.
         :paramtype endpoint: str
@@ -1028,14 +994,14 @@ class JobEndpoint(msrest.serialization.Model):
         :keyword properties: Additional properties to set on the endpoint.
         :paramtype properties: dict[str, str]
         """
-        super(JobEndpoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.endpoint = endpoint
         self.job_endpoint_type = job_endpoint_type
         self.port = port
         self.properties = properties
 
 
-class JobOutputArtifacts(msrest.serialization.Model):
+class JobOutputArtifacts(_serialization.Model):
     """Job output definition container information on where to find job logs and artifacts.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1047,27 +1013,23 @@ class JobOutputArtifacts(msrest.serialization.Model):
     """
 
     _validation = {
-        'datastore_id': {'readonly': True},
-        'path': {'readonly': True},
+        "datastore_id": {"readonly": True},
+        "path": {"readonly": True},
     }
 
     _attribute_map = {
-        'datastore_id': {'key': 'datastoreId', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
+        "datastore_id": {"key": "datastoreId", "type": "str"},
+        "path": {"key": "path", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(JobOutputArtifacts, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.datastore_id = None
         self.path = None
 
 
-class LabelClass(msrest.serialization.Model):
+class LabelClass(_serialization.Model):
     """Label class definition.
 
     :ivar display_name: Display name of the label class.
@@ -1077,24 +1039,24 @@ class LabelClass(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'subclasses': {'key': 'subclasses', 'type': '{LabelClass}'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "subclasses": {"key": "subclasses", "type": "{LabelClass}"},
     }
 
     def __init__(
         self,
         *,
         display_name: Optional[str] = None,
-        subclasses: Optional[Dict[str, "LabelClass"]] = None,
-        **kwargs
-    ):
+        subclasses: Optional[Dict[str, "_models.LabelClass"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: Display name of the label class.
         :paramtype display_name: str
         :keyword subclasses: Dictionary of subclasses of the label class.
         :paramtype subclasses: dict[str, ~azure.mgmt.machinelearningservices.models.LabelClass]
         """
-        super(LabelClass, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.subclasses = subclasses
 
@@ -1106,312 +1068,303 @@ class LiteralJobInput(JobInput):
 
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
-    :ivar value: Required. Literal input value.
+    :ivar value: Literal input value. Required.
     :vartype value: str
     """
 
     _validation = {
-        'job_input_type': {'required': True},
-        'value': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
+        "job_input_type": {"required": True},
+        "value": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: str,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: str, description: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword description: Description for the input.
         :paramtype description: str
-        :keyword value: Required. Literal input value.
+        :keyword value: Literal input value. Required.
         :paramtype value: str
         """
-        super(LiteralJobInput, self).__init__(description=description, **kwargs)
-        self.job_input_type = 'Literal'  # type: str
+        super().__init__(description=description, **kwargs)
+        self.job_input_type: str = "Literal"
         self.value = value
 
 
-class MLFlowModelJobInput(JobInput, AssetJobInput):
+class MLFlowModelJobInput(AssetJobInput, JobInput):
     """MLFlowModelJobInput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    :ivar uri: Required. Input Asset URI.
-    :vartype uri: str
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", "EvalMount", and "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Input Asset URI. Required.
+    :vartype uri: str
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         uri: str,
-        mode: Optional[Union[str, "InputDeliveryMode"]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.InputDeliveryMode"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-        :keyword uri: Required. Input Asset URI.
-        :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
+        :keyword mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+         "Download", "Direct", "EvalMount", and "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Input Asset URI. Required.
+        :paramtype uri: str
         """
-        super(MLFlowModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_input_type: str = "MLFlowModel"
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'MLFlowModel'  # type: str
-        self.description = description
 
 
-class MLFlowModelJobOutput(JobOutputV2, AssetJobOutput):
+class MLFlowModelJobOutput(AssetJobOutput, JobOutputV2):
     """MLFlowModelJobOutput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "CustomModel", "MLFlowModel", and "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
     :ivar uri: Output Asset URI. This will have a default value of
      "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
     :vartype uri: str
-    :ivar description: Description for the output.
-    :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
-    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
-        uri: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.OutputDeliveryMode"]] = None,
+        uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :keyword description: Description for the output.
+        :paramtype description: str
+        :keyword mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
         :keyword uri: Output Asset URI. This will have a default value of
          "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
         :paramtype uri: str
-        :keyword description: Description for the output.
-        :paramtype description: str
         """
-        super(MLFlowModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_output_type: str = "MLFlowModel"
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'MLFlowModel'  # type: str
-        self.description = description
 
 
-class MLTableJobInput(JobInput, AssetJobInput):
+class MLTableJobInput(AssetJobInput, JobInput):
     """MLTableJobInput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    :ivar uri: Required. Input Asset URI.
-    :vartype uri: str
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", "EvalMount", and "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Input Asset URI. Required.
+    :vartype uri: str
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         uri: str,
-        mode: Optional[Union[str, "InputDeliveryMode"]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.InputDeliveryMode"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-        :keyword uri: Required. Input Asset URI.
-        :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
+        :keyword mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+         "Download", "Direct", "EvalMount", and "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Input Asset URI. Required.
+        :paramtype uri: str
         """
-        super(MLTableJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_input_type: str = "MLTable"
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'MLTable'  # type: str
-        self.description = description
 
 
-class MLTableJobOutput(JobOutputV2, AssetJobOutput):
+class MLTableJobOutput(AssetJobOutput, JobOutputV2):
     """MLTableJobOutput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "CustomModel", "MLFlowModel", and "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
     :ivar uri: Output Asset URI. This will have a default value of
      "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
     :vartype uri: str
-    :ivar description: Description for the output.
-    :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
-    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
-        uri: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.OutputDeliveryMode"]] = None,
+        uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :keyword description: Description for the output.
+        :paramtype description: str
+        :keyword mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
         :keyword uri: Output Asset URI. This will have a default value of
          "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
         :paramtype uri: str
-        :keyword description: Description for the output.
-        :paramtype description: str
         """
-        super(MLTableJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_output_type: str = "MLTable"
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'MLTable'  # type: str
-        self.description = description
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.machinelearningservices.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.machinelearningservices.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.machinelearningservices.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.machinelearningservices.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1420,319 +1373,316 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TritonModelJobInput(JobInput, AssetJobInput):
+class TritonModelJobInput(AssetJobInput, JobInput):
     """TritonModelJobInput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    :ivar uri: Required. Input Asset URI.
-    :vartype uri: str
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", "EvalMount", and "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Input Asset URI. Required.
+    :vartype uri: str
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         uri: str,
-        mode: Optional[Union[str, "InputDeliveryMode"]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.InputDeliveryMode"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-        :keyword uri: Required. Input Asset URI.
-        :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
+        :keyword mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+         "Download", "Direct", "EvalMount", and "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Input Asset URI. Required.
+        :paramtype uri: str
         """
-        super(TritonModelJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_input_type: str = "TritonModel"
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'TritonModel'  # type: str
-        self.description = description
 
 
-class TritonModelJobOutput(JobOutputV2, AssetJobOutput):
+class TritonModelJobOutput(AssetJobOutput, JobOutputV2):
     """TritonModelJobOutput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "CustomModel", "MLFlowModel", and "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
     :ivar uri: Output Asset URI. This will have a default value of
      "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
     :vartype uri: str
-    :ivar description: Description for the output.
-    :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
-    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
-        uri: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.OutputDeliveryMode"]] = None,
+        uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :keyword description: Description for the output.
+        :paramtype description: str
+        :keyword mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
         :keyword uri: Output Asset URI. This will have a default value of
          "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
         :paramtype uri: str
-        :keyword description: Description for the output.
-        :paramtype description: str
         """
-        super(TritonModelJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_output_type: str = "TritonModel"
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'TritonModel'  # type: str
-        self.description = description
 
 
-class UriFileJobInput(JobInput, AssetJobInput):
+class UriFileJobInput(AssetJobInput, JobInput):
     """UriFileJobInput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    :ivar uri: Required. Input Asset URI.
-    :vartype uri: str
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", "EvalMount", and "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Input Asset URI. Required.
+    :vartype uri: str
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         uri: str,
-        mode: Optional[Union[str, "InputDeliveryMode"]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.InputDeliveryMode"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-        :keyword uri: Required. Input Asset URI.
-        :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
+        :keyword mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+         "Download", "Direct", "EvalMount", and "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Input Asset URI. Required.
+        :paramtype uri: str
         """
-        super(UriFileJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_input_type: str = "UriFile"
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'UriFile'  # type: str
-        self.description = description
 
 
-class UriFileJobOutput(JobOutputV2, AssetJobOutput):
+class UriFileJobOutput(AssetJobOutput, JobOutputV2):
     """UriFileJobOutput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "CustomModel", "MLFlowModel", and "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
     :ivar uri: Output Asset URI. This will have a default value of
      "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
     :vartype uri: str
-    :ivar description: Description for the output.
-    :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
-    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
-        uri: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.OutputDeliveryMode"]] = None,
+        uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :keyword description: Description for the output.
+        :paramtype description: str
+        :keyword mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
         :keyword uri: Output Asset URI. This will have a default value of
          "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
         :paramtype uri: str
-        :keyword description: Description for the output.
-        :paramtype description: str
         """
-        super(UriFileJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_output_type: str = "UriFile"
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'UriFile'  # type: str
-        self.description = description
 
 
-class UriFolderJobInput(JobInput, AssetJobInput):
+class UriFolderJobInput(AssetJobInput, JobInput):
     """UriFolderJobInput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-     "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    :ivar uri: Required. Input Asset URI.
-    :vartype uri: str
     :ivar description: Description for the input.
     :vartype description: str
-    :ivar job_input_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel",
-     "TritonModel".
+    :ivar job_input_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "Literal", "CustomModel", "MLFlowModel", and "TritonModel".
     :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
+    :ivar mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+     "Download", "Direct", "EvalMount", and "EvalDownload".
+    :vartype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+    :ivar uri: Input Asset URI. Required.
+    :vartype uri: str
     """
 
     _validation = {
-        'uri': {'required': True, 'pattern': r'[a-zA-Z0-9_]'},
-        'job_input_type': {'required': True},
+        "job_input_type": {"required": True},
+        "uri": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_input_type': {'key': 'jobInputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_input_type": {"key": "jobInputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         uri: str,
-        mode: Optional[Union[str, "InputDeliveryMode"]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.InputDeliveryMode"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-         "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-        :keyword uri: Required. Input Asset URI.
-        :paramtype uri: str
         :keyword description: Description for the input.
         :paramtype description: str
+        :keyword mode: Input Asset Delivery Mode. Known values are: "ReadOnlyMount", "ReadWriteMount",
+         "Download", "Direct", "EvalMount", and "EvalDownload".
+        :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
+        :keyword uri: Input Asset URI. Required.
+        :paramtype uri: str
         """
-        super(UriFolderJobInput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_input_type: str = "UriFolder"
         self.mode = mode
         self.uri = uri
-        self.job_input_type = 'UriFolder'  # type: str
-        self.description = description
 
 
-class UriFolderJobOutput(JobOutputV2, AssetJobOutput):
+class UriFolderJobOutput(AssetJobOutput, JobOutputV2):
     """UriFolderJobOutput.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+    :ivar description: Description for the output.
+    :vartype description: str
+    :ivar job_output_type: Specifies the type of job. Required. Known values are: "UriFile",
+     "UriFolder", "MLTable", "CustomModel", "MLFlowModel", and "TritonModel".
+    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
+    :ivar mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
     :vartype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
     :ivar uri: Output Asset URI. This will have a default value of
      "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
     :vartype uri: str
-    :ivar description: Description for the output.
-    :vartype description: str
-    :ivar job_output_type: Required. Specifies the type of job.Constant filled by server. Possible
-     values include: "UriFile", "UriFolder", "MLTable", "CustomModel", "MLFlowModel", "TritonModel".
-    :vartype job_output_type: str or ~azure.mgmt.machinelearningservices.models.JobOutputType
     """
 
     _validation = {
-        'job_output_type': {'required': True},
+        "job_output_type": {"required": True},
     }
 
     _attribute_map = {
-        'mode': {'key': 'mode', 'type': 'str'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'job_output_type': {'key': 'jobOutputType', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "job_output_type": {"key": "jobOutputType", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "uri": {"key": "uri", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mode: Optional[Union[str, "OutputDeliveryMode"]] = None,
-        uri: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        mode: Optional[Union[str, "_models.OutputDeliveryMode"]] = None,
+        uri: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword mode: Output Asset Delivery Mode. Possible values include: "ReadWriteMount", "Upload".
+        :keyword description: Description for the output.
+        :paramtype description: str
+        :keyword mode: Output Asset Delivery Mode. Known values are: "ReadWriteMount" and "Upload".
         :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.OutputDeliveryMode
         :keyword uri: Output Asset URI. This will have a default value of
          "azureml/{jobId}/{outputFolder}/{outputFileName}" if omitted.
         :paramtype uri: str
-        :keyword description: Description for the output.
-        :paramtype description: str
         """
-        super(UriFolderJobOutput, self).__init__(description=description, mode=mode, uri=uri, **kwargs)
+        super().__init__(mode=mode, uri=uri, description=description, **kwargs)
+        self.description = description
+        self.job_output_type: str = "UriFolder"
         self.mode = mode
         self.uri = uri
-        self.job_output_type = 'UriFolder'  # type: str
-        self.description = description

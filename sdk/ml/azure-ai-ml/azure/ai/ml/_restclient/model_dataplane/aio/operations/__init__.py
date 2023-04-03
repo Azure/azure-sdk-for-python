@@ -11,9 +11,15 @@ from ._extensive_model_operations import ExtensiveModelOperations
 from ._migration_operations import MigrationOperations
 from ._models_operations import ModelsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AssetsOperations',
-    'ExtensiveModelOperations',
-    'MigrationOperations',
-    'ModelsOperations',
+    "AssetsOperations",
+    "ExtensiveModelOperations",
+    "MigrationOperations",
+    "ModelsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,22 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
-from ._azure_machine_learning_workspaces_enums import *
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AddOrModifyRunServiceInstancesRequest(msrest.serialization.Model):
+class AddOrModifyRunServiceInstancesRequest(_serialization.Model):
     """AddOrModifyRunServiceInstancesRequest.
 
     :ivar instances: Dictionary of :code:`<ServiceInstance>`.
@@ -23,24 +31,19 @@ class AddOrModifyRunServiceInstancesRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instances': {'key': 'instances', 'type': '{ServiceInstance}'},
+        "instances": {"key": "instances", "type": "{ServiceInstance}"},
     }
 
-    def __init__(
-        self,
-        *,
-        instances: Optional[Dict[str, "ServiceInstance"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, instances: Optional[Dict[str, "_models.ServiceInstance"]] = None, **kwargs: Any) -> None:
         """
         :keyword instances: Dictionary of :code:`<ServiceInstance>`.
         :paramtype instances: dict[str, ~azure.mgmt.machinelearningservices.models.ServiceInstance]
         """
-        super(AddOrModifyRunServiceInstancesRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.instances = instances
 
 
-class Artifact(msrest.serialization.Model):
+class Artifact(_serialization.Model):
     """Details of an Artifact.
 
     All required parameters must be populated in order to send to Azure.
@@ -48,12 +51,12 @@ class Artifact(msrest.serialization.Model):
     :ivar artifact_id: The identifier of an Artifact. Format of ArtifactId -
      {Origin}/{Container}/{Path}.
     :vartype artifact_id: str
-    :ivar origin: Required. The origin of the Artifact creation request. Available origins are
-     'ExperimentRun', 'LocalUpload', 'WebUpload', 'Dataset' and 'Unknown'.
+    :ivar origin: The origin of the Artifact creation request. Available origins are
+     'ExperimentRun', 'LocalUpload', 'WebUpload', 'Dataset' and 'Unknown'. Required.
     :vartype origin: str
-    :ivar container: Required. The name of container. Artifacts can be grouped by container.
+    :ivar container: The name of container. Artifacts can be grouped by container. Required.
     :vartype container: str
-    :ivar path: Required. The path to the Artifact in a container.
+    :ivar path: The path to the Artifact in a container. Required.
     :vartype path: str
     :ivar etag: The Etag of the Artifact.
     :vartype etag: str
@@ -61,25 +64,25 @@ class Artifact(msrest.serialization.Model):
     :vartype created_time: ~datetime.datetime
     :ivar data_path:
     :vartype data_path: ~azure.mgmt.machinelearningservices.models.ArtifactDataPath
-    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :ivar tags: Dictionary of :code:`<string>`.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'origin': {'required': True},
-        'container': {'required': True},
-        'path': {'required': True},
+        "origin": {"required": True},
+        "container": {"required": True},
+        "path": {"required": True},
     }
 
     _attribute_map = {
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'container': {'key': 'container', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'created_time': {'key': 'createdTime', 'type': 'iso-8601'},
-        'data_path': {'key': 'dataPath', 'type': 'ArtifactDataPath'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "artifact_id": {"key": "artifactId", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
+        "container": {"key": "container", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "iso-8601"},
+        "data_path": {"key": "dataPath", "type": "ArtifactDataPath"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -91,20 +94,20 @@ class Artifact(msrest.serialization.Model):
         artifact_id: Optional[str] = None,
         etag: Optional[str] = None,
         created_time: Optional[datetime.datetime] = None,
-        data_path: Optional["ArtifactDataPath"] = None,
+        data_path: Optional["_models.ArtifactDataPath"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword artifact_id: The identifier of an Artifact. Format of ArtifactId -
          {Origin}/{Container}/{Path}.
         :paramtype artifact_id: str
-        :keyword origin: Required. The origin of the Artifact creation request. Available origins are
-         'ExperimentRun', 'LocalUpload', 'WebUpload', 'Dataset' and 'Unknown'.
+        :keyword origin: The origin of the Artifact creation request. Available origins are
+         'ExperimentRun', 'LocalUpload', 'WebUpload', 'Dataset' and 'Unknown'. Required.
         :paramtype origin: str
-        :keyword container: Required. The name of container. Artifacts can be grouped by container.
+        :keyword container: The name of container. Artifacts can be grouped by container. Required.
         :paramtype container: str
-        :keyword path: Required. The path to the Artifact in a container.
+        :keyword path: The path to the Artifact in a container. Required.
         :paramtype path: str
         :keyword etag: The Etag of the Artifact.
         :paramtype etag: str
@@ -113,10 +116,10 @@ class Artifact(msrest.serialization.Model):
         :paramtype created_time: ~datetime.datetime
         :keyword data_path:
         :paramtype data_path: ~azure.mgmt.machinelearningservices.models.ArtifactDataPath
-        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
         """
-        super(Artifact, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.artifact_id = artifact_id
         self.origin = origin
         self.container = container
@@ -127,7 +130,7 @@ class Artifact(msrest.serialization.Model):
         self.tags = tags
 
 
-class ArtifactContentInformation(msrest.serialization.Model):
+class ArtifactContentInformation(_serialization.Model):
     """Details of an Artifact Content Information.
 
     :ivar content_uri: The URI of the content.
@@ -140,16 +143,16 @@ class ArtifactContentInformation(msrest.serialization.Model):
     :vartype container: str
     :ivar path: The path to the Artifact in a container.
     :vartype path: str
-    :ivar tags: A set of tags. The tags on the artifact.
+    :ivar tags: The tags on the artifact.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'content_uri': {'key': 'contentUri', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'container': {'key': 'container', 'type': 'str'},
-        'path': {'key': 'path', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "content_uri": {"key": "contentUri", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
+        "container": {"key": "container", "type": "str"},
+        "path": {"key": "path", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
@@ -160,8 +163,8 @@ class ArtifactContentInformation(msrest.serialization.Model):
         container: Optional[str] = None,
         path: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword content_uri: The URI of the content.
         :paramtype content_uri: str
@@ -173,10 +176,10 @@ class ArtifactContentInformation(msrest.serialization.Model):
         :paramtype container: str
         :keyword path: The path to the Artifact in a container.
         :paramtype path: str
-        :keyword tags: A set of tags. The tags on the artifact.
+        :keyword tags: The tags on the artifact.
         :paramtype tags: dict[str, str]
         """
-        super(ArtifactContentInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_uri = content_uri
         self.origin = origin
         self.container = container
@@ -184,7 +187,7 @@ class ArtifactContentInformation(msrest.serialization.Model):
         self.tags = tags
 
 
-class ArtifactDataPath(msrest.serialization.Model):
+class ArtifactDataPath(_serialization.Model):
     """ArtifactDataPath.
 
     :ivar data_store_name:
@@ -196,9 +199,9 @@ class ArtifactDataPath(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data_store_name': {'key': 'dataStoreName', 'type': 'str'},
-        'relative_path': {'key': 'relativePath', 'type': 'str'},
-        'sql_data_path': {'key': 'sqlDataPath', 'type': 'SqlDataPath'},
+        "data_store_name": {"key": "dataStoreName", "type": "str"},
+        "relative_path": {"key": "relativePath", "type": "str"},
+        "sql_data_path": {"key": "sqlDataPath", "type": "SqlDataPath"},
     }
 
     def __init__(
@@ -206,9 +209,9 @@ class ArtifactDataPath(msrest.serialization.Model):
         *,
         data_store_name: Optional[str] = None,
         relative_path: Optional[str] = None,
-        sql_data_path: Optional["SqlDataPath"] = None,
-        **kwargs
-    ):
+        sql_data_path: Optional["_models.SqlDataPath"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_store_name:
         :paramtype data_store_name: str
@@ -217,82 +220,71 @@ class ArtifactDataPath(msrest.serialization.Model):
         :keyword sql_data_path:
         :paramtype sql_data_path: ~azure.mgmt.machinelearningservices.models.SqlDataPath
         """
-        super(ArtifactDataPath, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.data_store_name = data_store_name
         self.relative_path = relative_path
         self.sql_data_path = sql_data_path
 
 
-class ArtifactPath(msrest.serialization.Model):
+class ArtifactPath(_serialization.Model):
     """Details of an Artifact Path.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar path: Required. The path to the Artifact in a container.
+    :ivar path: The path to the Artifact in a container. Required.
     :vartype path: str
-    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :ivar tags: Dictionary of :code:`<string>`.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'path': {'required': True},
+        "path": {"required": True},
     }
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "path": {"key": "path", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        path: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, path: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword path: Required. The path to the Artifact in a container.
+        :keyword path: The path to the Artifact in a container. Required.
         :paramtype path: str
-        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
         """
-        super(ArtifactPath, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.tags = tags
 
 
-class ArtifactPathList(msrest.serialization.Model):
+class ArtifactPathList(_serialization.Model):
     """Contains list of Artifact Paths.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar paths: Required. List of Artifact Paths.
+    :ivar paths: List of Artifact Paths. Required.
     :vartype paths: list[~azure.mgmt.machinelearningservices.models.ArtifactPath]
     """
 
     _validation = {
-        'paths': {'required': True},
+        "paths": {"required": True},
     }
 
     _attribute_map = {
-        'paths': {'key': 'paths', 'type': '[ArtifactPath]'},
+        "paths": {"key": "paths", "type": "[ArtifactPath]"},
     }
 
-    def __init__(
-        self,
-        *,
-        paths: List["ArtifactPath"],
-        **kwargs
-    ):
+    def __init__(self, *, paths: List["_models.ArtifactPath"], **kwargs: Any) -> None:
         """
-        :keyword paths: Required. List of Artifact Paths.
+        :keyword paths: List of Artifact Paths. Required.
         :paramtype paths: list[~azure.mgmt.machinelearningservices.models.ArtifactPath]
         """
-        super(ArtifactPathList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.paths = paths
 
 
-class BaseEvent(msrest.serialization.Model):
+class BaseEvent(_serialization.Model):
     """Base event is the envelope used to post event data to the Event controller.
 
     :ivar timestamp:
@@ -304,9 +296,9 @@ class BaseEvent(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'data': {'key': 'data', 'type': 'object'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "name": {"key": "name", "type": "str"},
+        "data": {"key": "data", "type": "object"},
     }
 
     def __init__(
@@ -315,8 +307,8 @@ class BaseEvent(msrest.serialization.Model):
         timestamp: Optional[datetime.datetime] = None,
         name: Optional[str] = None,
         data: Optional[Any] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword timestamp:
         :paramtype timestamp: ~datetime.datetime
@@ -325,13 +317,13 @@ class BaseEvent(msrest.serialization.Model):
         :keyword data: Anything.
         :paramtype data: any
         """
-        super(BaseEvent, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.timestamp = timestamp
         self.name = name
         self.data = data
 
 
-class BatchAddOrModifyRunRequest(msrest.serialization.Model):
+class BatchAddOrModifyRunRequest(_serialization.Model):
     """BatchAddOrModifyRunRequest.
 
     :ivar runs:
@@ -339,24 +331,19 @@ class BatchAddOrModifyRunRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'runs': {'key': 'runs', 'type': '[CreateRun]'},
+        "runs": {"key": "runs", "type": "[CreateRun]"},
     }
 
-    def __init__(
-        self,
-        *,
-        runs: Optional[List["CreateRun"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, runs: Optional[List["_models.CreateRun"]] = None, **kwargs: Any) -> None:
         """
         :keyword runs:
         :paramtype runs: list[~azure.mgmt.machinelearningservices.models.CreateRun]
         """
-        super(BatchAddOrModifyRunRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.runs = runs
 
 
-class BatchArtifactContentInformationResult(msrest.serialization.Model):
+class BatchArtifactContentInformationResult(_serialization.Model):
     """Results of the Batch Artifact Content Information request.
 
     :ivar artifacts: Artifact details of the Artifact Ids requested.
@@ -370,19 +357,19 @@ class BatchArtifactContentInformationResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'artifacts': {'key': 'artifacts', 'type': '{Artifact}'},
-        'artifact_content_information': {'key': 'artifactContentInformation', 'type': '{ArtifactContentInformation}'},
-        'errors': {'key': 'errors', 'type': '{ErrorResponse}'},
+        "artifacts": {"key": "artifacts", "type": "{Artifact}"},
+        "artifact_content_information": {"key": "artifactContentInformation", "type": "{ArtifactContentInformation}"},
+        "errors": {"key": "errors", "type": "{ErrorResponse}"},
     }
 
     def __init__(
         self,
         *,
-        artifacts: Optional[Dict[str, "Artifact"]] = None,
-        artifact_content_information: Optional[Dict[str, "ArtifactContentInformation"]] = None,
-        errors: Optional[Dict[str, "ErrorResponse"]] = None,
-        **kwargs
-    ):
+        artifacts: Optional[Dict[str, "_models.Artifact"]] = None,
+        artifact_content_information: Optional[Dict[str, "_models.ArtifactContentInformation"]] = None,
+        errors: Optional[Dict[str, "_models.ErrorResponse"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword artifacts: Artifact details of the Artifact Ids requested.
         :paramtype artifacts: dict[str, ~azure.mgmt.machinelearningservices.models.Artifact]
@@ -393,13 +380,13 @@ class BatchArtifactContentInformationResult(msrest.serialization.Model):
         :keyword errors: Errors occurred while fetching the requested Artifact Ids.
         :paramtype errors: dict[str, ~azure.mgmt.machinelearningservices.models.ErrorResponse]
         """
-        super(BatchArtifactContentInformationResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.artifacts = artifacts
         self.artifact_content_information = artifact_content_information
         self.errors = errors
 
 
-class BatchEventCommand(msrest.serialization.Model):
+class BatchEventCommand(_serialization.Model):
     """BatchEventCommand.
 
     :ivar events:
@@ -407,24 +394,19 @@ class BatchEventCommand(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'events': {'key': 'events', 'type': '[BaseEvent]'},
+        "events": {"key": "events", "type": "[BaseEvent]"},
     }
 
-    def __init__(
-        self,
-        *,
-        events: Optional[List["BaseEvent"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, events: Optional[List["_models.BaseEvent"]] = None, **kwargs: Any) -> None:
         """
         :keyword events:
         :paramtype events: list[~azure.mgmt.machinelearningservices.models.BaseEvent]
         """
-        super(BatchEventCommand, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.events = events
 
 
-class BatchEventCommandResult(msrest.serialization.Model):
+class BatchEventCommandResult(_serialization.Model):
     """BatchEventCommandResult.
 
     :ivar errors:
@@ -435,17 +417,17 @@ class BatchEventCommandResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'errors': {'key': 'errors', 'type': '[KeyValuePairBaseEventErrorResponse]'},
-        'successes': {'key': 'successes', 'type': '[str]'},
+        "errors": {"key": "errors", "type": "[KeyValuePairBaseEventErrorResponse]"},
+        "successes": {"key": "successes", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        errors: Optional[List["KeyValuePairBaseEventErrorResponse"]] = None,
+        errors: Optional[List["_models.KeyValuePairBaseEventErrorResponse"]] = None,
         successes: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword errors:
         :paramtype errors:
@@ -453,12 +435,12 @@ class BatchEventCommandResult(msrest.serialization.Model):
         :keyword successes:
         :paramtype successes: list[str]
         """
-        super(BatchEventCommandResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.errors = errors
         self.successes = successes
 
 
-class BatchIMetricV2(msrest.serialization.Model):
+class BatchIMetricV2(_serialization.Model):
     """BatchIMetricV2.
 
     :ivar values:
@@ -468,29 +450,25 @@ class BatchIMetricV2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'values': {'key': 'values', 'type': '[IMetricV2]'},
-        'report_errors': {'key': 'reportErrors', 'type': 'bool'},
+        "values": {"key": "values", "type": "[IMetricV2]"},
+        "report_errors": {"key": "reportErrors", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        values: Optional[List["IMetricV2"]] = None,
-        report_errors: Optional[bool] = None,
-        **kwargs
-    ):
+        self, *, values: Optional[List["_models.IMetricV2"]] = None, report_errors: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword values:
         :paramtype values: list[~azure.mgmt.machinelearningservices.models.IMetricV2]
         :keyword report_errors:
         :paramtype report_errors: bool
         """
-        super(BatchIMetricV2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.values = values
         self.report_errors = report_errors
 
 
-class BatchRequest1(msrest.serialization.Model):
+class BatchRequest1(_serialization.Model):
     """BatchRequest1.
 
     :ivar requests: Dictionary of :code:`<GetRunDataRequest>`.
@@ -498,24 +476,19 @@ class BatchRequest1(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'requests': {'key': 'requests', 'type': '{GetRunDataRequest}'},
+        "requests": {"key": "requests", "type": "{GetRunDataRequest}"},
     }
 
-    def __init__(
-        self,
-        *,
-        requests: Optional[Dict[str, "GetRunDataRequest"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, requests: Optional[Dict[str, "_models.GetRunDataRequest"]] = None, **kwargs: Any) -> None:
         """
         :keyword requests: Dictionary of :code:`<GetRunDataRequest>`.
         :paramtype requests: dict[str, ~azure.mgmt.machinelearningservices.models.GetRunDataRequest]
         """
-        super(BatchRequest1, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.requests = requests
 
 
-class BatchResult1(msrest.serialization.Model):
+class BatchResult1(_serialization.Model):
     """BatchResult1.
 
     :ivar successful_results: Dictionary of :code:`<GetRunDataResult>`.
@@ -526,17 +499,17 @@ class BatchResult1(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'successful_results': {'key': 'successfulResults', 'type': '{GetRunDataResult}'},
-        'failed_results': {'key': 'failedResults', 'type': '{ErrorResponse}'},
+        "successful_results": {"key": "successfulResults", "type": "{GetRunDataResult}"},
+        "failed_results": {"key": "failedResults", "type": "{ErrorResponse}"},
     }
 
     def __init__(
         self,
         *,
-        successful_results: Optional[Dict[str, "GetRunDataResult"]] = None,
-        failed_results: Optional[Dict[str, "ErrorResponse"]] = None,
-        **kwargs
-    ):
+        successful_results: Optional[Dict[str, "_models.GetRunDataResult"]] = None,
+        failed_results: Optional[Dict[str, "_models.ErrorResponse"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword successful_results: Dictionary of :code:`<GetRunDataResult>`.
         :paramtype successful_results: dict[str,
@@ -544,12 +517,12 @@ class BatchResult1(msrest.serialization.Model):
         :keyword failed_results: Dictionary of :code:`<ErrorResponse>`.
         :paramtype failed_results: dict[str, ~azure.mgmt.machinelearningservices.models.ErrorResponse]
         """
-        super(BatchResult1, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.successful_results = successful_results
         self.failed_results = failed_results
 
 
-class BatchRunResult(msrest.serialization.Model):
+class BatchRunResult(_serialization.Model):
     """BatchRunResult.
 
     :ivar runs: Dictionary of :code:`<Run>`.
@@ -559,29 +532,29 @@ class BatchRunResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'runs': {'key': 'runs', 'type': '{Run}'},
-        'errors': {'key': 'errors', 'type': '{ErrorResponse}'},
+        "runs": {"key": "runs", "type": "{Run}"},
+        "errors": {"key": "errors", "type": "{ErrorResponse}"},
     }
 
     def __init__(
         self,
         *,
-        runs: Optional[Dict[str, "Run"]] = None,
-        errors: Optional[Dict[str, "ErrorResponse"]] = None,
-        **kwargs
-    ):
+        runs: Optional[Dict[str, "_models.Run"]] = None,
+        errors: Optional[Dict[str, "_models.ErrorResponse"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword runs: Dictionary of :code:`<Run>`.
         :paramtype runs: dict[str, ~azure.mgmt.machinelearningservices.models.Run]
         :keyword errors: Dictionary of :code:`<ErrorResponse>`.
         :paramtype errors: dict[str, ~azure.mgmt.machinelearningservices.models.ErrorResponse]
         """
-        super(BatchRunResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.runs = runs
         self.errors = errors
 
 
-class Compute(msrest.serialization.Model):
+class Compute(_serialization.Model):
     """Compute.
 
     :ivar target:
@@ -601,13 +574,13 @@ class Compute(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
-        'target_type': {'key': 'targetType', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'gpu_count': {'key': 'gpuCount', 'type': 'int'},
-        'priority': {'key': 'priority', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
+        "target": {"key": "target", "type": "str"},
+        "target_type": {"key": "targetType", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "gpu_count": {"key": "gpuCount", "type": "int"},
+        "priority": {"key": "priority", "type": "str"},
+        "region": {"key": "region", "type": "str"},
     }
 
     def __init__(
@@ -620,8 +593,8 @@ class Compute(msrest.serialization.Model):
         gpu_count: Optional[int] = None,
         priority: Optional[str] = None,
         region: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target:
         :paramtype target: str
@@ -638,7 +611,7 @@ class Compute(msrest.serialization.Model):
         :keyword region:
         :paramtype region: str
         """
-        super(Compute, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target = target
         self.target_type = target_type
         self.vm_size = vm_size
@@ -648,7 +621,7 @@ class Compute(msrest.serialization.Model):
         self.region = region
 
 
-class ComputeRequest(msrest.serialization.Model):
+class ComputeRequest(_serialization.Model):
     """ComputeRequest.
 
     :ivar node_count:
@@ -658,72 +631,62 @@ class ComputeRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'node_count': {'key': 'nodeCount', 'type': 'int'},
-        'gpu_count': {'key': 'gpuCount', 'type': 'int'},
+        "node_count": {"key": "nodeCount", "type": "int"},
+        "gpu_count": {"key": "gpuCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        node_count: Optional[int] = None,
-        gpu_count: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, node_count: Optional[int] = None, gpu_count: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword node_count:
         :paramtype node_count: int
         :keyword gpu_count:
         :paramtype gpu_count: int
         """
-        super(ComputeRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_count = node_count
         self.gpu_count = gpu_count
 
 
-class CreatedFrom(msrest.serialization.Model):
+class CreatedFrom(_serialization.Model):
     """CreatedFrom.
 
-    :ivar type:  The only acceptable values to pass in are None and "Notebook". The default value
-     is None.
+    :ivar type: Default value is "Notebook".
     :vartype type: str
-    :ivar location_type:  The only acceptable values to pass in are None and "ArtifactId". The
-     default value is None.
+    :ivar location_type: Default value is "ArtifactId".
     :vartype location_type: str
     :ivar location:
     :vartype location: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'location_type': {'key': 'locationType', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "location_type": {"key": "locationType", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[str] = None,
-        location_type: Optional[str] = None,
+        type: Optional[Literal["Notebook"]] = None,
+        location_type: Optional[Literal["ArtifactId"]] = None,
         location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type:  The only acceptable values to pass in are None and "Notebook". The default
-         value is None.
+        :keyword type: Default value is "Notebook".
         :paramtype type: str
-        :keyword location_type:  The only acceptable values to pass in are None and "ArtifactId". The
-         default value is None.
+        :keyword location_type: Default value is "ArtifactId".
         :paramtype location_type: str
         :keyword location:
         :paramtype location: str
         """
-        super(CreatedFrom, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.location_type = location_type
         self.location = location
 
 
-class CreateRun(msrest.serialization.Model):
+class CreateRun(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """CreateRun.
 
     :ivar run_id: The identifier for the run. Run IDs must be less than 256 characters and contain
@@ -770,7 +733,7 @@ class CreateRun(msrest.serialization.Model):
     :vartype target: str
     :ivar unique_child_run_compute_targets:
     :vartype unique_child_run_compute_targets: list[str]
-    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :ivar tags: Dictionary of :code:`<string>`.
     :vartype tags: dict[str, str]
     :ivar settings: Dictionary of :code:`<string>`.
     :vartype settings: dict[str, str]
@@ -811,55 +774,55 @@ class CreateRun(msrest.serialization.Model):
     """
 
     _validation = {
-        'unique_child_run_compute_targets': {'unique': True},
-        'input_datasets': {'unique': True},
-        'output_datasets': {'unique': True},
+        "unique_child_run_compute_targets": {"unique": True},
+        "input_datasets": {"unique": True},
+        "output_datasets": {"unique": True},
     }
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'parent_run_id': {'key': 'parentRunId', 'type': 'str'},
-        'experiment_id': {'key': 'experimentId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time_utc': {'key': 'startTimeUtc', 'type': 'iso-8601'},
-        'end_time_utc': {'key': 'endTimeUtc', 'type': 'iso-8601'},
-        'options': {'key': 'options', 'type': 'RunOptions'},
-        'is_virtual': {'key': 'isVirtual', 'type': 'bool'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'data_container_id': {'key': 'dataContainerId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'hidden': {'key': 'hidden', 'type': 'bool'},
-        'run_type': {'key': 'runType', 'type': 'str'},
-        'run_type_v2': {'key': 'runTypeV2', 'type': 'RunTypeV2'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'parameters': {'key': 'parameters', 'type': '{object}'},
-        'action_uris': {'key': 'actionUris', 'type': '{str}'},
-        'script_name': {'key': 'scriptName', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'unique_child_run_compute_targets': {'key': 'uniqueChildRunComputeTargets', 'type': '[str]'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'settings': {'key': 'settings', 'type': '{str}'},
-        'services': {'key': 'services', 'type': '{EndpointSetting}'},
-        'input_datasets': {'key': 'inputDatasets', 'type': '[DatasetLineage]'},
-        'output_datasets': {'key': 'outputDatasets', 'type': '[OutputDatasetLineage]'},
-        'run_definition': {'key': 'runDefinition', 'type': 'object'},
-        'job_specification': {'key': 'jobSpecification', 'type': 'object'},
-        'primary_metric_name': {'key': 'primaryMetricName', 'type': 'str'},
-        'created_from': {'key': 'createdFrom', 'type': 'CreatedFrom'},
-        'cancel_uri': {'key': 'cancelUri', 'type': 'str'},
-        'complete_uri': {'key': 'completeUri', 'type': 'str'},
-        'diagnostics_uri': {'key': 'diagnosticsUri', 'type': 'str'},
-        'compute_request': {'key': 'computeRequest', 'type': 'ComputeRequest'},
-        'compute': {'key': 'compute', 'type': 'Compute'},
-        'retain_for_lifetime_of_workspace': {'key': 'retainForLifetimeOfWorkspace', 'type': 'bool'},
-        'queueing_info': {'key': 'queueingInfo', 'type': 'QueueingInfo'},
-        'active_child_run_id': {'key': 'activeChildRunId', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '{TypedAssetReference}'},
-        'outputs': {'key': 'outputs', 'type': '{TypedAssetReference}'},
+        "run_id": {"key": "runId", "type": "str"},
+        "parent_run_id": {"key": "parentRunId", "type": "str"},
+        "experiment_id": {"key": "experimentId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time_utc": {"key": "startTimeUtc", "type": "iso-8601"},
+        "end_time_utc": {"key": "endTimeUtc", "type": "iso-8601"},
+        "options": {"key": "options", "type": "RunOptions"},
+        "is_virtual": {"key": "isVirtual", "type": "bool"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "data_container_id": {"key": "dataContainerId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "hidden": {"key": "hidden", "type": "bool"},
+        "run_type": {"key": "runType", "type": "str"},
+        "run_type_v2": {"key": "runTypeV2", "type": "RunTypeV2"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "parameters": {"key": "parameters", "type": "{object}"},
+        "action_uris": {"key": "actionUris", "type": "{str}"},
+        "script_name": {"key": "scriptName", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "unique_child_run_compute_targets": {"key": "uniqueChildRunComputeTargets", "type": "[str]"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "settings": {"key": "settings", "type": "{str}"},
+        "services": {"key": "services", "type": "{EndpointSetting}"},
+        "input_datasets": {"key": "inputDatasets", "type": "[DatasetLineage]"},
+        "output_datasets": {"key": "outputDatasets", "type": "[OutputDatasetLineage]"},
+        "run_definition": {"key": "runDefinition", "type": "object"},
+        "job_specification": {"key": "jobSpecification", "type": "object"},
+        "primary_metric_name": {"key": "primaryMetricName", "type": "str"},
+        "created_from": {"key": "createdFrom", "type": "CreatedFrom"},
+        "cancel_uri": {"key": "cancelUri", "type": "str"},
+        "complete_uri": {"key": "completeUri", "type": "str"},
+        "diagnostics_uri": {"key": "diagnosticsUri", "type": "str"},
+        "compute_request": {"key": "computeRequest", "type": "ComputeRequest"},
+        "compute": {"key": "compute", "type": "Compute"},
+        "retain_for_lifetime_of_workspace": {"key": "retainForLifetimeOfWorkspace", "type": "bool"},
+        "queueing_info": {"key": "queueingInfo", "type": "QueueingInfo"},
+        "active_child_run_id": {"key": "activeChildRunId", "type": "str"},
+        "inputs": {"key": "inputs", "type": "{TypedAssetReference}"},
+        "outputs": {"key": "outputs", "type": "{TypedAssetReference}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         run_id: Optional[str] = None,
@@ -868,7 +831,7 @@ class CreateRun(msrest.serialization.Model):
         status: Optional[str] = None,
         start_time_utc: Optional[datetime.datetime] = None,
         end_time_utc: Optional[datetime.datetime] = None,
-        options: Optional["RunOptions"] = None,
+        options: Optional["_models.RunOptions"] = None,
         is_virtual: Optional[bool] = None,
         display_name: Optional[str] = None,
         name: Optional[str] = None,
@@ -876,7 +839,7 @@ class CreateRun(msrest.serialization.Model):
         description: Optional[str] = None,
         hidden: Optional[bool] = None,
         run_type: Optional[str] = None,
-        run_type_v2: Optional["RunTypeV2"] = None,
+        run_type_v2: Optional["_models.RunTypeV2"] = None,
         properties: Optional[Dict[str, str]] = None,
         parameters: Optional[Dict[str, Any]] = None,
         action_uris: Optional[Dict[str, str]] = None,
@@ -885,25 +848,25 @@ class CreateRun(msrest.serialization.Model):
         unique_child_run_compute_targets: Optional[List[str]] = None,
         tags: Optional[Dict[str, str]] = None,
         settings: Optional[Dict[str, str]] = None,
-        services: Optional[Dict[str, "EndpointSetting"]] = None,
-        input_datasets: Optional[List["DatasetLineage"]] = None,
-        output_datasets: Optional[List["OutputDatasetLineage"]] = None,
+        services: Optional[Dict[str, "_models.EndpointSetting"]] = None,
+        input_datasets: Optional[List["_models.DatasetLineage"]] = None,
+        output_datasets: Optional[List["_models.OutputDatasetLineage"]] = None,
         run_definition: Optional[Any] = None,
         job_specification: Optional[Any] = None,
         primary_metric_name: Optional[str] = None,
-        created_from: Optional["CreatedFrom"] = None,
+        created_from: Optional["_models.CreatedFrom"] = None,
         cancel_uri: Optional[str] = None,
         complete_uri: Optional[str] = None,
         diagnostics_uri: Optional[str] = None,
-        compute_request: Optional["ComputeRequest"] = None,
-        compute: Optional["Compute"] = None,
+        compute_request: Optional["_models.ComputeRequest"] = None,
+        compute: Optional["_models.Compute"] = None,
         retain_for_lifetime_of_workspace: Optional[bool] = None,
-        queueing_info: Optional["QueueingInfo"] = None,
+        queueing_info: Optional["_models.QueueingInfo"] = None,
         active_child_run_id: Optional[str] = None,
-        inputs: Optional[Dict[str, "TypedAssetReference"]] = None,
-        outputs: Optional[Dict[str, "TypedAssetReference"]] = None,
-        **kwargs
-    ):
+        inputs: Optional[Dict[str, "_models.TypedAssetReference"]] = None,
+        outputs: Optional[Dict[str, "_models.TypedAssetReference"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_id: The identifier for the run. Run IDs must be less than 256 characters and
          contain only alphanumeric characters with dashes and underscores.
@@ -949,7 +912,7 @@ class CreateRun(msrest.serialization.Model):
         :paramtype target: str
         :keyword unique_child_run_compute_targets:
         :paramtype unique_child_run_compute_targets: list[str]
-        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
         :keyword settings: Dictionary of :code:`<string>`.
         :paramtype settings: dict[str, str]
@@ -989,7 +952,7 @@ class CreateRun(msrest.serialization.Model):
         :keyword outputs: Dictionary of :code:`<TypedAssetReference>`.
         :paramtype outputs: dict[str, ~azure.mgmt.machinelearningservices.models.TypedAssetReference]
         """
-        super(CreateRun, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_id = run_id
         self.parent_run_id = parent_run_id
         self.experiment_id = experiment_id
@@ -1032,7 +995,7 @@ class CreateRun(msrest.serialization.Model):
         self.outputs = outputs
 
 
-class DatasetIdentifier(msrest.serialization.Model):
+class DatasetIdentifier(_serialization.Model):
     """DatasetIdentifier.
 
     :ivar saved_id:
@@ -1044,9 +1007,9 @@ class DatasetIdentifier(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'saved_id': {'key': 'savedId', 'type': 'str'},
-        'registered_id': {'key': 'registeredId', 'type': 'str'},
-        'registered_version': {'key': 'registeredVersion', 'type': 'str'},
+        "saved_id": {"key": "savedId", "type": "str"},
+        "registered_id": {"key": "registeredId", "type": "str"},
+        "registered_version": {"key": "registeredVersion", "type": "str"},
     }
 
     def __init__(
@@ -1055,8 +1018,8 @@ class DatasetIdentifier(msrest.serialization.Model):
         saved_id: Optional[str] = None,
         registered_id: Optional[str] = None,
         registered_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword saved_id:
         :paramtype saved_id: str
@@ -1065,58 +1028,58 @@ class DatasetIdentifier(msrest.serialization.Model):
         :keyword registered_version:
         :paramtype registered_version: str
         """
-        super(DatasetIdentifier, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.saved_id = saved_id
         self.registered_id = registered_id
         self.registered_version = registered_version
 
 
-class DatasetInputDetails(msrest.serialization.Model):
+class DatasetInputDetails(_serialization.Model):
     """DatasetInputDetails.
 
     :ivar input_name:
     :vartype input_name: str
-    :ivar mechanism: Possible values include: "Direct", "Mount", "Download", "Hdfs".
+    :ivar mechanism: Known values are: "Direct", "Mount", "Download", and "Hdfs".
     :vartype mechanism: str or ~azure.mgmt.machinelearningservices.models.DatasetDeliveryMechanism
     :ivar path_on_compute:
     :vartype path_on_compute: str
     """
 
     _attribute_map = {
-        'input_name': {'key': 'inputName', 'type': 'str'},
-        'mechanism': {'key': 'mechanism', 'type': 'str'},
-        'path_on_compute': {'key': 'pathOnCompute', 'type': 'str'},
+        "input_name": {"key": "inputName", "type": "str"},
+        "mechanism": {"key": "mechanism", "type": "str"},
+        "path_on_compute": {"key": "pathOnCompute", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         input_name: Optional[str] = None,
-        mechanism: Optional[Union[str, "DatasetDeliveryMechanism"]] = None,
+        mechanism: Optional[Union[str, "_models.DatasetDeliveryMechanism"]] = None,
         path_on_compute: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword input_name:
         :paramtype input_name: str
-        :keyword mechanism: Possible values include: "Direct", "Mount", "Download", "Hdfs".
+        :keyword mechanism: Known values are: "Direct", "Mount", "Download", and "Hdfs".
         :paramtype mechanism: str or
          ~azure.mgmt.machinelearningservices.models.DatasetDeliveryMechanism
         :keyword path_on_compute:
         :paramtype path_on_compute: str
         """
-        super(DatasetInputDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.input_name = input_name
         self.mechanism = mechanism
         self.path_on_compute = path_on_compute
 
 
-class DatasetLineage(msrest.serialization.Model):
+class DatasetLineage(_serialization.Model):
     """DatasetLineage.
 
     :ivar identifier:
     :vartype identifier: ~azure.mgmt.machinelearningservices.models.DatasetIdentifier
-    :ivar consumption_type: Possible values include: "RunInput", "Reference".
+    :ivar consumption_type: Known values are: "RunInput" and "Reference".
     :vartype consumption_type: str or
      ~azure.mgmt.machinelearningservices.models.DatasetConsumptionType
     :ivar input_details:
@@ -1124,35 +1087,35 @@ class DatasetLineage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identifier': {'key': 'identifier', 'type': 'DatasetIdentifier'},
-        'consumption_type': {'key': 'consumptionType', 'type': 'str'},
-        'input_details': {'key': 'inputDetails', 'type': 'DatasetInputDetails'},
+        "identifier": {"key": "identifier", "type": "DatasetIdentifier"},
+        "consumption_type": {"key": "consumptionType", "type": "str"},
+        "input_details": {"key": "inputDetails", "type": "DatasetInputDetails"},
     }
 
     def __init__(
         self,
         *,
-        identifier: Optional["DatasetIdentifier"] = None,
-        consumption_type: Optional[Union[str, "DatasetConsumptionType"]] = None,
-        input_details: Optional["DatasetInputDetails"] = None,
-        **kwargs
-    ):
+        identifier: Optional["_models.DatasetIdentifier"] = None,
+        consumption_type: Optional[Union[str, "_models.DatasetConsumptionType"]] = None,
+        input_details: Optional["_models.DatasetInputDetails"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identifier:
         :paramtype identifier: ~azure.mgmt.machinelearningservices.models.DatasetIdentifier
-        :keyword consumption_type: Possible values include: "RunInput", "Reference".
+        :keyword consumption_type: Known values are: "RunInput" and "Reference".
         :paramtype consumption_type: str or
          ~azure.mgmt.machinelearningservices.models.DatasetConsumptionType
         :keyword input_details:
         :paramtype input_details: ~azure.mgmt.machinelearningservices.models.DatasetInputDetails
         """
-        super(DatasetLineage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identifier = identifier
         self.consumption_type = consumption_type
         self.input_details = input_details
 
 
-class DatasetOutputDetails(msrest.serialization.Model):
+class DatasetOutputDetails(_serialization.Model):
     """DatasetOutputDetails.
 
     :ivar output_name:
@@ -1160,24 +1123,19 @@ class DatasetOutputDetails(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'output_name': {'key': 'outputName', 'type': 'str'},
+        "output_name": {"key": "outputName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        output_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, output_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword output_name:
         :paramtype output_name: str
         """
-        super(DatasetOutputDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.output_name = output_name
 
 
-class DeleteConfiguration(msrest.serialization.Model):
+class DeleteConfiguration(_serialization.Model):
     """DeleteConfiguration.
 
     :ivar workspace_id:
@@ -1189,9 +1147,9 @@ class DeleteConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'cutoff_days': {'key': 'cutoffDays', 'type': 'int'},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+        "cutoff_days": {"key": "cutoffDays", "type": "int"},
     }
 
     def __init__(
@@ -1200,8 +1158,8 @@ class DeleteConfiguration(msrest.serialization.Model):
         workspace_id: Optional[str] = None,
         is_enabled: Optional[bool] = None,
         cutoff_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id:
         :paramtype workspace_id: str
@@ -1210,13 +1168,13 @@ class DeleteConfiguration(msrest.serialization.Model):
         :keyword cutoff_days:
         :paramtype cutoff_days: int
         """
-        super(DeleteConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.workspace_id = workspace_id
         self.is_enabled = is_enabled
         self.cutoff_days = cutoff_days
 
 
-class DeleteExperimentTagsResult(msrest.serialization.Model):
+class DeleteExperimentTagsResult(_serialization.Model):
     """DeleteExperimentTagsResult.
 
     :ivar errors: Dictionary of :code:`<ErrorResponse>`.
@@ -1224,24 +1182,19 @@ class DeleteExperimentTagsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'errors': {'key': 'errors', 'type': '{ErrorResponse}'},
+        "errors": {"key": "errors", "type": "{ErrorResponse}"},
     }
 
-    def __init__(
-        self,
-        *,
-        errors: Optional[Dict[str, "ErrorResponse"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, errors: Optional[Dict[str, "_models.ErrorResponse"]] = None, **kwargs: Any) -> None:
         """
         :keyword errors: Dictionary of :code:`<ErrorResponse>`.
         :paramtype errors: dict[str, ~azure.mgmt.machinelearningservices.models.ErrorResponse]
         """
-        super(DeleteExperimentTagsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.errors = errors
 
 
-class DeleteOrModifyTags(msrest.serialization.Model):
+class DeleteOrModifyTags(_serialization.Model):
     """The Tags to modify or delete.
 
     :ivar tags_to_modify: The KV pairs of tags to modify.
@@ -1251,8 +1204,8 @@ class DeleteOrModifyTags(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags_to_modify': {'key': 'tagsToModify', 'type': '{str}'},
-        'tags_to_delete': {'key': 'tagsToDelete', 'type': '[str]'},
+        "tags_to_modify": {"key": "tagsToModify", "type": "{str}"},
+        "tags_to_delete": {"key": "tagsToDelete", "type": "[str]"},
     }
 
     def __init__(
@@ -1260,20 +1213,20 @@ class DeleteOrModifyTags(msrest.serialization.Model):
         *,
         tags_to_modify: Optional[Dict[str, str]] = None,
         tags_to_delete: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags_to_modify: The KV pairs of tags to modify.
         :paramtype tags_to_modify: dict[str, str]
         :keyword tags_to_delete: The list of tags to delete.
         :paramtype tags_to_delete: list[str]
         """
-        super(DeleteOrModifyTags, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags_to_modify = tags_to_modify
         self.tags_to_delete = tags_to_delete
 
 
-class DeleteRunServices(msrest.serialization.Model):
+class DeleteRunServices(_serialization.Model):
     """The Services to delete.
 
     :ivar services_to_delete: The list of Services to delete.
@@ -1281,49 +1234,39 @@ class DeleteRunServices(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'services_to_delete': {'key': 'servicesToDelete', 'type': '[str]'},
+        "services_to_delete": {"key": "servicesToDelete", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        services_to_delete: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, services_to_delete: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword services_to_delete: The list of Services to delete.
         :paramtype services_to_delete: list[str]
         """
-        super(DeleteRunServices, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.services_to_delete = services_to_delete
 
 
-class DeleteTagsCommand(msrest.serialization.Model):
+class DeleteTagsCommand(_serialization.Model):
     """DeleteTagsCommand.
 
-    :ivar tags: A set of tags.
+    :ivar tags:
     :vartype tags: list[str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '[str]'},
+        "tags": {"key": "tags", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
-        :keyword tags: A set of tags.
+        :keyword tags:
         :paramtype tags: list[str]
         """
-        super(DeleteTagsCommand, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class DerivedMetricKey(msrest.serialization.Model):
+class DerivedMetricKey(_serialization.Model):
     """DerivedMetricKey.
 
     :ivar namespace:
@@ -1337,15 +1280,15 @@ class DerivedMetricKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'labels': {'unique': True},
-        'column_names': {'unique': True},
+        "labels": {"unique": True},
+        "column_names": {"unique": True},
     }
 
     _attribute_map = {
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'labels': {'key': 'labels', 'type': '[str]'},
-        'column_names': {'key': 'columnNames', 'type': '[str]'},
+        "namespace": {"key": "namespace", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "labels": {"key": "labels", "type": "[str]"},
+        "column_names": {"key": "columnNames", "type": "[str]"},
     }
 
     def __init__(
@@ -1355,8 +1298,8 @@ class DerivedMetricKey(msrest.serialization.Model):
         name: Optional[str] = None,
         labels: Optional[List[str]] = None,
         column_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword namespace:
         :paramtype namespace: str
@@ -1367,14 +1310,14 @@ class DerivedMetricKey(msrest.serialization.Model):
         :keyword column_names:
         :paramtype column_names: list[str]
         """
-        super(DerivedMetricKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.namespace = namespace
         self.name = name
         self.labels = labels
         self.column_names = column_names
 
 
-class EndpointSetting(msrest.serialization.Model):
+class EndpointSetting(_serialization.Model):
     """EndpointSetting.
 
     :ivar type:
@@ -1398,15 +1341,15 @@ class EndpointSetting(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'ssl_thumbprint': {'key': 'sslThumbprint', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'proxy_endpoint': {'key': 'proxyEndpoint', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "type": {"key": "type", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "ssl_thumbprint": {"key": "sslThumbprint", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "proxy_endpoint": {"key": "proxyEndpoint", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -1421,8 +1364,8 @@ class EndpointSetting(msrest.serialization.Model):
         error_message: Optional[str] = None,
         enabled: Optional[bool] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type:
         :paramtype type: str
@@ -1443,7 +1386,7 @@ class EndpointSetting(msrest.serialization.Model):
         :keyword properties: Dictionary of :code:`<string>`.
         :paramtype properties: dict[str, str]
         """
-        super(EndpointSetting, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.port = port
         self.ssl_thumbprint = ssl_thumbprint
@@ -1455,7 +1398,7 @@ class EndpointSetting(msrest.serialization.Model):
         self.properties = properties
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     :ivar type: The additional info type.
@@ -1465,29 +1408,23 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[str] = None,
-        info: Optional[Any] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[str] = None, info: Optional[Any] = None, **kwargs: Any) -> None:
         """
         :keyword type: The additional info type.
         :paramtype type: str
         :keyword info: The additional info.
         :paramtype info: any
         """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.info = info
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """The error response.
 
     :ivar error: The root error.
@@ -1505,25 +1442,25 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'RootError'},
-        'correlation': {'key': 'correlation', 'type': '{str}'},
-        'environment': {'key': 'environment', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
-        'component_name': {'key': 'componentName', 'type': 'str'},
+        "error": {"key": "error", "type": "RootError"},
+        "correlation": {"key": "correlation", "type": "{str}"},
+        "environment": {"key": "environment", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
+        "component_name": {"key": "componentName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        error: Optional["RootError"] = None,
+        error: Optional["_models.RootError"] = None,
         correlation: Optional[Dict[str, str]] = None,
         environment: Optional[str] = None,
         location: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
         component_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword error: The root error.
         :paramtype error: ~azure.mgmt.machinelearningservices.models.RootError
@@ -1538,7 +1475,7 @@ class ErrorResponse(msrest.serialization.Model):
         :keyword component_name: Component name where error originated/encountered.
         :paramtype component_name: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
         self.correlation = correlation
         self.environment = environment
@@ -1547,7 +1484,7 @@ class ErrorResponse(msrest.serialization.Model):
         self.component_name = component_name
 
 
-class Event(msrest.serialization.Model):
+class Event(_serialization.Model):
     """Event.
 
     :ivar name: Gets the Microsoft.MachineLearning.RunHistory.Contracts.Event name.
@@ -1560,9 +1497,9 @@ class Event(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'attributes': {'key': 'attributes', 'type': '{object}'},
+        "name": {"key": "name", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "attributes": {"key": "attributes", "type": "{object}"},
     }
 
     def __init__(
@@ -1571,8 +1508,8 @@ class Event(msrest.serialization.Model):
         name: Optional[str] = None,
         timestamp: Optional[datetime.datetime] = None,
         attributes: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Gets the Microsoft.MachineLearning.RunHistory.Contracts.Event name.
         :paramtype name: str
@@ -1582,13 +1519,13 @@ class Event(msrest.serialization.Model):
          associated with the event.
         :paramtype attributes: dict[str, any]
         """
-        super(Event, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.timestamp = timestamp
         self.attributes = attributes
 
 
-class Experiment(msrest.serialization.Model):
+class Experiment(_serialization.Model):
     """Experiment.
 
     :ivar experiment_id:
@@ -1599,7 +1536,7 @@ class Experiment(msrest.serialization.Model):
     :vartype description: str
     :ivar created_utc:
     :vartype created_utc: ~datetime.datetime
-    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :ivar tags: Dictionary of :code:`<string>`.
     :vartype tags: dict[str, str]
     :ivar archived_time:
     :vartype archived_time: ~datetime.datetime
@@ -1610,14 +1547,14 @@ class Experiment(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'experiment_id': {'key': 'experimentId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'created_utc': {'key': 'createdUtc', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'archived_time': {'key': 'archivedTime', 'type': 'iso-8601'},
-        'retain_for_lifetime_of_workspace': {'key': 'retainForLifetimeOfWorkspace', 'type': 'bool'},
-        'artifact_location': {'key': 'artifactLocation', 'type': 'str'},
+        "experiment_id": {"key": "experimentId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "created_utc": {"key": "createdUtc", "type": "iso-8601"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "archived_time": {"key": "archivedTime", "type": "iso-8601"},
+        "retain_for_lifetime_of_workspace": {"key": "retainForLifetimeOfWorkspace", "type": "bool"},
+        "artifact_location": {"key": "artifactLocation", "type": "str"},
     }
 
     def __init__(
@@ -1631,8 +1568,8 @@ class Experiment(msrest.serialization.Model):
         archived_time: Optional[datetime.datetime] = None,
         retain_for_lifetime_of_workspace: Optional[bool] = None,
         artifact_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword experiment_id:
         :paramtype experiment_id: str
@@ -1642,7 +1579,7 @@ class Experiment(msrest.serialization.Model):
         :paramtype description: str
         :keyword created_utc:
         :paramtype created_utc: ~datetime.datetime
-        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
         :keyword archived_time:
         :paramtype archived_time: ~datetime.datetime
@@ -1651,7 +1588,7 @@ class Experiment(msrest.serialization.Model):
         :keyword artifact_location:
         :paramtype artifact_location: str
         """
-        super(Experiment, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.experiment_id = experiment_id
         self.name = name
         self.description = description
@@ -1662,11 +1599,11 @@ class Experiment(msrest.serialization.Model):
         self.artifact_location = artifact_location
 
 
-class ExperimentQueryParams(msrest.serialization.Model):
+class ExperimentQueryParams(_serialization.Model):
     """Extends Query Params DTO for ViewType.
 
     :ivar view_type: ViewType filters experiments by their archived state. Default is ActiveOnly.
-     Possible values include: "Default", "All", "ActiveOnly", "ArchivedOnly".
+     Known values are: "Default", "All", "ActiveOnly", and "ArchivedOnly".
     :vartype view_type: str or ~azure.mgmt.machinelearningservices.models.ExperimentViewType
     :ivar filter: Allows for filtering the collection of resources.
      The expression specified is evaluated for each resource in the collection, and only items
@@ -1686,26 +1623,26 @@ class ExperimentQueryParams(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'view_type': {'key': 'viewType', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'str'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'order_by': {'key': 'orderBy', 'type': 'str'},
-        'top': {'key': 'top', 'type': 'int'},
+        "view_type": {"key": "viewType", "type": "str"},
+        "filter": {"key": "filter", "type": "str"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "order_by": {"key": "orderBy", "type": "str"},
+        "top": {"key": "top", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        view_type: Optional[Union[str, "ExperimentViewType"]] = None,
-        filter: Optional[str] = None,
+        view_type: Optional[Union[str, "_models.ExperimentViewType"]] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         continuation_token: Optional[str] = None,
         order_by: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword view_type: ViewType filters experiments by their archived state. Default is
-         ActiveOnly. Possible values include: "Default", "All", "ActiveOnly", "ArchivedOnly".
+         ActiveOnly. Known values are: "Default", "All", "ActiveOnly", and "ArchivedOnly".
         :paramtype view_type: str or ~azure.mgmt.machinelearningservices.models.ExperimentViewType
         :keyword filter: Allows for filtering the collection of resources.
          The expression specified is evaluated for each resource in the collection, and only items
@@ -1725,7 +1662,7 @@ class ExperimentQueryParams(msrest.serialization.Model):
          If not specified, all items are returned.
         :paramtype top: int
         """
-        super(ExperimentQueryParams, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.view_type = view_type
         self.filter = filter
         self.continuation_token = continuation_token
@@ -1733,7 +1670,7 @@ class ExperimentQueryParams(msrest.serialization.Model):
         self.top = top
 
 
-class GetRunDataRequest(msrest.serialization.Model):
+class GetRunDataRequest(_serialization.Model):
     """GetRunDataRequest.
 
     :ivar run_id:
@@ -1747,10 +1684,10 @@ class GetRunDataRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'select_run_metadata': {'key': 'selectRunMetadata', 'type': 'bool'},
-        'select_run_definition': {'key': 'selectRunDefinition', 'type': 'bool'},
-        'select_job_specification': {'key': 'selectJobSpecification', 'type': 'bool'},
+        "run_id": {"key": "runId", "type": "str"},
+        "select_run_metadata": {"key": "selectRunMetadata", "type": "bool"},
+        "select_run_definition": {"key": "selectRunDefinition", "type": "bool"},
+        "select_job_specification": {"key": "selectJobSpecification", "type": "bool"},
     }
 
     def __init__(
@@ -1760,8 +1697,8 @@ class GetRunDataRequest(msrest.serialization.Model):
         select_run_metadata: Optional[bool] = None,
         select_run_definition: Optional[bool] = None,
         select_job_specification: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_id:
         :paramtype run_id: str
@@ -1772,14 +1709,14 @@ class GetRunDataRequest(msrest.serialization.Model):
         :keyword select_job_specification:
         :paramtype select_job_specification: bool
         """
-        super(GetRunDataRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_id = run_id
         self.select_run_metadata = select_run_metadata
         self.select_run_definition = select_run_definition
         self.select_job_specification = select_job_specification
 
 
-class GetRunDataResult(msrest.serialization.Model):
+class GetRunDataResult(_serialization.Model):
     """GetRunDataResult.
 
     :ivar run_metadata: The definition of a Run.
@@ -1791,19 +1728,19 @@ class GetRunDataResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_metadata': {'key': 'runMetadata', 'type': 'Run'},
-        'run_definition': {'key': 'runDefinition', 'type': 'object'},
-        'job_specification': {'key': 'jobSpecification', 'type': 'object'},
+        "run_metadata": {"key": "runMetadata", "type": "Run"},
+        "run_definition": {"key": "runDefinition", "type": "object"},
+        "job_specification": {"key": "jobSpecification", "type": "object"},
     }
 
     def __init__(
         self,
         *,
-        run_metadata: Optional["Run"] = None,
+        run_metadata: Optional["_models.Run"] = None,
         run_definition: Optional[Any] = None,
         job_specification: Optional[Any] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_metadata: The definition of a Run.
         :paramtype run_metadata: ~azure.mgmt.machinelearningservices.models.Run
@@ -1812,13 +1749,13 @@ class GetRunDataResult(msrest.serialization.Model):
         :keyword job_specification: Anything.
         :paramtype job_specification: any
         """
-        super(GetRunDataResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_metadata = run_metadata
         self.run_definition = run_definition
         self.job_specification = job_specification
 
 
-class GetRunsByIds(msrest.serialization.Model):
+class GetRunsByIds(_serialization.Model):
     """GetRunsByIds.
 
     :ivar run_ids:
@@ -1826,24 +1763,19 @@ class GetRunsByIds(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_ids': {'key': 'runIds', 'type': '[str]'},
+        "run_ids": {"key": "runIds", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        run_ids: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, run_ids: Optional[List[str]] = None, **kwargs: Any) -> None:
         """
         :keyword run_ids:
         :paramtype run_ids: list[str]
         """
-        super(GetRunsByIds, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_ids = run_ids
 
 
-class GetSampledMetricRequest(msrest.serialization.Model):
+class GetSampledMetricRequest(_serialization.Model):
     """GetSampledMetricRequest.
 
     :ivar metric_name:
@@ -1853,30 +1785,27 @@ class GetSampledMetricRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_name': {'key': 'metricName', 'type': 'str'},
-        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
+        "metric_name": {"key": "metricName", "type": "str"},
+        "metric_namespace": {"key": "metricNamespace", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        metric_name: Optional[str] = None,
-        metric_namespace: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, metric_name: Optional[str] = None, metric_namespace: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_name:
         :paramtype metric_name: str
         :keyword metric_namespace:
         :paramtype metric_namespace: str
         """
-        super(GetSampledMetricRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_name = metric_name
         self.metric_namespace = metric_namespace
 
 
-class IMetricV2(msrest.serialization.Model):
-    """Sequence of one or many values sharing a common  DataContainerId, Name, and Schema. Used only for Post Metrics.
+class IMetricV2(_serialization.Model):
+    """Sequence of one or many values sharing a common  DataContainerId, Name, and Schema. Used only
+    for Post Metrics.
 
     :ivar data_container_id: Data container to which this Metric belongs.
     :vartype data_container_id: str
@@ -1895,12 +1824,12 @@ class IMetricV2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data_container_id': {'key': 'dataContainerId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'columns': {'key': 'columns', 'type': '{str}'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'standard_schema_id': {'key': 'standardSchemaId', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[MetricV2Value]'},
+        "data_container_id": {"key": "dataContainerId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "columns": {"key": "columns", "type": "{str}"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "standard_schema_id": {"key": "standardSchemaId", "type": "str"},
+        "value": {"key": "value", "type": "[MetricV2Value]"},
     }
 
     def __init__(
@@ -1908,12 +1837,12 @@ class IMetricV2(msrest.serialization.Model):
         *,
         data_container_id: Optional[str] = None,
         name: Optional[str] = None,
-        columns: Optional[Dict[str, Union[str, "MetricValueType"]]] = None,
+        columns: Optional[Dict[str, Union[str, "_models.MetricValueType"]]] = None,
         namespace: Optional[str] = None,
         standard_schema_id: Optional[str] = None,
-        value: Optional[List["MetricV2Value"]] = None,
-        **kwargs
-    ):
+        value: Optional[List["_models.MetricV2Value"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_container_id: Data container to which this Metric belongs.
         :paramtype data_container_id: str
@@ -1931,7 +1860,7 @@ class IMetricV2(msrest.serialization.Model):
         :keyword value: The list of values.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.MetricV2Value]
         """
-        super(IMetricV2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.data_container_id = data_container_id
         self.name = name
         self.columns = columns
@@ -1940,7 +1869,7 @@ class IMetricV2(msrest.serialization.Model):
         self.value = value
 
 
-class InnerErrorResponse(msrest.serialization.Model):
+class InnerErrorResponse(_serialization.Model):
     """A nested structure of errors.
 
     :ivar code: The error code.
@@ -1950,29 +1879,25 @@ class InnerErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
+        "code": {"key": "code", "type": "str"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        inner_error: Optional["InnerErrorResponse"] = None,
-        **kwargs
-    ):
+        self, *, code: Optional[str] = None, inner_error: Optional["_models.InnerErrorResponse"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword code: The error code.
         :paramtype code: str
         :keyword inner_error: A nested structure of errors.
         :paramtype inner_error: ~azure.mgmt.machinelearningservices.models.InnerErrorResponse
         """
-        super(InnerErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.inner_error = inner_error
 
 
-class JobCost(msrest.serialization.Model):
+class JobCost(_serialization.Model):
     """JobCost.
 
     :ivar charged_cpu_core_seconds:
@@ -1986,10 +1911,10 @@ class JobCost(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'charged_cpu_core_seconds': {'key': 'chargedCpuCoreSeconds', 'type': 'float'},
-        'charged_cpu_memory_megabyte_seconds': {'key': 'chargedCpuMemoryMegabyteSeconds', 'type': 'float'},
-        'charged_gpu_seconds': {'key': 'chargedGpuSeconds', 'type': 'float'},
-        'charged_node_utilization_seconds': {'key': 'chargedNodeUtilizationSeconds', 'type': 'float'},
+        "charged_cpu_core_seconds": {"key": "chargedCpuCoreSeconds", "type": "float"},
+        "charged_cpu_memory_megabyte_seconds": {"key": "chargedCpuMemoryMegabyteSeconds", "type": "float"},
+        "charged_gpu_seconds": {"key": "chargedGpuSeconds", "type": "float"},
+        "charged_node_utilization_seconds": {"key": "chargedNodeUtilizationSeconds", "type": "float"},
     }
 
     def __init__(
@@ -1999,8 +1924,8 @@ class JobCost(msrest.serialization.Model):
         charged_cpu_memory_megabyte_seconds: Optional[float] = None,
         charged_gpu_seconds: Optional[float] = None,
         charged_node_utilization_seconds: Optional[float] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword charged_cpu_core_seconds:
         :paramtype charged_cpu_core_seconds: float
@@ -2011,14 +1936,14 @@ class JobCost(msrest.serialization.Model):
         :keyword charged_node_utilization_seconds:
         :paramtype charged_node_utilization_seconds: float
         """
-        super(JobCost, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.charged_cpu_core_seconds = charged_cpu_core_seconds
         self.charged_cpu_memory_megabyte_seconds = charged_cpu_memory_megabyte_seconds
         self.charged_gpu_seconds = charged_gpu_seconds
         self.charged_node_utilization_seconds = charged_node_utilization_seconds
 
 
-class KeyValuePairBaseEventErrorResponse(msrest.serialization.Model):
+class KeyValuePairBaseEventErrorResponse(_serialization.Model):
     """KeyValuePairBaseEventErrorResponse.
 
     :ivar key: Base event is the envelope used to post event data to the Event controller.
@@ -2028,29 +1953,29 @@ class KeyValuePairBaseEventErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'BaseEvent'},
-        'value': {'key': 'value', 'type': 'ErrorResponse'},
+        "key": {"key": "key", "type": "BaseEvent"},
+        "value": {"key": "value", "type": "ErrorResponse"},
     }
 
     def __init__(
         self,
         *,
-        key: Optional["BaseEvent"] = None,
-        value: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
+        key: Optional["_models.BaseEvent"] = None,
+        value: Optional["_models.ErrorResponse"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key: Base event is the envelope used to post event data to the Event controller.
         :paramtype key: ~azure.mgmt.machinelearningservices.models.BaseEvent
         :keyword value: The error response.
         :paramtype value: ~azure.mgmt.machinelearningservices.models.ErrorResponse
         """
-        super(KeyValuePairBaseEventErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.value = value
 
 
-class KeyValuePairString(msrest.serialization.Model):
+class KeyValuePairString(_serialization.Model):
     """KeyValuePairString.
 
     :ivar key:
@@ -2060,29 +1985,23 @@ class KeyValuePairString(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword key:
         :paramtype key: str
         :keyword value:
         :paramtype value: str
         """
-        super(KeyValuePairString, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.value = value
 
 
-class KeyValuePairStringJToken(msrest.serialization.Model):
+class KeyValuePairStringJToken(_serialization.Model):
     """KeyValuePairStringJToken.
 
     :ivar key:
@@ -2092,29 +2011,23 @@ class KeyValuePairStringJToken(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'object'},
+        "key": {"key": "key", "type": "str"},
+        "value": {"key": "value", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        key: Optional[str] = None,
-        value: Optional[Any] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key: Optional[str] = None, value: Optional[Any] = None, **kwargs: Any) -> None:
         """
         :keyword key:
         :paramtype key: str
         :keyword value: Anything.
         :paramtype value: any
         """
-        super(KeyValuePairStringJToken, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.value = value
 
 
-class Link(msrest.serialization.Model):
+class Link(_serialization.Model):
     """Link.
 
     :ivar context:
@@ -2124,29 +2037,29 @@ class Link(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'context': {'key': 'context', 'type': 'SpanContext'},
-        'attributes': {'key': 'attributes', 'type': '{object}'},
+        "context": {"key": "context", "type": "SpanContext"},
+        "attributes": {"key": "attributes", "type": "{object}"},
     }
 
     def __init__(
         self,
         *,
-        context: Optional["SpanContext"] = None,
+        context: Optional["_models.SpanContext"] = None,
         attributes: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context:
         :paramtype context: ~azure.mgmt.machinelearningservices.models.SpanContext
         :keyword attributes: Gets the collection of attributes associated with the link.
         :paramtype attributes: dict[str, any]
         """
-        super(Link, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.context = context
         self.attributes = attributes
 
 
-class ListGenericResourceMetrics(msrest.serialization.Model):
+class ListGenericResourceMetrics(_serialization.Model):
     """ListGenericResourceMetrics.
 
     :ivar resource_id:
@@ -2162,11 +2075,11 @@ class ListGenericResourceMetrics(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'metric_names': {'key': 'metricNames', 'type': '[str]'},
-        'label_filters': {'key': 'labelFilters', 'type': '{str}'},
-        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "metric_names": {"key": "metricNames", "type": "[str]"},
+        "label_filters": {"key": "labelFilters", "type": "{str}"},
+        "metric_namespace": {"key": "metricNamespace", "type": "str"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
     }
 
     def __init__(
@@ -2177,8 +2090,8 @@ class ListGenericResourceMetrics(msrest.serialization.Model):
         label_filters: Optional[Dict[str, str]] = None,
         metric_namespace: Optional[str] = None,
         continuation_token: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id:
         :paramtype resource_id: str
@@ -2191,7 +2104,7 @@ class ListGenericResourceMetrics(msrest.serialization.Model):
         :keyword continuation_token:
         :paramtype continuation_token: str
         """
-        super(ListGenericResourceMetrics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.metric_names = metric_names
         self.label_filters = label_filters
@@ -2199,7 +2112,7 @@ class ListGenericResourceMetrics(msrest.serialization.Model):
         self.continuation_token = continuation_token
 
 
-class ListMetrics(msrest.serialization.Model):
+class ListMetrics(_serialization.Model):
     """ListMetrics.
 
     :ivar metric_namespace:
@@ -2209,29 +2122,25 @@ class ListMetrics(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
+        "metric_namespace": {"key": "metricNamespace", "type": "str"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        metric_namespace: Optional[str] = None,
-        continuation_token: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, metric_namespace: Optional[str] = None, continuation_token: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword metric_namespace:
         :paramtype metric_namespace: str
         :keyword continuation_token:
         :paramtype continuation_token: str
         """
-        super(ListMetrics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_namespace = metric_namespace
         self.continuation_token = continuation_token
 
 
-class MetricDefinition(msrest.serialization.Model):
+class MetricDefinition(_serialization.Model):
     """MetricDefinition.
 
     :ivar metric_key:
@@ -2243,19 +2152,19 @@ class MetricDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_key': {'key': 'metricKey', 'type': 'DerivedMetricKey'},
-        'columns': {'key': 'columns', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'MetricProperties'},
+        "metric_key": {"key": "metricKey", "type": "DerivedMetricKey"},
+        "columns": {"key": "columns", "type": "{str}"},
+        "properties": {"key": "properties", "type": "MetricProperties"},
     }
 
     def __init__(
         self,
         *,
-        metric_key: Optional["DerivedMetricKey"] = None,
-        columns: Optional[Dict[str, Union[str, "MetricValueType"]]] = None,
-        properties: Optional["MetricProperties"] = None,
-        **kwargs
-    ):
+        metric_key: Optional["_models.DerivedMetricKey"] = None,
+        columns: Optional[Dict[str, Union[str, "_models.MetricValueType"]]] = None,
+        properties: Optional["_models.MetricProperties"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_key:
         :paramtype metric_key: ~azure.mgmt.machinelearningservices.models.DerivedMetricKey
@@ -2265,13 +2174,13 @@ class MetricDefinition(msrest.serialization.Model):
         :keyword properties:
         :paramtype properties: ~azure.mgmt.machinelearningservices.models.MetricProperties
         """
-        super(MetricDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_key = metric_key
         self.columns = columns
         self.properties = properties
 
 
-class MetricProperties(msrest.serialization.Model):
+class MetricProperties(_serialization.Model):
     """MetricProperties.
 
     :ivar ux_metric_type: String value UX uses to decide how to render your metrics
@@ -2280,25 +2189,20 @@ class MetricProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ux_metric_type': {'key': 'uxMetricType', 'type': 'str'},
+        "ux_metric_type": {"key": "uxMetricType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ux_metric_type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ux_metric_type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword ux_metric_type: String value UX uses to decide how to render your metrics
          Ex: azureml.v1.scalar or azureml.v1.table.
         :paramtype ux_metric_type: str
         """
-        super(MetricProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ux_metric_type = ux_metric_type
 
 
-class MetricSample(msrest.serialization.Model):
+class MetricSample(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """MetricSample.
 
     :ivar derived_label_values: Dictionary of :code:`<string>`.
@@ -2306,7 +2210,7 @@ class MetricSample(msrest.serialization.Model):
     :ivar is_partial_result:
     :vartype is_partial_result: bool
     :ivar num_values_logged:
-    :vartype num_values_logged: long
+    :vartype num_values_logged: int
     :ivar data_container_id: Data container to which this Metric belongs.
     :vartype data_container_id: str
     :ivar name: Name identifying this Metric within the Data Container.
@@ -2332,18 +2236,18 @@ class MetricSample(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'derived_label_values': {'key': 'derivedLabelValues', 'type': '{str}'},
-        'is_partial_result': {'key': 'isPartialResult', 'type': 'bool'},
-        'num_values_logged': {'key': 'numValuesLogged', 'type': 'long'},
-        'data_container_id': {'key': 'dataContainerId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'columns': {'key': 'columns', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'MetricProperties'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'standard_schema_id': {'key': 'standardSchemaId', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[MetricV2Value]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "derived_label_values": {"key": "derivedLabelValues", "type": "{str}"},
+        "is_partial_result": {"key": "isPartialResult", "type": "bool"},
+        "num_values_logged": {"key": "numValuesLogged", "type": "int"},
+        "data_container_id": {"key": "dataContainerId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "columns": {"key": "columns", "type": "{str}"},
+        "properties": {"key": "properties", "type": "MetricProperties"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "standard_schema_id": {"key": "standardSchemaId", "type": "str"},
+        "value": {"key": "value", "type": "[MetricV2Value]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -2354,22 +2258,22 @@ class MetricSample(msrest.serialization.Model):
         num_values_logged: Optional[int] = None,
         data_container_id: Optional[str] = None,
         name: Optional[str] = None,
-        columns: Optional[Dict[str, Union[str, "MetricValueType"]]] = None,
-        properties: Optional["MetricProperties"] = None,
+        columns: Optional[Dict[str, Union[str, "_models.MetricValueType"]]] = None,
+        properties: Optional["_models.MetricProperties"] = None,
         namespace: Optional[str] = None,
         standard_schema_id: Optional[str] = None,
-        value: Optional[List["MetricV2Value"]] = None,
+        value: Optional[List["_models.MetricV2Value"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword derived_label_values: Dictionary of :code:`<string>`.
         :paramtype derived_label_values: dict[str, str]
         :keyword is_partial_result:
         :paramtype is_partial_result: bool
         :keyword num_values_logged:
-        :paramtype num_values_logged: long
+        :paramtype num_values_logged: int
         :keyword data_container_id: Data container to which this Metric belongs.
         :paramtype data_container_id: str
         :keyword name: Name identifying this Metric within the Data Container.
@@ -2394,7 +2298,7 @@ class MetricSample(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(MetricSample, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.derived_label_values = derived_label_values
         self.is_partial_result = is_partial_result
         self.num_values_logged = num_values_logged
@@ -2409,7 +2313,7 @@ class MetricSample(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class MetricSchema(msrest.serialization.Model):
+class MetricSchema(_serialization.Model):
     """MetricSchema.
 
     :ivar num_properties:
@@ -2419,29 +2323,29 @@ class MetricSchema(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'num_properties': {'key': 'numProperties', 'type': 'int'},
-        'properties': {'key': 'properties', 'type': '[MetricSchemaProperty]'},
+        "num_properties": {"key": "numProperties", "type": "int"},
+        "properties": {"key": "properties", "type": "[MetricSchemaProperty]"},
     }
 
     def __init__(
         self,
         *,
         num_properties: Optional[int] = None,
-        properties: Optional[List["MetricSchemaProperty"]] = None,
-        **kwargs
-    ):
+        properties: Optional[List["_models.MetricSchemaProperty"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword num_properties:
         :paramtype num_properties: int
         :keyword properties:
         :paramtype properties: list[~azure.mgmt.machinelearningservices.models.MetricSchemaProperty]
         """
-        super(MetricSchema, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.num_properties = num_properties
         self.properties = properties
 
 
-class MetricSchemaProperty(msrest.serialization.Model):
+class MetricSchemaProperty(_serialization.Model):
     """MetricSchemaProperty.
 
     :ivar property_id:
@@ -2453,9 +2357,9 @@ class MetricSchemaProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'property_id': {'key': 'propertyId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "property_id": {"key": "propertyId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -2464,8 +2368,8 @@ class MetricSchemaProperty(msrest.serialization.Model):
         property_id: Optional[str] = None,
         name: Optional[str] = None,
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword property_id:
         :paramtype property_id: str
@@ -2474,13 +2378,13 @@ class MetricSchemaProperty(msrest.serialization.Model):
         :keyword type:
         :paramtype type: str
         """
-        super(MetricSchemaProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.property_id = property_id
         self.name = name
         self.type = type
 
 
-class MetricV2(msrest.serialization.Model):
+class MetricV2(_serialization.Model):
     """Sequence of one or many values sharing a common DataContainerId, Name, and Schema.
 
     :ivar data_container_id: Data container to which this Metric belongs.
@@ -2508,15 +2412,15 @@ class MetricV2(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data_container_id': {'key': 'dataContainerId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'columns': {'key': 'columns', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'MetricProperties'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'standard_schema_id': {'key': 'standardSchemaId', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[MetricV2Value]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "data_container_id": {"key": "dataContainerId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "columns": {"key": "columns", "type": "{str}"},
+        "properties": {"key": "properties", "type": "MetricProperties"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "standard_schema_id": {"key": "standardSchemaId", "type": "str"},
+        "value": {"key": "value", "type": "[MetricV2Value]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -2524,15 +2428,15 @@ class MetricV2(msrest.serialization.Model):
         *,
         data_container_id: Optional[str] = None,
         name: Optional[str] = None,
-        columns: Optional[Dict[str, Union[str, "MetricValueType"]]] = None,
-        properties: Optional["MetricProperties"] = None,
+        columns: Optional[Dict[str, Union[str, "_models.MetricValueType"]]] = None,
+        properties: Optional["_models.MetricProperties"] = None,
         namespace: Optional[str] = None,
         standard_schema_id: Optional[str] = None,
-        value: Optional[List["MetricV2Value"]] = None,
+        value: Optional[List["_models.MetricV2Value"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_container_id: Data container to which this Metric belongs.
         :paramtype data_container_id: str
@@ -2558,7 +2462,7 @@ class MetricV2(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(MetricV2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.data_container_id = data_container_id
         self.name = name
         self.columns = columns
@@ -2570,7 +2474,7 @@ class MetricV2(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class MetricV2Value(msrest.serialization.Model):
+class MetricV2Value(_serialization.Model):
     """An individual value logged within a Metric.
 
     :ivar metric_id: Unique Id for this metric value
@@ -2581,7 +2485,7 @@ class MetricV2Value(msrest.serialization.Model):
     :ivar created_utc: Client specified timestamp for this metric value.
     :vartype created_utc: ~datetime.datetime
     :ivar step:
-    :vartype step: long
+    :vartype step: int
     :ivar data: Dictionary mapping column names (specified as the keys in MetricV2Dto.Columns) to
      values expressed in type associated
      with that column in the metric's schema.
@@ -2589,10 +2493,10 @@ class MetricV2Value(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'created_utc': {'key': 'createdUtc', 'type': 'iso-8601'},
-        'step': {'key': 'step', 'type': 'long'},
-        'data': {'key': 'data', 'type': '{object}'},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "created_utc": {"key": "createdUtc", "type": "iso-8601"},
+        "step": {"key": "step", "type": "int"},
+        "data": {"key": "data", "type": "{object}"},
     }
 
     def __init__(
@@ -2602,8 +2506,8 @@ class MetricV2Value(msrest.serialization.Model):
         created_utc: Optional[datetime.datetime] = None,
         step: Optional[int] = None,
         data: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_id: Unique Id for this metric value
          Format is either a Guid or a Guid augmented with an additional int index for cases where
@@ -2613,27 +2517,27 @@ class MetricV2Value(msrest.serialization.Model):
         :keyword created_utc: Client specified timestamp for this metric value.
         :paramtype created_utc: ~datetime.datetime
         :keyword step:
-        :paramtype step: long
+        :paramtype step: int
         :keyword data: Dictionary mapping column names (specified as the keys in MetricV2Dto.Columns)
          to values expressed in type associated
          with that column in the metric's schema.
         :paramtype data: dict[str, any]
         """
-        super(MetricV2Value, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_id = metric_id
         self.created_utc = created_utc
         self.step = step
         self.data = data
 
 
-class ModifyExperiment(msrest.serialization.Model):
+class ModifyExperiment(_serialization.Model):
     """ModifyExperiment.
 
     :ivar name:
     :vartype name: str
     :ivar description:
     :vartype description: str
-    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :ivar tags: Dictionary of :code:`<string>`.
     :vartype tags: dict[str, str]
     :ivar archive:
     :vartype archive: bool
@@ -2642,11 +2546,11 @@ class ModifyExperiment(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'archive': {'key': 'archive', 'type': 'bool'},
-        'retain_for_lifetime_of_workspace': {'key': 'retainForLifetimeOfWorkspace', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "archive": {"key": "archive", "type": "bool"},
+        "retain_for_lifetime_of_workspace": {"key": "retainForLifetimeOfWorkspace", "type": "bool"},
     }
 
     def __init__(
@@ -2657,21 +2561,21 @@ class ModifyExperiment(msrest.serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         archive: Optional[bool] = None,
         retain_for_lifetime_of_workspace: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
         :keyword description:
         :paramtype description: str
-        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
         :keyword archive:
         :paramtype archive: bool
         :keyword retain_for_lifetime_of_workspace:
         :paramtype retain_for_lifetime_of_workspace: bool
         """
-        super(ModifyExperiment, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.tags = tags
@@ -2679,46 +2583,46 @@ class ModifyExperiment(msrest.serialization.Model):
         self.retain_for_lifetime_of_workspace = retain_for_lifetime_of_workspace
 
 
-class OutputDatasetLineage(msrest.serialization.Model):
+class OutputDatasetLineage(_serialization.Model):
     """OutputDatasetLineage.
 
     :ivar identifier:
     :vartype identifier: ~azure.mgmt.machinelearningservices.models.DatasetIdentifier
-    :ivar output_type: Possible values include: "RunOutput", "Reference".
+    :ivar output_type: Known values are: "RunOutput" and "Reference".
     :vartype output_type: str or ~azure.mgmt.machinelearningservices.models.DatasetOutputType
     :ivar output_details:
     :vartype output_details: ~azure.mgmt.machinelearningservices.models.DatasetOutputDetails
     """
 
     _attribute_map = {
-        'identifier': {'key': 'identifier', 'type': 'DatasetIdentifier'},
-        'output_type': {'key': 'outputType', 'type': 'str'},
-        'output_details': {'key': 'outputDetails', 'type': 'DatasetOutputDetails'},
+        "identifier": {"key": "identifier", "type": "DatasetIdentifier"},
+        "output_type": {"key": "outputType", "type": "str"},
+        "output_details": {"key": "outputDetails", "type": "DatasetOutputDetails"},
     }
 
     def __init__(
         self,
         *,
-        identifier: Optional["DatasetIdentifier"] = None,
-        output_type: Optional[Union[str, "DatasetOutputType"]] = None,
-        output_details: Optional["DatasetOutputDetails"] = None,
-        **kwargs
-    ):
+        identifier: Optional["_models.DatasetIdentifier"] = None,
+        output_type: Optional[Union[str, "_models.DatasetOutputType"]] = None,
+        output_details: Optional["_models.DatasetOutputDetails"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identifier:
         :paramtype identifier: ~azure.mgmt.machinelearningservices.models.DatasetIdentifier
-        :keyword output_type: Possible values include: "RunOutput", "Reference".
+        :keyword output_type: Known values are: "RunOutput" and "Reference".
         :paramtype output_type: str or ~azure.mgmt.machinelearningservices.models.DatasetOutputType
         :keyword output_details:
         :paramtype output_details: ~azure.mgmt.machinelearningservices.models.DatasetOutputDetails
         """
-        super(OutputDatasetLineage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identifier = identifier
         self.output_type = output_type
         self.output_details = output_details
 
 
-class PaginatedArtifactContentInformationList(msrest.serialization.Model):
+class PaginatedArtifactContentInformationList(_serialization.Model):
     """A paginated list of ArtifactContentInformations.
 
     :ivar value: An array of objects of type ArtifactContentInformation.
@@ -2732,19 +2636,19 @@ class PaginatedArtifactContentInformationList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ArtifactContentInformation]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ArtifactContentInformation]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ArtifactContentInformation"]] = None,
+        value: Optional[List["_models.ArtifactContentInformation"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of objects of type ArtifactContentInformation.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.ArtifactContentInformation]
@@ -2755,13 +2659,13 @@ class PaginatedArtifactContentInformationList(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(PaginatedArtifactContentInformationList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token
         self.next_link = next_link
 
 
-class PaginatedArtifactList(msrest.serialization.Model):
+class PaginatedArtifactList(_serialization.Model):
     """A paginated list of Artifacts.
 
     :ivar value: An array of objects of type Artifact.
@@ -2775,19 +2679,19 @@ class PaginatedArtifactList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Artifact]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Artifact]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["Artifact"]] = None,
+        value: Optional[List["_models.Artifact"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of objects of type Artifact.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Artifact]
@@ -2798,13 +2702,13 @@ class PaginatedArtifactList(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(PaginatedArtifactList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token
         self.next_link = next_link
 
 
-class PaginatedExperimentList(msrest.serialization.Model):
+class PaginatedExperimentList(_serialization.Model):
     """A paginated list of Experiments.
 
     :ivar value: An array of objects of type Experiment.
@@ -2818,19 +2722,19 @@ class PaginatedExperimentList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Experiment]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Experiment]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["Experiment"]] = None,
+        value: Optional[List["_models.Experiment"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of objects of type Experiment.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Experiment]
@@ -2841,13 +2745,13 @@ class PaginatedExperimentList(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(PaginatedExperimentList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token
         self.next_link = next_link
 
 
-class PaginatedMetricDefinitionList(msrest.serialization.Model):
+class PaginatedMetricDefinitionList(_serialization.Model):
     """A paginated list of MetricDefinitions.
 
     :ivar value: An array of objects of type MetricDefinition.
@@ -2861,19 +2765,19 @@ class PaginatedMetricDefinitionList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MetricDefinition]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MetricDefinition]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["MetricDefinition"]] = None,
+        value: Optional[List["_models.MetricDefinition"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of objects of type MetricDefinition.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.MetricDefinition]
@@ -2884,13 +2788,13 @@ class PaginatedMetricDefinitionList(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(PaginatedMetricDefinitionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token
         self.next_link = next_link
 
 
-class PaginatedRunList(msrest.serialization.Model):
+class PaginatedRunList(_serialization.Model):
     """A paginated list of Runs.
 
     :ivar value: An array of objects of type Run.
@@ -2904,19 +2808,19 @@ class PaginatedRunList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Run]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Run]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["Run"]] = None,
+        value: Optional[List["_models.Run"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of objects of type Run.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Run]
@@ -2927,13 +2831,13 @@ class PaginatedRunList(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(PaginatedRunList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token
         self.next_link = next_link
 
 
-class PaginatedSpanDefinition1List(msrest.serialization.Model):
+class PaginatedSpanDefinition1List(_serialization.Model):
     """A paginated list of SpanDefinition`1s.
 
     :ivar value: An array of objects of type SpanDefinition`1.
@@ -2947,19 +2851,19 @@ class PaginatedSpanDefinition1List(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SpanDefinition1]'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SpanDefinition1]"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SpanDefinition1"]] = None,
+        value: Optional[List["_models.SpanDefinition1"]] = None,
         continuation_token: Optional[str] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: An array of objects of type SpanDefinition`1.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.SpanDefinition1]
@@ -2970,13 +2874,13 @@ class PaginatedSpanDefinition1List(msrest.serialization.Model):
          null, there are no additional pages.
         :paramtype next_link: str
         """
-        super(PaginatedSpanDefinition1List, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.continuation_token = continuation_token
         self.next_link = next_link
 
 
-class PostRunMetricsError(msrest.serialization.Model):
+class PostRunMetricsError(_serialization.Model):
     """PostRunMetricsError.
 
     :ivar metric: Sequence of one or many values sharing a common  DataContainerId, Name, and
@@ -2987,17 +2891,17 @@ class PostRunMetricsError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric': {'key': 'metric', 'type': 'IMetricV2'},
-        'error_response': {'key': 'errorResponse', 'type': 'ErrorResponse'},
+        "metric": {"key": "metric", "type": "IMetricV2"},
+        "error_response": {"key": "errorResponse", "type": "ErrorResponse"},
     }
 
     def __init__(
         self,
         *,
-        metric: Optional["IMetricV2"] = None,
-        error_response: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
+        metric: Optional["_models.IMetricV2"] = None,
+        error_response: Optional["_models.ErrorResponse"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric: Sequence of one or many values sharing a common  DataContainerId, Name, and
          Schema. Used only for Post Metrics.
@@ -3005,12 +2909,12 @@ class PostRunMetricsError(msrest.serialization.Model):
         :keyword error_response: The error response.
         :paramtype error_response: ~azure.mgmt.machinelearningservices.models.ErrorResponse
         """
-        super(PostRunMetricsError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric = metric
         self.error_response = error_response
 
 
-class PostRunMetricsResult(msrest.serialization.Model):
+class PostRunMetricsResult(_serialization.Model):
     """PostRunMetricsResult.
 
     :ivar errors:
@@ -3018,24 +2922,19 @@ class PostRunMetricsResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'errors': {'key': 'errors', 'type': '[PostRunMetricsError]'},
+        "errors": {"key": "errors", "type": "[PostRunMetricsError]"},
     }
 
-    def __init__(
-        self,
-        *,
-        errors: Optional[List["PostRunMetricsError"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, errors: Optional[List["_models.PostRunMetricsError"]] = None, **kwargs: Any) -> None:
         """
         :keyword errors:
         :paramtype errors: list[~azure.mgmt.machinelearningservices.models.PostRunMetricsError]
         """
-        super(PostRunMetricsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.errors = errors
 
 
-class QueryParams(msrest.serialization.Model):
+class QueryParams(_serialization.Model):
     """The set of supported filters.
 
     :ivar filter: Allows for filtering the collection of resources.
@@ -3056,21 +2955,21 @@ class QueryParams(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'filter': {'key': 'filter', 'type': 'str'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'order_by': {'key': 'orderBy', 'type': 'str'},
-        'top': {'key': 'top', 'type': 'int'},
+        "filter": {"key": "filter", "type": "str"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "order_by": {"key": "orderBy", "type": "str"},
+        "top": {"key": "top", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        filter: Optional[str] = None,
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         continuation_token: Optional[str] = None,
         order_by: Optional[str] = None,
         top: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword filter: Allows for filtering the collection of resources.
          The expression specified is evaluated for each resource in the collection, and only items
@@ -3090,14 +2989,14 @@ class QueryParams(msrest.serialization.Model):
          If not specified, all items are returned.
         :paramtype top: int
         """
-        super(QueryParams, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter = filter
         self.continuation_token = continuation_token
         self.order_by = order_by
         self.top = top
 
 
-class QueueingInfo(msrest.serialization.Model):
+class QueueingInfo(_serialization.Model):
     """QueueingInfo.
 
     :ivar code:
@@ -3109,9 +3008,9 @@ class QueueingInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'last_refresh_timestamp': {'key': 'lastRefreshTimestamp', 'type': 'iso-8601'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "last_refresh_timestamp": {"key": "lastRefreshTimestamp", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3120,8 +3019,8 @@ class QueueingInfo(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         last_refresh_timestamp: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code:
         :paramtype code: str
@@ -3130,13 +3029,13 @@ class QueueingInfo(msrest.serialization.Model):
         :keyword last_refresh_timestamp:
         :paramtype last_refresh_timestamp: ~datetime.datetime
         """
-        super(QueueingInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.last_refresh_timestamp = last_refresh_timestamp
 
 
-class RetrieveFullFidelityMetricRequest(msrest.serialization.Model):
+class RetrieveFullFidelityMetricRequest(_serialization.Model):
     """RetrieveFullFidelityMetricRequest.
 
     :ivar metric_name:
@@ -3152,11 +3051,11 @@ class RetrieveFullFidelityMetricRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric_name': {'key': 'metricName', 'type': 'str'},
-        'continuation_token': {'key': 'continuationToken', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'metric_namespace': {'key': 'metricNamespace', 'type': 'str'},
+        "metric_name": {"key": "metricName", "type": "str"},
+        "continuation_token": {"key": "continuationToken", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "metric_namespace": {"key": "metricNamespace", "type": "str"},
     }
 
     def __init__(
@@ -3167,8 +3066,8 @@ class RetrieveFullFidelityMetricRequest(msrest.serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         metric_namespace: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_name:
         :paramtype metric_name: str
@@ -3181,7 +3080,7 @@ class RetrieveFullFidelityMetricRequest(msrest.serialization.Model):
         :keyword metric_namespace:
         :paramtype metric_namespace: str
         """
-        super(RetrieveFullFidelityMetricRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_name = metric_name
         self.continuation_token = continuation_token
         self.start_time = start_time
@@ -3189,7 +3088,7 @@ class RetrieveFullFidelityMetricRequest(msrest.serialization.Model):
         self.metric_namespace = metric_namespace
 
 
-class RootError(msrest.serialization.Model):
+class RootError(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The root error.
 
     :ivar code: The service-defined error code. Supported error codes: ServiceError, UserError,
@@ -3220,17 +3119,17 @@ class RootError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'severity': {'key': 'severity', 'type': 'int'},
-        'message': {'key': 'message', 'type': 'str'},
-        'message_format': {'key': 'messageFormat', 'type': 'str'},
-        'message_parameters': {'key': 'messageParameters', 'type': '{str}'},
-        'reference_code': {'key': 'referenceCode', 'type': 'str'},
-        'details_uri': {'key': 'detailsUri', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[RootError]'},
-        'inner_error': {'key': 'innerError', 'type': 'InnerErrorResponse'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "severity": {"key": "severity", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+        "message_format": {"key": "messageFormat", "type": "str"},
+        "message_parameters": {"key": "messageParameters", "type": "{str}"},
+        "reference_code": {"key": "referenceCode", "type": "str"},
+        "details_uri": {"key": "detailsUri", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[RootError]"},
+        "inner_error": {"key": "innerError", "type": "InnerErrorResponse"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
     def __init__(
@@ -3244,11 +3143,11 @@ class RootError(msrest.serialization.Model):
         reference_code: Optional[str] = None,
         details_uri: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["RootError"]] = None,
-        inner_error: Optional["InnerErrorResponse"] = None,
-        additional_info: Optional[List["ErrorAdditionalInfo"]] = None,
-        **kwargs
-    ):
+        details: Optional[List["_models.RootError"]] = None,
+        inner_error: Optional["_models.InnerErrorResponse"] = None,
+        additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: The service-defined error code. Supported error codes: ServiceError, UserError,
          ValidationError, AzureStorageError, TransientError, RequestThrottled.
@@ -3278,7 +3177,7 @@ class RootError(msrest.serialization.Model):
         :paramtype additional_info:
          list[~azure.mgmt.machinelearningservices.models.ErrorAdditionalInfo]
         """
-        super(RootError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.severity = severity
         self.message = message
@@ -3292,7 +3191,7 @@ class RootError(msrest.serialization.Model):
         self.additional_info = additional_info
 
 
-class Run(msrest.serialization.Model):
+class Run(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The definition of a Run.
 
     :ivar run_number:
@@ -3314,9 +3213,9 @@ class Run(msrest.serialization.Model):
     :ivar warnings: A list of warnings that occurred during the run.
     :vartype warnings: list[~azure.mgmt.machinelearningservices.models.RunDetailsWarning]
     :ivar revision:
-    :vartype revision: long
+    :vartype revision: int
     :ivar status_revision:
-    :vartype status_revision: long
+    :vartype status_revision: int
     :ivar run_uuid: A system generated Id for the run.
     :vartype run_uuid: str
     :ivar parent_run_uuid: A system generated Id for the run's parent.
@@ -3388,7 +3287,7 @@ class Run(msrest.serialization.Model):
     :vartype target: str
     :ivar unique_child_run_compute_targets:
     :vartype unique_child_run_compute_targets: list[str]
-    :ivar tags: A set of tags. Dictionary of :code:`<string>`.
+    :ivar tags: Dictionary of :code:`<string>`.
     :vartype tags: dict[str, str]
     :ivar settings: Dictionary of :code:`<string>`.
     :vartype settings: dict[str, str]
@@ -3429,89 +3328,89 @@ class Run(msrest.serialization.Model):
     """
 
     _validation = {
-        'unique_child_run_compute_targets': {'unique': True},
-        'input_datasets': {'unique': True},
-        'output_datasets': {'unique': True},
+        "unique_child_run_compute_targets": {"unique": True},
+        "input_datasets": {"unique": True},
+        "output_datasets": {"unique": True},
     }
 
     _attribute_map = {
-        'run_number': {'key': 'runNumber', 'type': 'int'},
-        'root_run_id': {'key': 'rootRunId', 'type': 'str'},
-        'created_utc': {'key': 'createdUtc', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'User'},
-        'user_id': {'key': 'userId', 'type': 'str'},
-        'token': {'key': 'token', 'type': 'str'},
-        'token_expiry_time_utc': {'key': 'tokenExpiryTimeUtc', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'warnings': {'key': 'warnings', 'type': '[RunDetailsWarning]'},
-        'revision': {'key': 'revision', 'type': 'long'},
-        'status_revision': {'key': 'statusRevision', 'type': 'long'},
-        'run_uuid': {'key': 'runUuid', 'type': 'str'},
-        'parent_run_uuid': {'key': 'parentRunUuid', 'type': 'str'},
-        'root_run_uuid': {'key': 'rootRunUuid', 'type': 'str'},
-        'has_virtual_parent': {'key': 'hasVirtualParent', 'type': 'bool'},
-        'last_start_time_utc': {'key': 'lastStartTimeUtc', 'type': 'iso-8601'},
-        'current_compute_time': {'key': 'currentComputeTime', 'type': 'str'},
-        'compute_duration': {'key': 'computeDuration', 'type': 'str'},
-        'effective_start_time_utc': {'key': 'effectiveStartTimeUtc', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'User'},
-        'last_modified_utc': {'key': 'lastModifiedUtc', 'type': 'iso-8601'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'cancelation_reason': {'key': 'cancelationReason', 'type': 'str'},
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'parent_run_id': {'key': 'parentRunId', 'type': 'str'},
-        'experiment_id': {'key': 'experimentId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'start_time_utc': {'key': 'startTimeUtc', 'type': 'iso-8601'},
-        'end_time_utc': {'key': 'endTimeUtc', 'type': 'iso-8601'},
-        'options': {'key': 'options', 'type': 'RunOptions'},
-        'is_virtual': {'key': 'isVirtual', 'type': 'bool'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'data_container_id': {'key': 'dataContainerId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'hidden': {'key': 'hidden', 'type': 'bool'},
-        'run_type': {'key': 'runType', 'type': 'str'},
-        'run_type_v2': {'key': 'runTypeV2', 'type': 'RunTypeV2'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'parameters': {'key': 'parameters', 'type': '{object}'},
-        'action_uris': {'key': 'actionUris', 'type': '{str}'},
-        'script_name': {'key': 'scriptName', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'unique_child_run_compute_targets': {'key': 'uniqueChildRunComputeTargets', 'type': '[str]'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'settings': {'key': 'settings', 'type': '{str}'},
-        'services': {'key': 'services', 'type': '{EndpointSetting}'},
-        'input_datasets': {'key': 'inputDatasets', 'type': '[DatasetLineage]'},
-        'output_datasets': {'key': 'outputDatasets', 'type': '[OutputDatasetLineage]'},
-        'run_definition': {'key': 'runDefinition', 'type': 'object'},
-        'job_specification': {'key': 'jobSpecification', 'type': 'object'},
-        'primary_metric_name': {'key': 'primaryMetricName', 'type': 'str'},
-        'created_from': {'key': 'createdFrom', 'type': 'CreatedFrom'},
-        'cancel_uri': {'key': 'cancelUri', 'type': 'str'},
-        'complete_uri': {'key': 'completeUri', 'type': 'str'},
-        'diagnostics_uri': {'key': 'diagnosticsUri', 'type': 'str'},
-        'compute_request': {'key': 'computeRequest', 'type': 'ComputeRequest'},
-        'compute': {'key': 'compute', 'type': 'Compute'},
-        'retain_for_lifetime_of_workspace': {'key': 'retainForLifetimeOfWorkspace', 'type': 'bool'},
-        'queueing_info': {'key': 'queueingInfo', 'type': 'QueueingInfo'},
-        'active_child_run_id': {'key': 'activeChildRunId', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '{TypedAssetReference}'},
-        'outputs': {'key': 'outputs', 'type': '{TypedAssetReference}'},
+        "run_number": {"key": "runNumber", "type": "int"},
+        "root_run_id": {"key": "rootRunId", "type": "str"},
+        "created_utc": {"key": "createdUtc", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "User"},
+        "user_id": {"key": "userId", "type": "str"},
+        "token": {"key": "token", "type": "str"},
+        "token_expiry_time_utc": {"key": "tokenExpiryTimeUtc", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "warnings": {"key": "warnings", "type": "[RunDetailsWarning]"},
+        "revision": {"key": "revision", "type": "int"},
+        "status_revision": {"key": "statusRevision", "type": "int"},
+        "run_uuid": {"key": "runUuid", "type": "str"},
+        "parent_run_uuid": {"key": "parentRunUuid", "type": "str"},
+        "root_run_uuid": {"key": "rootRunUuid", "type": "str"},
+        "has_virtual_parent": {"key": "hasVirtualParent", "type": "bool"},
+        "last_start_time_utc": {"key": "lastStartTimeUtc", "type": "iso-8601"},
+        "current_compute_time": {"key": "currentComputeTime", "type": "str"},
+        "compute_duration": {"key": "computeDuration", "type": "str"},
+        "effective_start_time_utc": {"key": "effectiveStartTimeUtc", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "User"},
+        "last_modified_utc": {"key": "lastModifiedUtc", "type": "iso-8601"},
+        "duration": {"key": "duration", "type": "str"},
+        "cancelation_reason": {"key": "cancelationReason", "type": "str"},
+        "run_id": {"key": "runId", "type": "str"},
+        "parent_run_id": {"key": "parentRunId", "type": "str"},
+        "experiment_id": {"key": "experimentId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "start_time_utc": {"key": "startTimeUtc", "type": "iso-8601"},
+        "end_time_utc": {"key": "endTimeUtc", "type": "iso-8601"},
+        "options": {"key": "options", "type": "RunOptions"},
+        "is_virtual": {"key": "isVirtual", "type": "bool"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "data_container_id": {"key": "dataContainerId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "hidden": {"key": "hidden", "type": "bool"},
+        "run_type": {"key": "runType", "type": "str"},
+        "run_type_v2": {"key": "runTypeV2", "type": "RunTypeV2"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "parameters": {"key": "parameters", "type": "{object}"},
+        "action_uris": {"key": "actionUris", "type": "{str}"},
+        "script_name": {"key": "scriptName", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "unique_child_run_compute_targets": {"key": "uniqueChildRunComputeTargets", "type": "[str]"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "settings": {"key": "settings", "type": "{str}"},
+        "services": {"key": "services", "type": "{EndpointSetting}"},
+        "input_datasets": {"key": "inputDatasets", "type": "[DatasetLineage]"},
+        "output_datasets": {"key": "outputDatasets", "type": "[OutputDatasetLineage]"},
+        "run_definition": {"key": "runDefinition", "type": "object"},
+        "job_specification": {"key": "jobSpecification", "type": "object"},
+        "primary_metric_name": {"key": "primaryMetricName", "type": "str"},
+        "created_from": {"key": "createdFrom", "type": "CreatedFrom"},
+        "cancel_uri": {"key": "cancelUri", "type": "str"},
+        "complete_uri": {"key": "completeUri", "type": "str"},
+        "diagnostics_uri": {"key": "diagnosticsUri", "type": "str"},
+        "compute_request": {"key": "computeRequest", "type": "ComputeRequest"},
+        "compute": {"key": "compute", "type": "Compute"},
+        "retain_for_lifetime_of_workspace": {"key": "retainForLifetimeOfWorkspace", "type": "bool"},
+        "queueing_info": {"key": "queueingInfo", "type": "QueueingInfo"},
+        "active_child_run_id": {"key": "activeChildRunId", "type": "str"},
+        "inputs": {"key": "inputs", "type": "{TypedAssetReference}"},
+        "outputs": {"key": "outputs", "type": "{TypedAssetReference}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         run_number: Optional[int] = None,
         root_run_id: Optional[str] = None,
         created_utc: Optional[datetime.datetime] = None,
-        created_by: Optional["User"] = None,
+        created_by: Optional["_models.User"] = None,
         user_id: Optional[str] = None,
         token: Optional[str] = None,
         token_expiry_time_utc: Optional[datetime.datetime] = None,
-        error: Optional["ErrorResponse"] = None,
-        warnings: Optional[List["RunDetailsWarning"]] = None,
+        error: Optional["_models.ErrorResponse"] = None,
+        warnings: Optional[List["_models.RunDetailsWarning"]] = None,
         revision: Optional[int] = None,
         status_revision: Optional[int] = None,
         run_uuid: Optional[str] = None,
@@ -3522,7 +3421,7 @@ class Run(msrest.serialization.Model):
         current_compute_time: Optional[str] = None,
         compute_duration: Optional[str] = None,
         effective_start_time_utc: Optional[datetime.datetime] = None,
-        last_modified_by: Optional["User"] = None,
+        last_modified_by: Optional["_models.User"] = None,
         last_modified_utc: Optional[datetime.datetime] = None,
         duration: Optional[str] = None,
         cancelation_reason: Optional[str] = None,
@@ -3532,7 +3431,7 @@ class Run(msrest.serialization.Model):
         status: Optional[str] = None,
         start_time_utc: Optional[datetime.datetime] = None,
         end_time_utc: Optional[datetime.datetime] = None,
-        options: Optional["RunOptions"] = None,
+        options: Optional["_models.RunOptions"] = None,
         is_virtual: Optional[bool] = None,
         display_name: Optional[str] = None,
         name: Optional[str] = None,
@@ -3540,7 +3439,7 @@ class Run(msrest.serialization.Model):
         description: Optional[str] = None,
         hidden: Optional[bool] = None,
         run_type: Optional[str] = None,
-        run_type_v2: Optional["RunTypeV2"] = None,
+        run_type_v2: Optional["_models.RunTypeV2"] = None,
         properties: Optional[Dict[str, str]] = None,
         parameters: Optional[Dict[str, Any]] = None,
         action_uris: Optional[Dict[str, str]] = None,
@@ -3549,25 +3448,25 @@ class Run(msrest.serialization.Model):
         unique_child_run_compute_targets: Optional[List[str]] = None,
         tags: Optional[Dict[str, str]] = None,
         settings: Optional[Dict[str, str]] = None,
-        services: Optional[Dict[str, "EndpointSetting"]] = None,
-        input_datasets: Optional[List["DatasetLineage"]] = None,
-        output_datasets: Optional[List["OutputDatasetLineage"]] = None,
+        services: Optional[Dict[str, "_models.EndpointSetting"]] = None,
+        input_datasets: Optional[List["_models.DatasetLineage"]] = None,
+        output_datasets: Optional[List["_models.OutputDatasetLineage"]] = None,
         run_definition: Optional[Any] = None,
         job_specification: Optional[Any] = None,
         primary_metric_name: Optional[str] = None,
-        created_from: Optional["CreatedFrom"] = None,
+        created_from: Optional["_models.CreatedFrom"] = None,
         cancel_uri: Optional[str] = None,
         complete_uri: Optional[str] = None,
         diagnostics_uri: Optional[str] = None,
-        compute_request: Optional["ComputeRequest"] = None,
-        compute: Optional["Compute"] = None,
+        compute_request: Optional["_models.ComputeRequest"] = None,
+        compute: Optional["_models.Compute"] = None,
         retain_for_lifetime_of_workspace: Optional[bool] = None,
-        queueing_info: Optional["QueueingInfo"] = None,
+        queueing_info: Optional["_models.QueueingInfo"] = None,
         active_child_run_id: Optional[str] = None,
-        inputs: Optional[Dict[str, "TypedAssetReference"]] = None,
-        outputs: Optional[Dict[str, "TypedAssetReference"]] = None,
-        **kwargs
-    ):
+        inputs: Optional[Dict[str, "_models.TypedAssetReference"]] = None,
+        outputs: Optional[Dict[str, "_models.TypedAssetReference"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_number:
         :paramtype run_number: int
@@ -3588,9 +3487,9 @@ class Run(msrest.serialization.Model):
         :keyword warnings: A list of warnings that occurred during the run.
         :paramtype warnings: list[~azure.mgmt.machinelearningservices.models.RunDetailsWarning]
         :keyword revision:
-        :paramtype revision: long
+        :paramtype revision: int
         :keyword status_revision:
-        :paramtype status_revision: long
+        :paramtype status_revision: int
         :keyword run_uuid: A system generated Id for the run.
         :paramtype run_uuid: str
         :keyword parent_run_uuid: A system generated Id for the run's parent.
@@ -3662,7 +3561,7 @@ class Run(msrest.serialization.Model):
         :paramtype target: str
         :keyword unique_child_run_compute_targets:
         :paramtype unique_child_run_compute_targets: list[str]
-        :keyword tags: A set of tags. Dictionary of :code:`<string>`.
+        :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
         :keyword settings: Dictionary of :code:`<string>`.
         :paramtype settings: dict[str, str]
@@ -3702,7 +3601,7 @@ class Run(msrest.serialization.Model):
         :keyword outputs: Dictionary of :code:`<TypedAssetReference>`.
         :paramtype outputs: dict[str, ~azure.mgmt.machinelearningservices.models.TypedAssetReference]
         """
-        super(Run, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_number = run_number
         self.root_run_id = root_run_id
         self.created_utc = created_utc
@@ -3768,7 +3667,7 @@ class Run(msrest.serialization.Model):
         self.outputs = outputs
 
 
-class RunDetails(msrest.serialization.Model):
+class RunDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The details of the run.
 
     :ivar run_id: The identifier for the run.
@@ -3795,7 +3694,7 @@ class RunDetails(msrest.serialization.Model):
     :vartype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
     :ivar warnings: A list of warnings that occurred during the run.
     :vartype warnings: list[~azure.mgmt.machinelearningservices.models.RunDetailsWarning]
-    :ivar tags: A set of tags. The tag dictionary for the run. Tags are mutable.
+    :ivar tags: The tag dictionary for the run. Tags are mutable.
     :vartype tags: dict[str, str]
     :ivar properties: The properties dictionary for the run. Properties are immutable.
     :vartype properties: dict[str, str]
@@ -3814,7 +3713,7 @@ class RunDetails(msrest.serialization.Model):
     :ivar job_cost:
     :vartype job_cost: ~azure.mgmt.machinelearningservices.models.JobCost
     :ivar revision:
-    :vartype revision: long
+    :vartype revision: int
     :ivar run_type_v2:
     :vartype run_type_v2: ~azure.mgmt.machinelearningservices.models.RunTypeV2
     :ivar settings: The run settings.
@@ -3840,7 +3739,7 @@ class RunDetails(msrest.serialization.Model):
     :ivar user_id: The Id of the user that created the run.
     :vartype user_id: str
     :ivar status_revision:
-    :vartype status_revision: long
+    :vartype status_revision: int
     :ivar has_virtual_parent: Indicates if this is a child of a virtual run.
     :vartype has_virtual_parent: bool
     :ivar current_compute_time: The cumulative time spent in an active status for an active run.
@@ -3861,55 +3760,55 @@ class RunDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'input_datasets': {'unique': True},
-        'output_datasets': {'unique': True},
+        "input_datasets": {"unique": True},
+        "output_datasets": {"unique": True},
     }
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'run_uuid': {'key': 'runUuid', 'type': 'str'},
-        'parent_run_uuid': {'key': 'parentRunUuid', 'type': 'str'},
-        'root_run_uuid': {'key': 'rootRunUuid', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'parent_run_id': {'key': 'parentRunId', 'type': 'str'},
-        'created_time_utc': {'key': 'createdTimeUtc', 'type': 'iso-8601'},
-        'start_time_utc': {'key': 'startTimeUtc', 'type': 'iso-8601'},
-        'end_time_utc': {'key': 'endTimeUtc', 'type': 'iso-8601'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'warnings': {'key': 'warnings', 'type': '[RunDetailsWarning]'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'parameters': {'key': 'parameters', 'type': '{object}'},
-        'services': {'key': 'services', 'type': '{EndpointSetting}'},
-        'input_datasets': {'key': 'inputDatasets', 'type': '[DatasetLineage]'},
-        'output_datasets': {'key': 'outputDatasets', 'type': '[OutputDatasetLineage]'},
-        'run_definition': {'key': 'runDefinition', 'type': 'object'},
-        'log_files': {'key': 'logFiles', 'type': '{str}'},
-        'job_cost': {'key': 'jobCost', 'type': 'JobCost'},
-        'revision': {'key': 'revision', 'type': 'long'},
-        'run_type_v2': {'key': 'runTypeV2', 'type': 'RunTypeV2'},
-        'settings': {'key': 'settings', 'type': '{str}'},
-        'compute_request': {'key': 'computeRequest', 'type': 'ComputeRequest'},
-        'compute': {'key': 'compute', 'type': 'Compute'},
-        'created_by': {'key': 'createdBy', 'type': 'User'},
-        'compute_duration': {'key': 'computeDuration', 'type': 'str'},
-        'effective_start_time_utc': {'key': 'effectiveStartTimeUtc', 'type': 'iso-8601'},
-        'run_number': {'key': 'runNumber', 'type': 'int'},
-        'root_run_id': {'key': 'rootRunId', 'type': 'str'},
-        'user_id': {'key': 'userId', 'type': 'str'},
-        'status_revision': {'key': 'statusRevision', 'type': 'long'},
-        'has_virtual_parent': {'key': 'hasVirtualParent', 'type': 'bool'},
-        'current_compute_time': {'key': 'currentComputeTime', 'type': 'str'},
-        'last_start_time_utc': {'key': 'lastStartTimeUtc', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'User'},
-        'last_modified_utc': {'key': 'lastModifiedUtc', 'type': 'iso-8601'},
-        'duration': {'key': 'duration', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '{TypedAssetReference}'},
-        'outputs': {'key': 'outputs', 'type': '{TypedAssetReference}'},
+        "run_id": {"key": "runId", "type": "str"},
+        "run_uuid": {"key": "runUuid", "type": "str"},
+        "parent_run_uuid": {"key": "parentRunUuid", "type": "str"},
+        "root_run_uuid": {"key": "rootRunUuid", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "parent_run_id": {"key": "parentRunId", "type": "str"},
+        "created_time_utc": {"key": "createdTimeUtc", "type": "iso-8601"},
+        "start_time_utc": {"key": "startTimeUtc", "type": "iso-8601"},
+        "end_time_utc": {"key": "endTimeUtc", "type": "iso-8601"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "warnings": {"key": "warnings", "type": "[RunDetailsWarning]"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "parameters": {"key": "parameters", "type": "{object}"},
+        "services": {"key": "services", "type": "{EndpointSetting}"},
+        "input_datasets": {"key": "inputDatasets", "type": "[DatasetLineage]"},
+        "output_datasets": {"key": "outputDatasets", "type": "[OutputDatasetLineage]"},
+        "run_definition": {"key": "runDefinition", "type": "object"},
+        "log_files": {"key": "logFiles", "type": "{str}"},
+        "job_cost": {"key": "jobCost", "type": "JobCost"},
+        "revision": {"key": "revision", "type": "int"},
+        "run_type_v2": {"key": "runTypeV2", "type": "RunTypeV2"},
+        "settings": {"key": "settings", "type": "{str}"},
+        "compute_request": {"key": "computeRequest", "type": "ComputeRequest"},
+        "compute": {"key": "compute", "type": "Compute"},
+        "created_by": {"key": "createdBy", "type": "User"},
+        "compute_duration": {"key": "computeDuration", "type": "str"},
+        "effective_start_time_utc": {"key": "effectiveStartTimeUtc", "type": "iso-8601"},
+        "run_number": {"key": "runNumber", "type": "int"},
+        "root_run_id": {"key": "rootRunId", "type": "str"},
+        "user_id": {"key": "userId", "type": "str"},
+        "status_revision": {"key": "statusRevision", "type": "int"},
+        "has_virtual_parent": {"key": "hasVirtualParent", "type": "bool"},
+        "current_compute_time": {"key": "currentComputeTime", "type": "str"},
+        "last_start_time_utc": {"key": "lastStartTimeUtc", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "User"},
+        "last_modified_utc": {"key": "lastModifiedUtc", "type": "iso-8601"},
+        "duration": {"key": "duration", "type": "str"},
+        "inputs": {"key": "inputs", "type": "{TypedAssetReference}"},
+        "outputs": {"key": "outputs", "type": "{TypedAssetReference}"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         run_id: Optional[str] = None,
@@ -3922,23 +3821,23 @@ class RunDetails(msrest.serialization.Model):
         created_time_utc: Optional[datetime.datetime] = None,
         start_time_utc: Optional[datetime.datetime] = None,
         end_time_utc: Optional[datetime.datetime] = None,
-        error: Optional["ErrorResponse"] = None,
-        warnings: Optional[List["RunDetailsWarning"]] = None,
+        error: Optional["_models.ErrorResponse"] = None,
+        warnings: Optional[List["_models.RunDetailsWarning"]] = None,
         tags: Optional[Dict[str, str]] = None,
         properties: Optional[Dict[str, str]] = None,
         parameters: Optional[Dict[str, Any]] = None,
-        services: Optional[Dict[str, "EndpointSetting"]] = None,
-        input_datasets: Optional[List["DatasetLineage"]] = None,
-        output_datasets: Optional[List["OutputDatasetLineage"]] = None,
+        services: Optional[Dict[str, "_models.EndpointSetting"]] = None,
+        input_datasets: Optional[List["_models.DatasetLineage"]] = None,
+        output_datasets: Optional[List["_models.OutputDatasetLineage"]] = None,
         run_definition: Optional[Any] = None,
         log_files: Optional[Dict[str, str]] = None,
-        job_cost: Optional["JobCost"] = None,
+        job_cost: Optional["_models.JobCost"] = None,
         revision: Optional[int] = None,
-        run_type_v2: Optional["RunTypeV2"] = None,
+        run_type_v2: Optional["_models.RunTypeV2"] = None,
         settings: Optional[Dict[str, str]] = None,
-        compute_request: Optional["ComputeRequest"] = None,
-        compute: Optional["Compute"] = None,
-        created_by: Optional["User"] = None,
+        compute_request: Optional["_models.ComputeRequest"] = None,
+        compute: Optional["_models.Compute"] = None,
+        created_by: Optional["_models.User"] = None,
         compute_duration: Optional[str] = None,
         effective_start_time_utc: Optional[datetime.datetime] = None,
         run_number: Optional[int] = None,
@@ -3948,13 +3847,13 @@ class RunDetails(msrest.serialization.Model):
         has_virtual_parent: Optional[bool] = None,
         current_compute_time: Optional[str] = None,
         last_start_time_utc: Optional[datetime.datetime] = None,
-        last_modified_by: Optional["User"] = None,
+        last_modified_by: Optional["_models.User"] = None,
         last_modified_utc: Optional[datetime.datetime] = None,
         duration: Optional[str] = None,
-        inputs: Optional[Dict[str, "TypedAssetReference"]] = None,
-        outputs: Optional[Dict[str, "TypedAssetReference"]] = None,
-        **kwargs
-    ):
+        inputs: Optional[Dict[str, "_models.TypedAssetReference"]] = None,
+        outputs: Optional[Dict[str, "_models.TypedAssetReference"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_id: The identifier for the run.
         :paramtype run_id: str
@@ -3980,7 +3879,7 @@ class RunDetails(msrest.serialization.Model):
         :paramtype error: ~azure.mgmt.machinelearningservices.models.ErrorResponse
         :keyword warnings: A list of warnings that occurred during the run.
         :paramtype warnings: list[~azure.mgmt.machinelearningservices.models.RunDetailsWarning]
-        :keyword tags: A set of tags. The tag dictionary for the run. Tags are mutable.
+        :keyword tags: The tag dictionary for the run. Tags are mutable.
         :paramtype tags: dict[str, str]
         :keyword properties: The properties dictionary for the run. Properties are immutable.
         :paramtype properties: dict[str, str]
@@ -4000,7 +3899,7 @@ class RunDetails(msrest.serialization.Model):
         :keyword job_cost:
         :paramtype job_cost: ~azure.mgmt.machinelearningservices.models.JobCost
         :keyword revision:
-        :paramtype revision: long
+        :paramtype revision: int
         :keyword run_type_v2:
         :paramtype run_type_v2: ~azure.mgmt.machinelearningservices.models.RunTypeV2
         :keyword settings: The run settings.
@@ -4026,7 +3925,7 @@ class RunDetails(msrest.serialization.Model):
         :keyword user_id: The Id of the user that created the run.
         :paramtype user_id: str
         :keyword status_revision:
-        :paramtype status_revision: long
+        :paramtype status_revision: int
         :keyword has_virtual_parent: Indicates if this is a child of a virtual run.
         :paramtype has_virtual_parent: bool
         :keyword current_compute_time: The cumulative time spent in an active status for an active run.
@@ -4045,7 +3944,7 @@ class RunDetails(msrest.serialization.Model):
         :keyword outputs: The outputs for the run.
         :paramtype outputs: dict[str, ~azure.mgmt.machinelearningservices.models.TypedAssetReference]
         """
-        super(RunDetails, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_id = run_id
         self.run_uuid = run_uuid
         self.parent_run_uuid = parent_run_uuid
@@ -4089,7 +3988,7 @@ class RunDetails(msrest.serialization.Model):
         self.outputs = outputs
 
 
-class RunDetailsWarning(msrest.serialization.Model):
+class RunDetailsWarning(_serialization.Model):
     """RunDetailsWarning.
 
     :ivar source:
@@ -4099,29 +3998,23 @@ class RunDetailsWarning(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source': {'key': 'source', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "source": {"key": "source", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        source: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, source: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword source:
         :paramtype source: str
         :keyword message:
         :paramtype message: str
         """
-        super(RunDetailsWarning, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source = source
         self.message = message
 
 
-class RunMetric(msrest.serialization.Model):
+class RunMetric(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """RunMetric.
 
     :ivar run_id:
@@ -4151,18 +4044,18 @@ class RunMetric(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-        'metric_id': {'key': 'metricId', 'type': 'str'},
-        'data_container_id': {'key': 'dataContainerId', 'type': 'str'},
-        'metric_type': {'key': 'metricType', 'type': 'str'},
-        'created_utc': {'key': 'createdUtc', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'num_cells': {'key': 'numCells', 'type': 'int'},
-        'data_location': {'key': 'dataLocation', 'type': 'str'},
-        'cells': {'key': 'cells', 'type': '[{object}]'},
-        'schema': {'key': 'schema', 'type': 'MetricSchema'},
+        "run_id": {"key": "runId", "type": "str"},
+        "metric_id": {"key": "metricId", "type": "str"},
+        "data_container_id": {"key": "dataContainerId", "type": "str"},
+        "metric_type": {"key": "metricType", "type": "str"},
+        "created_utc": {"key": "createdUtc", "type": "iso-8601"},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "num_cells": {"key": "numCells", "type": "int"},
+        "data_location": {"key": "dataLocation", "type": "str"},
+        "cells": {"key": "cells", "type": "[{object}]"},
+        "schema": {"key": "schema", "type": "MetricSchema"},
     }
 
     def __init__(
@@ -4179,9 +4072,9 @@ class RunMetric(msrest.serialization.Model):
         num_cells: Optional[int] = None,
         data_location: Optional[str] = None,
         cells: Optional[List[Dict[str, Any]]] = None,
-        schema: Optional["MetricSchema"] = None,
-        **kwargs
-    ):
+        schema: Optional["_models.MetricSchema"] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword run_id:
         :paramtype run_id: str
@@ -4208,7 +4101,7 @@ class RunMetric(msrest.serialization.Model):
         :keyword schema:
         :paramtype schema: ~azure.mgmt.machinelearningservices.models.MetricSchema
         """
-        super(RunMetric, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.run_id = run_id
         self.metric_id = metric_id
         self.data_container_id = data_container_id
@@ -4223,7 +4116,7 @@ class RunMetric(msrest.serialization.Model):
         self.schema = schema
 
 
-class RunOptions(msrest.serialization.Model):
+class RunOptions(_serialization.Model):
     """RunOptions.
 
     :ivar generate_data_container_id_if_not_specified:
@@ -4231,24 +4124,19 @@ class RunOptions(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'generate_data_container_id_if_not_specified': {'key': 'generateDataContainerIdIfNotSpecified', 'type': 'bool'},
+        "generate_data_container_id_if_not_specified": {"key": "generateDataContainerIdIfNotSpecified", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        generate_data_container_id_if_not_specified: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, generate_data_container_id_if_not_specified: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword generate_data_container_id_if_not_specified:
         :paramtype generate_data_container_id_if_not_specified: bool
         """
-        super(RunOptions, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.generate_data_container_id_if_not_specified = generate_data_container_id_if_not_specified
 
 
-class RunServiceInstances(msrest.serialization.Model):
+class RunServiceInstances(_serialization.Model):
     """RunServiceInstances.
 
     :ivar instances: Dictionary of :code:`<ServiceInstanceResult>`.
@@ -4256,25 +4144,22 @@ class RunServiceInstances(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'instances': {'key': 'instances', 'type': '{ServiceInstanceResult}'},
+        "instances": {"key": "instances", "type": "{ServiceInstanceResult}"},
     }
 
     def __init__(
-        self,
-        *,
-        instances: Optional[Dict[str, "ServiceInstanceResult"]] = None,
-        **kwargs
-    ):
+        self, *, instances: Optional[Dict[str, "_models.ServiceInstanceResult"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword instances: Dictionary of :code:`<ServiceInstanceResult>`.
         :paramtype instances: dict[str,
          ~azure.mgmt.machinelearningservices.models.ServiceInstanceResult]
         """
-        super(RunServiceInstances, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.instances = instances
 
 
-class RunStatusSpans(msrest.serialization.Model):
+class RunStatusSpans(_serialization.Model):
     """RunStatusSpans.
 
     :ivar spans:
@@ -4282,24 +4167,19 @@ class RunStatusSpans(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'spans': {'key': 'spans', 'type': '[SpanDefinition1]'},
+        "spans": {"key": "spans", "type": "[SpanDefinition1]"},
     }
 
-    def __init__(
-        self,
-        *,
-        spans: Optional[List["SpanDefinition1"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, spans: Optional[List["_models.SpanDefinition1"]] = None, **kwargs: Any) -> None:
         """
         :keyword spans:
         :paramtype spans: list[~azure.mgmt.machinelearningservices.models.SpanDefinition1]
         """
-        super(RunStatusSpans, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.spans = spans
 
 
-class RunTypeV2(msrest.serialization.Model):
+class RunTypeV2(_serialization.Model):
     """RunTypeV2.
 
     :ivar orchestrator:
@@ -4313,14 +4193,14 @@ class RunTypeV2(msrest.serialization.Model):
     """
 
     _validation = {
-        'traits': {'unique': True},
+        "traits": {"unique": True},
     }
 
     _attribute_map = {
-        'orchestrator': {'key': 'orchestrator', 'type': 'str'},
-        'traits': {'key': 'traits', 'type': '[str]'},
-        'attribution': {'key': 'attribution', 'type': 'str'},
-        'compute_type': {'key': 'computeType', 'type': 'str'},
+        "orchestrator": {"key": "orchestrator", "type": "str"},
+        "traits": {"key": "traits", "type": "[str]"},
+        "attribution": {"key": "attribution", "type": "str"},
+        "compute_type": {"key": "computeType", "type": "str"},
     }
 
     def __init__(
@@ -4330,8 +4210,8 @@ class RunTypeV2(msrest.serialization.Model):
         traits: Optional[List[str]] = None,
         attribution: Optional[str] = None,
         compute_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword orchestrator:
         :paramtype orchestrator: str
@@ -4342,14 +4222,14 @@ class RunTypeV2(msrest.serialization.Model):
         :keyword compute_type:
         :paramtype compute_type: str
         """
-        super(RunTypeV2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.orchestrator = orchestrator
         self.traits = traits
         self.attribution = attribution
         self.compute_type = compute_type
 
 
-class ServiceInstance(msrest.serialization.Model):
+class ServiceInstance(_serialization.Model):
     """ServiceInstance.
 
     :ivar is_single_node:
@@ -4367,12 +4247,12 @@ class ServiceInstance(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_single_node': {'key': 'isSingleNode', 'type': 'bool'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "is_single_node": {"key": "isSingleNode", "type": "bool"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -4382,10 +4262,10 @@ class ServiceInstance(msrest.serialization.Model):
         error_message: Optional[str] = None,
         port: Optional[int] = None,
         status: Optional[str] = None,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_single_node:
         :paramtype is_single_node: bool
@@ -4400,7 +4280,7 @@ class ServiceInstance(msrest.serialization.Model):
         :keyword properties: Dictionary of :code:`<string>`.
         :paramtype properties: dict[str, str]
         """
-        super(ServiceInstance, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_single_node = is_single_node
         self.error_message = error_message
         self.port = port
@@ -4409,7 +4289,7 @@ class ServiceInstance(msrest.serialization.Model):
         self.properties = properties
 
 
-class ServiceInstanceResult(msrest.serialization.Model):
+class ServiceInstanceResult(_serialization.Model):
     """ServiceInstanceResult.
 
     :ivar type:
@@ -4427,12 +4307,12 @@ class ServiceInstanceResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "type": {"key": "type", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -4441,11 +4321,11 @@ class ServiceInstanceResult(msrest.serialization.Model):
         type: Optional[str] = None,
         port: Optional[int] = None,
         status: Optional[str] = None,
-        error: Optional["ErrorResponse"] = None,
+        error: Optional["_models.ErrorResponse"] = None,
         endpoint: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type:
         :paramtype type: str
@@ -4460,7 +4340,7 @@ class ServiceInstanceResult(msrest.serialization.Model):
         :keyword properties: Dictionary of :code:`<string>`.
         :paramtype properties: dict[str, str]
         """
-        super(ServiceInstanceResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.port = port
         self.status = status
@@ -4469,7 +4349,7 @@ class ServiceInstanceResult(msrest.serialization.Model):
         self.properties = properties
 
 
-class SpanContext(msrest.serialization.Model):
+class SpanContext(_serialization.Model):
     """SpanContext.
 
     :ivar trace_id: Gets the TraceId associated with this
@@ -4496,11 +4376,11 @@ class SpanContext(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'trace_id': {'key': 'traceId', 'type': 'str'},
-        'span_id': {'key': 'spanId', 'type': 'str'},
-        'is_remote': {'key': 'isRemote', 'type': 'bool'},
-        'is_valid': {'key': 'isValid', 'type': 'bool'},
-        'tracestate': {'key': 'tracestate', 'type': '[KeyValuePairString]'},
+        "trace_id": {"key": "traceId", "type": "str"},
+        "span_id": {"key": "spanId", "type": "str"},
+        "is_remote": {"key": "isRemote", "type": "bool"},
+        "is_valid": {"key": "isValid", "type": "bool"},
+        "tracestate": {"key": "tracestate", "type": "[KeyValuePairString]"},
     }
 
     def __init__(
@@ -4510,9 +4390,9 @@ class SpanContext(msrest.serialization.Model):
         span_id: Optional[str] = None,
         is_remote: Optional[bool] = None,
         is_valid: Optional[bool] = None,
-        tracestate: Optional[List["KeyValuePairString"]] = None,
-        **kwargs
-    ):
+        tracestate: Optional[List["_models.KeyValuePairString"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword trace_id: Gets the TraceId associated with this
          Microsoft.MachineLearning.RunHistory.Contracts.SpanContext.
@@ -4536,7 +4416,7 @@ class SpanContext(msrest.serialization.Model):
          Microsoft.MachineLearning.RunHistory.Contracts.SpanContext.
         :paramtype tracestate: list[~azure.mgmt.machinelearningservices.models.KeyValuePairString]
         """
-        super(SpanContext, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.trace_id = trace_id
         self.span_id = span_id
         self.is_remote = is_remote
@@ -4544,13 +4424,15 @@ class SpanContext(msrest.serialization.Model):
         self.tracestate = tracestate
 
 
-class SpanDefinition1(msrest.serialization.Model):
+class SpanDefinition1(_serialization.Model):
     """Most of the code in this class is vendored from here.
-https://github.com/open-telemetry/opentelemetry-dotnet/blob/master/src/OpenTelemetry/Trace/Export/SpanData.cs
-SpanData on that github link is readonly, we can't set properties on it after creation. So, just vendoring the Span
-contract.
-TStatus is the status enum. For runs, it is RunStatus
-This is the link for span spec https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#span.
+    https://github.com/open-telemetry/opentelemetry-dotnet/blob/master/src/OpenTelemetry/Trace/Export/SpanData.cs
+    SpanData on that github link is readonly, we can't set properties on it after creation. So,
+    just vendoring the Span
+    contract.
+    TStatus is the status enum. For runs, it is RunStatus
+    This is the link for span spec
+    https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/overview.md#span.
 
     :ivar context:
     :vartype context: ~azure.mgmt.machinelearningservices.models.SpanContext
@@ -4559,9 +4441,9 @@ This is the link for span spec https://github.com/open-telemetry/opentelemetry-s
     :ivar status: Gets span status.
      OpenTelemetry sets it to
      https://github.com/open-telemetry/opentelemetry-dotnet/blob/master/src/OpenTelemetry.Api/Trace/Status.cs
-     That status enums are not very meaningful to us, so we customize this. Possible values
-     include: "NotStarted", "Unapproved", "Pausing", "Paused", "Starting", "Preparing", "Queued",
-     "Running", "Finalizing", "CancelRequested", "Completed", "Failed", "Canceled".
+     That status enums are not very meaningful to us, so we customize this. Known values are:
+     "NotStarted", "Unapproved", "Pausing", "Paused", "Starting", "Preparing", "Queued", "Running",
+     "Finalizing", "CancelRequested", "Completed", "Failed", and "Canceled".
     :vartype status: str or ~azure.mgmt.machinelearningservices.models.RunStatus
     :ivar parent_span_id: Gets parent span id.
      TODO: In actual spec, it is ActivitySpanId type. But that causes problems in
@@ -4580,31 +4462,31 @@ This is the link for span spec https://github.com/open-telemetry/opentelemetry-s
     """
 
     _attribute_map = {
-        'context': {'key': 'context', 'type': 'SpanContext'},
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'parent_span_id': {'key': 'parentSpanId', 'type': 'str'},
-        'attributes': {'key': 'attributes', 'type': '[KeyValuePairStringJToken]'},
-        'events': {'key': 'events', 'type': '[Event]'},
-        'links': {'key': 'links', 'type': '[Link]'},
-        'start_timestamp': {'key': 'startTimestamp', 'type': 'iso-8601'},
-        'end_timestamp': {'key': 'endTimestamp', 'type': 'iso-8601'},
+        "context": {"key": "context", "type": "SpanContext"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "parent_span_id": {"key": "parentSpanId", "type": "str"},
+        "attributes": {"key": "attributes", "type": "[KeyValuePairStringJToken]"},
+        "events": {"key": "events", "type": "[Event]"},
+        "links": {"key": "links", "type": "[Link]"},
+        "start_timestamp": {"key": "startTimestamp", "type": "iso-8601"},
+        "end_timestamp": {"key": "endTimestamp", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        context: Optional["SpanContext"] = None,
+        context: Optional["_models.SpanContext"] = None,
         name: Optional[str] = None,
-        status: Optional[Union[str, "RunStatus"]] = None,
+        status: Optional[Union[str, "_models.RunStatus"]] = None,
         parent_span_id: Optional[str] = None,
-        attributes: Optional[List["KeyValuePairStringJToken"]] = None,
-        events: Optional[List["Event"]] = None,
-        links: Optional[List["Link"]] = None,
+        attributes: Optional[List["_models.KeyValuePairStringJToken"]] = None,
+        events: Optional[List["_models.Event"]] = None,
+        links: Optional[List["_models.Link"]] = None,
         start_timestamp: Optional[datetime.datetime] = None,
         end_timestamp: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context:
         :paramtype context: ~azure.mgmt.machinelearningservices.models.SpanContext
@@ -4613,9 +4495,9 @@ This is the link for span spec https://github.com/open-telemetry/opentelemetry-s
         :keyword status: Gets span status.
          OpenTelemetry sets it to
          https://github.com/open-telemetry/opentelemetry-dotnet/blob/master/src/OpenTelemetry.Api/Trace/Status.cs
-         That status enums are not very meaningful to us, so we customize this. Possible values
-         include: "NotStarted", "Unapproved", "Pausing", "Paused", "Starting", "Preparing", "Queued",
-         "Running", "Finalizing", "CancelRequested", "Completed", "Failed", "Canceled".
+         That status enums are not very meaningful to us, so we customize this. Known values are:
+         "NotStarted", "Unapproved", "Pausing", "Paused", "Starting", "Preparing", "Queued", "Running",
+         "Finalizing", "CancelRequested", "Completed", "Failed", and "Canceled".
         :paramtype status: str or ~azure.mgmt.machinelearningservices.models.RunStatus
         :keyword parent_span_id: Gets parent span id.
          TODO: In actual spec, it is ActivitySpanId type. But that causes problems in
@@ -4633,7 +4515,7 @@ This is the link for span spec https://github.com/open-telemetry/opentelemetry-s
         :keyword end_timestamp: Gets span end timestamp.
         :paramtype end_timestamp: ~datetime.datetime
         """
-        super(SpanDefinition1, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.context = context
         self.name = name
         self.status = status
@@ -4645,7 +4527,7 @@ This is the link for span spec https://github.com/open-telemetry/opentelemetry-s
         self.end_timestamp = end_timestamp
 
 
-class SqlDataPath(msrest.serialization.Model):
+class SqlDataPath(_serialization.Model):
     """SqlDataPath.
 
     :ivar sql_table_name:
@@ -4660,10 +4542,10 @@ class SqlDataPath(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sql_table_name': {'key': 'sqlTableName', 'type': 'str'},
-        'sql_query': {'key': 'sqlQuery', 'type': 'str'},
-        'sql_stored_procedure_name': {'key': 'sqlStoredProcedureName', 'type': 'str'},
-        'sql_stored_procedure_params': {'key': 'sqlStoredProcedureParams', 'type': '[StoredProcedureParameter]'},
+        "sql_table_name": {"key": "sqlTableName", "type": "str"},
+        "sql_query": {"key": "sqlQuery", "type": "str"},
+        "sql_stored_procedure_name": {"key": "sqlStoredProcedureName", "type": "str"},
+        "sql_stored_procedure_params": {"key": "sqlStoredProcedureParams", "type": "[StoredProcedureParameter]"},
     }
 
     def __init__(
@@ -4672,9 +4554,9 @@ class SqlDataPath(msrest.serialization.Model):
         sql_table_name: Optional[str] = None,
         sql_query: Optional[str] = None,
         sql_stored_procedure_name: Optional[str] = None,
-        sql_stored_procedure_params: Optional[List["StoredProcedureParameter"]] = None,
-        **kwargs
-    ):
+        sql_stored_procedure_params: Optional[List["_models.StoredProcedureParameter"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sql_table_name:
         :paramtype sql_table_name: str
@@ -4686,28 +4568,28 @@ class SqlDataPath(msrest.serialization.Model):
         :paramtype sql_stored_procedure_params:
          list[~azure.mgmt.machinelearningservices.models.StoredProcedureParameter]
         """
-        super(SqlDataPath, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sql_table_name = sql_table_name
         self.sql_query = sql_query
         self.sql_stored_procedure_name = sql_stored_procedure_name
         self.sql_stored_procedure_params = sql_stored_procedure_params
 
 
-class StoredProcedureParameter(msrest.serialization.Model):
+class StoredProcedureParameter(_serialization.Model):
     """StoredProcedureParameter.
 
     :ivar name:
     :vartype name: str
     :ivar value:
     :vartype value: str
-    :ivar type: Possible values include: "String", "Int", "Decimal", "Guid", "Boolean", "Date".
+    :ivar type: Known values are: "String", "Int", "Decimal", "Guid", "Boolean", and "Date".
     :vartype type: str or ~azure.mgmt.machinelearningservices.models.StoredProcedureParameterType
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -4715,24 +4597,24 @@ class StoredProcedureParameter(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         value: Optional[str] = None,
-        type: Optional[Union[str, "StoredProcedureParameterType"]] = None,
-        **kwargs
-    ):
+        type: Optional[Union[str, "_models.StoredProcedureParameterType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name:
         :paramtype name: str
         :keyword value:
         :paramtype value: str
-        :keyword type: Possible values include: "String", "Int", "Decimal", "Guid", "Boolean", "Date".
+        :keyword type: Known values are: "String", "Int", "Decimal", "Guid", "Boolean", and "Date".
         :paramtype type: str or ~azure.mgmt.machinelearningservices.models.StoredProcedureParameterType
         """
-        super(StoredProcedureParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.type = type
 
 
-class TypedAssetReference(msrest.serialization.Model):
+class TypedAssetReference(_serialization.Model):
     """TypedAssetReference.
 
     :ivar asset_id:
@@ -4742,29 +4624,23 @@ class TypedAssetReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "asset_id": {"key": "assetId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        asset_id: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, asset_id: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword asset_id:
         :paramtype asset_id: str
         :keyword type:
         :paramtype type: str
         """
-        super(TypedAssetReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.asset_id = asset_id
         self.type = type
 
 
-class User(msrest.serialization.Model):
+class User(_serialization.Model):
     """User.
 
     :ivar user_object_id: A user or service principal's object ID.
@@ -4794,14 +4670,14 @@ class User(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_object_id': {'key': 'userObjectId', 'type': 'str'},
-        'user_pu_id': {'key': 'userPuId', 'type': 'str'},
-        'user_idp': {'key': 'userIdp', 'type': 'str'},
-        'user_alt_sec_id': {'key': 'userAltSecId', 'type': 'str'},
-        'user_iss': {'key': 'userIss', 'type': 'str'},
-        'user_tenant_id': {'key': 'userTenantId', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'upn': {'key': 'upn', 'type': 'str'},
+        "user_object_id": {"key": "userObjectId", "type": "str"},
+        "user_pu_id": {"key": "userPuId", "type": "str"},
+        "user_idp": {"key": "userIdp", "type": "str"},
+        "user_alt_sec_id": {"key": "userAltSecId", "type": "str"},
+        "user_iss": {"key": "userIss", "type": "str"},
+        "user_tenant_id": {"key": "userTenantId", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
+        "upn": {"key": "upn", "type": "str"},
     }
 
     def __init__(
@@ -4815,8 +4691,8 @@ class User(msrest.serialization.Model):
         user_tenant_id: Optional[str] = None,
         user_name: Optional[str] = None,
         upn: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_object_id: A user or service principal's object ID.
          This is EUPI and may only be logged to warm path telemetry.
@@ -4843,7 +4719,7 @@ class User(msrest.serialization.Model):
          This is PII andshould never be logged.
         :paramtype upn: str
         """
-        super(User, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_object_id = user_object_id
         self.user_pu_id = user_pu_id
         self.user_idp = user_idp

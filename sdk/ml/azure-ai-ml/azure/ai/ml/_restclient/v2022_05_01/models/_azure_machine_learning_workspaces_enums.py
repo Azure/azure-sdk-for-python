@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allocation state of the compute. Possible values are: steady - Indicates that the compute is
     not resizing. There are no changes to the number of compute nodes in the compute in progress. A
     compute enters this state when it is created and when no operations are being performed on the
@@ -22,7 +21,8 @@ class AllocationState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STEADY = "Steady"
     RESIZING = "Resizing"
 
-class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ApplicationSharingPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for sharing applications on this compute instance among users of parent workspace. If
     Personal, only the creator can access applications on this compute instance. When Shared, any
     workspace user can access applications on this instance depending on his/her assigned role.
@@ -31,15 +31,16 @@ class ApplicationSharingPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     PERSONAL = "Personal"
     SHARED = "Shared"
 
-class Autosave(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Auto save settings.
-    """
+
+class Autosave(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Auto save settings."""
 
     NONE = "None"
     LOCAL = "Local"
     REMOTE = "Remote"
 
-class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class BatchLoggingLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Log verbosity for batch inferencing.
     Increasing verbosity order for logging is : Warning, Info and Debug.
     The default value is Info.
@@ -49,44 +50,44 @@ class BatchLoggingLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     WARNING = "Warning"
     DEBUG = "Debug"
 
-class BatchOutputAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine how batch inferencing will handle output
-    """
+
+class BatchOutputAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine how batch inferencing will handle output."""
 
     SUMMARY_ONLY = "SummaryOnly"
     APPEND_ROW = "AppendRow"
 
-class BillingCurrency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Three lettered code specifying the currency of the VM price. Example: USD
-    """
+
+class BillingCurrency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Three lettered code specifying the currency of the VM price. Example: USD."""
 
     USD = "USD"
 
-class Caching(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Caching type of Data Disk.
-    """
+
+class Caching(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Caching type of Data Disk."""
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class ClusterPurpose(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Intended usage of the cluster
-    """
+
+class ClusterPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Intended usage of the cluster."""
 
     FAST_PROD = "FastProd"
     DENSE_PROD = "DenseProd"
     DEV_TEST = "DevTest"
 
-class ComputeInstanceAuthorizationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The Compute Instance Authorization type. Available values are personal (default).
-    """
+
+class ComputeInstanceAuthorizationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Compute Instance Authorization type. Available values are personal (default)."""
 
     PERSONAL = "personal"
 
-class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Current state of an ComputeInstance.
-    """
+
+class ComputeInstanceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of an ComputeInstance."""
 
     CREATING = "Creating"
     CREATE_FAILED = "CreateFailed"
@@ -104,16 +105,16 @@ class ComputeInstanceState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNKNOWN = "Unknown"
     UNUSABLE = "Unusable"
 
-class ComputePowerAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The compute power action.
-    """
+
+class ComputePowerAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compute power action."""
 
     START = "Start"
     STOP = "Stop"
 
-class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of compute
-    """
+
+class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of compute."""
 
     AKS = "AKS"
     KUBERNETES = "Kubernetes"
@@ -126,9 +127,9 @@ class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DATA_LAKE_ANALYTICS = "DataLakeAnalytics"
     SYNAPSE_SPARK = "SynapseSpark"
 
-class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Authentication type of the connection target
-    """
+
+class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Authentication type of the connection target."""
 
     PAT = "PAT"
     MANAGED_IDENTITY = "ManagedIdentity"
@@ -136,31 +137,33 @@ class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     SAS = "SAS"
 
-class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Category of the connection
-    """
+
+class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of the connection."""
 
     PYTHON_FEED = "PythonFeed"
     CONTAINER_REGISTRY = "ContainerRegistry"
     GIT = "Git"
 
-class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ContainerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ContainerType."""
 
     STORAGE_INITIALIZER = "StorageInitializer"
     INFERENCE_SERVER = "InferenceServer"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the datastore credentials type.
-    """
+
+class CredentialsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the datastore credentials type."""
 
     ACCOUNT_KEY = "AccountKey"
     CERTIFICATE = "Certificate"
@@ -168,26 +171,26 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SAS = "Sas"
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
-class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the datastore contents type.
-    """
+
+class DatastoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the datastore contents type."""
 
     AZURE_BLOB = "AzureBlob"
     AZURE_DATA_LAKE_GEN1 = "AzureDataLakeGen1"
     AZURE_DATA_LAKE_GEN2 = "AzureDataLakeGen2"
     AZURE_FILE = "AzureFile"
 
-class DataType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the type of data.
-    """
+
+class DataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the type of data."""
 
     URI_FILE = "uri_file"
     URI_FOLDER = "uri_folder"
     MLTABLE = "mltable"
 
-class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Possible values for DeploymentProvisioningState.
-    """
+
+class DeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Possible values for DeploymentProvisioningState."""
 
     CREATING = "Creating"
     DELETING = "Deleting"
@@ -197,54 +200,56 @@ class DeploymentProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, E
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class DiagnoseResultLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of workspace setup error
-    """
+
+class DiagnoseResultLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level of workspace setup error."""
 
     WARNING = "Warning"
     ERROR = "Error"
     INFORMATION = "Information"
 
-class DistributionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the job distribution type.
-    """
+
+class DistributionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the job distribution type."""
 
     PY_TORCH = "PyTorch"
     TENSOR_FLOW = "TensorFlow"
     MPI = "Mpi"
 
-class EarlyTerminationPolicyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class EarlyTerminationPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """EarlyTerminationPolicyType."""
 
     BANDIT = "Bandit"
     MEDIAN_STOPPING = "MedianStopping"
     TRUNCATION_SELECTION = "TruncationSelection"
 
-class EncryptionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether or not the encryption is enabled for the workspace.
-    """
+
+class EncryptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether or not the encryption is enabled for the workspace."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class EndpointAuthMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine endpoint authentication mode.
-    """
+
+class EndpointAuthMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine endpoint authentication mode."""
 
     AML_TOKEN = "AMLToken"
     KEY = "Key"
     AAD_TOKEN = "AADToken"
 
-class EndpointComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine endpoint compute type.
-    """
+
+class EndpointComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine endpoint compute type."""
 
     MANAGED = "Managed"
     KUBERNETES = "Kubernetes"
     AZURE_ML_COMPUTE = "AzureMLCompute"
 
-class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of endpoint provisioning.
-    """
+
+class EndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of endpoint provisioning."""
 
     CREATING = "Creating"
     DELETING = "Deleting"
@@ -253,31 +258,31 @@ class EndpointProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enu
     UPDATING = "Updating"
     CANCELED = "Canceled"
 
-class EnvironmentType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Environment type is either user created or curated by Azure ML service
-    """
+
+class EnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Environment type is either user created or curated by Azure ML service."""
 
     CURATED = "Curated"
     USER_CREATED = "UserCreated"
 
-class Goal(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines supported metric goals for hyperparameter tuning
-    """
+
+class Goal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines supported metric goals for hyperparameter tuning."""
 
     MINIMIZE = "Minimize"
     MAXIMIZE = "Maximize"
 
-class IdentityConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine identity framework.
-    """
+
+class IdentityConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine identity framework."""
 
     MANAGED = "Managed"
     AML_TOKEN = "AMLToken"
     USER_IDENTITY = "UserIdentity"
 
-class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the input data delivery mode.
-    """
+
+class InputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the input data delivery mode."""
 
     READ_ONLY_MOUNT = "ReadOnlyMount"
     READ_WRITE_MOUNT = "ReadWriteMount"
@@ -286,9 +291,9 @@ class InputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     EVAL_MOUNT = "EvalMount"
     EVAL_DOWNLOAD = "EvalDownload"
 
-class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the Job Input Type.
-    """
+
+class JobInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the Job Input Type."""
 
     LITERAL = "literal"
     URI_FILE = "uri_file"
@@ -298,14 +303,16 @@ class JobInputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MLFLOW_MODEL = "mlflow_model"
     TRITON_MODEL = "triton_model"
 
-class JobLimitsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class JobLimitsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """JobLimitsType."""
 
     COMMAND = "Command"
     SWEEP = "Sweep"
 
-class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the Job Output Type.
-    """
+
+class JobOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the Job Output Type."""
 
     URI_FILE = "uri_file"
     URI_FOLDER = "uri_folder"
@@ -314,71 +321,76 @@ class JobOutputType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MLFLOW_MODEL = "mlflow_model"
     TRITON_MODEL = "triton_model"
 
-class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of a job.
-    """
 
-    #: Run hasn't started yet.
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a job."""
+
     NOT_STARTED = "NotStarted"
-    #: Run has started. The user has a run ID.
+    """Run hasn't started yet."""
     STARTING = "Starting"
-    #: (Not used currently) It will be used if ES is creating the compute target.
+    """Run has started. The user has a run ID."""
     PROVISIONING = "Provisioning"
-    #: The run environment is being prepared.
+    """(Not used currently) It will be used if ES is creating the compute target."""
     PREPARING = "Preparing"
-    #: The job is queued in the compute target. For example, in BatchAI the job is in queued state,
-    #: while waiting for all required nodes to be ready.
+    """The run environment is being prepared."""
     QUEUED = "Queued"
-    #: The job started to run in the compute target.
+    """The job is queued in the compute target. For example, in BatchAI the job is in queued state,
+    #: while waiting for all required nodes to be ready."""
     RUNNING = "Running"
-    #: Job is completed in the target. It is in output collection state now.
+    """The job started to run in the compute target."""
     FINALIZING = "Finalizing"
-    #: Cancellation has been requested for the job.
+    """Job is completed in the target. It is in output collection state now."""
     CANCEL_REQUESTED = "CancelRequested"
-    #: Job completed successfully. This reflects that both the job itself and output collection states
-    #: completed successfully.
+    """Cancellation has been requested for the job."""
     COMPLETED = "Completed"
-    #: Job failed.
+    """Job completed successfully. This reflects that both the job itself and output collection states
+    #: completed successfully"""
     FAILED = "Failed"
-    #: Following cancellation request, the job is now successfully canceled.
+    """Job failed."""
     CANCELED = "Canceled"
-    #: When heartbeat is enabled, if the run isn't updating any information to RunHistory then the run
+    """Following cancellation request, the job is now successfully canceled."""
+    NOT_RESPONDING = "NotResponding"
+    """When heartbeat is enabled, if the run isn't updating any information to RunHistory then the run
     #: goes to NotResponding state.
     #: NotResponding is the only state that is exempt from strict transition orders. A run can go from
-    #: NotResponding to any of the previous states.
-    NOT_RESPONDING = "NotResponding"
-    #: The job is paused by users. Some adjustment to labeling jobs can be made only in paused state.
+    #: NotResponding to any of the previous states."""
     PAUSED = "Paused"
-    #: Default job status if not mapped to all other statuses.
+    """The job is paused by users. Some adjustment to labeling jobs can be made only in paused state."""
     UNKNOWN = "Unknown"
+    """Default job status if not mapped to all other statuses"""
 
-class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the type of job.
-    """
+
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the type of job."""
 
     COMMAND = "Command"
     SWEEP = "Sweep"
     PIPELINE = "Pipeline"
 
-class KeyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyType."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
 
-class ListViewType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ListViewType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ListViewType."""
 
     ACTIVE_ONLY = "ActiveOnly"
     ARCHIVED_ONLY = "ArchivedOnly"
     ALL = "All"
 
-class LoadBalancerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Load Balancer Type
-    """
+
+class LoadBalancerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Load Balancer Type."""
 
     PUBLIC_IP = "PublicIp"
     INTERNAL_LOAD_BALANCER = "InternalLoadBalancer"
 
-class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
     """
@@ -388,16 +400,16 @@ class ManagedServiceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, En
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
-class MountAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Mount Action.
-    """
+
+class MountAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mount Action."""
 
     MOUNT = "Mount"
     UNMOUNT = "Unmount"
 
-class MountState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Mount state.
-    """
+
+class MountState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mount state."""
 
     MOUNT_REQUESTED = "MountRequested"
     MOUNTED = "Mounted"
@@ -406,14 +418,15 @@ class MountState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UNMOUNT_FAILED = "UnmountFailed"
     UNMOUNTED = "Unmounted"
 
-class Network(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """network of this container.
-    """
+
+class Network(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """network of this container."""
 
     BRIDGE = "Bridge"
     HOST = "Host"
 
-class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class NodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the compute node. Values are idle, running, preparing, unusable, leaving and
     preempted.
     """
@@ -425,16 +438,16 @@ class NodeState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     LEAVING = "leaving"
     PREEMPTED = "preempted"
 
-class OperatingSystemType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of operating system.
-    """
+
+class OperatingSystemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of operating system."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Name of the last operation.
-    """
+
+class OperationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of the last operation."""
 
     CREATE = "Create"
     START = "Start"
@@ -443,9 +456,9 @@ class OperationName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REIMAGE = "Reimage"
     DELETE = "Delete"
 
-class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Operation status.
-    """
+
+class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operation status."""
 
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
@@ -456,47 +469,49 @@ class OperationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REIMAGE_FAILED = "ReimageFailed"
     DELETE_FAILED = "DeleteFailed"
 
-class OperationTrigger(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Trigger of operation.
-    """
+
+class OperationTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Trigger of operation."""
 
     USER = "User"
     SCHEDULE = "Schedule"
     IDLE_SHUTDOWN = "IdleShutdown"
 
-class OrderString(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class OrderString(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OrderString."""
 
     CREATED_AT_DESC = "CreatedAtDesc"
     CREATED_AT_ASC = "CreatedAtAsc"
     UPDATED_AT_DESC = "UpdatedAtDesc"
     UPDATED_AT_ASC = "UpdatedAtAsc"
 
-class OsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Compute OS Type
-    """
+
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Compute OS Type."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class OutputDeliveryMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Output data delivery mode enums.
-    """
+
+class OutputDeliveryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Output data delivery mode enums."""
 
     READ_WRITE_MOUNT = "ReadWriteMount"
     UPLOAD = "Upload"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private endpoint connection status.
-    """
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
@@ -504,7 +519,8 @@ class PrivateEndpointServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumM
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of workspace resource. The provisioningState is to indicate states
     for resource provisioning.
     """
@@ -517,58 +533,59 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "Failed"
     CANCELED = "Canceled"
 
-class ProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current deployment state of schedule.
-    """
+
+class ProvisioningStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current deployment state of schedule."""
 
     COMPLETED = "Completed"
     PROVISIONING = "Provisioning"
     FAILED = "Failed"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether requests from Public Network are allowed.
-    """
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether requests from Public Network are allowed."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class QuotaUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """An enum describing the unit of quota measurement.
-    """
+
+class QuotaUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An enum describing the unit of quota measurement."""
 
     COUNT = "Count"
 
-class RandomSamplingAlgorithmRule(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The specific type of random algorithm
-    """
+
+class RandomSamplingAlgorithmRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The specific type of random algorithm."""
 
     RANDOM = "Random"
     SOBOL = "Sobol"
 
-class RecurrenceFrequency(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to describe the frequency of a recurrence schedule
-    """
 
-    #: Minute frequency.
+class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to describe the frequency of a recurrence schedule."""
+
     MINUTE = "Minute"
-    #: Hour frequency.
+    """Minute frequency"""
     HOUR = "Hour"
-    #: Day frequency.
+    """Hour frequency"""
     DAY = "Day"
-    #: Week frequency.
+    """Day frequency"""
     WEEK = "Week"
-    #: Month frequency.
+    """Week frequency"""
     MONTH = "Month"
+    """Month frequency"""
 
-class ReferenceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine which reference method to use for an asset.
-    """
+
+class ReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine which reference method to use for an asset."""
 
     ID = "Id"
     DATA_PATH = "DataPath"
     OUTPUT_PATH = "OutputPath"
 
-class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class RemoteLoginPortPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on all nodes of the cluster. Enabled - Indicates that the public ssh port is
     open on all nodes of the cluster. NotSpecified - Indicates that the public ssh port is closed
@@ -581,62 +598,69 @@ class RemoteLoginPortPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, E
     DISABLED = "Disabled"
     NOT_SPECIFIED = "NotSpecified"
 
-class SamplingAlgorithmType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SamplingAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SamplingAlgorithmType."""
 
     GRID = "Grid"
     RANDOM = "Random"
     BAYESIAN = "Bayesian"
 
-class ScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ScaleType."""
 
     DEFAULT = "Default"
     TARGET_UTILIZATION = "TargetUtilization"
 
-class ScheduleStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to describe status of schedule
-    """
 
-    #: Schedule is enabled.
+class ScheduleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to describe status of schedule."""
+
     ENABLED = "Enabled"
-    #: Schedule is disabled.
+    """Schedule is enabled"""
     DISABLED = "Disabled"
+    """Schedule is disabled"""
 
-class ScheduleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to describe type of schedule
-    """
 
-    #: Cron schedule type.
+class ScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to describe type of schedule."""
+
     CRON = "Cron"
-    #: Recurrence schedule type.
+    """Cron schedule type"""
     RECURRENCE = "Recurrence"
+    """Recurrence schedule type"""
 
-class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum to determine the datastore secrets type.
-    """
+
+class SecretsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum to determine the datastore secrets type."""
 
     ACCOUNT_KEY = "AccountKey"
     CERTIFICATE = "Certificate"
     SAS = "Sas"
     SERVICE_PRINCIPAL = "ServicePrincipal"
 
-class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 
-    #: Do not use any identity for service data access.
+class ServiceDataAccessAuthIdentity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ServiceDataAccessAuthIdentity."""
+
     NONE = "None"
-    #: Use the system assigned managed identity of the Workspace to authenticate service data access.
+    """Do not use any identity for service data access."""
     WORKSPACE_SYSTEM_ASSIGNED_IDENTITY = "WorkspaceSystemAssignedIdentity"
-    #: Use the user assigned managed identity of the Workspace to authenticate service data access.
+    """Use the system assigned managed identity of the Workspace to authenticate service data access."""
     WORKSPACE_USER_ASSIGNED_IDENTITY = "WorkspaceUserAssignedIdentity"
+    """Use the user assigned managed identity of the Workspace to authenticate service data access."""
 
-class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """TODO - SKU scale type
-    """
+
+class SkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TODO - SKU scale type."""
 
     AUTOMATIC = "Automatic"
     MANUAL = "Manual"
     NONE = "None"
 
-class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is required to be implemented by the Resource Provider if the service has more than
     one tier, but is not required on a PUT.
     """
@@ -646,15 +670,16 @@ class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class SourceType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Data source type.
-    """
+
+class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Data source type."""
 
     DATASET = "Dataset"
     DATASTORE = "Datastore"
     URI = "URI"
 
-class SshPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class SshPublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the public SSH port. Possible values are: Disabled - Indicates that the public ssh
     port is closed on this instance. Enabled - Indicates that the public ssh port is open and
     accessible according to the VNet/subnet policy if applicable.
@@ -663,17 +688,17 @@ class SshPublicAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class SslConfigurationStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enable or disable ssl for scoring
-    """
+
+class SslConfigurationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enable or disable ssl for scoring."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
     AUTO = "Auto"
 
-class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of update workspace quota.
-    """
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of update workspace quota."""
 
     UNDEFINED = "Undefined"
     SUCCESS = "Success"
@@ -684,73 +709,75 @@ class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     OPERATION_NOT_SUPPORTED_FOR_SKU = "OperationNotSupportedForSku"
     OPERATION_NOT_ENABLED_FOR_REGION = "OperationNotEnabledForRegion"
 
-class StorageAccountType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """type of this storage account.
-    """
+
+class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """type of this storage account."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
 
-class UnderlyingResourceAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class UnderlyingResourceAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """UnderlyingResourceAction."""
 
     DELETE = "Delete"
     DETACH = "Detach"
 
-class UnitOfMeasure(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The unit of time measurement for the specified VM price. Example: OneHour
-    """
+
+class UnitOfMeasure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The unit of time measurement for the specified VM price. Example: OneHour."""
 
     ONE_HOUR = "OneHour"
 
-class UsageUnit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """An enum describing the unit of usage measurement.
-    """
+
+class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An enum describing the unit of usage measurement."""
 
     COUNT = "Count"
 
-class ValueFormat(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """format for the workspace connection value
-    """
+
+class ValueFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """format for the workspace connection value."""
 
     JSON = "JSON"
 
-class VMPriceOSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Operating system type used by the VM.
-    """
+
+class VMPriceOSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operating system type used by the VM."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class VmPriority(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Virtual Machine priority
-    """
+
+class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Virtual Machine priority."""
 
     DEDICATED = "Dedicated"
     LOW_PRIORITY = "LowPriority"
 
-class VMTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the VM.
-    """
+
+class VMTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the VM."""
 
     STANDARD = "Standard"
     LOW_PRIORITY = "LowPriority"
     SPOT = "Spot"
 
-class Weekday(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum of weekdays
-    """
 
-    #: Monday weekday.
+class Weekday(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum of weekdays."""
+
     MONDAY = "Monday"
-    #: Tuesday weekday.
+    """Monday weekday"""
     TUESDAY = "Tuesday"
-    #: Wednesday weekday.
+    """Tuesday weekday"""
     WEDNESDAY = "Wednesday"
-    #: Thursday weekday.
+    """Wednesday weekday"""
     THURSDAY = "Thursday"
-    #: Friday weekday.
+    """Thursday weekday"""
     FRIDAY = "Friday"
-    #: Saturday weekday.
+    """Friday weekday"""
     SATURDAY = "Saturday"
-    #: Sunday weekday.
+    """Saturday weekday"""
     SUNDAY = "Sunday"
+    """Sunday weekday"""
