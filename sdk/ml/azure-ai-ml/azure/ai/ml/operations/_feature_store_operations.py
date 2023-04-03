@@ -266,7 +266,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                 ):
                     module_logger.info(
                         "Warning: You have changed the offline store connection, "
-                        "any data that was materialized/backfilled "
+                        "any data that was materialized "
                         "earlier will not be available. You have to run backfill again."
                     )
             else:
@@ -290,7 +290,7 @@ class _FeatureStoreOperations(WorkspaceOperationsBase):
                 ):
                     module_logger.info(
                         "Warning: You have changed the online store connection, "
-                        "any data that was materialized/backfilled earlier "
+                        "any data that was materialized earlier "
                         "will not be available. You have to run backfill again."
                     )
             else:
