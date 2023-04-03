@@ -57,7 +57,7 @@ class HttpXTransportResponse(HttpResponseImpl):
 # pylint: disable=unused-argument
 class HttpXStreamDownloadGenerator:
     """Generator for streaming response data.
-    
+
     :param pipeline: The pipeline object
     :param response: The response object.
     :keyword bool decompress: If True which is default, will attempt to decode the body based
@@ -67,7 +67,7 @@ class HttpXStreamDownloadGenerator:
         self.pipeline = pipeline
         self.response = response
         decompress = kwargs.pop("decompress", True)
-        
+
         if decompress:
             self.iter_content_func = self.response.internal_response.iter_bytes()
         else:
