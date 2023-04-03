@@ -25,7 +25,7 @@ import asyncio
 import os
 
 # Global Provisioning Endpoint
-IOTDPS_PROVISIONING_HOST = "global.azure-devices-provisioning.net"
+GLOBAL_PROVISIONING_HOST = "global.azure-devices-provisioning.net"
 
 
 class DeviceRegistrationSamples(object):
@@ -146,7 +146,7 @@ def _register_device_with_symmetric_key(
     )
 
     device_sdk = ProvisioningDeviceClient.create_from_symmetric_key(
-        provisioning_host=IOTDPS_PROVISIONING_HOST,
+        provisioning_host=GLOBAL_PROVISIONING_HOST,
         registration_id=device_id,
         id_scope=id_scope,
         symmetric_key=symmetric_key,

@@ -20,8 +20,8 @@ from azure.core.pipeline.policies import (
 )
 
 from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
-from azure.iot.deviceprovisioningservice.protocol import VERSION
-from azure.iot.deviceprovisioningservice.protocol.aio import (
+from azure.iot.deviceprovisioningservice._generated import VERSION
+from azure.iot.deviceprovisioningservice._generated.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
 

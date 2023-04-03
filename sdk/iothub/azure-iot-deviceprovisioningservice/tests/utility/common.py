@@ -3,7 +3,7 @@ from math import ceil
 from os import getcwd, makedirs, urandom
 from os.path import exists
 
-CERT_NAME = "azdps_sdk"
+CERT_NAME = "sdk_test_certificate"
 CERT_ENDING = "-cert.pem"
 KEY_ENDING = "-key.pem"
 

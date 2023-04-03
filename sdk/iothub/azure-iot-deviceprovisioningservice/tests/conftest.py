@@ -21,18 +21,18 @@ from urllib3.util.retry import Retry
 #   2. Convert DPS creation / cleanup to setup/teardown fixtures
 #   3. Figure out automated IoT Hub linkage for device registration tests
 
-
+# cSpell:disable
 mock_dps_target = {}
 mock_dps_target["cs"] = "HostName=mydps;SharedAccessKeyName=name;SharedAccessKey=value"
 mock_dps_target["entity"] = "mydps.azure-devices-provisioning.net"
-mock_dps_target["primarykey"] = "rJx/6rJ6rmG4ak890+eW5MYGH+A0uzRvjGNjg3Ve8sfo="
-mock_dps_target["secondarykey"] = "aCd/6rJ6rmG4ak890+eW5MYGH+A0uzRvjGNjg3Ve8sfo="
+mock_dps_target["primarykey"] = "fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA="
+mock_dps_target["secondarykey"] = "fakekeyfakekeyfakekeyfakekeyfakekeyfakekeyA="
 mock_dps_target["policy"] = "provisioningserviceowner"
 mock_dps_target["subscription"] = "5952cff8-bcd1-4235-9554-af2c0348bf23"
 mock_dps_target["endpoint"] = "https://{}".format(mock_dps_target["entity"])
 generic_cs_template = "HostName={};SharedAccessKeyName={};SharedAccessKey={}"
 
-IOTDPS_PROVISIONING_HOST = "global.azure-devices-provisioning.net"
+GLOBAL_PROVISIONING_HOST = "global.azure-devices-provisioning.net"
 WEBHOOK_URL = "https://www.test.test"
 TEST_ENDORSEMENT_KEY = (
     "AToAAQALAAMAsgAgg3GXZ0SEs/gakMyNRqXXJP1S124GUgtk8qHaGzMUaaoABgCAAEMAEAgAAAAAAAEAibym9HQP9vxCGF5dVc1Q"
@@ -96,16 +96,16 @@ def add_sanitizers(test_proxy):
 
 @pytest.fixture
 def mocked_response():
-    with responses.RequestsMock() as rsps:
+    with responses.RequestsMock() as mock:
         on_request_with_no_retry = functools.partial(
-            rsps._on_request,
+            mock._on_request,
             retries=Retry(
                 0,
                 read=False,
             ),
         )
-        rsps._on_request = on_request_with_no_retry
-        yield rsps
+        mock._on_request = on_request_with_no_retry
+        yield mock
 
 
 @pytest.fixture

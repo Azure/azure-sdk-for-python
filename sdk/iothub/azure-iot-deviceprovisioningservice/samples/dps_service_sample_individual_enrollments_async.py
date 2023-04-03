@@ -30,7 +30,7 @@ class EnrollmentSamples(object):
 
     symmetric_enrollment_id = "sample_symmetric_enrollment"
     x509_enrollment_id = "sample_x509_enrollment"
-    tpm_emrollment_id = "sample_tpm_enrollment"
+    tpm_enrollment_id = "sample_tpm_enrollment"
 
     # This is a sample TPM endorsement key
     TEST_ENDORSEMENT_KEY = (
@@ -100,7 +100,7 @@ class EnrollmentSamples(object):
 
         # Create an individual enrollment object with "TPM" attestation mechanism
         enrollment = {
-            "registrationId": self.tpm_emrollment_id,
+            "registrationId": self.tpm_enrollment_id,
             "attestation": {
                 "type": "tpm",
                 "tpm": {"endorsementKey": self.TEST_ENDORSEMENT_KEY},
@@ -108,7 +108,7 @@ class EnrollmentSamples(object):
         }
 
         await dps_service_client.individual_enrollment.create_or_update(
-            id=self.tpm_emrollment_id, enrollment=enrollment
+            id=self.tpm_enrollment_id, enrollment=enrollment
         )
 
     async def get_enrollment_sample_async(self):
@@ -126,7 +126,7 @@ class EnrollmentSamples(object):
 
         await dps_service_client.individual_enrollment.get(id=self.x509_enrollment_id)
 
-        await dps_service_client.individual_enrollment.get(id=self.tpm_emrollment_id)
+        await dps_service_client.individual_enrollment.get(id=self.tpm_enrollment_id)
 
     async def get_enrollment_attestation_sample_async(self):
         # Instantiate a DPS Service Client using a connection string
@@ -146,7 +146,7 @@ class EnrollmentSamples(object):
         )
 
         await dps_service_client.individual_enrollment.get_attestation_mechanism(
-            id=self.tpm_emrollment_id
+            id=self.tpm_enrollment_id
         )
 
     async def update_enrollment_sample_async(self):
@@ -234,7 +234,7 @@ class EnrollmentSamples(object):
         await dps_service_client.individual_enrollment.delete(
             id=self.symmetric_enrollment_id
         )
-        await dps_service_client.individual_enrollment.delete(id=self.tpm_emrollment_id)
+        await dps_service_client.individual_enrollment.delete(id=self.tpm_enrollment_id)
 
 
 def open_certificate(certificate_path: str) -> str:

@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 
 def validate_key_value_pairs(string: str) -> Dict[str, Any]:
     """
-    Funtion to validate key-value pairs in the format: a=b;c=d
+    Function to validate key-value pairs in the format: a=b;c=d
 
     Args:
         string (str): semicolon delimited string of key/value pairs.
@@ -44,7 +44,7 @@ def _parse_connection_string(
 
 def parse_iot_dps_connection_string(connection_string: str) -> Dict[str, str]:
     """
-    Funtion to parse a Device Provisioning Service connection string into
+    Function to parse a Device Provisioning Service connection string into
     key/value pairs.
 
     Args:

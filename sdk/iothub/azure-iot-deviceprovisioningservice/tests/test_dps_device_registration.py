@@ -1,6 +1,6 @@
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from tests.conftest import IOTDPS_PROVISIONING_HOST, ProvisioningServicePreparer
+from tests.conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
 from tests.utility.common import generate_enrollment_group, sign_string
 
 
@@ -25,7 +25,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
         symmetric_key = sign_string(primary_key, device_id)
 
         sdk = ProvisioningDeviceClient.create_from_symmetric_key(
-            provisioning_host=IOTDPS_PROVISIONING_HOST,
+            provisioning_host=GLOBAL_PROVISIONING_HOST,
             registration_id=device_id,
             id_scope=id_scope,
             symmetric_key=symmetric_key,

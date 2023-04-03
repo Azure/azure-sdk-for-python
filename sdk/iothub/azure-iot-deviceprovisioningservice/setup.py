@@ -64,7 +64,7 @@ setup(
         'azure',
         'azure.iot',
     ]),
-    python_requires=">=3.7"
+    python_requires=">=3.7",
     include_package_data=True,
     package_data={
         'pytyped': ['py.typed'],

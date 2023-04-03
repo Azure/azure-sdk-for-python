@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from .client import ProvisioningServiceClient
-from .protocol import VERSION
+from ._generated import VERSION
 
 __all__ = ["ProvisioningServiceClient"]
 
