@@ -2,28 +2,29 @@ import os
 import pytest
 from datetime import timedelta
 
-from azure.communication.callautomation import CallAutomationClient, CallInvite, CallConnected, ParticipantsUpdated, CallDisconnected
+from azure.communication.callautomation import CallAutomationClient, CallInvite, CallConnected, ParticipantsUpdated, CallDisconnected, PlayCompleted, FileSource
 from azure.communication.callautomation._shared.utils import parse_connection_str
 from azure.communication.identity import CommunicationIdentityClient
 
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from call_automation_automated_live_test_base import CallAutomationAutomatedLiveTestBase
 
+play_source_uri = 'https://acstestapp1.azurewebsites.net/audio/bot-hold-music-1.wav'
 
-class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase):
+class CallMediaClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTestBase):
     def setUp(self):
-        super(CallAutomationClientAsyncAutomatedLiveTest, self).setUp()
+        super(CallMediaClientAsyncAutomatedLiveTest, self).setUp()
         self.connection_str = os.environ.get('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING', 'endpoint=https://REDACTED.communication.azure.com/;accesskey=QWNjZXNzS2V5')
         self.identity_client = CommunicationIdentityClient.from_connection_string(self.connection_str)
         endpoint, _ = parse_connection_str(self.connection_str)
         self.endpoint = endpoint
     
     def tearDown(self):
-        super(CallAutomationClientAsyncAutomatedLiveTest, self).tearDown()
+        super(CallMediaClientAsyncAutomatedLiveTest, self).tearDown()
 
     @pytest.mark.live_test_only
     @AsyncCommunicationTestCase.await_prepared_test
-    async def test_create_VOIP_call_and_answer_then_hangup(self):
+    async def test_play_media_in_a_call(self):
         call_connection_list = []
         print("starting test")
         try:
@@ -80,6 +81,20 @@ class CallAutomationClientAsyncAutomatedLiveTest(CallAutomationAutomatedLiveTest
             if receiver_participant_updated_event is None:
                 raise ValuError("Receiver ParticipantsUpdated event is None")
 
+            # play media to all participants
+            call_media_client = create_call_result.call_connection.get_call_media()
+            file_source = FileSource(uri=play_source_uri)
+
+            call_media_client.play_to_all(
+                play_source=file_source,
+            )
+
+            # check for PlayCompleted event
+            self.wait_for_messages(unique_id, timedelta(seconds=20))
+            play_completed_event = self.check_for_event(event_type=PlayCompleted, call_connection_id=caller_connection_id)
+            if play_completed_event is None:
+                raise ValueError("PlayCompleted event is None")
+            
             # hang up the call
             answer_call_result.call_connection.hang_up(is_for_everyone=True)
             self.wait_for_messages(unique_id, timedelta(seconds=10))
