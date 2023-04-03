@@ -166,10 +166,10 @@ class AsyncHttpResponseImpl(_HttpResponseBaseImpl, _AsyncHttpResponse, AsyncHttp
 class RestAsyncHttpClientTransportResponse(_RestHttpClientTransportResponseBase, AsyncHttpResponseImpl):
     """Create a Rest HTTPResponse from an http.client response."""
 
-    async def iter_bytes(self, **kwargs) -> AsyncStreamable[bytes]:
+    def iter_bytes(self, **kwargs) -> AsyncStreamable[bytes]:
         raise TypeError("We do not support iter_bytes for this transport response")
 
-    async def iter_raw(self, **kwargs) -> AsyncStreamable[bytes]:
+    def iter_raw(self, **kwargs) -> AsyncStreamable[bytes]:
         raise TypeError("We do not support iter_raw for this transport response")
 
     async def read(self):

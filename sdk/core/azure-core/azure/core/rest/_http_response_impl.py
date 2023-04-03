@@ -70,7 +70,7 @@ class _Stream(Streamable[_StreamContentType_co]):
     def __next__(self) -> _StreamContentType_co:
         try:
             return next(self._generator)
-        except StopAsyncIteration:
+        except StopIteration:
             self.close()
             raise
 

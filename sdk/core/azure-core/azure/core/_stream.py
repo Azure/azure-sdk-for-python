@@ -31,9 +31,9 @@ class Streamable(
     def __exit__(self, *args) -> None:
         ...
 
-    def __iter__(self) -> Self:
+    def __iter__(self) -> "Streamable":
         ...
-    
+
     def __next__(self) -> _StreamContentType_co:
         ...
 
@@ -55,7 +55,7 @@ class AsyncStreamable(
     async def __aexit__(self, *args) -> None:
         ...
 
-    def __aiter__(self) -> Self:
+    def __aiter__(self) -> "AsyncStreamable":
         ...
 
     async def __anext__(self) -> _StreamContentType_co:
