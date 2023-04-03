@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:43:29 GMT",
+        "Date": "Mon, 03 Apr 2023 05:50:40 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14939.4 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:43:29 GMT",
+        "Date": "Mon, 03 Apr 2023 05:50:40 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14939.4 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,12 +172,12 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "82eb0e21-4f18-456e-84e7-2fdb804f0433",
+        "client-request-id": "0d38ddfc-6ebf-4cb9-a55f-791af9a0bda8",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
+        "User-Agent": "azsdk-python-identity/1.13.0b4 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "82eb0e21-4f18-456e-84e7-2fdb804f0433",
+        "client-request-id": "0d38ddfc-6ebf-4cb9-a55f-791af9a0bda8",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:43:29 GMT",
+        "Date": "Mon, 03 Apr 2023 05:50:40 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14649.17 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14939.4 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -221,7 +221,7 @@
         "Connection": "keep-alive",
         "Content-Length": "100",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "location": "eastus",
@@ -234,13 +234,13 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/6e9f7519-d8f8-4fda-894d-882465a6ace3?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/18af1fc9-98dc-4f4f-89be-4685793701f8?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
         "Cache-Control": "no-cache",
         "Content-Length": "384",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:43:30 GMT",
+        "Date": "Mon, 03 Apr 2023 05:50:42 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/6e9f7519-d8f8-4fda-894d-882465a6ace3?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/18af1fc9-98dc-4f4f-89be-4685793701f8?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
         "Pragma": "no-cache",
         "Retry-After": "2",
         "Server": [
@@ -249,11 +249,11 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9119d30a-1418-4ab4-b1c7-858fb013f3e4",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/CreateUpdateDisks3Min;997,Microsoft.Compute/CreateUpdateDisks30Min;7997",
+        "x-ms-correlation-request-id": "0142d704-3afb-42a7-8969-d134723b482f",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/CreateUpdateDisks3Min;2997,Microsoft.Compute/CreateUpdateDisks30Min;24997",
         "x-ms-ratelimit-remaining-subscription-writes": "1193",
-        "x-ms-routing-request-id": "WESTUS:20230216T054331Z:9119d30a-1418-4ab4-b1c7-858fb013f3e4",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055042Z:0142d704-3afb-42a7-8969-d134723b482f",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "name": "disknamexbc8e2966",
@@ -270,13 +270,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/6e9f7519-d8f8-4fda-894d-882465a6ace3?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/18af1fc9-98dc-4f4f-89be-4685793701f8?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -284,7 +284,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:43:30 GMT",
+        "Date": "Mon, 03 Apr 2023 05:50:42 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -295,26 +295,26 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c2bd3a0b-eec0-48f1-9b84-90a4506cdca7",
+        "x-ms-correlation-request-id": "b8520fae-354b-4d04-af3d-d8ae9d96bc76",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49984,Microsoft.Compute/GetOperation30Min;399984",
         "x-ms-ratelimit-remaining-subscription-reads": "11983",
-        "x-ms-routing-request-id": "WESTUS:20230216T054331Z:c2bd3a0b-eec0-48f1-9b84-90a4506cdca7",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055042Z:b8520fae-354b-4d04-af3d-d8ae9d96bc76",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:43:31.0821329\u002B00:00",
+        "startTime": "2023-04-03T05:50:42.8048563\u002B00:00",
         "status": "InProgress",
-        "name": "6e9f7519-d8f8-4fda-894d-882465a6ace3"
+        "name": "18af1fc9-98dc-4f4f-89be-4685793701f8"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/6e9f7519-d8f8-4fda-894d-882465a6ace3?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/18af1fc9-98dc-4f4f-89be-4685793701f8?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -322,7 +322,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:01 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:12 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -333,15 +333,15 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a6caf4a4-819e-44d8-a136-c55236e393c1",
+        "x-ms-correlation-request-id": "56459022-2111-41df-a393-cfd55998b5e1",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49982,Microsoft.Compute/GetOperation30Min;399982",
         "x-ms-ratelimit-remaining-subscription-reads": "11982",
-        "x-ms-routing-request-id": "WESTUS:20230216T054401Z:a6caf4a4-819e-44d8-a136-c55236e393c1",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055112Z:56459022-2111-41df-a393-cfd55998b5e1",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:43:31.0821329\u002B00:00",
-        "endTime": "2023-02-16T05:43:31.2071295\u002B00:00",
+        "startTime": "2023-04-03T05:50:42.8048563\u002B00:00",
+        "endTime": "2023-04-03T05:50:42.8985979\u002B00:00",
         "status": "Succeeded",
         "properties": {
           "output": {
@@ -365,15 +365,15 @@
               },
               "networkAccessPolicy": "AllowAll",
               "publicNetworkAccess": "Enabled",
-              "timeCreated": "2023-02-16T05:43:31.0821329\u002B00:00",
+              "timeCreated": "2023-04-03T05:50:42.8048563\u002B00:00",
               "provisioningState": "Succeeded",
               "diskState": "Unattached",
               "diskSizeBytes": 214748364800,
-              "uniqueId": "1d12cd32-e070-4b59-bfd0-abe59399a47f"
+              "uniqueId": "1b8ffa86-7a21-4bf1-a3dc-8477080f7f95"
             }
           }
         },
-        "name": "6e9f7519-d8f8-4fda-894d-882465a6ace3"
+        "name": "18af1fc9-98dc-4f4f-89be-4685793701f8"
       }
     },
     {
@@ -383,7 +383,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -391,7 +391,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:01 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:13 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -402,11 +402,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "84d1f2b0-ea5a-43d0-b3fd-0f6527a2c789",
+        "x-ms-correlation-request-id": "861554bf-99cb-4233-8a99-084e7198d5de",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;14989,Microsoft.Compute/LowCostGet30Min;119989",
         "x-ms-ratelimit-remaining-subscription-reads": "11981",
-        "x-ms-routing-request-id": "WESTUS:20230216T054401Z:84d1f2b0-ea5a-43d0-b3fd-0f6527a2c789",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055113Z:861554bf-99cb-4233-8a99-084e7198d5de",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "name": "disknamexbc8e2966",
@@ -429,11 +429,11 @@
           },
           "networkAccessPolicy": "AllowAll",
           "publicNetworkAccess": "Enabled",
-          "timeCreated": "2023-02-16T05:43:31.0821329\u002B00:00",
+          "timeCreated": "2023-04-03T05:50:42.8048563\u002B00:00",
           "provisioningState": "Succeeded",
           "diskState": "Unattached",
           "diskSizeBytes": 214748364800,
-          "uniqueId": "1d12cd32-e070-4b59-bfd0-abe59399a47f"
+          "uniqueId": "1b8ffa86-7a21-4bf1-a3dc-8477080f7f95"
         }
       }
     },
@@ -446,7 +446,7 @@
         "Connection": "keep-alive",
         "Content-Length": "222",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "location": "eastus",
@@ -459,13 +459,13 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/b4424d73-5f49-45d4-b36e-f9dadc173314?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/e6841b7c-7b5f-4b71-a102-d7133ab37e66?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
         "Cache-Control": "no-cache",
         "Content-Length": "516",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:02 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:13 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/b4424d73-5f49-45d4-b36e-f9dadc173314?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/e6841b7c-7b5f-4b71-a102-d7133ab37e66?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
         "Pragma": "no-cache",
         "Retry-After": "2",
         "Server": [
@@ -474,11 +474,11 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d61eebc9-44ef-4bbd-9832-2f5b26823547",
+        "x-ms-correlation-request-id": "6ef20a3c-d45f-4aae-afe1-d54eb43aaa48",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/HighCostSnapshotCreateHydrate3Min;999,Microsoft.Compute/HighCostSnapshotCreateHydrate30Min;7999",
         "x-ms-ratelimit-remaining-subscription-writes": "1192",
-        "x-ms-routing-request-id": "WESTUS:20230216T054402Z:d61eebc9-44ef-4bbd-9832-2f5b26823547",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055113Z:6ef20a3c-d45f-4aae-afe1-d54eb43aaa48",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "name": "snapshotxbc8e2966",
@@ -495,13 +495,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/b4424d73-5f49-45d4-b36e-f9dadc173314?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/e6841b7c-7b5f-4b71-a102-d7133ab37e66?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -509,7 +509,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:02 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:13 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Retry-After": "10",
@@ -521,26 +521,26 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "37643d55-28e5-437e-9127-e70a5e5925e6",
+        "x-ms-correlation-request-id": "9e21ce3b-bafd-4122-9862-015b58c9f80f",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49981,Microsoft.Compute/GetOperation30Min;399981",
         "x-ms-ratelimit-remaining-subscription-reads": "11980",
-        "x-ms-routing-request-id": "WESTUS:20230216T054402Z:37643d55-28e5-437e-9127-e70a5e5925e6",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055113Z:9e21ce3b-bafd-4122-9862-015b58c9f80f",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:44:02.5505322\u002B00:00",
+        "startTime": "2023-04-03T05:51:13.5859122\u002B00:00",
         "status": "InProgress",
-        "name": "b4424d73-5f49-45d4-b36e-f9dadc173314"
+        "name": "e6841b7c-7b5f-4b71-a102-d7133ab37e66"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/b4424d73-5f49-45d4-b36e-f9dadc173314?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/e6841b7c-7b5f-4b71-a102-d7133ab37e66?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -548,7 +548,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:12 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:23 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -559,15 +559,15 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "90f5076f-a751-4258-8ffc-29c5b04fd19e",
+        "x-ms-correlation-request-id": "a93973ed-46de-40d5-b1b4-1f742e25c2dc",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49979,Microsoft.Compute/GetOperation30Min;399979",
         "x-ms-ratelimit-remaining-subscription-reads": "11979",
-        "x-ms-routing-request-id": "WESTUS:20230216T054412Z:90f5076f-a751-4258-8ffc-29c5b04fd19e",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055123Z:a93973ed-46de-40d5-b1b4-1f742e25c2dc",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:44:02.5505322\u002B00:00",
-        "endTime": "2023-02-16T05:44:03.9255174\u002B00:00",
+        "startTime": "2023-04-03T05:51:13.5859122\u002B00:00",
+        "endTime": "2023-04-03T05:51:14.5390189\u002B00:00",
         "status": "Succeeded",
         "properties": {
           "output": {
@@ -583,7 +583,7 @@
               "creationData": {
                 "createOption": "Copy",
                 "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexbc8e2966",
-                "sourceUniqueId": "1d12cd32-e070-4b59-bfd0-abe59399a47f"
+                "sourceUniqueId": "1b8ffa86-7a21-4bf1-a3dc-8477080f7f95"
               },
               "diskSizeGB": 200,
               "encryption": {
@@ -592,15 +592,15 @@
               "incremental": false,
               "networkAccessPolicy": "AllowAll",
               "publicNetworkAccess": "Enabled",
-              "timeCreated": "2023-02-16T05:44:02.5661634\u002B00:00",
+              "timeCreated": "2023-04-03T05:51:13.5859122\u002B00:00",
               "provisioningState": "Succeeded",
               "diskState": "Unattached",
               "diskSizeBytes": 214748364800,
-              "uniqueId": "28c76413-74b8-4be4-a53b-2b6f62842721"
+              "uniqueId": "e7d645d2-18d0-413b-9753-d4a1fc74de6e"
             }
           }
         },
-        "name": "b4424d73-5f49-45d4-b36e-f9dadc173314"
+        "name": "e6841b7c-7b5f-4b71-a102-d7133ab37e66"
       }
     },
     {
@@ -610,7 +610,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -618,7 +618,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:12 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:23 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -629,11 +629,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "ed9f2080-798a-4edc-ab43-b50109704324",
+        "x-ms-correlation-request-id": "4bbbb7a6-1b99-4f6c-9a44-43f34eedb8e6",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;14986,Microsoft.Compute/LowCostGet30Min;119986",
         "x-ms-ratelimit-remaining-subscription-reads": "11978",
-        "x-ms-routing-request-id": "WESTUS:20230216T054413Z:ed9f2080-798a-4edc-ab43-b50109704324",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055123Z:4bbbb7a6-1b99-4f6c-9a44-43f34eedb8e6",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "name": "snapshotxbc8e2966",
@@ -648,7 +648,7 @@
           "creationData": {
             "createOption": "Copy",
             "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexbc8e2966",
-            "sourceUniqueId": "1d12cd32-e070-4b59-bfd0-abe59399a47f"
+            "sourceUniqueId": "1b8ffa86-7a21-4bf1-a3dc-8477080f7f95"
           },
           "diskSizeGB": 200,
           "encryption": {
@@ -657,11 +657,11 @@
           "incremental": false,
           "networkAccessPolicy": "AllowAll",
           "publicNetworkAccess": "Enabled",
-          "timeCreated": "2023-02-16T05:44:02.5661634\u002B00:00",
+          "timeCreated": "2023-04-03T05:51:13.5859122\u002B00:00",
           "provisioningState": "Succeeded",
           "diskState": "Unattached",
           "diskSizeBytes": 214748364800,
-          "uniqueId": "28c76413-74b8-4be4-a53b-2b6f62842721"
+          "uniqueId": "e7d645d2-18d0-413b-9753-d4a1fc74de6e"
         }
       }
     },
@@ -674,7 +674,7 @@
         "Connection": "keep-alive",
         "Content-Length": "317",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "location": "eastus",
@@ -695,11 +695,11 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Azure-AsyncNotification": "Enabled",
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/df6bd857-2a8b-4c6e-b3d8-3a0483c183d4?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/a6c416d2-57af-43c7-9c01-bdd7e45b19f8?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
         "Cache-Control": "no-cache",
         "Content-Length": "762",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:14 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:24 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -708,10 +708,10 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "ec2cea51-8114-45e4-b014-76c2b87d34d6",
+        "x-ms-correlation-request-id": "15af1a81-0d0f-4987-9791-6802ce64f373",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/CreateImages3Min;39,Microsoft.Compute/CreateImages30Min;199",
         "x-ms-ratelimit-remaining-subscription-writes": "1191",
-        "x-ms-routing-request-id": "WESTUS:20230216T054414Z:ec2cea51-8114-45e4-b014-76c2b87d34d6"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055124Z:15af1a81-0d0f-4987-9791-6802ce64f373"
       },
       "ResponseBody": {
         "name": "imagexbc8e2966",
@@ -738,13 +738,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/df6bd857-2a8b-4c6e-b3d8-3a0483c183d4?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/a6c416d2-57af-43c7-9c01-bdd7e45b19f8?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -752,7 +752,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:14 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:24 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -763,25 +763,25 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "962b048d-a116-4e62-912c-8fe53622c580",
+        "x-ms-correlation-request-id": "3be9064f-ccde-47ac-a811-9e4fd054dab8",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14999,Microsoft.Compute/GetOperation30Min;29999",
         "x-ms-ratelimit-remaining-subscription-reads": "11977",
-        "x-ms-routing-request-id": "WESTUS:20230216T054414Z:962b048d-a116-4e62-912c-8fe53622c580"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055124Z:3be9064f-ccde-47ac-a811-9e4fd054dab8"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:44:13.7469983\u002B00:00",
+        "startTime": "2023-04-03T05:51:24.4265279\u002B00:00",
         "status": "InProgress",
-        "name": "df6bd857-2a8b-4c6e-b3d8-3a0483c183d4"
+        "name": "a6c416d2-57af-43c7-9c01-bdd7e45b19f8"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/df6bd857-2a8b-4c6e-b3d8-3a0483c183d4?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/a6c416d2-57af-43c7-9c01-bdd7e45b19f8?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -789,7 +789,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:44 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -800,16 +800,16 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "030984f7-ab2c-44b1-9085-05be91122a00",
+        "x-ms-correlation-request-id": "2e5c0fdc-da18-4c31-a54c-ec290f8427db",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14998,Microsoft.Compute/GetOperation30Min;29998",
         "x-ms-ratelimit-remaining-subscription-reads": "11976",
-        "x-ms-routing-request-id": "WESTUS:20230216T054444Z:030984f7-ab2c-44b1-9085-05be91122a00"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055154Z:2e5c0fdc-da18-4c31-a54c-ec290f8427db"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:44:13.7469983\u002B00:00",
-        "endTime": "2023-02-16T05:44:18.8877539\u002B00:00",
+        "startTime": "2023-04-03T05:51:24.4265279\u002B00:00",
+        "endTime": "2023-04-03T05:51:29.5671311\u002B00:00",
         "status": "Succeeded",
-        "name": "df6bd857-2a8b-4c6e-b3d8-3a0483c183d4"
+        "name": "a6c416d2-57af-43c7-9c01-bdd7e45b19f8"
       }
     },
     {
@@ -819,7 +819,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -827,7 +827,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:44 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -838,10 +838,10 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "37037d6a-2400-4fa8-89a7-9f05fed3c6a9",
+        "x-ms-correlation-request-id": "3f61fb07-99a1-4916-a795-bb1bc49b79fa",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetImages3Min;358,Microsoft.Compute/GetImages30Min;1798",
         "x-ms-ratelimit-remaining-subscription-reads": "11975",
-        "x-ms-routing-request-id": "WESTUS:20230216T054444Z:37037d6a-2400-4fa8-89a7-9f05fed3c6a9"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055154Z:3f61fb07-99a1-4916-a795-bb1bc49b79fa"
       },
       "ResponseBody": {
         "name": "imagexbc8e2966",
@@ -875,7 +875,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -883,7 +883,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:44 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -894,11 +894,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "de70854f-5480-4342-8895-52261b19ee48",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;14990,Microsoft.Compute/LowCostGet30Min;119984",
+        "x-ms-correlation-request-id": "1766f038-4a2b-4749-a326-246737763c5e",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;14987,Microsoft.Compute/LowCostGet30Min;119984",
         "x-ms-ratelimit-remaining-subscription-reads": "11974",
-        "x-ms-routing-request-id": "WESTUS:20230216T054444Z:de70854f-5480-4342-8895-52261b19ee48",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055155Z:1766f038-4a2b-4749-a326-246737763c5e",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "name": "snapshotxbc8e2966",
@@ -913,7 +913,7 @@
           "creationData": {
             "createOption": "Copy",
             "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexbc8e2966",
-            "sourceUniqueId": "1d12cd32-e070-4b59-bfd0-abe59399a47f"
+            "sourceUniqueId": "1b8ffa86-7a21-4bf1-a3dc-8477080f7f95"
           },
           "diskSizeGB": 200,
           "encryption": {
@@ -922,11 +922,11 @@
           "incremental": false,
           "networkAccessPolicy": "AllowAll",
           "publicNetworkAccess": "Enabled",
-          "timeCreated": "2023-02-16T05:44:02.5661634\u002B00:00",
+          "timeCreated": "2023-04-03T05:51:13.5859122\u002B00:00",
           "provisioningState": "Succeeded",
           "diskState": "Unattached",
           "diskSizeBytes": 214748364800,
-          "uniqueId": "28c76413-74b8-4be4-a53b-2b6f62842721"
+          "uniqueId": "e7d645d2-18d0-413b-9753-d4a1fc74de6e"
         }
       }
     },
@@ -937,7 +937,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -945,7 +945,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:44 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -956,10 +956,10 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b49622cc-0b8d-4a54-a187-936f4d8c162f",
+        "x-ms-correlation-request-id": "99a8cad3-5916-4ce6-bb10-ba774cff3b7e",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetImages3Min;357,Microsoft.Compute/GetImages30Min;1797",
         "x-ms-ratelimit-remaining-subscription-reads": "11973",
-        "x-ms-routing-request-id": "WESTUS:20230216T054445Z:b49622cc-0b8d-4a54-a187-936f4d8c162f"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055155Z:99a8cad3-5916-4ce6-bb10-ba774cff3b7e"
       },
       "ResponseBody": {
         "name": "imagexbc8e2966",
@@ -995,7 +995,7 @@
         "Connection": "keep-alive",
         "Content-Length": "30",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "tags": {
@@ -1005,11 +1005,11 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Azure-AsyncNotification": "Enabled",
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/16377c27-ef5e-4e11-8a7f-e918e25aba43?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/833b27d1-ad56-4696-abcd-b5ec717494c6?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:45 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1020,10 +1020,10 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b7832d62-134e-49eb-b419-45dcf3aa1474",
+        "x-ms-correlation-request-id": "3d8075af-11af-469e-b8c4-289536bb151e",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/CreateImages3Min;38,Microsoft.Compute/CreateImages30Min;198",
         "x-ms-ratelimit-remaining-subscription-writes": "1190",
-        "x-ms-routing-request-id": "WESTUS:20230216T054445Z:b7832d62-134e-49eb-b419-45dcf3aa1474"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055155Z:3d8075af-11af-469e-b8c4-289536bb151e"
       },
       "ResponseBody": {
         "name": "imagexbc8e2966",
@@ -1054,13 +1054,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/16377c27-ef5e-4e11-8a7f-e918e25aba43?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/833b27d1-ad56-4696-abcd-b5ec717494c6?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1068,7 +1068,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:44:45 GMT",
+        "Date": "Mon, 03 Apr 2023 05:51:55 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1079,25 +1079,25 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "b6c79f51-d19d-4e71-ad87-060725a389f4",
+        "x-ms-correlation-request-id": "87da08bc-82d7-4186-b614-4889797923e2",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14997,Microsoft.Compute/GetOperation30Min;29997",
         "x-ms-ratelimit-remaining-subscription-reads": "11972",
-        "x-ms-routing-request-id": "WESTUS:20230216T054446Z:b6c79f51-d19d-4e71-ad87-060725a389f4"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055155Z:87da08bc-82d7-4186-b614-4889797923e2"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:44:45.2946626\u002B00:00",
+        "startTime": "2023-04-03T05:51:55.441985\u002B00:00",
         "status": "InProgress",
-        "name": "16377c27-ef5e-4e11-8a7f-e918e25aba43"
+        "name": "833b27d1-ad56-4696-abcd-b5ec717494c6"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/16377c27-ef5e-4e11-8a7f-e918e25aba43?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/833b27d1-ad56-4696-abcd-b5ec717494c6?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1105,7 +1105,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:15 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:25 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1116,16 +1116,16 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4eaeb8a2-1243-425f-8c4d-0a49d031bb53",
+        "x-ms-correlation-request-id": "9b8d5f55-d982-4c7b-8b46-6b7ce0526d4d",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14996,Microsoft.Compute/GetOperation30Min;29996",
         "x-ms-ratelimit-remaining-subscription-reads": "11971",
-        "x-ms-routing-request-id": "WESTUS:20230216T054516Z:4eaeb8a2-1243-425f-8c4d-0a49d031bb53"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055225Z:9b8d5f55-d982-4c7b-8b46-6b7ce0526d4d"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:44:45.2946626\u002B00:00",
-        "endTime": "2023-02-16T05:44:50.3729179\u002B00:00",
+        "startTime": "2023-04-03T05:51:55.441985\u002B00:00",
+        "endTime": "2023-04-03T05:52:00.5357107\u002B00:00",
         "status": "Succeeded",
-        "name": "16377c27-ef5e-4e11-8a7f-e918e25aba43"
+        "name": "833b27d1-ad56-4696-abcd-b5ec717494c6"
       }
     },
     {
@@ -1135,7 +1135,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1143,7 +1143,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:15 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:25 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1154,10 +1154,10 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "8a41fd4c-9ab7-4905-b9e0-1f67a7efbc9d",
+        "x-ms-correlation-request-id": "364b1291-a1a2-42fc-9327-da37a0e5ecff",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetImages3Min;355,Microsoft.Compute/GetImages30Min;1795",
         "x-ms-ratelimit-remaining-subscription-reads": "11970",
-        "x-ms-routing-request-id": "WESTUS:20230216T054516Z:8a41fd4c-9ab7-4905-b9e0-1f67a7efbc9d"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055226Z:364b1291-a1a2-42fc-9327-da37a0e5ecff"
       },
       "ResponseBody": {
         "name": "imagexbc8e2966",
@@ -1196,18 +1196,18 @@
         "Connection": "keep-alive",
         "Content-Length": "2",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {},
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0631b42f-7cf9-4d0d-ac19-ce9648b99c19?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/79f9abe4-e89c-4e89-b73c-9a880f1ef10b?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
         "Cache-Control": "no-cache",
         "Content-Length": "618",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:16 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:25 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0631b42f-7cf9-4d0d-ac19-ce9648b99c19?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/79f9abe4-e89c-4e89-b73c-9a880f1ef10b?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
         "Pragma": "no-cache",
         "Retry-After": "2",
         "Server": [
@@ -1216,11 +1216,11 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "23ed6199-1b66-4b6d-85b6-cd705cebcb22",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/CreateUpdateDisks3Min;998,Microsoft.Compute/CreateUpdateDisks30Min;7996",
+        "x-ms-correlation-request-id": "463de6a5-cbed-4943-8ef0-6b8be0ee3013",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/CreateUpdateDisks3Min;2998,Microsoft.Compute/CreateUpdateDisks30Min;24996",
         "x-ms-ratelimit-remaining-subscription-writes": "1189",
-        "x-ms-routing-request-id": "WESTUS:20230216T054516Z:23ed6199-1b66-4b6d-85b6-cd705cebcb22",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055226Z:463de6a5-cbed-4943-8ef0-6b8be0ee3013",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "name": "snapshotxbc8e2966",
@@ -1242,13 +1242,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0631b42f-7cf9-4d0d-ac19-ce9648b99c19?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/79f9abe4-e89c-4e89-b73c-9a880f1ef10b?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1256,10 +1256,9 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:16 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:26 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
-        "Retry-After": "10",
         "Server": [
           "Microsoft-HTTPAPI/2.0",
           "Microsoft-HTTPAPI/2.0"
@@ -1268,53 +1267,15 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "0ff87286-bfea-4935-a05c-c03838e4c5a3",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49983,Microsoft.Compute/GetOperation30Min;399974",
+        "x-ms-correlation-request-id": "8269c648-9ce8-47da-b54e-8e5f7218841d",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49980,Microsoft.Compute/GetOperation30Min;399974",
         "x-ms-ratelimit-remaining-subscription-reads": "11969",
-        "x-ms-routing-request-id": "WESTUS:20230216T054516Z:0ff87286-bfea-4935-a05c-c03838e4c5a3",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055226Z:8269c648-9ce8-47da-b54e-8e5f7218841d",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:45:16.5966831\u002B00:00",
-        "status": "InProgress",
-        "name": "0631b42f-7cf9-4d0d-ac19-ce9648b99c19"
-      }
-    },
-    {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/0631b42f-7cf9-4d0d-ac19-ce9648b99c19?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Encoding": "gzip",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:26 GMT",
-        "Expires": "-1",
-        "Pragma": "no-cache",
-        "Server": [
-          "Microsoft-HTTPAPI/2.0",
-          "Microsoft-HTTPAPI/2.0"
-        ],
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "Vary": "Accept-Encoding",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "65e8a7e9-503a-435c-a926-fd8ac57cffc1",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49982,Microsoft.Compute/GetOperation30Min;399973",
-        "x-ms-ratelimit-remaining-subscription-reads": "11968",
-        "x-ms-routing-request-id": "WESTUS:20230216T054526Z:65e8a7e9-503a-435c-a926-fd8ac57cffc1",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
-      },
-      "ResponseBody": {
-        "startTime": "2023-02-16T05:45:16.5966831\u002B00:00",
-        "endTime": "2023-02-16T05:45:16.7216907\u002B00:00",
+        "startTime": "2023-04-03T05:52:26.2729971\u002B00:00",
+        "endTime": "2023-04-03T05:52:26.3510563\u002B00:00",
         "status": "Succeeded",
         "properties": {
           "output": {
@@ -1330,7 +1291,7 @@
               "creationData": {
                 "createOption": "Copy",
                 "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexbc8e2966",
-                "sourceUniqueId": "1d12cd32-e070-4b59-bfd0-abe59399a47f"
+                "sourceUniqueId": "1b8ffa86-7a21-4bf1-a3dc-8477080f7f95"
               },
               "diskSizeGB": 200,
               "encryption": {
@@ -1339,15 +1300,15 @@
               "incremental": false,
               "networkAccessPolicy": "AllowAll",
               "publicNetworkAccess": "Enabled",
-              "timeCreated": "2023-02-16T05:44:02.5661634\u002B00:00",
+              "timeCreated": "2023-04-03T05:51:13.5859122\u002B00:00",
               "provisioningState": "Succeeded",
               "diskState": "Unattached",
               "diskSizeBytes": 214748364800,
-              "uniqueId": "28c76413-74b8-4be4-a53b-2b6f62842721"
+              "uniqueId": "e7d645d2-18d0-413b-9753-d4a1fc74de6e"
             }
           }
         },
-        "name": "0631b42f-7cf9-4d0d-ac19-ce9648b99c19"
+        "name": "79f9abe4-e89c-4e89-b73c-9a880f1ef10b"
       }
     },
     {
@@ -1357,7 +1318,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1365,7 +1326,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:26 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:26 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1376,11 +1337,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4acb72e4-c2ae-47a4-a7eb-fd67413b853e",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;14988,Microsoft.Compute/LowCostGet30Min;119982",
-        "x-ms-ratelimit-remaining-subscription-reads": "11967",
-        "x-ms-routing-request-id": "WESTUS:20230216T054526Z:4acb72e4-c2ae-47a4-a7eb-fd67413b853e",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-correlation-request-id": "57ba4bf9-1f25-4c54-b95c-73a5be11344d",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/LowCostGet3Min;14989,Microsoft.Compute/LowCostGet30Min;119983",
+        "x-ms-ratelimit-remaining-subscription-reads": "11968",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055226Z:57ba4bf9-1f25-4c54-b95c-73a5be11344d",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "name": "snapshotxbc8e2966",
@@ -1395,7 +1356,7 @@
           "creationData": {
             "createOption": "Copy",
             "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Compute/disks/disknamexbc8e2966",
-            "sourceUniqueId": "1d12cd32-e070-4b59-bfd0-abe59399a47f"
+            "sourceUniqueId": "1b8ffa86-7a21-4bf1-a3dc-8477080f7f95"
           },
           "diskSizeGB": 200,
           "encryption": {
@@ -1404,11 +1365,11 @@
           "incremental": false,
           "networkAccessPolicy": "AllowAll",
           "publicNetworkAccess": "Enabled",
-          "timeCreated": "2023-02-16T05:44:02.5661634\u002B00:00",
+          "timeCreated": "2023-04-03T05:51:13.5859122\u002B00:00",
           "provisioningState": "Succeeded",
           "diskState": "Unattached",
           "diskSizeBytes": 214748364800,
-          "uniqueId": "28c76413-74b8-4be4-a53b-2b6f62842721"
+          "uniqueId": "e7d645d2-18d0-413b-9753-d4a1fc74de6e"
         }
       }
     },
@@ -1421,7 +1382,7 @@
         "Connection": "keep-alive",
         "Content-Length": "45",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": {
         "access": "Read",
@@ -1429,12 +1390,12 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/a90a3fdf-d9d6-4398-955d-09aeba26d7f7?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/9fbed9d9-0f5e-4d29-83f6-82adc2c78558?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 16 Feb 2023 05:45:26 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:26 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/a90a3fdf-d9d6-4398-955d-09aeba26d7f7?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/9fbed9d9-0f5e-4d29-83f6-82adc2c78558?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
         "Pragma": "no-cache",
         "Server": [
           "Microsoft-HTTPAPI/2.0",
@@ -1442,22 +1403,22 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "8183c6a9-8e32-4018-979f-3878d3f949ba",
+        "x-ms-correlation-request-id": "589d7317-f004-434b-bb48-ceeba60835f1",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/HighCostSnapshotCreateHydrate3Min;998,Microsoft.Compute/HighCostSnapshotCreateHydrate30Min;7998",
         "x-ms-ratelimit-remaining-subscription-writes": "1197",
-        "x-ms-routing-request-id": "WESTUS:20230216T054527Z:8183c6a9-8e32-4018-979f-3878d3f949ba",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055226Z:589d7317-f004-434b-bb48-ceeba60835f1",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/a90a3fdf-d9d6-4398-955d-09aeba26d7f7?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/9fbed9d9-0f5e-4d29-83f6-82adc2c78558?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1465,7 +1426,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:26 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:26 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1476,32 +1437,70 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "76bb8819-4e09-427f-8249-4da05d2330fb",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49981,Microsoft.Compute/GetOperation30Min;399972",
-        "x-ms-ratelimit-remaining-subscription-reads": "11966",
-        "x-ms-routing-request-id": "WESTUS:20230216T054527Z:76bb8819-4e09-427f-8249-4da05d2330fb",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-correlation-request-id": "8d819630-9a01-4797-a0aa-c77cc8545a53",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49979,Microsoft.Compute/GetOperation30Min;399973",
+        "x-ms-ratelimit-remaining-subscription-reads": "11967",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055226Z:8d819630-9a01-4797-a0aa-c77cc8545a53",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:45:27.2059728\u002B00:00",
-        "endTime": "2023-02-16T05:45:27.4247213\u002B00:00",
+        "startTime": "2023-04-03T05:52:26.7416803\u002B00:00",
+        "status": "InProgress",
+        "name": "9fbed9d9-0f5e-4d29-83f6-82adc2c78558"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/9fbed9d9-0f5e-4d29-83f6-82adc2c78558?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 03 Apr 2023 05:52:56 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Server": [
+          "Microsoft-HTTPAPI/2.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "1b9cfb34-7ae0-4015-a255-3fd17a6094c3",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49981,Microsoft.Compute/GetOperation30Min;399971",
+        "x-ms-ratelimit-remaining-subscription-reads": "11966",
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055256Z:1b9cfb34-7ae0-4015-a255-3fd17a6094c3",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
+      },
+      "ResponseBody": {
+        "startTime": "2023-04-03T05:52:26.7416803\u002B00:00",
+        "endTime": "2023-04-03T05:52:26.8510546\u002B00:00",
         "status": "Succeeded",
         "properties": {
           "output": {
             "accessSAS": "accessSAS"
           }
         },
-        "name": "a90a3fdf-d9d6-4398-955d-09aeba26d7f7"
+        "name": "9fbed9d9-0f5e-4d29-83f6-82adc2c78558"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/a90a3fdf-d9d6-4398-955d-09aeba26d7f7?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/9fbed9d9-0f5e-4d29-83f6-82adc2c78558?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1509,7 +1508,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:27 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:56 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1520,11 +1519,11 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "7e315609-282d-4e90-823d-8e78eb659976",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49980,Microsoft.Compute/GetOperation30Min;399971",
+        "x-ms-correlation-request-id": "04267bd7-d0b9-4648-90e7-b43bc2b55295",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49980,Microsoft.Compute/GetOperation30Min;399970",
         "x-ms-ratelimit-remaining-subscription-reads": "11965",
-        "x-ms-routing-request-id": "WESTUS:20230216T054527Z:7e315609-282d-4e90-823d-8e78eb659976",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055257Z:04267bd7-d0b9-4648-90e7-b43bc2b55295",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
         "accessSAS": "accessSAS"
@@ -1538,17 +1537,17 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/fa540132-13db-4f02-b6b2-7797aa5e7a00?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/1f6d04e5-39bd-4dd0-ad31-777537867261?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 16 Feb 2023 05:45:27 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:56 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/fa540132-13db-4f02-b6b2-7797aa5e7a00?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/1f6d04e5-39bd-4dd0-ad31-777537867261?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
         "Pragma": "no-cache",
         "Server": [
           "Microsoft-HTTPAPI/2.0",
@@ -1556,22 +1555,22 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4ab5b58a-d2de-4a00-aa70-32ea048a0ccf",
+        "x-ms-correlation-request-id": "b87213e3-ad96-4841-8b33-797ea6585073",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/HighCostSnapshotCreateHydrate3Min;997,Microsoft.Compute/HighCostSnapshotCreateHydrate30Min;7997",
         "x-ms-ratelimit-remaining-subscription-writes": "1196",
-        "x-ms-routing-request-id": "WESTUS:20230216T054527Z:4ab5b58a-d2de-4a00-aa70-32ea048a0ccf",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055257Z:b87213e3-ad96-4841-8b33-797ea6585073",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/fa540132-13db-4f02-b6b2-7797aa5e7a00?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/1f6d04e5-39bd-4dd0-ad31-777537867261?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1579,7 +1578,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:27 GMT",
+        "Date": "Mon, 03 Apr 2023 05:52:56 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1590,26 +1589,26 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9b3f6e47-9402-4c0d-9125-2b785833b199",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49979,Microsoft.Compute/GetOperation30Min;399970",
+        "x-ms-correlation-request-id": "f817ad68-e662-4966-ae32-c7160f5632f3",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49979,Microsoft.Compute/GetOperation30Min;399969",
         "x-ms-ratelimit-remaining-subscription-reads": "11964",
-        "x-ms-routing-request-id": "WESTUS:20230216T054527Z:9b3f6e47-9402-4c0d-9125-2b785833b199",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055257Z:f817ad68-e662-4966-ae32-c7160f5632f3",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:45:27.7684826\u002B00:00",
+        "startTime": "2023-04-03T05:52:57.1946059\u002B00:00",
         "status": "InProgress",
-        "name": "fa540132-13db-4f02-b6b2-7797aa5e7a00"
+        "name": "1f6d04e5-39bd-4dd0-ad31-777537867261"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/fa540132-13db-4f02-b6b2-7797aa5e7a00?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/1f6d04e5-39bd-4dd0-ad31-777537867261?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1617,7 +1616,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:57 GMT",
+        "Date": "Mon, 03 Apr 2023 05:53:26 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1628,34 +1627,34 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "206a18d6-81e5-4c7b-80c9-531f1f4ff801",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49980,Microsoft.Compute/GetOperation30Min;399967",
+        "x-ms-correlation-request-id": "e13615d3-0e58-4000-a7bc-b6af7560428c",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49981,Microsoft.Compute/GetOperation30Min;399967",
         "x-ms-ratelimit-remaining-subscription-reads": "11963",
-        "x-ms-routing-request-id": "WESTUS:20230216T054558Z:206a18d6-81e5-4c7b-80c9-531f1f4ff801",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055327Z:e13615d3-0e58-4000-a7bc-b6af7560428c",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:45:27.7684826\u002B00:00",
-        "endTime": "2023-02-16T05:45:27.9092399\u002B00:00",
+        "startTime": "2023-04-03T05:52:57.1946059\u002B00:00",
+        "endTime": "2023-04-03T05:52:57.2883541\u002B00:00",
         "status": "Succeeded",
-        "name": "fa540132-13db-4f02-b6b2-7797aa5e7a00"
+        "name": "1f6d04e5-39bd-4dd0-ad31-777537867261"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/fa540132-13db-4f02-b6b2-7797aa5e7a00?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/1f6d04e5-39bd-4dd0-ad31-777537867261?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 16 Feb 2023 05:45:57 GMT",
+        "Date": "Mon, 03 Apr 2023 05:53:26 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1664,11 +1663,11 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "06112828-23cd-48b5-820f-75180864cfda",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49979,Microsoft.Compute/GetOperation30Min;399966",
+        "x-ms-correlation-request-id": "fcaa2b72-524c-4c91-9876-82fd599e29e3",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49980,Microsoft.Compute/GetOperation30Min;399966",
         "x-ms-ratelimit-remaining-subscription-reads": "11962",
-        "x-ms-routing-request-id": "WESTUS:20230216T054558Z:06112828-23cd-48b5-820f-75180864cfda",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055327Z:fcaa2b72-524c-4c91-9876-82fd599e29e3",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": null
     },
@@ -1680,18 +1679,18 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
         "Azure-AsyncNotification": "Enabled",
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/721d315f-ec13-4708-9a2d-dcf81ee7ea32?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/d754ce1b-4a37-4d75-b389-85caf34c8fcf?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 16 Feb 2023 05:45:57 GMT",
+        "Date": "Mon, 03 Apr 2023 05:53:26 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/721d315f-ec13-4708-9a2d-dcf81ee7ea32?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026monitor=true\u0026api-version=2022-11-01",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/d754ce1b-4a37-4d75-b389-85caf34c8fcf?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026monitor=true\u0026api-version=2022-11-01",
         "Pragma": "no-cache",
         "Server": [
           "Microsoft-HTTPAPI/2.0",
@@ -1699,21 +1698,21 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "32f4c9a1-6098-4cc5-869f-0280e9f2aa21",
+        "x-ms-correlation-request-id": "1e7863a4-39a0-4dd5-8531-d789e1b20c12",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/DeleteImages3Min;119,Microsoft.Compute/DeleteImages30Min;599",
         "x-ms-ratelimit-remaining-subscription-deletes": "14996",
-        "x-ms-routing-request-id": "WESTUS:20230216T054558Z:32f4c9a1-6098-4cc5-869f-0280e9f2aa21"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055327Z:1e7863a4-39a0-4dd5-8531-d789e1b20c12"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/721d315f-ec13-4708-9a2d-dcf81ee7ea32?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/d754ce1b-4a37-4d75-b389-85caf34c8fcf?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1721,7 +1720,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:45:57 GMT",
+        "Date": "Mon, 03 Apr 2023 05:53:27 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1732,25 +1731,25 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "f7f27824-5f6c-4514-b1e8-919a58a95f7c",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14995,Microsoft.Compute/GetOperation30Min;29995",
+        "x-ms-correlation-request-id": "520a19fd-0b92-4bda-acc6-06ad53941a45",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14994,Microsoft.Compute/GetOperation30Min;29994",
         "x-ms-ratelimit-remaining-subscription-reads": "11961",
-        "x-ms-routing-request-id": "WESTUS:20230216T054558Z:f7f27824-5f6c-4514-b1e8-919a58a95f7c"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055327Z:520a19fd-0b92-4bda-acc6-06ad53941a45"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:45:58.4686524\u002B00:00",
+        "startTime": "2023-04-03T05:53:27.66021\u002B00:00",
         "status": "InProgress",
-        "name": "721d315f-ec13-4708-9a2d-dcf81ee7ea32"
+        "name": "d754ce1b-4a37-4d75-b389-85caf34c8fcf"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/721d315f-ec13-4708-9a2d-dcf81ee7ea32?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/operations/d754ce1b-4a37-4d75-b389-85caf34c8fcf?p=c9e32605-d294-4c79-ab2e-5091dea588f3\u0026api-version=2022-11-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1758,7 +1757,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:46:28 GMT",
+        "Date": "Mon, 03 Apr 2023 05:53:56 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1769,16 +1768,16 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "74f65c56-d737-4861-b109-87178334cdd1",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14993,Microsoft.Compute/GetOperation30Min;29993",
+        "x-ms-correlation-request-id": "66a03d34-5f12-4d17-8be9-21d37bf11096",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;14992,Microsoft.Compute/GetOperation30Min;29992",
         "x-ms-ratelimit-remaining-subscription-reads": "11960",
-        "x-ms-routing-request-id": "WESTUS:20230216T054628Z:74f65c56-d737-4861-b109-87178334cdd1"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055357Z:66a03d34-5f12-4d17-8be9-21d37bf11096"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:45:58.4686524\u002B00:00",
-        "endTime": "2023-02-16T05:46:03.5469243\u002B00:00",
+        "startTime": "2023-04-03T05:53:27.66021\u002B00:00",
+        "endTime": "2023-04-03T05:53:32.7851704\u002B00:00",
         "status": "Succeeded",
-        "name": "721d315f-ec13-4708-9a2d-dcf81ee7ea32"
+        "name": "d754ce1b-4a37-4d75-b389-85caf34c8fcf"
       }
     },
     {
@@ -1789,17 +1788,17 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/d9c2877d-2b67-4f5e-bd0f-90f23e7328ef?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/050599cd-57d2-421b-bd06-feec141ace14?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 16 Feb 2023 05:46:29 GMT",
+        "Date": "Mon, 03 Apr 2023 05:53:57 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/d9c2877d-2b67-4f5e-bd0f-90f23e7328ef?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
+        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/050599cd-57d2-421b-bd06-feec141ace14?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026monitor=true\u0026api-version=2022-07-02",
         "Pragma": "no-cache",
         "Server": [
           "Microsoft-HTTPAPI/2.0",
@@ -1807,22 +1806,22 @@
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "c61c39e4-21b1-4580-9e5f-51917ef60c71",
+        "x-ms-correlation-request-id": "27f7dcf1-d7ee-421a-814b-de6441b36dd2",
         "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/DeleteDisks3Min;2999,Microsoft.Compute/DeleteDisks30Min;23998",
         "x-ms-ratelimit-remaining-subscription-deletes": "14995",
-        "x-ms-routing-request-id": "WESTUS:20230216T054629Z:c61c39e4-21b1-4580-9e5f-51917ef60c71",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055358Z:27f7dcf1-d7ee-421a-814b-de6441b36dd2",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/d9c2877d-2b67-4f5e-bd0f-90f23e7328ef?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/050599cd-57d2-421b-bd06-feec141ace14?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1830,7 +1829,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:46:29 GMT",
+        "Date": "Mon, 03 Apr 2023 05:53:57 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1841,26 +1840,26 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "7b466201-0571-4795-aa67-9e57c5c86456",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49978,Microsoft.Compute/GetOperation30Min;399963",
+        "x-ms-correlation-request-id": "a03511ba-67b4-4997-b7b7-21a487b92c20",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49980,Microsoft.Compute/GetOperation30Min;399963",
         "x-ms-ratelimit-remaining-subscription-reads": "11959",
-        "x-ms-routing-request-id": "WESTUS:20230216T054629Z:7b466201-0571-4795-aa67-9e57c5c86456",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055358Z:a03511ba-67b4-4997-b7b7-21a487b92c20",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:46:29.3148541\u002B00:00",
+        "startTime": "2023-04-03T05:53:58.053584\u002B00:00",
         "status": "InProgress",
-        "name": "d9c2877d-2b67-4f5e-bd0f-90f23e7328ef"
+        "name": "050599cd-57d2-421b-bd06-feec141ace14"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/d9c2877d-2b67-4f5e-bd0f-90f23e7328ef?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Compute/locations/eastus/DiskOperations/050599cd-57d2-421b-bd06-feec141ace14?p=d911c7ed-ab64-4a18-819c-23c3fc88d285\u0026api-version=2022-07-02",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1031-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-azure-mgmt-compute/29.2.0 Python/3.8.16 (Linux-5.15.0-1034-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1868,7 +1867,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 05:46:59 GMT",
+        "Date": "Mon, 03 Apr 2023 05:54:28 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": [
@@ -1879,17 +1878,17 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "05ca9a68-715c-4c29-a1b1-ffdd76f298dd",
-        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49978,Microsoft.Compute/GetOperation30Min;399961",
+        "x-ms-correlation-request-id": "e62b6431-5591-4a2a-82dd-9818bbef13fc",
+        "x-ms-ratelimit-remaining-resource": "Microsoft.Compute/GetOperation3Min;49984,Microsoft.Compute/GetOperation30Min;399961",
         "x-ms-ratelimit-remaining-subscription-reads": "11958",
-        "x-ms-routing-request-id": "WESTUS:20230216T054659Z:05ca9a68-715c-4c29-a1b1-ffdd76f298dd",
-        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133114072202335172"
+        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230403T055428Z:e62b6431-5591-4a2a-82dd-9818bbef13fc",
+        "x-ms-served-by": "d911c7ed-ab64-4a18-819c-23c3fc88d285_133116552673310925"
       },
       "ResponseBody": {
-        "startTime": "2023-02-16T05:46:29.3148541\u002B00:00",
-        "endTime": "2023-02-16T05:46:29.5648538\u002B00:00",
+        "startTime": "2023-04-03T05:53:58.053584\u002B00:00",
+        "endTime": "2023-04-03T05:53:58.2098665\u002B00:00",
         "status": "Succeeded",
-        "name": "d9c2877d-2b67-4f5e-bd0f-90f23e7328ef"
+        "name": "050599cd-57d2-421b-bd06-feec141ace14"
       }
     }
   ],

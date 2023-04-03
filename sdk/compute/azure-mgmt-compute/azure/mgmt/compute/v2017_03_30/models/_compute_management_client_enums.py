@@ -37,6 +37,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FROM_IMAGE = "FromImage"
     IMPORT = "Import"
     COPY = "Copy"
+    IMPORT_ENUM = "Import"
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -6,20 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._disks_operations import DisksOperations
-from ._snapshots_operations import SnapshotsOperations
-from ._disk_encryption_sets_operations import DiskEncryptionSetsOperations
-from ._disk_accesses_operations import DiskAccessesOperations
-from ._disk_restore_point_operations import DiskRestorePointOperations
-from ._galleries_operations import GalleriesOperations
-from ._gallery_images_operations import GalleryImagesOperations
-from ._gallery_image_versions_operations import GalleryImageVersionsOperations
-from ._gallery_applications_operations import GalleryApplicationsOperations
-from ._gallery_application_versions_operations import GalleryApplicationVersionsOperations
-from ._gallery_sharing_profile_operations import GallerySharingProfileOperations
-from ._shared_galleries_operations import SharedGalleriesOperations
-from ._shared_gallery_images_operations import SharedGalleryImagesOperations
-from ._shared_gallery_image_versions_operations import SharedGalleryImageVersionsOperations
+from ._operations import DisksOperations
+from ._operations import SnapshotsOperations
+from ._operations import DiskEncryptionSetsOperations
+from ._operations import DiskAccessesOperations
+from ._operations import DiskRestorePointOperations
+from ._operations import GalleriesOperations
+from ._operations import GalleryImagesOperations
+from ._operations import GalleryImageVersionsOperations
+from ._operations import GalleryApplicationsOperations
+from ._operations import GalleryApplicationVersionsOperations
+from ._operations import GallerySharingProfileOperations
+from ._operations import SharedGalleriesOperations
+from ._operations import SharedGalleryImagesOperations
+from ._operations import SharedGalleryImageVersionsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

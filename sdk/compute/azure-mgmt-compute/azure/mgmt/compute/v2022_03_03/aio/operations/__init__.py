@@ -6,18 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._galleries_operations import GalleriesOperations
-from ._gallery_images_operations import GalleryImagesOperations
-from ._gallery_image_versions_operations import GalleryImageVersionsOperations
-from ._gallery_applications_operations import GalleryApplicationsOperations
-from ._gallery_application_versions_operations import GalleryApplicationVersionsOperations
-from ._gallery_sharing_profile_operations import GallerySharingProfileOperations
-from ._shared_galleries_operations import SharedGalleriesOperations
-from ._shared_gallery_images_operations import SharedGalleryImagesOperations
-from ._shared_gallery_image_versions_operations import SharedGalleryImageVersionsOperations
-from ._community_galleries_operations import CommunityGalleriesOperations
-from ._community_gallery_images_operations import CommunityGalleryImagesOperations
-from ._community_gallery_image_versions_operations import CommunityGalleryImageVersionsOperations
+from ._operations import GalleriesOperations
+from ._operations import GalleryImagesOperations
+from ._operations import GalleryImageVersionsOperations
+from ._operations import GalleryApplicationsOperations
+from ._operations import GalleryApplicationVersionsOperations
+from ._operations import GallerySharingProfileOperations
+from ._operations import SharedGalleriesOperations
+from ._operations import SharedGalleryImagesOperations
+from ._operations import SharedGalleryImageVersionsOperations
+from ._operations import CommunityGalleriesOperations
+from ._operations import CommunityGalleryImagesOperations
+from ._operations import CommunityGalleryImageVersionsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import

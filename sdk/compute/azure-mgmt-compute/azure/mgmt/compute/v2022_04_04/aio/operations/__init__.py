@@ -6,11 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._cloud_service_role_instances_operations import CloudServiceRoleInstancesOperations
-from ._cloud_service_roles_operations import CloudServiceRolesOperations
-from ._cloud_services_operations import CloudServicesOperations
-from ._cloud_services_update_domain_operations import CloudServicesUpdateDomainOperations
-from ._cloud_service_operating_systems_operations import CloudServiceOperatingSystemsOperations
+from ._operations import CloudServiceRoleInstancesOperations
+from ._operations import CloudServiceRolesOperations
+from ._operations import CloudServicesOperations
+from ._operations import CloudServicesUpdateDomainOperations
+from ._operations import CloudServiceOperatingSystemsOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
