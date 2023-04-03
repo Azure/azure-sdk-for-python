@@ -395,7 +395,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         ...
 
     @abc.abstractmethod
-    async def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
+    def iter_raw(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will not decompress in the process.
 
         :return: An async iterator of bytes from the response
@@ -404,7 +404,7 @@ class AsyncHttpResponse(_HttpResponseBase, AsyncContextManager["AsyncHttpRespons
         raise NotImplementedError()
 
     @abc.abstractmethod
-    async def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
+    def iter_bytes(self, **kwargs: Any) -> AsyncStreamable[bytes]:
         """Asynchronously iterates over the response's bytes. Will decompress in the process.
 
         :return: An async iterator of bytes from the response
