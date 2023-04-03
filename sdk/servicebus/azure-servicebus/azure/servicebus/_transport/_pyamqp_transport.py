@@ -305,12 +305,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             for key in _LONG_ANNOTATIONS:
                 if key in annotated_message.annotations:
                     annotations[key] = amqp_long_value(annotated_message.annotations[key])
-        
+
         if annotated_message.application_properties:
             for key, val in annotated_message.application_properties.items():
-                # This is being done to bring parity with uamqp. uamqp will decode bytes to str in application properties
-                # and this will match that behavior
-                if type(val) == bytes:
+                # This is being done to bring parity with uamqp. uamqp will decode bytes to str in
+                # application properties and this will match that behavior
+                if isinstance(val, bytes):
                     annotated_message.application_properties[key] = val.decode("utf-8")
 
         message_dict = {
