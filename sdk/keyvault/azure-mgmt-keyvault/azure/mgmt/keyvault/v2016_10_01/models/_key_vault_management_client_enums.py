@@ -35,6 +35,7 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANAGEISSUERS = "manageissuers"
     RECOVER = "recover"
     PURGE = "purge"
+    IMPORT_ENUM = "import"
 
 
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -42,18 +43,6 @@ class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     RECOVER = "recover"
     DEFAULT = "default"
-
-
-class Enum5(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum5."""
-
-    RESOURCE_TYPE_EQ_MICROSOFT_KEY_VAULT_VAULTS_ = "resourceType eq 'Microsoft.KeyVault/vaults'"
-
-
-class Enum6(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum6."""
-
-    TWO_THOUSAND_FIFTEEN11_01 = "2015-11-01"
 
 
 class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -75,6 +64,7 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORE = "restore"
     RECOVER = "recover"
     PURGE = "purge"
+    IMPORT_ENUM = "import"
 
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
