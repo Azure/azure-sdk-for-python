@@ -3056,7 +3056,7 @@ class DocumentImage:
         )
 
 
-class DocumentPage:
+class DocumentPage:  # pylint: disable=too-many-instance-attributes
     """Content and layout elements extracted from a page of the input.
 
     .. versionadded:: 2023-02-28-preview
@@ -3116,10 +3116,10 @@ class DocumentPage:
     @classmethod
     def _from_generated(cls, page):
         kind = page.kind if hasattr(page, "kind") else None
-        annotations = DocumentAnnotation._from_generated(page.annotations) if hasattr(page, "annotations") else []
-        barcodes = DocumentBarcode._from_generated(page.barcodes) if hasattr(page, "barcodes") else []
-        formulas = DocumentFormula._from_generated(page.formulas) if hasattr(page, "formulas") else []
-        images = DocumentImage._from_generated(page.images) if hasattr(page, "images") else []
+        annotations = page.annotations if hasattr(page, "annotations") else None
+        barcodes = page.barcodes if hasattr(page, "barcodes") else None
+        formulas = page.formulas if hasattr(page, "formulas") else None
+        images = page.images if hasattr(page, "images") else None
 
         return cls(
             page_number=page.page_number,
@@ -3142,10 +3142,30 @@ class DocumentPage:
             else [],
             spans=prepare_document_spans(page.spans),
             kind=kind,
-            annotations=annotations,
-            barcodes=barcodes,
-            formulas=formulas,
-            images=images,
+            annotations=[
+                DocumentAnnotation._from_generated(annotation)
+                for annotation in annotations
+            ]
+            if annotations
+            else [],
+            barcodes=[
+                DocumentBarcode._from_generated(barcode)
+                for barcode in barcodes
+            ]
+            if barcodes
+            else [],
+            formulas=[
+                DocumentBarcode._from_generated(formula)
+                for formula in formulas
+            ]
+            if formulas
+            else [],
+            images=[
+                DocumentImage._from_generated(image)
+                for image in images
+            ]
+            if images
+            else [],
         )
 
     def __repr__(self) -> str:
