@@ -10,7 +10,11 @@ from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
-from ._generated.v2023_02_28_preview.models import DocumentModelDetails as ModelDetails, Error
+from ._generated.v2023_02_28_preview.models import (
+    DocumentModelDetails as ModelDetails,
+    DocumentClassifierDetails as ClassifierDetails,
+    Error
+)
 from ._generated.models import ClassifierDocumentTypeDetails
 from ._helpers import (
     adjust_value_type,
@@ -3597,7 +3601,8 @@ class OperationSummary:
     created, and more.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
+    the model can be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
+    :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
     """
     operation_id: str
@@ -3613,7 +3618,7 @@ class OperationSummary:
     """Date and time (UTC) when the operation was last updated."""
     kind: str
     """Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo"."""
+        "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild"."""
     resource_location: str
     """URL of the resource targeted by this operation."""
     api_version: Optional[str]
@@ -3694,7 +3699,8 @@ class OperationDetails(OperationSummary):
     error of the operation if it has completed.
 
     Note that operation information only persists for 24 hours. If the operation was successful,
-    the model can also be accessed using the :func:`~get_document_model` or :func:`~list_document_models` APIs.
+    the model can also be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
+    :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
     """
     operation_id: str
     """Operation ID."""
@@ -3709,16 +3715,15 @@ class OperationDetails(OperationSummary):
     """Date and time (UTC) when the operation was last updated."""
     kind: str
     """Type of operation. Possible values include: "documentModelBuild",
-        "documentModelCompose", "documentModelCopyTo"."""
+        "documentModelCompose", "documentModelCopyTo", "documentClassifierBuild"."""
     resource_location: str
     """URL of the resource targeted by this operation."""
     error: Optional[DocumentAnalysisError]
     """Encountered error, includes the error code, message, and details for why
         the operation failed."""
-    result: Optional[DocumentModelDetails]
-    """Operation result upon success. Returns a DocumentModelDetails which contains
-        all information about the model including the doc types
-        and fields it can analyze from documents."""
+    result: Optional[Union[DocumentModelDetails, DocumentClassifierDetails]]
+    """Operation result upon success. Returns a DocumentModelDetails or DocumentClassifierDetails
+        which contains all the information about the model."""
     api_version: Optional[str]
     """API version used to create this operation."""
     tags: Optional[Dict[str, str]]
@@ -3762,6 +3767,14 @@ class OperationDetails(OperationSummary):
         :return: OperationDetails
         :rtype: OperationDetails
         """
+
+        kind = data.get("kind", None)
+        if kind == "documentClassifierBuild":
+            result = DocumentClassifierDetails.from_dict(data.get("result")) \
+                if data.get("result") else None  # type: ignore
+        else:
+            result = DocumentModelDetails.from_dict(data.get("result")) \
+                if data.get("result") else None  # type: ignore
         return cls(
             operation_id=data.get("operation_id", None),
             status=data.get("status", None),
@@ -3770,7 +3783,7 @@ class OperationDetails(OperationSummary):
             last_updated_on=data.get("last_updated_on", None),
             kind=data.get("kind", None),
             resource_location=data.get("resource_location", None),
-            result=DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None,  # type: ignore
+            result=result,
             error=DocumentAnalysisError.from_dict(data.get("error")) if data.get("error") else None,  # type: ignore
             api_version=data.get("api_version", None),
             tags=data.get("tags", {}),
@@ -3779,6 +3792,12 @@ class OperationDetails(OperationSummary):
     @classmethod
     def _from_generated(cls, op, api_version):  # pylint: disable=arguments-differ
         deserialize = _get_deserialize(api_version)
+        if op.kind == "documentClassifierBuild":
+            result = DocumentClassifierDetails._from_generated(deserialize(ClassifierDetails, op.result)) \
+                if op.result else None
+        else:
+            result = DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result)) \
+                if op.result else None
         return cls(
             operation_id=op.operation_id,
             status=op.status,
@@ -3787,8 +3806,7 @@ class OperationDetails(OperationSummary):
             last_updated_on=op.last_updated_date_time,
             kind=op.kind,
             resource_location=op.resource_location,
-            result=DocumentModelDetails._from_generated(deserialize(ModelDetails, op.result))
-            if op.result else None,
+            result=result,
             error=DocumentAnalysisError._from_generated(deserialize(Error, op.error))
             if op.error else None,
             api_version=op.api_version,
