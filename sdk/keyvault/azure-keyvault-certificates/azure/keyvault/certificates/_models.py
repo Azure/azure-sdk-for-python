@@ -1105,7 +1105,8 @@ class CertificateIssuer(object):
         provider: "Optional[str]",
         attributes: "Optional[models.IssuerAttributes]" = None,
         account_id: "Optional[str]" = None,
-        password: "Optional[str]" = None, # [SuppressMessage("Microsoft.Security", "CS001:SecretInline", Justification="Typedef, not string.")]
+        # [SuppressMessage("Microsoft.Security", "CS001:SecretInNextLine", Justification="Typedef, not string.")]
+        password: "Optional[str]" = None,
         organization_id: "Optional[str]" = None,
         admin_contacts: "Optional[List[AdministratorContact]]" = None,
         **kwargs,
