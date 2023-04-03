@@ -86,7 +86,7 @@ class EventGridEvent(InternalEventGridEvent):
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
-        kwargs.setdefault("event_time", dt.datetime.utcnow().isoformat())
+        kwargs.setdefault("event_time", dt.datetime.now(dt.timezone.utc).isoformat())
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
