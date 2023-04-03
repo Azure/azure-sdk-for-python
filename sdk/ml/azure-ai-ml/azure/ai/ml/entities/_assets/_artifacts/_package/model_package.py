@@ -108,7 +108,7 @@ class PackageInputPathUrl:
 
     :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
     :type input_path_type: str
-    :param url: The url of the input path. e.g. https://<>/data/<>/versions/<>
+    :param url: The url of the input path. e.g. azureml://subscriptions/<>/resourceGroups/<>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>
     :type url: str
     """
 
@@ -263,7 +263,6 @@ class ModelPackage(Resource, PackageRequest):
         return target_environment_id
 
     def _to_rest_object(self) -> PackageRequest:
-
         code = None
 
         if (

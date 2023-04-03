@@ -114,7 +114,6 @@ class BatchDeployment(Deployment):  # pylint: disable=too-many-instance-attribut
         instance_count: Optional[int] = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
-
         self.deployment_type = kwargs.pop("type", "Model")
         self.job_definition = kwargs.pop("job_definition", None)
 

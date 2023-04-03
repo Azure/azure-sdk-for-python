@@ -463,7 +463,6 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         max_iterations: int,
         raise_error=False,
     ) -> MutableValidationResult:
-
         validation_result = cls._create_empty_validation_result()
 
         # saved values for validation later on
