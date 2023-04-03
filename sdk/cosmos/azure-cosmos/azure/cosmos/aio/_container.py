@@ -759,3 +759,26 @@ class ContainerProxy(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
+
+    @distributed_trace
+    async def delete_all_items_by_partition_key(
+        self,
+        partition_key,  # type: Any
+        **kwargs  # type: Any
+    ) -> None:
+        """Exposes an API to delete all items with a single partition key without the user having
+                 to explicitly call delete on each record in the partition key.
+
+        :param partition_key: Partition key for the items to be deleted.
+        :type partition_key: Any
+        :rtype: None
+        """
+        request_options = _build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
+        if partition_key is not None:
+            request_options["partitionKey"] = self._set_partition_key(partition_key)
+
+        await self.client_connection.DeleteAllItemsByPartitionKey(collection_link=self.container_link,
+                                                                  options=request_options, **kwargs)
+        if response_hook:
+            response_hook(self.client_connection.last_response_headers, None)

@@ -241,6 +241,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
+        resource_type = _internal_resourcetype(resource_type)
         authorization = auth._get_authorization_header(
             cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
         )
@@ -751,3 +752,15 @@ def _replace_throughput(throughput: Union[int, ThroughputProperties], new_throug
             new_throughput_properties["content"]["offerThroughput"] = throughput
         else:
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties")
+
+
+def _internal_resourcetype(resource_type: str) -> str:
+    """Partitionkey is used as the resource type for deleting all items by partition key in
+    other SDKs, but the colls resource type needs to be sent for the feature to work. In order to keep it consistent
+    with other SDKs, we switch it here.
+    """
+    match (resource_type.lower()):
+        case "partitionkey":
+            return "colls"
+        case _:
+            return resource_type

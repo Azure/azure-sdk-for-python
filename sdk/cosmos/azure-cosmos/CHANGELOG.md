@@ -4,6 +4,7 @@
 #### Features Added
  - Added `correlated_activity_id` for query operations
  - Added cross regional retries for Service Unavailable/Request Timeouts for read/Query Plan operations
+ - Added **preview** delete all items by partition key functionality.
 #### Breaking Changes
 
 #### Bugs Fixed

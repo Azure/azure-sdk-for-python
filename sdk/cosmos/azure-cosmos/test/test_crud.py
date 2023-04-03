@@ -2559,6 +2559,42 @@ class CRUDTests(unittest.TestCase):
         read_permission = created_user.get_permission(created_permission.properties)
         self.assertEqual(read_permission.id, created_permission.id)
 
+    def test_delete_all_items_by_partition_key(self):
+        # create database
+        created_db = self.databaseForTest
+
+        # create container
+        created_collection = created_db.create_container(
+            id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path='/pk', kind='Hash')
+        )
+        # Create two partition keys
+        partition_key1 = "{}-{}".format("Partition Key 1", str(uuid.uuid4()))
+        partition_key2 = "{}-{}".format("Partition Key 2", str(uuid.uuid4()))
+
+        # add items for partition key 1
+        for i in range(1, 3):
+            created_collection.upsert_item(
+                dict(id="item{}".format(i), pk=partition_key1)
+            )
+
+        # add items for partition key 2
+        pk2_list = []
+        for i in range(1, 3):
+            pk2_list.append(created_collection.upsert_item(
+                dict(id="item{}".format(i), pk=partition_key2)
+            ))
+
+        # delete all items for partition key 1
+        created_collection.delete_all_items_by_partition_key(partition_key1)
+
+        # check that only items from partition key 1 have been deleted
+        items = created_collection.read_all_items()
+
+        self.assertCountEqual(pk2_list, items)
+
+        created_db.delete_container(created_collection)
+
     # Temporarily commenting analytical storage tests until emulator support comes.
     # def test_create_container_with_analytical_store_off(self):
     #     # don't run test, for the time being, if running against the emulator

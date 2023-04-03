@@ -1751,8 +1751,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
 
-    def DeleteAllItemsByPartitionKey(self, partition_key_link, typ, id, initial_headers=None, options=None, **kwargs):
-        """Deletes a collection.
+    def DeleteAllItemsByPartitionKey(self, collection_link, options=None, **kwargs) -> None:
+        """Exposes an API to delete all items with a single partition key without the user having
+         to explicitly call delete on each record in the partition key.
 
         :param str collection_link:
             The link to the document collection.
@@ -1760,29 +1761,22 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             The request options for the request.
 
         :return:
-            The deleted Collection.
+            None
         :rtype:
-            dict
-
+            None
         """
         if options is None:
             options = {}
 
-        path = base.GetPathFromLink(partition_key_link)
-        partition_key_delete_path = path + '{}/{}'.format("operations", "partitionkeydelete")
-        print(partition_key_delete_path)
-        collection_id = base.GetResourceIdOrFullNameFromLink(partition_key_link)
-        initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", partition_key_delete_path, id, typ, options)
-        # Create will use WriteEndpoint since it uses POST operation
-
-        request_params = _request_object.RequestObject(typ, documents._OperationType.Delete)
-        result, self.last_response_headers = self.__Post(path=partition_key_delete_path, request_params=request_params,
-                                                         body=None, req_headers=headers, **kwargs)
-
-        # update session for write request
-        self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
-        return result
+        path = base.GetPathFromLink(collection_link)
+        #Specified url to perform background operation to delete all items by partition key
+        path = '{}{}/{}'.format(path, "operations", "partitionkeydelete")
+        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
+        initial_headers = dict(self.default_headers)
+        headers = base.GetHeaders(self, initial_headers, "post", path, collection_id, "partitionkey", options)
+        request_params = _request_object.RequestObject("partitionkey", documents._OperationType.Delete)
+        result, self.last_response_headers = self.__Post(path=path, request_params=request_params,
+                                                         req_headers=headers, body=None, **kwargs)
 
     def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
         """Replaces a trigger and returns it.
