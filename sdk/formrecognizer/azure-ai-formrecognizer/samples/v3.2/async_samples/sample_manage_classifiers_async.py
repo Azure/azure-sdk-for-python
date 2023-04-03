@@ -25,6 +25,7 @@ USAGE:
 import os
 import asyncio
 
+
 async def sample_manage_classifiers_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.exceptions import ResourceNotFoundError
@@ -47,10 +48,10 @@ async def sample_manage_classifiers_async():
                         prefix="IRS-1040-A/train"
                     )
                 ),
-                "IRS-1040-B": ClassifierDocumentTypeDetails(
+                "IRS-1040-D": ClassifierDocumentTypeDetails(
                     azure_blob_source=AzureBlobContentSource(
                         container_url=container_sas_url,
-                        prefix="IRS-1040-B/train"
+                        prefix="IRS-1040-D/train"
                     )
                 )
             },

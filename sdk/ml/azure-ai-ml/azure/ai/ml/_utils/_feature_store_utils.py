@@ -6,20 +6,19 @@
 
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import TYPE_CHECKING, Dict, Optional, Union
+from typing import TYPE_CHECKING, Dict, Union
 from urllib.parse import urlparse
 
 import yaml
 
-from azure.ai.ml._restclient.v2023_02_01_preview.operations import (  # pylint: disable = unused-import
+from .._artifacts._artifact_utilities import get_datastore_info, get_storage_client
+from .._restclient.v2023_02_01_preview.operations import (  # pylint: disable = unused-import
     FeaturesetContainersOperations,
     FeaturesetVersionsOperations,
     FeaturestoreEntityContainersOperations,
     FeaturestoreEntityVersionsOperations,
 )
-from azure.ai.ml._artifacts._artifact_utilities import get_datastore_info, get_storage_client
-from azure.ai.ml.operations._datastore_operations import DatastoreOperations
-
+from ..operations._datastore_operations import DatastoreOperations
 from ._storage_utils import AzureMLDatastorePathUri
 from .utils import load_yaml
 

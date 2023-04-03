@@ -105,7 +105,7 @@ class MedianStoppingPolicy(EarlyTerminationPolicy):
         self,
         *,
         delay_evaluation: int = 0,
-        evaluation_interval: int = 0,
+        evaluation_interval: int = 1,
     ) -> None:
         super().__init__(delay_evaluation=delay_evaluation, evaluation_interval=evaluation_interval)
         self.type = camel_to_snake(EarlyTerminationPolicyType.MEDIAN_STOPPING)
