@@ -99,7 +99,7 @@ class CodeOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
             else:
-                path, ignore_file, asset_hash = _get_snapshot_path_info(code)
+                _, _, asset_hash = _get_snapshot_path_info(code)
                 existing_asset = self._version_operation.list(
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
