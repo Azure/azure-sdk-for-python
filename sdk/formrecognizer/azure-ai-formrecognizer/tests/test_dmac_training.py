@@ -289,11 +289,20 @@ class TestDMACTraining(FormRecognizerTest):
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
-    def test_build_model_file_list_source(self, client, formrecognizer_storage_container_sas_url, **kwargs):
+    def test_build_model_file_list_source(self, client, formrecognizer_selection_mark_storage_container_sas_url, **kwargs):
         poller = client.begin_build_document_model(
             build_mode="template",
-            blob_container_url=formrecognizer_storage_container_sas_url,
-            file_list=".jsonl"
+            blob_container_url=formrecognizer_selection_mark_storage_container_sas_url,
+            file_list="filelist.jsonl"
         )
-        result = poller.result()
-        print(result)
+        model = poller.result()
+
+        assert model.model_id
+        assert model.description is None
+        assert model.created_on
+        for name, doc_type in model.doc_types.items():
+            assert name
+            for key, field in doc_type.field_schema.items():
+                assert key
+                assert field["type"]
+                assert doc_type.field_confidence[key] is not None
