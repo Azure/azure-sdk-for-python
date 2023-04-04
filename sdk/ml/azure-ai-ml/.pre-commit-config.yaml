@@ -1,0 +1,7 @@
+files: sdk/ml/
+repos:
+-   repo: https://github.com/psf/black
+    rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
+    hooks:
+    -   id: black
+        args: [--config=eng/black-pyproject.toml]
