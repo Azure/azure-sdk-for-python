@@ -33,7 +33,7 @@ class ScheduleSchema(ResourceSchema):
     provisioning_state = fields.Str(dump_only=True)
     properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
 
-q
+
 class JobScheduleSchema(ScheduleSchema):
     create_job = UnionField(
         [
