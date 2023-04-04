@@ -267,7 +267,6 @@ section of the project.
 
 ## Next steps
 
-The following section provides several code snippets illustrating common patterns used in the Document Translation Python client library.
 More samples can be found under the [samples][samples] directory.
 
 ## Contributing
