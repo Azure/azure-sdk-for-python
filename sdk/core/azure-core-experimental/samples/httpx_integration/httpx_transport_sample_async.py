@@ -36,9 +36,7 @@ async def sample_abstractive_summarization_async() -> None:
                 print("Summaries abstracted:")
                 [print(f"{summary.text}\n") for summary in result.summaries]
             elif result.is_error is True:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    result.error.code, result.error.message
-                ))
+                print("...Is an error with code '{}' and message '{}'".format(result.error.code, result.error.message))
     # [END abstractive_summary_async]
 
 
@@ -46,5 +44,5 @@ async def main():
     await sample_abstractive_summarization_async()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

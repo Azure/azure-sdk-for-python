@@ -34,11 +34,10 @@ from azure.core.rest import HttpRequest
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl
 
 
-
 class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
     def __init__(
-            self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
-        ) -> None:
+        self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
+    ) -> None:
         super().__init__(
             request=request,
             internal_response=httpx_response,
@@ -58,6 +57,7 @@ class AsyncHttpXTransportResponse(AsyncHttpResponseImpl):
     async def load_body(self) -> None:
         self._content = await self.internal_response.read()
 
+
 # pylint: disable=unused-argument
 class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
     """Generator for streaming response data.
@@ -67,6 +67,7 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
+
     def __init__(self, pipeline: Pipeline, response: AsyncHttpXTransportResponse, *_, **kwargs) -> None:
         self.pipeline = pipeline
         self.response = response

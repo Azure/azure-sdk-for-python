@@ -54,6 +54,7 @@ class HttpXTransportResponse(HttpResponseImpl):
     def stream_download(self, pipeline: Pipeline, **kwargs) -> Iterator[bytes]:
         return HttpXStreamDownloadGenerator(pipeline, self, **kwargs)
 
+
 # pylint: disable=unused-argument
 class HttpXStreamDownloadGenerator:
     """Generator for streaming response data.
@@ -63,6 +64,7 @@ class HttpXStreamDownloadGenerator:
     :keyword bool decompress: If True which is default, will attempt to decode the body based
         on the *content-encoding* header.
     """
+
     def __init__(self, pipeline: Pipeline, response: HttpXTransportResponse, **kwargs) -> None:
         self.pipeline = pipeline
         self.response = response
@@ -137,4 +139,3 @@ class HttpXTransport(HttpTransport):
             raise ServiceRequestError(err, error=err)
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
-    
