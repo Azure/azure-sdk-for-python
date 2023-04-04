@@ -34,7 +34,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ProvisioningServiceClient(object):
+class ProvisioningServiceClient(object):  # pylint: disable=client-accepts-api-version-keyword
     """
     API for connecting to, and conducting operations on a Device Provisioning Service instance
 

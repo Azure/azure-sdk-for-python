@@ -18,21 +18,22 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     UserAgentPolicy,
 )
-
-from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
 from azure.iot.deviceprovisioningservice._generated import VERSION
 from azure.iot.deviceprovisioningservice._generated.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
+from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
+
+from ..util.connection_strings import parse_iot_dps_connection_string
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ..util.connection_strings import parse_iot_dps_connection_string
 
-
-class ProvisioningServiceClient(object):
+class ProvisioningServiceClient(
+    object
+):  # pylint: disable=client-accepts-api-version-keyword
     """
     API for connecting to, and conducting operations on a Device Provisioning Service instance
 
