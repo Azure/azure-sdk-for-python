@@ -287,18 +287,7 @@ async for item in config_settings:
 
 ## Troubleshooting
 
-### Logging
-
-This SDK uses Python standard logging library.
-You can configure logging print out debugging information to the stdout or anywhere you want.
-
-```python
-import logging
-
-logging.basicConfig(level=logging.DEBUG)
-````
-
-Http request and response details are printed to stdout with this logging config.
+See the [troubleshooting guide][troubleshooting_guide] for details on how to diagnose various failure scenarios.
 
 ## Next steps
 
@@ -344,3 +333,4 @@ additional questions or comments.
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/
 [coc_contact]: mailto:opencode@microsoft.com
+[troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
