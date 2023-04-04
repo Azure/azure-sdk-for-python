@@ -573,18 +573,36 @@ class TestDSLPipeline:
             pipeline_with_invalid_user_defined_nodes_3()
 
     def test_pipeline_variable_name_uppercase(self):
-        component_yaml = "./tests/test_configs/components/helloworld_component_no_paths.yml"
-        component_func1 = load_component(source=component_yaml)
+        component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(
+            source=component_yaml,
+        )
 
         @dsl.pipeline(name="pipeline_with_uppercase_node_names")
         def pipeline_with_user_defined_nodes_1():
             for i in range(2):
-                for_loop_node = component_func1()
-                for_loop_node.name = f"Dummy_{i}"
+                node1 = component_func(component_in_path=Input(path="fake_input"))
+                # change node name to lower when setting it to avoid upper case in nxt_input's binding
+                node1.name = f"Dummy_{i}"
+                nxt_input = Input(
+                    path=node1.outputs.component_out_path,
+                    mode=InputOutputModes.DIRECT,
+                )
+                node2 = component_func(component_in_path=nxt_input)
+                node2.name = f"Another_{i}"
 
-        # raise clear exception instead of silently lower it
-        with pytest.raises(UserErrorException, match="Invalid node name found: 'Dummy_1'"):
-            pipeline_with_user_defined_nodes_1()
+        pipeline_job = pipeline_with_user_defined_nodes_1()
+        rest_pipeline_job = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job["properties"]["jobs"]["another_0"]["inputs"]["component_in_path"] == {
+            "job_input_type": "literal",
+            "mode": "Direct",
+            "value": "${{parent.jobs.dummy_0.outputs.component_out_path}}",
+        }
+        assert rest_pipeline_job["properties"]["jobs"]["another_1"]["inputs"]["component_in_path"] == {
+            "job_input_type": "literal",
+            "mode": "Direct",
+            "value": "${{parent.jobs.dummy_1.outputs.component_out_path}}",
+        }
 
     def test_connect_components_in_pipeline(self):
         hello_world_component_yaml = "./tests/test_configs/components/helloworld_component_with_input_and_output.yml"
