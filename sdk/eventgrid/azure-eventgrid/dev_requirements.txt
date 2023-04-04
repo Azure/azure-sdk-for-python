@@ -3,7 +3,7 @@
 -e ../../core/azure-core
 -e ../../identity/azure-identity
 -e ../../resources/azure-mgmt-resource
--e ../azure-mgmt-eventgrid
+azure-mgmt-eventgrid==22.0.0
 azure-storage-queue
 cloudevents<=2.0.0; python_version >= "3.7"
 aiohttp>=3.0
