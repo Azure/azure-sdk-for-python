@@ -2,7 +2,7 @@ Service: servicebus
 
 Project: sdk/servicebus/azure-servicebus
 
-PrimaryPackage: azure-eventhub
+PrimaryPackage: azure-servicebus
 
 PackageVersions:
 - azure-core: 1.26.3
