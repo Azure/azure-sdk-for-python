@@ -3770,11 +3770,11 @@ class OperationDetails(OperationSummary):
 
         kind = data.get("kind", None)
         if kind == "documentClassifierBuild":
-            result = DocumentClassifierDetails.from_dict(data.get("result")) \
-                if data.get("result") else None  # type: ignore
+            result = \
+                DocumentClassifierDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
         else:
-            result = DocumentModelDetails.from_dict(data.get("result")) \
-                if data.get("result") else None  # type: ignore
+            result = \
+                DocumentModelDetails.from_dict(data.get("result")) if data.get("result") else None  # type: ignore
         return cls(
             operation_id=data.get("operation_id", None),
             status=data.get("status", None),
