@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Any, Optional, Dict, Tuple
+from typing import Any, Optional, Dict
 
 import six
 
@@ -63,7 +63,7 @@ class ImdsCredential(GetTokenMixin):
 
     def _acquire_token_silently(
         self, *scopes: str, **kwargs: Any
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+    ) -> Optional[AccessToken]:
         return self._client.get_cached_token(*scopes)
 
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
