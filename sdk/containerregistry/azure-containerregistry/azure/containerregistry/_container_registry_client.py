@@ -990,8 +990,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
-        :returns: An iterable stream of bytes
+        :returns: DownloadBlobStream
         :rtype: ~azure.containerregistry.DownloadBlobStream
+        :raises ValueError: If the requested digest does not match the digest of the received blob.
         """
         chunk_size = DEFAULT_CHUNK_SIZE
         first_chunk, headers = cast(
