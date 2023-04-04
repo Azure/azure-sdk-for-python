@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.16 (Linux-5.15.0-1033-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Mar 2023 01:11:24 GMT",
+        "Date": "Thu, 30 Mar 2023 11:19:53 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14711.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14990.5 - NEULR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -101,7 +101,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.16 (Linux-5.15.0-1033-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Mar 2023 01:11:24 GMT",
+        "Date": "Thu, 30 Mar 2023 11:19:54 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.20 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14990.5 - WEULR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,16 +172,16 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "800836b7-6ae4-4100-a23d-fba7b1e9b2ef",
+        "client-request-id": "ef6b7cc5-f44c-4443-a424-0a1219364eab",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
         "Cookie": "cookie;",
-        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.8.16 (Linux-5.15.0-1033-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0",
+        "User-Agent": "azsdk-python-identity/1.13.0b3 Python/3.11.2 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
         "x-client-last-telemetry": "4|0|||",
-        "x-client-os": "linux",
+        "x-client-os": "win32",
         "x-client-sku": "MSAL.Python",
         "x-client-ver": "1.21.0",
         "x-ms-lib-capability": "retry-after, h429"
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "800836b7-6ae4-4100-a23d-fba7b1e9b2ef",
+        "client-request-id": "ef6b7cc5-f44c-4443-a424-0a1219364eab",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Mar 2023 01:11:24 GMT",
+        "Date": "Thu, 30 Mar 2023 11:19:54 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14711.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14990.5 - NEULR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -219,7 +219,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-netapp/9.0.2 Python/3.8.16 (Linux-5.15.0-1033-azure-x86_64-with-glibc2.2.5) VSTS_0fb41ef4-5012-48a9-bf39-4ee3de03ee35_build_2500_0"
+        "User-Agent": "azsdk-python-mgmt-netapp/9.1.0 Python/3.11.2 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -227,7 +227,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Mar 2023 01:11:25 GMT",
+        "Date": "Thu, 30 Mar 2023 11:19:54 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-IIS/10.0",
@@ -235,9 +235,9 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9c2230a7-db8e-450e-9cfb-42e4aa37fb65",
-        "x-ms-ratelimit-remaining-subscription-reads": "11997",
-        "x-ms-routing-request-id": "SOUTHCENTRALUS:20230307T011125Z:9c2230a7-db8e-450e-9cfb-42e4aa37fb65",
+        "x-ms-correlation-request-id": "5a369340-474f-4861-9d8d-61cb1ba0fe7a",
+        "x-ms-ratelimit-remaining-subscription-reads": "11537",
+        "x-ms-routing-request-id": "WESTEUROPE:20230330T111954Z:5a369340-474f-4861-9d8d-61cb1ba0fe7a",
         "X-Powered-By": "ASP.NET"
       },
       "ResponseBody": {
@@ -247,7 +247,7 @@
             "name": "westus2/accountsPerSubscription",
             "type": "Microsoft.NetApp/locations/quotaLimits",
             "properties": {
-              "current": 10,
+              "current": 20,
               "default": 10
             }
           },
@@ -265,7 +265,7 @@
             "name": "westus2/poolsPerAccount",
             "type": "Microsoft.NetApp/locations/quotaLimits",
             "properties": {
-              "current": 25,
+              "current": 40,
               "default": 25
             }
           },
@@ -288,6 +288,15 @@
             }
           },
           {
+            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/quotaLimits/totalCoolAccessVolumesPerSubscription",
+            "name": "westus2/totalCoolAccessVolumesPerSubscription",
+            "type": "Microsoft.NetApp/locations/quotaLimits",
+            "properties": {
+              "current": 10,
+              "default": 10
+            }
+          },
+          {
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.NetApp/locations/westus2/quotaLimits/totalDPVolumesPerSubscription",
             "name": "westus2/totalDPVolumesPerSubscription",
             "type": "Microsoft.NetApp/locations/quotaLimits",
@@ -301,7 +310,7 @@
             "name": "westus2/totalTiBsPerSubscription",
             "type": "Microsoft.NetApp/locations/quotaLimits",
             "properties": {
-              "current": 25,
+              "current": 100,
               "default": 25
             }
           },
