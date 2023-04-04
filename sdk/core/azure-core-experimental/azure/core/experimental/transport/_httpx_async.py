@@ -86,7 +86,7 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
 
     async def __anext__(self):
         try:
-            return anext(self.iter_content_func)
+            return await self.iter_content_func.__anext__()
         except StopAsyncIteration:
             self.response.internal_response.close()
             raise
