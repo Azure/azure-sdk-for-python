@@ -109,7 +109,8 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
         self.scatter_gather_graph = self.scatter_gather()
 
         # set SG node flag for telemetry
-        self.scatter_gather_graph.properties["azureml.telemetry.attribution"] = "scatter-gather"
+        self.scatter_gather_graph.properties["azureml.telemetry.attribution"] = "FederatedLearningSGJobFlag"
+        self.scatter_gather_graph._to_rest_object()
 
         # set output to final aggregation step's output
         self._outputs = self.scatter_gather_graph.outputs
