@@ -384,16 +384,34 @@ class RoomsClientTest(RoomsTestCase):
                 role=None
             ),
             InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2),
+                role=ParticipantRole.CONSUMER
+            ),
+            InvitedRoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id3)
             ),
             InvitedRoomParticipant(
                 communication_identifier=CommunicationUserIdentifier(self.id4)
-            )
-        ]
-        expected_participants.append(RoomParticipant(
+        )]
+
+        expected_participants = [
+            RoomParticipant(
+                raw_id=self.id1,
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                raw_id=self.id2,
+                role=ParticipantRole.CONSUMER
+            ),
+            RoomParticipant(
+                raw_id=self.id3,
+                role=ParticipantRole.PRESENTER
+            ),
+            RoomParticipant(
                 raw_id=self.id4,
                 role=ParticipantRole.ATTENDEE
-            ))
+            )
+        ]
         self.rooms_client.upsert_participants(room_id=create_response.id, participants=upsert_participants)
         update_response = self.rooms_client.list_participants(room_id=create_response.id)
         updated_participants = []
