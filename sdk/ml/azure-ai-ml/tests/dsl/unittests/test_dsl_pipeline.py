@@ -572,6 +572,20 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException, match="Invalid node name found"):
             pipeline_with_invalid_user_defined_nodes_3()
 
+    def test_pipeline_variable_name_uppercase(self):
+        component_yaml = "./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline(name="pipeline_with_uppercase_node_names")
+        def pipeline_with_user_defined_nodes_1():
+            for i in range(2):
+                for_loop_node = component_func1()
+                for_loop_node.name = f"Dummy_{i}"
+
+        # raise clear exception instead of silently lower it
+        with pytest.raises(UserErrorException, match="Invalid node name found: 'Dummy_1'"):
+            pipeline_with_user_defined_nodes_1()
+
     def test_connect_components_in_pipeline(self):
         hello_world_component_yaml = "./tests/test_configs/components/helloworld_component_with_input_and_output.yml"
         hello_world_component_func = load_component(source=hello_world_component_yaml)
