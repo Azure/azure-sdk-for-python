@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- httpx implementation of azure-core transport protocol
+
 ### Breaking Changes
 
 ### Bugs Fixed

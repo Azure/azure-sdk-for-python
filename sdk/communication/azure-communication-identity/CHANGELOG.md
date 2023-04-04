@@ -1,10 +1,12 @@
 # Release History
 
-## 1.3.2 (Unreleased)
+## 1.4.0b1 (Unreleased)
 
 ### Features Added
+- Added support for a new communication identifier `MicrosoftBotIdentifier`.
 
 ### Breaking Changes
+- Introduction of `MicrosoftBotIdentifier` is a breaking change. It will affect code that relied on using `UnknownIdentifier` with a raw_id starting with `28:` 
 
 ### Bugs Fixed
 

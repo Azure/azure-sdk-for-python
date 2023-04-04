@@ -83,6 +83,7 @@
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
@@ -391,7 +392,8 @@
     "yarl",
     "SDDL",
     "dacl",
-    "whls"
+    "whls",
+    "aiter"
   ],
   "overrides": [
     {
@@ -425,6 +427,12 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "doc/esrp_release.md",
+      "words": [
+        "ESRP"
       ]
     },
     {
