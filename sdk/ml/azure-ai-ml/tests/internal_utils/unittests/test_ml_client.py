@@ -640,7 +640,7 @@ class TestMachineLearningClient:
             registry_name=None,
         )
 
-        with pytest.raises((ValidationException, Exception)) as val_exception:
+        with pytest.raises(ValidationException) as val_exception:
             getattr(ml_client, ops_name).begin_create_or_update(*args)
         assert "This operation requires that you specify a workspace" in str(val_exception.value)
 
@@ -673,6 +673,6 @@ class TestMachineLearningClient:
             registry_name=None,
         )
 
-        with pytest.raises((ValidationException, Exception)) as ex:
+        with pytest.raises(ValidationException) as ex:
             getattr(ml_client, ops_name).create_or_update(*args)
         assert "This operation requires that you specify a workspace" in str(ex.value)
