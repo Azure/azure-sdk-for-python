@@ -49,7 +49,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -81,7 +81,7 @@ def build_update_request(resource_group_name: str, vault_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -112,7 +112,7 @@ def build_update_request(resource_group_name: str, vault_name: str, subscription
 def build_delete_request(resource_group_name: str, vault_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -136,7 +136,7 @@ def build_get_request(resource_group_name: str, vault_name: str, subscription_id
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -171,7 +171,7 @@ def build_update_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -206,7 +206,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -238,7 +238,7 @@ def build_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -264,7 +264,7 @@ def build_list_deleted_request(subscription_id: str, **kwargs: Any) -> HttpReque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -288,7 +288,7 @@ def build_get_deleted_request(vault_name: str, location: str, subscription_id: s
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -316,7 +316,7 @@ def build_get_deleted_request(vault_name: str, location: str, subscription_id: s
 def build_purge_deleted_request(vault_name: str, location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -336,17 +336,14 @@ def build_purge_deleted_request(vault_name: str, location: str, subscription_id:
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_list_request(
-    subscription_id: str,
-    *,
-    filter: Union[str, _models.Enum5],
-    api_version: Union[str, _models.Enum6],
-    top: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_list_request(subscription_id: str, *, top: Optional[int] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    filter: Literal["resourceType eq 'Microsoft.KeyVault/vaults'"] = kwargs.pop(
+        "filter", _params.pop("$filter", "resourceType eq 'Microsoft.KeyVault/vaults'")
+    )
+    api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -373,7 +370,7 @@ def build_check_name_availability_request(subscription_id: str, **kwargs: Any) -
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -510,7 +507,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
 
@@ -656,7 +653,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
 
@@ -736,7 +733,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -794,7 +791,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[_models.Vault] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -936,7 +933,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VaultAccessPolicyParameters] = kwargs.pop("cls", None)
 
@@ -1010,7 +1007,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[_models.VaultListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1096,7 +1093,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[_models.VaultListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1177,7 +1174,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[_models.DeletedVaultListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1269,7 +1266,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[_models.DeletedVault] = kwargs.pop("cls", None)
 
         request = build_get_deleted_request(
@@ -1320,7 +1317,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_purge_deleted_request(
@@ -1376,7 +1373,7 @@ class VaultsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1417,30 +1414,30 @@ class VaultsOperations:
     }
 
     @distributed_trace
-    def list(
-        self,
-        filter: Union[str, _models.Enum5],
-        api_version: Union[str, _models.Enum6],
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> Iterable["_models.Resource"]:
+    def list(self, top: Optional[int] = None, **kwargs: Any) -> Iterable["_models.Resource"]:
         """The List operation gets information about the vaults associated with the subscription.
 
-        :param filter: The filter to apply on the operation. "resourceType eq
-         'Microsoft.KeyVault/vaults'" Required.
-        :type filter: str or ~azure.mgmt.keyvault.v2016_10_01.models.Enum5
-        :param api_version: Azure Resource Manager Api Version. "2015-11-01" Required.
-        :type api_version: str or ~azure.mgmt.keyvault.v2016_10_01.models.Enum6
         :param top: Maximum number of results to return. Default value is None.
         :type top: int
+        :keyword filter: The filter to apply on the operation. Default value is "resourceType eq
+         'Microsoft.KeyVault/vaults'". Note that overriding this default value may result in unsupported
+         behavior.
+        :paramtype filter: str
+        :keyword api_version: Azure Resource Manager Api Version. Default value is "2015-11-01". Note
+         that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either Resource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.keyvault.v2016_10_01.models.Resource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        filter: Literal["resourceType eq 'Microsoft.KeyVault/vaults'"] = kwargs.pop(
+            "filter", _params.pop("$filter", "resourceType eq 'Microsoft.KeyVault/vaults'")
+        )
+        api_version: Literal["2015-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2015-11-01"))
         cls: ClsType[_models.ResourceListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -1456,9 +1453,9 @@ class VaultsOperations:
 
                 request = build_list_request(
                     subscription_id=self._config.subscription_id,
+                    top=top,
                     filter=filter,
                     api_version=api_version,
-                    top=top,
                     template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
@@ -1577,7 +1574,7 @@ class VaultsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2016-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-10-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CheckNameAvailabilityResult] = kwargs.pop("cls", None)
 

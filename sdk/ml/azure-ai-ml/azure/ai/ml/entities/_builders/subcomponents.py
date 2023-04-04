@@ -33,7 +33,7 @@ def save_mltable_yaml(path, mltable_paths):
 # Used by the FL scatter gather node to reduce a dynamic number of silo outputs
 # into a single input for the user-supplied aggregation step.
 @command_component()
-def aggregate_output(aggregated_output: Output(type="mltable"), **kwargs):
+def create_scatter_output_table(aggregated_output: Output(type="mltable"), **kwargs):
     # kwargs keys are inputs names (ex: silo_output_silo_1)
     # values are uri_folder paths
     save_mltable_yaml(aggregated_output, kwargs.values())

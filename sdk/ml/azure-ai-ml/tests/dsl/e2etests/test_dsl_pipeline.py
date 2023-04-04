@@ -6,10 +6,6 @@ from unittest.mock import patch
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase, is_live
-from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
-
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -25,7 +21,7 @@ from azure.ai.ml import (
     load_component,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
-from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, ANONYMOUS_COMPONENT_NAME
+from azure.ai.ml.constants._common import ANONYMOUS_COMPONENT_NAME, AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.dsl._load_import import to_component
@@ -33,8 +29,11 @@ from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
+from devtools_testutils import AzureRecordedTestCase, is_live
+from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -2571,9 +2570,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert "Studio" in default_services
         assert "Tracking" in default_services
         assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
-        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Studio"]["type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
-        assert default_services["Tracking"]["job_service_type"] == "Tracking"
+        assert default_services["Tracking"]["type"] == "Tracking"
 
     def test_group_outputs_description_overwrite(self, client):
         # test group outputs description overwrite
@@ -2656,6 +2655,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
+    @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import (
             BanditPolicy,
@@ -2964,7 +2964,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         subgraph_id = pipeline_job.jobs["subgraph"].component
         subgraph_id = subgraph_id.split(":")
         subgraph = client.components.get(name=subgraph_id[0], version=subgraph_id[1])
-        check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
+        # TODO: enable this check in playback mode after pipeline_component.jobs is opened in all subscriptions
+        if is_live():
+            check_name_and_version(subgraph.jobs["node_2"].outputs["component_out_path"], "sub_pipeline_2_output", "v2")
 
     @pytest.mark.disable_mock_code_hash
     # without this mark, the code would be passed with different id even when we upload the same component,
@@ -3027,3 +3029,41 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = assert_job_cancel(pipeline, client)
         assert pipeline_job.jobs["node_0"].limits.timeout == "${{parent.inputs.timeout}}"
         assert pipeline_job.jobs["node_1"].limits.timeout == 1
+
+    def test_pipeline_component_primitive_type_consumption(self, client: MLClient):
+        baisc_component_func = load_component(
+            "./tests/test_configs/dsl_pipeline/primitive_type_components/basic_component.yml"
+        )
+        boolean_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/boolean.yml")
+        integer_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/integer.yml")
+        number_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/number.yml")
+        string_func = load_component("./tests/test_configs/dsl_pipeline/primitive_type_components/string.yml")
+
+        @dsl.pipeline
+        def pipeline_component_func(bool_param: bool, int_param: int, float_param: float, str_param: str):
+            baisc_component_func(
+                bool_param=bool_param,
+                int_param=int_param,
+                float_param=float_param,
+                str_param=str_param,
+            )
+
+        @dsl.pipeline
+        def pipeline_func():
+            # components return primitive type outputs
+            bool_node = boolean_func()
+            int_node = integer_func()
+            float_node = number_func()
+            str_node = string_func()
+            # pipeline component consume above primitive type outputs
+            pipeline_node = pipeline_component_func(  # noqa: F841
+                bool_param=bool_node.outputs.output,
+                int_param=int_node.outputs.output,
+                float_param=float_node.outputs.output,
+                str_param=str_node.outputs.output,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        assert_job_cancel(pipeline_job, client)
