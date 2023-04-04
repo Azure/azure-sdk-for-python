@@ -3201,6 +3201,6 @@ class TestDSLPipeline:
 
         pipeline_job: PipelineJob = pipeline_func()
         # log customized flag on root pipeline job, service helps save this value for telemetry.
-        pipeline_job.properties["azureml.telemetry.attribute"] = "customized value for telemetry"
+        pipeline_job.properties["azureml.telemetry.attribution"] = "customized value for telemetry"
         rest_object = pipeline_job._to_rest_object()
-        assert rest_object.properties.properties == {"azureml.telemetry.attribute": "customized value for telemetry"}
+        assert rest_object.properties.properties == {"azureml.telemetry.attribution": "customized value for telemetry"}
