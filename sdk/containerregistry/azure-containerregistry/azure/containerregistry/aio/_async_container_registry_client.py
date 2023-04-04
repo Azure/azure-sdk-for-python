@@ -930,7 +930,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str digest: The digest of the blob to download.
         :returns: An iterable stream of bytes
         :rtype: ~azure.containerregistry.AsyncDownloadBlobStream
-        :raises ValueError: If the parameter repository or digest is None.
         """
         chunk_size = DEFAULT_CHUNK_SIZE
         first_chunk, headers = cast(
