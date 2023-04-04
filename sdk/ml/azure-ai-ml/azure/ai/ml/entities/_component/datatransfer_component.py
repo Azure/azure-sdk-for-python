@@ -242,7 +242,6 @@ class DataTransferImportComponent(DataTransferComponent):
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
-
         outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
         kwargs["task"] = DataTransferTaskType.IMPORT_DATA
         super().__init__(

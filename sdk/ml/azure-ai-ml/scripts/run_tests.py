@@ -15,7 +15,6 @@ def run_tests(input_file):
     """
     tests_to_run = []
     with open(input_file, "r") as f:
-
         for line in f:
             if len(line) < 1 or line[0] in ["#", ";"]:
                 continue
