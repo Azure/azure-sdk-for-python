@@ -6,6 +6,7 @@
 import hashlib
 from typing import Iterator, ContextManager, TypeVar, cast, Tuple, Dict, Any
 from typing_extensions import Protocol
+from azure.core.pipeline import PipelineResponse
 
 T = TypeVar('T', bound='DownloadBlobStream')
 
@@ -24,7 +25,7 @@ class DownloadBlobStream(
     def __init__(
         self,
         *,
-        response: Iterator[bytes],
+        response: PipelineResponse,
         get_next: GetNext,
         blob_size: int,
         downloaded: int,
@@ -32,6 +33,7 @@ class DownloadBlobStream(
         chunk_size: int
     ) -> None:
         self._response = response
+        self._response_bytes = response.http_response.iter_bytes()
         self._next = get_next
         self._blob_size = blob_size
         self._downloaded = downloaded
@@ -49,15 +51,15 @@ class DownloadBlobStream(
         return self
 
     def _yield_data(self) -> bytes:
-        data = next(self._response)
+        data = next(self._response_bytes)
         self._hasher.update(data)
         return data
 
-    def _download_chunk(self) -> Iterator[bytes]:
+    def _download_chunk(self) -> PipelineResponse:
         end_range = self._downloaded + self._chunk_size
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = cast(
-            Tuple[Iterator[bytes], Dict[str, str]],
+            Tuple[PipelineResponse, Dict[str, str]],
             self._next(range_header=range_header)
         )
         self._downloaded += int(headers["Content-Length"])
@@ -73,4 +75,8 @@ class DownloadBlobStream(
                     raise ValueError("The requested digest does not match the digest of the received blob.")
                 raise
             self._response = self._download_chunk()
+            self._response_bytes = self._response.http_response.iter_bytes()
             return self._yield_data()
+    
+    def close(self):
+        self._response.http_response.close()

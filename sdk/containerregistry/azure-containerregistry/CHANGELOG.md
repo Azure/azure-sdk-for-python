@@ -4,7 +4,7 @@
 
 ### Features Added
 - Supported uploading and downding large OCI artifact blobs in synchronous and asynchronous `ContainerRegistryClient`.
-- Published model `Annotation`, `Descriptor` and `OCIManifest`.
+- Published model `DownloadManifestResult`, `DownloadBlobStream` and `AsyncDownloadBlobStream`.
 
 ### Breaking Changes
 - Suppress the response error with status code `404` in `delete_blob()`.

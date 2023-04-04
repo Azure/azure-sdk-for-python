@@ -45,8 +45,8 @@ from ._models import (
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
     return pipeline_response, deserialized
 
-def _return_deserialized_and_headers(_, deserialized, response_headers):
-    return deserialized, response_headers
+def _return_response_and_headers(pipeline_response, _, response_headers):
+    return pipeline_response, response_headers
 
 def _return_response_headers(_, __, response_headers):
     return response_headers
@@ -960,7 +960,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             When digest is provided, will use this digest to compare with the one calculated by the response payload.
             When tag is provided, will use the digest in response headers to compare.
         :returns: DownloadManifestResult
-        :rtype: ~azure.containerregistry.models.DownloadManifestResult
+        :rtype: ~azure.containerregistry.DownloadManifestResult
         :raises ValueError: If the requested digest does not match the digest of the received manifest.
         """
         response, manifest_wrapper = cast(
@@ -985,23 +985,24 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobStream:
+    def download_blob(self, repository: str, digest: str, **kwargs) -> Iterator[bytes]:
         """Download a blob that is part of an artifact to a stream.
 
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
         :returns: An iterable stream of bytes
-        :rtype: ~azure.containerregistry._download_stream.DownloadBlobStream
+        :rtype: ~azure.containerregistry.DownloadBlobStream
         :raises ValueError: If the parameter repository or digest is None.
         """
-        chunk_size = DEFAULT_CHUNK_SIZE
+        # chunk_size = DEFAULT_CHUNK_SIZE
+        chunk_size = 4
         first_chunk, headers = cast(
-            Tuple[Iterator[bytes], Dict[str, str]],
+            Tuple[PipelineResponse, Dict[str, str]],
             self._client.container_registry_blob.get_chunk(
                 repository,
                 digest,
                 range_header=f"bytes=0-{chunk_size}",
-                cls=_return_deserialized_and_headers,
+                cls=_return_response_and_headers,
                 **kwargs
             )
         )
@@ -1012,7 +1013,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 self._client.container_registry_blob.get_chunk,
                 name=repository,
                 digest=digest,
-                cls=_return_deserialized_and_headers,
+                cls=_return_response_and_headers,
                 **kwargs
             ),
             blob_size=int(headers["Content-Range"].split("/")[1]),

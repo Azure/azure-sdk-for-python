@@ -22,7 +22,8 @@ import os
 import json
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ContainerRegistryClient, Annotations, Descriptor, OCIManifest
+from azure.containerregistry import ContainerRegistryClient
+from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 from utilities import get_authority, get_audience, get_credential
 
 
@@ -71,25 +72,28 @@ class UploadDownloadManifest(object):
             downloaded_manifest = download_manifest_result.manifest
             download_manifest_stream = download_manifest_result.data
             print(b"".join(download_manifest_stream))
-            # Download the layers
+            # Download and write out the layers
             for layer in downloaded_manifest.layers:
+                # Remove the "sha256:" prefix from digest
+                layer_file_name = layer.digest.split(":")[1]
                 try:
                     with client.download_blob(repository_name, layer.digest) as stream:
-                        with open("layer_file", "wb") as layer_file:
+                        with open(layer_file_name, "wb") as layer_file:
                             for chunk in stream:
                                 layer_file.write(chunk)
                 except ValueError:
-                    print("Downloaded layer digest value did not match. Deleting file...")
-                    os.remove("layer_file")
-            # Download the config
+                    print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
+                    os.remove(layer_file_name)
+            # Download and write out the config
+            config_file_name = "config.json"
             try:
                 with client.download_blob(repository_name, downloaded_manifest.config.digest) as stream:
-                    with open("config_file", "wb") as config_file:
+                    with open(config_file_name, "wb") as config_file:
                         for chunk in stream:
                             config_file.write(chunk)
             except ValueError:
-                print("Downloaded config digest value did not match. Deleting file...")
-                os.remove("config_file")
+                print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
+                os.remove(config_file_name)
 
             # Delete the layers
             for layer in downloaded_manifest.layers:

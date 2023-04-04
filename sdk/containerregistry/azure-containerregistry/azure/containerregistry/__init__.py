@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from ._container_registry_client import ContainerRegistryClient
-from ._generated.models import Annotations, Descriptor, OCIManifest
 from ._generated.models import (
     ArtifactManifestOrder,
     ArtifactTagOrder,
@@ -18,7 +17,10 @@ from ._models import (
     ArtifactManifestProperties,
     RepositoryProperties,
     ArtifactTagProperties,
+    DownloadManifestResult,
 )
+from ._download_stream import DownloadBlobStream
+from .aio._async_download_stream import AsyncDownloadBlobStream
 from ._version import VERSION
 
 __version__ = VERSION
@@ -32,7 +34,7 @@ __all__ = [
     "RepositoryProperties",
     "ArtifactTagOrder",
     "ArtifactTagProperties",
-    "Annotations",
-    "Descriptor",
-    "OCIManifest",
+    "DownloadManifestResult",
+    "DownloadBlobStream",
+    "AsyncDownloadBlobStream",
 ]

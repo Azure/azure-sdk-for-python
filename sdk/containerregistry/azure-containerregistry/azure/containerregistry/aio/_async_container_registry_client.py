@@ -18,12 +18,13 @@ from azure.core.exceptions import (
     HttpResponseError,
     map_error,
 )
+from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from ._async_download_stream import AsyncDownloadBlobStream
-from .._container_registry_client import _return_response_headers, _return_deserialized_and_headers
+from .._container_registry_client import _return_response_headers, _return_response_and_headers
 from .._generated.models import AcrErrors
 from .._helpers import (
     _is_tag,
@@ -928,17 +929,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
         :returns: An iterable stream of bytes
-        :rtype: ~azure.containerregistry._async_download_stream.AsyncDownloadBlobStream
+        :rtype: ~azure.containerregistry.AsyncDownloadBlobStream
         :raises ValueError: If the parameter repository or digest is None.
         """
-        chunk_size = DEFAULT_CHUNK_SIZE
+        # chunk_size = DEFAULT_CHUNK_SIZE
+        chunk_size = 4
         first_chunk, headers = cast(
-            Tuple[AsyncIterator[bytes], Dict[str, str]],
+            Tuple[PipelineResponse, Dict[str, str]],
             await self._client.container_registry_blob.get_chunk(
                 repository,
                 digest,
                 range_header=f"bytes=0-{chunk_size}",
-                cls=_return_deserialized_and_headers,
+                cls=_return_response_and_headers,
                 **kwargs
             )
         )
@@ -949,7 +951,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 self._client.container_registry_blob.get_chunk,
                 name=repository,
                 digest=digest,
-                cls=_return_deserialized_and_headers,
+                cls=_return_response_and_headers,
                 **kwargs
             ),
             blob_size=int(headers["Content-Range"].split("/")[1]),

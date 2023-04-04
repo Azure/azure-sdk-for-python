@@ -588,27 +588,6 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 for chunk in stream:
                     size += file.write(chunk)
             assert size == blob_size
-            
-            # Cleanup
-            client.delete_repository(repo)
-
-    @pytest.mark.live_test_only
-    @acr_preparer()
-    @recorded_by_proxy
-    def test_upload_large_blob_in_chunk(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        with self.create_registry_client(containerregistry_endpoint) as client:
-            # Test blob upload in equal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 # 4GB
-            data = b'\x00' * int(blob_size)
-            digest, size = client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
-
-            # Test blob upload and download in unequal size chunks
-            blob_size = DEFAULT_CHUNK_SIZE * 1024 + 20
-            data = b'\x00' * int(blob_size)
-            digest, size = client.upload_blob(repo, BytesIO(data))
-            assert size == blob_size
 
             client.delete_blob(repo, digest)
 
@@ -624,8 +603,10 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
                 for chunk in stream:
                     size += file.write(chunk)
             assert size == blob_size
-            
+
             client.delete_blob(repo, digest)
+
+            # Cleanup
             client.delete_repository(repo)
     
     @acr_preparer()
