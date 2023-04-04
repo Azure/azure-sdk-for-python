@@ -45,11 +45,11 @@ class ArtifactCache:
             with cls._instance_lock:
                 if cls._instance is None:
                     cls._instance = object.__new__(cls)
+                    cls.check_artifact_extension()
         return cls._instance
 
-    def __init__(self, cache_directory=None):
-        self._cache_directory = cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY
-        Path(self._cache_directory).mkdir(exist_ok=True, parents=True)
+    @staticmethod
+    def check_artifact_extension():
         # check az extension azure-devops installed. Install it if not installed.
         process = subprocess.Popen(
             "az artifacts --help --yes",
@@ -63,6 +63,10 @@ class ArtifactCache:
                 "Auto-installation failed. Please install azure-devops "
                 "extension by 'az extension add --name azure-devops'."
             )
+
+    def __init__(self, cache_directory=None):
+        self._cache_directory = cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY
+        Path(self._cache_directory).mkdir(exist_ok=True, parents=True)
         self._artifacts_tool_path = None
         self._download_locks = defaultdict(Lock)
 

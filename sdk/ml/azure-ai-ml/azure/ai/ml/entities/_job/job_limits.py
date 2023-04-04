@@ -10,7 +10,6 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import CommandJobLimits 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, is_data_binding_expression, to_iso_duration_format
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 module_logger = logging.getLogger(__name__)
@@ -44,7 +43,7 @@ class CommandJobLimits(JobLimits):
         self.timeout = timeout
 
     def _to_rest_object(self) -> RestCommandJobLimits:
-        if isinstance(self.timeout, PipelineInput):
+        if is_data_binding_expression(self.timeout):
             return RestCommandJobLimits(timeout=self.timeout)
         return RestCommandJobLimits(timeout=to_iso_duration_format(self.timeout))
 

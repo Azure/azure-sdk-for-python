@@ -13,12 +13,12 @@
 # _attribute_map of each model class from dict to OrderedDict.
 
 import inspect
-from msrest.serialization import Model
-from azure.servicebus.management._generated.models import _models_py3
+from azure.servicebus.management._generated._serialization import Model
+from azure.servicebus.management._generated.models import _models
 
 
 if __name__ == '__main__':
-    members = inspect.getmembers(_models_py3, inspect.isclass)
+    members = inspect.getmembers(_models, inspect.isclass)
     class_names = []
     model_class_attributes_string = "MODEL_CLASS_ATTRIBUTES = {\n"
     for class_name, class_ in members:

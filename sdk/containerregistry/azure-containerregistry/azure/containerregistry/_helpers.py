@@ -22,6 +22,8 @@ SUPPORTED_API_VERSIONS = [
     "2019-08-15-preview",
     "2021-07-01"
 ]
+OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
+DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024 # 4MB
 
 # Public cloud audience
 AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"

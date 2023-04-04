@@ -3,8 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, IO, Optional, overload, Union, cast
-
+import hashlib
+from io import BytesIO
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import (
@@ -33,6 +34,14 @@ from .._helpers import (
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 
+class _UnclosableBytesIO(BytesIO):
+    def close(self):
+        pass
+
+    def manual_close(self):
+        super().close()
+
+
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self,
@@ -46,7 +55,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
-        :param credential: The credential with which to authenticate.
+        :param credential: The credential with which to authenticate. This should be None in anonymous access.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential or None
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
             may result in unsupported behavior.
@@ -902,6 +911,68 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return digest
 
     @distributed_trace_async
+    async def upload_blob(self, repository: str, data: IO[bytes], **kwargs) -> Tuple[str, int]:
+        """Upload an artifact blob.
+
+        :param str repository: Name of the repository.
+        :param data: The blob to upload. Note: This must be a seekable stream.
+        :type data: IO
+        :returns: The digest and size in bytes of the uploaded blob.
+        :rtype: Tuple[str, int]
+        :raises ValueError: If the parameter repository or data is None.
+        """
+        try:
+            start_upload_response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.start_upload(
+                    repository, cls=_return_response_headers, **kwargs
+                )
+            )
+            digest, location, blob_size = await self._upload_blob_chunk(
+                start_upload_response_headers['Location'], data, **kwargs
+            )
+            complete_upload_response_headers = cast(
+                Dict[str, str],
+                await self._client.container_registry_blob.complete_upload(
+                    digest=digest,
+                    next_link=location,
+                    cls=_return_response_headers,
+                    **kwargs
+                )
+            )
+        except Exception as e:
+            if repository is None or data is None:
+                raise ValueError("The parameter repository and data cannot be None.") from e
+            raise
+        return complete_upload_response_headers['Docker-Content-Digest'], blob_size
+
+    async def _upload_blob_chunk(self, location: str, data: IO[bytes], **kwargs) -> Tuple[str, str, int]:
+        hasher = hashlib.sha256()
+        blob_size = 0
+        buffer = data.read(DEFAULT_CHUNK_SIZE)
+
+        while len(buffer) > 0:
+            try:
+                buffer_stream = _UnclosableBytesIO(buffer)
+                response_headers = cast(
+                    Dict[str, str],
+                    await self._client.container_registry_blob.upload_chunk(
+                        location,
+                        buffer_stream,
+                        cls=_return_response_headers,
+                        **kwargs
+                    )
+                )
+                blob_size += len(buffer)
+                hasher.update(buffer)
+                location = response_headers['Location']
+                buffer = data.read(DEFAULT_CHUNK_SIZE)
+            finally:
+                buffer_stream.manual_close()
+
+        return "sha256:" + hasher.hexdigest(), location, blob_size
+
+    @distributed_trace_async
     async def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> None:
         """Delete a manifest. If the manifest cannot be found or a response status code of
         404 is returned an error will not be raised.
@@ -926,3 +997,29 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         await self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
+
+    @distributed_trace_async
+    async def delete_blob(self, repository: str, digest: str, **kwargs) -> None:
+        """Delete a blob. If the blob cannot be found or a response status code of
+        404 is returned an error will not be raised.
+
+        :param str repository: Name of the repository the manifest belongs to
+        :param str digest: Digest of the blob to be deleted
+        :returns: None
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry.aio import ContainerRegistryClient
+            from azure.identity.aio import DefaultAzureCredential
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            await client.delete_blob("my_repository", "my_digest")
+        """
+        try:
+            await self._client.container_registry_blob.delete_blob(repository, digest, **kwargs)
+        except HttpResponseError as error:
+            if error.status_code == 404:
+                return
+            raise
