@@ -13,7 +13,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class MonitorInputDataSchema():
+class MonitorInputDataSchema(PatchedSchemaMeta):
     input_dataset = ArmVersionedStr(azureml_type=AzureMLResourceType.DATA)
     dataset_context = fields.Str()
     target_column_name = fields.Str()
