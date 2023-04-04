@@ -932,8 +932,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.AsyncDownloadBlobStream
         :raises ValueError: If the parameter repository or digest is None.
         """
-        # chunk_size = DEFAULT_CHUNK_SIZE
-        chunk_size = 4
+        chunk_size = DEFAULT_CHUNK_SIZE
         first_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
             await self._client.container_registry_blob.get_chunk(

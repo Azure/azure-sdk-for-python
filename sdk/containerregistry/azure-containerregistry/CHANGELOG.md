@@ -9,6 +9,7 @@
 ### Breaking Changes
 - Suppress the response error with status code `404` in `delete_blob()`.
 - Added to return blob size in bytes in `upload_blob()`.
+- Changed `download_blob()` return type from `DownloadBlobResult` to `DownloadBlobStream` and `AsyncDownloadBlobStream`.
 
 ### Bugs Fixed
 

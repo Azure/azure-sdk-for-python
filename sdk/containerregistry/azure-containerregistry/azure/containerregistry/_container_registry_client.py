@@ -985,7 +985,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs) -> Iterator[bytes]:
+    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobStream:
         """Download a blob that is part of an artifact to a stream.
 
         :param str repository: Name of the repository.
@@ -994,8 +994,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.DownloadBlobStream
         :raises ValueError: If the parameter repository or digest is None.
         """
-        # chunk_size = DEFAULT_CHUNK_SIZE
-        chunk_size = 4
+        chunk_size = DEFAULT_CHUNK_SIZE
         first_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
             self._client.container_registry_blob.get_chunk(
