@@ -12,7 +12,7 @@ DESCRIPTION:
 PREREQUISITES:
     This sample requires a few prerequisites in order to successfully register a device:
     1) An existing DPS instance that is linked to at least one existing IoT Hub:
-        https://learn.microsoft.com/en-us/azure/iot-dps/how-to-manage-linked-iot-hubs
+        https://learn.microsoft.com/azure/iot-dps/how-to-manage-linked-iot-hubs
     2) In order to register the device, you will need to install the IoT Device SDK:
         `pip install azure-iot-device`
 USAGE: python dps_service_sample_device_registration.py

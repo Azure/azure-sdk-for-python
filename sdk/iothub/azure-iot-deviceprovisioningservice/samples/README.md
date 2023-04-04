@@ -7,7 +7,7 @@ The async versions of any sample files will be appended with `_async` to show as
 ## Prerequisites
 * Python 3.7 or later is required to use this package
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure IoT Device Provisioning Service](https://learn.microsoft.com/en-us/azure/iot-dps/) resource to run these samples.
+[Azure IoT Device Provisioning Service](https://learn.microsoft.com/azure/iot-dps/) resource to run these samples.
 
 ## Setup
 
@@ -28,14 +28,14 @@ pip install azure-iot-deviceprovisioningservice
 
 ## Samples
 
-- [Device Registration States](./dps_service_sample_device_registration.py) ([async version](./dps_service_sample_device_registration_async.py)):
+- [Device Registration States]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_device_registration.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_device_registration_async.py)-->):
     - Create a basic enrollment group
     - Register a device (Requires device SDK)
     - Query device registration states for an enrollment group
     - Get device registration state
     - Delete device registration state
 
-- [Enrollment Groups](./dps_service_sample_enrollment_groups.py) ([async version](./dps_service_sample_enrollment_groups_async.py)):
+- [Enrollment Groups]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_enrollment_groups.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_enrollment_groups_async.py)-->):
     - Create a symmetric key enrollment group
     - Create an x509 certificate enrollment group
     - Get an enrollment group
@@ -45,7 +45,7 @@ pip install azure-iot-deviceprovisioningservice
     - Delete enrollment group
 
 
-- [Individual Enrollments](./dps_service_sample_individual_enrollments.py) ([async version](./dps_service_sample_individual_enrollments_async.py)):
+- [Individual Enrollments]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_individual_enrollments.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/dps_service_sample_individual_enrollments_async.py)-->):
     - Create a symmetric key individual enrollment
     - Create a TPM attestation individual enrollment
     - Create an x509 certificate individual enrollment
@@ -58,5 +58,5 @@ pip install azure-iot-deviceprovisioningservice
 
 ## Next steps
 
-Check out the [API reference documentation](https://learn.microsoft.com/en-us/rest/api/iot-dps/) to learn more about
+Check out the [API reference documentation](https://learn.microsoft.com/rest/api/iot-dps/) to learn more about
 what you can do with the Azure IoT Device Provisioning Service client library.

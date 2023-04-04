@@ -4,14 +4,14 @@ The IoT Hub Device Provisioning Service (DPS) is a helper service for IoT Hub th
 
 This service SDK provides data plane operations for backend apps. You can use this service SDK to create and manage individual enrollments and enrollment groups, and to query and manage device registration records.
 
-Learn how to provision devices to your IoT hub(s) with our [quickstarts, tutorials, and samples](https://learn.microsoft.com/en-us/azure/iot-dps/).
+Learn how to provision devices to your IoT hub(s) with our [quickstarts, tutorials, and samples](https://learn.microsoft.com/azure/iot-dps/).
 
 ## Getting started
 
 ### Prerequisites
 * Python 3.7 or later is required to use this package. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an
-[Azure IoT Hub Device Provisioning Service](https://learn.microsoft.com/en-us/azure/iot-dps/about-iot-dps) to use this package.
+[Azure IoT Hub Device Provisioning Service](https://learn.microsoft.com/azure/iot-dps/about-iot-dps) to use this package.
 
 This package has been tested with Python 3.7+.
 For a more complete view of Azure libraries, see the [azure sdk python release](https://aka.ms/azsdk/python/all).
@@ -25,7 +25,7 @@ pip install azure-iot-deviceprovisioningservice
 
 ### Create an IoT Hub Device Provisioning Service
 If you wish to create a new Device Provisioning Service, you can use the
-[Azure CLI](https://learn.microsoft.com/en-us/azure/iot-dps/quick-setup-auto-provision-cli):
+[Azure CLI](https://learn.microsoft.com/azure/iot-dps/quick-setup-auto-provision-cli):
 
 ```bash
 # Create a new resource group (if necessary)
@@ -35,8 +35,8 @@ az group create --name my-resource-group --location westus2
 az iot dps create --name my-dps --resource-group my-resource-group --location westus2
 ```
 
-[Azure Portal](https://learn.microsoft.com/en-us/azure/iot-dps/quick-setup-auto-provision),
-or [Bicep](https://learn.microsoft.com/en-us/azure/iot-dps/quick-setup-auto-provision-bicep?tabs=CLI),
+[Azure Portal](https://learn.microsoft.com/azure/iot-dps/quick-setup-auto-provision),
+or [Bicep](https://learn.microsoft.com/azure/iot-dps/quick-setup-auto-provision-bicep?tabs=CLI),
 
 ### Create the client
 The Device Provisioning Service client library for Python allows you to interact with three main operational categories: individual enrollments, enrollment groups, and device registration states.
@@ -44,7 +44,7 @@ The Device Provisioning Service client library for Python allows you to interact
 Interaction with these resources starts with an instance of a ProvisioningServiceClient. To create the ProvisioningServiceClient object, you will need the DPS resource's endpoint URL and a credential that allows you to access the resource.
 
 #### Creating the client from Azure credentials
-To use an [Azure Active Directory (AAD) token credential](https://learn.microsoft.com/en-us/azure/iot-dps/concepts-control-access-dps-azure-ad),
+To use an [Azure Active Directory (AAD) token credential](https://learn.microsoft.com/azure/iot-dps/concepts-control-access-dps-azure-ad),
    provide an instance of the desired credential type obtained from the
    [azure-identity](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials) library.
    For example, [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential)
@@ -82,9 +82,9 @@ for more information.
 
 ## Key concepts
 The following operation groups comprise the Service data plane layer:
-1. [Individual enrollments](https://learn.microsoft.com/en-us/azure/iot-dps/concepts-service#individual-enrollment)
-2. [Enrollment groups](https://learn.microsoft.com/en-us/azure/iot-dps/concepts-service#enrollment-group)
-3. [Device registration](https://learn.microsoft.com/en-us/azure/iot-dps/concepts-service#registration-record)
+1. [Individual enrollments](https://learn.microsoft.com/azure/iot-dps/concepts-service#individual-enrollment)
+2. [Enrollment groups](https://learn.microsoft.com/azure/iot-dps/concepts-service#enrollment-group)
+3. [Device registration](https://learn.microsoft.com/azure/iot-dps/concepts-service#registration-record)
 
 The Device Provisioning Service client library for Python allows you to interact with each of these components through different operation namespaces on the ProvisioningServiceClient.
 
@@ -168,18 +168,18 @@ state = client.device_registration_state.get(
 ## Next Steps
 
 ### More sample code
-Get started with our [samples](./samples/).
+Get started with our [samples]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/)-->.
 
 Several samples, as well as async samples, are available to you in the samples directory.
 
-- [Device Registration States](./samples/dps_service_sample_device_registration.py) ([async version](./samples/dps_service_sample_device_registration_async.py)):
+- [Device Registration States]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/dps_service_sample_device_registration.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/dps_service_sample_device_registration_async.py)-->):
     - Create a basic enrollment group
     - Register a device (Requires device SDK)
     - Query device registration states for an enrollment group
     - Get device registration state
     - Delete device registration state
 
-- [Enrollment Groups](./samples/dps_service_sample_enrollment_groups.py) ([async version](./samples/dps_service_sample_enrollment_groups_async.py)):
+- [Enrollment Groups]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/dps_service_sample_enrollment_groups.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/dps_service_sample_enrollment_groups_async.py)-->):
     - Create a symmetric key enrollment group
     - Create an x509 certificate enrollment group
     - Get an enrollment group
@@ -189,7 +189,7 @@ Several samples, as well as async samples, are available to you in the samples d
     - Delete enrollment group
 
 
-- [Individual Enrollments](./samples/dps_service_sample_individual_enrollments.py) ([async version](./samples/dps_service_sample_individual_enrollments_async.py)):
+- [Individual Enrollments]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/dps_service_sample_individual_enrollments.py)--> ([async version]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/dps_service_sample_individual_enrollments_async.py)-->):
     - Create a symmetric key individual enrollment
     - Create a TPM attestation individual enrollment
     - Create an x509 certificate individual enrollment
@@ -200,7 +200,7 @@ Several samples, as well as async samples, are available to you in the samples d
     - Delete an individual enrollment
 
 ### Additional documentation
-For more extensive documentation on Azure IoT Hub Device Provisioning Service, see the [Azure IoT Hub Device Provisioning Service documentation](https://learn.microsoft.com/en-us/azure/iot-dps/) on learn.microsoft.com.
+For more extensive documentation on Azure IoT Hub Device Provisioning Service, see the [Azure IoT Hub Device Provisioning Service documentation](https://learn.microsoft.com/azure/iot-dps/) on learn.microsoft.com.
 
 ## Contributing
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
