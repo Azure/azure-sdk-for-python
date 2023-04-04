@@ -1,0 +1,36 @@
+parameters:
+- name: LanguageVersion
+  displayName: LanguageVersion (3.7, 3.8, 3.9, 3.10, 3.11)
+  type: string
+  default: '3.11'
+- name: PackageVersions
+  displayName: PackageVersions (regex of package versions to run)
+  type: string
+  default: '7|source'
+- name: Tests
+  displayName: Tests (regex of tests to run)
+  type: string
+  default: '^(send-queue-message-batch|send-subscription-message-batch|receive-queue-message-batch|receive-subscription-message-batch)$'
+- name: Arguments
+  displayName: Arguments (regex of arguments to run)
+  type: string
+  default: '(1024)'
+- name: Iterations
+  displayName: Iterations (times to run each test)
+  type: number
+  default: '5'
+- name: AdditionalArguments
+  displayName: AdditionalArguments (passed to PerfAutomation)
+  type: string
+  default: ' '
+
+extends:
+  template: /eng/pipelines/templates/jobs/perf.yml
+  parameters:
+    ServiceDirectory: servicebus
+    LanguageVersion: ${{ parameters.LanguageVersion }}
+    PackageVersions: ${{ parameters.PackageVersions }}
+    Tests: ${{ parameters.Tests }}
+    Arguments: ${{ parameters.Arguments }}
+    Iterations: ${{ parameters.Iterations }}
+    AdditionalArguments: ${{ parameters.AdditionalArguments }}
