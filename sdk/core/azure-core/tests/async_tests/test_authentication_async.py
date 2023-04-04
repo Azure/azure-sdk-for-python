@@ -353,7 +353,7 @@ async def test_bearer_policy_redirect_opt_out_clean_up():
     credential = Mock(get_token=get_token)
     auth_policy = AsyncBearerTokenCredentialPolicy(credential, expected_scope)
     redirect_policy = AsyncRedirectPolicy()
-    header_clean_up_policy = SensitiveHeaderCleanupPolicy(not_clean_up_header=True)
+    header_clean_up_policy = SensitiveHeaderCleanupPolicy(disable_cleanup=True)
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))

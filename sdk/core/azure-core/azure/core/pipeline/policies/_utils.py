@@ -69,5 +69,6 @@ def get_retry_after(response):
             return parsed_retry_after / 1000.0
     return None
 
+
 def get_domain(url):
     return str(urlparse(url).netloc).lower()

@@ -32,7 +32,7 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     """A simple policy that cleans up sensitive headers
 
     :keyword List[str] block_headers_list: The headers to clean up.
-    :keyword bool not_clean_up_header: Opt out cleaning up sensitive headers
+    :keyword bool disable_cleanup: Opt out cleaning up sensitive headers
     """
     DEFAULT_SENSITIVE_HEADERS = set(
         [
@@ -42,9 +42,9 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     )
 
     def __init__(
-        self, *, block_headers_list: List[str] = None, not_clean_up_header: bool = False, **kwargs
+        self, *, block_headers_list: List[str] = None, disable_cleanup: bool = False, **kwargs
     ):  # pylint: disable=unused-argument,super-init-not-called
-        self._not_clean_up_header = not_clean_up_header
+        self._disable_cleanup = disable_cleanup
         self._block_headers_list = \
             SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS if block_headers_list is None else block_headers_list
 
@@ -56,16 +56,6 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         :type request: ~azure.core.pipeline.PipelineRequest
         """
         insecure_domain_change = request.context.options.pop("insecure_domain_change", False)
-        if not self._not_clean_up_header and insecure_domain_change:
+        if not self._disable_cleanup and insecure_domain_change:
             for header in self._block_headers_list:
                 request.http_request.headers.pop(header, None)
-
-    def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
-        """Executed after the request comes back from the next policy.
-
-        :param request: Request to be modified after returning from the policy.
-        :type request: ~azure.core.pipeline.PipelineRequest
-        :param response: Pipeline response object
-        :type response: ~azure.core.pipeline.PipelineResponse
-        """
