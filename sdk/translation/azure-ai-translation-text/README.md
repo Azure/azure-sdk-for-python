@@ -88,7 +88,7 @@ Gets the set of languages currently supported by other operations of the Transla
 
 ```python
 try:
-    response = response = text_translator.get_languages()
+    response = text_translator.get_languages()
 
     print(f"Number of supported languages for translate operation: {len(response.translation) if response.translation is not None else 0}")
     print(f"Number of supported languages for transliterate operation: {len(response.transliteration) if response.transliteration is not None else 0}")
