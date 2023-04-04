@@ -172,6 +172,76 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DataBoxOrderCompletedEventName = 'Microsoft.DataBox.OrderCompleted'
 
+    DataManagerForAgriApplicationDataChangedV2EventName = 'Microsoft.AgFoodPlatform.ApplicationDataChanged'
+
+    DataManagerForAgriAttachmentChangedV2EventName = 'Microsoft.AgFoodPlatform.AttachmentChanged'
+
+    DataManagerForAgriBiomassModelJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.BiomassModelJobStatusChanged'
+
+    DataManagerForAgriBoundaryChangedV2EventName = 'Microsoft.AgFoodPlatform.BoundaryChanged'
+
+    DataManagerForAgriCropChangedEventName = 'Microsoft.AgFoodPlatform.CropChanged'
+
+    DataManagerForAgriCropProductChangedEventName = 'Microsoft.AgFoodPlatform.CropProductChanged'
+
+    DataManagerForAgriDeviceChangedEventName = 'Microsoft.AgFoodPlatform.DeviceChanged'
+
+    DataManagerForAgriDeviceDataModelChangedEventName = 'Microsoft.AgFoodPlatform.DeviceDataModelChanged'
+
+    DataManagerForAgriFarmChangedV2EventName = 'Microsoft.AgFoodPlatform.FarmChanged'
+
+    DataManagerForAgriFarmOperationDataIngestionJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.FarmOperationDataIngestionJobStatusChanged'
+
+    DataManagerForAgriFieldChangedV2EventName = 'Microsoft.AgFoodPlatform.FieldChanged'
+
+    DataManagerForAgriHarvestDataChangedV2EventName = 'Microsoft.AgFoodPlatform.HarvestDataChanged'
+
+    DataManagerForAgriImageProcessingRasterizeJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.ImageProcessingRasterizeJobStatusChanged'
+
+    DataManagerForAgriInsightAttachmentChangedV2EventName = 'Microsoft.AgFoodPlatform.InsightAttachmentChanged'
+
+    DataManagerForAgriInsightChangedV2EventName = 'Microsoft.AgFoodPlatform.InsightChanged'
+
+    DataManagerForAgriManagementZoneChangedV2EventName = 'Microsoft.AgFoodPlatform.ManagementZoneChanged'
+
+    DataManagerForAgriNutrientAnalysisChangedV2EventName = 'Microsoft.AgFoodPlatform.NutrientAnalysisChanged'
+
+    DataManagerForAgriPartyChangedEventName = 'Microsoft.AgFoodPlatform.PartyChanged'
+
+    DataManagerForAgriPlantTissueAnalysisChangedV2EventName = 'Microsoft.AgFoodPlatform.PlantTissueAnalysisChanged'
+
+    DataManagerForAgriPlantingDataChangedV2EventName = 'Microsoft.AgFoodPlatform.PlantingDataChanged'
+
+    DataManagerForAgriPrescriptionChangedV2EventName = 'Microsoft.AgFoodPlatform.PrescriptionChanged'
+
+    DataManagerForAgriPrescriptionMapChangedV2EventName = 'Microsoft.AgFoodPlatform.PrescriptionMapChanged'
+
+    DataManagerForAgriSatelliteDataIngestionJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.SatelliteDataIngestionJobStatusChanged'
+
+    DataManagerForAgriSeasonChangedEventName = 'Microsoft.AgFoodPlatform.SeasonChanged'
+
+    DataManagerForAgriSeasonalFieldChangedV2EventName = 'Microsoft.AgFoodPlatform.SeasonalFieldChanged'
+
+    DataManagerForAgriSensorChangedEventName = 'Microsoft.AgFoodPlatform.SensorChanged'
+
+    DataManagerForAgriSensorDataModelChangedEventName = 'Microsoft.AgFoodPlatform.SensorDataModelChanged'
+
+    DataManagerForAgriSensorMappingChangedV2EventName = 'Microsoft.AgFoodPlatform.SensorMappingChanged'
+
+    DataManagerForAgriSensorPartnerIntegrationChangedV2EventName = 'Microsoft.AgFoodPlatform.SensorPartnerIntegrationChanged'
+
+    DataManagerForAgriSensorPlacementModelJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.SensorPlacementModelJobStatusChanged'
+
+    DataManagerForAgriSoilMoistureModelJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.SoilMoistureModelJobStatusChanged'
+
+    DataManagerForAgriTillageDataChangedV2EventName = 'Microsoft.AgFoodPlatform.TillageDataChanged'
+
+    DataManagerForAgriWeatherDataIngestionJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.WeatherDataIngestionJobStatusChanged'
+
+    DataManagerForAgriWeatherDataRefresherJobStatusChangedV2EventName = 'Microsoft.AgFoodPlatform.WeatherDataRefresherJobStatusChanged'
+
+    DataManagerForAgriZoneChangedV2EventName = 'Microsoft.AgFoodPlatform.ZoneChanged'
+
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
 
     # spell-checker:ignore Dicom
@@ -346,6 +416,10 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     StorageDirectoryRenamedEventName = 'Microsoft.Storage.DirectoryRenamed'
 
     StorageLifecyclePolicyCompletedEventName = 'Microsoft.Storage.LifecyclePolicyCompleted'
+
+    StorageStorageTaskCompletedEventName = 'Microsoft.Storage.StorageTaskCompleted'
+
+    StorageStorageTaskQueuedEventName = 'Microsoft.Storage.StorageTaskQueued'
 
     SubscriptionDeletedEventName = 'Microsoft.EventGrid.SubscriptionDeletedEvent'
 
