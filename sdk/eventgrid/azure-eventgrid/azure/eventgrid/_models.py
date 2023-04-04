@@ -6,7 +6,6 @@
 from typing import Any, cast
 import datetime as dt
 import uuid
-from msrest.serialization import UTC
 from ._messaging_shared import _get_json_content
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
@@ -87,7 +86,7 @@ class EventGridEvent(InternalEventGridEvent):
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
-        kwargs.setdefault("event_time", dt.datetime.now(UTC()).isoformat())
+        kwargs.setdefault("event_time", dt.datetime.now(dt.timezone.utc).isoformat())
         kwargs.setdefault("data", data)
         kwargs.setdefault("data_version", data_version)
 
