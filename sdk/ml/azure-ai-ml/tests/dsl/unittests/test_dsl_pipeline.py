@@ -747,8 +747,9 @@ class TestDSLPipeline:
             hello_world_component_2.resources.instance_count = 2
 
             # configure component outputs
-            hello_world_component_1.outputs.component_out_path.mode = "Upload"
-            hello_world_component_2.outputs.component_out_path.mode = "Upload"
+            # Note: this configures output type too
+            hello_world_component_1.outputs.component_out_path = Output(mode="Upload")
+            hello_world_component_2.outputs.component_out_path = Output(mode="Upload")
 
             merge_component_outputs = merge_outputs_component_func(
                 component_in_number=job_in_other_number,
