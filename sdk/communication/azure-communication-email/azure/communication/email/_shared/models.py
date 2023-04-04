@@ -17,7 +17,13 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Communication Identifier Kind."""
+    """Communication Identifier Kind.
+
+    For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,
+    as new or existing distinct type identifiers always contain the `raw_id` property. 
+    It is not advisable to rely on the `kind` property with a value `unknown`,
+    as it could become a new or existing distinct type in the future.
+    """
 
     UNKNOWN = "unknown"
     COMMUNICATION_USER = "communication_user"
@@ -150,7 +156,10 @@ class UnknownIdentifier(object):
     It will be encountered in communications with endpoints that are not
     identifiable by this version of the SDK.
 
-    It is not advisable to rely on this type of identifier, as UnknownIdentifier could become a new or existing distinct type in the future.
+    For checking yet unknown identifiers it is better to rely on the presence of the `raw_id` property,
+    as new or existing distinct type identifiers always contain the `raw_id` property. 
+    It is not advisable to rely on the `kind` property with a value `unknown`,
+    as it could become a new or existing distinct type in the future.
 
     :ivar str raw_id: Optional raw ID of the identifier.
     :ivar kind: The type of identifier.
