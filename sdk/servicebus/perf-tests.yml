@@ -14,10 +14,10 @@ Tests:
 - Test: send-queue-message-batch
   Class: SendQueueMessageBatchTest
   Arguments:
-  - --message-size 10240 --batch-size 100  
-  - --message-size 10240 --batch-size 100 --uamqp-transport
-  - --message-size 10240 --batch-size 100 --transport-type 1
-  - --message-size 10240 --batch-size 100 --transport-type 1 --uamqp-transport
+  - --message-size 1024 --batch-size 100  
+  - --message-size 1024 --batch-size 100 --uamqp-transport
+  - --message-size 1024 --batch-size 100 --transport-type 1
+  - --message-size 1024 --batch-size 100 --transport-type 1 --uamqp-transport
 
 - Test: receive-queue-message-batch
   Class: ReceiveQueueMessageBatchTest
@@ -30,10 +30,10 @@ Tests:
 - Test: send-subscription-message-batch
   Class: SendTopicMessageBatchTest
   Arguments:
-  - --message-size 10240 --batch-size 100  
-  - --message-size 10240 --batch-size 100 --uamqp-transport
-  - --message-size 10240 --batch-size 100 --transport-type 1
-  - --message-size 10240 --batch-size 100 --transport-type 1 --uamqp-transport
+  - --message-size 1024 --batch-size 100  
+  - --message-size 1024 --batch-size 100 --uamqp-transport
+  - --message-size 1024 --batch-size 100 --transport-type 1
+  - --message-size 1024 --batch-size 100 --transport-type 1 --uamqp-transport
 
 - Test: receive-subscription-message-batch
   Class: ReceiveSubscriptionMessageBatchTest
