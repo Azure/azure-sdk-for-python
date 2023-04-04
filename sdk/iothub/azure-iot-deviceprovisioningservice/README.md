@@ -1,4 +1,4 @@
-# Microsoft Azure IoT Hub Device Provisioning Service client library for Python
+# Azure IoT Hub Device Provisioning Service client library for Python
 
 The IoT Hub Device Provisioning Service (DPS) is a helper service for IoT Hub that enables zero-touch, just-in-time provisioning to the right IoT hub without requiring human intervention, allowing customers to provision millions of devices in a secure and scalable manner. 
 
@@ -165,7 +165,10 @@ state = client.device_registration_state.get(
 )
 ```
 
-## Next Steps
+
+## Troubleshooting
+
+## Next steps
 
 ### More sample code
 Get started with our [samples]<!--(https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/iothub/azure-iot-deviceprovisioningservice/samples/)-->.
