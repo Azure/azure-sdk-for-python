@@ -80,7 +80,7 @@ For text element length limits, maximum requests size, and supported text encodi
 
 ## Examples
 
-The following section provides several code snippets using the `client` [created above](#create-a-texttranslationclient-using-an-api-key-and-region-credential), and covers the main features present in this client library. Although most of the snippets below make use of asynchronous service calls, keep in mind that the Text Translation for Python library package supports both synchronous and asynchronous APIs.
+The following section provides several code snippets using the `client` [created above](#create-a-texttranslationclient-using-an-api-key-and-region-credential), and covers the main features present in this client library. Although most of the snippets below make use of synchronous service calls, keep in mind that the Text Translation for Python library package supports both synchronous and asynchronous APIs.
 
 ### Get Supported Languages
 
