@@ -63,6 +63,12 @@ class WebPubSubClientCredential:
         ...
 
     def __init__(self, client_access_url_provider: Union[str, Callable]) -> None:
+        """
+        :param client_access_url_provider: Client access url. If it's callable, it will be called to \
+         get the url. If it's str, it will be used directly. Please note that if you provide str, the 
+         connection will be closed and can't be reconnected once it is expired. 
+        :type client_access_url_provider: str or Callable
+        """
         if isinstance(client_access_url_provider, str):
             self._client_access_url_provider = lambda: client_access_url_provider
         else:
@@ -72,8 +78,8 @@ class WebPubSubClientCredential:
         return self._client_access_url_provider()
 
 
-_RETRY_TOTAL = 30
-_RETRY_BACKOFF_FACTOR = 1.0
+_RETRY_TOTAL = 10
+_RETRY_BACKOFF_FACTOR = 0.8
 _RETRY_BACKOFF_MAX = 120.0
 _RECOVERY_TIMEOUT = 30.0
 _RECOVERY_RETRY_INTERVAL = 1.0
