@@ -99,8 +99,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    HubOperations,
-    LeanOperations
+    HubOperations
 )
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
@@ -550,15 +549,6 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.HUB_WORKSPACE, self._hubs)
 
-        self._leans = LeanOperations(
-             self._operation_scope,
-            self._service_client_02_2023_preview,
-            self._operation_container,
-            self._credential,
-            **app_insights_handler_kwargs,
-        )
-        self._operation_container.add(AzureMLResourceType.LEAN_WORKSPACE, self._leans)
-
         if is_private_preview_enabled():
             self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
             self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
@@ -740,15 +730,6 @@ class MLClient:
 
     @property
     @experimental
-    def leans(self) -> LeanOperations:
-        """A collection of leans related operations.
-        :return: Lean Operations
-        :rtype: LeanOperations
-        """
-        return self._leans
-
-    @property
-    @experimental
     def _feature_store_entities(self) -> _FeatureStoreEntityOperations:
         """A collection of feature store entity related operations.
         :return: FeatureStoreEntity operations
@@ -757,22 +738,6 @@ class MLClient:
         if is_private_preview_enabled():
             return self._featurestoreentities
         raise Exception("feature store entity operations not supported")
-
-    @property
-    def hubs(self) -> HubOperations:
-        """A collection of hub related operations.
-        :return: Hub operations
-        :rtype: HubOperations
-        """
-        return self._hubs
-    
-    @property
-    def leans(self) -> LeanOperations:
-        """A collection of hub related operations.
-        :return: Hub operations
-        :rtype: HubOperations
-        """
-        return self._leans
 
     @property
     def connections(self) -> WorkspaceConnectionsOperations:

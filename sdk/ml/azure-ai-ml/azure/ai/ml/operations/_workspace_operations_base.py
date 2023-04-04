@@ -292,24 +292,24 @@ class WorkspaceOperationsBase:
                 workspace.container_registry,
                 ArmConstants.AZURE_MGMT_CONTAINER_REG_API_VERSION,
             )
-            if workspace.hub_storageaccounts is not  None:            
-                for storageaccount in workspace.hub_storageaccounts:
+            if workspace.storage_accounts is not  None:            
+                for storageaccount in workspace.storage_accounts:
                     delete_resource_by_arm_id(
                         self._credentials,
                         self._subscription_id,
                         storageaccount,
                         ArmConstants.AZURE_MGMT_STORAGE_API_VERSION,
                     )
-            if workspace.hub_keyvaults is not  None:
-                for keyvault in workspace.hub_keyvaults:
+            if workspace.key_vaults is not  None:
+                for keyvault in workspace.key_vaults:
                     delete_resource_by_arm_id(
                         self._credentials,
                         self._subscription_id,
                         keyvault,
                         ArmConstants.AZURE_MGMT_KEYVAULT_API_VERSION,
                     )
-            if workspace.hub_containerregistries is not  None:
-                for containerregistry in workspace.hub_containerregistries:
+            if workspace.container_registries is not  None:
+                for containerregistry in workspace.container_registries:
                     delete_resource_by_arm_id(
                         self._credentials,
                         self._subscription_id,
@@ -497,14 +497,14 @@ class WorkspaceOperationsBase:
         _set_val(param["managedNetwork"], managed_network)
 
         #Hub related param
-        if workspace.hub_storageaccounts:
-            _set_val(param["storage_accounts"], workspace.hub_storageaccounts)
-        if workspace.hub_keyvaults:
-            _set_val(param["key_vaults"], workspace.hub_keyvaults)
-        if workspace.hub_containerregistries:
-            _set_val(param["container_registies"], workspace.hub_containerregistries)
-        if workspace.hub_existingworkspaces:
-            _set_val(param["existing_workspaces"], workspace.hub_existingworkspaces)
+        if workspace.storage_accounts:
+            _set_val(param["storage_accounts"], workspace.storage_accounts)
+        if workspace.key_vaults:
+            _set_val(param["key_vaults"], workspace.key_vaults)
+        if workspace.container_registries:
+            _set_val(param["container_registies"], workspace.container_registries)
+        if workspace.existing_workspaces:
+            _set_val(param["existing_workspaces"], workspace.existing_workspaces)
 
         #Lean related param
         if workspace.hub_resource_id:

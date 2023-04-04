@@ -6,4 +6,4 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 from .hub import HubSchema
 
-__all__ = ["HubSchema", "LeanSchema"]
+__all__ = ["HubSchema"]

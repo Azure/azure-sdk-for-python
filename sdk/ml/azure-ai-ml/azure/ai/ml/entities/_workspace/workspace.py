@@ -7,6 +7,7 @@
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, List, Optional, Union
+from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
 from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
@@ -15,6 +16,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkSet
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.entities._hub._constants import LEAN_KIND, HUB_KIND
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
@@ -45,10 +47,11 @@ class Workspace(Resource):
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
-        hub_storageaccounts: Optional[List[str]] = None,
-        hub_keyvaults: Optional[List[str]] = None,
-        hub_containerregistries: Optional[List[str]] = None,
-        hub_existingworkspaces: Optional[List[str]] = None,
+        storage_accounts: Optional[List[str]] = None,
+        key_vaults: Optional[List[str]] = None,
+        container_registries: Optional[List[str]] = None,
+        existing_workspaces: Optional[List[str]] = None,
+        workspace_hub: Optional['Workspace'] = None,
         hub_resource_id: Optional[str] = None,
         **kwargs,
     ):
@@ -97,22 +100,22 @@ class Workspace(Resource):
         :type primary_user_assigned_identity: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
-        :param hub_storageaccounts: List of storage accounts used by Hub
-        :type hub_storageaccounts: List[str]
-        :param hub_keyvaults: List of key vaults used by Hub
-        :typehub_keyvaults: List[str]
-        :param hub_containerregistries: List of container registries used by Hub
-        :type hub_containerregistries: List[str]
-        :param hub_existingworkspaces: List of existing workspaces used by Hub to do convert
-        :type hub_existingworkspaces: List[str]
-        :param hub_resourceid: The resource id for hub workspace
-        :type hub_resourceid: str
+        :param storage_accounts: List of storage accounts used by Hub
+        :type storage_accounts: List[str]
+        :param key_vaults: List of key vaults used by Hub
+        :type key_vaults: List[str]
+        :param container_registries: List of container registries used by Hub
+        :type container_registries: List[str]
+        :param existing_workspaces: List of existing workspaces used by Hub to do convert
+        :type existing_workspaces: List[str]
+        :param workspace_hub: workspace hub object use to help create lean workspace
+        :type workspace_hub: Workspace
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
+        self._kind = kwargs.pop("kind", "default")
         self._discovery_url = kwargs.pop("discovery_url", None)
         self._mlflow_tracking_uri = kwargs.pop("mlflow_tracking_uri", None)
-        self._kind = kwargs.pop("kind", "default")
         self._feature_store_settings: Optional[_FeatureStoreSettings] = kwargs.pop("feature_store_settings", None)
         super().__init__(name=name, description=description, tags=tags, **kwargs)
 
@@ -130,11 +133,21 @@ class Workspace(Resource):
         self.identity = identity
         self.primary_user_assigned_identity = primary_user_assigned_identity
         self.managed_network = managed_network
-        self.hub_storageaccounts = hub_storageaccounts
-        self.hub_keyvaults = hub_keyvaults
-        self.hub_containerregistries = hub_containerregistries
-        self.hub_existingworkspaces = hub_existingworkspaces
+        self.storage_accounts = storage_accounts
+        self.key_vaults = key_vaults
+        self.container_registries = container_registries
+        self.existing_workspaces = existing_workspaces
         self.hub_resource_id = hub_resource_id
+
+        if(workspace_hub):
+            if(workspace_hub._kind.lower() != HUB_KIND):
+                raise ValidationError("workspace_hub should be a workspaceHub")
+            if all(x is None for x in [storage_account, location, container_registry, key_vault, public_network_access, managed_network, storage_accounts, key_vaults, container_registries, existing_workspaces]):
+                self._kind = LEAN_KIND
+                self.hub_resource_id = workspace_hub.id
+                self.location = workspace_hub.location
+            else:
+                raise ValidationError("To use workspaceHub to create workspace, you can only specify application insight, encryption and identity.")
 
     @property
     def discovery_url(self) -> str:
@@ -256,10 +269,10 @@ class Workspace(Resource):
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
             managed_network=managed_network,
             feature_store_settings=feature_store_settings,
-            hub_storageaccounts=rest_obj.storage_accounts,
-            hub_keyvaults=rest_obj.key_vaults,
-            hub_containerregistries=rest_obj.container_registries,
-            hub_existingworkspaces=rest_obj.existing_workspaces,
+            storage_accounts=rest_obj.storage_accounts,
+            key_vaults=rest_obj.key_vaults,
+            container_registries=rest_obj.container_registries,
+            existing_workspaces=rest_obj.existing_workspaces,
             hub_resource_id=rest_obj.hub_resource_id
         )
 
@@ -290,9 +303,9 @@ class Workspace(Resource):
             if self.managed_network
             else None,  # pylint: disable=protected-access
             feature_store_Settings=feature_store_Settings,
-            storage_accounts=self.hub_storageaccounts,
-            container_registries=self.hub_containerregistries,
-            key_vaults=self.hub_keyvaults,
-            existing_workspaces=self.hub_existingworkspaces,
+            storage_accounts=self.storage_accounts,
+            container_registries=self.container_registries,
+            key_vaults=self.key_vaults,
+            existing_workspaces=self.existing_workspaces,
             hub_resource_id=self.hub_resource_id
         )

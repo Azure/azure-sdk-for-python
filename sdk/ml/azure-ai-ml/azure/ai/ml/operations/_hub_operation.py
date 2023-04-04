@@ -16,7 +16,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._hub.hub import Hub
+from azure.ai.ml.entities._hub.hub import WorkspaceHub
 
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities._hub._constants import HUB_KIND
@@ -51,28 +51,28 @@ class HubOperations(WorkspaceOperationsBase):
             **kwargs,
         )
 
-    # @monitor_with_activity(logger, "Hub.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Hub]:
+    # @monitor_with_activity(logger, "WorkspaceHub.List", ActivityType.PUBLICAPI)
+    def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[WorkspaceHub]:
         """List all hub workspaces that the user has access to in the current
         resource group or subscription.
 
         :param scope: scope of the listing, "resource_group" or "subscription", defaults to "resource_group"
         :type scope: str, optional
-        :return: An iterator like instance of Hub objects
-        :rtype: ~azure.core.paging.ItemPaged[Hub]
+        :return: An iterator like instance of WorkspaceHub objects
+        :rtype: ~azure.core.paging.ItemPaged[WorkspaceHub]
         """
 
         if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
                 cls=lambda objs: [
-                    Hub._from_rest_object(filterObj)
+                    WorkspaceHub._from_rest_object(filterObj)
                     for filterObj in filter(lambda ws: ws.kind.lower() == HUB_KIND, objs)
                 ]
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
             cls=lambda objs: [
-                Hub._from_rest_object(filterObj)
+                WorkspaceHub._from_rest_object(filterObj)
                 for filterObj in filter(lambda ws: ws.kind.lower() == HUB_KIND, objs)
             ],
         )
@@ -80,48 +80,48 @@ class HubOperations(WorkspaceOperationsBase):
     # @monitor_with_activity(logger, "Hub.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-renamed
-    def get(self, name: str, **kwargs: Dict) -> Hub:
+    def get(self, name: str, **kwargs: Dict) -> WorkspaceHub:
         """Get a hub workspace by name.
 
         :param name: Name of the hub.
         :type name: str
         :return: The hub with the provided name.
-        :rtype: Hub
+        :rtype: WorkspaceHub
         """
 
-        hub_workspace = None
+        workspace_hub = None
         resource_group = kwargs.get("resource_group") or self._resource_group_name
         rest_workspace_obj = self._operation.get(resource_group, name)
         if rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND:
-            hub_workspace = Hub._from_rest_object(rest_workspace_obj)
+            workspace_hub = WorkspaceHub._from_rest_object(rest_workspace_obj)
 
-        return hub_workspace
+        return workspace_hub
 
     # @monitor_with_activity(logger, "Hub.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
     # pylint: disable=arguments-differ
     def begin_create(
         self,
-        hub: Hub,
+        workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller[Hub]:
-        """Create a new Hub.
+    ) -> LROPoller[WorkspaceHub]:
+        """Create a new WorkspaceHub.
 
         Returns the hub workspace if already exists.
 
-        :param hub: Hub definition.
-        :type hub: Hub
+        :param workspace_hub: Hub definition.
+        :type workspace_hub: WorkspaceHub
         :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Hub.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Hub]
         """
 
         def get_callback():
-            return self.get(hub.name)
+            return self.get(workspace_hub.name)
 
         return super().begin_create(
-            workspace=hub,
+            workspace=workspace_hub,
             update_dependent_resources=update_dependent_resources,
             get_callback=get_callback,
             **kwargs,
@@ -132,29 +132,29 @@ class HubOperations(WorkspaceOperationsBase):
     # pylint: disable=arguments-renamed
     def begin_update(
         self,
-        hub: Hub,
+        workspace_hub: WorkspaceHub,
         update_dependent_resources: bool = False,
         **kwargs: Dict,
-    ) -> LROPoller[Hub]:
+    ) -> LROPoller[WorkspaceHub]:
         """Update friendly name, description, tags, or PNA, manageNetworkSettings, encryption of a Hub.
 
         :param hub: Hub resource.
-        :type hub: Hub
-        :return: An instance of LROPoller that returns a Hub.
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Hub]
+        :type hub: WorkspaceHub
+        :return: An instance of LROPoller that returns a WorkspaceHub.
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.WorkspaceHub]
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        rest_workspace_obj = self._operation.get(resource_group, hub.name)
+        rest_workspace_obj = self._operation.get(resource_group, workspace_hub.name)
         if not (
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND
         ):
-            raise ValidationError("{0} is not a hub workspace".format(hub.name))
+            raise ValidationError("{0} is not a hub workspace".format(workspace_hub.name))
 
         def deserialize_callback(rest_obj):
-            return HubWorkspace._from_rest_object(rest_obj=rest_obj)
+            return WorkspaceHub._from_rest_object(rest_obj=rest_obj)
 
         return super().begin_update(
-            workspace=hub,
+            workspace=workspace_hub,
             update_dependent_resources=update_dependent_resources,
             deserialize_callback=deserialize_callback,
             **kwargs,
@@ -163,11 +163,11 @@ class HubOperations(WorkspaceOperationsBase):
     # @monitor_with_activity(logger, "Hub.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
-        """Delete a Hub.
+        """Delete a WorkspaceHub.
 
-        :param name: Name of the Hub
+        :param name: Name of the WorkspaceHub
         :type name: str
-        :param delete_dependent_resources: Whether to delete resources associated with the Hub,
+        :param delete_dependent_resources: Whether to delete resources associated with the WorkspaceHub,
             i.e., container registry, storage account, key vault.
             The default is False. Set to True to delete these resources.
         :type delete_dependent_resources: bool
@@ -179,6 +179,6 @@ class HubOperations(WorkspaceOperationsBase):
         if not (
             rest_workspace_obj and rest_workspace_obj.kind and rest_workspace_obj.kind.lower() == HUB_KIND
         ):
-            raise ValidationError("{0} is not a hub".format(name))
+            raise ValidationError("{0} is not a WorkspaceHub".format(name))
 
         return super().begin_delete(name=name, delete_dependent_resources=delete_dependent_resources, **kwargs)

@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 from typing import Dict, Iterable, Optional
+from marshmallow import ValidationError
 
 from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
 from azure.ai.ml._restclient.v2022_12_01_preview.models import ManagedNetworkProvisionOptions
@@ -22,6 +23,7 @@ from azure.ai.ml.entities import (
     Workspace,
     WorkspaceKeys,
 )
+
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace

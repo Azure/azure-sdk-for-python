@@ -22,7 +22,7 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE
 
 from ._constants import HUB_KIND
 
-class HubWorkspace(Workspace):
+class WorkspaceHub(Workspace):
     def __init__(
         self,
         *,
@@ -33,10 +33,10 @@ class HubWorkspace(Workspace):
         location: Optional[str] = None,
         resource_group: Optional[str] = None,
         managed_network: Optional[ManagedNetwork] = None,
-        hub_storageaccounts: Optional[List[str]] = None,
-        hub_keyvaults: Optional[List[str]] = None,
-        hub_containerregistries: Optional[List[str]] = None,
-        hub_existingworkspaces: Optional[List[str]] = None,
+        storage_accounts: Optional[List[str]] = None,
+        key_vaults: Optional[List[str]] = None,
+        container_registries: Optional[List[str]] = None,
+        existing_workspaces: Optional[List[str]] = None,
         customer_managed_key: Optional[CustomerManagedKey] = None,
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
@@ -44,7 +44,7 @@ class HubWorkspace(Workspace):
         **kwargs,
     ):
 
-        """Hub.
+        """WorkspaceHub.
 
         :param name: Name of the feature store.
         :type name: str
@@ -61,16 +61,14 @@ class HubWorkspace(Workspace):
         :type resource_group: str
         :param managed_network: workspace's Managed Network configuration
         :type managed_network: ManagedNetwork
-        :param hub_storageaccounts: List of storage accounts used by Hub
-        :type hub_storageaccounts: List[str]
-        :param hub_keyvaults: List of key vaults used by Hub
-        :typehub_keyvaults: List[str]
-        :param hub_containerregistry: List of container registries used by Hub
-        :type hub_containerregistry: List[str]
-        :param hub_existingworkspaces: List of existing workspaces used by Hub to do convert
-        :type hub_existingworkspaces: List[str]
-        :param hub_resourceid: The resource id for hub workspace
-        :type hub_resourceid: str
+        :param storage_accounts: List of storage accounts used by Hub
+        :type storage_accounts: List[str]
+        :param key_vaults: List of key vaults used by Hub
+        :key_vaults: List[str]
+        :param container_registries: List of container registries used by Hub
+        :type container_registries: List[str]
+        :param existing_workspaces: List of existing workspaces used by Hub to do convert
+        :type existing_workspaces: List[str]
         :param customer_managed_key: Key vault details for encrypting data with customer-managed keys.
             If not specified, Microsoft-managed keys will be used by default.
         :type customer_managed_key: CustomerManagedKey
@@ -99,21 +97,21 @@ class HubWorkspace(Workspace):
             identity=identity,
             primary_user_assigned_identity=primary_user_assigned_identity,
             managed_network=managed_network,
-            hub_storageaccounts=hub_storageaccounts,
-            hub_containerregistries=hub_containerregistries,
-            hub_keyvaults=hub_keyvaults,
-            hub_existingworkspaces=hub_existingworkspaces,
+            storage_accounts=storage_accounts,
+            container_registries=container_registries,
+            key_vaults=key_vaults,
+            existing_workspaces=existing_workspaces,
             **kwargs,
         )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "HubWorkspace":
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "WorkspaceHub":
         if not rest_obj:
             return None
 
         workspace_object = Workspace._from_rest_object(rest_obj)
 
-        return HubWorkspace(
+        return WorkspaceHub(
             name=workspace_object.name,
             description=workspace_object.description,
             tags=workspace_object.tags,
@@ -125,10 +123,10 @@ class HubWorkspace(Workspace):
             public_network_access=workspace_object.public_network_access,
             identity=workspace_object.identity,
             primary_user_assigned_identity=workspace_object.primary_user_assigned_identity,
-            hub_storageaccounts=workspace_object.hub_storageaccounts,
-            hub_keyvaults=workspace_object.hub_keyvaults,
-            hub_containerregistries=workspace_object.hub_containerregistries,
-            hub_existingworkspaces=workspace_object.hub_existingworkspaces,
+            storage_accounts=workspace_object.storage_accounts,
+            key_vaults=workspace_object.key_vaults,
+            container_registries=workspace_object.container_registries,
+            existing_workspaces=workspace_object.existing_workspaces,
             workspace_id=rest_obj.workspace_id,
             id=rest_obj.id,
         )
@@ -140,7 +138,7 @@ class HubWorkspace(Workspace):
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "HubWorkspace":
+    ) -> "WorkspaceHub":
         data = data or {}
         params_override = params_override or []
         context = {
@@ -148,8 +146,8 @@ class HubWorkspace(Workspace):
             PARAMS_OVERRIDE_KEY: params_override,
         }
         loaded_schema = load_from_dict(HubSchema, data, context, **kwargs)
-        return HubWorkspace(**loaded_schema)
+        return WorkspaceHub(**loaded_schema)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return HubWorkspace(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return WorkspaceHub(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
