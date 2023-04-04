@@ -211,7 +211,7 @@ try:
     input_text_elements = [ InputTextItem(text = "fly") ]
 
     response = text_translator.dictionary_lookup(content = input_text_elements, from_parameter = source_language, to = target_language)
-     dictionary_entry = response[0] if response else None
+    dictionary_entry = response[0] if response else None
 
     if dictionary_entry:
         print(f"For the given input {len(dictionary_entry.translations)} entries were found in the dictionary.")
