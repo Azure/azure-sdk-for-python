@@ -59,7 +59,7 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
-        self._original_domain = get_domain(request.http_request.url)
+        self._original_domain = get_domain(request.http_request.url) if self.allow else None
         while redirects_remaining:
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
