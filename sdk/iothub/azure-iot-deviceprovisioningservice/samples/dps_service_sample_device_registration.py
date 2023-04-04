@@ -134,7 +134,7 @@ def _register_device_with_symmetric_key(
     """
 
     # Register device using Provisioning Device Client from Device SDK
-    from azure.iot.device import ProvisioningDeviceClient
+    from azure.iot.device import ProvisioningDeviceClient  # type: ignore
 
     symmetric_key = _compute_device_symmetric_key(
         key=enrollment_group_key, string_to_sign=device_id

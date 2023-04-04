@@ -17,7 +17,7 @@ def validate_key_value_pairs(string: str) -> Dict[str, Any]:
 
     Returns (dict, None): a dictionary of key value pairs.
     """
-    result = None
+    result = {}
     if string:
         kv_list = [x for x in string.split(";") if "=" in x]  # key-value pairs
         result = dict(x.split("=", 1) for x in kv_list)
@@ -26,7 +26,7 @@ def validate_key_value_pairs(string: str) -> Dict[str, Any]:
 
 def _parse_connection_string(
     connection_string: str,
-    validate: List[str] = None,
+    validate: List[str] = [],
     cstring_type: str = "entity",
 ) -> Dict[str, str]:
     decomposed = validate_key_value_pairs(connection_string)

@@ -42,14 +42,8 @@ class ProvisioningServiceClient(object):
     def __init__(
         self,
         endpoint: str,
-        credential: Optional[
-            Union[
-                str,
-                Dict[str, str],
-                TokenCredential,
-            ]
-        ] = None,  # pylint: disable=line-too-long
-        **kwargs: Any,
+        credential: Optional["TokenCredential"] = None,
+        **kwargs,
     ) -> None:
         # Validate endpoint
         try:
@@ -58,6 +52,9 @@ class ProvisioningServiceClient(object):
         except AttributeError:
             raise ValueError("Endpoint URL must be a string.")
         endpoint = endpoint.rstrip("/")
+
+        if not credential:
+            raise ValueError("Credential cannot be None")
 
         self._pipeline = self._create_pipeline(
             credential=credential, base_url=endpoint, **kwargs
@@ -99,19 +96,13 @@ class ProvisioningServiceClient(object):
             host_name, shared_access_key_name, shared_access_key
         )
 
-        return cls(endpoint=host_name, credential=credential, **kwargs)
+        return cls(endpoint=host_name, credential=credential, **kwargs)  # type: ignore
 
     @classmethod
     def _create_pipeline(
         self,
-        credential: Optional[
-            Union[
-                str,
-                Dict[str, str],
-                TokenCredential,
-            ]
-        ],
         base_url: str,
+        credential: "TokenCredential",
         **kwargs,
     ) -> Pipeline:
         transport = kwargs.get("transport") or RequestsTransport(**kwargs)
@@ -120,19 +111,19 @@ class ProvisioningServiceClient(object):
         )
 
         # Choose appropriate credential policy
-        self._credential_policy = None
+        self._credential_policy = None  # type: ignore
         if hasattr(credential, "get_token"):
-            self._credential_policy = BearerTokenCredentialPolicy(
-                credential, "https://azure-devices-provisioning.net/.default"
+            self._credential_policy = BearerTokenCredentialPolicy(  # type: ignore
+                credential, "https://azure-devices-provisioning.net/.default"  # type: ignore
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            self._credential_policy = credential
+            self._credential_policy = credential  # type: ignore
         elif credential is not None:
             raise TypeError(f"Unsupported credential: {credential}")
 
         policies = [
             user_agent_policy,
-            self._credential_policy,
+            self._credential_policy,  # type: ignore
             HeadersPolicy(**kwargs),
             UserAgentPolicy(**kwargs),
             ContentDecodePolicy(**kwargs),
@@ -143,6 +134,6 @@ class ProvisioningServiceClient(object):
         ]
         # add additional policies from kwargs
         if kwargs.get("_additional_pipeline_policies"):
-            policies = policies.extend(kwargs.get("_additional_pipeline_policies"))
+            policies.extend([kwargs.get("_additional_pipeline_policies")])
 
-        return Pipeline(transport=transport, policies=policies)
+        return Pipeline(transport, policies=policies)  # type: ignore

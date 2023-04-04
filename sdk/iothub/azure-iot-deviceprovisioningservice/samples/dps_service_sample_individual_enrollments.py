@@ -69,7 +69,8 @@ class EnrollmentSamples(object):
         )
 
         # Load certificate contents from file
-        cert_contents = open_certificate(self.x509_cert_path)
+        certificate = open(self.x509_cert_path, "rt", encoding="utf-8")
+        cert_contents = certificate.read()
 
         # Create an individual enrollment object with "x509" attestation mechanism
         enrollment = {
@@ -228,35 +229,6 @@ class EnrollmentSamples(object):
         dps_service_client.individual_enrollment.delete(id=self.x509_enrollment_id)
         dps_service_client.individual_enrollment.delete(id=self.symmetric_enrollment_id)
         dps_service_client.individual_enrollment.delete(id=self.tpm_enrollment_id)
-
-
-def open_certificate(certificate_path: str) -> str:
-    from base64 import b64encode
-
-    """
-    Helper method to read certificate file contents.
-    Opens certificate file (as read binary) from the file system and
-    returns the value read.
-
-    Args:
-        certificate_path (str): the path the the certificate file.
-
-    Returns:
-        certificate (str): returns utf-8 encoded value from certificate file.
-    """
-
-    certificate = ""
-    if not certificate_path:
-        return certificate
-
-    with open(certificate_path, "rb") as cert_file:
-        certificate = cert_file.read()
-        try:
-            certificate = certificate.decode("utf-8")
-        except UnicodeError:
-            certificate = b64encode(certificate).decode("utf-8")
-    # Remove trailing white space from the certificate content
-    return certificate.rstrip()
 
 
 if __name__ == "__main__":
