@@ -586,14 +586,14 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def iter_contextual_wrapper(
-        receiver: "ServiceBusReceiver", max_wait_time: Optional[int] = None
+        receiver: "ServiceBusReceiver",
     ) -> Iterator["ServiceBusReceivedMessage"]:
         """The purpose of this wrapper is to allow both state restoration (for multiple concurrent iteration)
         and per-iter argument passing that requires the former."""
         while True:
             try:
                 # pylint: disable=protected-access
-                message = receiver._inner_next(wait_time=max_wait_time)
+                message = receiver._inner_next()
                 links = get_receive_links(message)
                 with receive_trace_context_manager(receiver, links=links):
                     yield message
@@ -602,7 +602,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def iter_next(
-        receiver: "ServiceBusReceiver", wait_time: Optional[int] = None
+        receiver: "ServiceBusReceiver",
     ) -> "ServiceBusReceivedMessage":
         """
         Used to iterate through received messages.
@@ -611,8 +611,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         try:
             receiver._receive_context.set()
             receiver._open()
-            if not receiver._message_iter or wait_time:
-                receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
+            if not receiver._message_iter:
+                receiver._message_iter = receiver._handler.receive_messages_iter(timeout=receiver._max_wait_time)
             pyamqp_message = next(
                 cast(Iterator["Message"], receiver._message_iter)
             )

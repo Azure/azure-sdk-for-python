@@ -232,7 +232,7 @@ class ServiceBusReceiver(
         self._check_live()
         while True:
             try:
-                return self._do_retryable_operation(self._iter_next, wait_time=wait_time)
+                return self._do_retryable_operation(self._iter_next)
             except StopIteration:
                 self._message_iter = None
                 raise
@@ -581,33 +581,6 @@ class ServiceBusReceiver(
     def close(self) -> None:
         super(ServiceBusReceiver, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
-
-    def _get_streaming_message_iter(
-        self, max_wait_time: Optional[float] = None
-    ) -> Iterator[ServiceBusReceivedMessage]:
-        """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
-        such a timeout occurs.
-
-        :param max_wait_time: Maximum time to wait in seconds for the next message to arrive.
-         If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, and no messages arrive for the
-         timeout period, the iterator will stop.
-        :type max_wait_time: Optional[float]
-        :rtype: Iterator[ServiceBusReceivedMessage]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/sync_samples/sample_code_servicebus.py
-                :start-after: [START receive_forever]
-                :end-before: [END receive_forever]
-                :language: python
-                :dedent: 4
-                :caption: Receive indefinitely from an iterator in streaming fashion.
-        """
-        self._check_live()
-        if max_wait_time is not None and max_wait_time <= 0:
-            raise ValueError("The max_wait_time must be greater than 0.")
-        return self._iter_contextual_wrapper(max_wait_time)
 
     def receive_messages(
         self,
