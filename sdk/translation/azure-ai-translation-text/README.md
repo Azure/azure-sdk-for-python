@@ -71,7 +71,7 @@ text_translator = TextTranslationClient(credential = TranslatorCredential("<apiK
 
 ### `TextTranslationClient`
 
-A `TextTranslationClient` is the primary interface for developers using the Text Translator client library.  It provides both synchronous and asynchronous operations to access a specific use of text translator, such as get supported languages detection or text translation.
+A `TextTranslationClient` is the primary interface for developers using the Text Translation client library.  It provides both synchronous and asynchronous operations to access a specific use of text translator, such as get supported languages detection or text translation.
 
 ### Input
 
