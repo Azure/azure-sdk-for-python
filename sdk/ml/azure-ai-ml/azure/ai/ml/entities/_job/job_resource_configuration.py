@@ -54,7 +54,7 @@ class BaseProperty(dict):
         if isinstance(obj, dict):
             # if obj has attribute _NEED_KEY_MAPPING, it should be an internal AISuperComputerConfiguration object,
             # whose key name need to be mapped to Pascal case during to dict operation.
-            # Reference: sdk\ml\azure-ai-ml\azure\ai\ml\_internal\entities\runsettings\ai_super_computer_configuration.py
+            # Ref: sdk\ml\azure-ai-ml\azure\ai\ml\_internal\entities\runsettings\ai_super_computer_configuration.py
             need_key_mapping = hasattr(obj, "_NEED_KEY_MAPPING")
             result = {}
             for key, value in obj.items():
