@@ -123,9 +123,6 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 with pytest.raises(ValueError):
                     await receiver.receive_messages(max_wait_time=0)
 
-                with pytest.raises(ValueError):
-                    await receiver._get_streaming_message_iter(max_wait_time=0)
-
                 count = 0
                 async for message in receiver:
                     print_message(_logger, message)
@@ -1480,7 +1477,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             scheduled_enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             messages = []
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20, max_wait_time=5)
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             async with sender, receiver:
                 content = str(uuid.uuid4())
@@ -1494,7 +1491,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 await sender.send_messages([message_a, message_b])
 
                 received_messages = []
-                async for message in receiver._get_streaming_message_iter(max_wait_time=5):
+                async for message in receiver:
                     received_messages.append(message)
                     await receiver.complete_message(message)
 
@@ -1827,11 +1824,11 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                 messages = []
                 async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
                     
-                    async for message in receiver._get_streaming_message_iter():
+                    async for message in receiver:
                         messages.append(message)
                         break
 
-                    async for message in receiver._get_streaming_message_iter():
+                    async for message in receiver:
                         messages.append(message)
 
                     for message in messages:
@@ -1845,9 +1842,9 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     message_3 = ServiceBusMessage("3")
                     await sender.send_messages([message_2, message_3])
 
-                    async for message in receiver._get_streaming_message_iter():
+                    async for message in receiver:
                         messages.append(message)
-                        async for message in receiver._get_streaming_message_iter():
+                        async for message in receiver:
                             messages.append(message)
 
                     assert len(messages) == 4
@@ -1897,60 +1894,6 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
                 assert len(messages) == 0  # make sure messages are removed from the queue
                 assert receiver_handler == receiver._handler  # make sure no reconnection happened
-
-    # @pytest.mark.skip(reason="TODO: _counter doesnt exist in pyamqp")
-    @pytest.mark.asyncio
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasserAsync()
-    async def test_async_queue_receiver_respects_max_wait_time_overrides(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        async with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
-
-            async with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = ServiceBusMessage("0")
-                await sender.send_messages(message)
-
-                messages = []
-                def get_time():
-                    return time.time()
-
-                async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
-
-                    time_1 = get_time()
-                    async for message in receiver._get_streaming_message_iter(max_wait_time=10):
-                        messages.append(message)
-                        await receiver.complete_message(message)
-
-                        time_2 = get_time()
-                        async for message in receiver._get_streaming_message_iter(max_wait_time=1):
-                            messages.append(message)
-                        time_3 = get_time()
-                        assert timedelta(seconds=.5) < timedelta(seconds=(time_3 - time_2)) <= timedelta(seconds=2)
-                    time_4 = get_time()
-                    assert timedelta(seconds=8) < timedelta(seconds=(time_4 - time_3)) <= timedelta(seconds=11)
-
-                    async for message in receiver._get_streaming_message_iter(max_wait_time=3):
-                        messages.append(message)
-                    time_5 = get_time()
-                    assert timedelta(seconds=1) < timedelta(seconds=(time_5 - time_4)) <= timedelta(seconds=4)
-
-                    async for message in receiver:
-                        messages.append(message)
-                    time_6 = get_time()
-                    assert timedelta(seconds=3) < timedelta(seconds=(time_6 - time_5)) <= timedelta(seconds=6)
-
-                    async for message in receiver._get_streaming_message_iter():
-                        messages.append(message)
-                    time_7 = get_time()
-                    assert timedelta(seconds=3) < timedelta(seconds=(time_7 - time_6)) <= timedelta(seconds=6)
-                    assert len(messages) == 1
-
     
     @pytest.mark.asyncio
     @pytest.mark.liveTest

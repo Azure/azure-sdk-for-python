@@ -187,9 +187,6 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             with pytest.raises(ValueError):
                 receiver.receive_messages(max_wait_time=0)
 
-            with pytest.raises(ValueError):
-                receiver._get_streaming_message_iter(max_wait_time=0)
-
             count = 0
             for message in receiver:
                 print_message(_logger, message)
@@ -1691,7 +1688,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             scheduled_enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, prefetch_count=20, max_wait_time=5)
 
             with sender, receiver:
                 content = str(uuid.uuid4())
@@ -1713,7 +1710,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 sender.send_messages(message_arry)
 
                 received_messages = []
-                for message in receiver._get_streaming_message_iter(max_wait_time=5):
+                for message in receiver:
                     received_messages.append(message)
                     receiver.complete_message(message)
 
@@ -2073,7 +2070,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     )
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
-            receiver = sb_client.get_queue_receiver(servicebus_queue.name)
+            receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
 
             with sender, receiver:
                 message = ServiceBusMessageBatch()
@@ -2086,7 +2083,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 message_2nd_received_cnt = 0
                 while message_1st_received_cnt < 20 or message_2nd_received_cnt < 20:
                     messages = []
-                    for message in receiver._get_streaming_message_iter(max_wait_time=10):
+                    for message in receiver:
                         messages.append(message)
                     if not messages:
                         break
@@ -2136,11 +2133,11 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     
-                    for message in receiver._get_streaming_message_iter():
+                    for message in receiver:
                         messages.append(message)
                         break
 
-                    for message in receiver._get_streaming_message_iter():
+                    for message in receiver:
                         messages.append(message)
 
                     for message in messages:
@@ -2154,9 +2151,9 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     message_3 = ServiceBusMessage("3")
                     sender.send_messages([message_2, message_3])
 
-                    for message in receiver._get_streaming_message_iter():
+                    for message in receiver:
                         messages.append(message)
-                        for message in receiver._get_streaming_message_iter():
+                        for message in receiver:
                             messages.append(message)
 
                     assert len(messages) == 4
@@ -2232,62 +2229,9 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                 messages = []
                 with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
                     
-                    for message in receiver._get_streaming_message_iter():
-                        messages.append(message)
-                assert len(messages) == 2
-
-    @pytest.mark.liveTest
-    @pytest.mark.live_test_only
-    @CachedServiceBusResourceGroupPreparer(name_prefix='servicebustest')
-    @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
-    @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
-    def test_queue_receiver_respects_max_wait_time_overrides(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string,
-                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
-
-            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                message = ServiceBusMessage("0")
-                sender.send_messages(message)
-
-                messages = []
-                def get_time():
-                    return time.time()
-
-                with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5) as receiver:
-
-                    time_1 = get_time()
-                    time_3 = time_1 # In case inner loop isn't hit, fail sanely.
-                    for message in receiver._get_streaming_message_iter(max_wait_time=10):
-                        messages.append(message)
-                        receiver.complete_message(message)
-
-                        time_2 = get_time()
-                        for message in receiver._get_streaming_message_iter(max_wait_time=1):
-                            messages.append(message)
-                        time_3 = get_time()
-                        assert timedelta(seconds=.5) < timedelta(seconds=(time_3 - time_2)) <= timedelta(seconds=2)
-                    time_4 = get_time()
-                    assert timedelta(seconds=8) < timedelta(seconds=(time_4 - time_3)) <= timedelta(seconds=11)
-
-                    for message in receiver._get_streaming_message_iter(max_wait_time=3):
-                        messages.append(message)
-                    time_5 = get_time()
-                    assert timedelta(seconds=1) < timedelta(seconds=(time_5 - time_4)) <= timedelta(seconds=4)
-
                     for message in receiver:
                         messages.append(message)
-                    time_6 = get_time()
-                    assert timedelta(seconds=3) < timedelta(seconds=(time_6 - time_5)) <= timedelta(seconds=6)
-
-                    for message in receiver._get_streaming_message_iter():
-                        messages.append(message)
-                    time_7 = get_time()
-                    assert timedelta(seconds=3) < timedelta(seconds=(time_7 - time_6)) <= timedelta(seconds=6)
-                    assert len(messages) == 1
-
+                assert len(messages) == 2
     
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
