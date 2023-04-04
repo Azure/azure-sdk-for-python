@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
+import json
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -30,6 +31,7 @@ from .._helpers import (
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
     OCI_IMAGE_MANIFEST,
+    DEFAULT_CHUNK_SIZE,
 )
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
@@ -862,7 +864,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     async def upload_manifest(
         self,
         repository: str,
-        manifest: Union[OciImageManifest, IO[bytes]],
+        manifest: Union[Dict[str, Any], IO[bytes]],
         *,
         tag: Optional[str] = None,
         media_type: str = OCI_IMAGE_MANIFEST,
@@ -871,8 +873,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Upload a manifest for an artifact.
 
         :param str repository: Name of the repository
-        :param manifest: The manifest to upload. It can be an OciImageManifest object or seekable stream. 
-        :type manifest: ~azure.containerregistry.models.OciImageManifest or IO
+        :param manifest: The manifest to upload. It can be a JSON formatted dict or seekable stream.
+        :type manifest: dict or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
         :keyword media_type: The media type of the manifest. If not specified, this value will be set to
@@ -880,13 +882,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :paramtype media_type: str
         :returns: The digest of the uploaded manifest, calculated by the registry.
         :rtype: str
-        :raises ValueError: If the parameter repository or manifest is None.
-        :raises ~azure.core.exceptions.HttpResponseError:
-            If the digest in the response does not match the digest of the uploaded manifest.
+        :raises ValueError: If the parameter repository or manifest is None,
+            or the digest in the response does not match the digest of the uploaded manifest.
         """
         try:
-            if isinstance(manifest, OciImageManifest):
-                data = _serialize_manifest(manifest)
+            if isinstance(manifest, dict):
+                data = BytesIO(json.dumps(manifest).encode())
             else:
                 data = manifest
             tag_or_digest = tag
@@ -904,9 +905,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             digest = response_headers['Docker-Content-Digest']
             if not _validate_digest(data, digest):
                 raise ValueError("The digest in the response does not match the digest of the uploaded manifest.")
-        except ValueError:
+        except Exception as e:
             if repository is None or manifest is None:
-                raise ValueError("The parameter repository and manifest cannot be None.")
+                raise ValueError("The parameter repository and manifest cannot be None.") from e
             raise
         return digest
 

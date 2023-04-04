@@ -5,6 +5,7 @@
 # ------------------------------------
 # pylint: disable=too-many-lines
 import hashlib
+import json
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.credentials import TokenCredential
@@ -857,7 +858,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def upload_manifest(
         self,
         repository: str,
-        manifest: Union[OciImageManifest, IO[bytes]],
+        manifest: Union[Dict[str, Any], IO[bytes]],
         *,
         tag: Optional[str] = None,
         media_type: str = OCI_IMAGE_MANIFEST,
@@ -866,8 +867,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """Upload a manifest for an artifact.
 
         :param str repository: Name of the repository
-        :param manifest: The manifest to upload. It can be an OciImageManifest object or seekable stream. 
-        :type manifest: ~azure.containerregistry.OciImageManifest or IO
+        :param manifest: The manifest to upload. It can be a JSON formatted dict or seekable stream.
+        :type manifest: dict or IO
         :keyword tag: Tag of the manifest.
         :paramtype tag: str or None
         :keyword media_type: The media type of the manifest. If not specified, this value will be set to
@@ -879,8 +880,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             or the digest in the response does not match the digest of the uploaded manifest.
         """
         try:
-            if isinstance(manifest, OciImageManifest):
-                data = _serialize_manifest(manifest)
+            if isinstance(manifest, dict):
+                data = BytesIO(json.dumps(manifest).encode())
             else:
                 data = manifest
             tag_or_digest = tag
@@ -956,7 +957,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
-        """Download the manifest for an artifact.
+        """Download the manifest for an OCI artifact.
 
         :param str repository: Name of the repository.
         :param str tag_or_digest: The tag or digest of the manifest to download.
