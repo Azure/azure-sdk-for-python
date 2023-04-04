@@ -5,7 +5,7 @@
 import abc
 import logging
 import time
-from typing import Any, Optional, Tuple
+from typing import Any, Optional
 
 from azure.core.credentials import AccessToken
 from .utils import within_credential_chain
@@ -24,20 +24,18 @@ class GetTokenMixin(abc.ABC):
     @abc.abstractmethod
     def _acquire_token_silently(
         self, *scopes: str, **kwargs: Any
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+    ) -> Optional[AccessToken]:
         """Attempt to acquire an access token from a cache or by redeeming a refresh token"""
 
     @abc.abstractmethod
     def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token from the STS"""
 
-    def _should_refresh(self, token: AccessToken, refresh_on: Optional[int] = None) -> bool:
+    def _should_refresh(self, token: AccessToken) -> bool:
         now = int(time.time())
-        if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
-            return False
-        if refresh_on and refresh_on < now:
-            return True
         if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
+            return False
+        if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
             return False
         return True
 
@@ -60,11 +58,11 @@ class GetTokenMixin(abc.ABC):
             raise ValueError('"get_token" requires at least one scope')
 
         try:
-            token, refresh_on = self._acquire_token_silently(*scopes, **kwargs)
+            token = self._acquire_token_silently(*scopes, **kwargs)
             if not token:
                 self._last_request_time = int(time.time())
                 token = self._request_token(*scopes, **kwargs)
-            elif self._should_refresh(token, refresh_on):
+            elif self._should_refresh(token):
                 try:
                     self._last_request_time = int(time.time())
                     token = self._request_token(*scopes, **kwargs)
