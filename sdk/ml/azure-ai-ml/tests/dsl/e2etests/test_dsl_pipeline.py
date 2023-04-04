@@ -2570,9 +2570,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert "Studio" in default_services
         assert "Tracking" in default_services
         assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
-        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Studio"]["type"] == "Studio"
         assert default_services["Tracking"]["endpoint"].startswith("azureml://")
-        assert default_services["Tracking"]["job_service_type"] == "Tracking"
+        assert default_services["Tracking"]["type"] == "Tracking"
 
     def test_group_outputs_description_overwrite(self, client):
         # test group outputs description overwrite
