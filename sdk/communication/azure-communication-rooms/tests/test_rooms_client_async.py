@@ -10,7 +10,6 @@ import datetime
 from azure.core.credentials import AzureKeyCredential
 from azure.communication.rooms.aio import RoomsClient
 from azure.communication.rooms import (
-    RoomParticipant,
     ParticipantRole,
     InvitedRoomParticipant,
     UpsertParticipantsResult,

@@ -17,9 +17,6 @@ from azure.communication.rooms import (
     RoomParticipant
 )
 from testcase_async import RoomsAsyncTestCase
-from _shared.testcase import (
-    ResponseReplacerProcessor
-)
 
 from _shared.utils import get_http_logging_policy
 from helper import URIIdentityReplacer
@@ -39,6 +36,7 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
         self.id1 = self.identity_client.create_user().properties["id"]
         self.id2 = self.identity_client.create_user().properties["id"]
         self.id3 = self.identity_client.create_user().properties["id"]
+        self.id4 = self.identity_client.create_user().properties["id"]
 
         self.users = {
             "john" : InvitedRoomParticipant(
@@ -373,6 +371,75 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
                 participants.append(participant)
             assert len(participants) == 3
             self.assertCountEqual(expected_participants, participants)
+            # delete created room
+            await self.rooms_client.delete_room(room_id=create_response.id)
+
+    @pytest.mark.live_test_only
+    @RoomsAsyncTestCase.await_prepared_test
+    async def test_upsert_participant_with_null_roles_async(self):
+        create_participants = [
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=None
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2)
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+
+        expected_participants = [
+            RoomParticipant(
+                raw_id=self.id1,
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                raw_id=self.id2,
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                raw_id=self.id3,
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+        async with self.rooms_client:
+            # Check participants with null roles were added in created room
+            create_response = await self.rooms_client.create_room(participants=create_participants)
+            list_participants_response = self.rooms_client.list_participants(room_id=create_response.id)
+            participants = []
+            async for participant in list_participants_response:
+                participants.append(participant)
+            assert len(participants) == 3
+            self.assertCountEqual(expected_participants, participants)
+
+            # Check participants were upserted properly
+            upsert_participants = [
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=None
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3)
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id4)
+            )]
+            expected_participants.append(
+                RoomParticipant(
+                    raw_id=self.id4,
+                    role=ParticipantRole.ATTENDEE
+                ))
+            await self.rooms_client.upsert_participants(room_id=create_response.id, participants=upsert_participants)
+            update_response = self.rooms_client.list_participants(room_id=create_response.id)
+            updated_participants = []
+            async for participant in update_response:
+                updated_participants.append(participant)
+            assert len(updated_participants) == 4
+            self.assertCountEqual(expected_participants, updated_participants)
+
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
 

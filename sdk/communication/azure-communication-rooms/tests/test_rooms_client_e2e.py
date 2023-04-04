@@ -35,6 +35,7 @@ class RoomsClientTest(RoomsTestCase):
         self.id1 = self.identity_client.create_user().properties["id"]
         self.id2 = self.identity_client.create_user().properties["id"]
         self.id3 = self.identity_client.create_user().properties["id"]
+        self.id4 = self.identity_client.create_user().properties["id"]
 
         self.users = {
             "john" : InvitedRoomParticipant(
@@ -333,6 +334,74 @@ class RoomsClientTest(RoomsTestCase):
             participants.append(participant)
         assert len(participants) == 3
         self.assertCountEqual(expected_participants, participants)
+        # delete created room
+        self.rooms_client.delete_room(room_id=create_response.id)
+
+
+    @pytest.mark.live_test_only
+    def test_upsert_participants_with_null_role(self):
+        create_participants = [
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=None
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id2)
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3),
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+        expected_participants = [
+            RoomParticipant(
+                raw_id=self.id1,
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                raw_id=self.id2,
+                role=ParticipantRole.ATTENDEE
+            ),
+            RoomParticipant(
+                raw_id=self.id3,
+                role=ParticipantRole.PRESENTER
+            )
+        ]
+
+        # Check participants with null roles were added in created room
+        create_response = self.rooms_client.create_room(participants=create_participants)
+        list_participants_response = self.rooms_client.list_participants(room_id=create_response.id)
+        participants = []
+        for participant in list_participants_response:
+            participants.append(participant)
+        assert len(participants) == 3
+        self.assertCountEqual(expected_participants, participants)
+
+        # Check participants were upserted properly
+        upsert_participants = [
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id1),
+                role=None
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id3)
+            ),
+            InvitedRoomParticipant(
+                communication_identifier=CommunicationUserIdentifier(self.id4)
+            )
+        ]
+        expected_participants.append(RoomParticipant(
+                raw_id=self.id4,
+                role=ParticipantRole.ATTENDEE
+            ))
+        self.rooms_client.upsert_participants(room_id=create_response.id, participants=upsert_participants)
+        update_response = self.rooms_client.list_participants(room_id=create_response.id)
+        updated_participants = []
+        for participant in update_response:
+            updated_participants.append(participant)
+        assert len(updated_participants) == 4
+        self.assertCountEqual(expected_participants, updated_participants)
+
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 

@@ -10,7 +10,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.communication.rooms import (
     RoomsClient,
-    RoomParticipant,
     ParticipantRole,
     InvitedRoomParticipant,
     RemoveParticipantsResult,
