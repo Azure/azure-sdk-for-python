@@ -20,7 +20,6 @@ from ._models import (
     DownloadManifestResult,
 )
 from ._download_stream import DownloadBlobStream
-from .aio._async_download_stream import AsyncDownloadBlobStream
 from ._version import VERSION
 
 __version__ = VERSION
@@ -36,5 +35,4 @@ __all__ = [
     "ArtifactTagProperties",
     "DownloadManifestResult",
     "DownloadBlobStream",
-    "AsyncDownloadBlobStream",
 ]

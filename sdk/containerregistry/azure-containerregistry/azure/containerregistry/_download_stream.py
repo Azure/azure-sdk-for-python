@@ -4,11 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import Iterator, ContextManager, TypeVar, cast, Tuple, Dict, Any
-from typing_extensions import Protocol
+from typing import Iterator, ContextManager, cast, Tuple, Dict, Any
+from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
-
-T = TypeVar('T', bound='DownloadBlobStream')
 
 
 class GetNext(Protocol):
@@ -18,7 +16,7 @@ class GetNext(Protocol):
 
 class DownloadBlobStream(
     Iterator[bytes],
-    ContextManager[T],
+    ContextManager["DownloadBlobStream"],
 ):
     """Protocol for methods to provide streamed responses."""
 
@@ -41,13 +39,13 @@ class DownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    def __enter__(self: T) -> T:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, *args) -> None:
-        return None
+        self.close()
 
-    def __iter__(self: T) -> T:
+    def __iter__(self) -> Self:
         return self
 
     def _yield_data(self) -> bytes:
@@ -76,7 +74,7 @@ class DownloadBlobStream(
                 raise
             self._response = self._download_chunk()
             self._response_bytes = self._response.http_response.iter_bytes()
-            return self._yield_data()
+            return self.__next__()
 
     def close(self):
         self._response.http_response.close()

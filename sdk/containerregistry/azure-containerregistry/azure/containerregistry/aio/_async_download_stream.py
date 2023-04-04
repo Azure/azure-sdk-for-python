@@ -4,21 +4,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import hashlib
-from typing import AsyncIterator, AsyncContextManager, Awaitable, TypeVar, cast, Tuple, Dict, Any
-from typing_extensions import Protocol
+from typing import AsyncIterator, AsyncContextManager, Awaitable, cast, Tuple, Dict, Any
+from typing_extensions import Protocol, Self
 from azure.core.pipeline import PipelineResponse
 
-T = TypeVar('T', bound='AsyncDownloadBlobStream')
 
-
-class GetNext(Protocol):
+class AsyncGetNext(Protocol):
     def __call__(self, *args: Any, range_header: str) -> Awaitable[AsyncIterator[bytes]]:
         pass
 
 
 class AsyncDownloadBlobStream(
     AsyncIterator[bytes],
-    AsyncContextManager[T],
+    AsyncContextManager["AsyncDownloadBlobStream"],
 ):
     """Protocol for methods to provide streamed responses."""
 
@@ -26,7 +24,7 @@ class AsyncDownloadBlobStream(
         self,
         *,
         response: PipelineResponse,
-        get_next: GetNext,
+        get_next: AsyncGetNext,
         blob_size: int,
         downloaded: int,
         digest: str,
@@ -41,13 +39,13 @@ class AsyncDownloadBlobStream(
         self._chunk_size = chunk_size
         self._hasher = hashlib.sha256()
 
-    async def __aenter__(self: T) -> T:
+    async def __aenter__(self) -> Self:
         return self
 
     async def __aexit__(self, *args) -> None:
-        return None
+        await self.close()
 
-    def __aiter__(self: T) -> T:
+    def __aiter__(self) -> Self:
         return self
 
     async def _yield_data(self) -> bytes:
