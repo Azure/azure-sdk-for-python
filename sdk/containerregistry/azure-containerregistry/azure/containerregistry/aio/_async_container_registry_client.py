@@ -7,7 +7,7 @@
 import functools
 import hashlib
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, AsyncIterator
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential

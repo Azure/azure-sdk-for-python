@@ -77,6 +77,6 @@ class DownloadBlobStream(
             self._response = self._download_chunk()
             self._response_bytes = self._response.http_response.iter_bytes()
             return self._yield_data()
-    
+
     def close(self):
         self._response.http_response.close()
