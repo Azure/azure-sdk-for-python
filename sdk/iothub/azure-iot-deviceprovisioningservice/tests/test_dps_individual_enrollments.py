@@ -1,13 +1,7 @@
-import os
-from os import mkdir
-from pathlib import PurePath
-from shutil import rmtree
-
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from tests.conftest import (
     API_VERSION,
-    CERT_FOLDER,
     CUSTOM_ALLOCATION,
     DEVICE_INFO,
     REPROVISION_MIGRATE,
@@ -108,17 +102,16 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
         device_id = self.create_random_name("x509_device_")
         attestation_type = "x509"
 
-        if not os.path.exists(CERT_FOLDER):
-            mkdir(CERT_FOLDER)
         cert_name = self.create_random_name("enroll_cert_")
-        thumb = create_test_cert(output_dir=CERT_FOLDER, subject=cert_name)
-        cert_path = PurePath(CERT_FOLDER, cert_name + "-cert.pem").as_posix()
+        cert = create_test_cert(subject=cert_name)
+        cert_contents = cert["certificate"]
+        thumb = cert["thumbprint"]
 
         enrollment = generate_enrollment(
             id=enrollment_id,
             device_id=device_id,
-            certificate_path=cert_path,
-            secondary_certificate_path=cert_path,
+            primary_cert=cert_contents,
+            secondary_cert=cert_contents,
             provisioning_status="enabled",
             allocation_policy="hashed",
             attestation_type=attestation_type,
@@ -196,9 +189,6 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
             query_specification={"query": "SELECT *"}
         )
         assert len(enrollment_list) == 0
-
-        # delete certificates
-        rmtree(CERT_FOLDER, ignore_errors=True)
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy

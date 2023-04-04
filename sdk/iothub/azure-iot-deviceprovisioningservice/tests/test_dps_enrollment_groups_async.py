@@ -1,14 +1,8 @@
-from os import mkdir
-from os.path import exists
-from pathlib import PurePath
-from shutil import rmtree
-
 from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 from tests.conftest import (
     API_VERSION,
-    CERT_FOLDER,
     CUSTOM_ALLOCATION,
     REPROVISION_MIGRATE,
     WEBHOOK_URL,
@@ -34,16 +28,15 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
 
-        if not exists(CERT_FOLDER):
-            mkdir(CERT_FOLDER)
         cert_name = self.create_random_name("enroll_cert_")
-        thumb = create_test_cert(output_dir=CERT_FOLDER, subject=cert_name)
-        cert_path = PurePath(CERT_FOLDER, cert_name + "-cert.pem").as_posix()
+        cert = create_test_cert(subject=cert_name)
+        cert_contents = cert["certificate"]
+        thumb = cert["thumbprint"]
 
         enrollment_group = generate_enrollment_group(
             id=enrollment_group_id,
-            certificate_path=cert_path,
-            secondary_certificate_path=cert_path,
+            primary_cert=cert_contents,
+            secondary_cert=cert_contents,
             provisioning_status="enabled",
             allocation_policy="hashed",
             attestation_type=attestation_type,
@@ -121,9 +114,6 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
             query_specification={"query": "SELECT *"}
         )
         assert len(enrollment_group_list) == 0
-
-        # delete certificates
-        rmtree(CERT_FOLDER, ignore_errors=True)
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
@@ -261,16 +251,14 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         eg1_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
 
-        if not exists(CERT_FOLDER):
-            mkdir(CERT_FOLDER)
         cert_name = self.create_random_name("enroll_cert_")
-        create_test_cert(output_dir=CERT_FOLDER, subject=cert_name)  # thumb =
-        cert_path = PurePath(CERT_FOLDER, cert_name + "-cert.pem").as_posix()
+        cert = create_test_cert(subject=cert_name)
+        cert_contents = cert["certificate"]
 
         eg1 = generate_enrollment_group(
             id=eg1_id,
-            certificate_path=cert_path,
-            secondary_certificate_path=cert_path,
+            primary_cert=cert_contents,
+            secondary_cert=cert_contents,
             provisioning_status="enabled",
             allocation_policy="hashed",
             attestation_type=attestation_type,

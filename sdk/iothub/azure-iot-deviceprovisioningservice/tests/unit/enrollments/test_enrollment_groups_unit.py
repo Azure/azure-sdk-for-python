@@ -40,16 +40,12 @@ enrollment_group_list = [
             initial_twin_properties={"key": "value"},
         )
     ),
-    (generate_enrollment_group(attestation_type="x509", certificate_path="myCert")),
-    (
-        generate_enrollment_group(
-            attestation_type="x509", secondary_certificate_path="myCert2"
-        )
-    ),
+    (generate_enrollment_group(attestation_type="x509", primary_cert="myCert")),
+    (generate_enrollment_group(attestation_type="x509", secondary_cert="myCert2")),
     (
         generate_enrollment_group(
             attestation_type="x509",
-            certificate_path="myCert",
+            primary_cert="myCert",
             iot_hub_host_name="myHub",
             provisioning_status="disabled",
         )
@@ -57,7 +53,7 @@ enrollment_group_list = [
     (
         generate_enrollment_group(
             attestation_type="x509",
-            certificate_path="myCert",
+            primary_cert="myCert",
             provisioning_status="enabled",
             initial_twin_properties={"key": "value"},
         )
@@ -80,7 +76,7 @@ enrollment_group_list = [
     (
         generate_enrollment_group(
             attestation_type="x509",
-            certificate_path="myCert",
+            primary_cert="myCert",
             reprovision_policy=REPROVISION_RESET,
         )
     ),

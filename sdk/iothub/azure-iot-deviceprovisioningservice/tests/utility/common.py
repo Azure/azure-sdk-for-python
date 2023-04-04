@@ -1,6 +1,6 @@
 from base64 import b32encode, b64decode, b64encode
 from math import ceil
-from os import getcwd, makedirs, urandom
+from os import makedirs, urandom
 from os.path import exists
 
 CERT_NAME = "sdk_test_certificate"
@@ -32,8 +32,8 @@ def generate_attestation(
     endorsement_key=None,
     primary_key=None,
     secondary_key=None,
-    certificate_path=None,
-    secondary_certificate_path=None,
+    primary_cert=None,
+    secondary_cert=None,
     signing_certs=False,
 ):
     attestation = {"type": attestation_type}
@@ -45,12 +45,10 @@ def generate_attestation(
             "secondaryKey": secondary_key,
         }
     if attestation_type == "x509":
-        primary_cert = None
-        secondary_cert = None
-        if certificate_path and exists(certificate_path):
-            primary_cert = get_certificate_info(certificate_path)
-        if secondary_certificate_path and exists(secondary_certificate_path):
-            secondary_cert = get_certificate_info(secondary_certificate_path)
+        if primary_cert:
+            primary_cert = {"certificate": primary_cert}
+        if secondary_cert:
+            secondary_cert = {"certificate": secondary_cert}
         certs = (
             {"primary": primary_cert, "secondary": secondary_cert}
             if (primary_cert or secondary_cert)
@@ -69,8 +67,8 @@ def generate_enrollment(
     attestation_type=None,
     capabilities=None,
     endorsement_key=None,
-    certificate_path=None,
-    secondary_certificate_path=None,
+    primary_cert=None,
+    secondary_cert=None,
     device_id=None,
     iot_hub_host_name=None,
     initial_twin_properties=None,
@@ -89,8 +87,8 @@ def generate_enrollment(
         endorsement_key=endorsement_key,
         primary_key=primary_key,
         secondary_key=secondary_key,
-        certificate_path=certificate_path,
-        secondary_certificate_path=secondary_certificate_path,
+        primary_cert=primary_cert,
+        secondary_cert=secondary_cert,
     )
     custom_allocation = (
         {"webhookUrl": webhook_url, "apiVersion": api_version}
@@ -119,8 +117,8 @@ def generate_enrollment_group(
     attestation_type=None,
     capabilities=None,
     endorsement_key=None,
-    certificate_path=None,
-    secondary_certificate_path=None,
+    primary_cert=None,
+    secondary_cert=None,
     iot_hub_host_name=None,
     initial_twin_properties=None,
     provisioning_status=None,
@@ -137,8 +135,8 @@ def generate_enrollment_group(
         endorsement_key=endorsement_key,
         primary_key=primary_key,
         secondary_key=secondary_key,
-        certificate_path=certificate_path,
-        secondary_certificate_path=secondary_certificate_path,
+        primary_cert=primary_cert,
+        secondary_cert=secondary_cert,
         signing_certs=True,
     )
     custom_allocation = (
@@ -172,25 +170,18 @@ def generate_key(byte_length=32):
 
 
 def create_test_cert(
-    output_dir=getcwd(), subject=CERT_NAME, cert_only=True, file_prefix=None
+    subject=CERT_NAME,
 ):
-    thumbprint = create_self_signed_certificate(
+    return create_self_signed_certificate(
         subject=subject,
         valid_days=1,
-        cert_output_dir=output_dir,
-        cert_only=cert_only,
-        file_prefix=file_prefix,
-    )["thumbprint"]
-    return thumbprint
+    )
 
 
 def create_self_signed_certificate(
     subject: str,
     valid_days: int = 365,
-    cert_output_dir: str = None,
     key_size: int = 2048,
-    cert_only: bool = False,
-    file_prefix: str = None,
 ):
     """
     Function used to create a basic self-signed certificate with no extensions.
@@ -254,26 +245,8 @@ def create_self_signed_certificate(
     # thumbprint
     thumbprint = cert.fingerprint(hash).hex().upper()
 
-    if cert_output_dir and exists(cert_output_dir):
-        cert_file = (file_prefix or subject) + CERT_ENDING
-        key_file = (file_prefix or subject) + KEY_ENDING
-        write_content_to_file(
-            content=cert_dump,
-            destination=cert_output_dir,
-            file_name=cert_file,
-            overwrite=True,
-        )
-
-        if not cert_only:
-            write_content_to_file(
-                content=key_dump,
-                destination=cert_output_dir,
-                file_name=key_file,
-                overwrite=True,
-            )
-
     result = {
-        "certificate": cert_dump,
+        "certificate": cert_dump.rstrip(),
         "privateKey": key_dump,
         "thumbprint": thumbprint,
     }
@@ -299,14 +272,6 @@ def write_content_to_file(
     write_content = bytes(content, "utf-8") if isinstance(content, str) else content
     with open(file_path, "wb") as f:
         f.write(write_content)
-
-
-def get_certificate_info(certificate_path):
-    if not certificate_path:
-        return None
-    certificate_content = open_certificate(certificate_path)
-    certificate_with_info = {"certificate": certificate_content}
-    return certificate_with_info
 
 
 def open_certificate(certificate_path: str) -> str:

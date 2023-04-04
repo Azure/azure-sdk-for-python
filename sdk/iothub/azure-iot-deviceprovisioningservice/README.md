@@ -126,7 +126,7 @@ from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 client = ProvisioningServiceClient.from_connection_string(connection_string="<connection_string>")
 
 # Load certificate contents
-certificate = open("mycert.pem", "rt", encoding="utf-8")
+certificate = open("certificate.pem", "rt", encoding="utf-8")
 cert_contents = certificate.read()
 
 # Create x509 enrollment group
