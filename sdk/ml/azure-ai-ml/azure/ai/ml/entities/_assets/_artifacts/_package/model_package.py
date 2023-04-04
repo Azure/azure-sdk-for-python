@@ -39,7 +39,8 @@ class PackageInputPathId:
 
     :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
     :type input_path_type: str
-    :param resource_id: The resource id of the input path. e.g. azureml://subscriptions/<>/resourceGroups/<>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>
+    :param resource_id: The resource id of the input path. e.g. azureml://subscriptions/<>/resourceGroups/
+    <>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>
     :type resource_id: str
     """
 
@@ -108,7 +109,8 @@ class PackageInputPathUrl:
 
     :param input_path_type: The type of the input path. Possible values include: "Url", "PathId", "PathVersion".
     :type input_path_type: str
-    :param url: The url of the input path. e.g. azureml://subscriptions/<>/resourceGroups/<>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>
+    :param url: The url of the input path. e.g. azureml://subscriptions/<>/resourceGroups/
+    <>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>
     :type url: str
     """
 
