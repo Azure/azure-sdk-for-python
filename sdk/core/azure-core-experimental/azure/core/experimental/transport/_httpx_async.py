@@ -23,8 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from collections.abc import AsyncIterator
-from typing import ContextManager, Optional, Any
+from typing import ContextManager, Optional, Any, AsyncIterator
 
 import httpx
 from azure.core.pipeline import Pipeline
