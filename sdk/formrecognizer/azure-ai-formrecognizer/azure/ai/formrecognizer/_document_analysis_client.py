@@ -87,10 +87,16 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
         :keyword features: Document analysis features to enable.
         :paramtype: list[str or ~azure.ai.formrecognizer.AnalysisFeature]
+        :keyword query_fields: List of additional fields to extract. Examples: "NumberOfGuests,StoreNumber".
+            Default value is None. See https://aka.ms/azsdk/formrecognizer/queryfields for usage.
+        :paramtype: list[str]
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *features* and *query_fields* keyword arguments.
 
         .. admonition:: Example:
 
@@ -112,31 +118,27 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        if continuation_token is not None:
-            _client_op_path = self._client.document_models
-            if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
-                _client_op_path = self._client
-            return _client_op_path.begin_analyze_document(  # type: ignore
-                model_id=model_id,
-                analyze_request=document,  # type: ignore
-                content_type="application/octet-stream",
-                string_index_type="unicodeCodePoint",
-                continuation_token=continuation_token,
-                cls=cls,
-                **kwargs
-            )
-
-        if not model_id:
+        if continuation_token is None and not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        _client_op_path = self._client.document_models
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client
+            if kwargs.pop("features", None):
+                raise ValueError(
+                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
+                )
+            if kwargs.pop("query_fields", None):
+                raise ValueError(
+                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                )
+        else:
+            _client_op_path = self._client.document_models
         return _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request=document,  # type: ignore
             content_type="application/octet-stream",
             string_index_type="unicodeCodePoint",
+            continuation_token=continuation_token,
             cls=cls,
             **kwargs
         )
@@ -161,10 +163,16 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
             See supported locales here: https://aka.ms/azsdk/formrecognizer/supportedlocales.
         :keyword features: Document analysis features to enable.
         :paramtype: list[str or ~azure.ai.formrecognizer.AnalysisFeature]
+        :keyword query_fields: List of additional fields to extract. Examples: "NumberOfGuests,StoreNumber".
+            Default value is None. See https://aka.ms/azsdk/formrecognizer/queryfields for usage.
+        :paramtype: list[str]
         :return: An instance of an LROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.AnalyzeResult`.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.formrecognizer.AnalyzeResult]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *features* and *query_fields* keyword arguments.
 
         .. admonition:: Example:
 
@@ -179,37 +187,33 @@ class DocumentAnalysisClient(FormRecognizerClientBase):
         cls = kwargs.pop("cls", self._analyze_document_callback)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        # continuation token requests do not perform the same value checks as
-        # regular analysis requests
-        if continuation_token is not None:
-            _client_op_path = self._client.document_models
-            if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
-                _client_op_path = self._client
-            return _client_op_path.begin_analyze_document(  # type: ignore
-                model_id=model_id,
-                analyze_request={"urlSource": document_url},  # type: ignore
-                string_index_type="unicodeCodePoint",
-                continuation_token=continuation_token,
-                cls=cls,
-                **kwargs
-            )
+        if continuation_token is None:
+            if not model_id:
+                raise ValueError("model_id cannot be None or empty.")
 
-        if not model_id:
-            raise ValueError("model_id cannot be None or empty.")
+            if not isinstance(document_url, str):
+                raise ValueError(
+                    "'document_url' needs to be of type 'str'. "
+                    "Please see `begin_analyze_document()` to pass a byte stream."
+                )
 
-        if not isinstance(document_url, str):
-            raise ValueError(
-                "'document_url' needs to be of type 'str'. "
-                "Please see `begin_analyze_document()` to pass a byte stream."
-            )
-
-        _client_op_path = self._client.document_models
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client
+            if kwargs.pop("features", None):
+                raise ValueError(
+                    "Keyword argument 'features' is only available for API version V2023_02_28_PREVIEW and later."
+                )
+            if kwargs.pop("query_fields", None):
+                raise ValueError(
+                    "Keyword argument 'query_fields' is only available for API version V2023_02_28_PREVIEW and later."
+                )
+        else:
+            _client_op_path = self._client.document_models
         return _client_op_path.begin_analyze_document(  # type: ignore
             model_id=model_id,
             analyze_request={"urlSource": document_url},  # type: ignore
             string_index_type="unicodeCodePoint",
+            continuation_token=continuation_token,
             cls=cls,
             **kwargs
         )
