@@ -7,57 +7,47 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
-from msrest import Deserializer, Serializer
 
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import EventGridPublisherClientConfiguration
+from ._operations import EventGridPublisherClientOperationsMixin
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
 
-class EventGridPublisherClient:
+class EventGridPublisherClient(
+    EventGridPublisherClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword
     """EventGrid Python Publisher Client.
 
+    :keyword api_version: Api Version. Default value is "2018-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
-        base_url = 'https://{topicHostname}'
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=missing-client-constructor-parameter-credential
+        _endpoint = "https://{topicHostname}"
         self._config = EventGridPublisherClientConfiguration(**kwargs)
-        self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {}  # type: Dict[str, Any]
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
 
-
-    def send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        We have helper methods to create requests specific to this service in `event_grid_publisher_client.rest`.
-        Use these helper methods to create the request you pass to this method.
-
-        >>> from event_grid_publisher_client.rest import build_publish_events_request
-        >>> request = build_publish_events_request(json=json, content=content, **kwargs)
-        <HttpRequest [POST], url: '/api/events'>
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
         >>> response = await client.send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
-
-        For advanced cases, you can also create your own :class:`~azure.core.rest.HttpRequest`
-        and pass it in.
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -77,5 +67,5 @@ class EventGridPublisherClient:
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
