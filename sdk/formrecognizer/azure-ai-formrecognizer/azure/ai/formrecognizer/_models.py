@@ -2136,10 +2136,11 @@ class CurrencyValue:
 
     @classmethod
     def _from_generated(cls, data):
+        currency_code = data.currency_code if hasattr(data, "currency_code") else None
         return cls(
             amount=data.amount,
             symbol=data.currency_symbol,
-            code=data.currency_code
+            code=currency_code
         )
 
     def __str__(self):
@@ -4143,8 +4144,8 @@ class QuotaDetails:
         :rtype: QuotaDetails
         """
         return cls(
-            used=data.get("custom_document_models", None),
-            quota=data.get("custom_document_models", None),
+            used=data.get("used", None),
+            quota=data.get("quota", None),
             quota_resets_on=data.get("quota_resets_on", None)
         )
 
