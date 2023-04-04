@@ -16,14 +16,10 @@ Use the Text Translation client library for Python to:
 
 [Source code][python-dt-src]
 | [Package (PyPI)][python-dt-pypi]
-| [Package (Conda)](https://anaconda.org/microsoft/azure-ai-translation-document/)
+| [Package (Conda)](https://aka.ms/https://anaconda.org/microsoft/azure-ai-translation-text/)
 | [API reference documentation][python-dt-ref-docs]
 | [Product documentation][python-dt-product-docs]
 | [Samples][python-dt-samples]
-
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 

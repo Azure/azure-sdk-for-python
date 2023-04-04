@@ -21,7 +21,7 @@ with open('CHANGELOG.md', encoding='utf-8') as f:
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description="azure-ai-translation-text",
+    description="Azure Text Translation Client Library for Python",
     author_email='azpysdkhelp@microsoft.com',
     url='https://github.com/Azure/azure-sdk-for-python',
     long_description=readme + '\n\n' + changelog,

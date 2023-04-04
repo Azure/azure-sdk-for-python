@@ -5,12 +5,10 @@ languages:
 products:
 - azure
 - cognitive-services
-- text-translator
+- azure-text-translator
 name: azure.ai.translation.text samples for Python
 description: Samples for the azure.ai.translation.text client library.
 ---
-
-# azure.ai.translation.text Samples
 
 # Azure Text Translator client library for Python
 
