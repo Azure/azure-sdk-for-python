@@ -10,7 +10,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class DataSegment():
+class DataSegment:
     def __init__(
         self,
         *,
@@ -22,7 +22,7 @@ class DataSegment():
 
 
 @experimental
-class  MonitoringMetricThreshold():
+class MonitoringMetricThreshold:
     def __init__(
         self,
         *,
@@ -36,7 +36,7 @@ class  MonitoringMetricThreshold():
 
 
 @experimental
-class MonitorFeatureFilter():
+class MonitorFeatureFilter:
     def __init__(
         self,
         *,
@@ -46,7 +46,7 @@ class MonitorFeatureFilter():
 
 
 @experimental
-class BaselineDataRange():
+class BaselineDataRange:
     def __init__(
         self,
         *,
@@ -58,7 +58,7 @@ class BaselineDataRange():
 
 
 @experimental
-class TargetDataset():
+class TargetDataset:
     def __init__(
         self,
         *,
@@ -70,7 +70,7 @@ class TargetDataset():
 
 
 @experimental
-class BaselineDataset():
+class BaselineDataset:
     def __init__(
         self,
         *,
@@ -82,7 +82,7 @@ class BaselineDataset():
 
 
 @experimental
-class MonitoringSignal():
+class MonitoringSignal:
     def __init__(
         self,
         *,
@@ -103,11 +103,9 @@ class MetricMonitoringSignal(MonitoringSignal):
         baseline_dataset: BaselineDataset = None,
         metric_thresholds: MonitoringMetricThreshold = None,
     ):
-        super().__init__(
-            target_dataset=target_dataset,
-            baseline_dataset=baseline_dataset
-        )
+        super().__init__(target_dataset=target_dataset, baseline_dataset=baseline_dataset)
         self.metric_thresholds = metric_thresholds
+
 
 @experimental
 class DataSignal(MetricMonitoringSignal):
@@ -125,7 +123,6 @@ class DataSignal(MetricMonitoringSignal):
             metric_thresholds=metric_thresholds,
         )
         self.features = features
-
 
 
 @experimental
@@ -157,9 +154,7 @@ class PredictionDriftSignal(MetricMonitoringSignal):
         metric_thresholds: MonitoringMetricThreshold = None,
     ):
         super().__init__(
-            target_dataset=target_dataset,
-            baseline_dataset=baseline_dataset,
-            metric_thresholds=metric_thresholds
+            target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds
         )
         self.type = "prediction_drift"
 
@@ -215,7 +210,7 @@ class FeatureAttributionDriftSignal(ModelSignal):
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            model_type=model_type
+            model_type=model_type,
         )
         self.type = "feature_attribution_drift"
 
@@ -229,13 +224,13 @@ class ModelPerformanceSignal(ModelSignal):
         baseline_dataset: BaselineDataset = None,
         metric_thresholds: MonitoringMetricThreshold = None,
         model_type: str = None,
-        data_segment: DataSegment = None
+        data_segment: DataSegment = None,
     ):
         super().__init__(
             target_dataset=target_dataset,
             baseline_dataset=baseline_dataset,
             metric_thresholds=metric_thresholds,
-            model_type=model_type
+            model_type=model_type,
         )
         self.type = "model_drift"
         self.data_segment = data_segment

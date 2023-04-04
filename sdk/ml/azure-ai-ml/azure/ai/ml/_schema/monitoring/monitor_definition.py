@@ -21,7 +21,7 @@ from azure.ai.ml._schema.core.fields import NestedField, UnionField, ComputeFiel
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 
 
-class MonitorDefinitionSchema(PatchedSchemaMeta):
+class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
     compute = ComputeField()
     monitoring_target = NestedField(MonitoringTargetSchema)
     data_ingestion = NestedField(MonitorInputDataSchema)
@@ -36,7 +36,7 @@ class MonitorDefinitionSchema(PatchedSchemaMeta):
                 NestedField(ModelPerformanceSignalSchema),
                 NestedField(CustomMonitoringSignalSchema),
             ]
-        )
+        ),
     )
     alert_notification = NestedField(AlertNotificationSchema)
 

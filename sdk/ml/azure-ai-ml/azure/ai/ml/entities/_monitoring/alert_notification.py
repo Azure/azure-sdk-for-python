@@ -8,7 +8,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class AlertNotification():
+class AlertNotification:
     def __init__(
         self,
         *,

@@ -36,7 +36,6 @@ class MonitorSchedule(Schedule):
             description=description,
             tags=tags,
             properties=properties,
-            description=description,
             **kwargs,
         )
         self.create_monitor = create_monitor

@@ -12,7 +12,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class MonitorDefinition():
+class MonitorDefinition:
     def __init__(
         self,
         *,

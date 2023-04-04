@@ -6,7 +6,7 @@ from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class MonitorInputData():
+class MonitorInputData:
     def __init__(
         self,
         *,

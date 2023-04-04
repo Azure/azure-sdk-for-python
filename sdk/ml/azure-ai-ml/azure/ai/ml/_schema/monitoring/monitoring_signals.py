@@ -11,7 +11,7 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, UnionField, StringTransformedEnum
 
 
-class DataSegmentSchema(PatchedSchemaMeta):
+class DataSegmentSchema(metaclass=PatchedSchemaMeta):
     feature_name = fields.Str()
     feature_values = fields.List(fields.Str)
 
@@ -22,7 +22,7 @@ class DataSegmentSchema(PatchedSchemaMeta):
         return DataSegment(**data)
 
 
-class MonitoringMetricThresholdSchema(PatchedSchemaMeta):
+class MonitoringMetricThresholdSchema(metaclass=PatchedSchemaMeta):
     applicable_feature_type = fields.Str()
     metric_name = fields.Str()
     threshold = fields.Float()
@@ -34,7 +34,7 @@ class MonitoringMetricThresholdSchema(PatchedSchemaMeta):
         return MonitoringMetricThreshold(**data)
 
 
-class MonitorFeatureFilterSchema(PatchedSchemaMeta):
+class MonitorFeatureFilterSchema(metaclass=PatchedSchemaMeta):
     top_n_feature_importance = fields.Int()
 
     @post_load
@@ -44,7 +44,7 @@ class MonitorFeatureFilterSchema(PatchedSchemaMeta):
         return MonitorFeatureFilter(**data)
 
 
-class BaselineDataRangeSchema(PatchedSchemaMeta):
+class BaselineDataRangeSchema(metaclass=PatchedSchemaMeta):
     from_date = fields.Str()
     to_date = fields.Str()
 
@@ -55,7 +55,7 @@ class BaselineDataRangeSchema(PatchedSchemaMeta):
         return BaselineDataRange(**data)
 
 
-class TargetDatasetSchema(PatchedSchemaMeta):
+class TargetDatasetSchema(metaclass=PatchedSchemaMeta):
     dataset_name = fields.Str()
     lookback_period_name = fields.Int()
 
@@ -66,10 +66,9 @@ class TargetDatasetSchema(PatchedSchemaMeta):
         return TargetDataset(**data)
 
 
-class BaselineDatasetSchema(PatchedSchemaMeta):
+class BaselineDatasetSchema(metaclass=PatchedSchemaMeta):
     dataset_name = fields.Str()
     data_range = NestedField(BaselineDataRangeSchema)
-
 
     @post_load
     def make(self, data, **kwargs):
@@ -78,7 +77,7 @@ class BaselineDatasetSchema(PatchedSchemaMeta):
         return BaselineDataset(**data)
 
 
-class MonitoringSignalSchema(PatchedSchemaMeta):
+class MonitoringSignalSchema(metaclass=PatchedSchemaMeta):
     target_dataset = NestedField(TargetDatasetSchema)
     baseline_dataset = NestedField(BaselineDatasetSchema)
 
@@ -92,7 +91,7 @@ class DataSignalSchema(MetricMonitoringSignalSchema):
         union_fields=[
             fields.List(fields.Str),
             NestedField(MonitorFeatureFilterSchema),
-            StringTransformedEnum(allowed_values=["all_features"])
+            StringTransformedEnum(allowed_values=["all_features"]),
         ]
     )
 

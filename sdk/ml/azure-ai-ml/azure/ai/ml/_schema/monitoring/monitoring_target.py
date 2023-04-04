@@ -12,7 +12,7 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import ArmVersionedStr
 
 
-class MonitoringTargetSchema(PatchedSchemaMeta):
+class MonitoringTargetSchema(metaclass=PatchedSchemaMeta):
     endpoint_deployment_id = fields.Str()
     model_id = ArmVersionedStr(azureml_type=AzureMLResourceType.MODEL)
 

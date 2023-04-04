@@ -50,9 +50,8 @@ class Schedule(Resource):
         self._is_enabled = is_enabled
         self._provisioning_state = provisioning_state
 
-
     @classmethod
-    def _resolve_cls_and_type(cls, data, params_override): # pylint: disable=unused-argument
+    def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
         from azure.ai.ml.entities._monitoring.monitoring_schedule import MonitorSchedule
 
         if "create_monitor" in data:
@@ -98,7 +97,6 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             description=description,
             tags=tags,
             properties=properties,
-            description=description,
             **kwargs,
         )
         self.create_job = create_job
