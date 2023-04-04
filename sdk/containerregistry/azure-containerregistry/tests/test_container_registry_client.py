@@ -633,24 +633,32 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tags_in_empty_repo(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        self.import_image(containerregistry_endpoint, ALPINE, [repo])
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # cleanup tags in ALPINE repo
-            for tag in client.list_tag_properties(ALPINE):
-                client.delete_tag(ALPINE, tag.name)
+            # cleanup tags in repo
+            for tag in client.list_tag_properties(repo):
+                client.delete_tag(repo, tag.name)
             
-            response = client.list_tag_properties(ALPINE)
+            response = client.list_tag_properties(repo)
             if response is not None:
                 for tag in response:
                     pass
+            
+            client.delete_repository(repo)
     
     @acr_preparer()
     @recorded_by_proxy
     def test_list_manifests_in_empty_repo(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        self.import_image(containerregistry_endpoint, ALPINE, [repo])
         with self.create_registry_client(containerregistry_endpoint) as client:
-            # cleanup manifests in ALPINE repo
-            for tag in client.list_tag_properties(ALPINE):
-                client.delete_manifest(ALPINE, tag.name)
-            response = client.list_manifest_properties(ALPINE)
+            # cleanup manifests in repo
+            for tag in client.list_tag_properties(repo):
+                client.delete_manifest(repo, tag.name)
+            response = client.list_manifest_properties(repo)
             if response is not None:
                 for manifest in response:
                     pass
+            
+            client.delete_repository(repo)
