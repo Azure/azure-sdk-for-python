@@ -51,6 +51,15 @@ class Schedule(Resource):
         self._provisioning_state = provisioning_state
 
 
+    @classmethod
+    def _resolve_cls_and_type(cls, data, params_override): # pylint: disable=unused-argument
+        from azure.ai.ml.entities._monitoring.monitoring_schedule import MonitorSchedule
+
+        if "create_monitor" in data:
+            return MonitorSchedule, None
+        return JobSchedule, None
+
+
 class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatableMixin, Schedule, TelemetryMixin):
     """JobSchedule object.
 
