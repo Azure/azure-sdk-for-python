@@ -389,7 +389,8 @@
     "yarl",
     "SDDL",
     "dacl",
-    "whls"
+    "whls",
+    "aiter"
   ],
   "overrides": [
     {
