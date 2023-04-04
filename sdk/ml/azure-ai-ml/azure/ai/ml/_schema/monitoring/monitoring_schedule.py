@@ -17,7 +17,7 @@ class MonitorSchedule(Schedule):
         *,
         name: str,
         trigger: Union[CronTrigger, RecurrenceTrigger],
-        create_monitor: MonitorDefinition = None,
+        create_job: MonitorDefinition = None,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
@@ -34,4 +34,4 @@ class MonitorSchedule(Schedule):
             description=description,
             **kwargs,
         )
-        self.create_monitor = create_monitor
+        self.create_job = create_job

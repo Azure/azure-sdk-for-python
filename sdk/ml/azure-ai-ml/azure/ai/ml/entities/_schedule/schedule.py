@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.v2023_02_01_preview.models import JobScheduleAction
 from azure.ai.ml._restclient.v2023_02_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._restclient.v2023_02_01_preview.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ScheduleProperties
-from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
+from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
@@ -131,7 +131,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         }
         return JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
-            **load_from_dict(ScheduleSchema, data, context, **kwargs),
+            **load_from_dict(JobScheduleSchema, data, context, **kwargs),
         )
 
     @classmethod
@@ -189,7 +189,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         create_job._id = job_id
         schedule = JobSchedule(
             base_path=context[BASE_PATH_CONTEXT_KEY],
-            **load_from_dict(ScheduleSchema, data, context, **kwargs),
+            **load_from_dict(JobScheduleSchema, data, context, **kwargs),
             **{create_job_key: None},
         )
         schedule.create_job = create_job
@@ -212,7 +212,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
 
     @classmethod
     def _create_schema_for_validation(cls, context):
-        return ScheduleSchema(context=context)
+        return JobScheduleSchema(context=context)
 
     @classmethod
     def _get_validation_error_target(cls) -> ErrorTarget:
