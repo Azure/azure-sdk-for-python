@@ -1,7 +1,7 @@
 ---
 page_type: sample
 languages:
-- csharp
+- python
 products:
 - azure
 - cognitive-services
