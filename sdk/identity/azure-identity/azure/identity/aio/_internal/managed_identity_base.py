@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import cast, Optional, Tuple
+from typing import cast, Optional
 
 from azure.core.credentials import AccessToken
 from . import AsyncContextManager
@@ -46,7 +46,7 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
 
     async def _acquire_token_silently(
         self, *scopes: str, **kwargs
-    ) -> Tuple[Optional[AccessToken], Optional[int]]:
+    ) -> Optional[AccessToken]:
         # casting because mypy can't determine that these methods are called
         # only by get_token, which raises when self._client is None
         return cast(AsyncManagedIdentityClient, self._client).get_cached_token(*scopes)

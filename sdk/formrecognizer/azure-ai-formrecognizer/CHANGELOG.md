@@ -5,6 +5,7 @@
 ### Features Added
 
 - Added `features` keyword argument on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
+- Added `query_fields` keyword argument on `begin_analyze_document()` and `begin_analyze_document_from_url()`.
 - Added `AnalysisFeature` enum with optional document analysis feature to enable.
 - Added `file_list` keyword argument on `begin_build_document_model()`.
 - Added the following optional properties on `DocumentStyle` class: `similar_font_family`, `font_style`, `font_weight`, `color`, `background_color`.
