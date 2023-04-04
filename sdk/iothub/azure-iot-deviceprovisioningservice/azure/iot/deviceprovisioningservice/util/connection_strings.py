@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------------------------
 
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 def validate_key_value_pairs(string: str) -> Dict[str, Any]:
@@ -26,9 +26,9 @@ def validate_key_value_pairs(string: str) -> Dict[str, Any]:
 
 def _parse_connection_string(
     connection_string: str,
-    validate: List[str] = [],
+    validate: Optional[List[str]] = None,
     cstring_type: str = "entity",
-) -> Dict[str, str]:
+) -> Dict[str, Any]:
     decomposed = validate_key_value_pairs(connection_string)
     decomposed_lower = dict((k.lower(), v) for k, v in decomposed.items())
     if validate:

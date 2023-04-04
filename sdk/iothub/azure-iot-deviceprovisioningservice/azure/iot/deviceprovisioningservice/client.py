@@ -4,9 +4,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.credentials import TokenCredential
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
@@ -29,6 +28,10 @@ from azure.iot.deviceprovisioningservice._generated import (
 )
 
 from .util.connection_strings import parse_iot_dps_connection_string
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class ProvisioningServiceClient(object):
@@ -98,10 +101,8 @@ class ProvisioningServiceClient(object):
 
         return cls(endpoint=host_name, credential=credential, **kwargs)  # type: ignore
 
-    @classmethod
     def _create_pipeline(
         self,
-        base_url: str,
         credential: "TokenCredential",
         **kwargs,
     ) -> Pipeline:

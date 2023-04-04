@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------------------------
 
 
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -97,10 +97,8 @@ class ProvisioningServiceClient(object):
 
         return cls(endpoint=host_name, credential=credential, **kwargs)  # type: ignore
 
-    @classmethod
     def _create_pipeline(
         self,
-        base_url: str,
         credential: "AsyncTokenCredential",
         **kwargs: Any,
     ) -> AsyncPipeline:
