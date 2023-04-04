@@ -43,7 +43,7 @@ def build_validate_request(azure_region: str, subscription_id: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
+    api_version: Literal["2023-02-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -81,7 +81,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
+    api_version: Literal["2023-02-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -119,7 +119,7 @@ def build_create_or_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
+    api_version: Literal["2023-02-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -159,7 +159,7 @@ def build_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
+    api_version: Literal["2023-02-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-02-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -288,8 +288,8 @@ class ProtectionIntentOperations:
 
         :param azure_region: Azure region to hit Api. Required.
         :type azure_region: str
-        :param parameters: Enable backup validation request on Virtual Machine. Is either a model type
-         or a IO type. Required.
+        :param parameters: Enable backup validation request on Virtual Machine. Is either a
+         PreValidateEnableBackupRequest type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.PreValidateEnableBackupRequest or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -311,7 +311,7 @@ class ProtectionIntentOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-01-01"] = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -339,8 +339,9 @@ class ProtectionIntentOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -393,7 +394,7 @@ class ProtectionIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-01-01"] = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ProtectionIntentResource] = kwargs.pop("cls", None)
@@ -412,8 +413,9 @@ class ProtectionIntentOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -523,7 +525,8 @@ class ProtectionIntentOperations:
         :type fabric_name: str
         :param intent_object_name: Intent object name. Required.
         :type intent_object_name: str
-        :param parameters: resource backed up item. Is either a model type or a IO type. Required.
+        :param parameters: resource backed up item. Is either a ProtectionIntentResource type or a IO
+         type. Required.
         :type parameters:
          ~azure.mgmt.recoveryservicesbackup.activestamp.models.ProtectionIntentResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -545,7 +548,7 @@ class ProtectionIntentOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-01-01"] = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -576,8 +579,9 @@ class ProtectionIntentOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -628,7 +632,7 @@ class ProtectionIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2023-01-01"] = kwargs.pop(
+        api_version: Literal["2023-02-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -647,8 +651,9 @@ class ProtectionIntentOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

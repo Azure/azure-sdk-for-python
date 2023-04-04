@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -42,7 +42,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -51,7 +51,8 @@ class Resource(_serialization.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -75,7 +76,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -133,8 +134,8 @@ class CustomCertificate(ProxyResource):
         key_vault_base_uri: str,
         key_vault_secret_name: str,
         key_vault_secret_version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_base_uri: Base uri of the KeyVault that stores certificate. Required.
         :paramtype key_vault_base_uri: str
@@ -167,8 +168,12 @@ class CustomCertificateList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CustomCertificate"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.CustomCertificate"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of custom certificates of this resource.
         :paramtype value: list[~azure.mgmt.webpubsub.models.CustomCertificate]
@@ -226,7 +231,7 @@ class CustomDomain(ProxyResource):
         "custom_certificate": {"key": "properties.customCertificate", "type": "ResourceReference"},
     }
 
-    def __init__(self, *, domain_name: str, custom_certificate: "_models.ResourceReference", **kwargs):
+    def __init__(self, *, domain_name: str, custom_certificate: "_models.ResourceReference", **kwargs: Any) -> None:
         """
         :keyword domain_name: The custom domain name. Required.
         :paramtype domain_name: str
@@ -256,8 +261,8 @@ class CustomDomainList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.CustomDomain"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.CustomDomain"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of custom domains that bind to this resource.
         :paramtype value: list[~azure.mgmt.webpubsub.models.CustomDomain]
@@ -299,8 +304,8 @@ class Dimension(_serialization.Model):
         display_name: Optional[str] = None,
         internal_name: Optional[str] = None,
         to_be_exported_for_shoebox: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The public facing name of the dimension.
         :paramtype name: str
@@ -340,7 +345,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -380,7 +385,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -391,7 +396,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.webpubsub.models.ErrorDetail
@@ -401,7 +407,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.webpubsub.models.ErrorDetail
@@ -455,8 +461,8 @@ class EventHandler(_serialization.Model):
         user_event_pattern: Optional[str] = None,
         system_events: Optional[List[str]] = None,
         auth: Optional["_models.UpstreamAuthSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword url_template: Gets or sets the EventHandler URL template. You can use a predefined
          parameter {hub} and {event} inside the template, the value of the EventHandler URL is
@@ -508,25 +514,26 @@ class EventListenerEndpoint(_serialization.Model):
 
     _subtype_map = {"type": {"EventHub": "EventHubEndpoint"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class EventHubEndpoint(EventListenerEndpoint):
     """An Event Hub endpoint.
-    The managed identity of Web PubSub service must be enabled, and the identity should have the "Azure Event Hubs Data sender" role to access Event Hub.
+    The managed identity of Web PubSub service must be enabled, and the identity should have the
+    "Azure Event Hubs Data sender" role to access Event Hub.
 
-        All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to Azure.
 
-        :ivar type: Required. "EventHub"
-        :vartype type: str or ~azure.mgmt.webpubsub.models.EventListenerEndpointDiscriminator
-        :ivar fully_qualified_namespace: The fully qualified namespace name of the Event Hub resource.
-         For example, "example.servicebus.windows.net". Required.
-        :vartype fully_qualified_namespace: str
-        :ivar event_hub_name: The name of the Event Hub. Required.
-        :vartype event_hub_name: str
+    :ivar type: Required. "EventHub"
+    :vartype type: str or ~azure.mgmt.webpubsub.models.EventListenerEndpointDiscriminator
+    :ivar fully_qualified_namespace: The fully qualified namespace name of the Event Hub resource.
+     For example, "example.servicebus.windows.net". Required.
+    :vartype fully_qualified_namespace: str
+    :ivar event_hub_name: The name of the Event Hub. Required.
+    :vartype event_hub_name: str
     """
 
     _validation = {
@@ -541,7 +548,7 @@ class EventHubEndpoint(EventListenerEndpoint):
         "event_hub_name": {"key": "eventHubName", "type": "str"},
     }
 
-    def __init__(self, *, fully_qualified_namespace: str, event_hub_name: str, **kwargs):
+    def __init__(self, *, fully_qualified_namespace: str, event_hub_name: str, **kwargs: Any) -> None:
         """
         :keyword fully_qualified_namespace: The fully qualified namespace name of the Event Hub
          resource. For example, "example.servicebus.windows.net". Required.
@@ -550,7 +557,7 @@ class EventHubEndpoint(EventListenerEndpoint):
         :paramtype event_hub_name: str
         """
         super().__init__(**kwargs)
-        self.type = "EventHub"  # type: str
+        self.type: str = "EventHub"
         self.fully_qualified_namespace = fully_qualified_namespace
         self.event_hub_name = event_hub_name
 
@@ -582,8 +589,8 @@ class EventListener(_serialization.Model):
         *,
         filter: "_models.EventListenerFilter",  # pylint: disable=redefined-builtin
         endpoint: "_models.EventListenerEndpoint",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword filter: A base class for event filter which determines whether an event should be sent
          to an event listener. Required.
@@ -597,7 +604,8 @@ class EventListener(_serialization.Model):
 
 
 class EventListenerFilter(_serialization.Model):
-    """A base class for event filter which determines whether an event should be sent to an event listener.
+    """A base class for event filter which determines whether an event should be sent to an event
+    listener.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     EventNameFilter
@@ -618,10 +626,10 @@ class EventListenerFilter(_serialization.Model):
 
     _subtype_map = {"type": {"EventName": "EventNameFilter"}}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class EventNameFilter(EventListenerFilter):
@@ -657,8 +665,8 @@ class EventNameFilter(EventListenerFilter):
     }
 
     def __init__(
-        self, *, system_events: Optional[List[str]] = None, user_event_pattern: Optional[str] = None, **kwargs
-    ):
+        self, *, system_events: Optional[List[str]] = None, user_event_pattern: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword system_events: Gets or sets a list of system events. Supported events: "connected" and
          "disconnected". Blocking event "connect" is not supported because it requires a response.
@@ -675,7 +683,7 @@ class EventNameFilter(EventListenerFilter):
         :paramtype user_event_pattern: str
         """
         super().__init__(**kwargs)
-        self.type = "EventName"  # type: str
+        self.type: str = "EventName"
         self.system_events = system_events
         self.user_event_pattern = user_event_pattern
 
@@ -698,7 +706,7 @@ class LiveTraceCategory(_serialization.Model):
         "enabled": {"key": "enabled", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the live trace category's name.
          Available values: ConnectivityLogs, MessagingLogs.
@@ -734,8 +742,8 @@ class LiveTraceConfiguration(_serialization.Model):
     }
 
     def __init__(
-        self, *, enabled: str = "false", categories: Optional[List["_models.LiveTraceCategory"]] = None, **kwargs
-    ):
+        self, *, enabled: str = "false", categories: Optional[List["_models.LiveTraceCategory"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword enabled: Indicates whether or not enable live trace.
          When it's set to true, live trace client can connect to the service.
@@ -766,7 +774,7 @@ class LogSpecification(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Name of the log.
         :paramtype name: str
@@ -814,8 +822,8 @@ class ManagedIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentityProperty"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Represents the identity type: systemAssigned, userAssigned, None. Known values
          are: "None", "SystemAssigned", and "UserAssigned".
@@ -843,7 +851,7 @@ class ManagedIdentitySettings(_serialization.Model):
         "resource": {"key": "resource", "type": "str"},
     }
 
-    def __init__(self, *, resource: Optional[str] = None, **kwargs):
+    def __init__(self, *, resource: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword resource: The Resource indicating the App ID URI of the target resource.
          It also appears in the aud (audience) claim of the issued token.
@@ -903,8 +911,8 @@ class MetricSpecification(_serialization.Model):
         fill_gap_with_zero: Optional[str] = None,
         category: Optional[str] = None,
         dimensions: Optional[List["_models.Dimension"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the metric.
         :paramtype name: str
@@ -942,7 +950,8 @@ class MetricSpecification(_serialization.Model):
 
 
 class NameAvailability(_serialization.Model):
-    """Result of the request to check name availability. It contains a flag and possible reason of failure.
+    """Result of the request to check name availability. It contains a flag and possible reason of
+    failure.
 
     :ivar name_available: Indicates whether the name is available or not.
     :vartype name_available: bool
@@ -964,8 +973,8 @@ class NameAvailability(_serialization.Model):
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
         message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Indicates whether the name is available or not.
         :paramtype name_available: bool
@@ -1002,7 +1011,7 @@ class NameAvailabilityParameters(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, type: str, name: str, **kwargs):
+    def __init__(self, *, type: str, name: str, **kwargs: Any) -> None:
         """
         :keyword type: The resource type. Can be "Microsoft.SignalRService/SignalR" or
          "Microsoft.SignalRService/webPubSub". Required.
@@ -1036,8 +1045,8 @@ class NetworkACL(_serialization.Model):
         *,
         allow: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
         deny: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow: Allowed request types. The value can be one or more of: ClientConnection,
          ServerConnection, RESTAPI.
@@ -1083,8 +1092,8 @@ class Operation(_serialization.Model):
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         properties: Optional["_models.OperationProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation with format: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -1133,8 +1142,8 @@ class OperationDisplay(_serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Friendly name of the resource provider.
         :paramtype provider: str
@@ -1167,7 +1176,9 @@ class OperationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
         :paramtype value: list[~azure.mgmt.webpubsub.models.Operation]
@@ -1192,7 +1203,9 @@ class OperationProperties(_serialization.Model):
         "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
-    def __init__(self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs):
+    def __init__(
+        self, *, service_specification: Optional["_models.ServiceSpecification"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_specification: An object that describes a specification.
         :paramtype service_specification: ~azure.mgmt.webpubsub.models.ServiceSpecification
@@ -1212,7 +1225,7 @@ class PrivateEndpoint(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Full qualified Id of the private endpoint.
         :paramtype id: str
@@ -1252,8 +1265,8 @@ class PrivateEndpointACL(NetworkACL):
         name: str,
         allow: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
         deny: Optional[List[Union[str, "_models.WebPubSubRequestType"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow: Allowed request types. The value can be one or more of: ClientConnection,
          ServerConnection, RESTAPI.
@@ -1322,8 +1335,8 @@ class PrivateEndpointConnection(ProxyResource):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint.
         :paramtype private_endpoint: ~azure.mgmt.webpubsub.models.PrivateEndpoint
@@ -1361,8 +1374,8 @@ class PrivateEndpointConnectionList(_serialization.Model):
         *,
         value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of the private endpoint connections.
         :paramtype value: list[~azure.mgmt.webpubsub.models.PrivateEndpointConnection]
@@ -1425,8 +1438,8 @@ class PrivateLinkResource(ProxyResource):
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
         shareable_private_link_resource_types: Optional[List["_models.ShareablePrivateLinkResourceType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_id: Group Id of the private link resource.
         :paramtype group_id: str
@@ -1462,8 +1475,12 @@ class PrivateLinkResourceList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.PrivateLinkResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of PrivateLinkResource.
         :paramtype value: list[~azure.mgmt.webpubsub.models.PrivateLinkResource]
@@ -1502,8 +1519,8 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         status: Optional[Union[str, "_models.PrivateLinkServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
          owner of the service. Known values are: "Pending", "Approved", "Rejected", and "Disconnected".
@@ -1531,7 +1548,7 @@ class RegenerateKeyParameters(_serialization.Model):
         "key_type": {"key": "keyType", "type": "str"},
     }
 
-    def __init__(self, *, key_type: Optional[Union[str, "_models.KeyType"]] = None, **kwargs):
+    def __init__(self, *, key_type: Optional[Union[str, "_models.KeyType"]] = None, **kwargs: Any) -> None:
         """
         :keyword key_type: The type of access key. Known values are: "Primary", "Secondary", and
          "Salt".
@@ -1559,7 +1576,7 @@ class ResourceLogCategory(_serialization.Model):
         "enabled": {"key": "enabled", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, enabled: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Gets or sets the resource log category's name.
          Available values: ConnectivityLogs, MessagingLogs.
@@ -1586,7 +1603,7 @@ class ResourceLogConfiguration(_serialization.Model):
         "categories": {"key": "categories", "type": "[ResourceLogCategory]"},
     }
 
-    def __init__(self, *, categories: Optional[List["_models.ResourceLogCategory"]] = None, **kwargs):
+    def __init__(self, *, categories: Optional[List["_models.ResourceLogCategory"]] = None, **kwargs: Any) -> None:
         """
         :keyword categories: Gets or sets the list of category configurations.
         :paramtype categories: list[~azure.mgmt.webpubsub.models.ResourceLogCategory]
@@ -1606,7 +1623,7 @@ class ResourceReference(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
@@ -1664,8 +1681,8 @@ class ResourceSku(_serialization.Model):
         name: str,
         tier: Optional[Union[str, "_models.WebPubSubSkuTier"]] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU. Required.
 
@@ -1711,8 +1728,8 @@ class ServiceSpecification(_serialization.Model):
         *,
         metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         log_specifications: Optional[List["_models.LogSpecification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_specifications: Specifications of the Metrics for Azure Monitoring.
         :paramtype metric_specifications: list[~azure.mgmt.webpubsub.models.MetricSpecification]
@@ -1745,8 +1762,13 @@ class ShareablePrivateLinkResourceProperties(_serialization.Model):
     }
 
     def __init__(
-        self, *, description: Optional[str] = None, group_id: Optional[str] = None, type: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        description: Optional[str] = None,
+        group_id: Optional[str] = None,
+        type: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword description: The description of the resource type that has been onboarded to private
          link service.
@@ -1784,8 +1806,8 @@ class ShareablePrivateLinkResourceType(_serialization.Model):
         *,
         name: Optional[str] = None,
         properties: Optional["_models.ShareablePrivateLinkResourceProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the resource type that has been onboarded to private link service.
         :paramtype name: str
@@ -1855,8 +1877,8 @@ class SharedPrivateLinkResource(ProxyResource):
         group_id: Optional[str] = None,
         private_link_resource_id: Optional[str] = None,
         request_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_id: The group id from the provider of resource the shared private link resource
          is for.
@@ -1898,8 +1920,8 @@ class SharedPrivateLinkResourceList(_serialization.Model):
         *,
         value: Optional[List["_models.SharedPrivateLinkResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of the shared private link resources.
         :paramtype value: list[~azure.mgmt.webpubsub.models.SharedPrivateLinkResource]
@@ -1946,8 +1968,8 @@ class SignalRServiceUsage(_serialization.Model):
         limit: Optional[int] = None,
         name: Optional["_models.SignalRServiceUsageName"] = None,
         unit: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified ARM resource id.
         :paramtype id: str
@@ -1986,8 +2008,12 @@ class SignalRServiceUsageList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SignalRServiceUsage"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.SignalRServiceUsage"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of the resource usages.
         :paramtype value: list[~azure.mgmt.webpubsub.models.SignalRServiceUsage]
@@ -2015,7 +2041,7 @@ class SignalRServiceUsageName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The identifier of the usage.
         :paramtype value: str
@@ -2052,7 +2078,7 @@ class Sku(_serialization.Model):
         "capacity": {"key": "capacity", "type": "SkuCapacity"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.resource_type = None
@@ -2094,7 +2120,7 @@ class SkuCapacity(_serialization.Model):
         "scale_type": {"key": "scaleType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.minimum = None
@@ -2126,7 +2152,7 @@ class SkuList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2170,8 +2196,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -2229,7 +2255,7 @@ class TrackedResource(Resource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
          | South Central US.
@@ -2262,8 +2288,8 @@ class UpstreamAuthSettings(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.UpstreamAuthType"]] = None,
         managed_identity: Optional["_models.ManagedIdentitySettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Upstream auth type enum. Known values are: "None" and "ManagedIdentity".
         :paramtype type: str or ~azure.mgmt.webpubsub.models.UpstreamAuthType
@@ -2296,7 +2322,7 @@ class UserAssignedIdentityProperty(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -2338,7 +2364,7 @@ class WebPubSubHub(ProxyResource):
         "properties": {"key": "properties", "type": "WebPubSubHubProperties"},
     }
 
-    def __init__(self, *, properties: "_models.WebPubSubHubProperties", **kwargs):
+    def __init__(self, *, properties: "_models.WebPubSubHubProperties", **kwargs: Any) -> None:
         """
         :keyword properties: Properties of a hub. Required.
         :paramtype properties: ~azure.mgmt.webpubsub.models.WebPubSubHubProperties
@@ -2369,7 +2395,7 @@ class WebPubSubHubList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.WebPubSubHub"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.WebPubSubHub"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of hub settings to this resource.
         :paramtype value: list[~azure.mgmt.webpubsub.models.WebPubSubHub]
@@ -2408,8 +2434,8 @@ class WebPubSubHubProperties(_serialization.Model):
         event_handlers: Optional[List["_models.EventHandler"]] = None,
         event_listeners: Optional[List["_models.EventListener"]] = None,
         anonymous_connect_policy: str = "deny",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_handlers: Event handler of a hub.
         :paramtype event_handlers: list[~azure.mgmt.webpubsub.models.EventHandler]
@@ -2458,8 +2484,8 @@ class WebPubSubKeys(_serialization.Model):
         secondary_key: Optional[str] = None,
         primary_connection_string: Optional[str] = None,
         secondary_connection_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_key: The primary access key.
         :paramtype primary_key: str
@@ -2500,8 +2526,8 @@ class WebPubSubNetworkACLs(_serialization.Model):
         default_action: Optional[Union[str, "_models.ACLAction"]] = None,
         public_network: Optional["_models.NetworkACL"] = None,
         private_endpoints: Optional[List["_models.PrivateEndpointACL"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_action: Azure Networking ACL Action. Known values are: "Allow" and "Deny".
         :paramtype default_action: str or ~azure.mgmt.webpubsub.models.ACLAction
@@ -2653,8 +2679,8 @@ class WebPubSubResource(TrackedResource):  # pylint: disable=too-many-instance-a
         public_network_access: str = "Enabled",
         disable_local_auth: bool = False,
         disable_aad_auth: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The GEO location of the resource. e.g. West US | East US | North Central US
          | South Central US.
@@ -2728,8 +2754,12 @@ class WebPubSubResourceList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.WebPubSubResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.WebPubSubResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of the resources.
         :paramtype value: list[~azure.mgmt.webpubsub.models.WebPubSubResource]
@@ -2754,7 +2784,7 @@ class WebPubSubTlsSettings(_serialization.Model):
         "client_cert_enabled": {"key": "clientCertEnabled", "type": "bool"},
     }
 
-    def __init__(self, *, client_cert_enabled: bool = True, **kwargs):
+    def __init__(self, *, client_cert_enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword client_cert_enabled: Request client certificate during TLS handshake if enabled.
         :paramtype client_cert_enabled: bool

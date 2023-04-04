@@ -76,6 +76,7 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "mock_code_hash",
     "mock_asset_name",
     "mock_component_hash",
+    "mock_set_headers_with_user_aml_token",
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
@@ -305,3 +306,24 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client, experiment_name="v15_v2_interop")
+
+    def test_internal_component_node_output_type(self, client):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+        yaml_path = "./tests/test_configs/internal/command-component-single-file-output/component_spec.yaml"
+        component_func = load_component(yaml_path)
+
+        @pipeline
+        def pipeline_func():
+            node = component_func()
+            # node level should not have output type when type not configured
+            node.outputs.output.mode = "mount"
+
+        pipeline_job = pipeline_func()
+        rest_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert rest_pipeline_job_dict["properties"]["jobs"]["node"]["outputs"] == {
+            "output": {"job_output_type": "uri_file", "mode": "ReadWriteMount"}
+        }
+        assert_job_cancel(pipeline_job, client)

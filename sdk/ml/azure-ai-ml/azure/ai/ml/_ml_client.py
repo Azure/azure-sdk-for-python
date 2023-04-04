@@ -91,11 +91,10 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
-    VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    WorkspaceOutboundRuleOperations,
 )
+from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
 from azure.ai.ml.operations._local_endpoint_helper import _LocalEndpointHelper
@@ -128,6 +127,8 @@ class MLClient:
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
     :type show_progress: typing.Optional[bool]
+    :param enable_telemetry: Whether to enable telemetry. Will be overridden to False if not in a Jupyter Notebook.
+    :type enable_telemetry: typing.Optional[bool]
     :keyword cloud: The cloud name to use, defaults to AzureCloud.
     :paramtype cloud: str
 
@@ -479,7 +480,17 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
 
-        self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
+        try:
+            from azure.ai.ml.operations._virtual_cluster_operations import VirtualClusterOperations
+
+            self._virtual_clusters = VirtualClusterOperations(
+                self._operation_scope,
+                self._credential,
+                _service_client_kwargs=kwargs,
+                **ops_kwargs,
+            )
+        except Exception as ex:  # pylint: disable=broad-except
+            module_logger.debug("Virtual Cluster operations could not be initialized due to %s ", ex)
 
         self._featurestores = _FeatureStoreOperations(
             self._operation_scope,
