@@ -71,13 +71,28 @@ class UploadDownloadManifest(object):
             downloaded_manifest = download_manifest_result.manifest
             download_manifest_stream = download_manifest_result.data
             print(b"".join(download_manifest_stream))
-            # Download the layers
+            # Download and write out the layers
             for layer in downloaded_manifest.layers:
-                with client.download_blob(repository_name, layer.digest).data as layer_stream:
-                    print(b"".join(layer_stream))
-            # Download the config
-            with client.download_blob(repository_name, downloaded_manifest.config.digest).data as config_stream:
-                print(b"".join(config_stream))
+                # Remove the "sha256:" prefix from digest
+                layer_file_name = layer.digest.split(":")[1]
+                try:
+                    with client.download_blob(repository_name, layer.digest) as stream:
+                        with open(layer_file_name, "wb") as layer_file:
+                            for chunk in stream:
+                                layer_file.write(chunk)
+                except ValueError:
+                    print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
+                    os.remove(layer_file_name)
+            # Download and write out the config
+            config_file_name = "config.json"
+            try:
+                with client.download_blob(repository_name, downloaded_manifest.config.digest) as stream:
+                    with open(config_file_name, "wb") as config_file:
+                        for chunk in stream:
+                            config_file.write(chunk)
+            except ValueError:
+                print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
+                os.remove(config_file_name)
 
             # Delete the layers
             for layer in downloaded_manifest.layers:

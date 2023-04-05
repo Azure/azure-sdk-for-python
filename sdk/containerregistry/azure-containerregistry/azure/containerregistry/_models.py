@@ -304,19 +304,6 @@ class ArtifactTagProperties(object):
         return self._repository_name
 
 
-class DownloadBlobResult(object):
-    """The result from downloading a blob from the registry.
-
-    :ivar data: The blob content.
-    :vartype data: IO
-    :ivar str digest: The blob's digest, calculated by the registry.
-    """
-
-    def __init__(self, **kwargs):
-        self.data = kwargs.get("data")
-        self.digest = kwargs.get("digest")
-
-
 class DownloadManifestResult(object):
     """The result from downloading a manifest from the registry.
 

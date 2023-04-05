@@ -3,10 +3,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=too-many-lines
+import functools
 import hashlib
 import json
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, AsyncIterator
+
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import (
@@ -21,7 +24,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
-from .._container_registry_client import _return_response_headers, _return_response_and_deserialized
+from ._async_download_stream import AsyncDownloadBlobStream
+from .._container_registry_client import _return_response_headers, _return_response_and_headers, _return_response_and_deserialized
 from .._generated.models import AcrErrors
 from .._helpers import (
     _compute_digest,
@@ -972,7 +976,43 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             finally:
                 buffer_stream.manual_close()
 
-        return "sha256:" + hasher.hexdigest(), location, blob_size
+        return f"sha256:{hasher.hexdigest()}", location, blob_size
+
+    @distributed_trace_async
+    async def download_blob(self, repository: str, digest: str, **kwargs) -> AsyncDownloadBlobStream:
+        """Download a blob that is part of an artifact to a stream.
+
+        :param str repository: Name of the repository.
+        :param str digest: The digest of the blob to download.
+        :returns: AsyncDownloadBlobStream
+        :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
+        :raises ValueError: If the requested digest does not match the digest of the received blob.
+        """
+        end_range = DEFAULT_CHUNK_SIZE - 1
+        first_chunk, headers = cast(
+            Tuple[PipelineResponse, Dict[str, str]],
+            await self._client.container_registry_blob.get_chunk(
+                repository,
+                digest,
+                range_header=f"bytes=0-{end_range}",
+                cls=_return_response_and_headers,
+                **kwargs
+            )
+        )
+        return AsyncDownloadBlobStream(
+            response=first_chunk,
+            digest=digest,
+            get_next=functools.partial(
+                self._client.container_registry_blob.get_chunk,
+                name=repository,
+                digest=digest,
+                cls=_return_response_and_headers,
+                **kwargs
+            ),
+            blob_size=int(headers["Content-Range"].split("/")[1]),
+            downloaded=int(headers["Content-Length"]),
+            chunk_size=DEFAULT_CHUNK_SIZE
+        )
 
     @distributed_trace_async
     def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:

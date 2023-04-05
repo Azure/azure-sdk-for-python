@@ -3289,7 +3289,7 @@ class DocumentModelSummary:
             tags=model.tags if model.tags else {},
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of DocumentModelSummary."""
         return {
             "model_id": self.model_id,
@@ -3300,7 +3300,7 @@ class DocumentModelSummary:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "DocumentModelSummary":
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentModelSummary":
         """Converts a dict in the shape of a DocumentModelSummary to the model itself.
 
         :param Dict data: A dictionary in the shape of DocumentModelSummary.
@@ -3436,7 +3436,7 @@ class DocumentModelDetails(DocumentModelSummary):
             if model.doc_types else {}
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> Dict[str, Any]:
         """Returns a dict representation of DocumentModelDetails."""
         return {
             "model_id": self.model_id,
@@ -3448,7 +3448,7 @@ class DocumentModelDetails(DocumentModelSummary):
         }
 
     @classmethod
-    def from_dict(cls, data: Dict) -> "DocumentModelDetails":
+    def from_dict(cls, data: Dict[str, Any]) -> "DocumentModelDetails":
         """Converts a dict in the shape of a DocumentModelDetails to the model itself.
 
         :param Dict data: A dictionary in the shape of DocumentModelDetails.

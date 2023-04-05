@@ -215,6 +215,7 @@ class NodeIOMixin:
             return output_dict
 
         rest_data_outputs = {name: _rename_name_and_version(val.as_dict()) for name, val in rest_data_outputs.items()}
+        self._update_output_types(rest_data_outputs)
         rest_data_outputs.update(rest_output_bindings)
         return rest_data_outputs
 
@@ -243,6 +244,16 @@ class NodeIOMixin:
         data_outputs = from_rest_data_outputs(rest_outputs)
 
         return {**data_outputs, **output_bindings}
+
+    def _update_output_types(self, rest_data_outputs):
+        """Update output types in rest_data_outputs according to meta level output."""
+
+        for name, rest_output in rest_data_outputs.items():
+            original_output = self.outputs[name]
+            # for configured output with meta, "correct" the output type to file to avoid the uri_folder default value
+            if original_output and original_output.type:
+                if original_output.type in ["AnyFile", "uri_file"]:
+                    rest_output["job_output_type"] = "uri_file"
 
 
 class PipelineNodeIOMixin(NodeIOMixin):
@@ -391,6 +402,9 @@ class PipelineIOMixin(PipelineNodeIOMixin):
             # Copy default value dict for group
             return copy.deepcopy(val.default)
         return val.default
+
+    def _update_output_types(self, rest_data_outputs):
+        """Won't clear output type for pipeline level outputs since it's required in rest object."""
 
 
 class AutoMLNodeIOMixin(NodeIOMixin):

@@ -610,7 +610,7 @@ def build_container_registry_blob_start_upload_request(name: str, **kwargs: Any)
 
 
 def build_container_registry_blob_get_chunk_request(
-    name: str, digest: str, *, range: str, **kwargs: Any
+    name: str, digest: str, *, range_header: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
@@ -626,14 +626,14 @@ def build_container_registry_blob_get_chunk_request(
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
-    _headers["Range"] = _SERIALIZER.header("range", range, "str")
+    _headers["Range"] = _SERIALIZER.header("range_header", range_header, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
 def build_container_registry_blob_check_chunk_exists_request(
-    name: str, digest: str, *, range: str, **kwargs: Any
+    name: str, digest: str, *, range_header: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
@@ -649,7 +649,7 @@ def build_container_registry_blob_check_chunk_exists_request(
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
-    _headers["Range"] = _SERIALIZER.header("range", range, "str")
+    _headers["Range"] = _SERIALIZER.header("range_header", range_header, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="HEAD", url=_url, headers=_headers, **kwargs)
@@ -2420,7 +2420,7 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace
-    def get_chunk(self, name: str, digest: str, *, range: str, **kwargs: Any) -> Iterator[bytes]:
+    def get_chunk(self, name: str, digest: str, *, range_header: str, **kwargs: Any) -> Iterator[bytes]:
         """Retrieve the blob from the registry identified by ``digest``. This endpoint may also support
         RFC7233 compliant range requests. Support can be detected by issuing a HEAD request. If the
         header ``Accept-Range: bytes`` is returned, range requests can be used to fetch partial
@@ -2430,9 +2430,9 @@ class ContainerRegistryBlobOperations:
         :type name: str
         :param digest: Digest of a BLOB. Required.
         :type digest: str
-        :keyword range: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header specifying
-         blob chunk. Required.
-        :paramtype range: str
+        :keyword range_header: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header
+         specifying blob chunk. Required.
+        :paramtype range_header: str
         :return: Iterator of the response bytes
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2453,7 +2453,7 @@ class ContainerRegistryBlobOperations:
         request = build_container_registry_blob_get_chunk_request(
             name=name,
             digest=digest,
-            range=range,
+            range_header=range_header,
             headers=_headers,
             params=_params,
         )
@@ -2486,7 +2486,7 @@ class ContainerRegistryBlobOperations:
 
     @distributed_trace
     def check_chunk_exists(  # pylint: disable=inconsistent-return-statements
-        self, name: str, digest: str, *, range: str, **kwargs: Any
+        self, name: str, digest: str, *, range_header: str, **kwargs: Any
     ) -> None:
         """Same as GET, except only the headers are returned.
 
@@ -2494,9 +2494,9 @@ class ContainerRegistryBlobOperations:
         :type name: str
         :param digest: Digest of a BLOB. Required.
         :type digest: str
-        :keyword range: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header specifying
-         blob chunk. Required.
-        :paramtype range: str
+        :keyword range_header: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header
+         specifying blob chunk. Required.
+        :paramtype range_header: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2517,7 +2517,7 @@ class ContainerRegistryBlobOperations:
         request = build_container_registry_blob_check_chunk_exists_request(
             name=name,
             digest=digest,
-            range=range,
+            range_header=range_header,
             headers=_headers,
             params=_params,
         )

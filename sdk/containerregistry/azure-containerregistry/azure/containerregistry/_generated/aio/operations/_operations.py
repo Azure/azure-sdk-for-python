@@ -1832,7 +1832,7 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)
 
     @distributed_trace_async
-    async def get_chunk(self, name: str, digest: str, *, range: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def get_chunk(self, name: str, digest: str, *, range_header: str, **kwargs: Any) -> AsyncIterator[bytes]:
         """Retrieve the blob from the registry identified by ``digest``. This endpoint may also support
         RFC7233 compliant range requests. Support can be detected by issuing a HEAD request. If the
         header ``Accept-Range: bytes`` is returned, range requests can be used to fetch partial
@@ -1842,9 +1842,9 @@ class ContainerRegistryBlobOperations:
         :type name: str
         :param digest: Digest of a BLOB. Required.
         :type digest: str
-        :keyword range: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header specifying
-         blob chunk. Required.
-        :paramtype range: str
+        :keyword range_header: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header
+         specifying blob chunk. Required.
+        :paramtype range_header: str
         :return: Async iterator of the response bytes
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1865,7 +1865,7 @@ class ContainerRegistryBlobOperations:
         request = build_container_registry_blob_get_chunk_request(
             name=name,
             digest=digest,
-            range=range,
+            range_header=range_header,
             headers=_headers,
             params=_params,
         )
@@ -1898,7 +1898,7 @@ class ContainerRegistryBlobOperations:
 
     @distributed_trace_async
     async def check_chunk_exists(  # pylint: disable=inconsistent-return-statements
-        self, name: str, digest: str, *, range: str, **kwargs: Any
+        self, name: str, digest: str, *, range_header: str, **kwargs: Any
     ) -> None:
         """Same as GET, except only the headers are returned.
 
@@ -1906,9 +1906,9 @@ class ContainerRegistryBlobOperations:
         :type name: str
         :param digest: Digest of a BLOB. Required.
         :type digest: str
-        :keyword range: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header specifying
-         blob chunk. Required.
-        :paramtype range: str
+        :keyword range_header: Format : bytes=:code:`<start>`-:code:`<end>`,  HTTP Range header
+         specifying blob chunk. Required.
+        :paramtype range_header: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1929,7 +1929,7 @@ class ContainerRegistryBlobOperations:
         request = build_container_registry_blob_check_chunk_exists_request(
             name=name,
             digest=digest,
-            range=range,
+            range_header=range_header,
             headers=_headers,
             params=_params,
         )

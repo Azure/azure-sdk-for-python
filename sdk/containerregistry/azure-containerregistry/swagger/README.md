@@ -179,3 +179,12 @@ directive:
           "format": "binary"
       };
 ```
+
+# Rename parameter "Range" to "RangeHeader"
+``` yaml
+directive:
+  from: swagger-document
+  where: $.parameters.Range
+  transform: >
+    $["x-ms-client-name"] = "RangeHeader"
+```
