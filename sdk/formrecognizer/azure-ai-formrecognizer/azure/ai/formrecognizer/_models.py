@@ -3604,6 +3604,9 @@ class OperationSummary:
     the model can be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
     :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
     To find out why an operation failed, use :func:`~get_operation` and provide the `operation_id`.
+
+    .. versionadded:: 2023-02-28-preview
+        The `documentClassifierBuild` kind.
     """
     operation_id: str
     """Operation ID."""
@@ -3701,6 +3704,9 @@ class OperationDetails(OperationSummary):
     Note that operation information only persists for 24 hours. If the operation was successful,
     the model can also be accessed using the :func:`~get_document_model`, :func:`~list_document_models`,
     :func:`~get_document_classifier`, :func:`~list_document_classifiers` APIs.
+
+    .. versionadded:: 2023-02-28-preview
+        The `documentClassifierBuild` kind and `DocumentClassifierDetails` result.
     """
     operation_id: str
     """Operation ID."""

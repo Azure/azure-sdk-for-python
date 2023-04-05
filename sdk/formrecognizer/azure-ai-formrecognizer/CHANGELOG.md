@@ -12,6 +12,7 @@
 - Added support for custom document classification on `DocumentModelAdministrationClient`: `begin_build_document_classifier`, 
   `list_document_classifiers`, `get_document_classifier`, and `delete_document_classifier`.
 - Added support for classifying documents on `DocumentAnalysisClient`: `begin_classify_document` and `begin_classify_document_from_url`.
+- Added kind `documentClassifierBuild` to `OperationSummary` and `OperationDetails`.
 
 ### Breaking Changes
 
