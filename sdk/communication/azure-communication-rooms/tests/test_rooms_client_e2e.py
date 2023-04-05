@@ -90,7 +90,6 @@ class RoomsClientTest(RoomsTestCase):
         self.rooms_client.delete_room(room_id=response.id)
         self.verify_successful_room_response(response=response, valid_until=valid_until)
 
-    @pytest.mark.live_test_only
     def test_create_room_only_participants(self):
         # add john and chris to room
         participants = [
@@ -296,7 +295,6 @@ class RoomsClientTest(RoomsTestCase):
         self.verify_successful_room_response(
             response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
-    @pytest.mark.live_test_only
     def test_upsert_participants(self):
         # add john and chris to room
         create_participants = [
@@ -337,8 +335,6 @@ class RoomsClientTest(RoomsTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
-
-    @pytest.mark.live_test_only
     def test_upsert_participants_with_null_role(self):
         create_participants = [
             InvitedRoomParticipant(
@@ -423,7 +419,6 @@ class RoomsClientTest(RoomsTestCase):
         # delete created room
         self.rooms_client.delete_room(room_id=create_response.id)
 
-    @pytest.mark.live_test_only
     def test_remove_participants(self):
         # add john and chris to room
         create_participants = [

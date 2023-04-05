@@ -19,7 +19,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee09-d155-1788-094822002778"}}'
@@ -66,7 +66,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee09-d1b0-1788-094822002779"}}'
@@ -113,7 +113,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee09-d207-1788-09482200277a"}}'
@@ -160,7 +160,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee09-d25c-1788-09482200277c"}}'
@@ -211,7 +211,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/rooms?api-version=2023-03-31-preview
+    uri: https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview
   response:
     body:
       string: '{"id":"99419749046518341","createdAt":"2023-04-04T21:24:29.5819111+00:00","validFrom":"2023-04-04T21:24:29.3239917+00:00","validUntil":"2023-10-01T21:24:29.3239917+00:00"}'
@@ -258,7 +258,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99419749046518341/participants?api-version=2023-03-31-preview
+    uri: https://sanitized.communication.azure.com/rooms/99419749046518341/participants?api-version=2023-03-31-preview
   response:
     body:
       string: '{"error":{"code":"BadRequest","message":"Invalid value for the Participants."}}'
@@ -302,7 +302,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-10-01
   response:
     body:
       string: ''
@@ -343,7 +343,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-10-01
   response:
     body:
       string: ''
@@ -384,7 +384,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-10-01
   response:
     body:
       string: ''

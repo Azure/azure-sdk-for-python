@@ -19,7 +19,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee08-3dd0-b688-094822002916"}}'
@@ -66,7 +66,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee08-3e2b-b688-094822002917"}}'
@@ -113,7 +113,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee08-3e81-b688-094822002918"}}'
@@ -160,7 +160,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/identities?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities?api-version=2022-10-01
   response:
     body:
       string: '{"identity":{"id":"8:acs:db75ed0c-e801-41a3-99a4-66a0a119a06c_00000017-ee08-3edd-b688-094822002919"}}'
@@ -207,7 +207,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.ppe.communication.azure.net/rooms?api-version=2023-03-31-preview
+    uri: https://sanitized.communication.azure.com/rooms?api-version=2023-03-31-preview
   response:
     body:
       string: '{"id":"99468424951726763","createdAt":"2023-04-04T21:22:46.3583427+00:00","validFrom":"2023-04-04T21:22:46.1009302+00:00","validUntil":"2023-10-01T21:22:46.1009302+00:00"}'
@@ -236,7 +236,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99468424951726763?api-version=2023-03-31-preview
+    uri: https://sanitized.communication.azure.com/rooms/99468424951726763?api-version=2023-03-31-preview
   response:
     body:
       string: ''
@@ -262,7 +262,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99468424951726763?api-version=2023-03-31-preview
+    uri: https://sanitized.communication.azure.com/rooms/99468424951726763?api-version=2023-03-31-preview
   response:
     body:
       string: '{"error":{"code":"NotFound","message":"The server cannot find the requested
@@ -292,7 +292,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/rooms/99468424951726763?api-version=2023-03-31-preview
+    uri: https://sanitized.communication.azure.com/rooms/99468424951726763?api-version=2023-03-31-preview
   response:
     body:
       string: ''
@@ -324,7 +324,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-10-01
   response:
     body:
       string: ''
@@ -365,7 +365,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-10-01
   response:
     body:
       string: ''
@@ -406,7 +406,7 @@ interactions:
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
-    uri: https://sanitized.ppe.communication.azure.net/identities/sanitized?api-version=2022-10-01
+    uri: https://sanitized.communication.azure.com/identities/sanitized?api-version=2022-10-01
   response:
     body:
       string: ''

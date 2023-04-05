@@ -97,7 +97,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             await self.rooms_client.delete_room(room_id=response.id)
             self.verify_successful_room_response(response=response, valid_until=valid_until)
 
-    @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
     async def test_create_room_only_participants_async(self):
         # add john and chris to room
@@ -334,7 +333,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             self.verify_successful_room_response(
                 response=update_response, valid_from=valid_from, valid_until=valid_until, room_id=create_response.id)
 
-    @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
     async def test_upsert_participant_async(self):
         # add john and chris to room
@@ -374,7 +372,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
 
-    @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
     async def test_upsert_participant_with_null_roles_async(self):
         create_participants = [
@@ -461,7 +458,6 @@ class RoomsClientTestAsync(RoomsAsyncTestCase):
             # delete created room
             await self.rooms_client.delete_room(room_id=create_response.id)
 
-    @pytest.mark.live_test_only
     @RoomsAsyncTestCase.await_prepared_test
     async def test_remove_participant_async(self):
         # add john and chris to room
