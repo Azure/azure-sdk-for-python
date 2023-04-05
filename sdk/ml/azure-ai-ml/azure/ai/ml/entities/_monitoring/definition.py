@@ -2,11 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Union
 
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
-from azure.ai.ml.entities._monitoring.signals import MonitoringSignal
+from azure.ai.ml.entities._monitoring.signals import (
+    DataDriftSignal,
+    DataQualitySignal,
+    PredictionDriftSignal,
+    FeatureAttributionDriftSignal,
+    ModelPerformanceSignal,
+    CustomMonitoringSignal,
+)
 from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
 from azure.ai.ml._utils._experimental import experimental
 
@@ -19,7 +26,12 @@ class MonitorDefinition:
         compute: str = None,
         monitoring_target: MonitoringTarget = None,
         data_ingestion: MonitorInputData = None,
-        monitoring_signals: Dict[str, MonitoringSignal] = None,
+        monitoring_signals: Dict[str, Union[DataDriftSignal,
+    DataQualitySignal,
+    PredictionDriftSignal,
+    FeatureAttributionDriftSignal,
+    ModelPerformanceSignal,
+    CustomMonitoringSignal,]] = None,
         alert_notification: AlertNotification = None,
     ):
         self.compute = compute

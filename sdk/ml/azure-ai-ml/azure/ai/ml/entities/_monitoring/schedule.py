@@ -8,11 +8,11 @@ from pathlib import Path
 from typing import Dict, Optional, Union
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.entities._monitoring.monitor_definition import MonitorDefinition
+from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigger
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml._schema.monitoring.monitoring_schedule import MonitorScheduleSchema
+from azure.ai.ml._schema.monitoring.schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 
 module_logger = logging.getLogger(__name__)
