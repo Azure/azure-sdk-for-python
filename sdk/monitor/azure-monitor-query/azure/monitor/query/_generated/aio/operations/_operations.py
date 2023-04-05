@@ -597,8 +597,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -916,8 +917,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -978,8 +980,10 @@ class QueryOperations:
                                 "str": "str"  # Optional. Dictionary of
                                   :code:`<string>`.
                             },
-                            "method": "str",  # Optional. "POST"
-                            "path": "str"  # Optional. "/query"
+                            "method": "POST",  # Optional. Default value is "POST". An
+                              single request in a batch. Required.
+                            "path": "/query"  # Optional. Default value is "/query". An
+                              single request in a batch. Required.
                         }
                     ]
                 }
@@ -1188,8 +1192,10 @@ class QueryOperations:
                                 "str": "str"  # Optional. Dictionary of
                                   :code:`<string>`.
                             },
-                            "method": "str",  # Optional. "POST"
-                            "path": "str"  # Optional. "/query"
+                            "method": "POST",  # Optional. Default value is "POST". An
+                              single request in a batch. Required.
+                            "path": "/query"  # Optional. Default value is "/query". An
+                              single request in a batch. Required.
                         }
                     ]
                 }
@@ -1412,8 +1418,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1731,8 +1738,9 @@ class QueryOperations:
         )
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
