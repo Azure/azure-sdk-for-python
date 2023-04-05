@@ -118,7 +118,8 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             description=description,
             tags=tags,
             properties=properties,
-            create_job=create_job**kwargs,
+            create_job=create_job,
+            **kwargs,
         )
 
     @property
