@@ -26,12 +26,17 @@ class MonitorDefinition:
         compute: str = None,
         monitoring_target: MonitoringTarget = None,
         data_ingestion: MonitorInputData = None,
-        monitoring_signals: Dict[str, Union[DataDriftSignal,
-    DataQualitySignal,
-    PredictionDriftSignal,
-    FeatureAttributionDriftSignal,
-    ModelPerformanceSignal,
-    CustomMonitoringSignal,]] = None,
+        monitoring_signals: Dict[
+            str,
+            Union[
+                DataDriftSignal,
+                DataQualitySignal,
+                PredictionDriftSignal,
+                FeatureAttributionDriftSignal,
+                ModelPerformanceSignal,
+                CustomMonitoringSignal,
+            ],
+        ] = None,
         alert_notification: AlertNotification = None,
     ):
         self.compute = compute
