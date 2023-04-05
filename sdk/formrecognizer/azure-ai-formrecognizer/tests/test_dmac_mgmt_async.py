@@ -187,6 +187,8 @@ class TestManagementAsync(AsyncFormRecognizerTest):
                     for key, field in doc_type.field_schema.items():
                         assert key
                         assert field["type"]
+                        if doc_type.build_mode == "neural":
+                            continue  # neural models don't have field confidence
                         assert doc_type.field_confidence[key] is not None
 
             # check successful classifier model op
