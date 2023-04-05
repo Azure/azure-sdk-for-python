@@ -48,14 +48,14 @@ def set_authentication_policy(credential, kwargs):
         if not kwargs.get("authentication_policy"):
             kwargs["authentication_policy"] = TranslatorAuthenticationPolicy(credential)
 
-    if isinstance(credential, TokenCredential):
-        if not kwargs.get("authentication_policy"):
-            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential)
-
     if isinstance(credential, AzureKeyCredential):
         if not kwargs.get("authentication_policy"):
             kwargs["authentication_policy"] = AzureKeyCredentialPolicy(
                 name="Ocp-Apim-Subscription-Key", credential=credential)
+
+    if hasattr(credential, "get_token"):
+        if not kwargs.get("authentication_policy"):
+            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential)
 
 class TextTranslationClient(ServiceClientGenerated):
     def __init__(
