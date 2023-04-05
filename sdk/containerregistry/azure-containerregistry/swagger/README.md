@@ -110,7 +110,7 @@ directive:
       $.required = true
 ```
 
-# Change NextLink client name to nextLink
+### Change NextLink client name to nextLink
 ``` yaml
 directive:
   from: swagger-document
@@ -119,7 +119,7 @@ directive:
     $["x-ms-client-name"] = "nextLink"
 ```
 
-# Updates to OciManifest
+### Updates to OciManifest
 ``` yaml
 directive:
   from: swagger-document
@@ -135,7 +135,7 @@ directive:
         };
 ```
 
-# Take stream as manifest body
+### Take stream as manifest body
 ``` yaml
 directive:
   from: swagger-document
@@ -147,7 +147,7 @@ directive:
       }
 ```
 
-# Updates to Descriptor
+### Updates to Descriptor
 ``` yaml
 directive:
   from: swagger-document
@@ -158,7 +158,7 @@ directive:
     delete $["x-accessibility"]
 ```
 
-# Updates to Annotations
+### Updates to Annotations
 ``` yaml
 directive:
   from: swagger-document
@@ -168,11 +168,14 @@ directive:
     delete $["x-accessibility"]
 ```
 
-# Remove parameter "accept" from "GetManifest"
+### Replace ManifestWrapper with stream response to calculate SHA256
 ``` yaml
 directive:
   from: swagger-document
-  where-operation: ContainerRegistry_GetManifest
+  where: $.paths["/v2/{name}/manifests/{reference}"].get.responses["200"]
   transform: >
-    $.parameters = $.parameters.filter(item => item.name !== "accept")
+      $.schema = {
+          "type": "string",
+          "format": "binary"
+      };
 ```
