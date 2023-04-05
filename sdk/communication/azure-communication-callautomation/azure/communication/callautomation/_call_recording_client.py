@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from io import BytesIO
 from typing import TYPE_CHECKING  # pylint: disable=unused-import
 from azure.core.pipeline.transport import HttpResponse
 from ._models import RecordingStateResponse, StartRecordingOptions
@@ -168,7 +169,7 @@ class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-
         """
         self._downloader.delete_recording(recording_location = recording_location, **kwargs)
 
-    def download_to(
+    def download_to_path(
         self,
         source_location: str,
         destination_path: str,
@@ -193,4 +194,32 @@ class CallRecordingClient(object): # pylint: disable=client-accepts-api-version-
                                                      **kwargs
                                                     )
         with open(destination_path, 'wb') as writer:
+            writer.write(stream.read())
+
+
+    def download_to_stream(
+        self,
+        source_location: str,
+        destination_stream: BytesIO,
+        offset: int = None,
+        length: int = None,
+        **kwargs
+    ) -> None:
+        """Download a stream of the call recording to the destination.
+
+        :param source_location: The source location uri. Required.
+        :type source_location: str
+        :param destination_stream: The destination stream. Required.
+        :type destination_stream: BytesIO
+        :param offset: Offset byte. Not required.
+        :type offset: int
+        :param length: how many bytes. Not required.
+        :type length: int
+        """
+        stream = self._downloader.download_streaming(source_location = source_location,
+                                                     offset = offset,
+                                                     length = length,
+                                                     **kwargs
+                                                    )
+        with open(destination_stream, 'wb') as writer:
             writer.write(stream.read())
