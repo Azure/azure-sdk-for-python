@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Updated settings to include OpenTelemetry which is now the default tracer provider.  #29095
+- Updated settings to include OpenTelemetry as a tracer provider.  #29095
 
 ### Other Changes
 

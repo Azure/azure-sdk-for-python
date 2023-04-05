@@ -166,7 +166,7 @@ def convert_tracing_impl(value: Union[str, Type[AbstractSpan]]) -> Optional[Type
     """
     if value is None:
         return (
-            _get_opentelemetry_span_if_opentelemetry_is_imported() or _get_opencensus_span_if_opencensus_is_imported()
+            _get_opencensus_span_if_opencensus_is_imported() or _get_opentelemetry_span_if_opentelemetry_is_imported()
         )
 
     if not isinstance(value, str):
