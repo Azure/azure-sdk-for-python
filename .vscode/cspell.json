@@ -392,7 +392,8 @@
     "yarl",
     "SDDL",
     "dacl",
-    "whls"
+    "whls",
+    "aiter"
   ],
   "overrides": [
     {
@@ -426,6 +427,12 @@
         "isfork",
         "ISFORK",
         "thead"
+      ]
+    },
+    {
+      "filename": "doc/esrp_release.md",
+      "words": [
+        "ESRP"
       ]
     },
     {
