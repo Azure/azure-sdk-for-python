@@ -22,7 +22,7 @@ from azure.core.pipeline.transport import (
 )  # pylint: disable=no-name-in-module
 
 from azure.iot.deviceprovisioningservice.auth import SharedKeyCredentialPolicy
-from azure.iot.deviceprovisioningservice._generated import VERSION
+from azure.iot.deviceprovisioningservice._generated._version import VERSION
 from azure.iot.deviceprovisioningservice._generated import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )

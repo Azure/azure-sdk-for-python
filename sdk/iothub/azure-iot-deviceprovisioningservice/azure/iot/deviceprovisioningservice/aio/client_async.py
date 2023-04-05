@@ -18,7 +18,7 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     UserAgentPolicy,
 )
-from azure.iot.deviceprovisioningservice._generated import VERSION
+from azure.iot.deviceprovisioningservice._generated._version import VERSION
 from azure.iot.deviceprovisioningservice._generated.aio import (
     ProvisioningServiceClient as GeneratedProvisioningServiceClient,
 )
