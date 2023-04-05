@@ -132,6 +132,7 @@ class RedirectPolicyBase:
             return False
         return True
 
+
 class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
     """A redirect policy.
 

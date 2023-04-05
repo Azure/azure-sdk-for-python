@@ -100,7 +100,7 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        request.context.options.pop('insecure_domain_change', False)
+        request.context.options.pop("insecure_domain_change", False)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),

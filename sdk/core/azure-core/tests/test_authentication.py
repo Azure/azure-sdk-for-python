@@ -414,6 +414,7 @@ def test_azure_named_key_credential_raises():
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred.update(1234, "newkey")
 
+
 def test_bearer_policy_redirect_same_domain():
     class MockTransport(HttpTransport):
         def __init__(self):
@@ -434,7 +435,7 @@ def test_bearer_policy_redirect_same_domain():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost"
+                response.headers["location"] = "https://localhost"
                 return response
             assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
             response = Response()
@@ -451,6 +452,7 @@ def test_bearer_policy_redirect_same_domain():
     pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     pipeline.run(HttpRequest("GET", "https://localhost"))
+
 
 def test_bearer_policy_redirect_different_domain():
     class MockTransport(HttpTransport):
@@ -472,7 +474,7 @@ def test_bearer_policy_redirect_different_domain():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost1"
+                response.headers["location"] = "https://localhost1"
                 return response
             assert not request.headers.get("Authorization")
             response = Response()
@@ -489,6 +491,7 @@ def test_bearer_policy_redirect_different_domain():
     pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     pipeline.run(HttpRequest("GET", "https://localhost"))
+
 
 def test_bearer_policy_redirect_opt_out_clean_up():
     class MockTransport(HttpTransport):
@@ -510,7 +513,7 @@ def test_bearer_policy_redirect_opt_out_clean_up():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost1"
+                response.headers["location"] = "https://localhost1"
                 return response
             assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
             response = Response()
@@ -527,6 +530,7 @@ def test_bearer_policy_redirect_opt_out_clean_up():
     pipeline = Pipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     pipeline.run(HttpRequest("GET", "https://localhost"))
+
 
 def test_bearer_policy_redirect_customize_sensitive_headers():
     class MockTransport(HttpTransport):
@@ -548,7 +552,7 @@ def test_bearer_policy_redirect_customize_sensitive_headers():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost1"
+                response.headers["location"] = "https://localhost1"
                 return response
             assert request.headers.get("Authorization")
             response = Response()

@@ -235,15 +235,19 @@ def get_completed_future(result=None):
     fut.set_result(result)
     return fut
 
+
 @pytest.mark.asyncio
 async def test_bearer_policy_redirect_same_domain():
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
             self._first = True
+
         async def __aexit__(self, exc_type, exc_val, exc_tb):
             pass
+
         async def close(self):
             pass
+
         async def open(self):
             pass
 
@@ -253,7 +257,7 @@ async def test_bearer_policy_redirect_same_domain():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost"
+                response.headers["location"] = "https://localhost"
                 return response
             assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
             response = Response()
@@ -262,6 +266,7 @@ async def test_bearer_policy_redirect_same_domain():
 
     auth_headder = "token"
     expected_scope = "scope"
+
     async def get_token(_):
         token = AccessToken(auth_headder, 0)
         return token
@@ -273,6 +278,7 @@ async def test_bearer_policy_redirect_same_domain():
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
+
 
 @pytest.mark.asyncio
 async def test_bearer_policy_redirect_different_domain():
@@ -295,7 +301,7 @@ async def test_bearer_policy_redirect_different_domain():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost1"
+                response.headers["location"] = "https://localhost1"
                 return response
             assert not request.headers.get("Authorization")
             response = Response()
@@ -316,6 +322,7 @@ async def test_bearer_policy_redirect_different_domain():
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
+
 
 @pytest.mark.asyncio
 async def test_bearer_policy_redirect_opt_out_clean_up():
@@ -338,7 +345,7 @@ async def test_bearer_policy_redirect_opt_out_clean_up():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost1"
+                response.headers["location"] = "https://localhost1"
                 return response
             assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
             response = Response()
@@ -359,6 +366,7 @@ async def test_bearer_policy_redirect_opt_out_clean_up():
     pipeline = AsyncPipeline(transport=MockTransport(), policies=[redirect_policy, auth_policy, header_clean_up_policy])
 
     await pipeline.run(HttpRequest("GET", "https://localhost"))
+
 
 @pytest.mark.asyncio
 async def test_bearer_policy_redirect_customize_sensitive_headers():
@@ -381,7 +389,7 @@ async def test_bearer_policy_redirect_customize_sensitive_headers():
                 assert request.headers["Authorization"] == "Bearer {}".format(auth_headder)
                 response = Response()
                 response.status_code = 301
-                response.headers['location'] = "https://localhost1"
+                response.headers["location"] = "https://localhost1"
                 return response
             assert request.headers.get("Authorization")
             response = Response()

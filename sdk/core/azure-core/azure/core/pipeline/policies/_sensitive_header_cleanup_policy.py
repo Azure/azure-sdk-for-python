@@ -23,8 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import List
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from typing import List, Optional
+from azure.core.pipeline import PipelineRequest
 from ._base import SansIOHTTPPolicy
 
 
@@ -34,6 +34,7 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     :keyword List[str] block_headers_list: The headers to clean up.
     :keyword bool disable_cleanup: Opt out cleaning up sensitive headers
     """
+
     DEFAULT_SENSITIVE_HEADERS = set(
         [
             "Authorization",
@@ -42,11 +43,12 @@ class SensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     )
 
     def __init__(
-        self, *, block_headers_list: List[str] = None, disable_cleanup: bool = False, **kwargs
+        self, *, block_headers_list: Optional[List[str]] = None, disable_cleanup: bool = False, **kwargs
     ):  # pylint: disable=unused-argument,super-init-not-called
         self._disable_cleanup = disable_cleanup
-        self._block_headers_list = \
+        self._block_headers_list = (
             SensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_HEADERS if block_headers_list is None else block_headers_list
+        )
 
     def on_request(self, request):  # pylint: disable=arguments-differ
         # type: (PipelineRequest) -> None

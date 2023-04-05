@@ -86,7 +86,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
                     request_authorized = await self.on_challenge(request, response)
                     if request_authorized:
                         # if we receive a challenge response, clear the 'insecure_domain_change' tag
-                        request.context.options.pop('insecure_domain_change', False)
+                        request.context.options.pop("insecure_domain_change", False)
                         try:
                             response = await self.next.send(request)
                             await await_result(self.on_response, request, response)
