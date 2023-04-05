@@ -308,10 +308,10 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = self._client.queue.get_properties(
+            response = cast(QueueProperties,self._client.queue.get_properties(
                 timeout=timeout,
                 cls=deserialize_queue_properties,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
         response.name = self.queue_name
@@ -374,13 +374,13 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            _, identifiers = self._client.queue.get_access_policy(
+            _, identifiers = cast(List, self._client.queue.get_access_policy(
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
-                **kwargs)
+                **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
-        return {s.id: s.access_policy or AccessPolicy() for s in cast(List, identifiers)}
+        return {s.id: s.access_policy or AccessPolicy() for s in identifiers}
 
     @distributed_trace
     def set_queue_access_policy(
@@ -534,8 +534,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             queue_message.next_visible_on = enqueued[0].time_next_visible
             return queue_message
         except HttpResponseError as error:
-            process_storage_error(error)
-        return None
+            return process_storage_error(error)
 
     @distributed_trace
     def receive_message(
@@ -684,8 +683,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             return ItemPaged(command, results_per_page=messages_per_page,
                              page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
-            process_storage_error(error)
-        return None
+            return process_storage_error(error)
 
     @distributed_trace
     def update_message(
@@ -712,7 +710,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         :param message:
             The message object or id identifying the message to update.
-        :type message: str or ~azure.storage.queue.QueueMessage
+        :type message: str or Optional[~azure.storage.queue.QueueMessage]
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
@@ -747,6 +745,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Update a message.
         """
         timeout = kwargs.pop('timeout', None)
+
+        receipt: Optional[str]
         if isinstance(message, QueueMessage):
             message_id = message.id
             message_text = content or message.content
@@ -757,7 +757,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         else:
             message_id = message
             message_text = content
-            receipt = cast(str, pop_receipt)
+            receipt = pop_receipt
             inserted_on = None
             expires_on = None
             dequeue_count = None
@@ -787,14 +787,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         else:
             updated = None
         try:
-            response = self._client.message_id.update(
+            response = cast(QueueMessage, self._client.message_id.update(
                 queue_message=updated,
                 visibilitytimeout=visibility_timeout or 0,
                 timeout=timeout,
                 pop_receipt=receipt,
                 cls=return_response_headers,
                 queue_message_id=message_id,
-                **kwargs)
+                **kwargs))
             new_message = QueueMessage(content=message_text)
             new_message.id = message_id
             new_message.inserted_on = cast(datetime, inserted_on)
@@ -804,8 +804,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             new_message.next_visible_on = response['time_next_visible']
             return new_message
         except HttpResponseError as error:
-            process_storage_error(error)
-        return None
+            return process_storage_error(error)
 
     @distributed_trace
     def peek_messages(
@@ -869,8 +868,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 wrapped_messages.append(QueueMessage._from_generated(peeked))  # pylint: disable=protected-access
             return wrapped_messages
         except HttpResponseError as error:
-            process_storage_error(error)
-        return None
+            return process_storage_error(error)
 
     @distributed_trace
     def clear_messages(self, **kwargs: Any) -> None:
@@ -939,12 +937,14 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Delete a message.
         """
         timeout = kwargs.pop('timeout', None)
+
+        receipt: Optional[str]
         if isinstance(message, QueueMessage):
             message_id = message.id
             receipt = pop_receipt or message.pop_receipt
         else:
             message_id = message
-            receipt = cast(str, pop_receipt)
+            receipt = pop_receipt
 
         if receipt is None:
             raise ValueError("pop_receipt must be present")
