@@ -763,8 +763,8 @@ class ContainerProxy(object):
     @distributed_trace
     async def delete_all_items_by_partition_key(
         self,
-        partition_key,  # type: Any
-        **kwargs  # type: Any
+        partition_key: Union[str, int, float, bool],
+        **kwargs: Any
     ) -> None:
         """Exposes an API to delete all items with a single partition key without the user having
                  to explicitly call delete on each record in the partition key.

@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+
 """End to end test.
 """
 
@@ -2579,19 +2580,17 @@ class CRUDTests(unittest.TestCase):
             )
 
         # add items for partition key 2
-        pk2_list = []
-        for i in range(1, 3):
-            pk2_list.append(created_collection.upsert_item(
-                dict(id="item{}".format(i), pk=partition_key2)
-            ))
+
+        pk2_item = created_collection.upsert_item(dict(id="item{}".format(3), pk=partition_key2))
 
         # delete all items for partition key 1
         created_collection.delete_all_items_by_partition_key(partition_key1)
 
         # check that only items from partition key 1 have been deleted
-        items = created_collection.read_all_items()
+        items = list(created_collection.read_all_items())
 
-        self.assertCountEqual(pk2_list, items)
+        # items should only have 1 item and it should equal pk2_item
+        self.assertDictEqual(pk2_item, items[0])
 
         created_db.delete_container(created_collection)
 

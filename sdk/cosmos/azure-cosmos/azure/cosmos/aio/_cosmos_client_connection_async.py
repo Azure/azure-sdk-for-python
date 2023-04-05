@@ -2541,7 +2541,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             except AttributeError:
                 raise_with_traceback(TypeError, message="Id type must be a string.")
 
-    async def DeleteAllItemsByPartitionKey(self, collection_link, options=None, **kwargs) -> None:
+    async def DeleteAllItemsByPartitionKey(
+        self,
+        collection_link,
+        options=None,
+        **kwargs
+    ) -> None:
         """Exposes an API to delete all items with a single partition key without the user having
          to explicitly call delete on each record in the partition key.
 
