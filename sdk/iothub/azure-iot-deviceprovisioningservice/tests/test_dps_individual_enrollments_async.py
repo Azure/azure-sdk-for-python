@@ -1,7 +1,7 @@
 from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-from tests.conftest import (
+from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
     DEVICE_INFO,
@@ -11,7 +11,7 @@ from tests.conftest import (
     WEBHOOK_URL,
     ProvisioningServicePreparer,
 )
-from tests.utility.common import create_test_cert, generate_enrollment, generate_key
+from utility.common import create_test_cert, generate_enrollment, generate_key
 
 
 class TestIndividualEnrollments(AzureRecordedTestCase):

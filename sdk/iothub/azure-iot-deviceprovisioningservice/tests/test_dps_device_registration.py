@@ -1,7 +1,7 @@
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from tests.conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
-from tests.utility.common import generate_enrollment_group, sign_string
+from conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
+from utility.common import generate_enrollment_group, sign_string
 
 
 class TestDeviceRegistration(AzureRecordedTestCase):

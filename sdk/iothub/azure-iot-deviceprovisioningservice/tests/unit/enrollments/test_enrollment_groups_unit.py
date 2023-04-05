@@ -3,13 +3,13 @@ import re
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-from tests.conftest import (
+from conftest import (
     REPROVISION_MIGRATE,
     REPROVISION_NEVER,
     REPROVISION_RESET,
     mock_dps_target,
 )
-from tests.utility.common import generate_enrollment_group
+from utility.common import generate_enrollment_group
 
 endpoint = mock_dps_target["endpoint"]
 enrollment_group_endpoint = "{}/enrollmentGroups".format(endpoint)

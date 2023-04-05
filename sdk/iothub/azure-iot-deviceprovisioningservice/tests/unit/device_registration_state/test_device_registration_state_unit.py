@@ -4,7 +4,7 @@ import re
 import pytest
 from azure.core.exceptions import HttpResponseError
 
-from tests.conftest import mock_dps_target
+from conftest import mock_dps_target
 
 registration_id = "test_registration_id"
 enrollment_group_id = "test_enrollment_group_id"

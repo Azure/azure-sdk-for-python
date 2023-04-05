@@ -21,15 +21,15 @@ USAGE: python dps_service_sample_device_registration.py
     2) AZURE_DPS_ID_SCOPE - the ID Scope property of your DPS instance (for registering a device)
 """
 
-import os
+from os import environ
 
 # Global Provisioning Endpoint
 GLOBAL_PROVISIONING_HOST = "global.azure-devices-provisioning.net"
 
 
 class DeviceRegistrationSamples(object):
-    connection_string = os.getenv("AZURE_DPS_CONNECTION_STRING")
-    id_scope = os.getenv("AZURE_DPS_ID_SCOPE")
+    connection_string = environ["AZURE_DPS_CONNECTION_STRING"]
+    id_scope = environ["AZURE_DPS_ID_SCOPE"]
     enrollment_group_id = "sample_symmetric_enrollment_group"
     device_id = "test-device"
 

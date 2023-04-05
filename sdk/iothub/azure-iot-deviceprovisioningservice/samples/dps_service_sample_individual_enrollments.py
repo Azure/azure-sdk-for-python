@@ -20,12 +20,12 @@ USAGE: python dps_service_sample_individual_enrollments.py
     2) AZURE_DPS_ENROLLMENT_CERT_PATH - Path to your certificate
 """
 
-import os
+from os import environ
 
 
 class EnrollmentSamples(object):
-    connection_string = os.getenv("AZURE_DPS_CONNECTION_STRING")
-    x509_cert_path = os.getenv("AZURE_DPS_ENROLLMENT_CERT_PATH")
+    connection_string = environ["AZURE_DPS_CONNECTION_STRING"]
+    x509_cert_path = environ["AZURE_DPS_ENROLLMENT_CERT_PATH"]
 
     symmetric_enrollment_id = "sample_symmetric_enrollment"
     x509_enrollment_id = "sample_x509_enrollment"

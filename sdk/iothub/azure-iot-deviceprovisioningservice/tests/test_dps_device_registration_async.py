@@ -2,8 +2,8 @@ import pytest
 from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
-from tests.conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
-from tests.utility.common import generate_enrollment_group, sign_string
+from conftest import GLOBAL_PROVISIONING_HOST, ProvisioningServicePreparer
+from utility.common import generate_enrollment_group, sign_string
 
 
 class TestDeviceRegistration(AzureRecordedTestCase):

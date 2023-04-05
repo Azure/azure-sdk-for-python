@@ -1,13 +1,13 @@
 from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from tests.conftest import (
+from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
     REPROVISION_MIGRATE,
     WEBHOOK_URL,
     ProvisioningServicePreparer,
 )
-from tests.utility.common import (
+from utility.common import (
     create_test_cert,
     generate_enrollment_group,
     generate_key,
