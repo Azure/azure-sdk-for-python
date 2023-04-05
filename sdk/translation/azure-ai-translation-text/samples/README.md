@@ -32,7 +32,6 @@ See the [README][README] of the Text Translator client library for more informat
 * [Dictionary Lookup][dictionarylookup_sample]
 * [Dictionary Examples][dictionaryexamples_sample]
 
-
 [README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
 
 [languages_sample]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/samples/Sample1_GetLanguages.md
