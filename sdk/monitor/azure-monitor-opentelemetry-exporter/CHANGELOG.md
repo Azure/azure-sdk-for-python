@@ -6,6 +6,8 @@
 
 - Enable AAD Credentials
     ([#28888](https://github.com/Azure/azure-sdk-for-python/pull/28888))
+- Enable AAD Credentials
+    ([#29656](https://github.com/Azure/azure-sdk-for-python/pull/29656))
 
 ### Breaking Changes
 
