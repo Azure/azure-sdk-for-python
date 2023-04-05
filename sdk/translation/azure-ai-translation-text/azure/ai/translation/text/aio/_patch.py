@@ -7,9 +7,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Union
-from azure.core.pipeline import PipelineRequest
-from azure.core.pipeline.policies import ( SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
+from azure.core.pipeline.policies import ( BearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
 from azure.core.credentials import ( TokenCredential, AzureKeyCredential )
+
+from .._patch import (
+    TranslatorCredential,
+    TranslatorAuthenticationPolicy,
+)
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
@@ -20,19 +24,6 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-
-class TranslatorCredential:
-    def __init__(self, key: str, region: str) -> None:
-        self.key = key
-        self.region = region
-
-class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
-    def __init__(self, credential: TranslatorCredential):
-        self.credential = credential
-
-    def on_request(self, request: PipelineRequest) -> None:
-        request.http_request.headers["Ocp-Apim-Subscription-Key"] = self.credential.key
-        request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.credential.region
 
 class TextTranslationClient(ServiceClientGenerated):
     def __init__(
