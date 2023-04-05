@@ -20,7 +20,10 @@ class TestCallRecordingClient(unittest.TestCase):
         raised = False
 
         def mock_send(*_, **__):
-            return mock_response(status_code=200)
+            return mock_response(status_code=200, json_payload={
+                "recording_id": "1",
+                "recording_state": "2"
+            })
         
         callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
 
@@ -76,6 +79,25 @@ class TestCallRecordingClient(unittest.TestCase):
         callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
         try:
             callautomation_client.get_call_recording().pause_recording(self.recording_id)
+        except:
+            raised = True
+            raise
+
+        self.assertFalse(raised, 'Expected is no excpetion raised')
+
+
+    def test_get_recording_properties(self):
+        raised = False
+
+        def mock_send(*_, **__):
+            return mock_response(status_code=200, json_payload={
+                "recording_id": "1",
+                "recording_state": "2"
+            })
+
+        callautomation_client = CallAutomationClient("https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send))
+        try:
+            callautomation_client.get_call_recording().get_recording_properties(self.recording_id)
         except:
             raised = True
             raise
