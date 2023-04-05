@@ -22,7 +22,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_dps_enrollment_tpm_lifecycle(self, iothub_dps_endpoint):
+    async def test_enrollment_tpm_lifecycle(self, iothub_dps_endpoint):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)
 
         attestation_type = "tpm"
@@ -99,7 +99,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_dps_enrollment_x509_lifecycle(self, iothub_dps_endpoint):
+    async def test_enrollment_x509_lifecycle(self, iothub_dps_endpoint):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)
         enrollment_id = self.create_random_name("x509_enrollment_")
         device_id = self.create_random_name("x509_device_")
@@ -195,7 +195,7 @@ class TestIndividualEnrollments(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_dps_enrollment_symmetrickey_lifecycle(self, iothub_dps_endpoint):
+    async def test_enrollment_symmetrickey_lifecycle(self, iothub_dps_endpoint):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)
         attestation_type = "symmetricKey"
         enrollment_id = self.create_random_name("sym_enrollment_")

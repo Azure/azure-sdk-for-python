@@ -1,6 +1,5 @@
-from azure.iot.deviceprovisioningservice.aio import ProvisioningServiceClient
-from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils.aio import recorded_by_proxy_async
+from azure.iot.deviceprovisioningservice import ProvisioningServiceClient
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from conftest import (
     API_VERSION,
     CUSTOM_ALLOCATION,
@@ -17,13 +16,13 @@ from utility.common import (
 
 class TestEnrollmentGroups(AzureRecordedTestCase):
     def create_provisioning_service_client(self, endpoint):
-        credential = self.get_credential(ProvisioningServiceClient, is_async=True)
+        credential = self.get_credential(ProvisioningServiceClient)
         client = ProvisioningServiceClient(endpoint=endpoint, credential=credential)
         return client
 
     @ProvisioningServicePreparer()
-    @recorded_by_proxy_async
-    async def test_dps_enrollment_group_x509_lifecycle(self, iothub_dps_endpoint):
+    @recorded_by_proxy
+    def test_enrollment_group_x509_lifecycle(self, iothub_dps_endpoint):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)
         enrollment_group_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
@@ -42,7 +41,7 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
             attestation_type=attestation_type,
             reprovision_policy=REPROVISION_MIGRATE,
         )
-        enrollment_group_response = await client.enrollment_group.create_or_update(
+        enrollment_group_response = client.enrollment_group.create_or_update(
             id=enrollment_group_id,
             enrollment_group=enrollment_group,
         )
@@ -72,16 +71,14 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         assert enrollment_group_response["reprovisionPolicy"]["updateHubAssignment"]
 
         # check for enrollment in query response
-        enrollment_group_list = await client.enrollment_group.query(
+        enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
         assert len(enrollment_group_list) == 1
         assert enrollment_group_list[0]["enrollmentGroupId"] == enrollment_group_id
 
         # check enrollment get
-        enrollment_group_response = await client.enrollment_group.get(
-            id=enrollment_group_id
-        )
+        enrollment_group_response = client.enrollment_group.get(id=enrollment_group_id)
 
         assert enrollment_group_response["enrollmentGroupId"] == enrollment_group_id
 
@@ -89,7 +86,7 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group["provisioningStatus"] = "disabled"
         enrollment_group["allocationPolicy"] = "custom"
         enrollment_group["customAllocationDefinition"] = CUSTOM_ALLOCATION
-        enrollment_group_response = await client.enrollment_group.create_or_update(
+        enrollment_group_response = client.enrollment_group.create_or_update(
             id=enrollment_group_id,
             enrollment_group=enrollment_group,
             if_match=enrollment_group_response["etag"],
@@ -107,19 +104,17 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         )
 
         # delete enrollment
-        await client.enrollment_group.delete(id=enrollment_group_id)
+        client.enrollment_group.delete(id=enrollment_group_id)
 
         # ensure deletion
-        enrollment_group_list = await client.enrollment_group.query(
+        enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
         assert len(enrollment_group_list) == 0
 
     @ProvisioningServicePreparer()
-    @recorded_by_proxy_async
-    async def test_dps_enrollment_group_symmetrickey_lifecycle(
-        self, iothub_dps_endpoint
-    ):
+    @recorded_by_proxy
+    def test_enrollment_group_symmetrickey_lifecycle(self, iothub_dps_endpoint):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)
         attestation_type = "symmetricKey"
         enrollment_group_id = self.create_random_name("sym_enroll_grp_")
@@ -139,13 +134,12 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group_id2 = self.create_random_name("sym_enroll_grp2_")
 
         # Use provided keys
-        enrollment_group_response = await client.enrollment_group.create_or_update(
+        enrollment_group_response = client.enrollment_group.create_or_update(
             id=enrollment_group_id, enrollment_group=enrollment_group
         )
 
         assert enrollment_group_response["enrollmentGroupId"] == enrollment_group_id
         assert enrollment_group_response["attestation"]["symmetricKey"]
-
         if self.is_live:
             assert (
                 enrollment_group_response["attestation"]["symmetricKey"]["primaryKey"]
@@ -161,21 +155,19 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         assert enrollment_group_response["reprovisionPolicy"]["updateHubAssignment"]
 
         # check for enrollment in query response
-        enrollment_group_list = await client.enrollment_group.query(
+        enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
         assert len(enrollment_group_list) == 1
         assert enrollment_group_list[0]["enrollmentGroupId"] == enrollment_group_id
 
         # check enrollment get
-        enrollment_group_response = await client.enrollment_group.get(
-            id=enrollment_group_id
-        )
+        enrollment_group_response = client.enrollment_group.get(id=enrollment_group_id)
 
         assert enrollment_group_response["enrollmentGroupId"] == enrollment_group_id
 
         # check attestation
-        attestation_response = await client.enrollment_group.get_attestation_mechanism(
+        attestation_response = client.enrollment_group.get_attestation_mechanism(
             id=enrollment_group_id
         )
         if self.is_live:
@@ -186,7 +178,7 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         enrollment_group["provisioningStatus"] = "disabled"
         enrollment_group["allocationPolicy"] = "custom"
         enrollment_group["customAllocationDefinition"] = CUSTOM_ALLOCATION
-        enrollment_group_response = await client.enrollment_group.create_or_update(
+        enrollment_group_response = client.enrollment_group.create_or_update(
             id=enrollment_group_id,
             enrollment_group=enrollment_group,
             if_match=enrollment_group_response["etag"],
@@ -216,14 +208,14 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
             webhook_url=WEBHOOK_URL,
             api_version=API_VERSION,
         )
-        enrollment_group_2 = await client.enrollment_group.create_or_update(
+        enrollment_group_2 = client.enrollment_group.create_or_update(
             id=enrollment_group_id2, enrollment_group=enrollment_group2
         )
 
         assert enrollment_group_2
 
         # check both enrollments
-        enrollment_group_list = await client.enrollment_group.query(
+        enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
         assert len(enrollment_group_list) == 2
@@ -235,18 +227,18 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         ]
 
         # delete both enrollments
-        await client.enrollment_group.delete(id=enrollment_group_id)
-        await client.enrollment_group.delete(id=enrollment_group_id2)
+        client.enrollment_group.delete(id=enrollment_group_id)
+        client.enrollment_group.delete(id=enrollment_group_id2)
 
         # ensure deletion
-        enrollment_group_list = await client.enrollment_group.query(
+        enrollment_group_list = client.enrollment_group.query(
             query_specification={"query": "SELECT *"}
         )
         assert len(enrollment_group_list) == 0
 
     @ProvisioningServicePreparer()
-    @recorded_by_proxy_async
-    async def test_enrollment_group_bulk_operations(self, iothub_dps_endpoint):
+    @recorded_by_proxy
+    def test_enrollment_group_bulk_operations(self, iothub_dps_endpoint):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)
         eg1_id = self.create_random_name("x509_enroll_grp_")
         attestation_type = "x509"
@@ -285,7 +277,7 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
             "mode": "create",
         }
 
-        bulk_enrollment_response = await client.enrollment_group.run_bulk_operation(
+        bulk_enrollment_response = client.enrollment_group.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
@@ -298,13 +290,13 @@ class TestEnrollmentGroups(AzureRecordedTestCase):
         ] == "disabled"
         bulk_enrollment_operation["mode"] = "update"
 
-        bulk_enrollment_response = await client.enrollment_group.run_bulk_operation(
+        bulk_enrollment_response = client.enrollment_group.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response
 
         bulk_enrollment_operation["mode"] = "delete"
-        bulk_enrollment_response = await client.enrollment_group.run_bulk_operation(
+        bulk_enrollment_response = client.enrollment_group.run_bulk_operation(
             bulk_operation=bulk_enrollment_operation
         )
         assert bulk_enrollment_response

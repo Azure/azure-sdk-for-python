@@ -35,7 +35,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
 
     @ProvisioningServicePreparer()
     @recorded_by_proxy
-    def test_dps_device_registration_lifecycle(
+    def test_device_registration_lifecycle(
         self, iothub_dps_endpoint, iothub_dps_idscope
     ):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)

@@ -37,7 +37,7 @@ class TestDeviceRegistration(AzureRecordedTestCase):
     @pytest.mark.asyncio
     @ProvisioningServicePreparer()
     @recorded_by_proxy_async
-    async def test_dps_device_registration_lifecycle(
+    async def test_device_registration_lifecycle(
         self, iothub_dps_endpoint, iothub_dps_idscope
     ):
         client = self.create_provisioning_service_client(iothub_dps_endpoint)
