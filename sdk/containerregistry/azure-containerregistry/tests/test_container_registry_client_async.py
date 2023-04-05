@@ -18,7 +18,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.containerregistry._helpers import _serialize_manifest, DOCKER_MANIFEST, DEFAULT_CHUNK_SIZE
+from azure.containerregistry._helpers import DOCKER_MANIFEST, OCI_IMAGE_MANIFEST, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError, HttpResponseError
 from azure.core.async_paging import AsyncItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -506,7 +506,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_upload_oci_manifest(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        manifest = self.create_oci_manifest()
+        manifest = self.get_oci_manifest()
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_manifest_prerequisites(repo, client)
 
@@ -514,25 +514,34 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             with pytest.raises(HttpResponseError):
                 await client.upload_manifest(repo, manifest, media_type=DOCKER_MANIFEST)
             digest = await client.upload_manifest(repo, manifest)
+            
+            # Assert
+            response = await client.download_manifest(repo, digest)
+            assert response.manifest_stream.tell() == 0
+            assert response.media_type == OCI_IMAGE_MANIFEST
 
-            # Cleanup
+            await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
-        manifest = self.create_oci_manifest()
-        manifest_stream = _serialize_manifest(manifest)
+        manifest_stream = self.get_oci_manifest_stream()
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_manifest_prerequisites(repo, client)
 
             # Act
             with pytest.raises(HttpResponseError):
-                await client.upload_manifest(repo, manifest, media_type=DOCKER_MANIFEST)
+                await client.upload_manifest(repo, manifest_stream, media_type=DOCKER_MANIFEST)
             digest = await client.upload_manifest(repo, manifest_stream)
+            
+            # Assert
+            response = await client.download_manifest(repo, digest)
+            assert response.manifest_stream.tell() == 0
+            assert response.media_type == OCI_IMAGE_MANIFEST
 
-            # Cleanup
+            await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
 
     @acr_preparer()
@@ -540,7 +549,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "v1"
-        manifest = self.create_oci_manifest()
+        manifest = self.get_oci_manifest()
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_manifest_prerequisites(repo, client)
             
@@ -549,7 +558,17 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 await client.upload_manifest(repo, manifest, tag=tag, media_type=DOCKER_MANIFEST)
             digest = await client.upload_manifest(repo, manifest, tag=tag)
             
-            # Cleanup
+            # Assert
+            response = await client.download_manifest(repo, tag)
+            assert response.manifest_stream.tell() == 0
+            assert response.media_type == OCI_IMAGE_MANIFEST
+            assert response.digest == digest
+
+            tags = await client.get_manifest_properties(repo, digest).tags
+            assert len(tags) == 1
+            assert tags[0] == tag
+
+            await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
 
     @acr_preparer()
@@ -557,8 +576,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         tag = "v1"
-        manifest = self.create_oci_manifest()
-        manifest_stream = _serialize_manifest(manifest)
+        manifest_stream = self.get_oci_manifest_stream()
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_manifest_prerequisites(repo, client)
             
@@ -567,7 +585,17 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 await client.upload_manifest(repo, manifest_stream, tag=tag, media_type=DOCKER_MANIFEST)
             digest = await client.upload_manifest(repo, manifest_stream, tag=tag)
             
-            # Cleanup
+            # Assert
+            response = await client.download_manifest(repo, tag)
+            assert response.manifest_stream.tell() == 0
+            assert response.media_type == OCI_IMAGE_MANIFEST
+            assert response.digest == digest
+
+            tags = await client.get_manifest_properties(repo, digest).tags
+            assert len(tags) == 1
+            assert tags[0] == tag
+
+            await client.delete_manifest(repo, digest)
             await client.delete_repository(repo)
     
     @acr_preparer()

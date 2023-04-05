@@ -6,10 +6,11 @@
 import logging
 import os
 import pytest
+import json
+from io import BytesIO
 
-from azure.containerregistry import ContainerRegistryClient, OciAnnotations, OciDescriptor, OciImageManifest
+from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
-# from azure.containerregistry._generated.models import OciAnnotations, OciDescriptor, OciImageManifest
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
@@ -86,19 +87,30 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def is_public_endpoint(self, endpoint):
         return ".azurecr.io" in endpoint
     
-    def create_oci_manifest(self):
-        config1 = OciDescriptor(
-            media_type="application/vnd.acme.rocket.config",
-            digest="sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
-            size_in_bytes=171
-        )
-        config2 = OciDescriptor(
-            media_type="application/vnd.oci.image.layer.v1.tar",
-            digest="sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
-            size_in_bytes=28,
-            annotations=OciAnnotations(name="artifact.txt")
-        )
-        return OciImageManifest(config=config1, schema_version=2, layers=[config2])
+    def get_oci_manifest(self):
+        oci_manifest = {
+            "schemaVersion": 2,
+            "config": {
+                "mediaType": "application/vnd.acme.rocket.config",
+                "digest": "sha256:d25b42d3dbad5361ed2d909624d899e7254a822c9a632b582ebd3a44f9b0dbc8",
+                "sizeInBytes": 171,
+            },
+            "layers": [
+                {
+                    "mediaType": "application/vnd.oci.image.layer.v1.tar",
+                    "digest": "sha256:654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed",
+                    "sizeInBytes": 28,
+                    "annotations": {
+                        "org.opencontainers.image.ref.name": "artifact.txt",
+                    },
+                },
+            ],
+        }
+        return oci_manifest
+    
+    def get_oci_manifest_stream(self):
+        oci_manifest = self.get_oci_manifest()
+        return BytesIO(json.dumps(oci_manifest).encode())
     
     def upload_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
