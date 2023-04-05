@@ -932,13 +932,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.aio.AsyncDownloadBlobStream
         :raises ValueError: If the requested digest does not match the digest of the received blob.
         """
-        chunk_size = DEFAULT_CHUNK_SIZE
+        end_range = DEFAULT_CHUNK_SIZE - 1
         first_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
             await self._client.container_registry_blob.get_chunk(
                 repository,
                 digest,
-                range_header=f"bytes=0-{chunk_size}",
+                range_header=f"bytes=0-{end_range}",
                 cls=_return_response_and_headers,
                 **kwargs
             )
@@ -955,7 +955,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             ),
             blob_size=int(headers["Content-Range"].split("/")[1]),
             downloaded=int(headers["Content-Length"]),
-            chunk_size=chunk_size
+            chunk_size=DEFAULT_CHUNK_SIZE
         )
 
     @distributed_trace_async

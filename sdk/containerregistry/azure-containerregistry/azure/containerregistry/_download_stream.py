@@ -54,7 +54,7 @@ class DownloadBlobStream(
         return data
 
     def _download_chunk(self) -> PipelineResponse:
-        end_range = self._downloaded + self._chunk_size
+        end_range = self._downloaded + self._chunk_size - 1
         range_header = f"bytes={self._downloaded}-{end_range}"
         next_chunk, headers = cast(
             Tuple[PipelineResponse, Dict[str, str]],
