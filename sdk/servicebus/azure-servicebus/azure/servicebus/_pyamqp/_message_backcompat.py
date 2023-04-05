@@ -107,7 +107,7 @@ class LegacyMessage(object):  # pylint: disable=too-many-instance-attributes
 
     def encode_message(self):
         output = bytearray()
-        # for backcompat reasons, we will app prop values should not be decoded
+        # to maintain the same behavior as uamqp, app prop values will not be decoded
         self.application_properties = self._message.application_properties.copy()
         encode_payload(output, self._to_outgoing_amqp_message(self._message))
         return bytes(output)
