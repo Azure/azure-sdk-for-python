@@ -17,8 +17,13 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.core_sdk_test
 class TestDSLPipeline:
     def test_fl_node_creation(
-        self, federated_learning_components_folder: Path, federated_learning_local_data_folder: Path
+        self,
+        federated_learning_components_folder: Path,
+        federated_learning_local_data_folder: Path,
     ) -> None:
+        # To support dsl pipeline kwargs
+        os.environ["AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"] = "True"
+
         preprocessing_component = load_component(
             source=os.path.join(federated_learning_components_folder, "preprocessing", "spec.yaml")
         )
@@ -39,7 +44,12 @@ class TestDSLPipeline:
             "siloCompute3",
             "aggCompute",
         ]
-        datastore_names = ["silo_datastore1", "silo_datastore2", "silo_datastore3", "agg_datastore"]
+        datastore_names = [
+            "silo_datastore1",
+            "silo_datastore2",
+            "silo_datastore3",
+            "agg_datastore",
+        ]
 
         @pipeline
         def silo_step_func(
@@ -156,24 +166,36 @@ class TestDSLPipeline:
             max_iterations=iterations,
         )
 
-        for iteration_subgraph in fl_node.subgraph:
-            for index in range(len(silo_configs)):
-                silo_step = iteration_subgraph["silo_steps"][index]
-                config = silo_configs[index]
-                sub_step_1 = silo_step.jobs["silo_pre_processing_step"]
-                assert sub_step_1.outputs["processed_train_data"]
-                assert sub_step_1.outputs["processed_test_data"]
-                assert sub_step_1.compute == config.compute
+        # Validate scatter-gather graph
+        assert fl_node.scatter_gather_graph.type == "pipeline"
+        scatter_gather_body = fl_node.scatter_gather_graph.component.jobs["scatter_gather_body"]
+        assert scatter_gather_body
 
-                sub_step_2 = silo_step.jobs["silo_training_step"]
-                assert aggregation_datastore in sub_step_2.outputs["model"].path
+        silo_idx = 0
+        for job_name, job_body in scatter_gather_body.component.jobs.items():
+            if job_name in [
+                "executed_merge_component",
+                "executed_aggregation_component",
+            ]:
+                # Validate Merge and Aggregation component
+                assert job_body.compute == aggregation_compute
+                assert aggregation_datastore in job_body.outputs["aggregated_output"].path
+            else:
+                # Validate silo component
 
-            merge_step = iteration_subgraph["mergers"][0]
-            agg_step = iteration_subgraph["aggregation"]
-            assert merge_step.compute == aggregation_compute
-            assert agg_step.compute == aggregation_compute
-            assert aggregation_datastore in merge_step.outputs["aggregated_output"].path
-            assert aggregation_datastore in agg_step.outputs["aggregated_output"].path
+                # Preprocessing
+                preprocessed_step = job_body.component.jobs["silo_pre_processing_step"]
+                assert preprocessed_step.outputs["processed_train_data"]
+                assert preprocessed_step.outputs["processed_test_data"]
+                assert preprocessed_step.compute == silo_configs[silo_idx].compute
+
+                # Training
+                training_step = job_body.component.jobs["silo_training_step"]
+                assert aggregation_datastore in training_step.outputs["model"].path
+                silo_idx += 1
+
+        # Final Output
+        assert fl_node.outputs.keys() == aggregation_to_silo_argument_map.keys()
 
     # The FL node contains a large validation function
     # This runs that function against a variety of input
@@ -276,10 +298,12 @@ class TestDSLPipeline:
 
         # succeed once step i/o contains values mentioned in argument maps
         silo_comp = create_component_with_io(
-            inputs=["some_input", "silo_input_name"], outputs=["in_out", "silo_output_name"]
+            inputs=["some_input", "silo_input_name"],
+            outputs=["in_out", "silo_output_name"],
         )
         agg_comp = create_component_with_io(
-            inputs=["another_input", "agg_input_name"], outputs=["agg_out", "agg_output_name"]
+            inputs=["another_input", "agg_input_name"],
+            outputs=["agg_out", "agg_output_name"],
         )
         validation_result = try_validate()
         assert validation_result.passed
@@ -309,7 +333,9 @@ class TestDSLPipeline:
 
         # Require number of silo-specific inputs to be consistent per silo
         silo_configs[0] = FederatedLearningSilo(
-            compute="com1", datastore="ds1", inputs={"input1": Input(type=AssetTypes.MLTABLE)}
+            compute="com1",
+            datastore="ds1",
+            inputs={"input1": Input(type=AssetTypes.MLTABLE)},
         )
         validation_result = try_validate()
         assert not validation_result.passed
@@ -321,14 +347,19 @@ class TestDSLPipeline:
         silo_configs[1] = FederatedLearningSilo(
             compute="com1",
             datastore="ds1",
-            inputs={"input1": Input(type=AssetTypes.MLTABLE), "input2": Input(type=AssetTypes.MLTABLE)},
+            inputs={
+                "input1": Input(type=AssetTypes.MLTABLE),
+                "input2": Input(type=AssetTypes.MLTABLE),
+            },
         )
         validation_result = try_validate()
         assert not validation_result.passed
         assert "Silo at index 1 has 2 inputs" in validation_result.error_messages["silo_configs"]
 
         silo_configs[1] = FederatedLearningSilo(
-            compute="com1", datastore="ds1", inputs={"input1": Input(type=AssetTypes.MLTABLE)}
+            compute="com1",
+            datastore="ds1",
+            inputs={"input1": Input(type=AssetTypes.MLTABLE)},
         )
         validation_result = try_validate()
         assert validation_result.passed

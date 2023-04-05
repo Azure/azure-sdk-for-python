@@ -20,7 +20,7 @@ class _MaterializationSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        schedule: RecurrenceTrigger,
+        schedule: Optional[RecurrenceTrigger] = None,
         offline_enabled: Optional[bool] = None,
         online_enabled: Optional[bool] = None,
         notification: Optional[_Notification] = None,
@@ -64,7 +64,7 @@ class _MaterializationSettings(RestTranslatableMixin):
             store_type = MaterializationStoreType.NONE
 
         return RestMaterializationSettings(
-            schedule=self.schedule._to_rest_object(),  # pylint: disable=protected-access
+            schedule=self.schedule._to_rest_object() if self.schedule else None,  # pylint: disable=protected-access
             notification=self.notification._to_rest_object()  # pylint: disable=protected-access
             if self.notification
             else None,
@@ -78,7 +78,9 @@ class _MaterializationSettings(RestTranslatableMixin):
         if not obj:
             return None
         return _MaterializationSettings(
-            schedule=RecurrenceTrigger._from_rest_object(obj.schedule),  # pylint: disable=protected-access
+            schedule=RecurrenceTrigger._from_rest_object(obj.schedule)  # pylint: disable=protected-access
+            if obj.schedule
+            else None,
             notification=_Notification._from_rest_object(obj.notification),  # pylint: disable=protected-access
             resource=_MaterializationComputeResource._from_rest_object(  # pylint: disable=protected-access
                 obj.resource

@@ -8,7 +8,6 @@ from abc import ABC
 from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentityConfiguration
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ManagedIdentity as RestWorkspaceConnectionManagedIdentity
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
@@ -24,6 +23,8 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdent
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
@@ -32,7 +33,6 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
 from azure.ai.ml._restclient.v2022_10_01.models import CertificateDatastoreSecrets, CredentialsType
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
 from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreCredentials as RestSasDatastoreCredentials
 from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreSecrets as RestSasDatastoreSecrets
@@ -42,16 +42,16 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
 from azure.ai.ml._restclient.v2022_10_01.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
+)
 from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken as RestAmlToken
 from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfigurationType
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestJobManagedIdentity
 from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
 from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
-    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
-)
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
@@ -327,11 +327,17 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobIdentityConfiguration) -> "Identity":
+        if obj is None:
+            return None
         mapping = {
             IdentityConfigurationType.AML_TOKEN: AmlTokenConfiguration,
             IdentityConfigurationType.MANAGED: ManagedIdentityConfiguration,
             IdentityConfigurationType.USER_IDENTITY: UserIdentityConfiguration,
         }
+
+        if isinstance(obj, dict):
+            # TODO: support data binding expression
+            obj = RestJobIdentityConfiguration.from_dict(obj)
 
         identity_class = mapping.get(obj.identity_type, None)
         if identity_class:
