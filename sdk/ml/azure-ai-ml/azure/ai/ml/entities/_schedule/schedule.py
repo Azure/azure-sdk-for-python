@@ -38,6 +38,7 @@ class Schedule(Resource):
         trigger: Union[CronTrigger, RecurrenceTrigger],
         display_name: Optional[str] = None,
         description: Optional[str] = None,
+        create_job: Union[Job, str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         **kwargs,
@@ -49,6 +50,7 @@ class Schedule(Resource):
         self.display_name = display_name
         self._is_enabled = is_enabled
         self._provisioning_state = provisioning_state
+        self._create_job = create_job
 
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
@@ -97,9 +99,9 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             description=description,
             tags=tags,
             properties=properties,
+            create_job=create_job
             **kwargs,
         )
-        self.create_job = create_job
 
     @property
     def is_enabled(self):
@@ -121,6 +123,24 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         :rtype: str
         """
         return self._provisioning_state
+
+    @property
+    def create_job(self):
+        """
+        Return the schedule's action job definition, or the existing job name.
+
+        :return: Create job.
+        :rtype: Union[Job, str]
+        """
+        return self._create_job
+
+    @create_job.setter
+    def create_job(self, create_job: Union[Job, str]):
+        """
+        Sets the schedule's action to a job definition or an existing job name.
+        """
+        self._create_job = create_job
+
 
     @classmethod
     def _load(

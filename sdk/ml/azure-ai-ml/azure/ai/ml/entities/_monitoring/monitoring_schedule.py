@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import logging
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
@@ -13,6 +14,8 @@ from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrenceTrigge
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._schema.monitoring.monitoring_schedule import MonitorScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
+
+module_logger = logging.getLogger(__name__)
 
 
 @experimental
@@ -29,6 +32,7 @@ class MonitorSchedule(Schedule):
         properties: Optional[Dict] = None,
         **kwargs,
     ):
+        kwargs.pop("create_job", None)
         super().__init__(
             name=name,
             trigger=trigger,
@@ -39,6 +43,10 @@ class MonitorSchedule(Schedule):
             **kwargs,
         )
         self.create_monitor = create_monitor
+
+    @property
+    def create_job(self):
+        module_logger.warning("create_job is not a valid property of MonitorSchedule")
 
     @classmethod
     def _load(
