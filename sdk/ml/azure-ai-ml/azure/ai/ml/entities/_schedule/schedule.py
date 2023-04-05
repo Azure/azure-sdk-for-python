@@ -31,6 +31,25 @@ from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
 
 
 class Schedule(Resource):
+    """JobSchedule object.
+
+    :param name: Name of the schedule.
+    :type name: str
+    :param trigger: Trigger of the schedule.
+    :type trigger: Union[CronTrigger, RecurrenceTrigger]
+    :param create_job: The schedule action job definition, or the existing job name. This param
+        only applies for JobSchedule and will be ignored for other schedule types.
+    :type create_job: Union[Job, str]
+    :param display_name: Display name of the schedule.
+    :type display_name: str
+    :param description: Description of the schedule, defaults to None
+    :type description: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param properties: The job property dictionary.
+    :type properties: dict[str, str]
+    """
+
     def __init__(
         self,
         *,
