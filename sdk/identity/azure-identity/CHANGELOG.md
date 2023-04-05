@@ -1,6 +1,6 @@
 # Release History
 
-## 1.13.0 (2023-04-11)
+## 1.13.0 (Unreleased)
 
 ### Features Added
 
@@ -11,6 +11,7 @@
 > These changes do not impact the API of stable versions such as 1.12.0.
 > Only code written against a beta version such as 1.13.0b3 may be affected.
 - Windows Web Account Manager (WAM) Brokered Authentication is still in preview and not available in this release. It will be available in the next beta release.
+- Additional Continuous Access Evaluation (CAE) support for service principal credentials is still in preview and not available in this release. It will be available in the next beta release.
 
 ## 1.13.0b3 (2023-03-07)
 
