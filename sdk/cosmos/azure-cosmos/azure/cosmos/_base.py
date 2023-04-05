@@ -745,8 +745,6 @@ def _internal_resourcetype(resource_type: str) -> str:
     other SDKs, but the colls resource type needs to be sent for the feature to work. In order to keep it consistent
     with other SDKs, we switch it here.
     """
-    match (resource_type.lower()):
-        case "partitionkey":
-            return "colls"
-        case _:
-            return resource_type
+    if (resource_type.lower() ==  "partitionkey"):
+        return "colls"
+    return resource_type
