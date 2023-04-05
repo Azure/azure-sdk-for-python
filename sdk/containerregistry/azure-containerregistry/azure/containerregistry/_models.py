@@ -320,14 +320,13 @@ class DownloadBlobResult(object):
 class DownloadManifestResult(object):
     """The result from downloading a manifest from the registry.
 
-    :ivar manifest: The OCI manifest that was downloaded.
-    :vartype manifest: ~azure.containerregistry.models.OciImageManifest
-    :ivar data: The manifest stream that was downloaded.
-    :vartype data: IO
+    :ivar manifest_stream: The manifest stream that was downloaded.
+    :vartype manifest_stream: IO
+    :ivar str media_type: The downloaded manifest media type.
     :ivar str digest: The manifest's digest, calculated by the registry.
     """
 
     def __init__(self, **kwargs):
-        self.manifest = kwargs.get("manifest")
-        self.data = kwargs.get("data")
+        self.manifest_stream = kwargs.get("manifest_stream")
+        self.media_type = kwargs.get("media_type")
         self.digest = kwargs.get("digest")

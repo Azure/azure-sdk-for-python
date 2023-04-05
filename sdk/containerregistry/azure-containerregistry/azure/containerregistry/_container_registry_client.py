@@ -7,7 +7,7 @@
 import hashlib
 import json
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple, Iterator
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -21,16 +21,16 @@ from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors, OciImageManifest, ManifestWrapper
+from ._generated.models import AcrErrors
 from ._helpers import (
     _compute_digest,
     _is_tag,
     _parse_next_link,
-    _serialize_manifest,
     _validate_digest,
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
     OCI_IMAGE_MANIFEST,
+    SUPPORTED_MANIFEST_MEDIA_TYPES,
     DEFAULT_CHUNK_SIZE,
 )
 from ._models import (
@@ -957,7 +957,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
-        """Download the manifest for an OCI artifact.
+        """Download the manifest for an artifact.
 
         :param str repository: Name of the repository.
         :param str tag_or_digest: The tag or digest of the manifest to download.
@@ -967,18 +967,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.models.DownloadManifestResult
         :raises ValueError: If the requested digest does not match the digest of the received manifest.
         """
-        response, manifest_wrapper = cast(
-            Tuple[PipelineResponse, ManifestWrapper],
+        response, manifest_iterator = cast(
+            Tuple[PipelineResponse, Iterator[bytes]],
             self._client.container_registry.get_manifest(
                 name=repository,
                 reference=tag_or_digest,
-                headers={"Accept": OCI_IMAGE_MANIFEST},
+                accept=SUPPORTED_MANIFEST_MEDIA_TYPES,
                 cls=_return_response_and_deserialized,
                 **kwargs
             )
         )
-        manifest = OciImageManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
-        manifest_stream = _serialize_manifest(manifest)
+        media_type = response.http_response.headers['Content-Type']
+        manifest_stream = BytesIO(b"".join(manifest_iterator))
         if tag_or_digest.startswith("sha256:"):
             digest = tag_or_digest
         else:
@@ -986,7 +986,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if not _validate_digest(manifest_stream, digest):
             raise ValueError("The requested digest does not match the digest of the received manifest.")
 
-        return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
+        return DownloadManifestResult(digest=digest, manifest_stream=manifest_stream, media_type=media_type)
 
     @distributed_trace
     def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobResult:

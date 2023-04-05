@@ -9,12 +9,10 @@ import re
 import time
 import json
 from typing import List, Dict, IO, Optional
-from io import BytesIO
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import PipelineRequest
-from ._generated.models import OciImageManifest
 
 BEARER = "Bearer"
 AUTHENTICATION_CHALLENGE_PARAMS_PATTERN = re.compile('(?:(\\w+)="([^""]*)")+')
@@ -22,16 +20,25 @@ SUPPORTED_API_VERSIONS = [
     "2019-08-15-preview",
     "2021-07-01"
 ]
-OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
 DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024 # 4MB
 
 # Public cloud audience
 AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
 
-# Known media types
+# Known manifest media types
 OCI_IMAGE_MANIFEST = "application/vnd.oci.image.manifest.v1+json"
 DOCKER_MANIFEST = "application/vnd.docker.distribution.manifest.v2+json"
 
+SUPPORTED_MANIFEST_MEDIA_TYPES = ", ".join(
+    [
+        "*/*",
+        OCI_IMAGE_MANIFEST,
+        DOCKER_MANIFEST,
+        "application/vnd.oci.image.index.v1+json",
+        "application/vnd.docker.distribution.manifest.list.v2+json",
+        "application/vnd.cncf.oras.artifact.manifest.v1+json"
+    ]
+)
 
 def _is_tag(tag_or_digest: str) -> bool:
     tag = tag_or_digest.split(":")
@@ -118,16 +125,6 @@ def _parse_exp_time(raw_token):
         return web_token.get("exp", time.time())
 
     return time.time()
-
-def _serialize_manifest(manifest: OciImageManifest) -> IO[bytes]:
-    data = json.dumps(manifest.serialize()).encode('utf-8')
-    return BytesIO(data)
-
-def _deserialize_manifest(data: IO[bytes]) -> OciImageManifest:
-    data.seek(0)
-    value = data.read()
-    data.seek(0)
-    return OciImageManifest.deserialize(json.loads(value.decode()))
 
 def _compute_digest(data: IO[bytes]) -> str:
     data.seek(0)

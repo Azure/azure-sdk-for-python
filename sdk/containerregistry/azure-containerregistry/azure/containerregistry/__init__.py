@@ -11,7 +11,6 @@ from ._generated.models import (
     ArtifactManifestOrder,
     ArtifactTagOrder,
 )
-from ._generated.models import OciAnnotations, OciDescriptor, OciImageManifest
 from ._models import (
     ArtifactArchitecture,
     ArtifactOperatingSystem,
@@ -32,7 +31,4 @@ __all__ = [
     "RepositoryProperties",
     "ArtifactTagOrder",
     "ArtifactTagProperties",
-    "OciAnnotations",
-    "OciDescriptor",
-    "OciImageManifest",
 ]
