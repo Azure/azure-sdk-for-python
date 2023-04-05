@@ -54,7 +54,7 @@ class Schedule(Resource):
 
     @classmethod
     def _resolve_cls_and_type(cls, data, params_override):  # pylint: disable=unused-argument
-        from azure.ai.ml.entities._monitoring.monitoring_schedule import MonitorSchedule
+        from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
         if "create_monitor" in data:
             return MonitorSchedule, None
