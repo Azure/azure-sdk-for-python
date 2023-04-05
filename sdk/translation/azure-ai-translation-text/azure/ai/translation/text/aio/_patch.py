@@ -7,7 +7,6 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Union
-from azure.core.pipeline.policies import ( BearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
 from azure.core.credentials import ( TokenCredential, AzureKeyCredential )
 
 from .._patch import (
@@ -43,4 +42,4 @@ class TextTranslationClient(ServiceClientGenerated):
         )
 
 
-__all__ = []
+__all__ = ["TextTranslationClient"]
