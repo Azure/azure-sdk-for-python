@@ -6,9 +6,9 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.monitoring.monitoring_target import MonitoringTargetSchema
-from azure.ai.ml._schema.monitoring.monitoring_input_data import MonitorInputDataSchema
-from azure.ai.ml._schema.monitoring.monitoring_signals import (
+from azure.ai.ml._schema.monitoring.target import MonitoringTargetSchema
+from azure.ai.ml._schema.monitoring.input_data import MonitorInputDataSchema
+from azure.ai.ml._schema.monitoring.signals import (
     DataDriftSignalSchema,
     DataQualitySignalSchema,
     PredictionDriftSignalSchema,
@@ -42,6 +42,6 @@ class MonitorDefinitionSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitor_definition import MonitorDefinition
+        from azure.ai.ml.entities._monitoring.definition import MonitorDefinition
 
         return MonitorDefinition(**data)

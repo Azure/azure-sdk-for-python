@@ -17,7 +17,7 @@ class DataSegmentSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import DataSegment
+        from azure.ai.ml.entities._monitoring.signals import DataSegment
 
         return DataSegment(**data)
 
@@ -29,7 +29,7 @@ class MonitoringMetricThresholdSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import MonitoringMetricThreshold
+        from azure.ai.ml.entities._monitoring.signals import MonitoringMetricThreshold
 
         return MonitoringMetricThreshold(**data)
 
@@ -39,7 +39,7 @@ class MonitorFeatureFilterSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import MonitorFeatureFilter
+        from azure.ai.ml.entities._monitoring.signals import MonitorFeatureFilter
 
         return MonitorFeatureFilter(**data)
 
@@ -50,7 +50,7 @@ class BaselineDataRangeSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import BaselineDataRange
+        from azure.ai.ml.entities._monitoring.signals import BaselineDataRange
 
         return BaselineDataRange(**data)
 
@@ -61,7 +61,7 @@ class TargetDatasetSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import TargetDataset
+        from azure.ai.ml.entities._monitoring.signals import TargetDataset
 
         return TargetDataset(**data)
 
@@ -72,7 +72,7 @@ class BaselineDatasetSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import BaselineDataset
+        from azure.ai.ml.entities._monitoring.signals import BaselineDataset
 
         return BaselineDataset(**data)
 
@@ -101,7 +101,7 @@ class DataDriftSignalSchema(DataSignalSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import DataDriftSignal
+        from azure.ai.ml.entities._monitoring.signals import DataDriftSignal
 
         return DataDriftSignal(**data)
 
@@ -111,7 +111,7 @@ class DataQualitySignalSchema(DataSignalSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import DataQualitySignal
+        from azure.ai.ml.entities._monitoring.signals import DataQualitySignal
 
         return DataQualitySignal(**data)
 
@@ -121,7 +121,7 @@ class PredictionDriftSignalSchema(MetricMonitoringSignalSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import PredictionDriftSignal
+        from azure.ai.ml.entities._monitoring.signals import PredictionDriftSignal
 
         return PredictionDriftSignal(**data)
 
@@ -135,7 +135,7 @@ class FeatureAttributionDriftSignalSchema(ModelSignalSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import FeatureAttributionDriftSignal
+        from azure.ai.ml.entities._monitoring.signals import FeatureAttributionDriftSignal
 
         return FeatureAttributionDriftSignal(**data)
 
@@ -146,7 +146,7 @@ class ModelPerformanceSignalSchema(ModelSignalSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import ModelPerformanceSignal
+        from azure.ai.ml.entities._monitoring.signals import ModelPerformanceSignal
 
         return ModelPerformanceSignal(**data)
 
@@ -157,6 +157,6 @@ class CustomMonitoringSignalSchema(ModelSignalSchema):
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._monitoring.monitoring_signals import CustomMonitoringSignal
+        from azure.ai.ml.entities._monitoring.signals import CustomMonitoringSignal
 
         return CustomMonitoringSignal(**data)

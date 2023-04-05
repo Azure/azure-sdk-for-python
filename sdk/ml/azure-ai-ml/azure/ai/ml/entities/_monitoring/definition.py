@@ -4,9 +4,9 @@
 
 from typing import Dict
 
-from azure.ai.ml.entities._monitoring.monitoring_target import MonitoringTarget
-from azure.ai.ml.entities._monitoring.monitoring_input_data import MonitorInputData
-from azure.ai.ml.entities._monitoring.monitoring_signals import MonitoringSignal
+from azure.ai.ml.entities._monitoring.target import MonitoringTarget
+from azure.ai.ml.entities._monitoring.input_data import MonitorInputData
+from azure.ai.ml.entities._monitoring.signals import MonitoringSignal
 from azure.ai.ml.entities._monitoring.alert_notification import AlertNotification
 from azure.ai.ml._utils._experimental import experimental
 
