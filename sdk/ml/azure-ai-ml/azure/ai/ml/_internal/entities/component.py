@@ -11,20 +11,19 @@ from uuid import UUID
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
-from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import Component
-from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.entities._validation import MutableValidationResult
-
 from ... import Input, Output
+from ..._restclient.v2022_10_01.models import ComponentVersion, ComponentVersionProperties
+from ..._schema import PathAwareSchema
 from ..._utils._arm_id_utils import parse_name_label
 from ..._utils._asset_utils import IgnoreFile
+from ...entities import Component
 from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
+from ...entities._system_data import SystemData
+from ...entities._util import convert_ordered_dict_to_dict
+from ...entities._validation import MutableValidationResult
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import _AdditionalIncludes, ADDITIONAL_INCLUDES_SUFFIX
+from ._additional_includes import ADDITIONAL_INCLUDES_SUFFIX, _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode, InternalComponentIgnoreFile
@@ -34,8 +33,8 @@ from .node import InternalBaseNode
 
 class InternalComponent(Component):
     # pylint: disable=too-many-instance-attributes, too-many-locals
-    """Base class for internal component version, used to define an internal
-    component. Recommended to create instance with component_factory.
+    """Base class for internal component version, used to define an internal component. Recommended to create instance
+    with component_factory.
 
     :param name: Name of the resource.
     :type name: str
@@ -183,7 +182,7 @@ class InternalComponent(Component):
         return validation_result
 
     @classmethod
-    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersion) -> Dict:
         # put it here as distribution is shared by some components, e.g. command
         distribution = obj.properties.component_spec.pop("distribution", None)
         init_kwargs = super()._from_rest_object_to_init_params(obj)
@@ -191,18 +190,18 @@ class InternalComponent(Component):
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
 
-    def _to_rest_object(self) -> ComponentVersionData:
+    def _to_rest_object(self) -> ComponentVersion:
         component = convert_ordered_dict_to_dict(self._to_dict())
         component["_source"] = self._source
 
-        properties = ComponentVersionDetails(
+        properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
             properties=self.properties,
             tags=self.tags,
         )
-        result = ComponentVersionData(properties=properties)
+        result = ComponentVersion(properties=properties)
         result.name = self.name
         return result
 
@@ -212,8 +211,8 @@ class InternalComponent(Component):
         code_path: Union[str, PathLike],
         ignore_file: IgnoreFile,
     ) -> str:
-        """Get the snapshot id of a component with specific working directory in ml-components.
-        Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
+        """Get the snapshot id of a component with specific working directory in ml-components. Use this as the name of
+        code asset to reuse steps in a pipeline job from ml-components runs.
 
         :param code_path: The path of the working directory.
         :type code_path: str
@@ -228,8 +227,8 @@ class InternalComponent(Component):
     @contextmanager
     def _resolve_local_code(self) -> Optional[Code]:
         """Try to create a Code object pointing to local code and yield it.
-        If there is no local code to upload, yield None.
-        Otherwise, yield a Code object pointing to the code.
+
+        If there is no local code to upload, yield None. Otherwise, yield a Code object pointing to the code.
         """
         # an internal component always has a default local code of its base path
         # otherwise, if there is no local code, yield super()._resolve_local_code() and return early

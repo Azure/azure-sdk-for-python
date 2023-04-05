@@ -114,8 +114,9 @@ class ServerSecurityAlertPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -184,8 +185,9 @@ class ServerSecurityAlertPoliciesOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -303,8 +305,8 @@ class ServerSecurityAlertPoliciesOperations:
         :type server_name: str
         :param security_alert_policy_name: The name of the threat detection policy. "Default" Required.
         :type security_alert_policy_name: str or ~azure.mgmt.sql.models.SecurityAlertPolicyName
-        :param parameters: The server security alert policy. Is either a model type or a IO type.
-         Required.
+        :param parameters: The server security alert policy. Is either a ServerSecurityAlertPolicy type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ServerSecurityAlertPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -439,8 +441,9 @@ class ServerSecurityAlertPoliciesOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

@@ -2,16 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, Optional, Mapping
+from typing import Dict, Optional
 
 from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCollectorSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.destination import Destination
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
+from azure.ai.ml.entities._deployment.deployment_collection import DeploymentCollection
 
 
 class DataCollector:
-    """Data Capture deployment entity
+    """Data Capture deployment entity.
 
     :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
     :type collections: Mapping[str, DeploymentCollection], optional
@@ -27,7 +28,7 @@ class DataCollector:
 
     def __init__(
         self,
-        collections: Optional[Mapping] = None,
+        collections: Optional[Dict[str, DeploymentCollection]] = None,
         rolling_rate: Optional[str] = None,
         destination: Optional[Destination] = None,
         sampling_rate: Optional[float] = None,

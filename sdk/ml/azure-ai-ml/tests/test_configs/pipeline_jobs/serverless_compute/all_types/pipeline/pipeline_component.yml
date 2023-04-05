@@ -1,0 +1,7 @@
+$schema: https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json
+type: pipeline
+name: simple_pipeline_component
+jobs:
+  node:
+    type: command
+    component: ./component.yml

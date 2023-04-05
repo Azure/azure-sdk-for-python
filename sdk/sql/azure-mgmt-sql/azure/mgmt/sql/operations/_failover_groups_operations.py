@@ -345,8 +345,9 @@ class FailoverGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -415,8 +416,9 @@ class FailoverGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -537,7 +539,7 @@ class FailoverGroupsOperations:
         :type server_name: str
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
-        :param parameters: The failover group parameters. Is either a model type or a IO type.
+        :param parameters: The failover group parameters. Is either a FailoverGroup type or a IO type.
          Required.
         :type parameters: ~azure.mgmt.sql.models.FailoverGroup or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -639,8 +641,9 @@ class FailoverGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -776,8 +779,9 @@ class FailoverGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -895,8 +899,8 @@ class FailoverGroupsOperations:
         :type server_name: str
         :param failover_group_name: The name of the failover group. Required.
         :type failover_group_name: str
-        :param parameters: The failover group parameters. Is either a model type or a IO type.
-         Required.
+        :param parameters: The failover group parameters. Is either a FailoverGroupUpdate type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.sql.models.FailoverGroupUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1029,8 +1033,9 @@ class FailoverGroupsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -1078,8 +1083,9 @@ class FailoverGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1207,8 +1213,9 @@ class FailoverGroupsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response

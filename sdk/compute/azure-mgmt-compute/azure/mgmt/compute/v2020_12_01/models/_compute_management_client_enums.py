@@ -74,24 +74,24 @@ class DiffDiskPlacement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This enumerates the possible sources of a disk's creation."""
 
-    #: Create an empty data disk of a size given by diskSizeGB.
     EMPTY = "Empty"
-    #: Disk will be attached to a VM.
+    """Create an empty data disk of a size given by diskSizeGB."""
     ATTACH = "Attach"
-    #: Create a new disk from a platform image specified by the given imageReference or
-    #: galleryImageReference.
+    """Disk will be attached to a VM."""
     FROM_IMAGE = "FromImage"
-    #: Create a disk by importing from a blob specified by a sourceUri in a storage account specified
-    #: by storageAccountId.
+    """Create a new disk from a platform image specified by the given imageReference or
+    #: galleryImageReference."""
     IMPORT = "Import"
-    #: Create a new disk or snapshot by copying from a disk or snapshot specified by the given
-    #: sourceResourceId.
+    """Create a disk by importing from a blob specified by a sourceUri in a storage account specified
+    #: by storageAccountId."""
     COPY = "Copy"
-    #: Create a new disk by copying from a backup recovery point.
+    """Create a new disk or snapshot by copying from a disk or snapshot specified by the given
+    #: sourceResourceId."""
     RESTORE = "Restore"
-    #: Create a new disk by obtaining a write token and using it to directly upload the contents of
-    #: the disk.
+    """Create a new disk by copying from a backup recovery point."""
     UPLOAD = "Upload"
+    """Create a new disk by obtaining a write token and using it to directly upload the contents of
+    #: the disk."""
 
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -137,72 +137,72 @@ class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta
 class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of key used to encrypt the data of the disk."""
 
-    #: Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can
-    #: be changed and revoked by a customer.
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
-    #: Resource using diskEncryptionSet would be encrypted at rest with two layers of encryption. One
-    #: of the keys is Customer managed and the other key is Platform managed.
+    """Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can
+    #: be changed and revoked by a customer."""
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
+    """Resource using diskEncryptionSet would be encrypted at rest with two layers of encryption. One
+    #: of the keys is Customer managed and the other key is Platform managed."""
 
 
 class DiskSecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the SecurityType of the VM. Applicable for OS disks only."""
 
-    #: Trusted Launch provides security features such as secure boot and virtual Trusted Platform
-    #: Module (vTPM)
     TRUSTED_LAUNCH = "TrustedLaunch"
+    """Trusted Launch provides security features such as secure boot and virtual Trusted Platform
+    #: Module (vTPM)"""
 
 
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This enumerates the possible state of the disk."""
 
-    #: The disk is not being used and can be attached to a VM.
     UNATTACHED = "Unattached"
-    #: The disk is currently mounted to a running VM.
+    """The disk is not being used and can be attached to a VM."""
     ATTACHED = "Attached"
-    #: The disk is mounted to a stopped-deallocated VM
+    """The disk is currently mounted to a running VM."""
     RESERVED = "Reserved"
-    #: The disk currently has an Active SAS Uri associated with it.
+    """The disk is mounted to a stopped-deallocated VM"""
     ACTIVE_SAS = "ActiveSAS"
-    #: A disk is ready to be created by upload by requesting a write token.
+    """The disk currently has an Active SAS Uri associated with it."""
     READY_TO_UPLOAD = "ReadyToUpload"
-    #: A disk is created for upload and a write token has been issued for uploading to it.
+    """A disk is ready to be created by upload by requesting a write token."""
     ACTIVE_UPLOAD = "ActiveUpload"
+    """A disk is created for upload and a write token has been issued for uploading to it."""
 
 
 class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name."""
 
-    #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
     STANDARD_LRS = "Standard_LRS"
-    #: Premium SSD locally redundant storage. Best for production and performance sensitive workloads.
+    """Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access."""
     PREMIUM_LRS = "Premium_LRS"
-    #: Standard SSD locally redundant storage. Best for web servers, lightly used enterprise
-    #: applications and dev/test.
+    """Premium SSD locally redundant storage. Best for production and performance sensitive workloads."""
     STANDARD_SSD_LRS = "StandardSSD_LRS"
-    #: Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier
-    #: databases (for example, SQL, Oracle), and other transaction-heavy workloads.
+    """Standard SSD locally redundant storage. Best for web servers, lightly used enterprise
+    #: applications and dev/test."""
     ULTRA_SSD_LRS = "UltraSSD_LRS"
-    #: Premium SSD zone redundant storage. Best for the production workloads that need storage
-    #: resiliency against zone failures.
+    """Ultra SSD locally redundant storage. Best for IO-intensive workloads such as SAP HANA, top tier
+    #: databases (for example, SQL, Oracle), and other transaction-heavy workloads."""
     PREMIUM_ZRS = "Premium_ZRS"
-    #: Standard SSD zone redundant storage. Best for web servers, lightly used enterprise applications
-    #: and dev/test that need storage resiliency against zone failures.
+    """Premium SSD zone redundant storage. Best for the production workloads that need storage
+    #: resiliency against zone failures."""
     STANDARD_SSD_ZRS = "StandardSSD_ZRS"
+    """Standard SSD zone redundant storage. Best for web servers, lightly used enterprise applications
+    #: and dev/test that need storage resiliency against zone failures."""
 
 
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of key used to encrypt the data of the disk."""
 
-    #: Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is
-    #: not a valid encryption type for disk encryption sets.
     ENCRYPTION_AT_REST_WITH_PLATFORM_KEY = "EncryptionAtRestWithPlatformKey"
-    #: Disk is encrypted at rest with Customer managed key that can be changed and revoked by a
-    #: customer.
+    """Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is
+    #: not a valid encryption type for disk encryption sets."""
     ENCRYPTION_AT_REST_WITH_CUSTOMER_KEY = "EncryptionAtRestWithCustomerKey"
-    #: Disk is encrypted at rest with 2 layers of encryption. One of the keys is Customer managed and
-    #: the other key is Platform managed.
+    """Disk is encrypted at rest with Customer managed key that can be changed and revoked by a
+    #: customer."""
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
+    """Disk is encrypted at rest with 2 layers of encryption. One of the keys is Customer managed and
+    #: the other key is Platform managed."""
 
 
 class ExecutionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -287,21 +287,21 @@ class MaintenanceOperationResultCodeTypes(str, Enum, metaclass=CaseInsensitiveEn
 class NetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Policy for accessing the disk via network."""
 
-    #: The disk can be exported or uploaded to from any network.
     ALLOW_ALL = "AllowAll"
-    #: The disk can be exported or uploaded to using a DiskAccess resource's private endpoints.
+    """The disk can be exported or uploaded to from any network."""
     ALLOW_PRIVATE = "AllowPrivate"
-    #: The disk cannot be exported.
+    """The disk can be exported or uploaded to using a DiskAccess resource's private endpoints."""
     DENY_ALL = "DenyAll"
+    """The disk cannot be exported."""
 
 
 class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The OS State."""
 
-    #: Generalized image. Needs to be provisioned during deployment time.
     GENERALIZED = "Generalized"
-    #: Specialized image. Contains already provisioned OS Disk.
+    """Generalized image. Needs to be provisioned during deployment time."""
     SPECIALIZED = "Specialized"
+    """Specialized image. Contains already provisioned OS Disk."""
 
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -455,12 +455,12 @@ class SettingNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name."""
 
-    #: Standard HDD locally redundant storage
     STANDARD_LRS = "Standard_LRS"
-    #: Premium SSD locally redundant storage
+    """Standard HDD locally redundant storage"""
     PREMIUM_LRS = "Premium_LRS"
-    #: Standard zone redundant storage
+    """Premium SSD locally redundant storage"""
     STANDARD_ZRS = "Standard_ZRS"
+    """Standard zone redundant storage"""
 
 
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):

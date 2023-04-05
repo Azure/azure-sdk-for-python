@@ -1,6 +1,34 @@
 # Release History
 
-## 12.11.0 (Unreleased)
+## 12.12.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.12.0b1 (2023-03-28)
+
+### Features Added
+- Added support for service version 2022-11-02.
+- Added support for `TokenCredential` to be used for authentication. A `TokenCredential` can be provided for the
+`credential` parameter to any client constructor. **Note:** When using a `TokenCredential`, the new keyword parameter
+`token_intnet` is **required** and must be provided. Additionally, this form of authentication is only supported for
+certain operations in the Data Plane SDK.
+- Added support for `allow_trailing_dot` and `allow_source_trailing_dot` on client construction. When
+`allow_trailing_dot` is provided, the service will not silently remove any trailing `.` character from directory/file
+names for all operations made from that client. `allow_source_trailing_dot` will apply this same rule to source files
+when performing a rename or copy operation.
+
+## 12.11.1 (2023-03-08)
+
+### Bugs Fixed
+- Fixed "duplicate type signatures" MyPy error.
+
+## 12.11.0 (2023-02-22)
 
 ### Features Added
 - Stable release of features from 12.11.0b1

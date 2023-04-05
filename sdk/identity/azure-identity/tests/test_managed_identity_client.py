@@ -36,17 +36,19 @@ def test_caching():
         request_factory=lambda _, __: HttpRequest("GET", "http://localhost"), transport=transport
     )
 
-    token = client.get_cached_token(scope)
+    token, refresh_on = client.get_cached_token(scope)
     assert not token
+    assert not refresh_on
 
     with mock.patch(ManagedIdentityClient.__module__ + ".time.time", lambda: now):
         token = client.request_token(scope)
     assert token.expires_on == expected_expires_on
     assert token.token == expected_token
 
-    token = client.get_cached_token(scope)
+    token, refresh_on = client.get_cached_token(scope)
     assert token.expires_on == expected_expires_on
     assert token.token == expected_token
+    assert refresh_on - now == 3600
 
 
 def test_deserializes_json_from_text():

@@ -6,9 +6,9 @@
 
 from typing import Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageObjectDetection as RestImageObjectDetection
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, ObjectDetectionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ImageObjectDetection as RestImageObjectDetection
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobBase, ObjectDetectionPrimaryMetrics, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
@@ -103,6 +103,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             resources=self.resources,
             task_details=image_object_detection_task,
             identity=self.identity._to_job_rest_object() if self.identity else None,
+            queue_settings=self.queue_settings,
         )
 
         result = JobBase(properties=properties)
@@ -131,6 +132,7 @@ class ImageObjectDetectionJob(AutoMLImageObjectDetectionBase):
             "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
             if properties.identity
             else None,
+            "queue_settings": properties.queue_settings,
         }
 
         image_object_detection_job = cls(

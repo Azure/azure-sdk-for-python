@@ -37,7 +37,7 @@ class LogsIngestionClient(LogsIngestionClientOperationsMixin):  # pylint: disabl
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = LogsIngestionClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()

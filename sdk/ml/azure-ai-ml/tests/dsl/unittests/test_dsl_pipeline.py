@@ -2,17 +2,12 @@ import logging
 import os
 from io import StringIO
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict
 from unittest import mock
 from unittest.mock import patch
 
 import pydash
 import pytest
-
-from azure.ai.ml.constants._job import PipelineConstants
-from test_configs.dsl_pipeline import data_binding_expression
-from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated, assert_job_cancel
-
 from azure.ai.ml import (
     AmlTokenConfiguration,
     Input,
@@ -36,8 +31,17 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     InputOutputModes,
 )
-from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
-from azure.ai.ml.entities._builders import Command, Spark, DataTransferCopy
+from azure.ai.ml.constants._job import PipelineConstants
+from azure.ai.ml.entities import (
+    Component,
+    Data,
+    JobResourceConfiguration,
+    PipelineJob,
+    QueueSettings,
+    SparkJobEntry,
+    SparkResourceConfiguration,
+)
+from azure.ai.ml.entities._builders import Command, DataTransferCopy, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 from azure.ai.ml.exceptions import (
@@ -47,6 +51,8 @@ from azure.ai.ml.exceptions import (
     UserErrorException,
     ValidationException,
 )
+from test_configs.dsl_pipeline import data_binding_expression
+from test_utilities.utils import assert_job_cancel, omit_with_wildcard, prepare_dsl_curated
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -958,7 +964,7 @@ class TestDSLPipeline:
     )
     def test_command_function_reuse(self, mock_machinelearning_client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
+        environment = "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33"
         expected_resources = {"instance_count": 2}
         expected_environment_variables = {"key": "val"}
         inputs = {
@@ -2459,6 +2465,39 @@ class TestDSLPipeline:
             "tags": {},
         }
 
+    def test_dsl_pipeline_with_data_transfer_import_component(self) -> None:
+        s3_blob = load_component("./tests/test_configs/components/data_transfer/import_file_to_blob.yaml")
+        path_source_s3 = "test1/*"
+        connection_target = "azureml:my-s3-connection"
+        source = {"type": "file_system", "connection": connection_target, "path": path_source_s3}
+
+        with pytest.raises(ValidationException) as e:
+
+            @dsl.pipeline
+            def data_transfer_copy_pipeline_from_yaml():
+                s3_blob(source=source)
+
+            data_transfer_copy_pipeline_from_yaml()
+            assert "DataTransfer component is not callable for import task." in str(e.value)
+
+    def test_dsl_pipeline_with_data_transfer_export_component(self) -> None:
+        blob_azuresql = load_component("./tests/test_configs/components/data_transfer/export_blob_to_database.yaml")
+
+        my_cosmos_folder = Input(type=AssetTypes.URI_FILE, path="/data/testFile_ForSqlDB.parquet")
+        connection_target_azuresql = "azureml:my_export_azuresqldb_connection"
+        table_name = "dbo.Persons"
+        sink = {"type": "database", "connection": connection_target_azuresql, "table_name": table_name}
+
+        with pytest.raises(ValidationException) as e:
+
+            @dsl.pipeline
+            def data_transfer_copy_pipeline_from_yaml():
+                blob_azuresql_node = blob_azuresql(source=my_cosmos_folder)
+                blob_azuresql_node.sink = sink
+
+            data_transfer_copy_pipeline_from_yaml()
+            assert "DataTransfer component is not callable for import task." in str(e.value)
+
     def test_node_sweep_with_optional_input(self) -> None:
         component_yaml = components_dir / "helloworld_component_optional_input.yml"
         component_func = load_component(component_yaml)
@@ -2759,9 +2798,11 @@ class TestDSLPipeline:
             return {"output": node.outputs.component_out_path}
 
         pipeline_job: PipelineJob = my_pipeline()
-        pipeline_job.settings.default_compute = "cpu-cluster"
-        pipeline_job.settings.continue_on_step_failure = True
-        pipeline_job.settings.continue_run_on_failed_optional_input = False
+        pipeline_job.settings = {
+            "default_compute": "cpu-cluster",
+            "continue_on_step_failure": True,
+            "continue_run_on_failed_optional_input": False,
+        }
 
         assert pipeline_job._to_rest_object().properties.settings == {
             PipelineConstants.DEFAULT_COMPUTE: "cpu-cluster",
@@ -2982,3 +3023,173 @@ class TestDSLPipeline:
             warning_template.format(io_name="keys", io="input", node_name="downstream_node"),
             warning_template.format(io_name="__hash__", io="output", node_name="pipeline_component_func"),
         ]
+
+    def test_pass_pipeline_inpute_to_environment_variables(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline(
+            name="pass_pipeline_inpute_to_environment_variables",
+        )
+        def pipeline(job_in_number: int, environment_variables: str):
+            hello_world_component = component_func(component_in_number=job_in_number)
+            hello_world_component.environment_variables = environment_variables
+
+        pipeline_job = pipeline()
+        assert pipeline_job.jobs["hello_world_component"].environment_variables
+        pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert (
+            pipeline_dict["jobs"]["hello_world_component"]["environment_variables"]
+            == "${{parent.inputs.environment_variables}}"
+        )
+
+    def test_node_name_underscore(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"microsoftsamplescommandcomponentbasic_nopaths_test"}
+        assert (
+            pipeline_job.jobs["microsoftsamplescommandcomponentbasic_nopaths_test"].name
+            == "microsoftsamplescommandcomponentbasic_nopaths_test"
+        )
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            _ = component_func(component_in_number=2)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {
+            "microsoftsamplescommandcomponentbasic_nopaths_test",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_1",
+        }
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {
+            "microsoftsamplescommandcomponentbasic_nopaths_test",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_1",
+            "microsoftsamplescommandcomponentbasic_nopaths_test_2",
+        }
+
+        @dsl.pipeline()
+        def my_pipeline():
+            _ = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+            node = component_func(component_in_number=4)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node = component_func(component_in_number=1)
+            component_func(component_in_number=2)
+            _ = component_func(component_in_number=3)
+            component_func(component_in_number=4)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job.jobs.keys() == {"node", "node_1", "node_2", "node_3"}
+
+    def test_pipeline_input_binding_limits_timeout(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline
+        def my_pipeline(timeout) -> PipelineJob:
+            # case 1: if timeout is PipelineInput
+            node_0 = component_func(component_in_number=1)
+            node_0.set_limits(timeout=timeout)
+            # case 2: if timeout is not PipelineInput
+            node_1 = component_func(component_in_number=1)
+            node_1.set_limits(timeout=1)
+
+        pipeline = my_pipeline(2)
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_dict = pipeline._to_rest_object().as_dict()
+        assert pipeline_dict["properties"]["jobs"]["node_0"]["limits"]["timeout"] == "${{parent.inputs.timeout}}"
+        assert pipeline_dict["properties"]["jobs"]["node_1"]["limits"]["timeout"] == "PT1S"
+
+    @pytest.mark.parametrize(
+        "component_path, fields_to_test, fake_inputs",
+        [
+            pytest.param(
+                "./tests/test_configs/components/helloworld_component.yml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                    # do not support data binding expression on queue_settings as it involves value mapping in
+                    # _to_rest_object
+                    # "queue_settings.priority": QueueSettings(priority="low"),
+                },
+                {},
+                id="command",
+            ),
+            pytest.param(
+                "./tests/test_configs/components/basic_parallel_component_score.yml",
+                {
+                    "resources.instance_count": JobResourceConfiguration(instance_count=1),
+                },
+                {},
+                id="parallel.resources",
+            ),
+            pytest.param(
+                "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml",
+                {
+                    "resources.runtime_version": SparkResourceConfiguration(runtime_version="2.4"),
+                    # seems that `type` is the only field for `identity` and hasn't been exposed to user
+                    # "identity.type": AmlTokenConfiguration(),
+                    # spark.entry doesn't support overwrite from node level for now, more details in
+                    # entities._builders.spark.Spark.__init__, around line 211
+                    # "entry.entry": SparkJobEntry(entry="main.py"),
+                },
+                {
+                    "file_input": Input(path="./tests/test_configs/data"),
+                },
+                id="spark",
+            ),
+        ],
+    )
+    def test_data_binding_expression_on_node_runsettings(
+        self, component_path: str, fields_to_test: Dict[str, Any], fake_inputs: Dict[str, Input]
+    ):
+        component = load_component(component_path)
+
+        @dsl.pipeline()
+        def pipeline_func(param: str = "2"):
+            node = component(**fake_inputs)
+            for field, value in fields_to_test.items():
+                attr, sub_attr = field.split(".")
+                setattr(node, attr, value)
+                setattr(getattr(node, attr), sub_attr, param)
+
+        pipeline_job: PipelineJob = pipeline_func()
+        rest_object = pipeline_job._to_rest_object()
+        regenerated_job = PipelineJob._from_rest_object(rest_object)
+        expected_dict, actual_dict = pipeline_job._to_dict(), regenerated_job._to_dict()
+
+        # TODO: node level task is not necessary and with issue in serialization/de-serialization
+        for skip_dot_key in ["jobs.node.task.code"]:
+            pydash.set_(expected_dict, skip_dot_key, "placeholder")
+            pydash.set_(actual_dict, skip_dot_key, "placeholder")
+        assert actual_dict == expected_dict
+
+        # directly update component to arm id
+        for _node in pipeline_job.jobs.values():
+            _node._component = (
+                "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg/providers/"
+                "Microsoft.MachineLearningServices/workspaces/ws/components/component_name/"
+                "versions/1.0.0"
+            )
+        # check if all the fields are correctly serialized
+        pipeline_job.component._get_anonymous_hash()

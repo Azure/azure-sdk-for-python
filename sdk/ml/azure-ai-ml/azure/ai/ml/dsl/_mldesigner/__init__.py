@@ -2,8 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-"""
-This file stores functions and objects that will be used in mldesigner package.
+"""This file stores functions and objects that will be used in mldesigner package.
+
 DO NOT change the module names in "all" list. If the interface has changed in source code, wrap it here and keep
 original function/module names the same as before, otherwise mldesigner will be broken by this change.
 """
@@ -19,6 +19,7 @@ from azure.ai.ml._utils.utils import try_enable_internal_components
 from azure.ai.ml._internal.entities import InternalComponent  # pylint: disable=unused-import
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._parallel_for import parallel_for, ParallelFor
 from azure.ai.ml.dsl._group_decorator import group
 
 from ._constants import V1_COMPONENT_TO_NODE
@@ -31,6 +32,8 @@ __all__ = [
     "condition",
     "do_while",
     "group",
+    "parallel_for",
+    "ParallelFor",
     # must keep
     "get_ignore_file",
     "_get_param_with_standard_annotation",

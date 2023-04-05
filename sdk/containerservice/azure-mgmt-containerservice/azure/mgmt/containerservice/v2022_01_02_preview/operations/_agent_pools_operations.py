@@ -425,8 +425,9 @@ class AgentPoolsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -490,8 +491,9 @@ class AgentPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -560,8 +562,9 @@ class AgentPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -684,7 +687,7 @@ class AgentPoolsOperations:
         :type resource_name: str
         :param agent_pool_name: The name of the agent pool. Required.
         :type agent_pool_name: str
-        :param parameters: The agent pool to create or update. Is either a model type or a IO type.
+        :param parameters: The agent pool to create or update. Is either a AgentPool type or a IO type.
          Required.
         :type parameters: ~azure.mgmt.containerservice.v2022_01_02_preview.models.AgentPool or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -786,8 +789,9 @@ class AgentPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -923,8 +927,9 @@ class AgentPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -991,8 +996,9 @@ class AgentPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1044,8 +1050,9 @@ class AgentPoolsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1075,7 +1082,7 @@ class AgentPoolsOperations:
     @distributed_trace
     def begin_upgrade_node_image_version(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.AgentPool]:
         """Upgrades the node image version of an agent pool to the latest.
 
         Upgrading the node image version of an agent pool applies the newest OS and runtime updates to

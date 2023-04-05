@@ -284,8 +284,9 @@ class WorkloadClassifiersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -358,8 +359,9 @@ class WorkloadClassifiersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -504,8 +506,8 @@ class WorkloadClassifiersOperations:
         :param workload_classifier_name: The name of the workload classifier to create/update.
          Required.
         :type workload_classifier_name: str
-        :param parameters: The properties of the workload classifier. Is either a model type or a IO
-         type. Required.
+        :param parameters: The properties of the workload classifier. Is either a WorkloadClassifier
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.WorkloadClassifier or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -616,8 +618,9 @@ class WorkloadClassifiersOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -788,8 +791,9 @@ class WorkloadClassifiersOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

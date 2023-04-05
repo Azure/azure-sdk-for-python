@@ -3,7 +3,7 @@ type: pipeline
 
 description: 'submit a pipeline with data transfer import database job'
 settings:
-  default_compute: azureml:adftest
+  default_compute: azureml:serverless
 inputs:
   query_source_snowflake: 'select * from TPCH_SF1000.PARTSUPP limit 10'
   connection_target_azuresql: 'azureml:my_snowflake_connection'
