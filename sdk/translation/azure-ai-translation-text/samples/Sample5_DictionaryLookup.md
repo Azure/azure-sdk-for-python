@@ -1,12 +1,12 @@
 # Dictionary Lookup
 
-## Create a `TranslatorClient`
+## Create a `TextTranslationClient`
 
-To create a new `TranslatorClient`, you will need the service endpoint and credentials of your Translator resource. In this sample, you will use an `TranslatorCredential`, which you can create with an API key and region.
+To create a new `TextTranslationClient`, you will need the service endpoint and credentials of your Translator resource. In this sample, you will use an `TranslatorCredential`, which you can create with an API key and region.
 
 ```Python
 credential = TranslatorCredential("<apiKey>", "<region>")
-text_translator = TranslatorClient(endpoint="<endpoint>", credential=credential)
+text_translator = TextTranslationClient(endpoint="<endpoint>", credential=credential)
 ```
 
 The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
@@ -29,8 +29,8 @@ try:
         print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error_code}")
-    print(f"Message: {exception.message}")
+    print(f"Error Code: {exception.error.error}")
+    print(f"Message: {exception.error.message}")
 ```
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.

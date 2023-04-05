@@ -7,11 +7,25 @@
 #--------------------------------------------------------------------------
 
 from io import open
+import os
 from setuptools import setup, find_packages
+import re
 
 
 PACKAGE_NAME = "azure-ai-translation-text"
-version = "1.0.0b1"
+PACKAGE_PPRINT_NAME = "Text Translation"
+
+# a-b-c => a/b/c
+package_folder_path = PACKAGE_NAME.replace('-', '/')
+# a-b-c => a.b.c
+namespace_name = PACKAGE_NAME.replace('-', '.')
+
+# Version extraction inspired from 'requests'
+with open(os.path.join(package_folder_path, '_version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+if not version:
+    raise RuntimeError('Cannot find version information')
 
 with open('README.md', encoding='utf-8') as f:
     readme = f.read()

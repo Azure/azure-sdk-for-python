@@ -106,8 +106,8 @@ try:
             print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error_code}")
-    print(f"Message: {exception.message}")
+    print(f"Error Code: {exception.error.error}")
+    print(f"Message: {exception.error.message}")
 ```
 
 For samples on using the `languages` endpoint refer to more samples [here][languages_sample].
@@ -132,8 +132,8 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error_code}")
-    print(f"Message: {exception.message}")
+    print(f"Error Code: {exception.error.error}")
+    print(f"Message: {exception.error.message}")
 ```
 
 For samples on using the `translate` endpoint refer to more samples [here][translate_sample].
@@ -158,8 +158,8 @@ try:
         print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error_code}")
-    print(f"Message: {exception.message}")
+    print(f"Error Code: {exception.error.error}")
+    print(f"Message: {exception.error.message}")
 ```
 
 For samples on using the `transliterate` endpoint refer to more samples [here][transliterate_sample].
@@ -188,8 +188,8 @@ try:
             print(boundary)
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error_code}")
-    print(f"Message: {exception.message}")
+    print(f"Error Code: {exception.error.error}")
+    print(f"Message: {exception.error.message}")
 ```
 
 For samples on using the `break sentence` endpoint refer to more samples [here][breaksentence_sample].
@@ -214,8 +214,8 @@ try:
         print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error_code}")
-    print(f"Message: {exception.message}")
+    print(f"Error Code: {exception.error.error}")
+    print(f"Message: {exception.error.message}")
 ```
 
 For samples on using the `dictionary lookup` endpoint refer to more samples [here][dictionarylookup_sample].
@@ -227,6 +227,8 @@ Please refer to the service documentation for a conceptual discussion of [dictio
 Returns grammatical structure and context examples for the source term and target term pair.
 
 ```python
+from azure.ai.translation.text.models import DictionaryExampleTextItem
+
 try:
     source_language = "en"
     target_language = "es"
@@ -240,8 +242,8 @@ try:
         print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error_code}")
-    print(f"Message: {exception.message}")
+    print(f"Error Code: {exception.error.error}")
+    print(f"Message: {exception.error.message}")
 ```
 
 For samples on using the `dictionary examples` endpoint refer to more samples [here][dictionaryexamples_sample].
@@ -253,6 +255,8 @@ Please refer to the service documentation for a conceptual discussion of [dictio
 When you interact with the Translator Service using the TextTranslator client library, errors returned by the Translator service correspond to the same HTTP status codes returned for REST API requests.
 
 For example, if you submit a translation request without a target translate language, a `400` error is returned, indicating "Bad Request".
+
+You can find the different error codes returned by the service in the [Service Documentation][service_errors].
 
 
 # Provide Feedback
@@ -294,6 +298,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [translator_auth]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference#authentication
 [translator_limits]: https://learn.microsoft.com/azure/cognitive-services/translator/request-limits
+[service_errors]: https://learn.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-reference#errors
 
 [languages_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-languages
 [translate_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-translate
