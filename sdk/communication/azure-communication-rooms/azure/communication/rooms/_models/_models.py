@@ -69,7 +69,13 @@ class InvitedRoomParticipant():
     :vartype role: Optional[Union[str, ParticipantRole]
     """
 
-    def __init__(self, *, communication_identifier: CommunicationIdentifier, role: Optional[Union[str, ParticipantRole]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        communication_identifier: CommunicationIdentifier,
+        role: Optional[Union[str, ParticipantRole]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword raw_id: Raw ID representation of the communication identifier. Please refer to the
          following document for additional information on Raw ID. :code:`<br>`

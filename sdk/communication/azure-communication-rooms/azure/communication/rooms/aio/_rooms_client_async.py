@@ -3,9 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ast import Dict
 from datetime import datetime
-from typing import Any, List, Optional
+from typing import List, Optional
 import uuid
 
 from azure.core.credentials import AzureKeyCredential
@@ -41,7 +40,8 @@ class RoomsClient(object):
     :param ~azure.core.credentials.AzureKeyCredential credential:
         The access key we use to authenticate against the service.
     :keyword api_version: Azure Communication Rooms API version.
-        Default value is "2023-03-31-preview". Note that overriding this default value may result in unsupported behavior.
+        Default value is "2023-03-31-preview".
+        Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
     def __init__(
@@ -286,13 +286,21 @@ class RoomsClient(object):
             cls=lambda objs: [RoomParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
-    def _convert_room_participants_to_dictionary_for_upsert(self, room_participants : List[InvitedRoomParticipant]):
+    @staticmethod
+    def _convert_room_participants_to_dictionary_for_upsert(
+        room_participants : List[InvitedRoomParticipant]
+    ):
         upsert_dictionary = dict()
         for participant in room_participants or []:
-            upsert_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(role=participant.role)
+            upsert_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(
+                role=participant.role
+            )
         return upsert_dictionary
 
-    def _convert_communication_identifiers_to_dictionary_for_remove(self, communication_identifiers : List[CommunicationIdentifier]):
+    @staticmethod
+    def _convert_communication_identifiers_to_dictionary_for_remove(
+        communication_identifiers : List[CommunicationIdentifier]
+    ):
         remove_dictionary = dict()
         for identifier in communication_identifiers or []:
             remove_dictionary[identifier.raw_id] = None

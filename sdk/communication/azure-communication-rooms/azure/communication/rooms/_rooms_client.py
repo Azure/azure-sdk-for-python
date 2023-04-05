@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ast import Dict
 from datetime import datetime
 from typing import List, Optional
 import uuid
@@ -286,13 +285,21 @@ class RoomsClient(object):
             cls=lambda objs: [RoomParticipant._from_generated(x) for x in objs],  # pylint:disable=protected-access
             **kwargs)
 
-    def _convert_room_participants_to_dictionary_for_upsert(self, room_participants : List[InvitedRoomParticipant]):
+    @staticmethod
+    def _convert_room_participants_to_dictionary_for_upsert(
+        room_participants : List[InvitedRoomParticipant]
+    ):
         upsert_dictionary = dict()
         for participant in room_participants or []:
-            upsert_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(role=participant.role)
+            upsert_dictionary[participant.communication_identifier.raw_id] = ParticipantProperties(
+                role=participant.role
+            )
         return upsert_dictionary
 
-    def _convert_communication_identifiers_to_dictionary_for_remove(self, communication_identifiers : List[CommunicationIdentifier]):
+    @staticmethod
+    def _convert_communication_identifiers_to_dictionary_for_remove(
+        communication_identifiers : List[CommunicationIdentifier]
+    ):
         remove_dictionary = dict()
         for identifier in communication_identifiers or []:
             remove_dictionary[identifier.raw_id] = None
