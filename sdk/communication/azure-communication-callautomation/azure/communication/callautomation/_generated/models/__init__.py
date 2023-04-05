@@ -11,6 +11,7 @@ from ._models import AddParticipantRequest
 from ._models import AddParticipantResponse
 from ._models import AddParticipantSucceeded
 from ._models import AnswerCallRequest
+from ._models import BlobStorage
 from ._models import CallConnected
 from ._models import CallConnectionProperties
 from ._models import CallDisconnected
@@ -28,6 +29,7 @@ from ._models import CommunicationUserIdentifierModel
 from ._models import CreateCallRequest
 from ._models import CustomContext
 from ._models import DtmfOptions
+from ._models import ExternalStorage
 from ._models import FileSource
 from ._models import GetParticipantsResponse
 from ._models import MediaStreamingConfiguration
@@ -51,9 +53,12 @@ from ._models import RecordingStateChanged
 from ._models import RecordingStateResponse
 from ._models import RedirectCallRequest
 from ._models import RejectCallRequest
+from ._models import RemoveParticipantFailed
 from ._models import RemoveParticipantRequest
 from ._models import RemoveParticipantResponse
+from ._models import RemoveParticipantSucceeded
 from ._models import ResultInformation
+from ._models import SsmlSource
 from ._models import StartCallRecordingRequest
 from ._models import TextSource
 from ._models import TransferCallResponse
@@ -89,6 +94,7 @@ __all__ = [
     "AddParticipantResponse",
     "AddParticipantSucceeded",
     "AnswerCallRequest",
+    "BlobStorage",
     "CallConnected",
     "CallConnectionProperties",
     "CallDisconnected",
@@ -106,6 +112,7 @@ __all__ = [
     "CreateCallRequest",
     "CustomContext",
     "DtmfOptions",
+    "ExternalStorage",
     "FileSource",
     "GetParticipantsResponse",
     "MediaStreamingConfiguration",
@@ -129,9 +136,12 @@ __all__ = [
     "RecordingStateResponse",
     "RedirectCallRequest",
     "RejectCallRequest",
+    "RemoveParticipantFailed",
     "RemoveParticipantRequest",
     "RemoveParticipantResponse",
+    "RemoveParticipantSucceeded",
     "ResultInformation",
+    "SsmlSource",
     "StartCallRecordingRequest",
     "TextSource",
     "TransferCallResponse",

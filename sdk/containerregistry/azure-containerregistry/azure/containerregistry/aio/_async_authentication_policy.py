@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import Union, Optional
+from io import SEEK_SET, UnsupportedOperation
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -49,6 +50,14 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         if response.http_response.status_code == 401:
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and await self.on_challenge(request, response, challenge):
+                if request.http_request.body and hasattr(request.http_request.body, 'read'):
+                    try:
+                        # attempt to rewind the body to the initial position
+                        request.http_request.body.seek(0, SEEK_SET)
+                    except (UnsupportedOperation, ValueError, AttributeError):
+                        # if body is not seekable, then retry would not work
+                        return response
+
                 response = await self.next.send(request)
 
         return response
