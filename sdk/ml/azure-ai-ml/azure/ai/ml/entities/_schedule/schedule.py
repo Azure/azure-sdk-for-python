@@ -99,8 +99,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             description=description,
             tags=tags,
             properties=properties,
-            create_job=create_job
-            **kwargs,
+            create_job=create_job**kwargs,
         )
 
     @property
@@ -140,7 +139,6 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         Sets the schedule's action to a job definition or an existing job name.
         """
         self._create_job = create_job
-
 
     @classmethod
     def _load(
