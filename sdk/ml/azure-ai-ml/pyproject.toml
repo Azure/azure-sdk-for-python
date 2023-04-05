@@ -4,9 +4,13 @@ pyright = false
 type_check_samples = false
 verifytypes = false
 
+[tool.pydocstyle]
+convention = "pep257"
+
 [tool.mypy]
 exclude = ["setup.py", "tests", "scripts", "samples", "azure/ai/ml/_restclient"]
 
 [tool.interrogate]
 fail-under = 95
 exclude = ["setup.py", "tests", "scripts", "samples", "azure/ai/ml/_restclient"]
+
