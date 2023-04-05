@@ -31,36 +31,45 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
         request.http_request.headers["Ocp-Apim-Subscription-Key"] = self.credential.key
         request.http_request.headers["Ocp-Apim-Subscription-Region"] = self.credential.region
 
+def get_translation_endpoint(endpoint):
+    if not endpoint:
+            endpoint = "https://api.cognitive.microsofttranslator.com"
+
+    translator_endpoint: str = ""
+    if "cognitiveservices" in endpoint:
+        translator_endpoint = endpoint + "/translator/text/v3.0"
+    else:
+        translator_endpoint = endpoint
+
+    return translator_endpoint
+
+def set_authentication_policy(credential, kwargs):
+    if isinstance(credential, TranslatorCredential):
+        if not kwargs.get("authentication_policy"):
+            kwargs["authentication_policy"] = TranslatorAuthenticationPolicy(credential)
+
+    if isinstance(credential, TokenCredential):
+        if not kwargs.get("authentication_policy"):
+            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential)
+
+    if isinstance(credential, AzureKeyCredential):
+        if not kwargs.get("authentication_policy"):
+            kwargs["authentication_policy"] = AzureKeyCredentialPolicy(
+                name="Ocp-Apim-Subscription-Key", credential=credential)
+
 class TextTranslationClient(ServiceClientGenerated):
     def __init__(
             self,
             endpoint: Union[str , None],
             credential: Union[AzureKeyCredential , TokenCredential , TranslatorCredential],
             **kwargs):
-        if isinstance(credential, TranslatorCredential):
-            if not kwargs.get("authentication_policy"):
-                kwargs["authentication_policy"] = TranslatorAuthenticationPolicy(credential)
 
-        if isinstance(credential, TokenCredential):
-            if not kwargs.get("authentication_policy"):
-                kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential)
+        set_authentication_policy(credential, kwargs)
 
-        if isinstance(credential, AzureKeyCredential):
-            if not kwargs.get("authentication_policy"):
-                kwargs["authentication_policy"] = AzureKeyCredentialPolicy(
-                    name="Ocp-Apim-Subscription-Key", credential=credential)
-
-        if not endpoint:
-            endpoint = "https://api.cognitive.microsofttranslator.com"
-
-        translator_endpoint: str = ""
-        if "cognitiveservices" in endpoint:
-            translator_endpoint = endpoint + "/translator/text/v3.0"
-        else:
-            translator_endpoint = endpoint
+        translation_endpoint = get_translation_endpoint(endpoint)
 
         super().__init__(
-            endpoint=translator_endpoint,
+            endpoint=translation_endpoint,
             **kwargs
         )
 
