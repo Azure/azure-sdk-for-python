@@ -298,7 +298,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 [translator_auth]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference#authentication
 [translator_limits]: https://learn.microsoft.com/azure/cognitive-services/translator/request-limits
-[service_errors]: https://learn.microsoft.com/en-us/azure/cognitive-services/translator/reference/v3-0-reference#errors
+[service_errors]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference#errors
 
 [languages_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-languages
 [translate_doc]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-translate
