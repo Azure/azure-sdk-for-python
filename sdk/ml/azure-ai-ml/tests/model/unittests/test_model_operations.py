@@ -107,6 +107,7 @@ version: 3"""
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=True,
                 ignore_file=None,
+                blob_uri=None,
             )
         mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
         assert "version='3'" in str(mock_model_operation._model_versions_operation.create_or_update.call_args)
@@ -266,6 +267,7 @@ path: ./model.pkl"""
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=True,
                 ignore_file=None,
+                blob_uri=None,
             )
 
     # def test_promote_model_from_workspace(

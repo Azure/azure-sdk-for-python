@@ -104,20 +104,20 @@ class CodeOperations(_ScopeDependentOperations):
                 )
             else:
                 _, _, asset_hash = _get_snapshot_path_info(code)
-                existing_asset = self._version_operation.list(
+                existing_assets = list(self._version_operation.list(
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
                     name=name,
                     hash=asset_hash,
                     hash_version=str(get_content_hash_version()),
-                )
+                ))
 
-                try:
-                    existing_asset = next(existing_asset)
+                if len(existing_assets) > 0:
+                    existing_asset = existing_assets[0]
                     # TODO: remove once bug with name/version is fixed
                     name, version = _get_existing_asset_name_and_version(existing_asset)
                     return self.get(name=name, version=version)
-                except StopIteration:
+                else:
                     sas_info = get_storage_info_for_non_registry_asset(
                         service_client=self._service_client,
                         workspace_name=self._workspace_name,

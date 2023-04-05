@@ -969,7 +969,7 @@ class DirectoryUploadProgressBar(tqdm):
             self.update(current - self.n)
 
 
-def get_storage_info_for_non_registry_asset(service_client, workspace_name, name, version, resource_group) -> str:
+def get_storage_info_for_non_registry_asset(service_client, workspace_name, name, version, resource_group) -> Dict[str, str]:
     """Get SAS uri and blob uri for non-registry asset.
 
     :param service_client: Service client
@@ -979,9 +979,9 @@ def get_storage_info_for_non_registry_asset(service_client, workspace_name, name
     :param version: Asset version
     :type version: str
     :param resource_group: Resource group
-    :rtype: Tuple[str, str]
+    :rtype: Dict[str, str]
     """
-    request_body = PendingUploadRequestDto(pending_upload_type="TemporaryBlobReference")
+    request_body = PendingUploadRequestDto(pending_upload_id=_generate_pending_upload_id(), pending_upload_type="TemporaryBlobReference")
     response = service_client.code_versions.create_or_get_pending_upload(
         resource_group_name=resource_group,
         workspace_name=workspace_name,
@@ -996,6 +996,10 @@ def get_storage_info_for_non_registry_asset(service_client, workspace_name, name
     }
 
     return sas_info
+
+
+def _generate_pending_upload_id() -> str:
+    return str(uuid.uuid4())
 
 
 def _get_existing_asset_name_and_version(existing_asset):

@@ -259,7 +259,7 @@ class OperationOrchestrator(object):
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
             sas_info = get_storage_info_for_non_registry_asset(
-                service_client=self.code_assets._service_client,
+                service_client=self._code_assets._service_client,
                 workspace_name=self._operation_scope.workspace_name,
                 name=code_asset.name,
                 version=code_asset.version,
