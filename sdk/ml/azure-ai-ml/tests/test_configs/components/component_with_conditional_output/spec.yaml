@@ -22,7 +22,7 @@ environment:
   name: CliV2AnonymousEnvironment
   tags: {}
   version: de330be7295a60292e69e4d0aca3cd6b
-  image: mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
   conda_file:
     name: default_environment
     channels:

@@ -7,13 +7,21 @@
 # --------------------------------------------------------------------------
 
 from ._ea_subscription_migrate_to_new_pricing_model_operations import EASubscriptionMigrateToNewPricingModelOperations
-from ._ea_subscription_rollback_to_legacy_pricing_model_operations import EASubscriptionRollbackToLegacyPricingModelOperations
+from ._ea_subscription_rollback_to_legacy_pricing_model_operations import (
+    EASubscriptionRollbackToLegacyPricingModelOperations,
+)
 from ._ea_subscription_list_migration_date_operations import EASubscriptionListMigrationDateOperations
 from ._component_current_pricing_plan_operations import ComponentCurrentPricingPlanOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'EASubscriptionMigrateToNewPricingModelOperations',
-    'EASubscriptionRollbackToLegacyPricingModelOperations',
-    'EASubscriptionListMigrationDateOperations',
-    'ComponentCurrentPricingPlanOperations',
+    "EASubscriptionMigrateToNewPricingModelOperations",
+    "EASubscriptionRollbackToLegacyPricingModelOperations",
+    "EASubscriptionListMigrationDateOperations",
+    "ComponentCurrentPricingPlanOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

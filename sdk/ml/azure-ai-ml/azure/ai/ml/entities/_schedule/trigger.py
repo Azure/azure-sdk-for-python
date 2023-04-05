@@ -7,12 +7,11 @@ from abc import ABC
 from datetime import datetime
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
-from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
-from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
-from azure.ai.ml._restclient.v2022_10_01.models import TriggerBase as RestTriggerBase
-from azure.ai.ml._restclient.v2022_10_01.models import TriggerType as RestTriggerType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CronTrigger as RestCronTrigger
+from azure.ai.ml._restclient.v2023_02_01_preview.models import RecurrenceSchedule as RestRecurrencePattern
+from azure.ai.ml._restclient.v2023_02_01_preview.models import RecurrenceTrigger as RestRecurrenceTrigger
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TriggerBase as RestTriggerBase
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TriggerType as RestTriggerType
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -58,7 +57,7 @@ class TriggerBase(RestTranslatableMixin, ABC):
 
 
 class RecurrencePattern(RestTranslatableMixin):
-    """Recurrence pattern
+    """Recurrence pattern.
 
     :param hours: List of hours for recurrence schedule pattern.
     :type hours: Union[int, List[int]]
@@ -94,12 +93,12 @@ class RecurrencePattern(RestTranslatableMixin):
             else self.month_days,
         )
 
-    def _to_rest_compute_pattern_object(self) -> RecurrenceSchedule:
+    def _to_rest_compute_pattern_object(self) -> RestRecurrencePattern:
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.month_days:
             module_logger.warning("'month_days' is ignored for not supported on compute recurrence schedule.")
-        return RecurrenceSchedule(
+        return RestRecurrencePattern(
             hours=[self.hours] if not isinstance(self.hours, list) else self.hours,
             minutes=[self.minutes] if not isinstance(self.minutes, list) else self.minutes,
             week_days=[self.week_days] if self.week_days and not isinstance(self.week_days, list) else self.week_days,
@@ -116,7 +115,7 @@ class RecurrencePattern(RestTranslatableMixin):
 
 
 class CronTrigger(TriggerBase):
-    """Cron Trigger
+    """Cron Trigger.
 
     :param expression: Specifies cron expression of schedule.
         The expression should follow NCronTab format.
@@ -154,7 +153,7 @@ class CronTrigger(TriggerBase):
         )
         self.expression = expression
 
-    def _to_rest_object(self) -> RestCronTrigger:  # v2022_10_01.models.CronTrigger
+    def _to_rest_object(self) -> RestCronTrigger:  # v2022_12_01.models.CronTrigger
         return RestCronTrigger(
             trigger_type=self.type,
             expression=self.expression,
@@ -163,12 +162,12 @@ class CronTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_cron_object(self) -> Cron:  # v2022_10_01_preview.models.Cron
+    def _to_rest_compute_cron_object(self) -> RestCronTrigger:  # v2022_12_01_preview.models.CronTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
             module_logger.warning("'end_time' is ignored for not supported on compute schedule.")
-        return Cron(
+        return RestCronTrigger(
             expression=self.expression,
             start_time=self.start_time,
             time_zone=self.time_zone,
@@ -185,7 +184,7 @@ class CronTrigger(TriggerBase):
 
 
 class RecurrenceTrigger(TriggerBase):
-    """Recurrence trigger
+    """Recurrence trigger.
 
     :param start_time: Specifies start time of schedule in ISO 8601 format.
     :type start_time: Union[str, datetime]
@@ -224,7 +223,7 @@ class RecurrenceTrigger(TriggerBase):
         self.frequency = frequency
         self.interval = interval
 
-    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_10_01.models.RecurrenceTrigger
+    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_12_01.models.RecurrenceTrigger
         return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
@@ -234,12 +233,13 @@ class RecurrenceTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_recurrence_object(self) -> Recurrence:  # v2022_10_01_preview.models.Recurrence
+    def _to_rest_compute_recurrence_object(self) -> RestRecurrenceTrigger:
+        # v2022_12_01_preview.models.RecurrenceTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
             module_logger.warning("'end_time' is ignored for not supported on compute schedule.")
-        return Recurrence(
+        return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
             schedule=self.schedule._to_rest_compute_pattern_object(),

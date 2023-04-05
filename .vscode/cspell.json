@@ -27,7 +27,7 @@
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
     "**/assets.json",
-
+    "**/pyproject.toml",
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
@@ -58,7 +58,10 @@
     "sdk/eventhub/azure-eventhub-checkpointstoretable/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/**",
     "sdk/eventhub/azure-eventhub/**",
+    "sdk/easm/azure-defender-easm/azure/defender/easm/**",
     "sdk/graphrbac/azure-graphrbac/**",
+    "sdk/healthinsights/azure-healthinsights-cancerprofiling/azure/**",
+    "sdk/healthinsights/azure-healthinsights-clinicalmatching/azure/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
     "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
@@ -80,6 +83,7 @@
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient/**",
+    "sdk/ml/azure-ai-ml/azure/ai/ml/_utils/_virtual_cluster_utils/_restclient/**",
     "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/job_name_generator.py",
     "sdk/ml/azure-ai-ml/azure/ai/ml/constants/_job/automl.py",
     "sdk/ml/azure-ai-ml/tests/**",
@@ -95,9 +99,13 @@
     ".gitignore",
     "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
-    "tools/azure-sdk-tools/setup.py"
+    "tools/azure-sdk-tools/setup.py",
+    "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
+    "pyprojecttoml",
+    "tomli",
+    "sdkrel",
     "qnamaker",
     "mindependency",
     "automl",
@@ -166,6 +174,8 @@
     "dtlksd",
     "DWORD",
     "eastus",
+    "Easm",
+    "euap",
     "eckey",
     "ekus",
     "encryptor",
@@ -381,13 +391,55 @@
     "prnumber",
     "yarl",
     "SDDL",
-    "dacl"
+    "dacl",
+    "whls",
+    "aiter"
   ],
   "overrides": [
+    {
+      "filename": "doc/dev/test_proxy_migration_guide.md",
+      "words": [
+        "pytestmarkparametrize"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/devtools_testutils/proxy_startup.py",
+      "words": [
+        "certifi",
+        "passenv"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/tests/integration/test_proxy_startup.py",
+      "words": [
+        "spinup"
+      ]
+    },
     {
       "filename": "sdk/remoterendering/**",
       "words": [
         "Phong"
+      ]
+    },
+    {
+      "filename": "tools/azure-sdk-tools/ci_tools/deps.html.j2",
+      "words": [
+        "isfork",
+        "ISFORK",
+        "thead"
+      ]
+    },
+    {
+      "filename": "doc/esrp_release.md",
+      "words": [
+        "ESRP"
+      ]
+    },
+    {
+      "filename": "sdk/core/azure-core/tests/test_serialization.py",
+      "words": [
+        "Rlcw",
+        "Jwcmlud"
       ]
     },
     {
@@ -425,9 +477,10 @@
       ]
     },
     {
-      "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
+      "filename": "sdk/translation/azure-ai-translation-document/**",
       "words": [
-        "essai"
+        "essai",
+        "myfoldername"
       ]
     },
     {
@@ -579,9 +632,119 @@
         "ierr",
         "mymodel",
         "heif",
-        "racwd"
+        "racwd",
+        "rrggbb"
       ]
     },
+    {
+      "filename": "sdk/healthinsights/**",
+      "words": [
+        "ABDO",
+        "ACEI",
+        "acessory",
+        "Angioedema",
+        "ANGIOEDEMA",
+        "angioedema",
+        "Apyrexial",
+        "auscltation",
+        "bilat",
+        "BIPAP",
+        "Bisacodyl",
+        "brochial",
+        "Caphosol",
+        "CARDIOVASC",
+        "chole",
+        "Cytoxan",
+        "DCIS",
+        "DEBAB",
+        "DEBAC",
+        "DEBAE",
+        "DEFIC",
+        "Dilt",
+        "diurese",
+        "dyslipidemia",
+        "ecchymoses",
+        "ENDO",
+        "Farenheit",
+        "fhir",
+        "fludarabine",
+        "Gastro",
+        "Gastroesophageal",
+        "GENEORPROTEIN",
+        "GENEORPROTEIN",
+        "Hematocrit",
+        "hemodynamic",
+        "hemodynamics",
+        "hemolytic",
+        "hemoptysis",
+        "hemoptysis",
+        "Hydrox",
+        "hypercholesterolemia",
+        "HYPERLIPEM",
+        "hypernatremia",
+        "Hypogammaglobumenia",
+        "hystarectomy",
+        "IADLs",
+        "inferolateral",
+        "IVIG",
+        "KIDN",
+        "lasix",
+        "LBTEST",
+        "LBTEST",
+        "LBTEST",
+        "LBTEST",
+        "LBTEST",
+        "LBTESTCD",
+        "LMCA",
+        "lopressor",
+        "LVEDP",
+        "LVEF",
+        "LYMPHADENO",
+        "MALIG",
+        "Medrol",
+        "meds",
+        "MIBI",
+        "Mirena",
+        "MTHU",
+        "Musculo",
+        "MYCNF",
+        "MYOCARD",
+        "nbrochial",
+        "NEURO",
+        "nhemodynamics",
+        "NKDA",
+        "nsclc",
+        "nxoperex",
+        "Omecprazole",
+        "onco",
+        "PERRLA",
+        "Phos",
+        "PRBCs",
+        "Prilosec",
+        "retrorubral",
+        "RPDA",
+        "sats",
+        "scopy",
+        "SDTM",
+        "Soln",
+        "Solu",
+        "solumedrol",
+        "Succ",
+        "sulfonylurea",
+        "tachycardic",
+        "tachypnic",
+        "Tazobactam",
+        "Theophyline",
+        "thyromegaly",
+        "tounge",
+        "tounge",
+        "Uniphyl",
+        "VASODILAT",
+        "VSTESTCD",
+        "xoperex",
+        "Zocor"
+      ]
+    },    
     {
       "filename": "sdk/keyvault/**",
       "words": [
@@ -694,7 +857,7 @@
       "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
       "words": [
         "Syms",
-        "Updation",
+        "Updation"
       ]
     },
     {
@@ -731,7 +894,8 @@
         "cpksubdirectory",
         "thead",
         "tbody",
-        "racwdlmeop"
+        "racwdlmeop",
+        "newfs"
       ]
     },
     {
@@ -884,7 +1048,9 @@
         "SEPS",
         "wargs",
         "pycache",
-        "ruamel"
+        "ruamel",
+        "reprcrash",
+        "etests"
       ]
     },
     {
@@ -903,7 +1069,19 @@
       "filename": "sdk/agrifood/azure-agrifood-farming/**",
       "words": [
         "NDVI",
-        "Unhandleable"
+        "Unhandleable",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize",
+        "stac",
+        "nnumeral",
+        "nonly",
+        "STAC",
+        "Placeid",
+        "resouce",
+        "nnumeral"
       ]
      },
      {
@@ -1109,6 +1287,13 @@
       ]
     },
     {
+      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
+      "words": [
+        "ctxt",
+        "wday"
+      ]
+    },
+    {
       "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
       "words": [
         "struct",
@@ -1179,6 +1364,18 @@
         "wday",
         "mday",
         "deseralize",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/receipt/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
         "wday",
         "mday",
         "deseralize",

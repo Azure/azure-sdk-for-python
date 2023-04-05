@@ -1,14 +1,24 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0 (2023-02-16)
 
 ### Features Added
   - Added new `on_error` parameter to the `upload` method to allow users to handle errors in their own way.
+    - An `LogsUploadError` class was added to encapsulate information about the error. An instance of this class is passed to the `on_error` callback.
+  - Added IO support for upload. Now IO streams can be passed in using the `logs` parameter. ([#28373](https://github.com/Azure/azure-sdk-for-python/pull/28373))
 
 ### Breaking Changes
   - Removed support for max_concurrency
-
-### Bugs Fixed
 
 ### Other Changes
   - Removed `msrest` dependency.

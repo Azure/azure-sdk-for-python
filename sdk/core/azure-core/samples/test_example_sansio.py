@@ -1,4 +1,4 @@
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
 #
@@ -22,7 +22,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 import sys
 from azure.core.pipeline.transport import HttpRequest
@@ -35,16 +35,13 @@ from azure.core.pipeline.policies import RequestIdPolicy
 
 def test_example_headers_policy():
     url = "https://bing.com"
-    policies = [
-        UserAgentPolicy("myuseragent"),
-        RedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     # [START headers_policy]
     from azure.core.pipeline.policies import HeadersPolicy
 
     headers_policy = HeadersPolicy()
-    headers_policy.add_header('CustomValue', 'Foo')
+    headers_policy.add_header("CustomValue", "Foo")
 
     # Or headers can be added per operation. These headers will supplement existing headers
     # or those defined in the config headers policy. They will also overwrite existing
@@ -52,24 +49,22 @@ def test_example_headers_policy():
     policies.append(headers_policy)
     client = PipelineClient(base_url=url, policies=policies)
     request = client.get(url)
-    pipeline_response = client._pipeline.run(request, headers={'CustomValue': 'Bar'})
+    pipeline_response = client._pipeline.run(request, headers={"CustomValue": "Bar"})
     # [END headers_policy]
 
     response = pipeline_response.http_response
     assert isinstance(response.status_code, int)
 
+
 def test_example_request_id_policy():
     url = "https://bing.com"
-    policies = [
-        UserAgentPolicy("myuseragent"),
-        RedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     # [START request_id_policy]
     from azure.core.pipeline.policies import HeadersPolicy
 
     request_id_policy = RequestIdPolicy()
-    request_id_policy.set_request_id('azconfig-test')
+    request_id_policy.set_request_id("azconfig-test")
 
     # Or headers can be added per operation. These headers will supplement existing headers
     # or those defined in the config headers policy. They will also overwrite existing
@@ -98,7 +93,7 @@ def test_example_user_agent_policy():
 
     # You can also pass in a custom value per operation to append to the end of the user-agent.
     # This can be used together with the policy configuration to append multiple values.
-    policies=[
+    policies = [
         redirect_policy,
         user_agent_policy,
     ]
@@ -114,10 +109,7 @@ def test_example_user_agent_policy():
 def example_network_trace_logging():
     filename = "log.txt"
     url = "https://bing.com"
-    policies = [
-        UserAgentPolicy("myuseragent"),
-        RedirectPolicy()
-    ]
+    policies = [UserAgentPolicy("myuseragent"), RedirectPolicy()]
 
     # [START network_trace_logging_policy]
     from azure.core.pipeline.policies import NetworkTraceLoggingPolicy
@@ -151,6 +143,7 @@ def example_network_trace_logging():
     response = pipeline_response.http_response
     assert isinstance(response.status_code, int)
 
+
 def example_proxy_policy():
 
     # [START proxy_policy]
@@ -159,10 +152,10 @@ def example_proxy_policy():
     proxy_policy = ProxyPolicy()
 
     # Example
-    proxy_policy.proxies = {'http': 'http://10.10.1.10:3148'}
+    proxy_policy.proxies = {"http": "http://10.10.1.10:3148"}
 
     # Use basic auth
-    proxy_policy.proxies = {'https': 'http://user:password@10.10.1.10:1180/'}
+    proxy_policy.proxies = {"https": "http://user:password@10.10.1.10:1180/"}
 
     # You can also configure proxies by setting the environment variables
     # HTTP_PROXY and HTTPS_PROXY.

@@ -49,9 +49,7 @@ class RedirectPolicyBase:
         self.max_redirects = kwargs.get("redirect_max", 30)
 
         remove_headers = set(kwargs.get("redirect_remove_headers", []))
-        self._remove_headers_on_redirect = remove_headers.union(
-            self.REDIRECT_HEADERS_BLACKLIST
-        )
+        self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
         redirect_status = set(kwargs.get("redirect_on_status_codes", []))
         self._redirect_on_status_codes = redirect_status.union(self.REDIRECT_STATUSES)
         self._original_domain = None
@@ -109,9 +107,7 @@ class RedirectPolicyBase:
         """
         # TODO: Revise some of the logic here.
         settings["redirects"] -= 1
-        settings["history"].append(
-            RequestHistory(response.http_request, http_response=response.http_response)
-        )
+        settings["history"].append(RequestHistory(response.http_request, http_response=response.http_response))
 
         redirected = urlparse(redirect_location)
         if not redirected.netloc:
@@ -171,9 +167,7 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
-                retryable = self.increment(
-                    redirect_settings, response, redirect_location
-                )
+                retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 if self._domain_changed(request.http_request.url):
                     request.context.options["insecure_domain_change"] = True

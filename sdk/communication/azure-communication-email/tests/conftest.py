@@ -25,8 +25,9 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
-from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_header_regex_sanitizer, set_default_session_settings, add_uri_regex_sanitizer
+from devtools_testutils import add_general_regex_sanitizer, add_header_regex_sanitizer, add_body_key_sanitizer, set_default_session_settings, add_uri_regex_sanitizer
 from azure.communication.email._shared.utils import parse_connection_str
+from azure.communication.email._api_versions import DEFAULT_VERSION
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -39,18 +40,13 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=communication_connection_string, value="endpoint=https://someEndpoint/;accesskey=someAccessKeyw==")
     add_general_regex_sanitizer(regex=sender_address, value="someSender@contoso.com")
     add_general_regex_sanitizer(regex=recipient_address, value="someRecipient@domain.com")
-    add_general_regex_sanitizer(regex='"messageId":.*,', value='"messageId": "someMessageId",')
+
+    add_body_key_sanitizer(json_path="$.id", value="someId")
 
     endpoint, _ = parse_connection_str(communication_connection_string)
-    add_general_regex_sanitizer(regex=endpoint, value="https://someEndpoint")
+    add_general_regex_sanitizer(regex=endpoint, value="someEndpoint")
 
-    add_header_regex_sanitizer(key="repeatability-first-sent", value="sanitized")
-    add_header_regex_sanitizer(key="repeatability-request-id", value="sanitized")
     add_header_regex_sanitizer(key="x-ms-content-sha256", value="sanitized")
-    add_header_regex_sanitizer(key="Operation-Location", value="https://someEndpoint/emails/someMessageId/status")
-    add_header_regex_sanitizer(key="Date", value="sanitized")
-    add_header_regex_sanitizer(key="x-ms-request-id", value="someMessageId")
-    add_header_regex_sanitizer(key="x-ms-client-request-id", value="sanitized")
-    add_header_regex_sanitizer(key="x-azure-ref", value="sanitized")
+    add_header_regex_sanitizer(key="Operation-Location", value="https://someEndpoint/emails/operations/someId?api-version=" + DEFAULT_VERSION)
 
-    add_uri_regex_sanitizer(regex="emails/.*/", value="emails/someMessageId/")
+    add_uri_regex_sanitizer(regex="emails/operations/.*\?", value="emails/operations/someId?")

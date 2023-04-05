@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -38,7 +38,7 @@ class AdministratorListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -70,7 +70,7 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -103,7 +103,7 @@ class ProxyResource(Resource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -177,7 +177,9 @@ class Advisor(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "recommended_actions": {"key": "properties.recommendedActions", "type": "[RecommendedAction]"},
     }
 
-    def __init__(self, *, auto_execute_status: Optional[Union[str, "_models.AutoExecuteStatus"]] = None, **kwargs):
+    def __init__(
+        self, *, auto_execute_status: Optional[Union[str, "_models.AutoExecuteStatus"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword auto_execute_status: Gets the auto-execute status (whether to let the system execute
          the recommendations) of this advisor. Possible values are 'Enabled' and 'Disabled'. Known
@@ -227,8 +229,8 @@ class AutomaticTuningOptions(_serialization.Model):
     }
 
     def __init__(
-        self, *, desired_state: Optional[Union[str, "_models.AutomaticTuningOptionModeDesired"]] = None, **kwargs
-    ):
+        self, *, desired_state: Optional[Union[str, "_models.AutomaticTuningOptionModeDesired"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword desired_state: Automatic tuning option desired state. Known values are: "Off", "On",
          and "Default".
@@ -272,8 +274,8 @@ class AutomaticTuningServerOptions(_serialization.Model):
     }
 
     def __init__(
-        self, *, desired_state: Optional[Union[str, "_models.AutomaticTuningOptionModeDesired"]] = None, **kwargs
-    ):
+        self, *, desired_state: Optional[Union[str, "_models.AutomaticTuningOptionModeDesired"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword desired_state: Automatic tuning option desired state. Known values are: "Off", "On",
          and "Default".
@@ -324,7 +326,7 @@ class AutoPauseDelayTimeRange(_serialization.Model):
         "do_not_pause_value": {"key": "doNotPauseValue", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.min_value = None
@@ -356,7 +358,7 @@ class AzureADOnlyAuthListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -402,8 +404,8 @@ class BackupShortTermRetentionPolicy(ProxyResource):
         *,
         retention_days: Optional[int] = None,
         diff_backup_interval_in_hours: Optional[Union[int, "_models.DiffBackupIntervalInHours"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword retention_days: The backup retention period in days. This is how many days
          Point-in-Time Restore will be supported.
@@ -440,7 +442,7 @@ class BackupShortTermRetentionPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -468,7 +470,7 @@ class Baseline(_serialization.Model):
         "updated_time": {"key": "updatedTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.expected_results = None
@@ -505,7 +507,7 @@ class BaselineAdjustedResult(_serialization.Model):
         "results_only_in_baseline": {"key": "resultsOnlyInBaseline", "type": "[[str]]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.baseline = None
@@ -535,7 +537,7 @@ class BenchmarkReference(_serialization.Model):
         "reference": {"key": "reference", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.benchmark = None
@@ -567,7 +569,7 @@ class CheckNameAvailabilityRequest(_serialization.Model):
 
     type = "Microsoft.Sql/servers"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Required.
         :paramtype name: str
@@ -607,7 +609,7 @@ class CheckNameAvailabilityResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -633,7 +635,7 @@ class CompleteDatabaseRestoreDefinition(_serialization.Model):
         "last_backup_name": {"key": "lastBackupName", "type": "str"},
     }
 
-    def __init__(self, *, last_backup_name: str, **kwargs):
+    def __init__(self, *, last_backup_name: str, **kwargs: Any) -> None:
         """
         :keyword last_backup_name: The last backup name to apply. Required.
         :paramtype last_backup_name: str
@@ -683,8 +685,8 @@ class CopyLongTermRetentionBackupParameters(_serialization.Model):
         target_server_fully_qualified_domain_name: Optional[str] = None,
         target_database_name: Optional[str] = None,
         target_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_subscription_id: The subscription that owns the target server.
         :paramtype target_subscription_id: str
@@ -729,7 +731,7 @@ class CreateDatabaseRestorePointDefinition(_serialization.Model):
         "restore_point_label": {"key": "restorePointLabel", "type": "str"},
     }
 
-    def __init__(self, *, restore_point_label: str, **kwargs):
+    def __init__(self, *, restore_point_label: str, **kwargs: Any) -> None:
         """
         :keyword restore_point_label: The restore point label to apply. Required.
         :paramtype restore_point_label: str
@@ -772,7 +774,7 @@ class TrackedResource(Resource):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -963,6 +965,11 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype is_infra_encryption_enabled: bool
     :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
     :vartype federated_client_id: str
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+    :ivar encryption_protector: The azure key vault URI of the database if it's configured with per
+     Database Customer Managed Keys.
+    :vartype encryption_protector: str
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
@@ -990,6 +997,33 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
      For more details about “x-ms-authorization-auxiliary” header see
      https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant.
     :vartype source_resource_id: str
+    :ivar manual_cutover: Whether or not customer controlled manual cutover needs to be done during
+     Update Database operation to Hyperscale tier.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier.
+
+     When manualCutover is specified, the scaling operation will wait for user input to trigger
+     cutover to Hyperscale database.
+
+     To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+     Waiting state.
+    :vartype manual_cutover: bool
+    :ivar perform_cutover: To trigger customer controlled manual cutover during the wait state
+     while Scaling operation is in progress.
+
+     This property parameter is only applicable for scaling operations that are initiated along
+     with 'manualCutover' parameter.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+     When performCutover is specified, the scaling operation will trigger cutover and perform
+     role-change to Hyperscale database.
+    :vartype perform_cutover: bool
+    :ivar availability_zone: Specifies the availability zone the database is pinned to. Known
+     values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _validation = {
@@ -1066,8 +1100,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
         "is_infra_encryption_enabled": {"key": "properties.isInfraEncryptionEnabled", "type": "bool"},
         "federated_client_id": {"key": "properties.federatedClientId", "type": "str"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
+        "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
         "source_resource_id": {"key": "properties.sourceResourceId", "type": "str"},
+        "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
+        "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -1101,10 +1140,15 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
         federated_client_id: Optional[str] = None,
+        keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
+        encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
         source_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        manual_cutover: Optional[bool] = None,
+        perform_cutover: Optional[bool] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -1231,6 +1275,11 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype is_ledger_on: bool
         :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
         :paramtype federated_client_id: str
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+        :keyword encryption_protector: The azure key vault URI of the database if it's configured with
+         per Database Customer Managed Keys.
+        :paramtype encryption_protector: str
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
@@ -1258,6 +1307,33 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
          For more details about “x-ms-authorization-auxiliary” header see
          https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant.
         :paramtype source_resource_id: str
+        :keyword manual_cutover: Whether or not customer controlled manual cutover needs to be done
+         during Update Database operation to Hyperscale tier.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier.
+
+         When manualCutover is specified, the scaling operation will wait for user input to trigger
+         cutover to Hyperscale database.
+
+         To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+         Waiting state.
+        :paramtype manual_cutover: bool
+        :keyword perform_cutover: To trigger customer controlled manual cutover during the wait state
+         while Scaling operation is in progress.
+
+         This property parameter is only applicable for scaling operations that are initiated along
+         with 'manualCutover' parameter.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+         When performCutover is specified, the scaling operation will trigger cutover and perform
+         role-change to Hyperscale database.
+        :paramtype perform_cutover: bool
+        :keyword availability_zone: Specifies the availability zone the database is pinned to. Known
+         values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -1302,8 +1378,13 @@ class Database(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
         self.federated_client_id = federated_client_id
+        self.keys = keys
+        self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
         self.source_resource_id = source_resource_id
+        self.manual_cutover = manual_cutover
+        self.perform_cutover = perform_cutover
+        self.availability_zone = availability_zone
 
 
 class DatabaseAdvancedThreatProtection(ProxyResource):
@@ -1344,7 +1425,9 @@ class DatabaseAdvancedThreatProtection(ProxyResource):
         "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
          disabled or a state has not been applied yet on the specific database or server. Known values
@@ -1378,7 +1461,7 @@ class DatabaseAdvancedThreatProtectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1427,8 +1510,8 @@ class DatabaseAutomaticTuning(ProxyResource):
         *,
         desired_state: Optional[Union[str, "_models.AutomaticTuningMode"]] = None,
         options: Optional[Dict[str, "_models.AutomaticTuningOptions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword desired_state: Automatic tuning desired state. Known values are: "Inherit", "Custom",
          "Auto", and "Unspecified".
@@ -1619,8 +1702,8 @@ class DatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-ins
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword retention_days: Specifies the number of days to keep in the audit logs in the storage
          account.
@@ -1784,7 +1867,7 @@ class DatabaseBlobAuditingPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1840,8 +1923,8 @@ class DatabaseColumn(ProxyResource):
         temporal_type: Optional[Union[str, "_models.TableTemporalType"]] = None,
         memory_optimized: Optional[bool] = None,
         is_computed: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword column_type: The column data type. Known values are: "image", "text",
          "uniqueidentifier", "date", "time", "datetime2", "datetimeoffset", "tinyint", "smallint",
@@ -1886,7 +1969,7 @@ class DatabaseColumnListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1938,8 +2021,8 @@ class DatabaseExtensions(ProxyResource):
         storage_key_type: Optional[Union[str, "_models.StorageKeyType"]] = None,
         storage_key: Optional[str] = None,
         storage_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword operation_mode: Operation Mode. "PolybaseImport"
         :paramtype operation_mode: str or ~azure.mgmt.sql.models.OperationMode
@@ -1986,8 +2069,8 @@ class DatabaseIdentity(_serialization.Model):
         *,
         type: Optional[Union[str, "_models.DatabaseIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.DatabaseUserIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The identity type. Known values are: "None" and "UserAssigned".
         :paramtype type: str or ~azure.mgmt.sql.models.DatabaseIdentityType
@@ -1998,6 +2081,44 @@ class DatabaseIdentity(_serialization.Model):
         self.type = type
         self.tenant_id = None
         self.user_assigned_identities = user_assigned_identities
+
+
+class DatabaseKey(_serialization.Model):
+    """Database level key used for encryption at rest.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The database key type. Only supported value is 'AzureKeyVault'. "AzureKeyVault"
+    :vartype type: str or ~azure.mgmt.sql.models.DatabaseKeyType
+    :ivar thumbprint: Thumbprint of the database key.
+    :vartype thumbprint: str
+    :ivar creation_date: The database key creation date.
+    :vartype creation_date: ~datetime.datetime
+    :ivar subregion: Subregion of the server key.
+    :vartype subregion: str
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "thumbprint": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "subregion": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "creation_date": {"key": "creationDate", "type": "iso-8601"},
+        "subregion": {"key": "subregion", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.thumbprint = None
+        self.creation_date = None
+        self.subregion = None
 
 
 class DatabaseListResult(_serialization.Model):
@@ -2021,7 +2142,7 @@ class DatabaseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2110,7 +2231,7 @@ class DatabaseOperation(ProxyResource):  # pylint: disable=too-many-instance-att
         "is_cancellable": {"key": "properties.isCancellable", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.database_name = None
@@ -2150,7 +2271,7 @@ class DatabaseOperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2182,7 +2303,7 @@ class DatabaseSchema(ProxyResource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -2208,7 +2329,7 @@ class DatabaseSchemaListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2236,7 +2357,7 @@ class DatabaseSecurityAlertListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2313,8 +2434,8 @@ class DatabaseSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-many-in
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         retention_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
          policy has not been applied yet on the specific database. Known values are: "Enabled" and
@@ -2383,7 +2504,7 @@ class DatabaseSqlVulnerabilityAssessmentBaselineSet(ProxyResource):
         "results": {"key": "properties.results", "type": "{[[str]]}"},
     }
 
-    def __init__(self, *, results: Optional[Dict[str, List[List[str]]]] = None, **kwargs):
+    def __init__(self, *, results: Optional[Dict[str, List[List[str]]]] = None, **kwargs: Any) -> None:
         """
         :keyword results: The baseline set result.
         :paramtype results: dict[str, list[list[str]]]
@@ -2414,7 +2535,7 @@ class DatabaseSqlVulnerabilityAssessmentBaselineSetListResult(_serialization.Mod
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2453,7 +2574,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaseline(ProxyResource):
         "results": {"key": "properties.results", "type": "[[str]]"},
     }
 
-    def __init__(self, *, results: Optional[List[List[str]]] = None, **kwargs):
+    def __init__(self, *, results: Optional[List[List[str]]] = None, **kwargs: Any) -> None:
         """
         :keyword results: The rule baseline result.
         :paramtype results: list[list[str]]
@@ -2498,7 +2619,9 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineInput(ProxyResource):
         "results": {"key": "properties.results", "type": "[[str]]"},
     }
 
-    def __init__(self, *, latest_scan: Optional[bool] = None, results: Optional[List[List[str]]] = None, **kwargs):
+    def __init__(
+        self, *, latest_scan: Optional[bool] = None, results: Optional[List[List[str]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword latest_scan: The latest scan flag.
         :paramtype latest_scan: bool
@@ -2548,8 +2671,8 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineListInput(ProxyResource):
     }
 
     def __init__(
-        self, *, latest_scan: Optional[bool] = None, results: Optional[Dict[str, List[List[str]]]] = None, **kwargs
-    ):
+        self, *, latest_scan: Optional[bool] = None, results: Optional[Dict[str, List[List[str]]]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword latest_scan: The latest scan flag.
         :paramtype latest_scan: bool
@@ -2583,7 +2706,7 @@ class DatabaseSqlVulnerabilityAssessmentRuleBaselineListResult(_serialization.Mo
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2627,8 +2750,8 @@ class DatabaseTable(ProxyResource):
         *,
         temporal_type: Optional[Union[str, "_models.TableTemporalType"]] = None,
         memory_optimized: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword temporal_type: The table temporal type. Known values are: "NonTemporalTable",
          "HistoryTable", and "SystemVersionedTemporalTable".
@@ -2662,7 +2785,7 @@ class DatabaseTableListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -2819,9 +2942,38 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
     :vartype is_infra_encryption_enabled: bool
     :ivar federated_client_id: The Client id used for cross tenant per database CMK scenario.
     :vartype federated_client_id: str
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+    :ivar encryption_protector: The azure key vault URI of the database if it's configured with per
+     Database Customer Managed Keys.
+    :vartype encryption_protector: str
     :ivar preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
      enclaves. Known values are: "Default" and "VBS".
     :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar manual_cutover: Whether or not customer controlled manual cutover needs to be done during
+     Update Database operation to Hyperscale tier.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier.
+
+     When manualCutover is specified, the scaling operation will wait for user input to trigger
+     cutover to Hyperscale database.
+
+     To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+     Waiting state.
+    :vartype manual_cutover: bool
+    :ivar perform_cutover: To trigger customer controlled manual cutover during the wait state
+     while Scaling operation is in progress.
+
+     This property parameter is only applicable for scaling operations that are initiated along
+     with 'manualCutover' parameter.
+
+     This property is only applicable when scaling database from Business Critical/General
+     Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+     When performCutover is specified, the scaling operation will trigger cutover and perform
+     role-change to Hyperscale database.
+    :vartype perform_cutover: bool
     """
 
     _validation = {
@@ -2886,7 +3038,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         "is_ledger_on": {"key": "properties.isLedgerOn", "type": "bool"},
         "is_infra_encryption_enabled": {"key": "properties.isInfraEncryptionEnabled", "type": "bool"},
         "federated_client_id": {"key": "properties.federatedClientId", "type": "str"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
+        "encryption_protector": {"key": "properties.encryptionProtector", "type": "str"},
         "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "manual_cutover": {"key": "properties.manualCutover", "type": "bool"},
+        "perform_cutover": {"key": "properties.performCutover", "type": "bool"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -2919,9 +3075,13 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         maintenance_configuration_id: Optional[str] = None,
         is_ledger_on: Optional[bool] = None,
         federated_client_id: Optional[str] = None,
+        keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
+        encryption_protector: Optional[str] = None,
         preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
-        **kwargs
-    ):
+        manual_cutover: Optional[bool] = None,
+        perform_cutover: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: The name and tier of the SKU.
         :paramtype sku: ~azure.mgmt.sql.models.Sku
@@ -3031,9 +3191,38 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         :paramtype is_ledger_on: bool
         :keyword federated_client_id: The Client id used for cross tenant per database CMK scenario.
         :paramtype federated_client_id: str
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+        :keyword encryption_protector: The azure key vault URI of the database if it's configured with
+         per Database Customer Managed Keys.
+        :paramtype encryption_protector: str
         :keyword preferred_enclave_type: Type of enclave requested on the database i.e. Default or VBS
          enclaves. Known values are: "Default" and "VBS".
         :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword manual_cutover: Whether or not customer controlled manual cutover needs to be done
+         during Update Database operation to Hyperscale tier.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier.
+
+         When manualCutover is specified, the scaling operation will wait for user input to trigger
+         cutover to Hyperscale database.
+
+         To trigger cutover, please provide 'performCutover' parameter when the Scaling operation is in
+         Waiting state.
+        :paramtype manual_cutover: bool
+        :keyword perform_cutover: To trigger customer controlled manual cutover during the wait state
+         while Scaling operation is in progress.
+
+         This property parameter is only applicable for scaling operations that are initiated along
+         with 'manualCutover' parameter.
+
+         This property is only applicable when scaling database from Business Critical/General
+         Purpose/Premium/Standard tier to Hyperscale tier is already in progress.
+
+         When performCutover is specified, the scaling operation will trigger cutover and perform
+         role-change to Hyperscale database.
+        :paramtype perform_cutover: bool
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -3077,7 +3266,11 @@ class DatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-instance
         self.is_ledger_on = is_ledger_on
         self.is_infra_encryption_enabled = None
         self.federated_client_id = federated_client_id
+        self.keys = keys
+        self.encryption_protector = encryption_protector
         self.preferred_enclave_type = preferred_enclave_type
+        self.manual_cutover = manual_cutover
+        self.perform_cutover = perform_cutover
 
 
 class DatabaseUsage(ProxyResource):
@@ -3121,7 +3314,7 @@ class DatabaseUsage(ProxyResource):
         "unit": {"key": "properties.unit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.display_name = None
@@ -3151,7 +3344,7 @@ class DatabaseUsageListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3179,7 +3372,7 @@ class DatabaseUserIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -3240,8 +3433,8 @@ class DatabaseVulnerabilityAssessment(ProxyResource):
         storage_container_sas_key: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         recurring_scans: Optional["_models.VulnerabilityAssessmentRecurringScansProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
          https://myStorage.blob.core.windows.net/VaScans/).  It is required if server level
@@ -3287,7 +3480,7 @@ class DatabaseVulnerabilityAssessmentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3330,8 +3523,8 @@ class DatabaseVulnerabilityAssessmentRuleBaseline(ProxyResource):
         self,
         *,
         baseline_results: Optional[List["_models.DatabaseVulnerabilityAssessmentRuleBaselineItem"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword baseline_results: The rule baseline result.
         :paramtype baseline_results:
@@ -3358,7 +3551,7 @@ class DatabaseVulnerabilityAssessmentRuleBaselineItem(_serialization.Model):
         "result": {"key": "result", "type": "[str]"},
     }
 
-    def __init__(self, *, result: List[str], **kwargs):
+    def __init__(self, *, result: List[str], **kwargs: Any) -> None:
         """
         :keyword result: The rule baseline result. Required.
         :paramtype result: list[str]
@@ -3397,7 +3590,7 @@ class DatabaseVulnerabilityAssessmentScansExport(ProxyResource):
         "exported_report_location": {"key": "properties.exportedReportLocation", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.exported_report_location = None
@@ -3459,8 +3652,8 @@ class DataMaskingPolicy(ProxyResource):
         *,
         data_masking_state: Optional[Union[str, "_models.DataMaskingState"]] = None,
         exempt_principals: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword data_masking_state: The state of the data masking policy. Known values are: "Disabled"
          and "Enabled".
@@ -3573,8 +3766,8 @@ class DataMaskingRule(ProxyResource):  # pylint: disable=too-many-instance-attri
         prefix_size: Optional[str] = None,
         suffix_size: Optional[str] = None,
         replacement_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword alias_name: The alias name. This is a legacy parameter and is no longer used.
         :paramtype alias_name: str
@@ -3637,7 +3830,7 @@ class DataMaskingRuleListResult(_serialization.Model):
         "value": {"key": "value", "type": "[DataMaskingRule]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DataMaskingRule"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.DataMaskingRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of database data masking rules.
         :paramtype value: list[~azure.mgmt.sql.models.DataMaskingRule]
@@ -3675,7 +3868,7 @@ class DataWarehouseUserActivities(ProxyResource):
         "active_queries_count": {"key": "properties.activeQueriesCount", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.active_queries_count = None
@@ -3702,7 +3895,7 @@ class DataWarehouseUserActivitiesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3750,7 +3943,7 @@ class DeletedServer(ProxyResource):
         "fully_qualified_domain_name": {"key": "properties.fullyQualifiedDomainName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.version = None
@@ -3780,7 +3973,7 @@ class DeletedServerListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3856,8 +4049,8 @@ class DistributedAvailabilityGroup(ProxyResource):  # pylint: disable=too-many-i
         primary_availability_group_name: Optional[str] = None,
         secondary_availability_group_name: Optional[str] = None,
         replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword target_database: The name of the target database.
         :paramtype target_database: str
@@ -3905,7 +4098,7 @@ class DistributedAvailabilityGroupsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -3959,7 +4152,7 @@ class EditionCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -4011,6 +4204,8 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
     :vartype creation_date: ~datetime.datetime
     :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
     :vartype max_size_bytes: int
+    :ivar min_capacity: Minimal capacity that serverless pool will not shrink below, if not paused.
+    :vartype min_capacity: float
     :ivar per_database_settings: The per database settings for the elastic pool.
     :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
     :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4023,8 +4218,15 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
      This configuration defines the period when the maintenance updates will will occur.
     :vartype maintenance_configuration_id: str
     :ivar high_availability_replica_count: The number of secondary replicas associated with the
-     elastic pool that are used to provide high availability.
+     elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+     pools.
     :vartype high_availability_replica_count: int
+    :ivar preferred_enclave_type: Type of enclave requested on the elastic pool. Known values are:
+     "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
+     to. Known values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _validation = {
@@ -4048,11 +4250,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         "state": {"key": "properties.state", "type": "str"},
         "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
         "max_size_bytes": {"key": "properties.maxSizeBytes", "type": "int"},
+        "min_capacity": {"key": "properties.minCapacity", "type": "float"},
         "per_database_settings": {"key": "properties.perDatabaseSettings", "type": "ElasticPoolPerDatabaseSettings"},
         "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
         "high_availability_replica_count": {"key": "properties.highAvailabilityReplicaCount", "type": "int"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(
@@ -4062,13 +4267,16 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
         max_size_bytes: Optional[int] = None,
+        min_capacity: Optional[float] = None,
         per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
         high_availability_replica_count: Optional[int] = None,
-        **kwargs
-    ):
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -4087,6 +4295,9 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         :paramtype sku: ~azure.mgmt.sql.models.Sku
         :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
         :paramtype max_size_bytes: int
+        :keyword min_capacity: Minimal capacity that serverless pool will not shrink below, if not
+         paused.
+        :paramtype min_capacity: float
         :keyword per_database_settings: The per database settings for the elastic pool.
         :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
         :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4099,8 +4310,15 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
          pool. This configuration defines the period when the maintenance updates will will occur.
         :paramtype maintenance_configuration_id: str
         :keyword high_availability_replica_count: The number of secondary replicas associated with the
-         elastic pool that are used to provide high availability.
+         elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
+         pools.
         :paramtype high_availability_replica_count: int
+        :keyword preferred_enclave_type: Type of enclave requested on the elastic pool. Known values
+         are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword availability_zone: Specifies the availability zone the pool's primary replica is
+         pinned to. Known values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -4108,11 +4326,14 @@ class ElasticPool(TrackedResource):  # pylint: disable=too-many-instance-attribu
         self.state = None
         self.creation_date = None
         self.max_size_bytes = max_size_bytes
+        self.min_capacity = min_capacity
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
         self.high_availability_replica_count = high_availability_replica_count
+        self.preferred_enclave_type = preferred_enclave_type
+        self.availability_zone = availability_zone
 
 
 class ElasticPoolActivity(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -4224,7 +4445,7 @@ class ElasticPoolActivity(ProxyResource):  # pylint: disable=too-many-instance-a
         "requested_dtu_guarantee": {"key": "properties.requestedDtuGuarantee", "type": "int"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -4270,7 +4491,7 @@ class ElasticPoolActivityListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ElasticPoolActivity]"},
     }
 
-    def __init__(self, *, value: List["_models.ElasticPoolActivity"], **kwargs):
+    def __init__(self, *, value: List["_models.ElasticPoolActivity"], **kwargs: Any) -> None:
         """
         :keyword value: The list of elastic pool activities. Required.
         :paramtype value: list[~azure.mgmt.sql.models.ElasticPoolActivity]
@@ -4369,7 +4590,7 @@ class ElasticPoolDatabaseActivity(ProxyResource):  # pylint: disable=too-many-in
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
@@ -4410,7 +4631,7 @@ class ElasticPoolDatabaseActivityListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ElasticPoolDatabaseActivity]"},
     }
 
-    def __init__(self, *, value: List["_models.ElasticPoolDatabaseActivity"], **kwargs):
+    def __init__(self, *, value: List["_models.ElasticPoolDatabaseActivity"], **kwargs: Any) -> None:
         """
         :keyword value: The list of elastic pool database activities. Required.
         :paramtype value: list[~azure.mgmt.sql.models.ElasticPoolDatabaseActivity]
@@ -4457,7 +4678,7 @@ class ElasticPoolEditionCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -4491,7 +4712,7 @@ class ElasticPoolListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -4579,7 +4800,7 @@ class ElasticPoolOperation(ProxyResource):  # pylint: disable=too-many-instance-
         "is_cancellable": {"key": "properties.isCancellable", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.elastic_pool_name = None
@@ -4619,7 +4840,7 @@ class ElasticPoolOperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -4664,7 +4885,7 @@ class ElasticPoolPerDatabaseMaxPerformanceLevelCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -4706,7 +4927,7 @@ class ElasticPoolPerDatabaseMinPerformanceLevelCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -4732,7 +4953,9 @@ class ElasticPoolPerDatabaseSettings(_serialization.Model):
         "max_capacity": {"key": "maxCapacity", "type": "float"},
     }
 
-    def __init__(self, *, min_capacity: Optional[float] = None, max_capacity: Optional[float] = None, **kwargs):
+    def __init__(
+        self, *, min_capacity: Optional[float] = None, max_capacity: Optional[float] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword min_capacity: The minimum capacity all databases are guaranteed.
         :paramtype min_capacity: float
@@ -4814,7 +5037,7 @@ class ElasticPoolPerformanceLevelCapability(_serialization.Model):  # pylint: di
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -4834,7 +5057,7 @@ class ElasticPoolPerformanceLevelCapability(_serialization.Model):  # pylint: di
         self.reason = reason
 
 
-class ElasticPoolUpdate(_serialization.Model):
+class ElasticPoolUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """An elastic pool update.
 
     :ivar sku: An ARM Resource SKU.
@@ -4843,6 +5066,8 @@ class ElasticPoolUpdate(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar max_size_bytes: The storage limit for the database elastic pool in bytes.
     :vartype max_size_bytes: int
+    :ivar min_capacity: Minimal capacity that serverless pool will not shrink below, if not paused.
+    :vartype min_capacity: float
     :ivar per_database_settings: The per database settings for the elastic pool.
     :vartype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
     :ivar zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4858,17 +5083,26 @@ class ElasticPoolUpdate(_serialization.Model):
      elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
      pools.
     :vartype high_availability_replica_count: int
+    :ivar preferred_enclave_type: Type of enclave requested on the elastic pool. Known values are:
+     "Default" and "VBS".
+    :vartype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+    :ivar availability_zone: Specifies the availability zone the pool's primary replica is pinned
+     to. Known values are: "NoPreference", "1", "2", and "3".
+    :vartype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
     """
 
     _attribute_map = {
         "sku": {"key": "sku", "type": "Sku"},
         "tags": {"key": "tags", "type": "{str}"},
         "max_size_bytes": {"key": "properties.maxSizeBytes", "type": "int"},
+        "min_capacity": {"key": "properties.minCapacity", "type": "float"},
         "per_database_settings": {"key": "properties.perDatabaseSettings", "type": "ElasticPoolPerDatabaseSettings"},
         "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
         "license_type": {"key": "properties.licenseType", "type": "str"},
         "maintenance_configuration_id": {"key": "properties.maintenanceConfigurationId", "type": "str"},
         "high_availability_replica_count": {"key": "properties.highAvailabilityReplicaCount", "type": "int"},
+        "preferred_enclave_type": {"key": "properties.preferredEnclaveType", "type": "str"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
     }
 
     def __init__(
@@ -4877,13 +5111,16 @@ class ElasticPoolUpdate(_serialization.Model):
         sku: Optional["_models.Sku"] = None,
         tags: Optional[Dict[str, str]] = None,
         max_size_bytes: Optional[int] = None,
+        min_capacity: Optional[float] = None,
         per_database_settings: Optional["_models.ElasticPoolPerDatabaseSettings"] = None,
         zone_redundant: Optional[bool] = None,
         license_type: Optional[Union[str, "_models.ElasticPoolLicenseType"]] = None,
         maintenance_configuration_id: Optional[str] = None,
         high_availability_replica_count: Optional[int] = None,
-        **kwargs
-    ):
+        preferred_enclave_type: Optional[Union[str, "_models.AlwaysEncryptedEnclaveType"]] = None,
+        availability_zone: Optional[Union[str, "_models.AvailabilityZoneType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: An ARM Resource SKU.
         :paramtype sku: ~azure.mgmt.sql.models.Sku
@@ -4891,6 +5128,9 @@ class ElasticPoolUpdate(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword max_size_bytes: The storage limit for the database elastic pool in bytes.
         :paramtype max_size_bytes: int
+        :keyword min_capacity: Minimal capacity that serverless pool will not shrink below, if not
+         paused.
+        :paramtype min_capacity: float
         :keyword per_database_settings: The per database settings for the elastic pool.
         :paramtype per_database_settings: ~azure.mgmt.sql.models.ElasticPoolPerDatabaseSettings
         :keyword zone_redundant: Whether or not this elastic pool is zone redundant, which means the
@@ -4906,16 +5146,25 @@ class ElasticPoolUpdate(_serialization.Model):
          elastic pool that are used to provide high availability. Applicable only to Hyperscale elastic
          pools.
         :paramtype high_availability_replica_count: int
+        :keyword preferred_enclave_type: Type of enclave requested on the elastic pool. Known values
+         are: "Default" and "VBS".
+        :paramtype preferred_enclave_type: str or ~azure.mgmt.sql.models.AlwaysEncryptedEnclaveType
+        :keyword availability_zone: Specifies the availability zone the pool's primary replica is
+         pinned to. Known values are: "NoPreference", "1", "2", and "3".
+        :paramtype availability_zone: str or ~azure.mgmt.sql.models.AvailabilityZoneType
         """
         super().__init__(**kwargs)
         self.sku = sku
         self.tags = tags
         self.max_size_bytes = max_size_bytes
+        self.min_capacity = min_capacity
         self.per_database_settings = per_database_settings
         self.zone_redundant = zone_redundant
         self.license_type = license_type
         self.maintenance_configuration_id = maintenance_configuration_id
         self.high_availability_replica_count = high_availability_replica_count
+        self.preferred_enclave_type = preferred_enclave_type
+        self.availability_zone = availability_zone
 
 
 class EncryptionProtector(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -4980,8 +5229,8 @@ class EncryptionProtector(ProxyResource):  # pylint: disable=too-many-instance-a
         server_key_name: Optional[str] = None,
         server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         auto_rotation_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server_key_name: The name of the server key.
         :paramtype server_key_name: str
@@ -5023,7 +5272,7 @@ class EncryptionProtectorListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -5058,7 +5307,7 @@ class EndpointCertificate(ProxyResource):
         "public_blob": {"key": "properties.publicBlob", "type": "str"},
     }
 
-    def __init__(self, *, public_blob: Optional[str] = None, **kwargs):
+    def __init__(self, *, public_blob: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword public_blob: The certificate public blob.
         :paramtype public_blob: str
@@ -5088,11 +5337,64 @@ class EndpointCertificateListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class EndpointDependency(_serialization.Model):
+    """A domain name that the managed instance service needs to communicate with, along with
+    additional details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar domain_name: The domain name of the dependency.
+    :vartype domain_name: str
+    :ivar endpoint_details: The IP Addresses and Ports used when connecting to DomainName.
+    :vartype endpoint_details: list[~azure.mgmt.sql.models.EndpointDetail]
+    """
+
+    _validation = {
+        "domain_name": {"readonly": True},
+        "endpoint_details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "domain_name": {"key": "domainName", "type": "str"},
+        "endpoint_details": {"key": "endpointDetails", "type": "[EndpointDetail]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.domain_name = None
+        self.endpoint_details = None
+
+
+class EndpointDetail(_serialization.Model):
+    """A domain name that the managed instance service needs to communicate with, along with
+    additional details.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar port: The port an endpoint is connected to.
+    :vartype port: int
+    """
+
+    _validation = {
+        "port": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "port": {"key": "port", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.port = None
 
 
 class ExportDatabaseDefinition(_serialization.Model):
@@ -5145,8 +5447,8 @@ class ExportDatabaseDefinition(_serialization.Model):
         administrator_login_password: str,
         authentication_type: Optional[str] = None,
         network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
          "StorageAccessKey".
@@ -5352,8 +5654,8 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword predicate_expression: Specifies condition of where clause when creating an audit.
         :paramtype predicate_expression: str
@@ -5519,7 +5821,7 @@ class ExtendedDatabaseBlobAuditingPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -5721,8 +6023,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-ma
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
          devops logs will be sent to Azure Monitor.
@@ -5905,7 +6207,7 @@ class ExtendedServerBlobAuditingPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -5973,8 +6275,8 @@ class FailoverGroup(ProxyResource):  # pylint: disable=too-many-instance-attribu
         read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         partner_servers: Optional[List["_models.PartnerInfo"]] = None,
         databases: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -6019,7 +6321,7 @@ class FailoverGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -6039,8 +6341,8 @@ class FailoverGroupReadOnlyEndpoint(_serialization.Model):
     }
 
     def __init__(
-        self, *, failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None, **kwargs
-    ):
+        self, *, failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword failover_policy: Failover policy of the read-only endpoint for the failover group.
          Known values are: "Disabled" and "Enabled".
@@ -6082,8 +6384,8 @@ class FailoverGroupReadWriteEndpoint(_serialization.Model):
         *,
         failover_policy: Union[str, "_models.ReadWriteEndpointFailoverPolicy"],
         failover_with_data_loss_grace_period_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_policy: Failover policy of the read-write endpoint for the failover group. If
          failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required. Required.
@@ -6126,8 +6428,8 @@ class FailoverGroupUpdate(_serialization.Model):
         read_write_endpoint: Optional["_models.FailoverGroupReadWriteEndpoint"] = None,
         read_only_endpoint: Optional["_models.FailoverGroupReadOnlyEndpoint"] = None,
         databases: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -6169,7 +6471,7 @@ class ResourceWithWritableName(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -6204,7 +6506,7 @@ class ProxyResourceWithWritableName(ResourceWithWritableName):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, **kwargs):
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -6251,8 +6553,8 @@ class FirewallRule(ProxyResourceWithWritableName):
         name: Optional[str] = None,
         start_ip_address: Optional[str] = None,
         end_ip_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -6280,7 +6582,7 @@ class FirewallRuleList(_serialization.Model):
         "values": {"key": "values", "type": "[FirewallRule]"},
     }
 
-    def __init__(self, *, values: Optional[List["_models.FirewallRule"]] = None, **kwargs):
+    def __init__(self, *, values: Optional[List["_models.FirewallRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword values:
         :paramtype values: list[~azure.mgmt.sql.models.FirewallRule]
@@ -6310,7 +6612,7 @@ class FirewallRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -6361,7 +6663,7 @@ class GeoBackupPolicy(ProxyResource):
         "storage_type": {"key": "properties.storageType", "type": "str"},
     }
 
-    def __init__(self, *, state: Union[str, "_models.GeoBackupPolicyState"], **kwargs):
+    def __init__(self, *, state: Union[str, "_models.GeoBackupPolicyState"], **kwargs: Any) -> None:
         """
         :keyword state: The state of the geo backup policy. Required. Known values are: "Disabled" and
          "Enabled".
@@ -6385,7 +6687,7 @@ class GeoBackupPolicyListResult(_serialization.Model):
         "value": {"key": "value", "type": "[GeoBackupPolicy]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.GeoBackupPolicy"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.GeoBackupPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of geo backup policies.
         :paramtype value: list[~azure.mgmt.sql.models.GeoBackupPolicy]
@@ -6444,8 +6746,8 @@ class ImportExistingDatabaseDefinition(_serialization.Model):
         administrator_login_password: str,
         authentication_type: Optional[str] = None,
         network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_key_type: Storage key type. Required. Known values are: "SharedAccessKey" and
          "StorageAccessKey".
@@ -6495,7 +6797,7 @@ class ImportExportExtensionsOperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -6555,7 +6857,7 @@ class ImportExportExtensionsOperationResult(ProxyResource):
         "error_message": {"key": "properties.errorMessage", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.request_id = None
@@ -6637,7 +6939,7 @@ class ImportExportOperationResult(ProxyResource):  # pylint: disable=too-many-in
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.request_id = None
@@ -6718,8 +7020,8 @@ class ImportNewDatabaseDefinition(_serialization.Model):  # pylint: disable=too-
         max_size_bytes: Optional[str] = None,
         authentication_type: Optional[str] = None,
         network_isolation: Optional["_models.NetworkIsolationSettings"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword database_name: Name of the import database.
         :paramtype database_name: str
@@ -6771,6 +7073,9 @@ class InstanceFailoverGroup(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
+    :ivar secondary_type: Type of the geo-secondary instance. Set 'Standby' if the instance is used
+     as a DR option only. Known values are: "Geo" and "Standby".
+    :vartype secondary_type: str or ~azure.mgmt.sql.models.SecondaryInstanceType
     :ivar read_write_endpoint: Read-write endpoint of the failover group instance.
     :vartype read_write_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadWriteEndpoint
     :ivar read_only_endpoint: Read-only endpoint of the failover group instance.
@@ -6798,6 +7103,7 @@ class InstanceFailoverGroup(ProxyResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "secondary_type": {"key": "properties.secondaryType", "type": "str"},
         "read_write_endpoint": {
             "key": "properties.readWriteEndpoint",
             "type": "InstanceFailoverGroupReadWriteEndpoint",
@@ -6812,13 +7118,17 @@ class InstanceFailoverGroup(ProxyResource):
     def __init__(
         self,
         *,
+        secondary_type: Optional[Union[str, "_models.SecondaryInstanceType"]] = None,
         read_write_endpoint: Optional["_models.InstanceFailoverGroupReadWriteEndpoint"] = None,
         read_only_endpoint: Optional["_models.InstanceFailoverGroupReadOnlyEndpoint"] = None,
         partner_regions: Optional[List["_models.PartnerRegionInfo"]] = None,
         managed_instance_pairs: Optional[List["_models.ManagedInstancePairInfo"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
+        :keyword secondary_type: Type of the geo-secondary instance. Set 'Standby' if the instance is
+         used as a DR option only. Known values are: "Geo" and "Standby".
+        :paramtype secondary_type: str or ~azure.mgmt.sql.models.SecondaryInstanceType
         :keyword read_write_endpoint: Read-write endpoint of the failover group instance.
         :paramtype read_write_endpoint: ~azure.mgmt.sql.models.InstanceFailoverGroupReadWriteEndpoint
         :keyword read_only_endpoint: Read-only endpoint of the failover group instance.
@@ -6829,6 +7139,7 @@ class InstanceFailoverGroup(ProxyResource):
         :paramtype managed_instance_pairs: list[~azure.mgmt.sql.models.ManagedInstancePairInfo]
         """
         super().__init__(**kwargs)
+        self.secondary_type = secondary_type
         self.read_write_endpoint = read_write_endpoint
         self.read_only_endpoint = read_only_endpoint
         self.replication_role = None
@@ -6858,7 +7169,7 @@ class InstanceFailoverGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -6878,8 +7189,8 @@ class InstanceFailoverGroupReadOnlyEndpoint(_serialization.Model):
     }
 
     def __init__(
-        self, *, failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None, **kwargs
-    ):
+        self, *, failover_policy: Optional[Union[str, "_models.ReadOnlyEndpointFailoverPolicy"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword failover_policy: Failover policy of the read-only endpoint for the failover group.
          Known values are: "Disabled" and "Enabled".
@@ -6921,8 +7232,8 @@ class InstanceFailoverGroupReadWriteEndpoint(_serialization.Model):
         *,
         failover_policy: Union[str, "_models.ReadWriteEndpointFailoverPolicy"],
         failover_with_data_loss_grace_period_minutes: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword failover_policy: Failover policy of the read-write endpoint for the failover group. If
          failoverPolicy is Automatic then failoverWithDataLossGracePeriodMinutes is required. Required.
@@ -6995,8 +7306,8 @@ class InstancePool(TrackedResource):
         subnet_id: Optional[str] = None,
         v_cores: Optional[int] = None,
         license_type: Optional[Union[str, "_models.InstancePoolLicenseType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -7049,7 +7360,7 @@ class InstancePoolEditionCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -7094,7 +7405,7 @@ class InstancePoolFamilyCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -7128,7 +7439,7 @@ class InstancePoolListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -7146,7 +7457,7 @@ class InstancePoolUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -7188,7 +7499,7 @@ class InstancePoolVcoresCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -7238,8 +7549,8 @@ class IPv6FirewallRule(ProxyResourceWithWritableName):
         name: Optional[str] = None,
         start_i_pv6_address: Optional[str] = None,
         end_i_pv6_address: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Resource name.
         :paramtype name: str
@@ -7275,7 +7586,7 @@ class IPv6FirewallRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -7317,7 +7628,9 @@ class Job(ProxyResource):
         "schedule": {"key": "properties.schedule", "type": "JobSchedule"},
     }
 
-    def __init__(self, *, description: str = "", schedule: Optional["_models.JobSchedule"] = None, **kwargs):
+    def __init__(
+        self, *, description: str = "", schedule: Optional["_models.JobSchedule"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword description: User-defined description of the job.
         :paramtype description: str
@@ -7382,8 +7695,8 @@ class JobAgent(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
         database_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -7421,7 +7734,7 @@ class JobAgentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -7439,7 +7752,7 @@ class JobAgentUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -7479,7 +7792,7 @@ class JobCredential(ProxyResource):
         "password": {"key": "properties.password", "type": "str"},
     }
 
-    def __init__(self, *, username: Optional[str] = None, password: Optional[str] = None, **kwargs):
+    def __init__(self, *, username: Optional[str] = None, password: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword username: The credential user name.
         :paramtype username: str
@@ -7512,7 +7825,7 @@ class JobCredentialListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -7598,7 +7911,7 @@ class JobExecution(ProxyResource):  # pylint: disable=too-many-instance-attribut
         "target": {"key": "properties.target", "type": "JobExecutionTarget"},
     }
 
-    def __init__(self, *, current_attempts: Optional[int] = None, **kwargs):
+    def __init__(self, *, current_attempts: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword current_attempts: Number of times the job execution has been attempted.
         :paramtype current_attempts: int
@@ -7640,7 +7953,7 @@ class JobExecutionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -7673,7 +7986,7 @@ class JobExecutionTarget(_serialization.Model):
         "database_name": {"key": "databaseName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -7702,7 +8015,7 @@ class JobListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -7741,8 +8054,8 @@ class JobSchedule(_serialization.Model):
         type: Union[str, "_models.JobScheduleType"] = "Once",
         enabled: Optional[bool] = None,
         interval: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword start_time: Schedule start time.
         :paramtype start_time: ~datetime.datetime
@@ -7819,8 +8132,8 @@ class JobStep(ProxyResource):
         action: Optional["_models.JobStepAction"] = None,
         output: Optional["_models.JobStepOutput"] = None,
         execution_options: Optional["_models.JobStepExecutionOptions"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword step_id: The job step's index within the job. If not specified when creating the job
          step, it will be created as the last step. If not specified when updating the job step, the
@@ -7877,8 +8190,8 @@ class JobStepAction(_serialization.Model):
         value: str,
         type: Union[str, "_models.JobStepActionType"] = "TSql",
         source: Union[str, "_models.JobStepActionSource"] = "Inline",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of action being executed by the job step. "TSql"
         :paramtype type: str or ~azure.mgmt.sql.models.JobStepActionType
@@ -7927,8 +8240,8 @@ class JobStepExecutionOptions(_serialization.Model):
         initial_retry_interval_seconds: int = 1,
         maximum_retry_interval_seconds: int = 120,
         retry_interval_backoff_multiplier: float = 2,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword timeout_seconds: Execution timeout for the job step.
         :paramtype timeout_seconds: int
@@ -7973,7 +8286,7 @@ class JobStepListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8033,8 +8346,8 @@ class JobStepOutput(_serialization.Model):
         subscription_id: Optional[str] = None,
         resource_group_name: Optional[str] = None,
         schema_name: str = "dbo",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The output destination type. "SqlDatabase"
         :paramtype type: str or ~azure.mgmt.sql.models.JobStepOutputType
@@ -8066,7 +8379,8 @@ class JobStepOutput(_serialization.Model):
 
 
 class JobTarget(_serialization.Model):
-    """A job target, for example a specific database or a container of databases that is evaluated during job execution.
+    """A job target, for example a specific database or a container of databases that is evaluated
+    during job execution.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8113,8 +8427,8 @@ class JobTarget(_serialization.Model):
         elastic_pool_name: Optional[str] = None,
         shard_map_name: Optional[str] = None,
         refresh_credential: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword membership_type: Whether the target is included or excluded from the group. Known
          values are: "Include" and "Exclude".
@@ -8172,7 +8486,7 @@ class JobTargetGroup(ProxyResource):
         "members": {"key": "properties.members", "type": "[JobTarget]"},
     }
 
-    def __init__(self, *, members: Optional[List["_models.JobTarget"]] = None, **kwargs):
+    def __init__(self, *, members: Optional[List["_models.JobTarget"]] = None, **kwargs: Any) -> None:
         """
         :keyword members: Members of the target group.
         :paramtype members: list[~azure.mgmt.sql.models.JobTarget]
@@ -8202,7 +8516,7 @@ class JobTargetGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8234,7 +8548,7 @@ class JobVersion(ProxyResource):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
 
@@ -8260,7 +8574,7 @@ class JobVersionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8301,7 +8615,7 @@ class LedgerDigestUploads(ProxyResource):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, digest_storage_endpoint: Optional[str] = None, **kwargs):
+    def __init__(self, *, digest_storage_endpoint: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword digest_storage_endpoint: The digest storage endpoint, which must be either an Azure
          blob storage endpoint or an URI for Azure Confidential Ledger.
@@ -8333,7 +8647,7 @@ class LedgerDigestUploadsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8365,7 +8679,7 @@ class LicenseTypeCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -8413,7 +8727,7 @@ class LocationCapabilities(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -8455,7 +8769,9 @@ class LogicalDatabaseTransparentDataEncryption(ProxyResource):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.TransparentDataEncryptionState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.TransparentDataEncryptionState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the transparent data encryption. Known values are:
          "Enabled" and "Disabled".
@@ -8486,7 +8802,7 @@ class LogicalDatabaseTransparentDataEncryptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8514,7 +8830,7 @@ class LogicalServerAdvancedThreatProtectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8542,7 +8858,7 @@ class LogicalServerSecurityAlertPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8571,7 +8887,7 @@ class LogSizeCapability(_serialization.Model):
         "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.limit = None
@@ -8641,8 +8957,8 @@ class LongTermRetentionBackup(ProxyResource):  # pylint: disable=too-many-instan
         self,
         *,
         requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword requested_backup_storage_redundancy: The storage redundancy type of the backup. Known
          values are: "Geo", "Local", "Zone", and "GeoZone".
@@ -8681,7 +8997,7 @@ class LongTermRetentionBackupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8743,7 +9059,7 @@ class LongTermRetentionBackupOperationResult(ProxyResource):
         "message": {"key": "properties.message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.request_id = None
@@ -8799,8 +9115,8 @@ class LongTermRetentionPolicy(ProxyResource):
         monthly_retention: Optional[str] = None,
         yearly_retention: Optional[str] = None,
         week_of_year: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
         :paramtype weekly_retention: str
@@ -8840,7 +9156,7 @@ class LongTermRetentionPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -8877,7 +9193,7 @@ class MaintenanceConfigurationCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -8953,8 +9269,8 @@ class MaintenanceWindowOptions(ProxyResource):
         min_cycles: Optional[int] = None,
         time_granularity_in_minutes: Optional[int] = None,
         allow_multiple_maintenance_windows_per_cycle: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Whether maintenance windows are enabled for the database.
         :paramtype is_enabled: bool
@@ -9011,7 +9327,9 @@ class MaintenanceWindows(ProxyResource):
         "time_ranges": {"key": "properties.timeRanges", "type": "[MaintenanceWindowTimeRange]"},
     }
 
-    def __init__(self, *, time_ranges: Optional[List["_models.MaintenanceWindowTimeRange"]] = None, **kwargs):
+    def __init__(
+        self, *, time_ranges: Optional[List["_models.MaintenanceWindowTimeRange"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword time_ranges:
         :paramtype time_ranges: list[~azure.mgmt.sql.models.MaintenanceWindowTimeRange]
@@ -9044,8 +9362,8 @@ class MaintenanceWindowTimeRange(_serialization.Model):
         day_of_week: Optional[Union[str, "_models.DayOfWeek"]] = None,
         start_time: Optional[str] = None,
         duration: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword day_of_week: Day of maintenance window. Known values are: "Sunday", "Monday",
          "Tuesday", "Wednesday", "Thursday", "Friday", and "Saturday".
@@ -9090,7 +9408,7 @@ class ManagedBackupShortTermRetentionPolicy(ProxyResource):
         "retention_days": {"key": "properties.retentionDays", "type": "int"},
     }
 
-    def __init__(self, *, retention_days: Optional[int] = None, **kwargs):
+    def __init__(self, *, retention_days: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword retention_days: The backup retention period in days. This is how many days
          Point-in-Time Restore will be supported.
@@ -9121,7 +9439,7 @@ class ManagedBackupShortTermRetentionPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -9148,7 +9466,8 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
     :ivar collation: Collation of the managed database.
     :vartype collation: str
     :ivar status: Status of the database. Known values are: "Online", "Offline", "Shutdown",
-     "Creating", "Inaccessible", "Restoring", and "Updating".
+     "Creating", "Inaccessible", "Restoring", "Updating", "Stopping", "Stopped", "Starting",
+     "DbMoving", and "DbCopying".
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: ~datetime.datetime
@@ -9180,9 +9499,15 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
     :ivar source_database_id: The resource identifier of the source database associated with create
      operation of this database.
     :vartype source_database_id: str
+    :ivar cross_subscription_source_database_id: The resource identifier of the cross-subscription
+     source database associated with create operation of this database.
+    :vartype cross_subscription_source_database_id: str
     :ivar restorable_dropped_database_id: The restorable dropped database resource id to restore
      when creating this database.
     :vartype restorable_dropped_database_id: str
+    :ivar cross_subscription_restorable_dropped_database_id: The restorable cross-subscription
+     dropped database resource id to restore when creating this database.
+    :vartype cross_subscription_restorable_dropped_database_id: str
     :ivar storage_container_identity: Conditional. If createMode is RestoreExternalBackup, this
      value is used. Specifies the identity used for storage container authentication. Can be
      'SharedAccessSignature' or 'ManagedIdentity'; if not specified 'SharedAccessSignature' is
@@ -9205,6 +9530,9 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype auto_complete_restore: bool
     :ivar last_backup_name: Last backup file name for restore of this managed database.
     :vartype last_backup_name: str
+    :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
+     cross-subscription restore.
+    :vartype cross_subscription_target_managed_instance_id: str
     """
 
     _validation = {
@@ -9235,7 +9563,12 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         "create_mode": {"key": "properties.createMode", "type": "str"},
         "storage_container_uri": {"key": "properties.storageContainerUri", "type": "str"},
         "source_database_id": {"key": "properties.sourceDatabaseId", "type": "str"},
+        "cross_subscription_source_database_id": {"key": "properties.crossSubscriptionSourceDatabaseId", "type": "str"},
         "restorable_dropped_database_id": {"key": "properties.restorableDroppedDatabaseId", "type": "str"},
+        "cross_subscription_restorable_dropped_database_id": {
+            "key": "properties.crossSubscriptionRestorableDroppedDatabaseId",
+            "type": "str",
+        },
         "storage_container_identity": {"key": "properties.storageContainerIdentity", "type": "str"},
         "storage_container_sas_token": {"key": "properties.storageContainerSasToken", "type": "str"},
         "failover_group_id": {"key": "properties.failoverGroupId", "type": "str"},
@@ -9246,9 +9579,13 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         },
         "auto_complete_restore": {"key": "properties.autoCompleteRestore", "type": "bool"},
         "last_backup_name": {"key": "properties.lastBackupName", "type": "str"},
+        "cross_subscription_target_managed_instance_id": {
+            "key": "properties.crossSubscriptionTargetManagedInstanceId",
+            "type": "str",
+        },
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -9259,15 +9596,18 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         create_mode: Optional[Union[str, "_models.ManagedDatabaseCreateMode"]] = None,
         storage_container_uri: Optional[str] = None,
         source_database_id: Optional[str] = None,
+        cross_subscription_source_database_id: Optional[str] = None,
         restorable_dropped_database_id: Optional[str] = None,
+        cross_subscription_restorable_dropped_database_id: Optional[str] = None,
         storage_container_identity: Optional[str] = None,
         storage_container_sas_token: Optional[str] = None,
         recoverable_database_id: Optional[str] = None,
         long_term_retention_backup_resource_id: Optional[str] = None,
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
-        **kwargs
-    ):
+        cross_subscription_target_managed_instance_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -9300,9 +9640,15 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         :keyword source_database_id: The resource identifier of the source database associated with
          create operation of this database.
         :paramtype source_database_id: str
+        :keyword cross_subscription_source_database_id: The resource identifier of the
+         cross-subscription source database associated with create operation of this database.
+        :paramtype cross_subscription_source_database_id: str
         :keyword restorable_dropped_database_id: The restorable dropped database resource id to restore
          when creating this database.
         :paramtype restorable_dropped_database_id: str
+        :keyword cross_subscription_restorable_dropped_database_id: The restorable cross-subscription
+         dropped database resource id to restore when creating this database.
+        :paramtype cross_subscription_restorable_dropped_database_id: str
         :keyword storage_container_identity: Conditional. If createMode is RestoreExternalBackup, this
          value is used. Specifies the identity used for storage container authentication. Can be
          'SharedAccessSignature' or 'ManagedIdentity'; if not specified 'SharedAccessSignature' is
@@ -9322,6 +9668,9 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype auto_complete_restore: bool
         :keyword last_backup_name: Last backup file name for restore of this managed database.
         :paramtype last_backup_name: str
+        :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
+         cross-subscription restore.
+        :paramtype cross_subscription_target_managed_instance_id: str
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.collation = collation
@@ -9334,7 +9683,9 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         self.create_mode = create_mode
         self.storage_container_uri = storage_container_uri
         self.source_database_id = source_database_id
+        self.cross_subscription_source_database_id = cross_subscription_source_database_id
         self.restorable_dropped_database_id = restorable_dropped_database_id
+        self.cross_subscription_restorable_dropped_database_id = cross_subscription_restorable_dropped_database_id
         self.storage_container_identity = storage_container_identity
         self.storage_container_sas_token = storage_container_sas_token
         self.failover_group_id = None
@@ -9342,6 +9693,7 @@ class ManagedDatabase(TrackedResource):  # pylint: disable=too-many-instance-att
         self.long_term_retention_backup_resource_id = long_term_retention_backup_resource_id
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
+        self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
 
 
 class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
@@ -9382,7 +9734,9 @@ class ManagedDatabaseAdvancedThreatProtection(ProxyResource):
         "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
          disabled or a state has not been applied yet on the specific database or server. Known values
@@ -9416,7 +9770,7 @@ class ManagedDatabaseAdvancedThreatProtectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -9444,7 +9798,7 @@ class ManagedDatabaseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -9468,7 +9822,7 @@ class ManagedDatabaseMoveDefinition(_serialization.Model):
         "destination_managed_database_id": {"key": "destinationManagedDatabaseId", "type": "str"},
     }
 
-    def __init__(self, *, destination_managed_database_id: str, **kwargs):
+    def __init__(self, *, destination_managed_database_id: str, **kwargs: Any) -> None:
         """
         :keyword destination_managed_database_id: The destination managed database ID. Required.
         :paramtype destination_managed_database_id: str
@@ -9498,7 +9852,7 @@ class ManagedDatabaseMoveOperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -9595,7 +9949,7 @@ class ManagedDatabaseMoveOperationResult(ProxyResource):  # pylint: disable=too-
         "is_user_error": {"key": "properties.isUserError", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.operation = None
@@ -9653,7 +10007,7 @@ class ManagedDatabaseRestoreDetailsBackupSetProperties(_serialization.Model):
         "restore_finished_timestamp_utc": {"key": "restoreFinishedTimestampUtc", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -9793,7 +10147,7 @@ class ManagedDatabaseRestoreDetailsResult(ProxyResource):  # pylint: disable=too
         },
     }
 
-    def __init__(self, **kwargs):  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
         """ """
         super().__init__(**kwargs)
         self.type_properties_type = None
@@ -9837,7 +10191,7 @@ class ManagedDatabaseRestoreDetailsUnrestorableFileProperties(_serialization.Mod
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -9910,8 +10264,8 @@ class ManagedDatabaseSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         retention_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
          policy has not been applied yet on the specific database. Known values are: "New", "Enabled",
@@ -9968,7 +10322,7 @@ class ManagedDatabaseSecurityAlertPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -10000,8 +10354,8 @@ class ManagedDatabaseStartMoveDefinition(_serialization.Model):
         *,
         destination_managed_database_id: str,
         operation_mode: Optional[Union[str, "_models.MoveOperationMode"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword destination_managed_database_id: The destination managed database ID. Required.
         :paramtype destination_managed_database_id: str
@@ -10023,7 +10377,8 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :ivar collation: Collation of the managed database.
     :vartype collation: str
     :ivar status: Status of the database. Known values are: "Online", "Offline", "Shutdown",
-     "Creating", "Inaccessible", "Restoring", and "Updating".
+     "Creating", "Inaccessible", "Restoring", "Updating", "Stopping", "Stopped", "Starting",
+     "DbMoving", and "DbCopying".
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: ~datetime.datetime
@@ -10055,9 +10410,15 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :ivar source_database_id: The resource identifier of the source database associated with create
      operation of this database.
     :vartype source_database_id: str
+    :ivar cross_subscription_source_database_id: The resource identifier of the cross-subscription
+     source database associated with create operation of this database.
+    :vartype cross_subscription_source_database_id: str
     :ivar restorable_dropped_database_id: The restorable dropped database resource id to restore
      when creating this database.
     :vartype restorable_dropped_database_id: str
+    :ivar cross_subscription_restorable_dropped_database_id: The restorable cross-subscription
+     dropped database resource id to restore when creating this database.
+    :vartype cross_subscription_restorable_dropped_database_id: str
     :ivar storage_container_identity: Conditional. If createMode is RestoreExternalBackup, this
      value is used. Specifies the identity used for storage container authentication. Can be
      'SharedAccessSignature' or 'ManagedIdentity'; if not specified 'SharedAccessSignature' is
@@ -10080,6 +10441,9 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :vartype auto_complete_restore: bool
     :ivar last_backup_name: Last backup file name for restore of this managed database.
     :vartype last_backup_name: str
+    :ivar cross_subscription_target_managed_instance_id: Target managed instance id used in
+     cross-subscription restore.
+    :vartype cross_subscription_target_managed_instance_id: str
     """
 
     _validation = {
@@ -10102,7 +10466,12 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         "create_mode": {"key": "properties.createMode", "type": "str"},
         "storage_container_uri": {"key": "properties.storageContainerUri", "type": "str"},
         "source_database_id": {"key": "properties.sourceDatabaseId", "type": "str"},
+        "cross_subscription_source_database_id": {"key": "properties.crossSubscriptionSourceDatabaseId", "type": "str"},
         "restorable_dropped_database_id": {"key": "properties.restorableDroppedDatabaseId", "type": "str"},
+        "cross_subscription_restorable_dropped_database_id": {
+            "key": "properties.crossSubscriptionRestorableDroppedDatabaseId",
+            "type": "str",
+        },
         "storage_container_identity": {"key": "properties.storageContainerIdentity", "type": "str"},
         "storage_container_sas_token": {"key": "properties.storageContainerSasToken", "type": "str"},
         "failover_group_id": {"key": "properties.failoverGroupId", "type": "str"},
@@ -10113,6 +10482,10 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         },
         "auto_complete_restore": {"key": "properties.autoCompleteRestore", "type": "bool"},
         "last_backup_name": {"key": "properties.lastBackupName", "type": "str"},
+        "cross_subscription_target_managed_instance_id": {
+            "key": "properties.crossSubscriptionTargetManagedInstanceId",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -10125,15 +10498,18 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         create_mode: Optional[Union[str, "_models.ManagedDatabaseCreateMode"]] = None,
         storage_container_uri: Optional[str] = None,
         source_database_id: Optional[str] = None,
+        cross_subscription_source_database_id: Optional[str] = None,
         restorable_dropped_database_id: Optional[str] = None,
+        cross_subscription_restorable_dropped_database_id: Optional[str] = None,
         storage_container_identity: Optional[str] = None,
         storage_container_sas_token: Optional[str] = None,
         recoverable_database_id: Optional[str] = None,
         long_term_retention_backup_resource_id: Optional[str] = None,
         auto_complete_restore: Optional[bool] = None,
         last_backup_name: Optional[str] = None,
-        **kwargs
-    ):
+        cross_subscription_target_managed_instance_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -10164,9 +10540,15 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :keyword source_database_id: The resource identifier of the source database associated with
          create operation of this database.
         :paramtype source_database_id: str
+        :keyword cross_subscription_source_database_id: The resource identifier of the
+         cross-subscription source database associated with create operation of this database.
+        :paramtype cross_subscription_source_database_id: str
         :keyword restorable_dropped_database_id: The restorable dropped database resource id to restore
          when creating this database.
         :paramtype restorable_dropped_database_id: str
+        :keyword cross_subscription_restorable_dropped_database_id: The restorable cross-subscription
+         dropped database resource id to restore when creating this database.
+        :paramtype cross_subscription_restorable_dropped_database_id: str
         :keyword storage_container_identity: Conditional. If createMode is RestoreExternalBackup, this
          value is used. Specifies the identity used for storage container authentication. Can be
          'SharedAccessSignature' or 'ManagedIdentity'; if not specified 'SharedAccessSignature' is
@@ -10186,6 +10568,9 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :paramtype auto_complete_restore: bool
         :keyword last_backup_name: Last backup file name for restore of this managed database.
         :paramtype last_backup_name: str
+        :keyword cross_subscription_target_managed_instance_id: Target managed instance id used in
+         cross-subscription restore.
+        :paramtype cross_subscription_target_managed_instance_id: str
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -10199,7 +10584,9 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         self.create_mode = create_mode
         self.storage_container_uri = storage_container_uri
         self.source_database_id = source_database_id
+        self.cross_subscription_source_database_id = cross_subscription_source_database_id
         self.restorable_dropped_database_id = restorable_dropped_database_id
+        self.cross_subscription_restorable_dropped_database_id = cross_subscription_restorable_dropped_database_id
         self.storage_container_identity = storage_container_identity
         self.storage_container_sas_token = storage_container_sas_token
         self.failover_group_id = None
@@ -10207,6 +10594,7 @@ class ManagedDatabaseUpdate(_serialization.Model):  # pylint: disable=too-many-i
         self.long_term_retention_backup_resource_id = long_term_retention_backup_resource_id
         self.auto_complete_restore = auto_complete_restore
         self.last_backup_name = last_backup_name
+        self.cross_subscription_target_managed_instance_id = cross_subscription_target_managed_instance_id
 
 
 class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-attributes
@@ -10228,8 +10616,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype tags: dict[str, str]
     :ivar identity: The Azure Active Directory identity of the managed instance.
     :vartype identity: ~azure.mgmt.sql.models.ResourceIdentity
-    :ivar sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
-     BC_Gen5.
+    :ivar sku: Managed instance SKU. Allowed values for sku.name: GP_Gen5, GP_G8IM, GP_G8IH,
+     BC_Gen5, BC_G8IM, BC_G8IH.
     :vartype sku: ~azure.mgmt.sql.models.Sku
     :ivar provisioning_state: Known values are: "Creating", "Deleting", "Updating", "Unknown",
      "Succeeded", "Failed", "Accepted", "Created", "Deleted", "Unrecognized", "Running", "Canceled",
@@ -10262,8 +10650,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
     :ivar v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
     :vartype v_cores: int
-    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-     Increments of 32 GB allowed only.
+    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+     Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+     number of vCores.
     :vartype storage_size_in_gb: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
@@ -10320,7 +10709,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
     :vartype primary_user_assigned_identity_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory administrator of the server.
+    :ivar administrators: The Azure Active Directory administrator of the instance. This can only
+     be used at instance create time. If used for instance update, it will be ignored or it will
+     result in an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
     :ivar service_principal: The managed instance's service principal.
     :vartype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -10411,8 +10802,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         key_id: Optional[str] = None,
         administrators: Optional["_models.ManagedInstanceExternalAdministrator"] = None,
         service_principal: Optional["_models.ServicePrincipal"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -10420,8 +10811,8 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype tags: dict[str, str]
         :keyword identity: The Azure Active Directory identity of the managed instance.
         :paramtype identity: ~azure.mgmt.sql.models.ResourceIdentity
-        :keyword sku: Managed instance SKU. Allowed values for sku.name: GP_Gen4, GP_Gen5, BC_Gen4,
-         BC_Gen5.
+        :keyword sku: Managed instance SKU. Allowed values for sku.name: GP_Gen5, GP_G8IM, GP_G8IH,
+         BC_Gen5, BC_G8IM, BC_G8IH.
         :paramtype sku: ~azure.mgmt.sql.models.Sku
         :keyword managed_instance_create_mode: Specifies the mode of database creation.
 
@@ -10445,8 +10836,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
         :keyword v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
         :paramtype v_cores: int
-        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-         Increments of 32 GB allowed only.
+        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+         Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+         number of vCores.
         :paramtype storage_size_in_gb: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
@@ -10493,7 +10885,9 @@ class ManagedInstance(TrackedResource):  # pylint: disable=too-many-instance-att
         :paramtype primary_user_assigned_identity_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory administrator of the server.
+        :keyword administrators: The Azure Active Directory administrator of the instance. This can
+         only be used at instance create time. If used for instance update, it will be ignored or it
+         will result in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
         :keyword service_principal: The managed instance's service principal.
         :paramtype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -10576,8 +10970,8 @@ class ManagedInstanceAdministrator(ProxyResource):
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword administrator_type: Type of the managed instance administrator. "ActiveDirectory"
         :paramtype administrator_type: str or ~azure.mgmt.sql.models.ManagedInstanceAdministratorType
@@ -10616,7 +11010,7 @@ class ManagedInstanceAdministratorListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -10661,7 +11055,9 @@ class ManagedInstanceAdvancedThreatProtection(ProxyResource):
         "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
          disabled or a state has not been applied yet on the specific database or server. Known values
@@ -10695,7 +11091,7 @@ class ManagedInstanceAdvancedThreatProtectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -10730,7 +11126,7 @@ class ManagedInstanceAzureADOnlyAuthentication(ProxyResource):
         "azure_ad_only_authentication": {"key": "properties.azureADOnlyAuthentication", "type": "bool"},
     }
 
-    def __init__(self, *, azure_ad_only_authentication: Optional[bool] = None, **kwargs):
+    def __init__(self, *, azure_ad_only_authentication: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
         :paramtype azure_ad_only_authentication: bool
@@ -10760,7 +11156,7 @@ class ManagedInstanceAzureADOnlyAuthListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -10816,8 +11212,8 @@ class ManagedInstanceDtc(ProxyResource):
         dtc_enabled: Optional[bool] = None,
         security_settings: Optional["_models.ManagedInstanceDtcSecuritySettings"] = None,
         external_dns_suffix_search_list: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dtc_enabled: Active status of managed instance DTC.
         :paramtype dtc_enabled: bool
@@ -10856,7 +11252,7 @@ class ManagedInstanceDtcListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -10902,8 +11298,8 @@ class ManagedInstanceDtcSecuritySettings(_serialization.Model):
         sna_lu6_point2_transactions_enabled: Optional[bool] = None,
         xa_transactions_default_timeout: Optional[int] = None,
         xa_transactions_maximum_timeout: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword transaction_manager_communication_settings: Transaction Manager communication settings
          of managed instance DTC.
@@ -10950,8 +11346,8 @@ class ManagedInstanceDtcTransactionManagerCommunicationSettings(_serialization.M
         allow_inbound_enabled: Optional[bool] = None,
         allow_outbound_enabled: Optional[bool] = None,
         authentication: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword allow_inbound_enabled: Allow Inbound traffic to managed instance DTC.
         :paramtype allow_inbound_enabled: bool
@@ -11004,7 +11400,7 @@ class ManagedInstanceEditionCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -11072,8 +11468,8 @@ class ManagedInstanceEncryptionProtector(ProxyResource):
         server_key_name: Optional[str] = None,
         server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         auto_rotation_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server_key_name: The name of the managed instance key.
         :paramtype server_key_name: str
@@ -11113,7 +11509,7 @@ class ManagedInstanceEncryptionProtectorListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -11156,8 +11552,8 @@ class ManagedInstanceExternalAdministrator(_serialization.Model):
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         azure_ad_only_authentication: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword administrator_type: Type of the sever administrator. "ActiveDirectory"
         :paramtype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
@@ -11219,7 +11615,7 @@ class ManagedInstanceFamilyCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -11287,8 +11683,8 @@ class ManagedInstanceKey(ProxyResource):
         *,
         server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server_key_type: The key type like 'ServiceManaged', 'AzureKeyVault'. Known values
          are: "ServiceManaged" and "AzureKeyVault".
@@ -11327,7 +11723,7 @@ class ManagedInstanceKeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -11355,7 +11751,7 @@ class ManagedInstanceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -11416,7 +11812,7 @@ class ManagedInstanceLongTermRetentionBackup(ProxyResource):
         "backup_storage_redundancy": {"key": "properties.backupStorageRedundancy", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.managed_instance_name = None
@@ -11449,7 +11845,7 @@ class ManagedInstanceLongTermRetentionBackupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -11500,8 +11896,8 @@ class ManagedInstanceLongTermRetentionPolicy(ProxyResource):
         monthly_retention: Optional[str] = None,
         yearly_retention: Optional[str] = None,
         week_of_year: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword weekly_retention: The weekly retention policy for an LTR backup in an ISO 8601 format.
         :paramtype weekly_retention: str
@@ -11541,7 +11937,7 @@ class ManagedInstanceLongTermRetentionPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -11573,7 +11969,7 @@ class ManagedInstanceMaintenanceConfigurationCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -11674,7 +12070,7 @@ class ManagedInstanceOperation(ProxyResource):  # pylint: disable=too-many-insta
         "operation_steps": {"key": "properties.operationSteps", "type": "ManagedInstanceOperationSteps"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.managed_instance_name = None
@@ -11715,7 +12111,7 @@ class ManagedInstanceOperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -11743,7 +12139,7 @@ class ManagedInstanceOperationParametersPair(_serialization.Model):
         "requested_parameters": {"key": "requestedParameters", "type": "UpsertManagedServerOperationParameters"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.current_parameters = None
@@ -11775,7 +12171,7 @@ class ManagedInstanceOperationSteps(_serialization.Model):
         "steps_list": {"key": "stepsList", "type": "[UpsertManagedServerOperationStep]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.total_steps = None
@@ -11802,8 +12198,8 @@ class ManagedInstancePairInfo(_serialization.Model):
         *,
         primary_managed_instance_id: Optional[str] = None,
         partner_managed_instance_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword primary_managed_instance_id: Id of Primary Managed Instance in pair.
         :paramtype primary_managed_instance_id: str
@@ -11836,7 +12232,7 @@ class ManagedInstancePecProperty(_serialization.Model):
         "properties": {"key": "properties", "type": "ManagedInstancePrivateEndpointConnectionProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -11890,8 +12286,8 @@ class ManagedInstancePrivateEndpointConnection(ProxyResource):
         private_link_service_connection_state: Optional[
             "_models.ManagedInstancePrivateLinkServiceConnectionStateProperty"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
         :paramtype private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
@@ -11927,7 +12323,7 @@ class ManagedInstancePrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -11969,8 +12365,8 @@ class ManagedInstancePrivateEndpointConnectionProperties(_serialization.Model):
         private_link_service_connection_state: Optional[
             "_models.ManagedInstancePrivateLinkServiceConnectionStateProperty"
         ] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
         :paramtype private_endpoint: ~azure.mgmt.sql.models.ManagedInstancePrivateEndpointProperty
@@ -11996,7 +12392,7 @@ class ManagedInstancePrivateEndpointProperty(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource id of the private endpoint.
         :paramtype id: str
@@ -12034,7 +12430,7 @@ class ManagedInstancePrivateLink(ProxyResource):
         "properties": {"key": "properties", "type": "ManagedInstancePrivateLinkProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.properties = None
@@ -12061,7 +12457,7 @@ class ManagedInstancePrivateLinkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -12089,7 +12485,7 @@ class ManagedInstancePrivateLinkProperties(_serialization.Model):
         "required_members": {"key": "requiredMembers", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.group_id = None
@@ -12123,7 +12519,7 @@ class ManagedInstancePrivateLinkServiceConnectionStateProperty(_serialization.Mo
         "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(self, *, status: str, description: str, **kwargs):
+    def __init__(self, *, status: str, description: str, **kwargs: Any) -> None:
         """
         :keyword status: The private link service connection status. Required.
         :paramtype status: str
@@ -12164,7 +12560,7 @@ class ManagedInstanceQuery(ProxyResource):
         "query_text": {"key": "properties.queryText", "type": "str"},
     }
 
-    def __init__(self, *, query_text: Optional[str] = None, **kwargs):
+    def __init__(self, *, query_text: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword query_text: Query text.
         :paramtype query_text: str
@@ -12194,7 +12590,7 @@ class ManagedInstanceQueryStatistics(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -12243,8 +12639,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :vartype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
     :ivar v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
     :vartype v_cores: int
-    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-     Increments of 32 GB allowed only.
+    :ivar storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+     Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+     number of vCores.
     :vartype storage_size_in_gb: int
     :ivar collation: Collation of the managed instance.
     :vartype collation: str
@@ -12301,7 +12698,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
     :vartype primary_user_assigned_identity_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory administrator of the server.
+    :ivar administrators: The Azure Active Directory administrator of the instance. This can only
+     be used at instance create time. If used for instance update, it will be ignored or it will
+     result in an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
     :ivar service_principal: The managed instance's service principal.
     :vartype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -12383,8 +12782,8 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         key_id: Optional[str] = None,
         administrators: Optional["_models.ManagedInstanceExternalAdministrator"] = None,
         service_principal: Optional["_models.ServicePrincipal"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: Managed instance sku.
         :paramtype sku: ~azure.mgmt.sql.models.Sku
@@ -12414,8 +12813,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :paramtype license_type: str or ~azure.mgmt.sql.models.ManagedInstanceLicenseType
         :keyword v_cores: The number of vCores. Allowed values: 8, 16, 24, 32, 40, 64, 80.
         :paramtype v_cores: int
-        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 8192.
-         Increments of 32 GB allowed only.
+        :keyword storage_size_in_gb: Storage size in GB. Minimum value: 32. Maximum value: 16384.
+         Increments of 32 GB allowed only. Maximum value depends on the selected hardware family and
+         number of vCores.
         :paramtype storage_size_in_gb: int
         :keyword collation: Collation of the managed instance.
         :paramtype collation: str
@@ -12462,7 +12862,9 @@ class ManagedInstanceUpdate(_serialization.Model):  # pylint: disable=too-many-i
         :paramtype primary_user_assigned_identity_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory administrator of the server.
+        :keyword administrators: The Azure Active Directory administrator of the instance. This can
+         only be used at instance create time. If used for instance update, it will be ignored or it
+         will result in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ManagedInstanceExternalAdministrator
         :keyword service_principal: The managed instance's service principal.
         :paramtype service_principal: ~azure.mgmt.sql.models.ServicePrincipal
@@ -12557,7 +12959,7 @@ class ManagedInstanceVcoresCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -12611,7 +13013,7 @@ class ManagedInstanceVersionCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -12679,8 +13081,8 @@ class ManagedInstanceVulnerabilityAssessment(ProxyResource):
         storage_container_sas_key: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         recurring_scans: Optional["_models.VulnerabilityAssessmentRecurringScansProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
          https://myStorage.blob.core.windows.net/VaScans/).
@@ -12727,7 +13129,80 @@ class ManagedInstanceVulnerabilityAssessmentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class ManagedLedgerDigestUploads(ProxyResource):
+    """Azure SQL Database ledger digest upload settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar digest_storage_endpoint: The digest storage endpoint, which must be either an Azure blob
+     storage endpoint or an URI for Azure Confidential Ledger.
+    :vartype digest_storage_endpoint: str
+    :ivar state: Specifies the state of ledger digest upload. Known values are: "Enabled" and
+     "Disabled".
+    :vartype state: str or ~azure.mgmt.sql.models.ManagedLedgerDigestUploadsState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "digest_storage_endpoint": {"key": "properties.digestStorageEndpoint", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+    }
+
+    def __init__(self, *, digest_storage_endpoint: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword digest_storage_endpoint: The digest storage endpoint, which must be either an Azure
+         blob storage endpoint or an URI for Azure Confidential Ledger.
+        :paramtype digest_storage_endpoint: str
+        """
+        super().__init__(**kwargs)
+        self.digest_storage_endpoint = digest_storage_endpoint
+        self.state = None
+
+
+class ManagedLedgerDigestUploadsListResult(_serialization.Model):
+    """A list of ledger digest upload settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ManagedLedgerDigestUploads]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ManagedLedgerDigestUploads]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -12767,7 +13242,7 @@ class ManagedServerDnsAlias(ProxyResource):
         "public_azure_dns_record": {"key": "properties.publicAzureDnsRecord", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.azure_dns_record = None
@@ -12792,7 +13267,7 @@ class ManagedServerDnsAliasAcquisition(_serialization.Model):
         "old_managed_server_dns_alias_resource_id": {"key": "oldManagedServerDnsAliasResourceId", "type": "str"},
     }
 
-    def __init__(self, *, old_managed_server_dns_alias_resource_id: str, **kwargs):
+    def __init__(self, *, old_managed_server_dns_alias_resource_id: str, **kwargs: Any) -> None:
         """
         :keyword old_managed_server_dns_alias_resource_id: The resource ID of the managed server DNS
          alias that will be acquired to point to this managed server instead. Required.
@@ -12813,7 +13288,7 @@ class ManagedServerDnsAliasCreation(_serialization.Model):
         "create_dns_record": {"key": "createDnsRecord", "type": "bool"},
     }
 
-    def __init__(self, *, create_dns_record: bool = True, **kwargs):
+    def __init__(self, *, create_dns_record: bool = True, **kwargs: Any) -> None:
         """
         :keyword create_dns_record: Whether or not DNS record should be created for this alias.
         :paramtype create_dns_record: bool
@@ -12843,7 +13318,7 @@ class ManagedServerDnsAliasListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -12920,8 +13395,8 @@ class ManagedServerSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-ma
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         retention_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
          policy has not been applied yet on the specific database. Known values are: "Enabled" and
@@ -12979,7 +13454,7 @@ class ManagedServerSecurityAlertPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -13015,7 +13490,9 @@ class ManagedTransparentDataEncryption(ProxyResource):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.TransparentDataEncryptionState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.TransparentDataEncryptionState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the transparent data encryption. Known values are:
          "Enabled" and "Disabled".
@@ -13046,7 +13523,7 @@ class ManagedTransparentDataEncryptionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -13075,7 +13552,7 @@ class MaxSizeCapability(_serialization.Model):
         "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.limit = None
@@ -13120,7 +13597,7 @@ class MaxSizeRangeCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -13172,7 +13649,7 @@ class Metric(_serialization.Model):
         "metric_values": {"key": "metricValues", "type": "[MetricValue]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.start_time = None
@@ -13204,7 +13681,7 @@ class MetricAvailability(_serialization.Model):
         "time_grain": {"key": "timeGrain", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.retention = None
@@ -13246,7 +13723,7 @@ class MetricDefinition(_serialization.Model):
         "metric_availabilities": {"key": "metricAvailabilities", "type": "[MetricAvailability]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -13273,7 +13750,7 @@ class MetricDefinitionListResult(_serialization.Model):
         "value": {"key": "value", "type": "[MetricDefinition]"},
     }
 
-    def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs):
+    def __init__(self, *, value: List["_models.MetricDefinition"], **kwargs: Any) -> None:
         """
         :keyword value: The list of metric definitions for the database. Required.
         :paramtype value: list[~azure.mgmt.sql.models.MetricDefinition]
@@ -13299,7 +13776,7 @@ class MetricListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Metric]"},
     }
 
-    def __init__(self, *, value: List["_models.Metric"], **kwargs):
+    def __init__(self, *, value: List["_models.Metric"], **kwargs: Any) -> None:
         """
         :keyword value: The list of metrics for the database. Required.
         :paramtype value: list[~azure.mgmt.sql.models.Metric]
@@ -13329,7 +13806,7 @@ class MetricName(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -13373,7 +13850,7 @@ class MetricValue(_serialization.Model):
         "total": {"key": "total", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.count = None
@@ -13409,7 +13886,7 @@ class MinCapacityCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -13434,7 +13911,7 @@ class Name(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: Usage name value.
         :paramtype value: str
@@ -13469,8 +13946,8 @@ class NetworkIsolationSettings(_serialization.Model):
         *,
         storage_account_resource_id: Optional[str] = None,
         sql_server_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_account_resource_id: The resource id for the storage account used to store
          BACPAC file. If set, private endpoint connection will be created for the storage account. Must
@@ -13515,7 +13992,7 @@ class Operation(_serialization.Model):
         "properties": {"key": "properties", "type": "{object}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -13554,7 +14031,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -13592,7 +14069,7 @@ class OperationImpact(_serialization.Model):
         "change_value_relative": {"key": "changeValueRelative", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -13622,7 +14099,66 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
+class OutboundEnvironmentEndpoint(_serialization.Model):
+    """An endpoint that the managed instance service requires outbound network access to.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar category: The type of service accessed by the managed instance service, e.g., Azure
+     Storage, Azure Active Directory, etc.
+    :vartype category: str
+    :ivar endpoints: The endpoints that the managed instance service communicates with in order to
+     function correctly.
+    :vartype endpoints: list[~azure.mgmt.sql.models.EndpointDependency]
+    """
+
+    _validation = {
+        "category": {"readonly": True},
+        "endpoints": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "category": {"key": "category", "type": "str"},
+        "endpoints": {"key": "endpoints", "type": "[EndpointDependency]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.category = None
+        self.endpoints = None
+
+
+class OutboundEnvironmentEndpointCollection(_serialization.Model):
+    """A collection of endpoints that the managed instance service requires outbound network access
+    to.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.OutboundEnvironmentEndpoint]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[OutboundEnvironmentEndpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -13658,7 +14194,7 @@ class OutboundFirewallRule(ProxyResource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provisioning_state = None
@@ -13685,7 +14221,7 @@ class OutboundFirewallRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -13720,7 +14256,7 @@ class PartnerInfo(_serialization.Model):
         "replication_role": {"key": "replicationRole", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource identifier of the partner server. Required.
         :paramtype id: str
@@ -13752,7 +14288,7 @@ class PartnerRegionInfo(_serialization.Model):
         "replication_role": {"key": "replicationRole", "type": "str"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword location: Geo location of the partner managed instances.
         :paramtype location: str
@@ -13783,7 +14319,7 @@ class PerformanceLevelCapability(_serialization.Model):
         "unit": {"key": "unit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -13836,8 +14372,8 @@ class PrivateEndpointConnection(ProxyResource):
         *,
         private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
         :paramtype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
@@ -13873,7 +14409,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -13887,6 +14423,8 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
 
     :ivar private_endpoint: Private endpoint which the connection belongs to.
     :vartype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :ivar group_ids: Group IDs.
+    :vartype group_ids: list[str]
     :ivar private_link_service_connection_state: Connection state of the private endpoint
      connection.
     :vartype private_link_service_connection_state:
@@ -13897,11 +14435,13 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
     """
 
     _validation = {
+        "group_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
         "private_endpoint": {"key": "privateEndpoint", "type": "PrivateEndpointProperty"},
+        "group_ids": {"key": "groupIds", "type": "[str]"},
         "private_link_service_connection_state": {
             "key": "privateLinkServiceConnectionState",
             "type": "PrivateLinkServiceConnectionStateProperty",
@@ -13914,8 +14454,8 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
         *,
         private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: Private endpoint which the connection belongs to.
         :paramtype private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
@@ -13926,6 +14466,7 @@ class PrivateEndpointConnectionProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
+        self.group_ids = None
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
@@ -13955,7 +14496,7 @@ class PrivateEndpointConnectionRequestStatus(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.private_link_service_id = None
@@ -13974,7 +14515,7 @@ class PrivateEndpointProperty(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource id of the private endpoint.
         :paramtype id: str
@@ -14012,7 +14553,7 @@ class PrivateLinkResource(ProxyResource):
         "properties": {"key": "properties", "type": "PrivateLinkResourceProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.properties = None
@@ -14039,7 +14580,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -14071,7 +14612,7 @@ class PrivateLinkResourceProperties(_serialization.Model):
         "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.group_id = None
@@ -14109,8 +14650,8 @@ class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
     }
 
     def __init__(
-        self, *, status: Union[str, "_models.PrivateLinkServiceConnectionStateStatus"], description: str, **kwargs
-    ):
+        self, *, status: Union[str, "_models.PrivateLinkServiceConnectionStateStatus"], description: str, **kwargs: Any
+    ) -> None:
         """
         :keyword status: The private link service connection status. Required. Known values are:
          "Approved", "Pending", "Rejected", and "Disconnected".
@@ -14149,7 +14690,7 @@ class QueryCheck(_serialization.Model):
         "column_names": {"key": "columnNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.query = None
@@ -14185,7 +14726,7 @@ class QueryMetricInterval(_serialization.Model):
         "metrics": {"key": "metrics", "type": "[QueryMetricProperties]"},
     }
 
-    def __init__(self, *, metrics: Optional[List["_models.QueryMetricProperties"]] = None, **kwargs):
+    def __init__(self, *, metrics: Optional[List["_models.QueryMetricProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword metrics: List of metric objects for this interval.
         :paramtype metrics: list[~azure.mgmt.sql.models.QueryMetricProperties]
@@ -14247,7 +14788,7 @@ class QueryMetricProperties(_serialization.Model):
         "stdev": {"key": "stdev", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -14305,7 +14846,7 @@ class QueryStatistics(ProxyResource):
         "intervals": {"key": "properties.intervals", "type": "[QueryMetricInterval]"},
     }
 
-    def __init__(self, *, intervals: Optional[List["_models.QueryMetricInterval"]] = None, **kwargs):
+    def __init__(self, *, intervals: Optional[List["_models.QueryMetricInterval"]] = None, **kwargs: Any) -> None:
         """
         :keyword intervals: List of intervals with appropriate metric data.
         :paramtype intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
@@ -14350,7 +14891,7 @@ class QueryStatisticsProperties(_serialization.Model):
         "intervals": {"key": "intervals", "type": "[QueryMetricInterval]"},
     }
 
-    def __init__(self, *, intervals: Optional[List["_models.QueryMetricInterval"]] = None, **kwargs):
+    def __init__(self, *, intervals: Optional[List["_models.QueryMetricInterval"]] = None, **kwargs: Any) -> None:
         """
         :keyword intervals: List of intervals with appropriate metric data.
         :paramtype intervals: list[~azure.mgmt.sql.models.QueryMetricInterval]
@@ -14388,7 +14929,7 @@ class ReadScaleCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -14545,8 +15086,8 @@ class RecommendedAction(ProxyResource):  # pylint: disable=too-many-instance-att
     }
 
     def __init__(  # pylint: disable=too-many-locals
-        self, *, state: Optional["_models.RecommendedActionStateInfo"] = None, **kwargs
-    ):
+        self, *, state: Optional["_models.RecommendedActionStateInfo"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Gets the info of the current state the recommended action is in.
         :paramtype state: ~azure.mgmt.sql.models.RecommendedActionStateInfo
@@ -14580,7 +15121,8 @@ class RecommendedAction(ProxyResource):  # pylint: disable=too-many-instance-att
 
 
 class RecommendedActionErrorInfo(_serialization.Model):
-    """Contains error information for an Azure SQL Database, Server or Elastic Pool Recommended Action.
+    """Contains error information for an Azure SQL Database, Server or Elastic Pool Recommended
+    Action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -14602,7 +15144,7 @@ class RecommendedActionErrorInfo(_serialization.Model):
         "is_retryable": {"key": "isRetryable", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.error_code = None
@@ -14610,7 +15152,8 @@ class RecommendedActionErrorInfo(_serialization.Model):
 
 
 class RecommendedActionImpactRecord(_serialization.Model):
-    """Contains information of estimated or observed impact on various metrics for an Azure SQL Database, Server or Elastic Pool Recommended Action.
+    """Contains information of estimated or observed impact on various metrics for an Azure SQL
+    Database, Server or Elastic Pool Recommended Action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -14647,7 +15190,7 @@ class RecommendedActionImpactRecord(_serialization.Model):
         "change_value_relative": {"key": "changeValueRelative", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.dimension_name = None
@@ -14658,7 +15201,8 @@ class RecommendedActionImpactRecord(_serialization.Model):
 
 
 class RecommendedActionImplementationInfo(_serialization.Model):
-    """Contains information for manual implementation for an Azure SQL Database, Server or Elastic Pool Recommended Action.
+    """Contains information for manual implementation for an Azure SQL Database, Server or Elastic
+    Pool Recommended Action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -14680,7 +15224,7 @@ class RecommendedActionImplementationInfo(_serialization.Model):
         "script": {"key": "script", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.method = None
@@ -14688,7 +15232,8 @@ class RecommendedActionImplementationInfo(_serialization.Model):
 
 
 class RecommendedActionMetricInfo(_serialization.Model):
-    """Contains time series of various impacted metrics for an Azure SQL Database, Server or Elastic Pool Recommended Action.
+    """Contains time series of various impacted metrics for an Azure SQL Database, Server or Elastic
+    Pool Recommended Action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -14721,7 +15266,7 @@ class RecommendedActionMetricInfo(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.metric_name = None
@@ -14732,7 +15277,8 @@ class RecommendedActionMetricInfo(_serialization.Model):
 
 
 class RecommendedActionStateInfo(_serialization.Model):
-    """Contains information of current state for an Azure SQL Database, Server or Elastic Pool Recommended Action.
+    """Contains information of current state for an Azure SQL Database, Server or Elastic Pool
+    Recommended Action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -14773,7 +15319,7 @@ class RecommendedActionStateInfo(_serialization.Model):
         "last_modified": {"key": "lastModified", "type": "iso-8601"},
     }
 
-    def __init__(self, *, current_value: Union[str, "_models.RecommendedActionCurrentState"], **kwargs):
+    def __init__(self, *, current_value: Union[str, "_models.RecommendedActionCurrentState"], **kwargs: Any) -> None:
         """
         :keyword current_value: Current state the recommended action is in. Some commonly used states
          are: Active      -> recommended action is active and no action has been taken yet. Pending
@@ -14840,8 +15386,8 @@ class RecommendedSensitivityLabelUpdate(ProxyResource):
         schema: Optional[str] = None,
         table: Optional[str] = None,
         column: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword op: Known values are: "enable" and "disable".
         :paramtype op: str or ~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdateKind
@@ -14870,7 +15416,9 @@ class RecommendedSensitivityLabelUpdateList(_serialization.Model):
         "operations": {"key": "operations", "type": "[RecommendedSensitivityLabelUpdate]"},
     }
 
-    def __init__(self, *, operations: Optional[List["_models.RecommendedSensitivityLabelUpdate"]] = None, **kwargs):
+    def __init__(
+        self, *, operations: Optional[List["_models.RecommendedSensitivityLabelUpdate"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword operations:
         :paramtype operations: list[~azure.mgmt.sql.models.RecommendedSensitivityLabelUpdate]
@@ -14880,7 +15428,7 @@ class RecommendedSensitivityLabelUpdateList(_serialization.Model):
 
 
 class RecoverableDatabase(ProxyResource):
-    """A recoverable database.
+    """A recoverable database resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -14896,9 +15444,10 @@ class RecoverableDatabase(ProxyResource):
     :vartype service_level_objective: str
     :ivar elastic_pool_name: The elastic pool name of the database.
     :vartype elastic_pool_name: str
-    :ivar last_available_backup_date: The last available backup date of the database (ISO8601
-     format).
+    :ivar last_available_backup_date: The last available backup date.
     :vartype last_available_backup_date: ~datetime.datetime
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
     """
 
     _validation = {
@@ -14919,41 +15468,48 @@ class RecoverableDatabase(ProxyResource):
         "service_level_objective": {"key": "properties.serviceLevelObjective", "type": "str"},
         "elastic_pool_name": {"key": "properties.elasticPoolName", "type": "str"},
         "last_available_backup_date": {"key": "properties.lastAvailableBackupDate", "type": "iso-8601"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
     }
 
-    def __init__(self, **kwargs):
-        """ """
+    def __init__(self, *, keys: Optional[Dict[str, "_models.DatabaseKey"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
+        """
         super().__init__(**kwargs)
         self.edition = None
         self.service_level_objective = None
         self.elastic_pool_name = None
         self.last_available_backup_date = None
+        self.keys = keys
 
 
 class RecoverableDatabaseListResult(_serialization.Model):
-    """The response to a list recoverable databases request.
+    """A list of recoverable databases.
 
-    All required parameters must be populated in order to send to Azure.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar value: A list of recoverable databases. Required.
+    :ivar value: Array of results.
     :vartype value: list[~azure.mgmt.sql.models.RecoverableDatabase]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        "value": {"required": True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[RecoverableDatabase]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RecoverableDatabase"], **kwargs):
-        """
-        :keyword value: A list of recoverable databases. Required.
-        :paramtype value: list[~azure.mgmt.sql.models.RecoverableDatabase]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.value = value
+        self.value = None
+        self.next_link = None
 
 
 class RecoverableManagedDatabase(ProxyResource):
@@ -14985,7 +15541,7 @@ class RecoverableManagedDatabase(ProxyResource):
         "last_available_backup_date": {"key": "properties.lastAvailableBackupDate", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.last_available_backup_date = None
@@ -15012,11 +15568,71 @@ class RecoverableManagedDatabaseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class RefreshExternalGovernanceStatusOperationResult(ProxyResource):
+    """An RefreshExternalGovernanceStatus operation result resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar request_id: Request Id.
+    :vartype request_id: str
+    :ivar request_type: Request type.
+    :vartype request_type: str
+    :ivar queued_time: Queued time.
+    :vartype queued_time: str
+    :ivar server_name: Server name.
+    :vartype server_name: str
+    :ivar status: Operation status.
+    :vartype status: str
+    :ivar error_message: Error message.
+    :vartype error_message: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "request_id": {"readonly": True},
+        "request_type": {"readonly": True},
+        "queued_time": {"readonly": True},
+        "server_name": {"readonly": True},
+        "status": {"readonly": True},
+        "error_message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "request_id": {"key": "properties.requestId", "type": "str"},
+        "request_type": {"key": "properties.requestType", "type": "str"},
+        "queued_time": {"key": "properties.queuedTime", "type": "str"},
+        "server_name": {"key": "properties.serverName", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "error_message": {"key": "properties.errorMessage", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.request_id = None
+        self.request_type = None
+        self.queued_time = None
+        self.server_name = None
+        self.status = None
+        self.error_message = None
 
 
 class Remediation(_serialization.Model):
@@ -15048,7 +15664,7 @@ class Remediation(_serialization.Model):
         "portal_link": {"key": "portalLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.description = None
@@ -15130,7 +15746,7 @@ class ReplicationLink(ProxyResource):  # pylint: disable=too-many-instance-attri
         "link_type": {"key": "properties.linkType", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.partner_server = None
@@ -15167,7 +15783,7 @@ class ReplicationLinkListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -15208,8 +15824,8 @@ class ResourceIdentity(_serialization.Model):
         *,
         user_assigned_identities: Optional[Dict[str, "_models.UserIdentity"]] = None,
         type: Optional[Union[str, "_models.IdentityType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword user_assigned_identities: The resource ids of the user assigned identities to use.
         :paramtype user_assigned_identities: dict[str, ~azure.mgmt.sql.models.UserIdentity]
@@ -15242,7 +15858,7 @@ class ResourceMoveDefinition(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, *, id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The target ID for the resource. Required.
         :paramtype id: str
@@ -15281,6 +15897,8 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
     :ivar backup_storage_redundancy: The storage account type used to store backups for this
      database. Known values are: "Geo", "Local", "Zone", and "GeoZone".
     :vartype backup_storage_redundancy: str or ~azure.mgmt.sql.models.BackupStorageRedundancy
+    :ivar keys: The resource ids of the user assigned identities to use.
+    :vartype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
     """
 
     _validation = {
@@ -15308,6 +15926,7 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         "deletion_date": {"key": "properties.deletionDate", "type": "iso-8601"},
         "earliest_restore_date": {"key": "properties.earliestRestoreDate", "type": "iso-8601"},
         "backup_storage_redundancy": {"key": "properties.backupStorageRedundancy", "type": "str"},
+        "keys": {"key": "properties.keys", "type": "{DatabaseKey}"},
     }
 
     def __init__(
@@ -15316,8 +15935,9 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         sku: Optional["_models.Sku"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        keys: Optional[Dict[str, "_models.DatabaseKey"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: The name and tier of the SKU.
         :paramtype sku: ~azure.mgmt.sql.models.Sku
@@ -15325,6 +15945,8 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword keys: The resource ids of the user assigned identities to use.
+        :paramtype keys: dict[str, ~azure.mgmt.sql.models.DatabaseKey]
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -15336,6 +15958,7 @@ class RestorableDroppedDatabase(ProxyResource):  # pylint: disable=too-many-inst
         self.deletion_date = None
         self.earliest_restore_date = None
         self.backup_storage_redundancy = None
+        self.keys = keys
 
 
 class RestorableDroppedDatabaseListResult(_serialization.Model):
@@ -15359,7 +15982,7 @@ class RestorableDroppedDatabaseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -15416,7 +16039,7 @@ class RestorableDroppedManagedDatabase(TrackedResource):
         "earliest_restore_date": {"key": "properties.earliestRestoreDate", "type": "iso-8601"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -15451,7 +16074,7 @@ class RestorableDroppedManagedDatabaseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -15504,7 +16127,7 @@ class RestorePoint(ProxyResource):
         "restore_point_label": {"key": "properties.restorePointLabel", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.location = None
@@ -15535,11 +16158,70 @@ class RestorePointListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class ScheduleItem(_serialization.Model):
+    """Schedule info describing when the server should be started or stopped.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar start_day: Start day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+     "Wednesday", "Thursday", "Friday", and "Saturday".
+    :vartype start_day: str or ~azure.mgmt.sql.models.DayOfWeek
+    :ivar start_time: Start time. Required.
+    :vartype start_time: str
+    :ivar stop_day: Stop day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+     "Wednesday", "Thursday", "Friday", and "Saturday".
+    :vartype stop_day: str or ~azure.mgmt.sql.models.DayOfWeek
+    :ivar stop_time: Stop time. Required.
+    :vartype stop_time: str
+    """
+
+    _validation = {
+        "start_day": {"required": True},
+        "start_time": {"required": True},
+        "stop_day": {"required": True},
+        "stop_time": {"required": True},
+    }
+
+    _attribute_map = {
+        "start_day": {"key": "startDay", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "stop_day": {"key": "stopDay", "type": "str"},
+        "stop_time": {"key": "stopTime", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_day: Union[str, "_models.DayOfWeek"],
+        start_time: str,
+        stop_day: Union[str, "_models.DayOfWeek"],
+        stop_time: str,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_day: Start day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+         "Wednesday", "Thursday", "Friday", and "Saturday".
+        :paramtype start_day: str or ~azure.mgmt.sql.models.DayOfWeek
+        :keyword start_time: Start time. Required.
+        :paramtype start_time: str
+        :keyword stop_day: Stop day. Required. Known values are: "Sunday", "Monday", "Tuesday",
+         "Wednesday", "Thursday", "Friday", and "Saturday".
+        :paramtype stop_day: str or ~azure.mgmt.sql.models.DayOfWeek
+        :keyword stop_time: Stop time. Required.
+        :paramtype stop_time: str
+        """
+        super().__init__(**kwargs)
+        self.start_day = start_day
+        self.start_time = start_time
+        self.stop_day = stop_day
+        self.stop_time = stop_time
 
 
 class SecurityEvent(ProxyResource):  # pylint: disable=too-many-instance-attributes
@@ -15609,7 +16291,7 @@ class SecurityEvent(ProxyResource):  # pylint: disable=too-many-instance-attribu
         },
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.event_time = None
@@ -15644,7 +16326,7 @@ class SecurityEventCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -15666,8 +16348,12 @@ class SecurityEventsFilterParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, event_time: Optional[datetime.datetime] = None, show_server_records: Optional[bool] = None, **kwargs
-    ):
+        self,
+        *,
+        event_time: Optional[datetime.datetime] = None,
+        show_server_records: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword event_time: Filter on the event time.
         :paramtype event_time: ~datetime.datetime
@@ -15720,7 +16406,7 @@ class SecurityEventSqlInjectionAdditionalProperties(_serialization.Model):
         "error_message": {"key": "errorMessage", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.threat_id = None
@@ -15802,8 +16488,8 @@ class SensitivityLabel(ProxyResource):  # pylint: disable=too-many-instance-attr
         information_type: Optional[str] = None,
         information_type_id: Optional[str] = None,
         rank: Optional[Union[str, "_models.SensitivityLabelRank"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword label_name: The label name.
         :paramtype label_name: str
@@ -15850,7 +16536,7 @@ class SensitivityLabelListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -15905,8 +16591,8 @@ class SensitivityLabelUpdate(ProxyResource):
         table: Optional[str] = None,
         column: Optional[str] = None,
         sensitivity_label: Optional["_models.SensitivityLabel"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword op: Known values are: "set" and "remove".
         :paramtype op: str or ~azure.mgmt.sql.models.SensitivityLabelUpdateKind
@@ -15938,7 +16624,7 @@ class SensitivityLabelUpdateList(_serialization.Model):
         "operations": {"key": "operations", "type": "[SensitivityLabelUpdate]"},
     }
 
-    def __init__(self, *, operations: Optional[List["_models.SensitivityLabelUpdate"]] = None, **kwargs):
+    def __init__(self, *, operations: Optional[List["_models.SensitivityLabelUpdate"]] = None, **kwargs: Any) -> None:
         """
         :keyword operations:
         :paramtype operations: list[~azure.mgmt.sql.models.SensitivityLabelUpdate]
@@ -15983,12 +16669,12 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :vartype minimal_tls_version: str
     :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-     "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled' or 'SecuredByPerimeter'.
+     Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
      allows connection from workspace. Known values are: "Connected" and "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
@@ -15999,13 +16685,18 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype federated_client_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory identity of the server.
+    :ivar administrators: The Azure Active Directory administrator of the server. This can only be
+     used at server create time. If used for server update, it will be ignored or it will result in
+     an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
      this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
      are: "Enabled" and "Disabled".
     :vartype restrict_outbound_network_access: str or
      ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+    :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
+     and "Disabled".
+    :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
     """
 
     _validation = {
@@ -16018,6 +16709,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "fully_qualified_domain_name": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
         "workspace_feature": {"readonly": True},
+        "external_governance_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -16045,6 +16737,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         "key_id": {"key": "properties.keyId", "type": "str"},
         "administrators": {"key": "properties.administrators", "type": "ServerExternalAdministrator"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
+        "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
     }
 
     def __init__(
@@ -16057,14 +16750,14 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         administrator_login_password: Optional[str] = None,
         version: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        public_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
+        public_network_access: Optional[Union[str, "_models.ServerPublicNetworkAccessFlag"]] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         federated_client_id: Optional[str] = None,
         key_id: Optional[str] = None,
         administrators: Optional["_models.ServerExternalAdministrator"] = None,
         restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -16080,12 +16773,12 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype administrator_login_password: str
         :keyword version: The version of the server.
         :paramtype version: str
-        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
         :paramtype minimal_tls_version: str
         :keyword public_network_access: Whether or not public endpoint access is allowed for this
-         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled' or
+         'SecuredByPerimeter'. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
         :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
          used by default.
         :paramtype primary_user_assigned_identity_id: str
@@ -16093,7 +16786,9 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype federated_client_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory identity of the server.
+        :keyword administrators: The Azure Active Directory administrator of the server. This can only
+         be used at server create time. If used for server update, it will be ignored or it will result
+         in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
         :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
          for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
@@ -16118,6 +16813,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         self.key_id = key_id
         self.administrators = administrators
         self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.external_governance_status = None
 
 
 class ServerAdvancedThreatProtection(ProxyResource):
@@ -16158,7 +16854,9 @@ class ServerAdvancedThreatProtection(ProxyResource):
         "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.AdvancedThreatProtectionState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
          disabled or a state has not been applied yet on the specific database or server. Known values
@@ -16213,8 +16911,8 @@ class ServerAutomaticTuning(ProxyResource):
         *,
         desired_state: Optional[Union[str, "_models.AutomaticTuningServerMode"]] = None,
         options: Optional[Dict[str, "_models.AutomaticTuningServerOptions"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword desired_state: Automatic tuning desired state. Known values are: "Custom", "Auto", and
          "Unspecified".
@@ -16276,8 +16974,8 @@ class ServerAzureADAdministrator(ProxyResource):
         login: Optional[str] = None,
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword administrator_type: Type of the sever administrator. "ActiveDirectory"
         :paramtype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
@@ -16324,7 +17022,7 @@ class ServerAzureADOnlyAuthentication(ProxyResource):
         "azure_ad_only_authentication": {"key": "properties.azureADOnlyAuthentication", "type": "bool"},
     }
 
-    def __init__(self, *, azure_ad_only_authentication: Optional[bool] = None, **kwargs):
+    def __init__(self, *, azure_ad_only_authentication: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword azure_ad_only_authentication: Azure Active Directory only Authentication enabled.
         :paramtype azure_ad_only_authentication: bool
@@ -16524,8 +17222,8 @@ class ServerBlobAuditingPolicy(ProxyResource):  # pylint: disable=too-many-insta
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_devops_audit_enabled: Specifies the state of devops audit. If state is Enabled,
          devops logs will be sent to Azure Monitor.
@@ -16705,7 +17403,7 @@ class ServerBlobAuditingPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -16752,7 +17450,7 @@ class ServerCommunicationLink(ProxyResource):
         "partner_server": {"key": "properties.partnerServer", "type": "str"},
     }
 
-    def __init__(self, *, partner_server: Optional[str] = None, **kwargs):
+    def __init__(self, *, partner_server: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword partner_server: The name of the partner server.
         :paramtype partner_server: str
@@ -16775,13 +17473,84 @@ class ServerCommunicationLinkListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ServerCommunicationLink]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ServerCommunicationLink"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.ServerCommunicationLink"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of server communication links.
         :paramtype value: list[~azure.mgmt.sql.models.ServerCommunicationLink]
         """
         super().__init__(**kwargs)
         self.value = value
+
+
+class ServerConfigurationOption(ProxyResource):
+    """A server configuration option.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar server_configuration_option_value: Value of the server configuration option.
+    :vartype server_configuration_option_value: int
+    :ivar provisioning_state: Provisioning state of server configuration option. Known values are:
+     "Created", "InProgress", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.sql.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "server_configuration_option_value": {"key": "properties.serverConfigurationOptionValue", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(self, *, server_configuration_option_value: Optional[int] = None, **kwargs: Any) -> None:
+        """
+        :keyword server_configuration_option_value: Value of the server configuration option.
+        :paramtype server_configuration_option_value: int
+        """
+        super().__init__(**kwargs)
+        self.server_configuration_option_value = server_configuration_option_value
+        self.provisioning_state = None
+
+
+class ServerConfigurationOptionListResult(_serialization.Model):
+    """A list of server configuration options.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.ServerConfigurationOption]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ServerConfigurationOption]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class ServerConnectionPolicy(ProxyResource):
@@ -16821,7 +17590,9 @@ class ServerConnectionPolicy(ProxyResource):
         "connection_type": {"key": "properties.connectionType", "type": "str"},
     }
 
-    def __init__(self, *, connection_type: Optional[Union[str, "_models.ServerConnectionType"]] = None, **kwargs):
+    def __init__(
+        self, *, connection_type: Optional[Union[str, "_models.ServerConnectionType"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword connection_type: The server connection type. Known values are: "Default", "Redirect",
          and "Proxy".
@@ -16854,7 +17625,7 @@ class ServerConnectionPolicyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -16946,8 +17717,8 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         storage_account_subscription_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_azure_monitor_target_enabled: Specifies whether DevOps audit events are sent to
          Azure Monitor.
@@ -17023,7 +17794,7 @@ class ServerDevOpsAuditSettingsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -17059,7 +17830,7 @@ class ServerDnsAlias(ProxyResource):
         "azure_dns_record": {"key": "properties.azureDnsRecord", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.azure_dns_record = None
@@ -17083,7 +17854,7 @@ class ServerDnsAliasAcquisition(_serialization.Model):
         "old_server_dns_alias_id": {"key": "oldServerDnsAliasId", "type": "str"},
     }
 
-    def __init__(self, *, old_server_dns_alias_id: str, **kwargs):
+    def __init__(self, *, old_server_dns_alias_id: str, **kwargs: Any) -> None:
         """
         :keyword old_server_dns_alias_id: The id of the server alias that will be acquired to point to
          this server instead. Required.
@@ -17114,7 +17885,7 @@ class ServerDnsAliasListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -17157,8 +17928,8 @@ class ServerExternalAdministrator(_serialization.Model):
         sid: Optional[str] = None,
         tenant_id: Optional[str] = None,
         azure_ad_only_authentication: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword administrator_type: Type of the sever administrator. "ActiveDirectory"
         :paramtype administrator_type: str or ~azure.mgmt.sql.models.AdministratorType
@@ -17200,7 +17971,7 @@ class ServerInfo(_serialization.Model):
         "server_id": {"key": "serverId", "type": "str"},
     }
 
-    def __init__(self, *, server_id: str, **kwargs):
+    def __init__(self, *, server_id: str, **kwargs: Any) -> None:
         """
         :keyword server_id: Server Id. Required.
         :paramtype server_id: str
@@ -17272,8 +18043,8 @@ class ServerKey(ProxyResource):  # pylint: disable=too-many-instance-attributes
         *,
         server_key_type: Optional[Union[str, "_models.ServerKeyType"]] = None,
         uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword server_key_type: The server key type like 'ServiceManaged', 'AzureKeyVault'. Known
          values are: "ServiceManaged" and "AzureKeyVault".
@@ -17314,7 +18085,7 @@ class ServerKeyListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -17342,7 +18113,7 @@ class ServerListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -17427,7 +18198,7 @@ class ServerOperation(ProxyResource):  # pylint: disable=too-many-instance-attri
         "is_cancellable": {"key": "properties.isCancellable", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.operation = None
@@ -17466,7 +18237,7 @@ class ServerOperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -17494,7 +18265,7 @@ class ServerPrivateEndpointConnection(_serialization.Model):
         "properties": {"key": "properties", "type": "PrivateEndpointConnectionProperties"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -17571,8 +18342,8 @@ class ServerSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-many-inst
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         retention_days: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the policy, whether it is enabled or disabled or a
          policy has not been applied yet on the specific database. Known values are: "Enabled" and
@@ -17610,7 +18381,8 @@ class ServerSecurityAlertPolicy(ProxyResource):  # pylint: disable=too-many-inst
 
 
 class ServerTrustCertificate(ProxyResource):
-    """Server trust certificate imported from box to enable connection between box and Sql Managed Instance.
+    """Server trust certificate imported from box to enable connection between box and Sql Managed
+    Instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -17645,7 +18417,7 @@ class ServerTrustCertificate(ProxyResource):
         "certificate_name": {"key": "properties.certificateName", "type": "str"},
     }
 
-    def __init__(self, *, public_blob: Optional[str] = None, **kwargs):
+    def __init__(self, *, public_blob: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword public_blob: The certificate public blob.
         :paramtype public_blob: str
@@ -17677,7 +18449,7 @@ class ServerTrustCertificatesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -17721,8 +18493,8 @@ class ServerTrustGroup(ProxyResource):
         *,
         group_members: Optional[List["_models.ServerInfo"]] = None,
         trust_scopes: Optional[List[Union[str, "_models.ServerTrustGroupPropertiesTrustScopesItem"]]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword group_members: Group members information for the server trust group.
         :paramtype group_members: list[~azure.mgmt.sql.models.ServerInfo]
@@ -17756,7 +18528,7 @@ class ServerTrustGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -17787,12 +18559,12 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
     :ivar private_endpoint_connections: List of private endpoint connections on a server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.sql.models.ServerPrivateEndpointConnection]
-    :ivar minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+    :ivar minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
     :vartype minimal_tls_version: str
     :ivar public_network_access: Whether or not public endpoint access is allowed for this server.
-     Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-     "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+     Value is optional but if passed in, must be 'Enabled' or 'Disabled' or 'SecuredByPerimeter'.
+     Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+    :vartype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
     :ivar workspace_feature: Whether or not existing server has a workspace created and if it
      allows connection from workspace. Known values are: "Connected" and "Disconnected".
     :vartype workspace_feature: str or ~azure.mgmt.sql.models.ServerWorkspaceFeature
@@ -17803,13 +18575,18 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
     :vartype federated_client_id: str
     :ivar key_id: A CMK URI of the key to use for encryption.
     :vartype key_id: str
-    :ivar administrators: The Azure Active Directory identity of the server.
+    :ivar administrators: The Azure Active Directory administrator of the server. This can only be
+     used at server create time. If used for server update, it will be ignored or it will result in
+     an error. For updates individual APIs will need to be used.
     :vartype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
     :ivar restrict_outbound_network_access: Whether or not to restrict outbound network access for
      this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values
      are: "Enabled" and "Disabled".
     :vartype restrict_outbound_network_access: str or
      ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+    :ivar external_governance_status: Status of external governance. Known values are: "Enabled"
+     and "Disabled".
+    :vartype external_governance_status: str or ~azure.mgmt.sql.models.ExternalGovernanceStatus
     """
 
     _validation = {
@@ -17817,6 +18594,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         "fully_qualified_domain_name": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
         "workspace_feature": {"readonly": True},
+        "external_governance_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -17839,6 +18617,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         "key_id": {"key": "properties.keyId", "type": "str"},
         "administrators": {"key": "properties.administrators", "type": "ServerExternalAdministrator"},
         "restrict_outbound_network_access": {"key": "properties.restrictOutboundNetworkAccess", "type": "str"},
+        "external_governance_status": {"key": "properties.externalGovernanceStatus", "type": "str"},
     }
 
     def __init__(
@@ -17850,14 +18629,14 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         administrator_login_password: Optional[str] = None,
         version: Optional[str] = None,
         minimal_tls_version: Optional[str] = None,
-        public_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
+        public_network_access: Optional[Union[str, "_models.ServerPublicNetworkAccessFlag"]] = None,
         primary_user_assigned_identity_id: Optional[str] = None,
         federated_client_id: Optional[str] = None,
         key_id: Optional[str] = None,
         administrators: Optional["_models.ServerExternalAdministrator"] = None,
         restrict_outbound_network_access: Optional[Union[str, "_models.ServerNetworkAccessFlag"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: Server identity.
         :paramtype identity: ~azure.mgmt.sql.models.ResourceIdentity
@@ -17871,12 +18650,12 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         :paramtype administrator_login_password: str
         :keyword version: The version of the server.
         :paramtype version: str
-        :keyword minimal_tls_version: Minimal TLS version. Allowed values: '1.0', '1.1', '1.2'.
+        :keyword minimal_tls_version: Minimal TLS version. Allowed values: 'None', '1.0', '1.1', '1.2'.
         :paramtype minimal_tls_version: str
         :keyword public_network_access: Whether or not public endpoint access is allowed for this
-         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerNetworkAccessFlag
+         server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled' or
+         'SecuredByPerimeter'. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+        :paramtype public_network_access: str or ~azure.mgmt.sql.models.ServerPublicNetworkAccessFlag
         :keyword primary_user_assigned_identity_id: The resource id of a user assigned identity to be
          used by default.
         :paramtype primary_user_assigned_identity_id: str
@@ -17884,7 +18663,9 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         :paramtype federated_client_id: str
         :keyword key_id: A CMK URI of the key to use for encryption.
         :paramtype key_id: str
-        :keyword administrators: The Azure Active Directory identity of the server.
+        :keyword administrators: The Azure Active Directory administrator of the server. This can only
+         be used at server create time. If used for server update, it will be ignored or it will result
+         in an error. For updates individual APIs will need to be used.
         :paramtype administrators: ~azure.mgmt.sql.models.ServerExternalAdministrator
         :keyword restrict_outbound_network_access: Whether or not to restrict outbound network access
          for this server.  Value is optional but if passed in, must be 'Enabled' or 'Disabled'. Known
@@ -17909,6 +18690,7 @@ class ServerUpdate(_serialization.Model):  # pylint: disable=too-many-instance-a
         self.key_id = key_id
         self.administrators = administrators
         self.restrict_outbound_network_access = restrict_outbound_network_access
+        self.external_governance_status = None
 
 
 class ServerUsage(_serialization.Model):
@@ -17952,7 +18734,7 @@ class ServerUsage(_serialization.Model):
         "next_reset_time": {"key": "nextResetTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -17981,7 +18763,7 @@ class ServerUsageListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ServerUsage]"},
     }
 
-    def __init__(self, *, value: List["_models.ServerUsage"], **kwargs):
+    def __init__(self, *, value: List["_models.ServerUsage"], **kwargs: Any) -> None:
         """
         :keyword value: The list of server metrics for the server. Required.
         :paramtype value: list[~azure.mgmt.sql.models.ServerUsage]
@@ -18027,7 +18809,7 @@ class ServerVersionCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -18095,8 +18877,8 @@ class ServerVulnerabilityAssessment(ProxyResource):
         storage_container_sas_key: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
         recurring_scans: Optional["_models.VulnerabilityAssessmentRecurringScansProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword storage_container_path: A blob storage container path to hold the scan results (e.g.
          https://myStorage.blob.core.windows.net/VaScans/).
@@ -18143,7 +18925,7 @@ class ServerVulnerabilityAssessmentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -18195,7 +18977,7 @@ class ServiceObjective(ProxyResource):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.service_objective_name = None
@@ -18278,7 +19060,7 @@ class ServiceObjectiveCapability(_serialization.Model):  # pylint: disable=too-m
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -18317,7 +19099,7 @@ class ServiceObjectiveListResult(_serialization.Model):
         "value": {"key": "value", "type": "[ServiceObjective]"},
     }
 
-    def __init__(self, *, value: List["_models.ServiceObjective"], **kwargs):
+    def __init__(self, *, value: List["_models.ServiceObjective"], **kwargs: Any) -> None:
         """
         :keyword value: The list of database service objectives. Required.
         :paramtype value: list[~azure.mgmt.sql.models.ServiceObjective]
@@ -18354,7 +19136,7 @@ class ServicePrincipal(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.ServicePrincipalType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.ServicePrincipalType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: Service principal type. Known values are: "None" and "SystemAssigned".
         :paramtype type: str or ~azure.mgmt.sql.models.ServicePrincipalType
@@ -18404,8 +19186,8 @@ class Sku(_serialization.Model):
         size: Optional[str] = None,
         family: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the SKU, typically, a letter + Number code, e.g. P3. Required.
         :paramtype name: str
@@ -18459,7 +19241,7 @@ class SloUsageMetric(_serialization.Model):
         "in_range_time_ratio": {"key": "inRangeTimeRatio", "type": "float"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.service_level_objective = None
@@ -18495,7 +19277,9 @@ class SqlAgentConfiguration(ProxyResource):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.SqlAgentConfigurationPropertiesState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.SqlAgentConfigurationPropertiesState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: The state of Sql Agent. Known values are: "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.sql.models.SqlAgentConfigurationPropertiesState
@@ -18538,7 +19322,9 @@ class SqlVulnerabilityAssessment(ProxyResource):
         "state": {"key": "properties.state", "type": "str"},
     }
 
-    def __init__(self, *, state: Optional[Union[str, "_models.SqlVulnerabilityAssessmentState"]] = None, **kwargs):
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.SqlVulnerabilityAssessmentState"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword state: Specifies the state of the SQL Vulnerability Assessment, whether it is enabled
          or disabled or a state has not been applied yet on the specific database or server. Known
@@ -18571,7 +19357,7 @@ class SqlVulnerabilityAssessmentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -18599,7 +19385,7 @@ class SqlVulnerabilityAssessmentScanError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -18627,7 +19413,7 @@ class SQLVulnerabilityAssessmentScanListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -18728,7 +19514,7 @@ class SqlVulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=to
         "is_baseline_applied": {"key": "properties.isBaselineApplied", "type": "bool"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.system_data = None
@@ -18771,7 +19557,7 @@ class SqlVulnerabilityAssessmentScanRecordListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -18841,7 +19627,7 @@ class SqlVulnerabilityAssessmentScanResults(ProxyResource):  # pylint: disable=t
         "rule_metadata": {"key": "properties.ruleMetadata", "type": "VaRule"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.system_data = None
@@ -18853,6 +19639,106 @@ class SqlVulnerabilityAssessmentScanResults(ProxyResource):  # pylint: disable=t
         self.remediation = None
         self.baseline_adjusted_result = None
         self.rule_metadata = None
+
+
+class StartStopManagedInstanceSchedule(ProxyResource):
+    """Managed instance's Start/Stop schedule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: System data of the scheduled resource.
+    :vartype system_data: ~azure.mgmt.sql.models.SystemData
+    :ivar description: The description of the schedule.
+    :vartype description: str
+    :ivar time_zone_id: The time zone of the schedule.
+    :vartype time_zone_id: str
+    :ivar schedule_list: Schedule list.
+    :vartype schedule_list: list[~azure.mgmt.sql.models.ScheduleItem]
+    :ivar next_run_action: Next action to be executed (Start or Stop).
+    :vartype next_run_action: str
+    :ivar next_execution_time: Timestamp when the next action will be executed in the corresponding
+     schedule time zone.
+    :vartype next_execution_time: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "next_run_action": {"readonly": True},
+        "next_execution_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "time_zone_id": {"key": "properties.timeZoneId", "type": "str"},
+        "schedule_list": {"key": "properties.scheduleList", "type": "[ScheduleItem]"},
+        "next_run_action": {"key": "properties.nextRunAction", "type": "str"},
+        "next_execution_time": {"key": "properties.nextExecutionTime", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        description: str = "",
+        time_zone_id: str = "UTC",
+        schedule_list: Optional[List["_models.ScheduleItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword description: The description of the schedule.
+        :paramtype description: str
+        :keyword time_zone_id: The time zone of the schedule.
+        :paramtype time_zone_id: str
+        :keyword schedule_list: Schedule list.
+        :paramtype schedule_list: list[~azure.mgmt.sql.models.ScheduleItem]
+        """
+        super().__init__(**kwargs)
+        self.system_data = None
+        self.description = description
+        self.time_zone_id = time_zone_id
+        self.schedule_list = schedule_list
+        self.next_run_action = None
+        self.next_execution_time = None
+
+
+class StartStopManagedInstanceScheduleListResult(_serialization.Model):
+    """Managed instance's Start/Stop schedule list result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value: list[~azure.mgmt.sql.models.StartStopManagedInstanceSchedule]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[StartStopManagedInstanceSchedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class StorageCapability(_serialization.Model):
@@ -18882,7 +19768,7 @@ class StorageCapability(_serialization.Model):
         "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(self, *, reason: Optional[str] = None, **kwargs):
+    def __init__(self, *, reason: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword reason: The reason for the capability not being available.
         :paramtype reason: str
@@ -18934,7 +19820,7 @@ class SubscriptionUsage(ProxyResource):
         "unit": {"key": "properties.unit", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.display_name = None
@@ -18964,7 +19850,7 @@ class SubscriptionUsageListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -18999,7 +19885,9 @@ class SynapseLinkWorkspace(ProxyResource):
         "workspaces": {"key": "properties.workspaces", "type": "[SynapseLinkWorkspaceInfoProperties]"},
     }
 
-    def __init__(self, *, workspaces: Optional[List["_models.SynapseLinkWorkspaceInfoProperties"]] = None, **kwargs):
+    def __init__(
+        self, *, workspaces: Optional[List["_models.SynapseLinkWorkspaceInfoProperties"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword workspaces: List of all synapselink workspaces.
         :paramtype workspaces: list[~azure.mgmt.sql.models.SynapseLinkWorkspaceInfoProperties]
@@ -19022,7 +19910,9 @@ class SynapseLinkWorkspaceInfoProperties(_serialization.Model):
         "link_connection_name": {"key": "linkConnectionName", "type": "str"},
     }
 
-    def __init__(self, *, workspace_id: Optional[str] = None, link_connection_name: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, workspace_id: Optional[str] = None, link_connection_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword workspace_id: Synapse link workspace id.
         :paramtype workspace_id: str
@@ -19055,7 +19945,7 @@ class SynapseLinkWorkspaceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -19115,7 +20005,7 @@ class SyncAgent(ProxyResource):
         "version": {"key": "properties.version", "type": "str"},
     }
 
-    def __init__(self, *, sync_database_id: Optional[str] = None, **kwargs):
+    def __init__(self, *, sync_database_id: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword sync_database_id: ARM resource id of the sync database in the sync agent.
         :paramtype sync_database_id: str
@@ -19147,7 +20037,7 @@ class SyncAgentKeyProperties(_serialization.Model):
         "sync_agent_key": {"key": "syncAgentKey", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.sync_agent_key = None
@@ -19203,7 +20093,7 @@ class SyncAgentLinkedDatabase(ProxyResource):
         "user_name": {"key": "properties.userName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.database_type = None
@@ -19235,7 +20125,7 @@ class SyncAgentLinkedDatabaseListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -19263,7 +20153,7 @@ class SyncAgentListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -19291,7 +20181,7 @@ class SyncDatabaseIdListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -19315,7 +20205,7 @@ class SyncDatabaseIdProperties(_serialization.Model):
         "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -19342,7 +20232,7 @@ class SyncFullSchemaProperties(_serialization.Model):
         "last_update_time": {"key": "lastUpdateTime", "type": "iso-8601"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.tables = None
@@ -19370,7 +20260,7 @@ class SyncFullSchemaPropertiesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -19410,7 +20300,7 @@ class SyncFullSchemaTable(_serialization.Model):
         "quoted_name": {"key": "quotedName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.columns = None
@@ -19461,7 +20351,7 @@ class SyncFullSchemaTableColumn(_serialization.Model):
         "quoted_name": {"key": "quotedName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.data_size = None
@@ -19556,8 +20446,8 @@ class SyncGroup(ProxyResource):  # pylint: disable=too-many-instance-attributes
         enable_conflict_logging: Optional[bool] = None,
         conflict_logging_retention_in_days: Optional[int] = None,
         use_private_link_connection: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sku: The name and capacity of the SKU.
         :paramtype sku: ~azure.mgmt.sql.models.Sku
@@ -19619,7 +20509,7 @@ class SyncGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -19647,7 +20537,7 @@ class SyncGroupLogListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -19692,7 +20582,7 @@ class SyncGroupLogProperties(_serialization.Model):
         "operation_status": {"key": "operationStatus", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.timestamp = None
@@ -19722,8 +20612,8 @@ class SyncGroupSchema(_serialization.Model):
         *,
         tables: Optional[List["_models.SyncGroupSchemaTable"]] = None,
         master_sync_member_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tables: List of tables in sync group schema.
         :paramtype tables: list[~azure.mgmt.sql.models.SyncGroupSchemaTable]
@@ -19754,8 +20644,8 @@ class SyncGroupSchemaTable(_serialization.Model):
         *,
         columns: Optional[List["_models.SyncGroupSchemaTableColumn"]] = None,
         quoted_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword columns: List of columns in sync group schema.
         :paramtype columns: list[~azure.mgmt.sql.models.SyncGroupSchemaTableColumn]
@@ -19790,8 +20680,8 @@ class SyncGroupSchemaTableColumn(_serialization.Model):
         quoted_name: Optional[str] = None,
         data_size: Optional[str] = None,
         data_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword quoted_name: Quoted name of sync group table column.
         :paramtype quoted_name: str
@@ -19893,8 +20783,8 @@ class SyncMember(ProxyResource):  # pylint: disable=too-many-instance-attributes
         user_name: Optional[str] = None,
         password: Optional[str] = None,
         sync_direction: Optional[Union[str, "_models.SyncDirection"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword database_type: Database type of the sync member. Known values are: "AzureSqlDatabase"
          and "SqlServerDatabase".
@@ -19956,7 +20846,7 @@ class SyncMemberListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -20000,8 +20890,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -20058,7 +20948,9 @@ class TdeCertificate(ProxyResource):
         "cert_password": {"key": "properties.certPassword", "type": "str"},
     }
 
-    def __init__(self, *, private_blob: Optional[str] = None, cert_password: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, private_blob: Optional[str] = None, cert_password: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword private_blob: The base64 encoded certificate private blob.
         :paramtype private_blob: str
@@ -20103,7 +20995,7 @@ class TimeZone(ProxyResource):
         "display_name": {"key": "properties.displayName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.time_zone_id = None
@@ -20131,7 +21023,7 @@ class TimeZoneListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -20178,7 +21070,7 @@ class TopQueries(_serialization.Model):
         "queries": {"key": "queries", "type": "[QueryStatisticsProperties]"},
     }
 
-    def __init__(self, *, queries: Optional[List["_models.QueryStatisticsProperties"]] = None, **kwargs):
+    def __init__(self, *, queries: Optional[List["_models.QueryStatisticsProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword queries: List of top resource consuming queries with appropriate metric data.
         :paramtype queries: list[~azure.mgmt.sql.models.QueryStatisticsProperties]
@@ -20214,7 +21106,7 @@ class TopQueriesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -20238,8 +21130,8 @@ class UpdateLongTermRetentionBackupParameters(_serialization.Model):
         self,
         *,
         requested_backup_storage_redundancy: Optional[Union[str, "_models.BackupStorageRedundancy"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword requested_backup_storage_redundancy: The storage redundancy type of the copied backup.
          Known values are: "Geo", "Local", "Zone", and "GeoZone".
@@ -20280,7 +21172,7 @@ class UpdateVirtualClusterDnsServersOperation(ProxyResource):
         "status": {"key": "properties.status", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.status = None
@@ -20313,8 +21205,8 @@ class UpsertManagedServerOperationParameters(_serialization.Model):
         tier: Optional[str] = None,
         v_cores: Optional[int] = None,
         storage_size_in_gb: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword family:
         :paramtype family: str
@@ -20356,8 +21248,8 @@ class UpsertManagedServerOperationStep(_serialization.Model):
         order: Optional[int] = None,
         name: Optional[str] = None,
         status: Optional[Union[str, "_models.UpsertManagedServerOperationStepStatus"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword order:
         :paramtype order: int
@@ -20414,7 +21306,7 @@ class Usage(_serialization.Model):
         "requested_limit": {"key": "requestedLimit", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -20447,7 +21339,7 @@ class UsageListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -20475,7 +21367,7 @@ class UserIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None
@@ -20533,7 +21425,7 @@ class VaRule(_serialization.Model):
         "benchmark_references": {"key": "benchmarkReferences", "type": "[BenchmarkReference]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.rule_id = None
@@ -20593,8 +21485,8 @@ class VirtualCluster(TrackedResource):
     }
 
     def __init__(
-        self, *, location: str, tags: Optional[Dict[str, str]] = None, version: Optional[str] = None, **kwargs
-    ):
+        self, *, location: str, tags: Optional[Dict[str, str]] = None, version: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -20630,7 +21522,7 @@ class VirtualClusterListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -20664,7 +21556,7 @@ class VirtualClusterUpdate(_serialization.Model):
         "child_resources": {"key": "properties.childResources", "type": "[str]"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, version: Optional[str] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, version: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -20720,8 +21612,8 @@ class VirtualNetworkRule(ProxyResource):
         *,
         virtual_network_subnet_id: Optional[str] = None,
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword virtual_network_subnet_id: The ARM resource id of the virtual network subnet.
         :paramtype virtual_network_subnet_id: str
@@ -20756,7 +21648,7 @@ class VirtualNetworkRuleListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -20787,8 +21679,8 @@ class VulnerabilityAssessmentRecurringScansProperties(_serialization.Model):
         is_enabled: Optional[bool] = None,
         email_subscription_admins: bool = True,
         emails: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_enabled: Recurring scans state.
         :paramtype is_enabled: bool
@@ -20825,7 +21717,7 @@ class VulnerabilityAssessmentScanError(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -20890,7 +21782,7 @@ class VulnerabilityAssessmentScanRecord(ProxyResource):  # pylint: disable=too-m
         "number_of_failed_security_checks": {"key": "properties.numberOfFailedSecurityChecks", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.scan_id = None
@@ -20924,7 +21816,7 @@ class VulnerabilityAssessmentScanRecordListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -20983,8 +21875,8 @@ class WorkloadClassifier(ProxyResource):
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         importance: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword member_name: The workload classifier member name.
         :paramtype member_name: str
@@ -21029,7 +21921,7 @@ class WorkloadClassifierListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -21088,8 +21980,8 @@ class WorkloadGroup(ProxyResource):
         max_resource_percent_per_request: Optional[float] = None,
         importance: Optional[str] = None,
         query_execution_timeout: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword min_resource_percent: The workload group minimum percentage resource.
         :paramtype min_resource_percent: int
@@ -21134,7 +22026,7 @@ class WorkloadGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None

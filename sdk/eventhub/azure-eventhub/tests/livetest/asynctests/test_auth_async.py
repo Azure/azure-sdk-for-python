@@ -22,7 +22,7 @@ async def test_client_secret_credential_async(live_eventhub, uamqp_transport):
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=credential,
                                              user_agent='customized information',
-                                             auth_timeout=3,
+                                             auth_timeout=30,
                                              uamqp_transport=uamqp_transport
                                              )
     consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
@@ -30,7 +30,7 @@ async def test_client_secret_credential_async(live_eventhub, uamqp_transport):
                                              consumer_group='$default',
                                              credential=credential,
                                              user_agent='customized information',
-                                             auth_timeout=3,
+                                             auth_timeout=30,
                                              uamqp_transport=uamqp_transport
                                              )
 
@@ -46,7 +46,7 @@ async def test_client_secret_credential_async(live_eventhub, uamqp_transport):
     on_event.called = False
     async with consumer_client:
         task = asyncio.ensure_future(consumer_client.receive(on_event, partition_id='0', starting_position='-1'))
-        await asyncio.sleep(13)
+        await asyncio.sleep(15)
     await task
     assert on_event.called is True
     assert on_event.partition_id == "0"
@@ -81,7 +81,7 @@ async def test_client_sas_credential_async(live_eventhub, uamqp_transport):
         await producer_client.send_batch(batch)
 
     # Finally let's do it with SAS token + conn str
-    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
+    token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token)
     conn_str_producer_client = EventHubProducerClient.from_connection_string(token_conn_str,
                                                                              eventhub_name=live_eventhub['event_hub'], uamqp_transport=uamqp_transport)
 
@@ -105,16 +105,18 @@ async def test_client_azure_sas_credential_async(live_eventhub, uamqp_transport)
 
     credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     auth_uri = "sb://{}/{}".format(hostname, live_eventhub['event_hub'])
-    token = (await credential.get_token(auth_uri)).token.decode()
+    token = (await credential.get_token(auth_uri)).token
     producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                              eventhub_name=live_eventhub['event_hub'],
-                                             auth_timeout=3,
+                                             auth_timeout=30,
                                              credential=AzureSasCredential(token), uamqp_transport=uamqp_transport)
 
     async with producer_client:
         batch = await producer_client.create_batch(partition_id='0')
         batch.add(EventData(body='A single message'))
         await producer_client.send_batch(batch)
+
+    assert (await producer_client.get_eventhub_properties()) is not None
 
 
 @pytest.mark.liveTest
@@ -126,7 +128,7 @@ async def test_client_azure_named_key_credential_async(live_eventhub, uamqp_tran
                                             eventhub_name=live_eventhub['event_hub'],
                                             consumer_group='$default',
                                             credential=credential,
-                                            auth_timeout=3,
+                                            auth_timeout=30,
                                             user_agent='customized information', uamqp_transport=uamqp_transport)
 
     assert (await consumer_client.get_eventhub_properties()) is not None

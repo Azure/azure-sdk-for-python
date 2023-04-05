@@ -141,8 +141,8 @@ class TemplateSpecsOperations:
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec. Required.
         :type template_spec_name: str
-        :param template_spec: Template Spec supplied to the operation. Is either a model type or a IO
-         type. Required.
+        :param template_spec: Template Spec supplied to the operation. Is either a TemplateSpec type or
+         a IO type. Required.
         :type template_spec: ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpec
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -193,8 +193,9 @@ class TemplateSpecsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -293,8 +294,8 @@ class TemplateSpecsOperations:
         :type resource_group_name: str
         :param template_spec_name: Name of the Template Spec. Required.
         :type template_spec_name: str
-        :param template_spec: Template Spec resource with the tags to be updated. Is either a model
-         type or a IO type. Default value is None.
+        :param template_spec: Template Spec resource with the tags to be updated. Is either a
+         TemplateSpecUpdateModel type or a IO type. Default value is None.
         :type template_spec:
          ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpecUpdateModel or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -348,8 +349,9 @@ class TemplateSpecsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -423,8 +425,9 @@ class TemplateSpecsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -490,8 +493,9 @@ class TemplateSpecsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -582,8 +586,9 @@ class TemplateSpecsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -681,8 +686,9 @@ class TemplateSpecsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -801,7 +807,7 @@ class TemplateSpecVersionsOperations:
         :param template_spec_version: The version of the Template Spec. Required.
         :type template_spec_version: str
         :param template_spec_version_model: Template Spec Version supplied to the operation. Is either
-         a model type or a IO type. Required.
+         a TemplateSpecVersion type or a IO type. Required.
         :type template_spec_version_model:
          ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpecVersion or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -853,8 +859,9 @@ class TemplateSpecVersionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -963,7 +970,7 @@ class TemplateSpecVersionsOperations:
         :param template_spec_version: The version of the Template Spec. Required.
         :type template_spec_version: str
         :param template_spec_version_update_model: Template Spec Version resource with the tags to be
-         updated. Is either a model type or a IO type. Default value is None.
+         updated. Is either a TemplateSpecVersionUpdateModel type or a IO type. Default value is None.
         :type template_spec_version_update_model:
          ~azure.mgmt.resource.templatespecs.v2021_03_01_preview.models.TemplateSpecVersionUpdateModel or
          IO
@@ -1019,8 +1026,9 @@ class TemplateSpecVersionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1088,8 +1096,9 @@ class TemplateSpecVersionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1158,8 +1167,9 @@ class TemplateSpecVersionsOperations:
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -1252,8 +1262,9 @@ class TemplateSpecVersionsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
+            _stream = False
             pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request, stream=False, **kwargs
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 

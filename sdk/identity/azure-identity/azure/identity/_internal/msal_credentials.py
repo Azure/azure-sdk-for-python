@@ -22,22 +22,24 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
             client_credential: Optional[Union[str, Dict]] = None,
             *,
             additionally_allowed_tenants: Optional[List[str]] = None,
-            allow_broker: Optional[bool] = None,
+            # allow_broker: Optional[bool] = None,
             authority: Optional[str] = None,
-            instance_discovery: Optional[bool] = None,
+            disable_instance_discovery: Optional[bool] = None,
             tenant_id: Optional[str] = None,
             **kwargs
     ) -> None:
-        self._instance_discovery = instance_discovery
+        self._instance_discovery = None if disable_instance_discovery is None else not disable_instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
+        if self._regional_authority and self._regional_authority.lower() in ["tryautodetect", "true"]:
+            self._regional_authority = msal.ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY
         self._tenant_id = tenant_id or "organizations"
         validate_tenant_id(self._tenant_id)
         self._client = MsalClient(**kwargs)
         self._client_applications: Dict[str, msal.ClientApplication] = {}
         self._client_credential = client_credential
         self._client_id = client_id
-        self._allow_broker = allow_broker
+        # self._allow_broker = allow_broker
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)
@@ -69,7 +71,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
         )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
-            capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
+            capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
             cls = msal.ConfidentialClientApplication if self._client_credential else msal.PublicClientApplication
             self._client_applications[tenant_id] = cls(
                 client_id=self._client_id,
@@ -80,7 +82,7 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
                 token_cache=self._cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
-                allow_broker=self._allow_broker
+                # allow_broker=self._allow_broker
             )
 
         return self._client_applications[tenant_id]

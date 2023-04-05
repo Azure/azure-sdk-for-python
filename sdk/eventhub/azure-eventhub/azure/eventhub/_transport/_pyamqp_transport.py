@@ -446,7 +446,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if update_token:
             # update_token not actually needed by pyamqp
             # just using to detect wh
-            return JWTTokenAuth(auth_uri, auth_uri, get_token)
+            return JWTTokenAuth(auth_uri, auth_uri, get_token, token_type=token_type)
         return JWTTokenAuth(
             auth_uri,
             auth_uri,
@@ -487,7 +487,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         Return updated auth token.
         :param mgmt_auth: Auth.
         """
-        return mgmt_auth.get_token()
+        return mgmt_auth.get_token().token
 
     @staticmethod
     def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
@@ -521,7 +521,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             return errors.AuthenticationException(
                 errors.ErrorCondition.UnauthorizedAccess,
                 description=f"""Management authentication failed. Status code: {status_code}, """
-                    """Description: {description!r}""",
+                    f"""Description: {description!r}""",
             )
         if status_code in [404]:
             return errors.AMQPConnectionError(

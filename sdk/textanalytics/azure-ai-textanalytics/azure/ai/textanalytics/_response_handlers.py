@@ -37,8 +37,7 @@ from ._models import (
     ClassifyDocumentResult,
     ActionPointerKind,
     ExtractSummaryResult,
-    AbstractSummaryResult,
-    DynamicClassificationResult,
+    AbstractiveSummaryResult,
 )
 
 
@@ -137,7 +136,7 @@ def prepare_result(func):
 def abstract_summary_result(
     summary, results, *args, **kwargs
 ):  # pylint: disable=unused-argument
-    return AbstractSummaryResult._from_generated(  # pylint: disable=protected-access
+    return AbstractiveSummaryResult._from_generated(  # pylint: disable=protected-access
         summary
     )
 
@@ -313,15 +312,6 @@ def classify_document_result(
 ):  # pylint: disable=unused-argument
     return ClassifyDocumentResult._from_generated(  # pylint: disable=protected-access
         custom_categories
-    )
-
-
-@prepare_result
-def dynamic_classification_result(
-    categories, results, *args, **kwargs
-):  # pylint: disable=unused-argument
-    return DynamicClassificationResult._from_generated(  # pylint: disable=protected-access
-        categories
     )
 
 

@@ -5,6 +5,7 @@
 from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import DumpableStringField, NestedField, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.intellectual_property import PublisherSchema
 from azure.ai.ml._schema.core.resource import ResourceSchema
 from azure.ai.ml._schema.workspace.identity import IdentitySchema
 from azure.ai.ml._utils._experimental import experimental
@@ -32,7 +33,7 @@ class RegistrySchema(ResourceSchema):
         casing_transform=snake_to_pascal,
     )
     replication_locations = fields.List(NestedField(RegistryRegionDetailsSchema))
-    intellectual_property_publisher = fields.Str()
+    intellectual_property = NestedField(PublisherSchema)
     # This is an acr account which will be applied to every registryRegionArmDetail defined
     # in replication_locations. This is different from the internal swagger
     # definition, which has a per-region list of acr accounts.

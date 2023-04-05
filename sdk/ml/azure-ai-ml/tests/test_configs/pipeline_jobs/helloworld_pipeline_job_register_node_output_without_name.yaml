@@ -1,0 +1,19 @@
+display_name: register_node_output
+type: pipeline
+jobs:
+  parallel_body:
+    type: command
+    inputs:
+      component_in_path:
+        type: uri_file
+        path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    component: ../components/helloworld_component.yml
+    outputs:
+      component_out_path:
+        # name: node_output
+        version: 1
+outputs:
+  pipeline_out_path:
+    type: uri_folder
+settings:
+  default_compute: azureml:cpu-cluster

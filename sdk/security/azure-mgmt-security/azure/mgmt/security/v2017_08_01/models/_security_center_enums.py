@@ -13,11 +13,11 @@ from azure.core import CaseInsensitiveEnumMeta
 class ResourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the resource regarding a single assessment."""
 
-    #: This assessment on the resource is healthy
     HEALTHY = "Healthy"
-    #: This assessment is not applicable to this resource
+    """This assessment on the resource is healthy"""
     NOT_APPLICABLE = "NotApplicable"
-    #: This assessment is turned off by policy on this subscription
+    """This assessment is not applicable to this resource"""
     OFF_BY_POLICY = "OffByPolicy"
-    #: This assessment on the resource is not healthy
+    """This assessment is turned off by policy on this subscription"""
     NOT_HEALTHY = "NotHealthy"
+    """This assessment on the resource is not healthy"""

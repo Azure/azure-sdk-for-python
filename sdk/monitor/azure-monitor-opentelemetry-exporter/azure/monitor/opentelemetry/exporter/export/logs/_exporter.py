@@ -3,7 +3,7 @@
 import logging
 from typing import Sequence, Any
 
-from opentelemetry.sdk._logs.severity import SeverityNumber
+from opentelemetry._logs.severity import SeverityNumber
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.sdk._logs import LogData
 from opentelemetry.sdk._logs.export import LogExporter, LogExportResult

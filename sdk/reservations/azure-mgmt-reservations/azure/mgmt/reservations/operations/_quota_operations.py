@@ -353,7 +353,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[LROPoller[_models.CurrentQuotaLimitBase], LROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota (service limits) of a resource to the requested value.
          Steps:
 
@@ -405,7 +405,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[LROPoller[_models.CurrentQuotaLimitBase], LROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota (service limits) of a resource to the requested value.
          Steps:
 
@@ -455,7 +455,7 @@ class QuotaOperations:
         resource_name: str,
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO],
         **kwargs: Any
-    ) -> Union[LROPoller[_models.CurrentQuotaLimitBase], LROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Create or update the quota (service limits) of a resource to the requested value.
          Steps:
 
@@ -476,8 +476,8 @@ class QuotaOperations:
          Microsoft.Compute, Sku or TotalLowPriorityCores for Microsoft.MachineLearningServices.
          Required.
         :type resource_name: str
-        :param create_quota_request: Quota requests payload. Is either a model type or a IO type.
-         Required.
+        :param create_quota_request: Quota requests payload. Is either a CurrentQuotaLimitBase type or
+         a IO type. Required.
         :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -635,7 +635,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[LROPoller[_models.CurrentQuotaLimitBase], LROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota (service limits) of this resource to the requested value.
           • To get the quota information for specific resource, send a GET request.
           • To increase the quota, update the limit field from the GET response to a new value.
@@ -684,7 +684,7 @@ class QuotaOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> Union[LROPoller[_models.CurrentQuotaLimitBase], LROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota (service limits) of this resource to the requested value.
           • To get the quota information for specific resource, send a GET request.
           • To increase the quota, update the limit field from the GET response to a new value.
@@ -731,7 +731,7 @@ class QuotaOperations:
         resource_name: str,
         create_quota_request: Union[_models.CurrentQuotaLimitBase, IO],
         **kwargs: Any
-    ) -> Union[LROPoller[_models.CurrentQuotaLimitBase], LROPoller[_models.QuotaRequestSubmitResponse201]]:
+    ) -> LROPoller[_models.CurrentQuotaLimitBase]:
         """Update the quota (service limits) of this resource to the requested value.
           • To get the quota information for specific resource, send a GET request.
           • To increase the quota, update the limit field from the GET response to a new value.
@@ -749,8 +749,8 @@ class QuotaOperations:
          Microsoft.Compute, Sku or TotalLowPriorityCores for Microsoft.MachineLearningServices.
          Required.
         :type resource_name: str
-        :param create_quota_request: Payload for the quota request. Is either a model type or a IO
-         type. Required.
+        :param create_quota_request: Payload for the quota request. Is either a CurrentQuotaLimitBase
+         type or a IO type. Required.
         :type create_quota_request: ~azure.mgmt.reservations.models.CurrentQuotaLimitBase or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

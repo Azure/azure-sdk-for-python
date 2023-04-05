@@ -8,7 +8,6 @@ from abc import ABC
 from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthType
 from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentityConfiguration
 from azure.ai.ml._restclient.v2022_01_01_preview.models import ManagedIdentity as RestWorkspaceConnectionManagedIdentity
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
@@ -24,6 +23,8 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdent
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
+from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
@@ -32,7 +33,6 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
     CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
 )
 from azure.ai.ml._restclient.v2022_10_01.models import CertificateDatastoreSecrets, CredentialsType
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials as RestNoneDatastoreCredentials
 from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreCredentials as RestSasDatastoreCredentials
 from azure.ai.ml._restclient.v2022_10_01.models import SasDatastoreSecrets as RestSasDatastoreSecrets
@@ -42,13 +42,16 @@ from azure.ai.ml._restclient.v2022_10_01.models import (
 from azure.ai.ml._restclient.v2022_10_01.models import (
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
 )
-from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
-from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfigurationType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedIdentity as RestJobManagedIdentity
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import ConnectionAuthType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
+)
+from azure.ai.ml._restclient.v2023_02_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
+from azure.ai.ml._restclient.v2023_02_01_preview.models import IdentityConfigurationType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedIdentity as RestJobManagedIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
@@ -324,11 +327,17 @@ class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlT
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobIdentityConfiguration) -> "Identity":
+        if obj is None:
+            return None
         mapping = {
             IdentityConfigurationType.AML_TOKEN: AmlTokenConfiguration,
             IdentityConfigurationType.MANAGED: ManagedIdentityConfiguration,
             IdentityConfigurationType.USER_IDENTITY: UserIdentityConfiguration,
         }
+
+        if isinstance(obj, dict):
+            # TODO: support data binding expression
+            obj = RestJobIdentityConfiguration.from_dict(obj)
 
         identity_class = mapping.get(obj.identity_type, None)
         if identity_class:
@@ -678,3 +687,43 @@ class NoneCredentialConfiguration(RestTranslatableMixin):
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+
+class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
+    """Access Key Credentials.
+
+    :param access_key_id: access key id
+    :type access_key_id: str
+    :param secret_access_key: secret access key
+    :type secret_access_key: str
+    """
+
+    def __init__(
+        self,
+        *,
+        access_key_id: str,
+        secret_access_key: str,
+    ):
+        super().__init__()
+        self.type = camel_to_snake(ConnectionAuthType.ACCESS_KEY)
+        self.access_key_id = access_key_id
+        self.secret_access_key = secret_access_key
+
+    def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionAccessKey:
+        return RestWorkspaceConnectionAccessKey(
+            access_key_id=self.access_key_id, secret_access_key=self.secret_access_key
+        )
+
+    @classmethod
+    def _from_workspace_connection_rest_object(
+        cls, obj: Optional[RestWorkspaceConnectionAccessKey]
+    ) -> "AccessKeyConfiguration":
+        return cls(
+            access_key_id=obj.access_key_id if obj is not None and obj.access_key_id else None,
+            secret_access_key=obj.secret_access_key if obj is not None and obj.secret_access_key else None,
+        )
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, AccessKeyConfiguration):
+            return NotImplemented
+        return self.access_key_id == other.access_key_id and self.secret_access_key == other.secret_access_key

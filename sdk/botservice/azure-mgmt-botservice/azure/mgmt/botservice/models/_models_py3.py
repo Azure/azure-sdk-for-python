@@ -27,9 +27,10 @@ class Channel(_serialization.Model):
     """Channel definition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AlexaChannel, DirectLineChannel, DirectLineSpeechChannel, EmailChannel, FacebookChannel,
-    KikChannel, LineChannel, MsTeamsChannel, OutlookChannel, SkypeChannel, SlackChannel,
-    SmsChannel, TelegramChannel, WebChatChannel
+    AcsChatChannel, AlexaChannel, DirectLineChannel, DirectLineSpeechChannel, EmailChannel,
+    FacebookChannel, KikChannel, LineChannel, M365Extensions, MsTeamsChannel, Omnichannel,
+    OutlookChannel, SearchAssistant, SkypeChannel, SlackChannel, SmsChannel, TelegramChannel,
+    TelephonyChannel, WebChatChannel
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -59,6 +60,7 @@ class Channel(_serialization.Model):
 
     _subtype_map = {
         "channel_name": {
+            "AcsChatChannel": "AcsChatChannel",
             "AlexaChannel": "AlexaChannel",
             "DirectLineChannel": "DirectLineChannel",
             "DirectLineSpeechChannel": "DirectLineSpeechChannel",
@@ -66,12 +68,16 @@ class Channel(_serialization.Model):
             "FacebookChannel": "FacebookChannel",
             "KikChannel": "KikChannel",
             "LineChannel": "LineChannel",
+            "M365Extensions": "M365Extensions",
             "MsTeamsChannel": "MsTeamsChannel",
+            "Omnichannel": "Omnichannel",
             "OutlookChannel": "OutlookChannel",
+            "SearchAssistant": "SearchAssistant",
             "SkypeChannel": "SkypeChannel",
             "SlackChannel": "SlackChannel",
             "SmsChannel": "SmsChannel",
             "TelegramChannel": "TelegramChannel",
+            "TelephonyChannel": "TelephonyChannel",
             "WebChatChannel": "WebChatChannel",
         }
     }
@@ -88,6 +94,46 @@ class Channel(_serialization.Model):
         self.etag = etag
         self.provisioning_state = None
         self.location = location
+
+
+class AcsChatChannel(Channel):
+    """AcsChat channel definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel_name: The channel name. Required.
+    :vartype channel_name: str
+    :ivar etag: Entity Tag of the resource.
+    :vartype etag: str
+    :ivar provisioning_state: Provisioning state of the resource.
+    :vartype provisioning_state: str
+    :ivar location: Specifies the location of the resource.
+    :vartype location: str
+    """
+
+    _validation = {
+        "channel_name": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "channel_name": {"key": "channelName", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, etag: Optional[str] = None, location: str = "global", **kwargs):
+        """
+        :keyword etag: Entity Tag of the resource.
+        :paramtype etag: str
+        :keyword location: Specifies the location of the resource.
+        :paramtype location: str
+        """
+        super().__init__(etag=etag, location=location, **kwargs)
+        self.channel_name: str = "AcsChatChannel"
 
 
 class AlexaChannel(Channel):
@@ -587,7 +633,7 @@ class BotProperties(_serialization.Model):  # pylint: disable=too-many-instance-
         public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
         is_streaming_supported: bool = False,
         disable_local_auth: Optional[bool] = None,
-        schema_transformation_version: str = "0.0",
+        schema_transformation_version: Optional[str] = None,
         storage_resource_id: Optional[str] = None,
         open_with_hint: Optional[str] = None,
         app_password_hint: Optional[str] = None,
@@ -756,8 +802,6 @@ class ChannelResponseList(_serialization.Model):
 class ChannelSettings(_serialization.Model):
     """Channel settings definition.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar extension_key1: The extensionKey1.
     :vartype extension_key1: str
     :ivar extension_key2: The extensionKey2.
@@ -777,12 +821,9 @@ class ChannelSettings(_serialization.Model):
     :ivar disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
      used exclusively for authentication.
     :vartype disable_local_auth: bool
+    :ivar require_terms_agreement: Whether customer needs to agree to new terms.
+    :vartype require_terms_agreement: bool
     """
-
-    _validation = {
-        "extension_key1": {"readonly": True},
-        "extension_key2": {"readonly": True},
-    }
 
     _attribute_map = {
         "extension_key1": {"key": "extensionKey1", "type": "str"},
@@ -794,11 +835,14 @@ class ChannelSettings(_serialization.Model):
         "bot_icon_url": {"key": "botIconUrl", "type": "str"},
         "is_enabled": {"key": "isEnabled", "type": "bool"},
         "disable_local_auth": {"key": "disableLocalAuth", "type": "bool"},
+        "require_terms_agreement": {"key": "requireTermsAgreement", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
+        extension_key1: str = "",
+        extension_key2: str = "",
         sites: Optional[List["_models.Site"]] = None,
         channel_id: Optional[str] = None,
         channel_display_name: Optional[str] = None,
@@ -806,9 +850,14 @@ class ChannelSettings(_serialization.Model):
         bot_icon_url: Optional[str] = None,
         is_enabled: Optional[bool] = None,
         disable_local_auth: Optional[bool] = None,
+        require_terms_agreement: Optional[bool] = None,
         **kwargs
     ):
         """
+        :keyword extension_key1: The extensionKey1.
+        :paramtype extension_key1: str
+        :keyword extension_key2: The extensionKey2.
+        :paramtype extension_key2: str
         :keyword sites: The list of sites.
         :paramtype sites: list[~azure.mgmt.botservice.models.Site]
         :keyword channel_id: The channel id.
@@ -824,10 +873,12 @@ class ChannelSettings(_serialization.Model):
         :keyword disable_local_auth: Opt-out of local authentication and ensure only MSI and AAD can be
          used exclusively for authentication.
         :paramtype disable_local_auth: bool
+        :keyword require_terms_agreement: Whether customer needs to agree to new terms.
+        :paramtype require_terms_agreement: bool
         """
         super().__init__(**kwargs)
-        self.extension_key1 = None
-        self.extension_key2 = None
+        self.extension_key1 = extension_key1
+        self.extension_key2 = extension_key2
         self.sites = sites
         self.channel_id = channel_id
         self.channel_display_name = channel_display_name
@@ -835,6 +886,7 @@ class ChannelSettings(_serialization.Model):
         self.bot_icon_url = bot_icon_url
         self.is_enabled = is_enabled
         self.disable_local_auth = disable_local_auth
+        self.require_terms_agreement = require_terms_agreement
 
 
 class CheckNameAvailabilityRequestBody(_serialization.Model):
@@ -871,24 +923,32 @@ class CheckNameAvailabilityResponseBody(_serialization.Model):
     :ivar message: additional message from the bot management api showing why a bot name is not
      available.
     :vartype message: str
+    :ivar abs_code: response code from ABS.
+    :vartype abs_code: str
     """
 
     _attribute_map = {
         "valid": {"key": "valid", "type": "bool"},
         "message": {"key": "message", "type": "str"},
+        "abs_code": {"key": "absCode", "type": "str"},
     }
 
-    def __init__(self, *, valid: Optional[bool] = None, message: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, valid: Optional[bool] = None, message: Optional[str] = None, abs_code: Optional[str] = None, **kwargs
+    ):
         """
         :keyword valid: indicates if the bot name is valid.
         :paramtype valid: bool
         :keyword message: additional message from the bot management api showing why a bot name is not
          available.
         :paramtype message: str
+        :keyword abs_code: response code from ABS.
+        :paramtype abs_code: str
         """
         super().__init__(**kwargs)
         self.valid = valid
         self.message = message
+        self.abs_code = abs_code
 
 
 class ConnectionItemName(_serialization.Model):
@@ -1023,10 +1083,6 @@ class ConnectionSettingProperties(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Id associated with the Connection Setting.
-    :vartype id: str
-    :ivar name: Name associated with the Connection Setting.
-    :vartype name: str
     :ivar client_id: Client Id associated with the Connection Setting.
     :vartype client_id: str
     :ivar setting_id: Setting Id set by the service for the Connection Setting.
@@ -1051,8 +1107,6 @@ class ConnectionSettingProperties(_serialization.Model):
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
         "client_id": {"key": "clientId", "type": "str"},
         "setting_id": {"key": "settingId", "type": "str"},
         "client_secret": {"key": "clientSecret", "type": "str"},
@@ -1066,11 +1120,9 @@ class ConnectionSettingProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        name: Optional[str] = None,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
-        scopes: Optional[str] = None,
+        scopes: str = "",
         service_provider_id: Optional[str] = None,
         service_provider_display_name: Optional[str] = None,
         parameters: Optional[List["_models.ConnectionSettingParameter"]] = None,
@@ -1078,10 +1130,6 @@ class ConnectionSettingProperties(_serialization.Model):
         **kwargs
     ):
         """
-        :keyword id: Id associated with the Connection Setting.
-        :paramtype id: str
-        :keyword name: Name associated with the Connection Setting.
-        :paramtype name: str
         :keyword client_id: Client Id associated with the Connection Setting.
         :paramtype client_id: str
         :keyword client_secret: Client Secret associated with the Connection Setting.
@@ -1099,8 +1147,6 @@ class ConnectionSettingProperties(_serialization.Model):
         :paramtype provisioning_state: str
         """
         super().__init__(**kwargs)
-        self.id = id
-        self.name = name
         self.client_id = client_id
         self.setting_id = None
         self.client_secret = client_secret
@@ -1261,8 +1307,6 @@ class DirectLineChannel(Channel):
 class DirectLineChannelProperties(_serialization.Model):
     """The parameters to provide for the Direct Line channel.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar sites: The list of Direct Line sites.
     :vartype sites: list[~azure.mgmt.botservice.models.DirectLineSite]
     :ivar extension_key1: The extensionKey1.
@@ -1272,11 +1316,6 @@ class DirectLineChannelProperties(_serialization.Model):
     :ivar direct_line_embed_code: Direct Line embed code of the resource.
     :vartype direct_line_embed_code: str
     """
-
-    _validation = {
-        "extension_key1": {"readonly": True},
-        "extension_key2": {"readonly": True},
-    }
 
     _attribute_map = {
         "sites": {"key": "sites", "type": "[DirectLineSite]"},
@@ -1289,19 +1328,25 @@ class DirectLineChannelProperties(_serialization.Model):
         self,
         *,
         sites: Optional[List["_models.DirectLineSite"]] = None,
+        extension_key1: str = "",
+        extension_key2: str = "",
         direct_line_embed_code: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword sites: The list of Direct Line sites.
         :paramtype sites: list[~azure.mgmt.botservice.models.DirectLineSite]
+        :keyword extension_key1: The extensionKey1.
+        :paramtype extension_key1: str
+        :keyword extension_key2: The extensionKey2.
+        :paramtype extension_key2: str
         :keyword direct_line_embed_code: Direct Line embed code of the resource.
         :paramtype direct_line_embed_code: str
         """
         super().__init__(**kwargs)
         self.sites = sites
-        self.extension_key1 = None
-        self.extension_key2 = None
+        self.extension_key1 = extension_key1
+        self.extension_key2 = extension_key2
         self.direct_line_embed_code = direct_line_embed_code
 
 
@@ -1312,6 +1357,8 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar tenant_id: Tenant Id.
+    :vartype tenant_id: str
     :ivar site_id: Site Id.
     :vartype site_id: str
     :ivar site_name: Site name. Required.
@@ -1341,7 +1388,7 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
     :vartype app_id: str
     :ivar is_v1_enabled: Whether this site is enabled for Bot Framework V1 protocol.
     :vartype is_v1_enabled: bool
-    :ivar is_v3_enabled: Whether this site is enabled for Bot Framework V1 protocol.
+    :ivar is_v3_enabled: Whether this site is enabled for Bot Framework V3 protocol.
     :vartype is_v3_enabled: bool
     :ivar is_secure_site_enabled: Whether this site is enabled for authentication with Bot
      Framework.
@@ -1349,6 +1396,8 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
     :ivar trusted_origins: List of Trusted Origin URLs for this site. This field is applicable only
      if isSecureSiteEnabled is True.
     :vartype trusted_origins: list[str]
+    :ivar is_web_chat_speech_enabled: Whether this site is enabled for Webchat Speech.
+    :vartype is_web_chat_speech_enabled: bool
     :ivar is_webchat_preview_enabled: Whether this site is enabled for preview versions of Webchat.
     :vartype is_webchat_preview_enabled: bool
     """
@@ -1363,6 +1412,7 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
     }
 
     _attribute_map = {
+        "tenant_id": {"key": "tenantId", "type": "str"},
         "site_id": {"key": "siteId", "type": "str"},
         "site_name": {"key": "siteName", "type": "str"},
         "key": {"key": "key", "type": "str"},
@@ -1379,6 +1429,7 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         "is_v3_enabled": {"key": "isV3Enabled", "type": "bool"},
         "is_secure_site_enabled": {"key": "isSecureSiteEnabled", "type": "bool"},
         "trusted_origins": {"key": "trustedOrigins", "type": "[str]"},
+        "is_web_chat_speech_enabled": {"key": "isWebChatSpeechEnabled", "type": "bool"},
         "is_webchat_preview_enabled": {"key": "isWebchatPreviewEnabled", "type": "bool"},
     }
 
@@ -1387,6 +1438,7 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         *,
         site_name: str,
         is_enabled: bool,
+        tenant_id: Optional[str] = None,
         is_endpoint_parameters_enabled: Optional[bool] = None,
         is_detailed_logging_enabled: Optional[bool] = None,
         is_block_user_upload_enabled: Optional[bool] = None,
@@ -1397,10 +1449,13 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         is_v3_enabled: Optional[bool] = None,
         is_secure_site_enabled: Optional[bool] = None,
         trusted_origins: Optional[List[str]] = None,
+        is_web_chat_speech_enabled: bool = False,
         is_webchat_preview_enabled: bool = False,
         **kwargs
     ):
         """
+        :keyword tenant_id: Tenant Id.
+        :paramtype tenant_id: str
         :keyword site_name: Site name. Required.
         :paramtype site_name: str
         :keyword is_enabled: Whether this site is enabled for DirectLine channel. Required.
@@ -1420,7 +1475,7 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         :paramtype app_id: str
         :keyword is_v1_enabled: Whether this site is enabled for Bot Framework V1 protocol.
         :paramtype is_v1_enabled: bool
-        :keyword is_v3_enabled: Whether this site is enabled for Bot Framework V1 protocol.
+        :keyword is_v3_enabled: Whether this site is enabled for Bot Framework V3 protocol.
         :paramtype is_v3_enabled: bool
         :keyword is_secure_site_enabled: Whether this site is enabled for authentication with Bot
          Framework.
@@ -1428,11 +1483,14 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         :keyword trusted_origins: List of Trusted Origin URLs for this site. This field is applicable
          only if isSecureSiteEnabled is True.
         :paramtype trusted_origins: list[str]
+        :keyword is_web_chat_speech_enabled: Whether this site is enabled for Webchat Speech.
+        :paramtype is_web_chat_speech_enabled: bool
         :keyword is_webchat_preview_enabled: Whether this site is enabled for preview versions of
          Webchat.
         :paramtype is_webchat_preview_enabled: bool
         """
         super().__init__(**kwargs)
+        self.tenant_id = tenant_id
         self.site_id = None
         self.site_name = site_name
         self.key = None
@@ -1449,6 +1507,7 @@ class Site(_serialization.Model):  # pylint: disable=too-many-instance-attribute
         self.is_v3_enabled = is_v3_enabled
         self.is_secure_site_enabled = is_secure_site_enabled
         self.trusted_origins = trusted_origins
+        self.is_web_chat_speech_enabled = is_web_chat_speech_enabled
         self.is_webchat_preview_enabled = is_webchat_preview_enabled
 
 
@@ -1459,6 +1518,8 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar tenant_id: Tenant Id.
+    :vartype tenant_id: str
     :ivar site_id: Site Id.
     :vartype site_id: str
     :ivar site_name: Site name. Required.
@@ -1488,7 +1549,7 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
     :vartype app_id: str
     :ivar is_v1_enabled: Whether this site is enabled for Bot Framework V1 protocol.
     :vartype is_v1_enabled: bool
-    :ivar is_v3_enabled: Whether this site is enabled for Bot Framework V1 protocol.
+    :ivar is_v3_enabled: Whether this site is enabled for Bot Framework V3 protocol.
     :vartype is_v3_enabled: bool
     :ivar is_secure_site_enabled: Whether this site is enabled for authentication with Bot
      Framework.
@@ -1496,6 +1557,8 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
     :ivar trusted_origins: List of Trusted Origin URLs for this site. This field is applicable only
      if isSecureSiteEnabled is True.
     :vartype trusted_origins: list[str]
+    :ivar is_web_chat_speech_enabled: Whether this site is enabled for Webchat Speech.
+    :vartype is_web_chat_speech_enabled: bool
     :ivar is_webchat_preview_enabled: Whether this site is enabled for preview versions of Webchat.
     :vartype is_webchat_preview_enabled: bool
     """
@@ -1510,6 +1573,7 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
     }
 
     _attribute_map = {
+        "tenant_id": {"key": "tenantId", "type": "str"},
         "site_id": {"key": "siteId", "type": "str"},
         "site_name": {"key": "siteName", "type": "str"},
         "key": {"key": "key", "type": "str"},
@@ -1526,6 +1590,7 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
         "is_v3_enabled": {"key": "isV3Enabled", "type": "bool"},
         "is_secure_site_enabled": {"key": "isSecureSiteEnabled", "type": "bool"},
         "trusted_origins": {"key": "trustedOrigins", "type": "[str]"},
+        "is_web_chat_speech_enabled": {"key": "isWebChatSpeechEnabled", "type": "bool"},
         "is_webchat_preview_enabled": {"key": "isWebchatPreviewEnabled", "type": "bool"},
     }
 
@@ -1534,6 +1599,7 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
         *,
         site_name: str,
         is_enabled: bool,
+        tenant_id: Optional[str] = None,
         is_endpoint_parameters_enabled: Optional[bool] = None,
         is_detailed_logging_enabled: Optional[bool] = None,
         is_block_user_upload_enabled: Optional[bool] = None,
@@ -1544,10 +1610,13 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
         is_v3_enabled: Optional[bool] = None,
         is_secure_site_enabled: Optional[bool] = None,
         trusted_origins: Optional[List[str]] = None,
+        is_web_chat_speech_enabled: bool = False,
         is_webchat_preview_enabled: bool = False,
         **kwargs
     ):
         """
+        :keyword tenant_id: Tenant Id.
+        :paramtype tenant_id: str
         :keyword site_name: Site name. Required.
         :paramtype site_name: str
         :keyword is_enabled: Whether this site is enabled for DirectLine channel. Required.
@@ -1567,7 +1636,7 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
         :paramtype app_id: str
         :keyword is_v1_enabled: Whether this site is enabled for Bot Framework V1 protocol.
         :paramtype is_v1_enabled: bool
-        :keyword is_v3_enabled: Whether this site is enabled for Bot Framework V1 protocol.
+        :keyword is_v3_enabled: Whether this site is enabled for Bot Framework V3 protocol.
         :paramtype is_v3_enabled: bool
         :keyword is_secure_site_enabled: Whether this site is enabled for authentication with Bot
          Framework.
@@ -1575,11 +1644,14 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
         :keyword trusted_origins: List of Trusted Origin URLs for this site. This field is applicable
          only if isSecureSiteEnabled is True.
         :paramtype trusted_origins: list[str]
+        :keyword is_web_chat_speech_enabled: Whether this site is enabled for Webchat Speech.
+        :paramtype is_web_chat_speech_enabled: bool
         :keyword is_webchat_preview_enabled: Whether this site is enabled for preview versions of
          Webchat.
         :paramtype is_webchat_preview_enabled: bool
         """
         super().__init__(
+            tenant_id=tenant_id,
             site_name=site_name,
             is_enabled=is_enabled,
             is_endpoint_parameters_enabled=is_endpoint_parameters_enabled,
@@ -1592,6 +1664,7 @@ class DirectLineSite(Site):  # pylint: disable=too-many-instance-attributes
             is_v3_enabled=is_v3_enabled,
             is_secure_site_enabled=is_secure_site_enabled,
             trusted_origins=trusted_origins,
+            is_web_chat_speech_enabled=is_web_chat_speech_enabled,
             is_webchat_preview_enabled=is_webchat_preview_enabled,
             **kwargs
         )
@@ -2472,6 +2545,46 @@ class ListChannelWithKeysResponse(BotChannel):  # pylint: disable=too-many-insta
         self.changed_time = changed_time
 
 
+class M365Extensions(Channel):
+    """M365 Extensions definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel_name: The channel name. Required.
+    :vartype channel_name: str
+    :ivar etag: Entity Tag of the resource.
+    :vartype etag: str
+    :ivar provisioning_state: Provisioning state of the resource.
+    :vartype provisioning_state: str
+    :ivar location: Specifies the location of the resource.
+    :vartype location: str
+    """
+
+    _validation = {
+        "channel_name": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "channel_name": {"key": "channelName", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, etag: Optional[str] = None, location: str = "global", **kwargs):
+        """
+        :keyword etag: Entity Tag of the resource.
+        :paramtype etag: str
+        :keyword location: Specifies the location of the resource.
+        :paramtype location: str
+        """
+        super().__init__(etag=etag, location=location, **kwargs)
+        self.channel_name: str = "M365Extensions"
+
+
 class MsTeamsChannel(Channel):
     """Microsoft Teams channel definition.
 
@@ -2589,6 +2702,46 @@ class MsTeamsChannelProperties(_serialization.Model):
         self.incoming_call_route = incoming_call_route
         self.deployment_environment = deployment_environment
         self.accepted_terms = accepted_terms
+
+
+class Omnichannel(Channel):
+    """Omnichannel channel definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel_name: The channel name. Required.
+    :vartype channel_name: str
+    :ivar etag: Entity Tag of the resource.
+    :vartype etag: str
+    :ivar provisioning_state: Provisioning state of the resource.
+    :vartype provisioning_state: str
+    :ivar location: Specifies the location of the resource.
+    :vartype location: str
+    """
+
+    _validation = {
+        "channel_name": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "channel_name": {"key": "channelName", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, etag: Optional[str] = None, location: str = "global", **kwargs):
+        """
+        :keyword etag: Entity Tag of the resource.
+        :paramtype etag: str
+        :keyword location: Specifies the location of the resource.
+        :paramtype location: str
+        """
+        super().__init__(etag=etag, location=location, **kwargs)
+        self.channel_name: str = "Omnichannel"
 
 
 class OperationDisplayInfo(_serialization.Model):
@@ -2871,6 +3024,8 @@ class PrivateEndpointConnection(PrivateLinkResourceBase):
      Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.botservice.models.PrivateEndpointConnectionProvisioningState
+    :ivar group_ids: Group ids.
+    :vartype group_ids: list[str]
     """
 
     _validation = {
@@ -2890,6 +3045,7 @@ class PrivateEndpointConnection(PrivateLinkResourceBase):
             "type": "PrivateLinkServiceConnectionState",
         },
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
     }
 
     def __init__(
@@ -2897,6 +3053,7 @@ class PrivateEndpointConnection(PrivateLinkResourceBase):
         *,
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
+        group_ids: Optional[List[str]] = None,
         **kwargs
     ):
         """
@@ -2906,11 +3063,14 @@ class PrivateEndpointConnection(PrivateLinkResourceBase):
          the connection between service consumer and provider.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.botservice.models.PrivateLinkServiceConnectionState
+        :keyword group_ids: Group ids.
+        :paramtype group_ids: list[str]
         """
         super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
+        self.group_ids = group_ids
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
@@ -3117,6 +3277,46 @@ class QnAMakerEndpointKeysResponse(_serialization.Model):
         self.last_stable_version = last_stable_version
 
 
+class SearchAssistant(Channel):
+    """SearchAssistant definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel_name: The channel name. Required.
+    :vartype channel_name: str
+    :ivar etag: Entity Tag of the resource.
+    :vartype etag: str
+    :ivar provisioning_state: Provisioning state of the resource.
+    :vartype provisioning_state: str
+    :ivar location: Specifies the location of the resource.
+    :vartype location: str
+    """
+
+    _validation = {
+        "channel_name": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "channel_name": {"key": "channelName", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, etag: Optional[str] = None, location: str = "global", **kwargs):
+        """
+        :keyword etag: Entity Tag of the resource.
+        :paramtype etag: str
+        :keyword location: Specifies the location of the resource.
+        :paramtype location: str
+        """
+        super().__init__(etag=etag, location=location, **kwargs)
+        self.channel_name: str = "SearchAssistant"
+
+
 class ServiceProvider(_serialization.Model):
     """Service Provider Definition.
 
@@ -3242,11 +3442,11 @@ class ServiceProviderProperties(_serialization.Model):
     :vartype id: str
     :ivar display_name: Display Name of the Service Provider.
     :vartype display_name: str
-    :ivar service_provider_name: Display Name of the Service Provider.
+    :ivar service_provider_name: Name of the Service Provider.
     :vartype service_provider_name: str
-    :ivar dev_portal_url: Display Name of the Service Provider.
+    :ivar dev_portal_url: URL of Dev Portal.
     :vartype dev_portal_url: str
-    :ivar icon_url: Display Name of the Service Provider.
+    :ivar icon_url: The URL of icon.
     :vartype icon_url: str
     :ivar parameters: The list of parameters for the Service Provider.
     :vartype parameters: list[~azure.mgmt.botservice.models.ServiceProviderParameter]
@@ -3257,7 +3457,6 @@ class ServiceProviderProperties(_serialization.Model):
         "display_name": {"readonly": True},
         "service_provider_name": {"readonly": True},
         "dev_portal_url": {"readonly": True},
-        "icon_url": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3269,8 +3468,12 @@ class ServiceProviderProperties(_serialization.Model):
         "parameters": {"key": "parameters", "type": "[ServiceProviderParameter]"},
     }
 
-    def __init__(self, *, parameters: Optional[List["_models.ServiceProviderParameter"]] = None, **kwargs):
+    def __init__(
+        self, *, icon_url: str = "", parameters: Optional[List["_models.ServiceProviderParameter"]] = None, **kwargs
+    ):
         """
+        :keyword icon_url: The URL of icon.
+        :paramtype icon_url: str
         :keyword parameters: The list of parameters for the Service Provider.
         :paramtype parameters: list[~azure.mgmt.botservice.models.ServiceProviderParameter]
         """
@@ -3279,7 +3482,7 @@ class ServiceProviderProperties(_serialization.Model):
         self.display_name = None
         self.service_provider_name = None
         self.dev_portal_url = None
-        self.icon_url = None
+        self.icon_url = icon_url
         self.parameters = parameters
 
 
@@ -3898,6 +4101,276 @@ class TelegramChannelProperties(_serialization.Model):
         self.is_enabled = is_enabled
 
 
+class TelephonyChannel(Channel):
+    """Telephony channel definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar channel_name: The channel name. Required.
+    :vartype channel_name: str
+    :ivar etag: Entity Tag of the resource.
+    :vartype etag: str
+    :ivar provisioning_state: Provisioning state of the resource.
+    :vartype provisioning_state: str
+    :ivar location: Specifies the location of the resource.
+    :vartype location: str
+    :ivar properties: The set of properties specific to Telephony channel resource.
+    :vartype properties: ~azure.mgmt.botservice.models.TelephonyChannelProperties
+    """
+
+    _validation = {
+        "channel_name": {"required": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "channel_name": {"key": "channelName", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "TelephonyChannelProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        etag: Optional[str] = None,
+        location: str = "global",
+        properties: Optional["_models.TelephonyChannelProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword etag: Entity Tag of the resource.
+        :paramtype etag: str
+        :keyword location: Specifies the location of the resource.
+        :paramtype location: str
+        :keyword properties: The set of properties specific to Telephony channel resource.
+        :paramtype properties: ~azure.mgmt.botservice.models.TelephonyChannelProperties
+        """
+        super().__init__(etag=etag, location=location, **kwargs)
+        self.channel_name: str = "TelephonyChannel"
+        self.properties = properties
+
+
+class TelephonyChannelProperties(_serialization.Model):
+    """The parameters to provide for the Direct Line channel.
+
+    :ivar phone_numbers: The list of Telephony phone numbers.
+    :vartype phone_numbers: list[~azure.mgmt.botservice.models.TelephonyPhoneNumbers]
+    :ivar api_configurations: The list of Telephony api configuration.
+    :vartype api_configurations:
+     list[~azure.mgmt.botservice.models.TelephonyChannelResourceApiConfiguration]
+    :ivar cognitive_service_subscription_key: The extensionKey1.
+    :vartype cognitive_service_subscription_key: str
+    :ivar cognitive_service_region: The extensionKey2.
+    :vartype cognitive_service_region: str
+    :ivar default_locale: The default locale of the channel.
+    :vartype default_locale: str
+    :ivar premium_sku: The premium SKU applied to the channel.
+    :vartype premium_sku: str
+    :ivar is_enabled: Whether the channel is enabled.
+    :vartype is_enabled: bool
+    """
+
+    _attribute_map = {
+        "phone_numbers": {"key": "phoneNumbers", "type": "[TelephonyPhoneNumbers]"},
+        "api_configurations": {"key": "apiConfigurations", "type": "[TelephonyChannelResourceApiConfiguration]"},
+        "cognitive_service_subscription_key": {"key": "cognitiveServiceSubscriptionKey", "type": "str"},
+        "cognitive_service_region": {"key": "cognitiveServiceRegion", "type": "str"},
+        "default_locale": {"key": "defaultLocale", "type": "str"},
+        "premium_sku": {"key": "premiumSKU", "type": "str"},
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+    }
+
+    def __init__(
+        self,
+        *,
+        phone_numbers: Optional[List["_models.TelephonyPhoneNumbers"]] = None,
+        api_configurations: Optional[List["_models.TelephonyChannelResourceApiConfiguration"]] = None,
+        cognitive_service_subscription_key: Optional[str] = None,
+        cognitive_service_region: Optional[str] = None,
+        default_locale: Optional[str] = None,
+        premium_sku: Optional[str] = None,
+        is_enabled: Optional[bool] = None,
+        **kwargs
+    ):
+        """
+        :keyword phone_numbers: The list of Telephony phone numbers.
+        :paramtype phone_numbers: list[~azure.mgmt.botservice.models.TelephonyPhoneNumbers]
+        :keyword api_configurations: The list of Telephony api configuration.
+        :paramtype api_configurations:
+         list[~azure.mgmt.botservice.models.TelephonyChannelResourceApiConfiguration]
+        :keyword cognitive_service_subscription_key: The extensionKey1.
+        :paramtype cognitive_service_subscription_key: str
+        :keyword cognitive_service_region: The extensionKey2.
+        :paramtype cognitive_service_region: str
+        :keyword default_locale: The default locale of the channel.
+        :paramtype default_locale: str
+        :keyword premium_sku: The premium SKU applied to the channel.
+        :paramtype premium_sku: str
+        :keyword is_enabled: Whether the channel is enabled.
+        :paramtype is_enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.phone_numbers = phone_numbers
+        self.api_configurations = api_configurations
+        self.cognitive_service_subscription_key = cognitive_service_subscription_key
+        self.cognitive_service_region = cognitive_service_region
+        self.default_locale = default_locale
+        self.premium_sku = premium_sku
+        self.is_enabled = is_enabled
+
+
+class TelephonyChannelResourceApiConfiguration(_serialization.Model):
+    """A resource Api configuration for the Telephony channel.
+
+    :ivar id: The id of config.
+    :vartype id: str
+    :ivar provider_name: The provider name.
+    :vartype provider_name: str
+    :ivar cognitive_service_subscription_key: The cognitive service subscription key.
+    :vartype cognitive_service_subscription_key: str
+    :ivar cognitive_service_region: The cognitive service region.
+    :vartype cognitive_service_region: str
+    :ivar cognitive_service_resource_id: The cognitive service resourceId.
+    :vartype cognitive_service_resource_id: str
+    :ivar default_locale: The default locale.
+    :vartype default_locale: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "provider_name": {"key": "providerName", "type": "str"},
+        "cognitive_service_subscription_key": {"key": "cognitiveServiceSubscriptionKey", "type": "str"},
+        "cognitive_service_region": {"key": "cognitiveServiceRegion", "type": "str"},
+        "cognitive_service_resource_id": {"key": "cognitiveServiceResourceId", "type": "str"},
+        "default_locale": {"key": "defaultLocale", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        provider_name: Optional[str] = None,
+        cognitive_service_subscription_key: Optional[str] = None,
+        cognitive_service_region: Optional[str] = None,
+        cognitive_service_resource_id: Optional[str] = None,
+        default_locale: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The id of config.
+        :paramtype id: str
+        :keyword provider_name: The provider name.
+        :paramtype provider_name: str
+        :keyword cognitive_service_subscription_key: The cognitive service subscription key.
+        :paramtype cognitive_service_subscription_key: str
+        :keyword cognitive_service_region: The cognitive service region.
+        :paramtype cognitive_service_region: str
+        :keyword cognitive_service_resource_id: The cognitive service resourceId.
+        :paramtype cognitive_service_resource_id: str
+        :keyword default_locale: The default locale.
+        :paramtype default_locale: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.provider_name = provider_name
+        self.cognitive_service_subscription_key = cognitive_service_subscription_key
+        self.cognitive_service_region = cognitive_service_region
+        self.cognitive_service_resource_id = cognitive_service_resource_id
+        self.default_locale = default_locale
+
+
+class TelephonyPhoneNumbers(_serialization.Model):
+    """A telephone number for the Telephony channel.
+
+    :ivar id: The element id.
+    :vartype id: str
+    :ivar phone_number: The phone number.
+    :vartype phone_number: str
+    :ivar acs_endpoint: The endpoint of ACS.
+    :vartype acs_endpoint: str
+    :ivar acs_secret: The secret of ACS.
+    :vartype acs_secret: str
+    :ivar acs_resource_id: The resource id of ACS.
+    :vartype acs_resource_id: str
+    :ivar cognitive_service_subscription_key: The subscription key of cognitive service.
+    :vartype cognitive_service_subscription_key: str
+    :ivar cognitive_service_region: The service region of cognitive service.
+    :vartype cognitive_service_region: str
+    :ivar cognitive_service_resource_id: The resource id of cognitive service.
+    :vartype cognitive_service_resource_id: str
+    :ivar default_locale: The default locale of the phone number.
+    :vartype default_locale: str
+    :ivar offer_type: Optional Property that will determine the offering type of the phone.
+    :vartype offer_type: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "acs_endpoint": {"key": "acsEndpoint", "type": "str"},
+        "acs_secret": {"key": "acsSecret", "type": "str"},
+        "acs_resource_id": {"key": "acsResourceId", "type": "str"},
+        "cognitive_service_subscription_key": {"key": "cognitiveServiceSubscriptionKey", "type": "str"},
+        "cognitive_service_region": {"key": "cognitiveServiceRegion", "type": "str"},
+        "cognitive_service_resource_id": {"key": "cognitiveServiceResourceId", "type": "str"},
+        "default_locale": {"key": "defaultLocale", "type": "str"},
+        "offer_type": {"key": "offerType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        phone_number: Optional[str] = None,
+        acs_endpoint: Optional[str] = None,
+        acs_secret: Optional[str] = None,
+        acs_resource_id: Optional[str] = None,
+        cognitive_service_subscription_key: Optional[str] = None,
+        cognitive_service_region: Optional[str] = None,
+        cognitive_service_resource_id: Optional[str] = None,
+        default_locale: Optional[str] = None,
+        offer_type: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The element id.
+        :paramtype id: str
+        :keyword phone_number: The phone number.
+        :paramtype phone_number: str
+        :keyword acs_endpoint: The endpoint of ACS.
+        :paramtype acs_endpoint: str
+        :keyword acs_secret: The secret of ACS.
+        :paramtype acs_secret: str
+        :keyword acs_resource_id: The resource id of ACS.
+        :paramtype acs_resource_id: str
+        :keyword cognitive_service_subscription_key: The subscription key of cognitive service.
+        :paramtype cognitive_service_subscription_key: str
+        :keyword cognitive_service_region: The service region of cognitive service.
+        :paramtype cognitive_service_region: str
+        :keyword cognitive_service_resource_id: The resource id of cognitive service.
+        :paramtype cognitive_service_resource_id: str
+        :keyword default_locale: The default locale of the phone number.
+        :paramtype default_locale: str
+        :keyword offer_type: Optional Property that will determine the offering type of the phone.
+        :paramtype offer_type: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.phone_number = phone_number
+        self.acs_endpoint = acs_endpoint
+        self.acs_secret = acs_secret
+        self.acs_resource_id = acs_resource_id
+        self.cognitive_service_subscription_key = cognitive_service_subscription_key
+        self.cognitive_service_region = cognitive_service_region
+        self.cognitive_service_resource_id = cognitive_service_resource_id
+        self.default_locale = default_locale
+        self.offer_type = offer_type
+
+
 class WebChatChannel(Channel):
     """Web Chat channel definition.
 
@@ -3988,6 +4461,8 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar tenant_id: Tenant Id.
+    :vartype tenant_id: str
     :ivar site_id: Site Id.
     :vartype site_id: str
     :ivar site_name: Site name. Required.
@@ -4017,7 +4492,7 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
     :vartype app_id: str
     :ivar is_v1_enabled: Whether this site is enabled for Bot Framework V1 protocol.
     :vartype is_v1_enabled: bool
-    :ivar is_v3_enabled: Whether this site is enabled for Bot Framework V1 protocol.
+    :ivar is_v3_enabled: Whether this site is enabled for Bot Framework V3 protocol.
     :vartype is_v3_enabled: bool
     :ivar is_secure_site_enabled: Whether this site is enabled for authentication with Bot
      Framework.
@@ -4025,6 +4500,8 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
     :ivar trusted_origins: List of Trusted Origin URLs for this site. This field is applicable only
      if isSecureSiteEnabled is True.
     :vartype trusted_origins: list[str]
+    :ivar is_web_chat_speech_enabled: Whether this site is enabled for Webchat Speech.
+    :vartype is_web_chat_speech_enabled: bool
     :ivar is_webchat_preview_enabled: Whether this site is enabled for preview versions of Webchat.
     :vartype is_webchat_preview_enabled: bool
     """
@@ -4039,6 +4516,7 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
     }
 
     _attribute_map = {
+        "tenant_id": {"key": "tenantId", "type": "str"},
         "site_id": {"key": "siteId", "type": "str"},
         "site_name": {"key": "siteName", "type": "str"},
         "key": {"key": "key", "type": "str"},
@@ -4055,6 +4533,7 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
         "is_v3_enabled": {"key": "isV3Enabled", "type": "bool"},
         "is_secure_site_enabled": {"key": "isSecureSiteEnabled", "type": "bool"},
         "trusted_origins": {"key": "trustedOrigins", "type": "[str]"},
+        "is_web_chat_speech_enabled": {"key": "isWebChatSpeechEnabled", "type": "bool"},
         "is_webchat_preview_enabled": {"key": "isWebchatPreviewEnabled", "type": "bool"},
     }
 
@@ -4063,6 +4542,7 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
         *,
         site_name: str,
         is_enabled: bool,
+        tenant_id: Optional[str] = None,
         is_endpoint_parameters_enabled: Optional[bool] = None,
         is_detailed_logging_enabled: Optional[bool] = None,
         is_block_user_upload_enabled: Optional[bool] = None,
@@ -4073,10 +4553,13 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
         is_v3_enabled: Optional[bool] = None,
         is_secure_site_enabled: Optional[bool] = None,
         trusted_origins: Optional[List[str]] = None,
+        is_web_chat_speech_enabled: bool = False,
         is_webchat_preview_enabled: bool = False,
         **kwargs
     ):
         """
+        :keyword tenant_id: Tenant Id.
+        :paramtype tenant_id: str
         :keyword site_name: Site name. Required.
         :paramtype site_name: str
         :keyword is_enabled: Whether this site is enabled for DirectLine channel. Required.
@@ -4096,7 +4579,7 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
         :paramtype app_id: str
         :keyword is_v1_enabled: Whether this site is enabled for Bot Framework V1 protocol.
         :paramtype is_v1_enabled: bool
-        :keyword is_v3_enabled: Whether this site is enabled for Bot Framework V1 protocol.
+        :keyword is_v3_enabled: Whether this site is enabled for Bot Framework V3 protocol.
         :paramtype is_v3_enabled: bool
         :keyword is_secure_site_enabled: Whether this site is enabled for authentication with Bot
          Framework.
@@ -4104,11 +4587,14 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
         :keyword trusted_origins: List of Trusted Origin URLs for this site. This field is applicable
          only if isSecureSiteEnabled is True.
         :paramtype trusted_origins: list[str]
+        :keyword is_web_chat_speech_enabled: Whether this site is enabled for Webchat Speech.
+        :paramtype is_web_chat_speech_enabled: bool
         :keyword is_webchat_preview_enabled: Whether this site is enabled for preview versions of
          Webchat.
         :paramtype is_webchat_preview_enabled: bool
         """
         super().__init__(
+            tenant_id=tenant_id,
             site_name=site_name,
             is_enabled=is_enabled,
             is_endpoint_parameters_enabled=is_endpoint_parameters_enabled,
@@ -4121,6 +4607,7 @@ class WebChatSite(Site):  # pylint: disable=too-many-instance-attributes
             is_v3_enabled=is_v3_enabled,
             is_secure_site_enabled=is_secure_site_enabled,
             trusted_origins=trusted_origins,
+            is_web_chat_speech_enabled=is_web_chat_speech_enabled,
             is_webchat_preview_enabled=is_webchat_preview_enabled,
             **kwargs
         )

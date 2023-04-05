@@ -6,40 +6,54 @@
 
 import logging
 
-from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump
+from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, validates
 
-from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
-from azure.ai.ml._schema.component import (
+from ..._schema.assets.environment import AnonymousEnvironmentSchema
+from ..._schema.component import (
     AnonymousCommandComponentSchema,
+    AnonymousDataTransferCopyComponentSchema,
     AnonymousImportComponentSchema,
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
     ComponentFileRefField,
+    DataTransferCopyComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
 )
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
-from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.input_output_entry import OutputSchema
-from azure.ai.ml._schema.job.input_output_fields_provider import InputsField
-from azure.ai.ml._schema.pipeline.pipeline_job_io import OutputBindingStr
-from azure.ai.ml._schema.spark_resource_configuration import SparkResourceConfigurationSchema
-from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.constants._component import NodeType
-from azure.ai.ml.entities._inputs_outputs import Input
-
+from ..._utils.utils import is_data_binding_expression
+from ...constants._common import AzureMLResourceType
+from ...constants._component import DataTransferTaskType, NodeType
+from ...entities._inputs_outputs import Input
 from ...entities._job.pipeline._attr_dict import _AttrDict
 from ...exceptions import ValidationException
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
-from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
+from ..core.fields import (
+    ArmVersionedStr,
+    ComputeField,
+    NestedField,
+    RegistryStr,
+    StringTransformedEnum,
+    TypeSensitiveUnionField,
+    UnionField,
+)
+from ..core.schema import PathAwareSchema
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
+from ..job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from ..job.input_output_entry import DatabaseSchema, FileSystemSchema, OutputSchema
+from ..job.input_output_fields_provider import InputsField
 from ..job.job_limits import CommandJobLimitsSchema
 from ..job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
-from ..job.services import JobServiceSchema
+from ..job.services import (
+    JobServiceSchema,
+    JupyterLabJobServiceSchema,
+    SshJobServiceSchema,
+    TensorBoardJobServiceSchema,
+    VsCodeJobServiceSchema,
+)
+from ..pipeline.pipeline_job_io import OutputBindingStr
+from ..spark_resource_configuration import SparkResourceConfigurationSchema
 
 module_logger = logging.getLogger(__name__)
 
@@ -48,7 +62,7 @@ module_logger = logging.getLogger(__name__)
 class BaseNodeSchema(PathAwareSchema):
     unknown = INCLUDE
 
-    inputs = InputsField()
+    inputs = InputsField(support_databinding=True)
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
@@ -61,14 +75,18 @@ class BaseNodeSchema(PathAwareSchema):
         # data binding expression is not supported inside component field, while validation error
         # message will be very long when component is an object as error message will include
         # str(component), so just add component to skip list. The same to trial in Sweep.
-        support_data_binding_expression_for_fields(self, ["type", "component", "trial"])
+        support_data_binding_expression_for_fields(self, ["type", "component", "trial", "inputs"])
 
     @post_dump(pass_original=True)
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
         """Support serializing unknown fields for pipeline node."""
         if isinstance(original_data, _AttrDict):
             user_setting_attr_dict = original_data._get_attrs()
-            data.update(user_setting_attr_dict)
+            # TODO: dump _AttrDict values to serializable data like dict instead of original object
+            # skip fields that are already serialized
+            for key, value in user_setting_attr_dict.items():
+                if key not in data:
+                    data[key] = value
         return data
 
     # an alternative would be set schema property to be load_only, but sub-schemas like CommandSchema usually also
@@ -152,7 +170,21 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
         ],
     )
-    services = fields.Dict(keys=fields.Str(), values=NestedField(JobServiceSchema))
+    services = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(SshJobServiceSchema),
+                NestedField(JupyterLabJobServiceSchema),
+                NestedField(TensorBoardJobServiceSchema),
+                NestedField(VsCodeJobServiceSchema),
+                # JobServiceSchema should be the last in the list.
+                # To support types not set by users like Custom, Tracking, Studio.
+                NestedField(JobServiceSchema),
+            ],
+            is_strict=True,
+        ),
+    )
     identity = UnionField(
         [
             NestedField(ManagedIdentitySchema),
@@ -341,6 +373,151 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
             raise ValidationError(e.message)
         return spark_node
+
+    @pre_dump
+    def resolve_inputs_outputs(self, job, **kwargs):
+        return _resolve_inputs_outputs(job)
+
+
+class DataTransferCopySchema(BaseNodeSchema):
+    # pylint: disable=unused-argument
+    component = TypeSensitiveUnionField(
+        {
+            NodeType.DATA_TRANSFER: [
+                # inline component or component file reference starting with FILE prefix
+                NestedField(AnonymousDataTransferCopyComponentSchema, unknown=INCLUDE),
+                # component file reference
+                DataTransferCopyComponentFileRefField(),
+            ],
+        },
+        plain_union_fields=[
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
+        required=True,
+    )
+    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
+    compute = ComputeField()
+
+    @post_load
+    def make(self, data, **kwargs) -> "DataTransferCopy":
+        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from azure.ai.ml.entities._builders.data_transfer_func import copy_data
+
+        # parse inputs/outputs
+        data = parse_inputs_outputs(data)
+        try:
+            data_transfer_node = copy_data(**data)
+        except ValidationException as e:
+            # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
+            # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
+            raise ValidationError(e.message)
+        return data_transfer_node
+
+    @pre_dump
+    def resolve_inputs_outputs(self, job, **kwargs):
+        return _resolve_inputs_outputs(job)
+
+
+class DataTransferImportSchema(BaseNodeSchema):
+    # pylint: disable=unused-argument
+    component = UnionField(
+        [
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
+        required=True,
+    )
+    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
+    compute = ComputeField()
+    source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
+    outputs = fields.Dict(
+        keys=fields.Str(), values=UnionField([OutputBindingStr, NestedField(OutputSchema)]), allow_none=False
+    )
+
+    @validates("inputs")
+    def inputs_key(self, value):
+        raise ValidationError(f"inputs field is not a valid filed in task type " f"{DataTransferTaskType.IMPORT_DATA}.")
+
+    @validates("outputs")
+    def outputs_key(self, value):
+        if len(value) != 1 or list(value.keys())[0] != "sink":
+            raise ValidationError(
+                f"outputs field only support one output called sink in task type "
+                f"{DataTransferTaskType.IMPORT_DATA}."
+            )
+
+    @post_load
+    def make(self, data, **kwargs) -> "DataTransferImport":
+        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from azure.ai.ml.entities._builders.data_transfer_func import import_data
+
+        # parse inputs/outputs
+        data = parse_inputs_outputs(data)
+        try:
+            data_transfer_node = import_data(**data)
+        except ValidationException as e:
+            # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
+            # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
+            raise ValidationError(e.message)
+        return data_transfer_node
+
+    @pre_dump
+    def resolve_inputs_outputs(self, job, **kwargs):
+        return _resolve_inputs_outputs(job)
+
+
+class DataTransferExportSchema(BaseNodeSchema):
+    # pylint: disable=unused-argument
+    component = UnionField(
+        [
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
+        required=True,
+    )
+    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
+    compute = ComputeField()
+    inputs = InputsField(support_databinding=True, allow_none=False)
+    sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
+
+    @validates("inputs")
+    def inputs_key(self, value):
+        if len(value) != 1 or list(value.keys())[0] != "source":
+            raise ValidationError(
+                f"inputs field only support one input called source in task type "
+                f"{DataTransferTaskType.EXPORT_DATA}."
+            )
+
+    @validates("outputs")
+    def outputs_key(self, value):
+        raise ValidationError(
+            f"outputs field is not a valid filed in task type " f"{DataTransferTaskType.EXPORT_DATA}."
+        )
+
+    @post_load
+    def make(self, data, **kwargs) -> "DataTransferExport":
+        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from azure.ai.ml.entities._builders.data_transfer_func import export_data
+
+        # parse inputs/outputs
+        data = parse_inputs_outputs(data)
+        try:
+            data_transfer_node = export_data(**data)
+        except ValidationException as e:
+            # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
+            # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
+            raise ValidationError(e.message)
+        return data_transfer_node
 
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):

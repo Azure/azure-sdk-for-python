@@ -41,13 +41,13 @@
     "TimeoutSeconds": {
       "type": "integer",
       "optional": true,
-      "default": 500000,
+      "default": "500000",
       "description": "timeout in seconds"
     },
     "hitappid": {
       "type": "integer",
       "optional": true,
-      "default": 31346,
+      "default": "31346",
       "description": "hitapp id"
     },
     "projectname": {
@@ -71,7 +71,7 @@
     "TaskGroupId": {
       "type": "integer",
       "optional": true,
-      "default": 86891,
+      "default": "86891",
       "description": "task group id"
     },
     "GoldHitRTADataType": {

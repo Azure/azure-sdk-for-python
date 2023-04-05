@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -27,7 +27,7 @@ class ErrorDefinition(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDefinitionProperties"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinitionProperties"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDefinitionProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error of the list gateway status.
         :paramtype error:
@@ -57,7 +57,7 @@ class ErrorDefinitionProperties(_serialization.Model):
         "code": {"key": "code", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code of list gateway.
         :paramtype code: str
@@ -94,8 +94,8 @@ class Operation(_serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: Name of the operation.
         :paramtype name: str
@@ -142,7 +142,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -165,7 +165,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.authorization.v2021_01_01_preview.models.Operation]
@@ -206,7 +208,7 @@ class RoleAssignmentApproval(_serialization.Model):
         "stages": {"key": "properties.stages", "type": "[RoleAssignmentApprovalStep]"},
     }
 
-    def __init__(self, *, stages: Optional[List["_models.RoleAssignmentApprovalStep"]] = None, **kwargs):
+    def __init__(self, *, stages: Optional[List["_models.RoleAssignmentApprovalStep"]] = None, **kwargs: Any) -> None:
         """
         :keyword stages: This is the collection of stages returned when one does an expand on it.
         :paramtype stages:
@@ -240,7 +242,7 @@ class RoleAssignmentApprovalListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RoleAssignmentApproval"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.RoleAssignmentApproval"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Role Assignment Approval list.
         :paramtype value:
@@ -327,8 +329,8 @@ class RoleAssignmentApprovalStep(_serialization.Model):  # pylint: disable=too-m
         display_name: Optional[str] = None,
         review_result: Optional[Union[str, "_models.RoleAssignmentApprovalStepReviewResult"]] = None,
         justification: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the approval stage.
         :paramtype display_name: str
@@ -377,7 +379,7 @@ class RoleAssignmentApprovalStepListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RoleAssignmentApprovalStep"]] = None, **kwargs):
+    def __init__(self, *, value: Optional[List["_models.RoleAssignmentApprovalStep"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Role Assignment Approval Step list.
         :paramtype value:
@@ -452,8 +454,8 @@ class RoleAssignmentApprovalStepProperties(_serialization.Model):
         display_name: Optional[str] = None,
         review_result: Optional[Union[str, "_models.RoleAssignmentApprovalStepReviewResult"]] = None,
         justification: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword display_name: The display name for the approval stage.
         :paramtype display_name: str

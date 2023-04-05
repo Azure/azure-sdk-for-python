@@ -1,5 +1,24 @@
 # Release History
 
+## 1.3.0b1 (2023-02-16)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
+## 1.2.0 (2023-01-17)
+
+### Features Added
+
+  - Added operation group MachinePoolsOperations
+  - Added operation group OpenShiftVersionsOperations
+  - Added operation group SecretsOperations
+  - Added operation group SyncIdentityProvidersOperations
+  - Added operation group SyncSetsOperations
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
 ## 1.1.0 (2022-05-10)
 
 **Features**

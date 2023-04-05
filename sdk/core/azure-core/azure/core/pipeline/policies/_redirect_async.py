@@ -64,9 +64,7 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings["allow"]:
-                redirects_remaining = self.increment(
-                    redirect_settings, response, redirect_location
-                )
+                redirects_remaining = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
                 if self._domain_changed(request.http_request.url):
                     request.context.options["insecure_domain_change"] = True

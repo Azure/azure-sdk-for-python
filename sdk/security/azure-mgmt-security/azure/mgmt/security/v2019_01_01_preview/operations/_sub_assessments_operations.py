@@ -45,9 +45,9 @@ def build_list_all_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
+    api_version: Literal["2019-01-01-preview"] = kwargs.pop(
         "api_version", _params.pop("api-version", "2019-01-01-preview")
-    )  # type: Literal["2019-01-01-preview"]
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -56,7 +56,7 @@ def build_list_all_request(scope: str, **kwargs: Any) -> HttpRequest:
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -71,9 +71,9 @@ def build_list_request(scope: str, assessment_name: str, **kwargs: Any) -> HttpR
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
+    api_version: Literal["2019-01-01-preview"] = kwargs.pop(
         "api_version", _params.pop("api-version", "2019-01-01-preview")
-    )  # type: Literal["2019-01-01-preview"]
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -85,7 +85,7 @@ def build_list_request(scope: str, assessment_name: str, **kwargs: Any) -> HttpR
         "assessmentName": _SERIALIZER.url("assessment_name", assessment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -100,9 +100,9 @@ def build_get_request(scope: str, assessment_name: str, sub_assessment_name: str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop(
+    api_version: Literal["2019-01-01-preview"] = kwargs.pop(
         "api_version", _params.pop("api-version", "2019-01-01-preview")
-    )  # type: Literal["2019-01-01-preview"]
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -116,7 +116,7 @@ def build_get_request(scope: str, assessment_name: str, sub_assessment_name: str
         "subAssessmentName": _SERIALIZER.url("sub_assessment_name", sub_assessment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -164,10 +164,10 @@ class SubAssessmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2019-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2019-01-01-preview")
-        )  # type: Literal["2019-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecuritySubAssessmentList]
+        )
+        cls: ClsType[_models.SecuritySubAssessmentList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -188,7 +188,7 @@ class SubAssessmentsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -204,7 +204,7 @@ class SubAssessmentsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -212,14 +212,15 @@ class SubAssessmentsOperations:
             deserialized = self._deserialize("SecuritySubAssessmentList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -231,7 +232,7 @@ class SubAssessmentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_all.metadata = {"url": "/{scope}/providers/Microsoft.Security/subAssessments"}  # type: ignore
+    list_all.metadata = {"url": "/{scope}/providers/Microsoft.Security/subAssessments"}
 
     @distributed_trace
     def list(self, scope: str, assessment_name: str, **kwargs: Any) -> Iterable["_models.SecuritySubAssessment"]:
@@ -253,10 +254,10 @@ class SubAssessmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2019-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2019-01-01-preview")
-        )  # type: Literal["2019-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecuritySubAssessmentList]
+        )
+        cls: ClsType[_models.SecuritySubAssessmentList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -278,7 +279,7 @@ class SubAssessmentsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -294,7 +295,7 @@ class SubAssessmentsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -302,14 +303,15 @@ class SubAssessmentsOperations:
             deserialized = self._deserialize("SecuritySubAssessmentList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -321,7 +323,7 @@ class SubAssessmentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments"}  # type: ignore
+    list.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments"}
 
     @distributed_trace
     def get(
@@ -354,10 +356,10 @@ class SubAssessmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2019-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2019-01-01-preview")
-        )  # type: Literal["2019-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecuritySubAssessment]
+        )
+        cls: ClsType[_models.SecuritySubAssessment] = kwargs.pop("cls", None)
 
         request = build_get_request(
             scope=scope,
@@ -369,10 +371,11 @@ class SubAssessmentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -388,4 +391,6 @@ class SubAssessmentsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments/{subAssessmentName}"}  # type: ignore
+    get.metadata = {
+        "url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments/{subAssessmentName}"
+    }

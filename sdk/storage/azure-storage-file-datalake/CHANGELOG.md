@@ -1,11 +1,42 @@
 # Release History
 
-## 12.10.0b1 (Unreleased)
+## 12.11.0 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 12.11.0b1 (2023-03-28)
+
+### Features Added
+- Added support for service version 2022-11-02.
+- Added support for `encryption_context`, a string value that can be passed when creating a file that will not be
+encrypted with the file. This value is returned on `download_file`, `get_file_properties` and `get_paths`.
+
+## 12.10.1 (2023-03-08)
+
+### Bugs Fixed
+- Fixed "duplicate type signatures" MyPy error.
+
+## 12.10.0 (2023-02-22)
+
+### Features Added
+- Stable release of features from 12.10.0b1
+
+## 12.10.0b1 (2023-02-02)
 
 ### Features Added
 - Added support for service version 2021-12-02.
 - Added ability to perform leasing actions on file append and flush. See new keyword `lease_action` for details.
 - Added support for `AsyncIterable` as data type for async file upload.
+
+### Bugs Fixed
+- Fixed an issue where `rename_file` and `rename_directory` would not work correctly if the new file/directory name
+contained a `?` character.
 
 ### Other Changes
 - Removed `msrest` dependency.

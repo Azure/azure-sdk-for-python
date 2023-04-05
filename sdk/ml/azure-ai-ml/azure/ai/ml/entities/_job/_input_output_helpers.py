@@ -6,24 +6,24 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInputType
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobInput as RestMLTableJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFileJobInput as RestUriFileJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
+from azure.ai.ml._restclient.v2023_02_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
 from azure.ai.ml.constants._component import IOConstants
@@ -177,7 +177,7 @@ def to_rest_dataset_literal_inputs(
     *,
     job_type,
 ) -> Dict[str, RestJobInput]:
-    """Turns dataset and literal inputs into dictionary of REST JobInput
+    """Turns dataset and literal inputs into dictionary of REST JobInput.
 
     :param inputs: Dictionary of dataset and literal inputs to job
     :type inputs: Dict[str, Union[int, str, float, bool, JobInput]]
@@ -290,7 +290,7 @@ def from_rest_inputs_to_dataset_literal(
 
 
 def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]:
-    """Turns job outputs into REST format
+    """Turns job outputs into REST format.
 
     :param outputs: Dictionary of dataset outputs from job
     :type outputs: Dict[str, JobOutput]
@@ -310,6 +310,8 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
             output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
             if output_value_type in target_cls_dict:
                 output = target_cls_dict[output_value_type](
+                    asset_name=output_value.name,
+                    asset_version=output_value.version,
                     uri=output_value.path,
                     mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
                     description=output_value.description,
@@ -328,7 +330,7 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
 
 
 def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Output]:
-    """Turns REST outputs into the SDK format
+    """Turns REST outputs into the SDK format.
 
     :param outputs: Dictionary of dataset and literal inputs to job
     :type outputs: Dict[str, RestJobOutput]
@@ -352,6 +354,8 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
                 description=output_value.description,
+                name=output_value.asset_name,
+                version=output_value.asset_version,
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)

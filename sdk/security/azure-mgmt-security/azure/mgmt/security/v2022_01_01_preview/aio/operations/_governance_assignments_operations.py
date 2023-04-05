@@ -65,13 +65,14 @@ class GovernanceAssignmentsOperations:
 
     @distributed_trace
     def list(self, scope: str, assessment_name: str, **kwargs: Any) -> AsyncIterable["_models.GovernanceAssignment"]:
-        """Get security governanceAssignments on all your resources inside a scope.
+        """Get governance assignments on all of your resources inside a scope.
 
-        :param scope: Scope of the query, can be subscription
-         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
-         (/providers/Microsoft.Management/managementGroups/mgName). Required.
+        :param scope: The scope of the Governance assignments. Valid scopes are: subscription (format:
+         'subscriptions/{subscriptionId}'), or security connector (format:
+         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName})'.
+         Required.
         :type scope: str
-        :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
+        :param assessment_name: The Assessment Key - A unique key for the assessment type. Required.
         :type assessment_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GovernanceAssignment or the result of
@@ -83,10 +84,10 @@ class GovernanceAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-01-01-preview")
-        )  # type: Literal["2022-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GovernanceAssignmentsList]
+        )
+        cls: ClsType[_models.GovernanceAssignmentsList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -108,7 +109,7 @@ class GovernanceAssignmentsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -124,7 +125,7 @@ class GovernanceAssignmentsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -132,14 +133,15 @@ class GovernanceAssignmentsOperations:
             deserialized = self._deserialize("GovernanceAssignmentsList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=_stream, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -151,7 +153,7 @@ class GovernanceAssignmentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments"}  # type: ignore
+    list.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments"}
 
     @distributed_trace_async
     async def get(
@@ -159,14 +161,15 @@ class GovernanceAssignmentsOperations:
     ) -> _models.GovernanceAssignment:
         """Get a specific governanceAssignment for the requested scope by AssignmentKey.
 
-        :param scope: Scope of the query, can be subscription
-         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
-         (/providers/Microsoft.Management/managementGroups/mgName). Required.
+        :param scope: The scope of the Governance assignments. Valid scopes are: subscription (format:
+         'subscriptions/{subscriptionId}'), or security connector (format:
+         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName})'.
+         Required.
         :type scope: str
-        :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
+        :param assessment_name: The Assessment Key - A unique key for the assessment type. Required.
         :type assessment_name: str
-        :param assignment_key: The security governance assignment key - the assessment key of the
-         required governance assignment. Required.
+        :param assignment_key: The governance assignment key - the assessment key of the required
+         governance assignment. Required.
         :type assignment_key: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GovernanceAssignment or the result of cls(response)
@@ -184,10 +187,10 @@ class GovernanceAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-01-01-preview")
-        )  # type: Literal["2022-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GovernanceAssignment]
+        )
+        cls: ClsType[_models.GovernanceAssignment] = kwargs.pop("cls", None)
 
         request = build_get_request(
             scope=scope,
@@ -199,10 +202,11 @@ class GovernanceAssignmentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -218,7 +222,9 @@ class GovernanceAssignmentsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments/{assignmentKey}"}  # type: ignore
+    get.metadata = {
+        "url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments/{assignmentKey}"
+    }
 
     @overload
     async def create_or_update(
@@ -231,18 +237,19 @@ class GovernanceAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GovernanceAssignment:
-        """Creates or update a security GovernanceAssignment on the given subscription.
+        """Creates or updates a governance assignment on the given subscription.
 
-        :param scope: Scope of the query, can be subscription
-         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
-         (/providers/Microsoft.Management/managementGroups/mgName). Required.
+        :param scope: The scope of the Governance assignments. Valid scopes are: subscription (format:
+         'subscriptions/{subscriptionId}'), or security connector (format:
+         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName})'.
+         Required.
         :type scope: str
-        :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
+        :param assessment_name: The Assessment Key - A unique key for the assessment type. Required.
         :type assessment_name: str
-        :param assignment_key: The security governance assignment key - the assessment key of the
-         required governance assignment. Required.
+        :param assignment_key: The governance assignment key - the assessment key of the required
+         governance assignment. Required.
         :type assignment_key: str
-        :param governance_assignment: GovernanceAssignment over a subscription scope. Required.
+        :param governance_assignment: Governance assignment over a subscription scope. Required.
         :type governance_assignment:
          ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -265,18 +272,19 @@ class GovernanceAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.GovernanceAssignment:
-        """Creates or update a security GovernanceAssignment on the given subscription.
+        """Creates or updates a governance assignment on the given subscription.
 
-        :param scope: Scope of the query, can be subscription
-         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
-         (/providers/Microsoft.Management/managementGroups/mgName). Required.
+        :param scope: The scope of the Governance assignments. Valid scopes are: subscription (format:
+         'subscriptions/{subscriptionId}'), or security connector (format:
+         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName})'.
+         Required.
         :type scope: str
-        :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
+        :param assessment_name: The Assessment Key - A unique key for the assessment type. Required.
         :type assessment_name: str
-        :param assignment_key: The security governance assignment key - the assessment key of the
-         required governance assignment. Required.
+        :param assignment_key: The governance assignment key - the assessment key of the required
+         governance assignment. Required.
         :type assignment_key: str
-        :param governance_assignment: GovernanceAssignment over a subscription scope. Required.
+        :param governance_assignment: Governance assignment over a subscription scope. Required.
         :type governance_assignment: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -296,19 +304,20 @@ class GovernanceAssignmentsOperations:
         governance_assignment: Union[_models.GovernanceAssignment, IO],
         **kwargs: Any
     ) -> _models.GovernanceAssignment:
-        """Creates or update a security GovernanceAssignment on the given subscription.
+        """Creates or updates a governance assignment on the given subscription.
 
-        :param scope: Scope of the query, can be subscription
-         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
-         (/providers/Microsoft.Management/managementGroups/mgName). Required.
+        :param scope: The scope of the Governance assignments. Valid scopes are: subscription (format:
+         'subscriptions/{subscriptionId}'), or security connector (format:
+         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName})'.
+         Required.
         :type scope: str
-        :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
+        :param assessment_name: The Assessment Key - A unique key for the assessment type. Required.
         :type assessment_name: str
-        :param assignment_key: The security governance assignment key - the assessment key of the
-         required governance assignment. Required.
+        :param assignment_key: The governance assignment key - the assessment key of the required
+         governance assignment. Required.
         :type assignment_key: str
-        :param governance_assignment: GovernanceAssignment over a subscription scope. Is either a model
-         type or a IO type. Required.
+        :param governance_assignment: Governance assignment over a subscription scope. Is either a
+         GovernanceAssignment type or a IO type. Required.
         :type governance_assignment:
          ~azure.mgmt.security.v2022_01_01_preview.models.GovernanceAssignment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -330,11 +339,11 @@ class GovernanceAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-01-01-preview")
-        )  # type: Literal["2022-01-01-preview"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GovernanceAssignment]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GovernanceAssignment] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -357,10 +366,11 @@ class GovernanceAssignmentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -376,11 +386,13 @@ class GovernanceAssignmentsOperations:
             deserialized = self._deserialize("GovernanceAssignment", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments/{assignmentKey}"}  # type: ignore
+    create_or_update.metadata = {
+        "url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments/{assignmentKey}"
+    }
 
     @distributed_trace_async
     async def delete(  # pylint: disable=inconsistent-return-statements
@@ -388,14 +400,15 @@ class GovernanceAssignmentsOperations:
     ) -> None:
         """Delete a GovernanceAssignment over a given scope.
 
-        :param scope: Scope of the query, can be subscription
-         (/subscriptions/0b06d9ea-afe6-4779-bd59-30e5c2d9d13f) or management group
-         (/providers/Microsoft.Management/managementGroups/mgName). Required.
+        :param scope: The scope of the Governance assignments. Valid scopes are: subscription (format:
+         'subscriptions/{subscriptionId}'), or security connector (format:
+         'subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName})'.
+         Required.
         :type scope: str
-        :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
+        :param assessment_name: The Assessment Key - A unique key for the assessment type. Required.
         :type assessment_name: str
-        :param assignment_key: The security governance assignment key - the assessment key of the
-         required governance assignment. Required.
+        :param assignment_key: The governance assignment key - the assessment key of the required
+         governance assignment. Required.
         :type assignment_key: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
@@ -413,10 +426,10 @@ class GovernanceAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-01-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", "2022-01-01-preview")
-        )  # type: Literal["2022-01-01-preview"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             scope=scope,
@@ -428,10 +441,11 @@ class GovernanceAssignmentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
@@ -443,4 +457,6 @@ class GovernanceAssignmentsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments/{assignmentKey}"}  # type: ignore
+    delete.metadata = {
+        "url": "/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/governanceAssignments/{assignmentKey}"
+    }

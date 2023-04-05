@@ -10,6 +10,10 @@ autorest --use=@autorest/python@5.19.0 swagger/README.md --python-sdks-folder=<p
 
 We automatically hardcode in that this is `python` and `multiapi`.
 
+After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
+
+`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
+
 ## Basic
 
 ```yaml
@@ -80,7 +84,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_2022_10_01_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_2022_10_01_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/527f6d35fb0d85c48210ca0f6f6f42814d63bd33/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/72664c83300dfaf6782e22822a5aae0b0df92735/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext.json
 namespace: azure.ai.textanalytics.v2022_10_01_preview
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_10_01_preview
 ```
@@ -186,4 +190,20 @@ directive:
   - from: swagger-document
     where: $.definitions.JobState
     transform: $.properties.lastUpdatedDateTime["x-ms-client-name"] = "lastUpdateDateTime";
+```
+
+
+### Remove unsupported BooleanResolution
+
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions
+  transform: >
+    delete $["BooleanResolution"]
+- from: swagger-document
+  where: $.definitions.BaseResolution.properties.resolutionKind.enum
+  transform: >
+    $.splice($.indexOf("BooleanResolution"), 1);
+    return $;
 ```

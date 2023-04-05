@@ -17,6 +17,28 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
+class AADAuthenticationSettings(_serialization.Model):
+    """Enable AAD authentication for SQL VM.
+
+    :ivar client_id: The client Id of the Managed Identity to query Microsoft Graph API. An empty
+     string must be used for the system assigned Managed Identity.
+    :vartype client_id: str
+    """
+
+    _attribute_map = {
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, *, client_id: Optional[str] = None, **kwargs):
+        """
+        :keyword client_id: The client Id of the Managed Identity to query Microsoft Graph API. An
+         empty string must be used for the system assigned Managed Identity.
+        :paramtype client_id: str
+        """
+        super().__init__(**kwargs)
+        self.client_id = client_id
+
+
 class AdditionalFeaturesServerConfigurations(_serialization.Model):
     """Additional SQL Server feature settings.
 
@@ -117,13 +139,13 @@ class AgReplica(_serialization.Model):
 
 
 class AssessmentSettings(_serialization.Model):
-    """Configure assessment for databases in your SQL virtual machine.
+    """Configure SQL best practices Assessment for databases in your SQL virtual machine.
 
-    :ivar enable: Enable or disable assessment feature on SQL virtual machine.
+    :ivar enable: Enable or disable SQL best practices Assessment feature on SQL virtual machine.
     :vartype enable: bool
-    :ivar run_immediately: Run assessment immediately on SQL virtual machine.
+    :ivar run_immediately: Run SQL best practices Assessment immediately on SQL virtual machine.
     :vartype run_immediately: bool
-    :ivar schedule: Schedule for Assessment.
+    :ivar schedule: Schedule for SQL best practices Assessment.
     :vartype schedule: ~azure.mgmt.sqlvirtualmachine.models.Schedule
     """
 
@@ -142,11 +164,12 @@ class AssessmentSettings(_serialization.Model):
         **kwargs
     ):
         """
-        :keyword enable: Enable or disable assessment feature on SQL virtual machine.
+        :keyword enable: Enable or disable SQL best practices Assessment feature on SQL virtual
+         machine.
         :paramtype enable: bool
-        :keyword run_immediately: Run assessment immediately on SQL virtual machine.
+        :keyword run_immediately: Run SQL best practices Assessment immediately on SQL virtual machine.
         :paramtype run_immediately: bool
-        :keyword schedule: Schedule for Assessment.
+        :keyword schedule: Schedule for SQL best practices Assessment.
         :paramtype schedule: ~azure.mgmt.sqlvirtualmachine.models.Schedule
         """
         super().__init__(**kwargs)
@@ -530,6 +553,97 @@ class AvailabilityGroupListenerListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.sqlvirtualmachine.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.sqlvirtualmachine.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.sqlvirtualmachine.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.sqlvirtualmachine.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
 
 
 class KeyVaultCredentialSettings(_serialization.Model):
@@ -921,6 +1035,9 @@ class ServerConfigurationsManagementSettings(_serialization.Model):
      ~azure.mgmt.sqlvirtualmachine.models.AdditionalFeaturesServerConfigurations
     :ivar sql_instance_settings: SQL Instance settings.
     :vartype sql_instance_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLInstanceSettings
+    :ivar azure_ad_authentication_settings: Azure AD authentication Settings.
+    :vartype azure_ad_authentication_settings:
+     ~azure.mgmt.sqlvirtualmachine.models.AADAuthenticationSettings
     """
 
     _attribute_map = {
@@ -938,6 +1055,10 @@ class ServerConfigurationsManagementSettings(_serialization.Model):
             "type": "AdditionalFeaturesServerConfigurations",
         },
         "sql_instance_settings": {"key": "sqlInstanceSettings", "type": "SQLInstanceSettings"},
+        "azure_ad_authentication_settings": {
+            "key": "azureAdAuthenticationSettings",
+            "type": "AADAuthenticationSettings",
+        },
     }
 
     def __init__(
@@ -948,6 +1069,7 @@ class ServerConfigurationsManagementSettings(_serialization.Model):
         sql_storage_update_settings: Optional["_models.SqlStorageUpdateSettings"] = None,
         additional_features_server_configurations: Optional["_models.AdditionalFeaturesServerConfigurations"] = None,
         sql_instance_settings: Optional["_models.SQLInstanceSettings"] = None,
+        azure_ad_authentication_settings: Optional["_models.AADAuthenticationSettings"] = None,
         **kwargs
     ):
         """
@@ -965,6 +1087,9 @@ class ServerConfigurationsManagementSettings(_serialization.Model):
          ~azure.mgmt.sqlvirtualmachine.models.AdditionalFeaturesServerConfigurations
         :keyword sql_instance_settings: SQL Instance settings.
         :paramtype sql_instance_settings: ~azure.mgmt.sqlvirtualmachine.models.SQLInstanceSettings
+        :keyword azure_ad_authentication_settings: Azure AD authentication Settings.
+        :paramtype azure_ad_authentication_settings:
+         ~azure.mgmt.sqlvirtualmachine.models.AADAuthenticationSettings
         """
         super().__init__(**kwargs)
         self.sql_connectivity_update_settings = sql_connectivity_update_settings
@@ -972,6 +1097,7 @@ class ServerConfigurationsManagementSettings(_serialization.Model):
         self.sql_storage_update_settings = sql_storage_update_settings
         self.additional_features_server_configurations = additional_features_server_configurations
         self.sql_instance_settings = sql_instance_settings
+        self.azure_ad_authentication_settings = azure_ad_authentication_settings
 
 
 class SqlConnectivityUpdateSettings(_serialization.Model):
@@ -1320,7 +1446,8 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
     :ivar sql_management: SQL Server Management type. Known values are: "Full", "LightWeight", and
      "NoAgent".
     :vartype sql_management: str or ~azure.mgmt.sqlvirtualmachine.models.SqlManagementMode
-    :ivar least_privilege_mode: SQL IaaS Agent least privilege mode. "Enabled"
+    :ivar least_privilege_mode: SQL IaaS Agent least privilege mode. Known values are: "Enabled"
+     and "NotSet".
     :vartype least_privilege_mode: str or ~azure.mgmt.sqlvirtualmachine.models.LeastPrivilegeMode
     :ivar sql_image_sku: SQL Server edition type. Known values are: "Developer", "Express",
      "Standard", "Enterprise", and "Web".
@@ -1348,7 +1475,9 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
     :ivar storage_configuration_settings: Storage Configuration Settings.
     :vartype storage_configuration_settings:
      ~azure.mgmt.sqlvirtualmachine.models.StorageConfigurationSettings
-    :ivar assessment_settings: Assessment Settings.
+    :ivar troubleshooting_status: Troubleshooting status.
+    :vartype troubleshooting_status: ~azure.mgmt.sqlvirtualmachine.models.TroubleshootingStatus
+    :ivar assessment_settings: SQL best practices Assessment Settings.
     :vartype assessment_settings: ~azure.mgmt.sqlvirtualmachine.models.AssessmentSettings
     :ivar enable_automatic_upgrade: Enable automatic upgrade of Sql IaaS extension Agent.
     :vartype enable_automatic_upgrade: bool
@@ -1361,6 +1490,7 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
         "location": {"required": True},
         "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "troubleshooting_status": {"readonly": True},
     }
 
     _attribute_map = {
@@ -1395,6 +1525,7 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
             "key": "properties.storageConfigurationSettings",
             "type": "StorageConfigurationSettings",
         },
+        "troubleshooting_status": {"key": "properties.troubleshootingStatus", "type": "TroubleshootingStatus"},
         "assessment_settings": {"key": "properties.assessmentSettings", "type": "AssessmentSettings"},
         "enable_automatic_upgrade": {"key": "properties.enableAutomaticUpgrade", "type": "bool"},
     }
@@ -1409,7 +1540,7 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
         sql_image_offer: Optional[str] = None,
         sql_server_license_type: Optional[Union[str, "_models.SqlServerLicenseType"]] = None,
         sql_management: Optional[Union[str, "_models.SqlManagementMode"]] = None,
-        least_privilege_mode: Optional[Union[str, "_models.LeastPrivilegeMode"]] = None,
+        least_privilege_mode: Union[str, "_models.LeastPrivilegeMode"] = "NotSet",
         sql_image_sku: Optional[Union[str, "_models.SqlImageSku"]] = None,
         sql_virtual_machine_group_resource_id: Optional[str] = None,
         wsfc_domain_credentials: Optional["_models.WsfcDomainCredentials"] = None,
@@ -1420,7 +1551,7 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
         server_configurations_management_settings: Optional["_models.ServerConfigurationsManagementSettings"] = None,
         storage_configuration_settings: Optional["_models.StorageConfigurationSettings"] = None,
         assessment_settings: Optional["_models.AssessmentSettings"] = None,
-        enable_automatic_upgrade: Optional[bool] = None,
+        enable_automatic_upgrade: bool = False,
         **kwargs
     ):
         """
@@ -1442,7 +1573,8 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
         :keyword sql_management: SQL Server Management type. Known values are: "Full", "LightWeight",
          and "NoAgent".
         :paramtype sql_management: str or ~azure.mgmt.sqlvirtualmachine.models.SqlManagementMode
-        :keyword least_privilege_mode: SQL IaaS Agent least privilege mode. "Enabled"
+        :keyword least_privilege_mode: SQL IaaS Agent least privilege mode. Known values are: "Enabled"
+         and "NotSet".
         :paramtype least_privilege_mode: str or ~azure.mgmt.sqlvirtualmachine.models.LeastPrivilegeMode
         :keyword sql_image_sku: SQL Server edition type. Known values are: "Developer", "Express",
          "Standard", "Enterprise", and "Web".
@@ -1471,7 +1603,7 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
         :keyword storage_configuration_settings: Storage Configuration Settings.
         :paramtype storage_configuration_settings:
          ~azure.mgmt.sqlvirtualmachine.models.StorageConfigurationSettings
-        :keyword assessment_settings: Assessment Settings.
+        :keyword assessment_settings: SQL best practices Assessment Settings.
         :paramtype assessment_settings: ~azure.mgmt.sqlvirtualmachine.models.AssessmentSettings
         :keyword enable_automatic_upgrade: Enable automatic upgrade of Sql IaaS extension Agent.
         :paramtype enable_automatic_upgrade: bool
@@ -1494,6 +1626,7 @@ class SqlVirtualMachine(TrackedResource):  # pylint: disable=too-many-instance-a
         self.key_vault_credential_settings = key_vault_credential_settings
         self.server_configurations_management_settings = server_configurations_management_settings
         self.storage_configuration_settings = storage_configuration_settings
+        self.troubleshooting_status = None
         self.assessment_settings = assessment_settings
         self.enable_automatic_upgrade = enable_automatic_upgrade
 
@@ -1692,6 +1825,64 @@ class SqlVirtualMachineUpdate(_serialization.Model):
         self.tags = tags
 
 
+class SqlVmTroubleshooting(_serialization.Model):
+    """Details required for SQL VM troubleshooting.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar start_time_utc: Start time in UTC timezone.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: End time in UTC timezone.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar troubleshooting_scenario: SQL VM troubleshooting scenario. "UnhealthyReplica"
+    :vartype troubleshooting_scenario: str or
+     ~azure.mgmt.sqlvirtualmachine.models.TroubleshootingScenario
+    :ivar properties: Troubleshooting properties.
+    :vartype properties: ~azure.mgmt.sqlvirtualmachine.models.TroubleshootingAdditionalProperties
+    :ivar virtual_machine_resource_id: Virtual machine resource id for response.
+    :vartype virtual_machine_resource_id: str
+    """
+
+    _validation = {
+        "virtual_machine_resource_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "start_time_utc": {"key": "startTimeUtc", "type": "iso-8601"},
+        "end_time_utc": {"key": "endTimeUtc", "type": "iso-8601"},
+        "troubleshooting_scenario": {"key": "troubleshootingScenario", "type": "str"},
+        "properties": {"key": "properties", "type": "TroubleshootingAdditionalProperties"},
+        "virtual_machine_resource_id": {"key": "virtualMachineResourceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_time_utc: Optional[datetime.datetime] = None,
+        end_time_utc: Optional[datetime.datetime] = None,
+        troubleshooting_scenario: Optional[Union[str, "_models.TroubleshootingScenario"]] = None,
+        properties: Optional["_models.TroubleshootingAdditionalProperties"] = None,
+        **kwargs
+    ):
+        """
+        :keyword start_time_utc: Start time in UTC timezone.
+        :paramtype start_time_utc: ~datetime.datetime
+        :keyword end_time_utc: End time in UTC timezone.
+        :paramtype end_time_utc: ~datetime.datetime
+        :keyword troubleshooting_scenario: SQL VM troubleshooting scenario. "UnhealthyReplica"
+        :paramtype troubleshooting_scenario: str or
+         ~azure.mgmt.sqlvirtualmachine.models.TroubleshootingScenario
+        :keyword properties: Troubleshooting properties.
+        :paramtype properties: ~azure.mgmt.sqlvirtualmachine.models.TroubleshootingAdditionalProperties
+        """
+        super().__init__(**kwargs)
+        self.start_time_utc = start_time_utc
+        self.end_time_utc = end_time_utc
+        self.troubleshooting_scenario = troubleshooting_scenario
+        self.properties = properties
+        self.virtual_machine_resource_id = None
+
+
 class SqlWorkloadTypeUpdateSettings(_serialization.Model):
     """Set workload type to optimize storage for SQL Server.
 
@@ -1843,6 +2034,95 @@ class SystemData(_serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class TroubleshootingAdditionalProperties(_serialization.Model):
+    """SQL VM Troubleshooting additional properties.
+
+    :ivar unhealthy_replica_info: The unhealthy replica information.
+    :vartype unhealthy_replica_info: ~azure.mgmt.sqlvirtualmachine.models.UnhealthyReplicaInfo
+    """
+
+    _attribute_map = {
+        "unhealthy_replica_info": {"key": "unhealthyReplicaInfo", "type": "UnhealthyReplicaInfo"},
+    }
+
+    def __init__(self, *, unhealthy_replica_info: Optional["_models.UnhealthyReplicaInfo"] = None, **kwargs):
+        """
+        :keyword unhealthy_replica_info: The unhealthy replica information.
+        :paramtype unhealthy_replica_info: ~azure.mgmt.sqlvirtualmachine.models.UnhealthyReplicaInfo
+        """
+        super().__init__(**kwargs)
+        self.unhealthy_replica_info = unhealthy_replica_info
+
+
+class TroubleshootingStatus(_serialization.Model):
+    """Status of last troubleshooting operation on this SQL VM.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar root_cause: Root cause of the issue.
+    :vartype root_cause: str
+    :ivar last_trigger_time_utc: Last troubleshooting trigger time in UTC timezone.
+    :vartype last_trigger_time_utc: ~datetime.datetime
+    :ivar start_time_utc: Start time in UTC timezone.
+    :vartype start_time_utc: ~datetime.datetime
+    :ivar end_time_utc: End time in UTC timezone.
+    :vartype end_time_utc: ~datetime.datetime
+    :ivar troubleshooting_scenario: SQL VM troubleshooting scenario. "UnhealthyReplica"
+    :vartype troubleshooting_scenario: str or
+     ~azure.mgmt.sqlvirtualmachine.models.TroubleshootingScenario
+    :ivar properties: Troubleshooting properties.
+    :vartype properties: ~azure.mgmt.sqlvirtualmachine.models.TroubleshootingAdditionalProperties
+    """
+
+    _validation = {
+        "root_cause": {"readonly": True},
+        "last_trigger_time_utc": {"readonly": True},
+        "start_time_utc": {"readonly": True},
+        "end_time_utc": {"readonly": True},
+        "troubleshooting_scenario": {"readonly": True},
+        "properties": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "root_cause": {"key": "rootCause", "type": "str"},
+        "last_trigger_time_utc": {"key": "lastTriggerTimeUtc", "type": "iso-8601"},
+        "start_time_utc": {"key": "startTimeUtc", "type": "iso-8601"},
+        "end_time_utc": {"key": "endTimeUtc", "type": "iso-8601"},
+        "troubleshooting_scenario": {"key": "troubleshootingScenario", "type": "str"},
+        "properties": {"key": "properties", "type": "TroubleshootingAdditionalProperties"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.root_cause = None
+        self.last_trigger_time_utc = None
+        self.start_time_utc = None
+        self.end_time_utc = None
+        self.troubleshooting_scenario = None
+        self.properties = None
+
+
+class UnhealthyReplicaInfo(_serialization.Model):
+    """SQL VM Troubleshoot UnhealthyReplica scenario information.
+
+    :ivar availability_group_name: The name of the availability group.
+    :vartype availability_group_name: str
+    """
+
+    _attribute_map = {
+        "availability_group_name": {"key": "availabilityGroupName", "type": "str"},
+    }
+
+    def __init__(self, *, availability_group_name: Optional[str] = None, **kwargs):
+        """
+        :keyword availability_group_name: The name of the availability group.
+        :paramtype availability_group_name: str
+        """
+        super().__init__(**kwargs)
+        self.availability_group_name = availability_group_name
 
 
 class WsfcDomainCredentials(_serialization.Model):

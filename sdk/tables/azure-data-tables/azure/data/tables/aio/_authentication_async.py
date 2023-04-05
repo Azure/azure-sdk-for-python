@@ -3,17 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import Union, Optional, cast, overload
 
-from typing import TYPE_CHECKING
-
+from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.pipeline import PipelineResponse, PipelineRequest
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy
 
-from .._authentication import _HttpChallenge
-
-if TYPE_CHECKING:
-    from typing import Any
-    from azure.core.credentials_async import AsyncTokenCredential
-    from azure.core.pipeline import PipelineResponse, PipelineRequest  # pylint: disable=ungrouped-imports
+from .._constants import STORAGE_OAUTH_SCOPE
+from .._authentication import _HttpChallenge, AzureSasCredentialPolicy, SharedKeyCredentialPolicy
 
 
 class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
@@ -23,7 +21,7 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
     authentication challenges.
 
     :param credential: The credential.
-    :type credential: ~azure.core.TokenCredential
+    :type credential: ~azure.core.AsyncTokenCredential
     :param str scopes: Lets you specify the type of access needed.
     :keyword bool discover_tenant: Determines if tenant discovery should be enabled. Defaults to True.
     :keyword bool discover_scopes: Determines if scopes from authentication challenges should be provided to token
@@ -33,17 +31,17 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: AsyncTokenCredential,
         *scopes: str,
         discover_tenant: bool = True,
         discover_scopes: bool = True,
-        **kwargs: "Any"
+        **kwargs
     ) -> None:
         self._discover_tenant = discover_tenant
         self._discover_scopes = discover_scopes
         super().__init__(credential, *scopes, **kwargs)
 
-    async def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
+    async def on_challenge(self, request: PipelineRequest, response: PipelineResponse) -> bool:
         """Authorize request according to an authentication challenge
 
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
@@ -71,3 +69,55 @@ class AsyncBearerTokenChallengePolicy(AsyncBearerTokenCredentialPolicy):
         else:
             await self.authorize_request(request, scope)
         return True
+
+
+@overload
+def _configure_credential(credential: AzureNamedKeyCredential) -> SharedKeyCredentialPolicy:
+    ...
+
+@overload
+def _configure_credential(credential: SharedKeyCredentialPolicy) -> SharedKeyCredentialPolicy:
+    ...
+
+@overload
+def _configure_credential(credential: AzureSasCredential) -> AzureSasCredentialPolicy:
+    ...
+
+@overload
+def _configure_credential(credential: AsyncTokenCredential) -> AsyncBearerTokenChallengePolicy:
+    ...
+
+@overload
+def _configure_credential(credential: None) -> None:
+    ...
+
+def _configure_credential(
+    credential: Optional[
+        Union[
+            AzureNamedKeyCredential,
+            AzureSasCredential,
+            AsyncTokenCredential,
+            SharedKeyCredentialPolicy
+        ]
+    ]
+) -> Optional[
+    Union[
+        AsyncBearerTokenChallengePolicy,
+        AzureSasCredentialPolicy,
+        SharedKeyCredentialPolicy
+    ]
+]:
+    if hasattr(credential, "get_token"):
+        credential = cast(AsyncTokenCredential, credential)
+        return AsyncBearerTokenChallengePolicy(
+            credential, STORAGE_OAUTH_SCOPE
+        )
+    if isinstance(credential, SharedKeyCredentialPolicy):
+        return credential
+    if isinstance(credential, AzureSasCredential):
+        return AzureSasCredentialPolicy(credential)
+    if isinstance(credential, AzureNamedKeyCredential):
+        return SharedKeyCredentialPolicy(credential)
+    if credential is not None:
+        raise TypeError("Unsupported credential: {}".format(credential))
+    return None

@@ -1,5 +1,15 @@
 # Release History
 
+## 4.0.0b1 (2023-02-14)
+
+### Features Added
+
+  - Model WorkbookErrorDefinition has a new parameter innererror
+
+### Breaking Changes
+
+  - Model WorkbookErrorDefinition no longer has parameter inner_error
+
 ## 3.1.0 (2022-06-02)
 
 **Features**
