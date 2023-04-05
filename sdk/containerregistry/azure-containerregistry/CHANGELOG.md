@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.0b3 (2023-04-04)
 
 ### Features Added
 - Supported uploading and downding large OCI artifact blobs in synchronous and asynchronous `ContainerRegistryClient`.
@@ -10,10 +10,6 @@
 - Suppress the response error with status code `404` in `delete_blob()`.
 - Added to return blob size in bytes in `upload_blob()`.
 - Changed `download_blob()` return type from `DownloadBlobResult` to `DownloadBlobStream` and `AsyncDownloadBlobStream`.
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.1.0b2 (2023-03-24)
 
