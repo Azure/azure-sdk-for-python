@@ -29,7 +29,7 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
             self,
             endpoint: Union[str , None],
-            credential: Union[AzureKeyCredential , TokenCredential , TranslatorCredential],
+            credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential],
             **kwargs):
 
         set_authentication_policy(credential, kwargs)
