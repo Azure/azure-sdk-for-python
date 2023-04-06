@@ -38,11 +38,11 @@ def get_base_logger(log_filename, logger_name, level=logging.INFO, print_console
 def get_logger(log_filename, logger_name, level=logging.INFO, print_console=False, log_format=None,
                log_file_max_bytes=20 * 1024 * 1024, log_file_backup_count=3):
     stress_logger = logging.getLogger(logger_name)
-    stress_logger.setLevel(level)
-    eventhub_logger = logging.getLogger("azure.eventhub")
-    eventhub_logger.setLevel(level)
-    uamqp_logger = logging.getLogger("uamqp")
-    uamqp_logger.setLevel(level)
+    stress_logger.setLevel(logging.WARNING)
+    eventhub_logger = logging.getLogger("azure.servicebus")
+    eventhub_logger.setLevel(logging.INFO)
+    uamqp_logger = logging.getLogger("azure.servicebus._pyamqp.aio.connection")
+    uamqp_logger.setLevel(logging.DEBUG)
 
     formatter = log_format or logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
     if print_console:
@@ -56,27 +56,30 @@ def get_logger(log_filename, logger_name, level=logging.INFO, print_console=Fals
             stress_logger.addHandler(console_handler)
 
     if log_filename:
-        eventhub_file_handler = RotatingFileHandler(
-            "eventhub_" + log_filename,
-            maxBytes=log_file_max_bytes,
-            backupCount=log_file_backup_count
-        )
-        uamqp_file_handler = RotatingFileHandler(
-            "uamqp_" + log_filename,
-            maxBytes=log_file_max_bytes,
-            backupCount=log_file_backup_count
-        )
-        stress_file_handler = RotatingFileHandler(
-            log_filename,
-            maxBytes=log_file_max_bytes,
-            backupCount=log_file_backup_count
-        )
-        eventhub_file_handler.setFormatter(formatter)
-        uamqp_file_handler.setFormatter(formatter)
-        stress_file_handler.setFormatter(formatter)
-        eventhub_logger.addHandler(eventhub_file_handler)
-        uamqp_logger.addHandler(uamqp_file_handler)
-        stress_logger.addHandler(stress_file_handler)
+        try:
+            eventhub_file_handler = RotatingFileHandler(
+                log_filename,
+                maxBytes=log_file_max_bytes,
+                backupCount=log_file_backup_count
+            )
+            # uamqp_file_handler = RotatingFileHandler(
+            #     "uamqp_" + log_filename,
+            #     maxBytes=log_file_max_bytes,
+            #     backupCount=log_file_backup_count
+            # )
+            stress_file_handler = RotatingFileHandler(
+                log_filename,
+                maxBytes=log_file_max_bytes,
+                backupCount=log_file_backup_count
+            )
+            eventhub_file_handler.setFormatter(formatter)
+            # uamqp_file_handler.setFormatter(formatter)
+            stress_file_handler.setFormatter(formatter)
+            eventhub_logger.addHandler(eventhub_file_handler)
+            # uamqp_logger.addHandler(uamqp_file_handler)
+            stress_logger.addHandler(stress_file_handler)
+        except:
+            pass
 
     return stress_logger
 

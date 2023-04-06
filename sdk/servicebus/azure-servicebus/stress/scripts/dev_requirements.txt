@@ -1,6 +1,8 @@
-aiohttp>=3.0; python_version >= '3.5'
+aiohttp>=3.0
 opencensus-ext-azure
 psutil
 pytest
-azure-servicebus
+git+https://github.com/Azure/azure-sdk-for-python.git@feature/servicebus/pyproto#subdirectory=sdk/servicebus/azure-servicebus&egg=azure-servicebus
 python-dotenv
+websocket-client
+uamqp==1.6.3

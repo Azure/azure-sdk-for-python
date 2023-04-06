@@ -1,5 +1,5 @@
 apiVersion: v2
-name: python-servicebus-stress-test
+name: py-sb-stress-test
 description: python service bus stress test.
 version: 0.1.2
 appVersion: v0.2
@@ -9,5 +9,5 @@ annotations:
 
 dependencies:
 - name: stress-test-addons
-  version: ~0.2.0
+  version: 0.2.0
   repository: https://stresstestcharts.blob.core.windows.net/helm/

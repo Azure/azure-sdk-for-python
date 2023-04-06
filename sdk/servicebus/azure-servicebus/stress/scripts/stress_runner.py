@@ -6,8 +6,10 @@
 
 import os
 import asyncio
+import configparser
 from argparse import ArgumentParser
 from datetime import timedelta
+from dotenv import load_dotenv
 
 from azure.servicebus import ServiceBusClient
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
@@ -16,9 +18,7 @@ from stress_test_base import StressTestRunner, StressTestRunnerAsync
 from app_insights_metric import AzureMonitorMetric
 from process_monitor import ProcessMonitor
 
-CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
-
+ENV_FILE = os.environ.get("ENV_FILE")
 
 def sync_send(client, args):
     azure_monitor_metric = AzureMonitorMetric("Sync ServiceBus Sender")
@@ -53,6 +53,9 @@ async def async_send(client, args):
 
 
 def sync_receive(client, args):
+    config = configparser.ConfigParser()
+    config.read("./stress_runner.cfg")
+
     azure_monitor_metric = AzureMonitorMetric("Sync ServiceBus Receiver")
     process_monitor = ProcessMonitor("monitor_receiver_stress_sync.log", "receiver_stress_sync")
     stress_test = StressTestRunner(
@@ -87,10 +90,14 @@ async def async_receive(client, args):
 
 
 if __name__ == '__main__':
+    load_dotenv(dotenv_path=ENV_FILE, override=True)
     parser = ArgumentParser()
+    parser.add_argument("--conn_str", help="ServiceBus connection string",
+        default=os.environ.get('SERVICE_BUS_CONNECTION_STR'))
+    parser.add_argument("--queue_name", help="The queue name.", default=os.environ.get("SERVICE_BUS_QUEUE_NAME"))
     parser.add_argument("--method", type=str)
     parser.add_argument("--duration", type=int, default=259200)
-    parser.add_argument("--logging-enable", action="store_true")
+    parser.add_argument("--logging_enable", action="store_true")
 
     parser.add_argument("--send-batch-size", type=int, default=100)
     parser.add_argument("--message-size", type=int, default=100)
@@ -101,6 +108,9 @@ if __name__ == '__main__':
 
     args, _ = parser.parse_known_args()
     loop = asyncio.get_event_loop()
+
+    CONNECTION_STR = args.conn_str
+    QUEUE_NAME= args.queue_name
 
     if args.method.startswith("sync"):
         sb_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)

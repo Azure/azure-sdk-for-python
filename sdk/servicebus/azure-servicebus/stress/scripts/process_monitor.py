@@ -12,7 +12,7 @@ from logger import get_base_logger
 
 
 class ProcessMonitor:
-    def __init__(self, log_filename, logger_name, log_interval=5.0, print_console=False,
+    def __init__(self, log_filename, logger_name, log_interval=30.0, print_console=False,
                  process_id=None, **kwargs):
         """
         Process Monitor monitors the CPU usage, memory usage of a specific process.
