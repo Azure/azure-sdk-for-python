@@ -4,10 +4,17 @@ repos:
     rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
     hooks:
     -   id: black
-        args: [--config=eng/black-pyproject.toml]
+        args: [--config=../../eng/black-pyproject.toml]
 - repo: https://github.com/econchick/interrogate
   rev: 1.5.0 
   hooks:
   - id: interrogate
-    args: [--fail-under=35, --ignore-module, -vv]
-    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py|.*\.(yml|yaml|json|md|toml|txt|in))
+    args: [--config=pyproject.toml]
+- repo: https://github.com/PyCQA/pydocstyle
+  rev: 6.1.1
+  hooks:
+    - id: pydocstyle
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v0.902
+  hooks:
+    - id: mypy
