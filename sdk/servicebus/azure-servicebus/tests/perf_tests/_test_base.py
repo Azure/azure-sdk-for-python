@@ -141,7 +141,7 @@ class _SubscriptionReceiveTest(_ReceiveTest, PerfStressTest):
             arguments.uamqp_transport
         )
         self.topic_name=self.get_from_env('AZURE_SERVICEBUS_TOPIC_NAME')
-        self.subscription_name=self.get_from_env('AZURE_SERVICE_BUS_SUBSCRIPTION_NAME')
+        self.subscription_name=self.get_from_env('AZURE_SERVICEBUS_SUBSCRIPTION_NAME')
 
         self.receiver=self.servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
         self.async_receiver=self.async_servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
@@ -194,7 +194,7 @@ class _SubscriptionReceiveBatchTest(_ReceiveTest, BatchPerfTest):
         )
         
         self.topic_name=self.get_from_env('AZURE_SERVICEBUS_TOPIC_NAME')
-        self.subscription_name=self.get_from_env('AZURE_SERVICE_BUS_SUBSCRIPTION_NAME')
+        self.subscription_name=self.get_from_env('AZURE_SERVICEBUS_SUBSCRIPTION_NAME')
 
         self.receiver=self.servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
         self.async_receiver=self.async_servicebus_client.get_subscription_receiver(topic_name=self.topic_name, subscription_name=self.subscription_name)
