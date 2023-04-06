@@ -28,7 +28,7 @@ from ._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._encryption import StorageEncryptionMixin
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
-from ._models import QueueMessage, AccessPolicy, MessagesPaged, QueueMessage, QueueProperties
+from ._models import AccessPolicy, MessagesPaged, QueueMessage, QueueProperties
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
