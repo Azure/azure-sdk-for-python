@@ -25,11 +25,10 @@ try:
         print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
 [README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
-

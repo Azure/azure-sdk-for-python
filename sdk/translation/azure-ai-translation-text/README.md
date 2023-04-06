@@ -16,7 +16,6 @@ Use the Text Translation client library for Python to:
 
 [Source code][python-dt-src]
 | [Package (PyPI)][python-dt-pypi]
-| [Package (Conda)](https://aka.ms/https://anaconda.org/microsoft/azure-ai-translation-text/)
 | [API reference documentation][python-dt-ref-docs]
 | [Product documentation][python-dt-product-docs]
 | [Samples][python-dt-samples]
@@ -24,6 +23,7 @@ Use the Text Translation client library for Python to:
 ## Getting started
 
 ### Prerequisites
+
 * Python 3.7 or later is required to use this package.
 * An existing Translator service or Cognitive Services resource.
 
@@ -36,6 +36,7 @@ pip install azure-ai-translation-text
 ```
 
 #### Create a Translator service resource
+
 You can create Translator resource following [Create a Translator resource][translator_resource_create].
 
 ### Authenticate the client
@@ -106,7 +107,7 @@ try:
             print(f"{key} -- name: {value.name}, supported target languages count: {len(value.translations)}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
@@ -132,7 +133,7 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
@@ -158,7 +159,7 @@ try:
         print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
@@ -188,7 +189,7 @@ try:
             print(boundary)
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
@@ -214,7 +215,7 @@ try:
         print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
@@ -242,7 +243,7 @@ try:
         print(f"First example: '{dictionary_entry.examples[0].target_prefix}{dictionary_entry.examples[0].target_term}{dictionary_entry.examples[0].target_suffix}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
@@ -258,12 +259,11 @@ For example, if you submit a translation request without a target translate lang
 
 You can find the different error codes returned by the service in the [Service Documentation][service_errors].
 
-
-# Provide Feedback
+## Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the
 [Issues](https://github.com/Azure/azure-sdk-for-python/issues)
-section of the project. 
+section of the project.
 
 ## Next steps
 
@@ -285,13 +285,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python-dt-ref-docs]: https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-reference
 [python-dt-samples]: https://aka.ms/https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/translation/azure-ai-translation-text/samples
 
-[azure_subscription]: https://azure.microsoft.com/free/
 [pip]: https://pypi.org/project/pip/
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_portal]: https://portal.azure.com
 
-[azure_identity]: https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/identity/Azure.Identity
-[register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [translator_resource_create]: https://learn.microsoft.com/azure/cognitive-services/Translator/create-translator-resource
 
 [translator_client_class]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/azure/ai/translation/text/_client.py

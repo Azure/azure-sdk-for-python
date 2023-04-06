@@ -12,6 +12,7 @@ text_translator = TextTranslationClient(endpoint="<endpoint>", credential=creden
 The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
 ### Break Sentence with language and script parameters
+
 When the input language is known, you can provide those to the service call.
 
 ```Python
@@ -32,11 +33,12 @@ try:
             print(boundary)
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Break Sentence with auto-detection
+
 You can omit source language of the input text. In this case, API will try to auto-detect the language.
 
 ```Python
@@ -55,11 +57,10 @@ try:
             print(boundary)
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
 [README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
-

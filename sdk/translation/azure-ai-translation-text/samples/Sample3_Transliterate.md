@@ -11,7 +11,8 @@ text_translator = TextTranslationClient(endpoint="<endpoint>", credential=creden
 
 The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
-### Transliterate
+### Transliterate Text
+
 Converts characters or letters of a source language to the corresponding characters or letters of a target language.
 
 ```Python
@@ -28,11 +29,10 @@ try:
         print(f"Input text was transliterated to '{transliteration.script}' script. Transliterated text: '{transliteration.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
 [README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
-

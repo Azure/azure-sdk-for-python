@@ -12,6 +12,7 @@ text_translator = TextTranslationClient(endpoint="<endpoint>", credential=creden
 The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
 ### Translate text
+
 Translate text from known source language to target language.
 
 ```Python
@@ -28,11 +29,12 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Translate with auto-detection
+
 You can omit source language of the input text. In this case, API will try to auto-detect the language.
 
 > Note that you must provide the source language rather than autodetection when using the dynamic dictionary feature.
@@ -55,11 +57,12 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Translate with Transliteration
+
 You can combine both Translation and Transliteration in one Translate call. Your source Text can be in non-standard Script of a language as well as you can ask for non-standard Script of a target language.
 
 ```Python
@@ -84,11 +87,12 @@ try:
                 print(f"Transliterated text ({transliteration.script}): {transliteration.text}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Translate multiple input texts
+
 You can translate multiple text elements with a various length. Each input element can be in different language (source language parameter needs to be omitted and language auto-detection is used). Refer to [Request limits for Translator](https://learn.microsoft.com/azure/cognitive-services/translator/request-limits) for current limits.
 
 ```Python
@@ -106,11 +110,12 @@ try:
         print(f"Text was translated to: '{translation.translations[0].to if translation.translations else None}' and the result is: '{translation.translations[0].text if translation.translations else None}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Translate multiple target languages
+
 You can provide multiple target languages which results to each input element be translated to all target languages.
 
 ```Python
@@ -129,11 +134,12 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Translate different text types
+
 You can select whether the translated text is plain text or HTML text. Any HTML needs to be a well-formed, complete element. Possible values are: plain (default) or html.
 
 ```Python
@@ -153,11 +159,12 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Don’t translate specific entity name in a text
+
 It's sometimes useful to exclude specific content from translation. You can use the attribute class=notranslate to specify content that should remain in its original language. In the following example, the content inside the first div element won't be translated, while the content in the second div element will be translated.
 
 ```Python
@@ -175,11 +182,12 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Translate specific entity name in a text applying a dictionary
+
 If you already know the translation you want to apply to a word or a phrase, you can supply it as markup within the request. The dynamic dictionary is safe only for compound nouns like proper names and product names.
 
 > Note You must include the From parameter in your API translation request instead of using the autodetect feature.
@@ -198,11 +206,12 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Profanity handling
+
 [Profanity handling](https://learn.microsoft.com/azure/cognitive-services/translator/reference/v3-0-translate#handle-profanity). Normally the Translator service will retain profanity that is present in the source in the translation. The degree of profanity and the context that makes words profane differ between cultures, and as a result the degree of profanity in the target language may be amplified or reduced.
 
 If you want to avoid getting profanity in the translation, regardless of the presence of profanity in the source text, you can use the profanity filtering option. The option allows you to choose whether you want to see profanity deleted, whether you want to mark profanities with appropriate tags (giving you the option to add your own post-processing), or you want no action taken. The accepted values of `ProfanityAction` are `DELETED`, `MARKED` and `NOACTION` (default).
@@ -225,11 +234,12 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Include alignments into translations
+
 You can ask translation service to include alignment projection from source text to translated text.
 
 ```Python
@@ -251,11 +261,12 @@ try:
                 print(f"Alignments: {translated_text.alignment.proj}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Include sentence length
+
 You can ask translator service to include sentence boundaries for the input text and the translated text.
 
 ```Python
@@ -278,11 +289,12 @@ try:
                 print(f"Translated Sentence length: {translated_text.sent_len.trans_sent_len}")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 ### Custom Translator
+
 You can get translations from a customized system built with [Custom Translator](https://learn.microsoft.com/azure/cognitive-services/translator/customization). Add the Category ID from your Custom Translator [project details](https://learn.microsoft.com/azure/cognitive-services/translator/custom-translator/how-to-create-project#view-project-details) to this parameter to use your deployed customized system.
 
 It is possible to set `allow_fallback` parameter. It specifies that the service is allowed to fall back to a general system when a custom system doesn't exist. Possible values are: `True` (default) or `False`.
@@ -306,11 +318,10 @@ try:
             print(f"Text was translated to: '{translated_text.to}' and the result is: '{translated_text.text}'.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
 [README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
-

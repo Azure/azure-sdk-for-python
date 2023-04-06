@@ -11,7 +11,7 @@ text_translator = TextTranslationClient(endpoint="<endpoint>", credential=creden
 
 The values of the `endpoint`, `apiKey` and `region` variables can be retrieved from environment variables, configuration settings, or any other secure approach that works for your application.
 
-### Dictionary Lookup
+### Lookup Dictionary Entries
 
 Returns equivalent words for the source term in the target language.
 
@@ -29,11 +29,10 @@ try:
         print(f"First entry: '{dictionary_entry.translations[0].display_target}', confidence: {dictionary_entry.translations[0].confidence}.")
 
 except HttpResponseError as exception:
-    print(f"Error Code: {exception.error.error}")
+    print(f"Error Code: {exception.error.code}")
     print(f"Message: {exception.error.message}")
 ```
 
 See the [README] of the Text Translator client library for more information, including useful links and instructions.
 
 [README]: https://aka.ms/https://github.com/azure-sdk-for-python/blob/main/sdk/translation/azure-ai-translation-text/README.md
-
