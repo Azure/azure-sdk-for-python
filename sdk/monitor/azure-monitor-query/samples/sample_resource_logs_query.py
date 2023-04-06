@@ -17,18 +17,18 @@ For more information on DefaultAzureCredential, see https://docs.microsoft.com/p
 **Note** - Although this example uses pandas to print the response, it's optional and
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
+# [START resource_logs_query]
 import os
 import pandas as pd
 from datetime import timedelta
-from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 
 
 credential  = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
-# [START resource_logs_query]
 query = """AzureActivity | take 5"""
 
 try:

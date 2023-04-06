@@ -18,6 +18,8 @@ For more information on DefaultAzureCredential, see https://docs.microsoft.com/p
 isn't a required package for querying. Alternatively, native Python can be used as well.
 """
 import asyncio
+
+# [START resource_logs_query_async]
 from datetime import timedelta
 import os
 
@@ -32,7 +34,6 @@ from azure.monitor.query import LogsQueryStatus
 credential  = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
-# [START resource_logs_query_async]
 query = """AzureActivity | take 5"""
 
 async def resource_logs_query():
