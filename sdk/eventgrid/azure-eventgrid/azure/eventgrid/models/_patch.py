@@ -7,7 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List, Mapping, Any, overload
-from ._models import ReceiveResponse as ReceiveResponseInternal, ReceiveDetails as ReceiveDetailsInternal, BrokerProperties
+from ._models import BrokerProperties, ReceiveDetails as ReceiveDetailsInternal
 from azure.core.messaging import CloudEvent
 
 

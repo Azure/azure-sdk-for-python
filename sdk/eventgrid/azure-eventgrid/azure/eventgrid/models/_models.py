@@ -182,12 +182,12 @@ class LockTokenInput(_model_base.Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar lock_tokens: LockTokens. Required.
+    :ivar lock_tokens: LockToken. Required.
     :vartype lock_tokens: list[str]
     """
 
     lock_tokens: List[str] = rest_field(name="lockTokens")
-    """LockTokens. Required."""
+    """LockToken. Required."""
 
     @overload
     def __init__(
@@ -265,25 +265,6 @@ class ReceiveDetails(_model_base.Model):
     event: "_models._models.CloudEventEvent" = rest_field()
     """Cloud Event details. Required."""
 
-    @overload
-    def __init__(
-        self,
-        *,
-        broker_properties: "_models.BrokerProperties",
-        event: "_models._models.CloudEventEvent",
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
 
 class ReceiveResponse(_model_base.Model):
     """Details of the Receive operation response.
@@ -294,14 +275,14 @@ class ReceiveResponse(_model_base.Model):
     :vartype value: list[~azuremessagingeventgrid.models.ReceiveDetails]
     """
 
-    value: List["_models.ReceiveDetails"] = rest_field()
+    value: List["_models._models.ReceiveDetails"] = rest_field()
     """Array of receive responses, one per cloud event. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        value: List["_models.ReceiveDetails"],
+        value: List["_models._models.ReceiveDetails"],
     ):
         ...
 
