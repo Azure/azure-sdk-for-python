@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union
+from typing import ( Union, Optional )
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import ( SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
 from azure.core.credentials import ( TokenCredential, AzureKeyCredential )
@@ -121,7 +121,7 @@ class TextTranslationClient(ServiceClientGenerated):
             self,
             credential: Union[AzureKeyCredential , TokenCredential , TranslatorCredential],
             *,
-            endpoint: Union[str , None],
+            endpoint: Optional[str] = None,
             api_version = "3.0",
             **kwargs):
 

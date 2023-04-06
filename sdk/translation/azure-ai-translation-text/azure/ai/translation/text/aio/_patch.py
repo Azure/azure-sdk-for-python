@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union
+from typing import ( Union, Optional )
 from azure.core.pipeline.policies import ( AsyncBearerTokenCredentialPolicy, AzureKeyCredentialPolicy )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -64,6 +64,14 @@ class TextTranslationClient(ServiceClientGenerated):
     Dictionary example Returns grammatical structure and context examples for the source term and
     target term pair.
 
+    Combinations of endpoint and credential values:
+    str + AzureKeyCredential - used custom domain translator endpoint
+    str + TokenCredential - used for regional endpoint with token authentication
+    str + TranslatorCredential - used for National Clouds
+    None + AzureKeyCredential - used for global translator endpoint with global Translator resource
+    None + Token - general translator endpoint with token authentication
+    None + TranslatorCredential - general translator endpoint with regional Translator resource
+
     :param endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
          https://api.cognitive.microsofttranslator.com). Required.
     :type endpoint: str
@@ -76,8 +84,8 @@ class TextTranslationClient(ServiceClientGenerated):
     def __init__(
             self,
             credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential],
-            *
-            endpoint: Union[str , None],
+            *,
+            endpoint: Optional[str] = None,
             api_version = "3.0",
             **kwargs):
 
