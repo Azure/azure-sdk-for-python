@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 import re
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
@@ -29,6 +29,7 @@ from azure.ai.ml._utils.utils import (
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.entities._deployment.pipeline_component_batch_deployment import PipelineComponentBatchDeployment
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -60,19 +61,31 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         ops_logger.update_info(kwargs)
         self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
+        service_client_04_2023_preview = kwargs.pop("service_service_client_02_2023_preview")
+        self._component_batch_deployment_operations = service_client_04_2023_preview.batch_deployments
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
-        self._component_operations = service_client_05_2022.component_versions
+        self._component_operations = service_client_04_2023_preview.component_versions
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
 
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
 
+    # @property
+    # def _02_2023_preview_client(self) -> ServiceClient022023Preview:
+    #     workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
+    #     mfe_base_uri = _get_mfe_base_url_from_discovery_service(
+    #         workspace_operations, self._workspace_name, self._requests_pipeline
+    #     )
+    #     return ServiceClient022023Preview(
+    #             credential=self._credentials, base_url=mfe_base_uri, subscription_id=self._subscription_id
+    #         )
+
     @distributed_trace
     @monitor_with_activity(logger, "BatchDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
-        deployment: BatchDeployment,
+        deployment: Union[BatchDeployment, PipelineComponentBatchDeployment],
         *,
         skip_script_validation: bool = False,
     ) -> LROPoller[BatchDeployment]:
@@ -111,23 +124,30 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             operation_config=self._operation_config,
         )
         upload_dependencies(deployment, orchestrators)
-        if is_private_preview_enabled() and deployment.job_definition:
+        if type(deployment) is PipelineComponentBatchDeployment:
             self._validate_component(deployment, orchestrators)
         try:
             location = self._get_workspace_location()
             deployment_rest = deployment._to_rest_object(location=location)
-
-            poller = self._batch_deployment.begin_create_or_update(
-                resource_group_name=self._resource_group_name,
-                workspace_name=self._workspace_name,
-                endpoint_name=deployment.endpoint_name,
-                deployment_name=deployment.name,
-                body=deployment_rest,
-                **self._init_kwargs,
-                cls=lambda response, deserialized, headers: BatchDeployment._from_rest_object(deserialized),
+            if type(deployment) is PipelineComponentBatchDeployment:
+                return self._component_batch_deployment_operations.begin_create_or_update(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    endpoint_name=deployment.endpoint_name,
+                    deployment_name=deployment.name,
+                    body=deployment_rest,
+                    **self._init_kwargs,
             )
-            return poller
-
+            else:
+                return self._batch_deployment.begin_create_or_update(
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    endpoint_name=deployment.endpoint_name,
+                    deployment_name=deployment.name,
+                    body=deployment_rest,
+                    **self._init_kwargs,
+                    cls=lambda response, deserialized, headers: BatchDeployment._from_rest_object(deserialized),
+                )
         except Exception as ex:
             raise ex
 
@@ -253,27 +273,24 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type orchestrators: _operation_orchestrator.OperationOrchestrator
         """
         component = None
-        if isinstance(deployment.job_definition.component, PipelineComponent):
+        if isinstance(deployment.component, PipelineComponent):
             component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
-                name=deployment.job_definition.component.name,
+                name=deployment.component.name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
-                component=deployment.job_definition.component,
-                version=deployment.job_definition.component.version,
+                component=deployment.component,
+                version=deployment.component.version,
                 **self._init_kwargs,
             )
-            if not deployment.job_definition.description and component.description:
-                deployment.job_definition.description = component.description
-            if not deployment.job_definition.tags and component.tags:
-                deployment.job_definition.tags = component.tags
-        elif isinstance(deployment.job_definition.component, str):
+            deployment.component = component
+        elif isinstance(deployment.component, str):
             component_id = orchestrators.get_asset_arm_id(
-                deployment.job_definition.component, azureml_type=AzureMLResourceType.COMPONENT
+                deployment.component, azureml_type=AzureMLResourceType.COMPONENT
             )
             if not deployment.job_definition.name:
                 name, _ = parse_prefixed_name_version(deployment.job_definition.component)
                 deployment.job_definition.name = name
-            deployment.job_definition.component_id = component_id
+            deployment.component_id = component_id
         elif isinstance(deployment.job_definition.job, str):
             job_component = PipelineComponent(source_job_id=deployment.job_definition.job)
             component = self._component_operations.create_or_update(
@@ -289,11 +306,11 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             if not deployment.job_definition.tags and component.properties.tags:
                 deployment.job_definition.tags = component.properties.tags
         # pylint: disable=line-too-long
-        if isinstance(deployment.job_definition.job, str) or isinstance(
-            deployment.job_definition.component, PipelineComponent
-        ):
-            deployment.job_definition.component = None
-            deployment.job_definition.job = None
-            deployment.job_definition.component_id = component.id
-            if not deployment.job_definition.name and component.name:
-                deployment.job_definition.name = component.name
+        # if isinstance(deployment.job_definition.job, str) or isinstance(
+        #     deployment.job_definition.component, PipelineComponent
+        # ):
+        #     deployment.job_definition.component = None
+        #     deployment.job_definition.job = None
+        #     deployment.job_definition.component_id = component.id
+        #     if not deployment.job_definition.name and component.name:
+        #         deployment.job_definition.name = component.name

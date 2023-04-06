@@ -8,16 +8,10 @@ import logging
 from typing import Any
 
 from marshmallow import fields, post_load
-from azure.ai.ml._schema import(
-    UnionField,
-    ArmVersionedStr,
-    RegistryStr,
-)
+
 from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
-from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
-from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
+from azure.ai.ml._schema.core.fields import ComputeField, ExperimentalField, NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentType
@@ -27,8 +21,8 @@ from .batch_deployment_settings import BatchRetrySettingsSchema
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeploymentSchema(DeploymentSchema):
-    compute = ComputeField(required=False)
+class ModelBatchDeploymentSchema(BatchDeploymentSchema):
+    compute = ComputeField(required=True)
     error_threshold = fields.Int(
         metadata={
             "description": """Error threshold, if the error count for the entire input goes above this value,\r\n
@@ -61,29 +55,10 @@ class BatchDeploymentSchema(DeploymentSchema):
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(allowed_values=[BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL], required=False)
 
-    job_definition = NestedField(JobDefinitionSchema)
-    component = UnionField(
-        [
-            RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-            PipelineComponentFileRefField(),
-        ]
-    )
-    settings = fields.Dict()
+    job_definition = ExperimentalField(NestedField(JobDefinitionSchema))
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
-        from azure.ai.ml.entities import BatchDeployment, ModelBatchDeployment, PipelineComponentBatchDeployment
-        import debugpy
-        debugpy.connect(('localhost', 5678))
-        debugpy.breakpoint()
-        try:
-            if data["type"]:
-                if data["type"] == BatchDeploymentType.COMPONENT:
-                    return PipelineComponentBatchDeployment(**data)
-                elif data["type"] == BatchDeploymentType.MODEL:
-                    return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
-        except Exception as ex:
-            raise ex
-        # except:
-        #     return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        from azure.ai.ml.entities import ModelBatchDeployment
+            
+        return ModelBatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
