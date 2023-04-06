@@ -38,7 +38,7 @@ class TranslatorCredential:
             raise ValueError("The key used for updating can not be None or empty")
         if not isinstance(key, str):
             raise TypeError("The key used for updating must be a string.")
-        self._key = key
+        self.key = key
 
 class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
     """ Translator Authentication Policy. Adds both authentication headers that are required.
@@ -54,7 +54,7 @@ class TranslatorAuthenticationPolicy(SansIOHTTPPolicy):
 
 def get_translation_endpoint(endpoint, api_version):
     if not endpoint:
-            endpoint = "https://api.cognitive.microsofttranslator.com"
+        endpoint = "https://api.cognitive.microsofttranslator.com"
 
     translator_endpoint: str = ""
     if "cognitiveservices" in endpoint:
@@ -74,7 +74,7 @@ def set_authentication_policy(credential, kwargs):
                 name="Ocp-Apim-Subscription-Key", credential=credential)
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
-            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, DEFAULT_TOKEN_SCOPE, kwargs)
+            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs)
 
 class TextTranslationClient(ServiceClientGenerated):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
@@ -119,8 +119,9 @@ class TextTranslationClient(ServiceClientGenerated):
     """
     def __init__(
             self,
-            endpoint: Union[str , None],
             credential: Union[AzureKeyCredential , TokenCredential , TranslatorCredential],
+            *,
+            endpoint: Union[str , None],
             api_version = "3.0",
             **kwargs):
 

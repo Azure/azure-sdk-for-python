@@ -38,7 +38,7 @@ def set_authentication_policy(credential, kwargs):
                 name="Ocp-Apim-Subscription-Key", credential=credential)
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
-            kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(credential, DEFAULT_TOKEN_SCOPE, kwargs)
+            kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(credential, *kwargs.pop("credential_scopes", [DEFAULT_TOKEN_SCOPE]), kwargs)
 
 class TextTranslationClient(ServiceClientGenerated):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
@@ -75,8 +75,9 @@ class TextTranslationClient(ServiceClientGenerated):
     """
     def __init__(
             self,
-            endpoint: Union[str , None],
             credential: Union[AzureKeyCredential , AsyncTokenCredential , TranslatorCredential],
+            *
+            endpoint: Union[str , None],
             api_version = "3.0",
             **kwargs):
 
