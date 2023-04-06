@@ -520,26 +520,6 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
 
 
 @pytest.fixture
-def mock_pending_upload_id(mocker: MockFixture) -> None:
-    fake_uuid = "000000000000000000000"
-
-    def generate_uuid(*args, **kwargs):
-        real_uuid = str(uuid.uuid4())
-        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
-        return real_uuid
-
-    if is_live():
-        mocker.patch(
-            "azure.ai.ml._utils._asset_utils._generate_pending_upload_id",
-            side_effect=generate_uuid,
-        )
-    else:
-        mocker.patch(
-            "azure.ai.ml._utils._asset_utils._generate_pending_upload_id", return_value=fake_uuid
-        )
-
-
-@pytest.fixture
 def mock_asset_name(mocker: MockFixture):
     fake_uuid = "000000000000000000000"
 
