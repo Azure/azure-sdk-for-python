@@ -12,7 +12,14 @@
 - Added support for custom document classification on `DocumentModelAdministrationClient`: `begin_build_document_classifier`, 
   `list_document_classifiers`, `get_document_classifier`, and `delete_document_classifier`.
 - Added support for classifying documents on `DocumentAnalysisClient`: `begin_classify_document` and `begin_classify_document_from_url`.
+- Added model `QuotaDetails` and property `custom_neural_document_model_builds` on `ResourceDetails`.
 - Added kind `documentClassifierBuild` to `OperationSummary` and `OperationDetails`.
+- Added property `expires_on` to `DocumentModelDetails` and `DocumentModelSummary`.
+- Added kind `formulaBlock` to `DocumentParagraph`.
+- Added property `common_name` to `DocumentKeyValuePair`.
+- Added property `code` to `CurrencyValue`.
+- Added properties `unit`, `city_district`, `state_district`, `suburb`, `house`, and `level` to `AddressValue`.
+- Added "boolean" `value_type` and `bool` `value` to `DocumentField`.
 
 ### Breaking Changes
 
