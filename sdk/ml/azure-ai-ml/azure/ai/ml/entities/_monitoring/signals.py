@@ -6,11 +6,25 @@ from typing import List, Union
 
 from typing_extensions import Literal
 
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+    DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
+    DataQualityMonitoringSignal as RestMonitoringDataQualitySignal,
+    PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
+    FeatureAttributionDriftMonitoringSignal as RestFeatureAttributionDriftMonitoringSignal,
+    ModelPerformanceSignalBase as RestModelPerformanceSignal,
+    CustomMonitoringSignal as RestCustomMonitoringSignal,
+    MonitoringDataSegment as RestMonitoringDataSegment,
+    TopNFeaturesByAttribution as RestTopNFeaturesByAttribution,
+    AllFeatures as RestAllFeatures,
+    FeatureSubset as RestFeatureSubset
+
+)
 from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
-class DataSegment:
+class DataSegment(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -19,6 +33,16 @@ class DataSegment:
     ):
         self.feature_name = feature_name
         self.feature_values = feature_values
+
+    def _to_rest_object(self) -> RestMonitoringDataSegment:
+        return RestMonitoringDataSegment(feature=self.feature_name, values=self.feature_values)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitoringDataSegment) -> "DataSegment":
+        return cls(
+            feature_name=obj.feature,
+            feature_values=obj.values,
+        )
 
 
 @experimental
@@ -36,13 +60,22 @@ class MonitoringMetricThreshold:
 
 
 @experimental
-class MonitorFeatureFilter:
+class MonitorFeatureFilter(RestTranslatableMixin):
     def __init__(
         self,
         *,
         top_n_feature_importance: int = None,
     ):
         self.top_n_feature_importance = top_n_feature_importance
+
+    def _to_rest_object(self) -> RestTopNFeaturesByAttribution:
+        return RestTopNFeaturesByAttribution(
+            top=self.top_n_feature_importance,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestTopNFeaturesByAttribution) -> "MonitorFeatureFilter":
+        return cls(top_n_feature_importance=obj.top)
 
 
 @experimental
@@ -63,10 +96,10 @@ class TargetDataset:
         self,
         *,
         dataset_name: str = None,
-        lookback_period_name: int = None,
+        lookback_period_days: int = None,
     ):
         self.dataset_name = dataset_name
-        self.lookback_period_name = lookback_period_name
+        self.lookback_period_days = lookback_period_days
 
 
 @experimental
@@ -82,7 +115,7 @@ class BaselineDataset:
 
 
 @experimental
-class MonitoringSignal:
+class MonitoringSignal(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -143,6 +176,18 @@ class DataDriftSignal(DataSignal):
         )
         self.type = "data_drift"
 
+    def _to_rest_object(self) -> RestMonitoringDataDriftSignal:
+        features = None
+        if isinstance(self.features, list):
+            features = RestFeatureSubset(features=self.features)
+        elif isinstance(self.features, MonitorFeatureFilter):
+            features = self.features._to_rest_object()
+        elif isinstance(self.features, str) and self.features == "all_features":
+            features = RestAllFeatures()
+        return RestMonitoringDataDriftSignal(
+            features=features,
+        )
+
 
 @experimental
 class PredictionDriftSignal(MetricMonitoringSignal):
@@ -157,6 +202,13 @@ class PredictionDriftSignal(MetricMonitoringSignal):
             target_dataset=target_dataset, baseline_dataset=baseline_dataset, metric_thresholds=metric_thresholds
         )
         self.type = "prediction_drift"
+
+    def _to_rest_object(self) -> RestPredictionDriftMonitoringSignal:
+        return RestPredictionDriftMonitoringSignal()
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestPredictionDriftMonitoringSignal) -> "PredictionDriftSignal":
+        return cls()
 
 
 @experimental
@@ -176,6 +228,21 @@ class DataQualitySignal(DataSignal):
             features=features,
         )
         self.type = "data_quality"
+
+    def _to_rest_object(self) -> RestMonitoringDataQualitySignal:
+        if isinstance(self.features, list):
+            features = RestFeatureSubset(features=self.features)
+        elif isinstance(self.features, MonitorFeatureFilter):
+            features = self.features._to_rest_object()
+        elif isinstance(self.features, str) and self.features == "all_features":
+            features = RestAllFeatures()
+        return RestMonitoringDataQualitySignal(
+            features=features,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestMonitoringDataQualitySignal) -> "DataQualitySignal":
+        return cls()
 
 
 @experimental
@@ -214,6 +281,13 @@ class FeatureAttributionDriftSignal(ModelSignal):
         )
         self.type = "feature_attribution_drift"
 
+    def _to_rest_object(self) -> RestFeatureAttributionDriftMonitoringSignal:
+        return RestFeatureAttributionDriftMonitoringSignal()
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestFeatureAttributionDriftMonitoringSignal) -> "FeatureAttributionDriftSignal":
+        return cls()
+
 
 @experimental
 class ModelPerformanceSignal(ModelSignal):
@@ -235,6 +309,13 @@ class ModelPerformanceSignal(ModelSignal):
         self.type = "model_drift"
         self.data_segment = data_segment
 
+    def _to_rest_object(self) -> RestModelPerformanceSignal:
+        return RestModelPerformanceSignal()
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestModelPerformanceSignal) -> "ModelPerformanceSignal":
+        return RestModelPerformanceSignal
+
 
 @experimental
 class CustomMonitoringSignal(MonitoringSignal):
@@ -251,3 +332,10 @@ class CustomMonitoringSignal(MonitoringSignal):
         )
         self.type = "custom_monitoring_signal"
         self.component_id = component_id
+
+    def _to_rest_object(self) -> RestCustomMonitoringSignal:
+        return RestCustomMonitoringSignal(component_id=self.component_id)
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
+        return cls(component_id=obj.component_id)

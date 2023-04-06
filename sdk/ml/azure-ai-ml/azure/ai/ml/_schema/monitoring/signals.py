@@ -57,7 +57,7 @@ class BaselineDataRangeSchema(metaclass=PatchedSchemaMeta):
 
 class TargetDatasetSchema(metaclass=PatchedSchemaMeta):
     dataset_name = fields.Str()
-    lookback_period_name = fields.Int()
+    lookback_period_days = fields.Int()
 
     @post_load
     def make(self, data, **kwargs):
