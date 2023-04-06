@@ -134,6 +134,8 @@ _runtime_data = (
     + "zRVYUxNZ1BfNGZZNGo4aXI3Y2wxVFhsRmRBZ2N4NTVvN1RrY1NBIgogICAgICAgICAg"
     + "ICB9CiAgICAgICAgfQogICAgICAgIA"
 )
+
+_attest_tpm_payload = "eyJwYXlsb2FkIjogeyJ0eXBlIjogImFpa2NlcnQifX0"
 ''' cspell:enable '''
 
 class TestAsyncAzureAttestation(AzureRecordedTestCase):
@@ -267,26 +269,6 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
         # type: (str, **Any) -> None
         await self._test_attest_sgx_enclave(kwargs.pop("instance_url"))
 
-    @AttestationPreparer()
-    @recorded_by_proxy_async
-    async def test_tpm_attestation(self, attestation_aad_url):
-        # type: (str) -> None
-        client = self.create_client(attestation_aad_url)
-        admin_client = self.create_adminclient(attestation_aad_url)
-
-        # TPM attestation requires that there be a policy present, so set one.
-        basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
-        await admin_client.set_policy(AttestationType.TPM, basic_policy)
-
-        encoded_payload = bytes(json.dumps({"payload": {"type": "aikcert"}}), 'ascii')
-        tpm_response = await client.attest_tpm(encoded_payload)
-
-        decoded_response = json.loads(tpm_response.getTpmResult())
-        assert decoded_response["payload"] is not None
-        payload = decoded_response["payload"]
-        assert payload["challenge"] is not None
-        assert payload["service_context"] is not None
-
     """
         # Commented out call showing the modifications needed to convert this to a call
         # to an MAA instance running locally for diagnostic purposes.
@@ -306,6 +288,26 @@ class TestAsyncAzureAttestation(AzureRecordedTestCase):
             headers={"tenantName": "tenant1"})
             print(response)
     """
+
+    @AttestationPreparer()
+    @recorded_by_proxy_async
+    async def test_tpm_attestation(self, attestation_aad_url):
+        # type: (str) -> None
+        client = self.create_client(attestation_aad_url)
+        admin_client = self.create_adminclient(attestation_aad_url)
+
+        # TPM attestation requires that there be a policy present, so set one.
+        basic_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
+        await admin_client.set_policy(AttestationType.TPM, basic_policy)
+
+        encoded_payload = base64url_decode(_attest_tpm_payload)
+        tpm_response = await client.attest_tpm(encoded_payload)
+
+        decoded_response = json.loads(tpm_response.result)
+        assert decoded_response["payload"] is not None
+        payload = decoded_response["payload"]
+        assert payload["challenge"] is not None
+        assert payload["service_context"] is not None
 
     def create_client(self, base_uri, **kwargs):
         # type: (str, Dict[str, Any]) -> AttestationClient

@@ -358,16 +358,13 @@ class AttestationClient(object):
 
     @distributed_trace_async
     async def attest_tpm(self, content: bytes, **kwargs: Any) -> TpmAttestationResult:
-        """Attest a TPM based enclave.
+        """Performs TPM attestation.
 
-        See the `TPM Attestation Protocol Reference
-        <https://docs.microsoft.com/en-us/azure/attestation/virtualization-based-security-protocol>`_
-        for more information.
-
-        :param bytes content: Data to send to the TPM attestation service.
-        :returns: A structure containing the response from the TPM attestation.
+        :param bytes content: Attestation request for Trusted Platform Module (TPM) attestation.
+        :returns: attestation response for Trusted Platform Module (TPM) attestation.
         :rtype: TpmAttestationResult
         """
+
         response = await self._client.attestation.attest_tpm(
             content, **kwargs
         )
