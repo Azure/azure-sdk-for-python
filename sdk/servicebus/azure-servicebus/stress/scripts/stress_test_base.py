@@ -480,7 +480,12 @@ class StressTestRunnerAsync(StressTestRunner):
             for receiver in self.receivers
         ]
         with self.process_monitor:
-            await asyncio.gather(*send_tasks, *receive_tasks)
+            # await asyncio.gather(*send_tasks, *receive_tasks)
+            for task in asyncio.as_completed(send_tasks + receive_tasks):
+                try:
+                    await task
+                except Exception as e:
+                    print(e)
             result = StressTestResults()
             result.state_by_sender = {
                 s: f.result() for s, f in zip(self.senders, send_tasks)
