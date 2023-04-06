@@ -10,6 +10,8 @@ from azure.core.credentials import ( TokenCredential, AzureKeyCredential )
 
 from ._client import TextTranslationClient as ServiceClientGenerated
 
+DEFAULT_TOKEN_SCOPE = "https://api.microsofttranslator.com/"
+
 def patch_sdk():
     """Do not remove from this file.
 
@@ -72,7 +74,7 @@ def set_authentication_policy(credential, kwargs):
                 name="Ocp-Apim-Subscription-Key", credential=credential)
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
-            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential)
+            kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, DEFAULT_TOKEN_SCOPE, kwargs)
 
 class TextTranslationClient(ServiceClientGenerated):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural

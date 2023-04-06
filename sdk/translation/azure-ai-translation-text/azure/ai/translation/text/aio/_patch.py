@@ -12,6 +12,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from .._patch import (
+    DEFAULT_TOKEN_SCOPE,
     get_translation_endpoint,
     TranslatorAuthenticationPolicy,
     TranslatorCredential
@@ -37,7 +38,7 @@ def set_authentication_policy(credential, kwargs):
                 name="Ocp-Apim-Subscription-Key", credential=credential)
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
-            kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(credential)
+            kwargs["authentication_policy"] = AsyncBearerTokenCredentialPolicy(credential, DEFAULT_TOKEN_SCOPE, kwargs)
 
 class TextTranslationClient(ServiceClientGenerated):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
