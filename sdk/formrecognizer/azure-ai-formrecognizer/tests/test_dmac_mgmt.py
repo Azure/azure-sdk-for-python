@@ -198,8 +198,8 @@ class TestManagement(FormRecognizerTest):
             classifier = op.result
             assert classifier.api_version
             assert classifier.classifier_id
-            assert classifier.created_date_time
-            assert classifier.expiration_date_time
+            assert classifier.created_on
+            assert classifier.expires_on
             for doc_type, source in classifier.doc_types.items():
                 assert doc_type
                 assert source.azure_blob_source or source.azure_blob_file_list_source
