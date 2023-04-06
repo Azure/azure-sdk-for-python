@@ -12,8 +12,8 @@ from azure.ai.ml._arm_deployments.arm_helper import deployment_message_mapping
 from azure.ai.ml._azure_environments import (
     _get_azure_portal_id_from_metadata,
     _get_base_url_from_metadata,
-    _get_cloud_details,
-    _resource_to_scopes,
+    _get_cloud_environment_info,
+    _convert_resource_to_scopes,
 )
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
@@ -48,9 +48,9 @@ class ArmDeploymentExecutor(object):
         self._subscription_id = subscription_id
         self._resource_group_name = resource_group_name
         self._deployment_name = deployment_name
-        self._cloud = _get_cloud_details()
+        self._cloud = _get_cloud_environment_info()
         management_hostname = _get_base_url_from_metadata()
-        credential_scopes = _resource_to_scopes(management_hostname)
+        credential_scopes = _convert_resource_to_scopes(management_hostname)
         kwargs.pop("base_url", None)
         if credential_scopes is not None:
             kwargs["credential_scopes"] = credential_scopes

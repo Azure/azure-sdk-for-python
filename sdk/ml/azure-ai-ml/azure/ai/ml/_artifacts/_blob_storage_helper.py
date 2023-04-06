@@ -31,7 +31,7 @@ from azure.ai.ml._utils._asset_utils import (
     upload_directory,
     upload_file,
 )
-from azure.ai.ml._azure_environments import _get_cloud_details
+from azure.ai.ml._azure_environments import _get_cloud_environment_info
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceNotFoundError
@@ -92,7 +92,7 @@ class BlobStorageClient:
             # warn if large file (> 100 MB)
             file_size, _ = get_directory_size(source, ignore_file=ignore_file)
             file_size_in_mb = file_size / 10**6
-            cloud = _get_cloud_details()
+            cloud = _get_cloud_environment_info()
             cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
             full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{dest}"
             if file_size_in_mb > 100:
@@ -227,7 +227,7 @@ class BlobStorageClient:
 
                 # check if total size of download has exceeded 100 MB
                 # make sure proper cloud endpoint is used
-                cloud = _get_cloud_details()
+                cloud = _get_cloud_environment_info()
                 cloud_endpoint = cloud["storage_endpoint"]
                 full_storage_url = f"https://{self.account_name}.blob.{cloud_endpoint}/{self.container}/{starts_with}"
                 download_size_in_mb += blob_content.size / 10**6

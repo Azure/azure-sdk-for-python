@@ -34,7 +34,7 @@ def get_model_artifacts(
     """
     # Validate model for local endpoint
     if _model_contains_cloud_artifacts(deployment=deployment):
-        return _get_cloud_model_artifacts(
+        return _get_cloud_environment_info_model_artifacts(
             model_operations=model_operations,
             model=deployment.model,
             download_path=download_path,
@@ -62,7 +62,9 @@ def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
     return isinstance(deployment.model, str)
 
 
-def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> str:
+def _get_cloud_environment_info_model_artifacts(
+    model_operations: ModelOperations, model: str, download_path: str
+) -> str:
     name, version = parse_prefixed_name_version(model)
     model_asset = model_operations.get(name=name, version=version)
     model_uri_path = AzureMLDatastorePathUri(model_asset.path)
