@@ -28,12 +28,11 @@ from ._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._encryption import StorageEncryptionMixin
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
-from ._models import QueueMessage, AccessPolicy, MessagesPaged
+from ._models import QueueMessage, AccessPolicy, MessagesPaged, QueueMessage, QueueProperties
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from ._models import QueueProperties
 
 
 class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
@@ -287,7 +286,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":
+    def get_queue_properties(self, **kwargs: Any) -> QueueProperties:
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -308,7 +307,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = cast(QueueProperties,self._client.queue.get_properties(
+            response = cast(QueueProperties, self._client.queue.get_properties(
                 timeout=timeout,
                 cls=deserialize_queue_properties,
                 **kwargs))
