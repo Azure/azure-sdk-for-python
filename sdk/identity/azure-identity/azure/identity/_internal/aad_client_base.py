@@ -5,7 +5,6 @@
 import abc
 import base64
 import json
-import os
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
@@ -18,7 +17,6 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from .._constants import EnvironmentVariables
 from .utils import get_default_authority, normalize_authority, resolve_tenant
 from .aadclient_certificate import AadClientCertificate
 
@@ -54,8 +52,7 @@ class AadClientBase(abc.ABC):
 
         self._cache = cache or TokenCache()
         self._client_id = client_id
-        # CP1 = can handle claims challenges (CAE)
-        self._capabilities = None if EnvironmentVariables.AZURE_IDENTITY_DISABLE_CP1 in os.environ else ["CP1"]
+        self._capabilities = None
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
