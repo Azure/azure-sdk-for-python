@@ -57,8 +57,8 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
 
         # runtime_version type is either float or str
         if isinstance(self.runtime_version, float):
-            if self.runtime_version < 3.1 or self.runtime_version >= 3.3:
-                msg = "runtime version should be either 3.1 or 3.2"
+            if self.runtime_version < 3.2 or self.runtime_version >= 3.4:
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -73,7 +73,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
             except ValueError:
                 raise ValueError("runtime_version should only contain numbers")
             if len(runtime_arr) <= 1:
-                msg = "runtime version should be either 3.1 or 3.2"
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
@@ -82,15 +82,15 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                 )
             first_number = int(runtime_arr[0])
             second_number = int(runtime_arr[1])
-            if first_number != 3 or second_number not in (1, 2):
-                msg = "runtime version should be either 3.1 or 3.2"
+            if first_number != 3 or second_number not in (2, 3):
+                msg = "runtime version should be either 3.2 or 3.3"
                 raise ValidationException(
                     message=msg,
                     no_personal_data_message=msg,
                     target=ErrorTarget.SPARK_JOB,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-        else:
+        elif self.runtime_version is not None:
             msg = "runtime version should be either float or str type"
             raise ValidationException(
                 message=msg,

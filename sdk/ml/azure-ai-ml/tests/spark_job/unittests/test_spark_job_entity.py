@@ -189,7 +189,7 @@ class TestSparkJobEntity:
                 executor_memory="2g",
             )
             node._to_job()._to_rest_object()
-            assert ve.message == "runtime version should be either 3.1 or 3.2"
+            assert ve.message == "runtime version should be either 3.2 or 3.3"
 
     def test_resources_3_runtime_version(self):
         with pytest.raises(ValidationException) as ve:
@@ -203,7 +203,7 @@ class TestSparkJobEntity:
                 executor_memory="2g",
             )
             node._to_job()._to_rest_object()
-            assert ve.message == "runtime version should be either 3.1 or 3.2"
+            assert ve.message == "runtime version should be either 3.2 or 3.3"
 
     def test_resources_runtime_version_with_char(self):
         with pytest.raises(ValueError) as ve:

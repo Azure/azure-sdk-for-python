@@ -38,7 +38,7 @@ class TestSparkJobSchema:
             internal_representation: SparkJob = SparkJob(**schema.load(cfg))
             with pytest.raises(ValidationException) as ve:
                 source = internal_representation._to_rest_object()
-                assert ve.message == "runtime version should be either 3.1 or 3.2"
+                assert ve.message == "runtime version should be either 3.2 or 3.3"
 
     def test_invalid_instance_type(self):
         test_path = "./tests/test_configs/spark_job/spark_job_invalid_instance_type.yml"
