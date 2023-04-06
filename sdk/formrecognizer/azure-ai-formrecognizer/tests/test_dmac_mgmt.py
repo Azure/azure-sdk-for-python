@@ -85,6 +85,9 @@ class TestManagement(FormRecognizerTest):
 
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
+        assert info.custom_neural_document_model_builds.quota
+        assert info.custom_neural_document_model_builds.quota_resets_on
+        assert info.custom_neural_document_model_builds.used is not None
 
     @skip_flaky_test
     @FormRecognizerPreparer()
@@ -118,6 +121,7 @@ class TestManagement(FormRecognizerTest):
         assert model.model_id == model_from_get.model_id
         assert model.description == model_from_get.description
         assert model.created_on == model_from_get.created_on
+        assert model.expires_on == model_from_get.expires_on
         for name, doc_type in model.doc_types.items():
             assert name in model_from_get.doc_types
             for key, field in doc_type.field_schema.items():

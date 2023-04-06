@@ -1,14 +1,14 @@
 # Release History
 
-## 1.26.4 (Unreleased)
+## 1.26.4 (2023-04-06)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Updated settings to include OpenTelemetry as a tracer provider.  #29095
 
 ### Other Changes
+
+- Improved typing
 
 ## 1.26.3 (2023-02-02)
 
