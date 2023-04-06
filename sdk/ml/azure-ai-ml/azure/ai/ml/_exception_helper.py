@@ -5,7 +5,7 @@
 import json
 import logging
 import traceback
-from typing import Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 from colorama import Fore, Style, init
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -20,10 +20,15 @@ from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationE
 module_logger = logging.getLogger(__name__)
 
 
-def _find_deepest_dictionary(data):
-    """
-    Find deepest dictionary in nested dictionary.
-    Used here to get nested error message. Can't be in utils.py due to circular import.
+def _find_deepest_dictionary(data: Dict[Any, Any]) -> Dict[Any, Any]:
+    """Find deepest dictionary in nested dictionary.
+
+    Can't be placed in _utils/ due to circular import.
+
+    :param data: Nested dictionary
+    :type data: Dict[Any, Any]
+    :return: The innermost dictionary
+    :rtype: Dict[Any, Any]
     """
     if not any([isinstance(data.get(key), dict) for key in data]):
         return data
@@ -33,7 +38,14 @@ def _find_deepest_dictionary(data):
 
 
 def get_entity_type(error: Union[SchemaValidationError, ValidationException]) -> Tuple[str, str]:
-    """Get entity name from schema type referenced in the error."""
+    """Get entity name and details based on the schema type referenced in an error.
+
+    :param error: Client-side validation error
+    :type error: Union[SchemaValidationError, ValidationException]
+    :raises NotImplementedError: If entity-linking logic has not been implemented for the error schema type
+    :return: Entity name and details component of error message
+    :rtype: Tuple[str, str]
+    """
     details = ""
 
     error_name = error.exc_msg if hasattr(error, "exc_msg") else error.split(":")[0]
@@ -72,8 +84,18 @@ def get_entity_type(error: Union[SchemaValidationError, ValidationException]) ->
 def format_details_section(
     error: Union[SchemaValidationError, ValidationException], details: str, entity_type: str
 ) -> Tuple[Dict[str, bool], str]:
-    """Builds strings for details of the error message template's Details section."""
+    """Build string for the error message template's Details section.
 
+    :param error: Client-side validation error
+    :type error: Union[SchemaValidationError, ValidationException]
+    :param details: Error message details
+    :type details: str
+    :param entity_type: The entity name corresponding the schema type in the error message
+    :type entity_type: str
+    :return: A dictionary of each ValidationErrorType with boolean keys indicating if they were
+    found in the error message and the formatted Details section string
+    :rtype: Tuple[Dict[str, bool], str]
+    """
     error_types = {
         ValidationErrorType.INVALID_VALUE: False,
         ValidationErrorType.UNKNOWN_FIELD: False,
@@ -146,8 +168,18 @@ def format_details_section(
 def format_errors_and_resolutions_sections(
     entity_type: str, error_types: Dict[str, bool], cli: bool
 ) -> Tuple[str, str]:
-    """Builds strings for details of the error message template's Errors and Resolutions sections."""
+    """Build strings for the error message template's Errors and Resolutions sections.
 
+    :param entity_type: The entity name corresponding the schema type in the error message
+    :type entity_type: str
+    :param error_types: A dictionary of each ValidationErrorType with boolean keys indicating if they were
+    found in the error message
+    :type error_types: Dict[str, bool]
+    :param cli: Whether or not the error was triggered by the CLI or SDK
+    :type cli: bool
+    :return: Formatted strings for Errors and Resolutions sections
+    :rtype: Tuple[str, str]
+    """
     resolutions = ""
     errors = ""
     count = 1
@@ -198,11 +230,21 @@ def format_errors_and_resolutions_sections(
 def format_create_validation_error(
     error: Union[SchemaValidationError, ValidationException],
     yaml_operation: bool,
-    cli: bool = False,
+    cli: Optional[bool] = False,
     raw_error: Optional[str] = None,
 ) -> str:
-    """
-    Formats a detailed error message for validation errors.
+    """Build a UI-friendly error message string for validation errors.
+
+    :param error: Raised error
+    :type error: Union[SchemaValidationError, ValidationException]
+    :param yaml_operation: Whether or not the error arose from a YAML file issue. If so, a section asking the user to check their YAML file will be added.
+    :type yaml_operation: bool
+    :param cli: Whether or not the error was triggered by the CLI or SDK, defaults to False
+    :type cli: Optional[bool]
+    :param raw_error: Raw error message, defaults to None
+    :type raw_error: Optional[str]
+    :return: Formatted error message
+    :rtype: str
     """
     from azure.ai.ml._schema._datastore import (
         AzureBlobSchema,
@@ -266,7 +308,20 @@ def format_create_validation_error(
     return formatted_error
 
 
-def log_and_raise_error(error, debug=False, yaml_operation=False):
+def log_and_raise_error(
+    error: Exception, debug: Optional[bool] = False, yaml_operation: Optional[bool] = False
+) -> None:
+    """Log, filter, format, and raise triggered errors.
+
+    :param error: Raised error
+    :type error: Exception
+    :param debug: Whether or not the --debug flag should be included to provide verbose log output, defaults to False
+    :type debug: Optional[bool]
+    :param yaml_operation: Whether or not the error arose from a YAML file issue, defaults to False
+    :type yaml_operation: Optional[bool]
+    :raises error: Unformatted error message
+    :raises Exception: Formatted error message, for client-side validation errors only
+    """
     init()
 
     # use an f-string to automatically call str() on error
