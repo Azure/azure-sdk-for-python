@@ -5,3 +5,8 @@ repos:
     hooks:
     -   id: black
         args: [--config=eng/black-pyproject.toml]
+- repo: https://github.com/econchick/interrogate
+  rev: 1.5.0 
+  hooks:
+  - id: interrogate
+    args: [--fail-under=35] # will be raised to 95 eventually once GetGreen goal is hit
