@@ -1,0 +1,115 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/050bd22d-a09e-47d0-ac20-367266ffaa54?api-version=2023-02-15-preview",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "500",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-purview-sharing/1.0.0b1 Python/3.10.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "properties": {
+          "artifact": {
+            "properties": {
+              "paths": [
+                {
+                  "containerName": "container1",
+                  "receiverPath": "t1/dbtGen2Pqt.parquet",
+                  "senderPath": "t1/dbtGen2Pqt.parquet"
+                }
+              ]
+            },
+            "storeKind": "AdlsGen2Account",
+            "storeReference": {
+              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftsharersan",
+              "type": "ArmResourceReference"
+            }
+          },
+          "displayName": "sentShare-Test",
+          "description": "A sample share"
+        },
+        "shareKind": "InPlace"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-02-15-preview",
+        "Content-Length": "699",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Mar 2023 20:55:17 GMT",
+        "Location": "/sentShares/050bd22d-a09e-47d0-ac20-367266ffaa54/050bd22d-a09e-47d0-ac20-367266ffaa54",
+        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-02-15-preview",
+        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/00000000-0000-0000-0000-000000000000?api-version=2023-02-15-preview",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "d30a3c3e-7847-4687-b240-4d82a6ec7686"
+      },
+      "ResponseBody": {
+        "properties": {
+          "displayName": "sentShare-Test",
+          "description": "A sample share",
+          "artifact": {
+            "properties": {
+              "paths": [
+                {
+                  "containerName": "container1",
+                  "senderPath": "t1/dbtGen2Pqt.parquet",
+                  "receiverPath": "t1/dbtGen2Pqt.parquet"
+                }
+              ],
+              "location": "southafricanorth"
+            },
+            "storeKind": "AdlsGen2Account",
+            "storeReference": {
+              "referenceName": "/subscriptions/0f3dcfc3-18f8-4099-b381-8353e19d43a7/resourceGroups/faisalaltell/providers/Microsoft.Storage/storageAccounts/ftsharersan",
+              "type": "ArmResourceReference"
+            }
+          },
+          "state": "Succeeded",
+          "createdAt": "2023-03-14T20:55:17.041964Z",
+          "dependsOn": [],
+          "senderName": "SyMS",
+          "senderTenantName": "Microsoft"
+        },
+        "shareKind": "InPlace",
+        "id": "050bd22d-a09e-47d0-ac20-367266ffaa54",
+        "type": "SentShare"
+      }
+    },
+    {
+      "RequestUri": "https://fake_account.share.purview.azure.com/sentShares/050bd22d-a09e-47d0-ac20-367266ffaa54?api-version=2023-02-15-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-purview-sharing/1.0.0b1 Python/3.10.10 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Azure-AsyncOperation": "https://fake_account.share.purview.azure.com/operationResults/ba7b2a1c-7de3-43fe-bbb9-c8cf2ad70496?api-version=2023-02-15-preview",
+        "Content-Length": "138",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Tue, 14 Mar 2023 20:55:17 GMT",
+        "Operation-Id": "https://fake_account.share.purview.azure.com/operationResults/ba7b2a1c-7de3-43fe-bbb9-c8cf2ad70496?api-version=2023-02-15-preview",
+        "Operation-Location": "https://fake_account.share.purview.azure.com/operationResults/ba7b2a1c-7de3-43fe-bbb9-c8cf2ad70496?api-version=2023-02-15-preview",
+        "Server": "Kestrel",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "x-ms-correlation-request-id": "5d15e568-ee84-4cac-8ce7-a237543b1099"
+      },
+      "ResponseBody": {
+        "id": "ba7b2a1c-7de3-43fe-bbb9-c8cf2ad70496",
+        "startTime": "2023-03-14T20:55:17.7591993Z",
+        "endTime": null,
+        "status": "NotStarted",
+        "error": null
+      }
+    }
+  ],
+  "Variables": {}
+}

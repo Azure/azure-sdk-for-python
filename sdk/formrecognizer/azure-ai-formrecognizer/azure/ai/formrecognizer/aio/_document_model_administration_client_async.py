@@ -10,6 +10,9 @@ from typing import (
     Any,
     Union,
     List,
+    overload,
+    Optional,
+    Mapping
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -26,6 +29,7 @@ from .._api_versions import DocumentAnalysisApiVersion
 from .._polling import DocumentModelAdministrationPolling
 from .._models import (
     ModelBuildMode,
+    DocumentClassifierDetails,
     DocumentModelDetails,
     DocumentModelSummary,
     OperationDetails,
@@ -33,6 +37,7 @@ from .._models import (
     ResourceDetails,
     TargetAuthorization,
 )
+from .._generated.models import ClassifierDocumentTypeDetails
 
 
 class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
@@ -87,6 +92,34 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             endpoint=endpoint, credential=credential, api_version=api_version, client_kind="document", **kwargs
         )
 
+    @overload
+    async def begin_build_document_model(
+        self,
+        build_mode: Union[str, ModelBuildMode],
+        *,
+        blob_container_url: str,
+        prefix: Optional[str] = None,
+        model_id: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Mapping[str, str]] = None,
+        **kwargs: Any
+    ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]:
+        ...
+
+    @overload
+    async def begin_build_document_model(
+        self,
+        build_mode: Union[str, ModelBuildMode],
+        *,
+        blob_container_url: str,
+        file_list: str,
+        model_id: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Mapping[str, str]] = None,
+        **kwargs: Any
+    ) -> AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]:
+        ...
+
     @distributed_trace_async
     async def begin_build_document_model(
         self, build_mode: Union[str, ModelBuildMode], *, blob_container_url: str, **kwargs: Any
@@ -113,12 +146,17 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         :keyword str prefix: A case-sensitive prefix string to filter documents in the blob container url path.
             For example, when using an Azure storage blob URI, use the prefix to restrict sub folders.
             `prefix` should end in '/' to avoid cases where filenames share the same prefix.
+        :keyword str file_list: Path to a JSONL file within the container specifying a subset of
+            documents for training.
         :keyword tags: List of user defined key-value tag attributes associated with the model.
         :paramtype tags: dict[str, str]
         :return: An instance of an AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
             object to return a :class:`~azure.ai.formrecognizer.DocumentModelDetails`.
         :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentModelDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *file_list* keyword argument.
 
         .. admonition:: Example:
 
@@ -141,23 +179,47 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         cls = kwargs.pop("cls", callback)
         continuation_token = kwargs.pop("continuation_token", None)
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        prefix = kwargs.pop("prefix", None)
+        file_list = kwargs.pop("file_list", None)
 
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        _client_op_path = self._client.document_models.begin_build_model
+        azure_blob_source = None
+        azure_blob_file_list_source = None
+        if prefix:
+            azure_blob_source = self._generated_models.AzureBlobContentSource(
+                container_url=blob_container_url,
+                prefix=prefix
+            )
+        if file_list:
+            azure_blob_file_list_source = self._generated_models.AzureBlobFileListSource(
+                container_url=blob_container_url,
+                file_list=file_list
+            )
+        if not azure_blob_source and not azure_blob_file_list_source:
+            azure_blob_source = self._generated_models.AzureBlobContentSource(
+                container_url=blob_container_url,
+            )
+
+        model_kwargs = {}
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.begin_build_document_model
+            if file_list:
+                raise ValueError(
+                    "Keyword argument 'file_list' is only available for API version V2023_02_28_PREVIEW and later."
+                )
+        else:
+            _client_op_path = self._client.document_models.begin_build_model
+            model_kwargs.update({"azure_blob_file_list_source": azure_blob_file_list_source})
         return await _client_op_path(  # type: ignore
             build_request=self._generated_models.BuildDocumentModelRequest(
                 model_id=model_id,
                 build_mode=build_mode,
                 description=description,
                 tags=tags,
-                azure_blob_source=self._generated_models.AzureBlobContentSource(
-                    container_url=blob_container_url,
-                    prefix=kwargs.pop("prefix", None),
-                ),
+                azure_blob_source=azure_blob_source,
+                **model_kwargs
             ),
             cls=cls,
             continuation_token=continuation_token,
@@ -212,9 +274,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        _client_op_path = self._client.document_models.begin_compose_model
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.begin_compose_document_model
+        else:
+            _client_op_path = self._client.document_models.begin_compose_model
         return await _client_op_path(  # type: ignore
             compose_request=self._generated_models.ComposeDocumentModelRequest(
                 model_id=model_id,
@@ -259,9 +322,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        _client_op_path = self._client.document_models.authorize_model_copy
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.authorize_copy_document_model
+        else:
+            _client_op_path = self._client.document_models.authorize_model_copy
         response = await _client_op_path(
             authorize_copy_request=self._generated_models.AuthorizeCopyRequest(
                 model_id=model_id, description=description, tags=tags
@@ -312,9 +376,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        _client_op_path = self._client.document_models.begin_copy_model_to
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.begin_copy_document_model_to
+        else:
+            _client_op_path = self._client.document_models.begin_copy_model_to
         return await _client_op_path(  # type: ignore
             model_id=model_id,
             copy_to_request=self._generated_models.CopyAuthorization(
@@ -357,9 +422,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        _client_op_path = self._client.document_models.delete_model
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.delete_document_model
+        else:
+            _client_op_path = self._client.document_models.delete_model
         return await _client_op_path(model_id=model_id, **kwargs)
 
     @distributed_trace
@@ -381,9 +447,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: List all models that were built successfully under the Form Recognizer resource.
         """
 
-        _client_op_path = self._client.document_models.list_models
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_document_models
+        else:
+            _client_op_path = self._client.document_models.list_models
         return _client_op_path(  # type: ignore
             cls=kwargs.pop(
                 "cls",
@@ -410,9 +477,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: Get model counts and limits under the Form Recognizer resource.
         """
 
-        _client_op_path = self._client.miscellaneous.get_resource_info
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_resource_details
+        else:
+            _client_op_path = self._client.miscellaneous.get_resource_info
         response = await _client_op_path(**kwargs)
         return ResourceDetails._from_generated(response.custom_document_models)
 
@@ -438,9 +506,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        _client_op_path = self._client.document_models.get_model
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_document_model
+        else:
+            _client_op_path = self._client.document_models.get_model
         response = await _client_op_path(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
@@ -466,9 +535,10 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: List all document model operations in the past 24 hours.
         """
 
-        _client_op_path = self._client.miscellaneous.list_operations
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_operations
+        else:
+            _client_op_path = self._client.miscellaneous.list_operations
         return _client_op_path(  # type: ignore
             cls=kwargs.pop(
                 "cls",
@@ -503,13 +573,169 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not operation_id:
             raise ValueError("'operation_id' cannot be None or empty.")
 
-        _client_op_path = self._client.miscellaneous.get_operation
         if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
             _client_op_path = self._client.get_operation
+        else:
+            _client_op_path = self._client.miscellaneous.get_operation
         return OperationDetails._from_generated(
             await _client_op_path(operation_id, **kwargs),
             api_version=self._api_version,
         )
+
+    @distributed_trace_async
+    async def begin_build_document_classifier(
+        self,
+        doc_types: Mapping[str, ClassifierDocumentTypeDetails],
+        *,
+        classifier_id: Optional[str] = None,
+        description: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncDocumentModelAdministrationLROPoller[DocumentClassifierDetails]:
+        """Build a document classifier. For more information on how to build and train
+        a custom classifier model, see https://aka.ms/azsdk/formrecognizer/buildclassifiermodel.
+
+        :param doc_types: Required. Mapping of document types to classify against.
+        :keyword str classifier_id: Unique document classifier name.
+            If not specified, a classifier ID will be created for you.
+        :keyword str description: Document classifier description.
+        :return: An instance of an AsyncDocumentModelAdministrationLROPoller. Call `result()` on the poller
+            object to return a :class:`~azure.ai.formrecognizer.DocumentClassifierDetails`.
+        :rtype: ~azure.ai.formrecognizer.aio.AsyncDocumentModelAdministrationLROPoller[DocumentClassifierDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *begin_build_document_classifier* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_build_classifier_async.py
+                :start-after: [START build_classifier_async]
+                :end-before: [END build_classifier_async]
+                :language: python
+                :dedent: 4
+                :caption: Build a document classifier.
+        """
+        def callback(raw_response, _, headers):  # pylint: disable=unused-argument
+            op_response = \
+                self._deserialize(self._generated_models.DocumentClassifierBuildOperationDetails, raw_response)
+            model_info = self._deserialize(self._generated_models.DocumentClassifierDetails, op_response.result)
+            return DocumentClassifierDetails._from_generated(model_info)
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'begin_build_document_classifier()' is only available for API version "
+                             "V2023_02_28_PREVIEW and later")
+        cls = kwargs.pop("cls", callback)
+        continuation_token = kwargs.pop("continuation_token", None)
+        polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
+        if classifier_id is None:
+            classifier_id = str(uuid.uuid4())
+
+        return await self._client.document_classifiers.begin_build_classifier(
+            build_request=self._generated_models.BuildDocumentClassifierRequest(
+                classifier_id=classifier_id,
+                description=description,
+                doc_types=doc_types,
+            ),
+            cls=cls,
+            continuation_token=continuation_token,
+            polling=AsyncLROBasePolling(
+                timeout=polling_interval, lro_algorithms=[DocumentModelAdministrationPolling()], **kwargs
+            ),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_document_classifier(self, classifier_id: str, **kwargs: Any) -> DocumentClassifierDetails:
+        """Get a document classifier by its ID.
+
+        :param str classifier_id: Classifier identifier.
+        :return: DocumentClassifierDetails
+        :rtype: ~azure.ai.formrecognizer.DocumentClassifierDetails
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *get_document_classifier* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+                :start-after: [START get_document_classifier_async]
+                :end-before: [END get_document_classifier_async]
+                :language: python
+                :dedent: 8
+                :caption: Get a classifier by its ID.
+        """
+
+        if not classifier_id:
+            raise ValueError("classifier_id cannot be None or empty.")
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'get_document_classifier()' is only available for API version "
+                             "V2023_02_28_PREVIEW and later")
+        response = await self._client.document_classifiers.get_classifier(classifier_id=classifier_id, **kwargs)
+        return DocumentClassifierDetails._from_generated(response)
+
+    @distributed_trace
+    def list_document_classifiers(self, **kwargs: Any) -> AsyncItemPaged[DocumentClassifierDetails]:
+        """List information for each document classifier, including its classifier ID,
+        description, and when it was created.
+
+        :return: Pageable of DocumentClassifierDetails.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[DocumentClassifierDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *list_document_classifiers* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+                :start-after: [START list_document_classifiers_async]
+                :end-before: [END list_document_classifiers_async]
+                :language: python
+                :dedent: 8
+                :caption: List all classifiers that were built successfully under the Form Recognizer resource.
+        """
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'list_document_classifiers()' is only available for API version "
+                             "V2023_02_28_PREVIEW and later")
+        return self._client.document_classifiers.list_classifiers(  # type: ignore
+            cls=kwargs.pop(
+                "cls",
+                lambda objs: [DocumentClassifierDetails._from_generated(x) for x in objs],
+            ),
+            **kwargs
+        )
+
+    @distributed_trace_async
+    async def delete_document_classifier(self, classifier_id: str, **kwargs: Any) -> None:
+        """Delete a document classifier.
+
+        :param str classifier_id: Classifier identifier.
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError or ~azure.core.exceptions.ResourceNotFoundError:
+
+        .. versionadded:: 2023-02-28-preview
+            The *delete_document_classifier* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/v3.2/async_samples/sample_manage_classifiers_async.py
+                :start-after: [START delete_document_classifier_async]
+                :end-before: [END delete_document_classifier_async]
+                :language: python
+                :dedent: 8
+                :caption: Delete a classifier.
+        """
+
+        if not classifier_id:
+            raise ValueError("classifier_id cannot be None or empty.")
+
+        if self._api_version == DocumentAnalysisApiVersion.V2022_08_31:
+            raise ValueError("Method 'delete_document_classifier()' is only available for API version "
+                             "V2023_02_28_PREVIEW and later")
+        return await self._client.document_classifiers.delete_classifier(classifier_id=classifier_id, **kwargs)
 
     def get_document_analysis_client(self, **kwargs: Any) -> DocumentAnalysisClient:
         """Get an instance of a DocumentAnalysisClient from DocumentModelAdministrationClient.
