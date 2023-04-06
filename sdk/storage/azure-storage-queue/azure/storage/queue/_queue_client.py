@@ -28,11 +28,12 @@ from ._generated.models import SignedIdentifier, QueueMessage as GenQueueMessage
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._encryption import StorageEncryptionMixin
 from ._message_encoding import NoEncodePolicy, NoDecodePolicy
-from ._models import AccessPolicy, MessageDecodePolicy, MessageEncodePolicy, MessagesPaged, QueueMessage, QueueProperties
+from ._models import AccessPolicy, MessagesPaged, QueueMessage
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from ._models import QueueProperties
 
 
 class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
@@ -102,8 +103,8 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
 
-        self._config.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
-        self._config.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
+        self.message_encode_policy = kwargs.get('message_encode_policy', None) or NoEncodePolicy()
+        self.message_decode_policy = kwargs.get('message_decode_policy', None) or NoDecodePolicy()
         self._client = AzureQueueStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
         self._configure_encryption(kwargs)
@@ -286,7 +287,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def get_queue_properties(self, **kwargs: Any) -> QueueProperties:
+    def get_queue_properties(self, **kwargs: Any) -> "QueueProperties":
         """Returns all user-defined metadata for the specified queue.
 
         The data returned does not include the queue's list of messages.
@@ -307,7 +308,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            response = cast(QueueProperties, self._client.queue.get_properties(
+            response = cast("QueueProperties", self._client.queue.get_properties(
                 timeout=timeout,
                 cls=deserialize_queue_properties,
                 **kwargs))
@@ -498,26 +499,25 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Send messages.
         """
         timeout = kwargs.pop('timeout', None)
-        if isinstance(self._config.message_encode_policy, MessageEncodePolicy):
-            try:
-                self._config.message_encode_policy.configure(
-                    require_encryption=self.require_encryption,
-                    key_encryption_key=self.key_encryption_key,
-                    resolver=self.key_resolver_function,
-                    encryption_version=self.encryption_version)
-            except TypeError:
-                warnings.warn(
-                    "TypeError when calling message_encode_policy.configure. \
-                    It is likely missing the encryption_version parameter. \
-                    Consider updating your encryption information/implementation. \
-                    Retrying without encryption_version."
-                )
-                self._config.message_encode_policy.configure(
-                    require_encryption=self.require_encryption,
-                    key_encryption_key=self.key_encryption_key,
-                    resolver=self.key_resolver_function)
-            encoded_content = self._config.message_encode_policy(content)
-            new_message = GenQueueMessage(message_text=encoded_content)
+        try:
+            self.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function,
+                encryption_version=self.encryption_version)
+        except TypeError:
+            warnings.warn(
+                "TypeError when calling message_encode_policy.configure. \
+                It is likely missing the encryption_version parameter. \
+                Consider updating your encryption information/implementation. \
+                Retrying without encryption_version."
+            )
+            self.message_encode_policy.configure(
+                require_encryption=self.require_encryption,
+                key_encryption_key=self.key_encryption_key,
+                resolver=self.key_resolver_function)
+        encoded_content = self.message_encode_policy(content)
+        new_message = GenQueueMessage(message_text=encoded_content)
 
         try:
             enqueued = self._client.messages.enqueue(
@@ -534,7 +534,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             queue_message.next_visible_on = enqueued[0].time_next_visible
             return queue_message
         except HttpResponseError as error:
-            return process_storage_error(error)
+            process_storage_error(error)
 
     @distributed_trace
     def receive_message(
@@ -580,24 +580,23 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Receive one message from the queue.
         """
         timeout = kwargs.pop('timeout', None)
-        if isinstance(self._config.message_decode_policy, MessageDecodePolicy):
-            self._config.message_decode_policy.configure(
-                require_encryption=self.require_encryption,
-                key_encryption_key=self.key_encryption_key,
-                resolver=self.key_resolver_function)
+        self.message_decode_policy.configure(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function)
         try:
             message = self._client.messages.dequeue(
                 number_of_messages=1,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
-                cls=self._config.message_decode_policy,
+                cls=self.message_decode_policy,
                 **kwargs
             )
             wrapped_message = QueueMessage._from_generated(  # pylint: disable=protected-access
                 message[0]) if message != [] else None
             return wrapped_message
         except HttpResponseError as error:
-            return process_storage_error(error)
+            process_storage_error(error)
 
     @distributed_trace
     def receive_messages(
@@ -665,17 +664,16 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 :caption: Receive messages from the queue.
         """
         timeout = kwargs.pop('timeout', None)
-        if isinstance(self._config.message_decode_policy, MessageDecodePolicy):
-            self._config.message_decode_policy.configure(
-                require_encryption=self.require_encryption,
-                key_encryption_key=self.key_encryption_key,
-                resolver=self.key_resolver_function)
+        self.message_decode_policy.configure(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function)
         try:
             command = functools.partial(
                 self._client.messages.dequeue,
                 visibilitytimeout=visibility_timeout,
                 timeout=timeout,
-                cls=self._config.message_decode_policy,
+                cls=self.message_decode_policy,
                 **kwargs
             )
             if max_messages is not None and messages_per_page is not None:
@@ -684,7 +682,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             return ItemPaged(command, results_per_page=messages_per_page,
                             page_iterator_class=MessagesPaged, max_messages=max_messages)
         except HttpResponseError as error:
-            return process_storage_error(error)
+            process_storage_error(error)
 
     @distributed_trace
     def update_message(
@@ -766,26 +764,25 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         if receipt is None:
             raise ValueError("pop_receipt must be present")
         if message_text is not None:
-            if isinstance(self._config.message_encode_policy, MessageEncodePolicy):
-                try:
-                    self._config.message_encode_policy.configure(
-                        self.require_encryption,
-                        self.key_encryption_key,
-                        self.key_resolver_function,
-                        encryption_version=self.encryption_version)
-                except TypeError:
-                    warnings.warn(
-                        "TypeError when calling message_encode_policy.configure. \
-                        It is likely missing the encryption_version parameter. \
-                        Consider updating your encryption information/implementation. \
-                        Retrying without encryption_version."
-                    )
-                    self._config.message_encode_policy.configure(
-                        self.require_encryption,
-                        self.key_encryption_key,
-                        self.key_resolver_function)
-                encoded_message_text = self._config.message_encode_policy(message_text)
-                updated = GenQueueMessage(message_text=encoded_message_text)
+            try:
+                self.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function,
+                    encryption_version=self.encryption_version)
+            except TypeError:
+                warnings.warn(
+                    "TypeError when calling message_encode_policy.configure. \
+                    It is likely missing the encryption_version parameter. \
+                    Consider updating your encryption information/implementation. \
+                    Retrying without encryption_version."
+                )
+                self.message_encode_policy.configure(
+                    self.require_encryption,
+                    self.key_encryption_key,
+                    self.key_resolver_function)
+            encoded_message_text = self.message_encode_policy(message_text)
+            updated = GenQueueMessage(message_text=encoded_message_text)
         else:
             updated = None
         try:
@@ -806,7 +803,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             new_message.next_visible_on = response['time_next_visible']
             return new_message
         except HttpResponseError as error:
-            return process_storage_error(error)
+            process_storage_error(error)
 
     @distributed_trace
     def peek_messages(
@@ -855,23 +852,22 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout = kwargs.pop('timeout', None)
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
-        if isinstance(self._config.message_decode_policy, MessageDecodePolicy):
-            self._config.message_decode_policy.configure(
-                require_encryption=self.require_encryption,
-                key_encryption_key=self.key_encryption_key,
-                resolver=self.key_resolver_function)
+        self.message_decode_policy.configure(
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function)
         try:
             messages = self._client.messages.peek(
                 number_of_messages=max_messages,
                 timeout=timeout,
-                cls=self._config.message_decode_policy,
+                cls=self.message_decode_policy,
                 **kwargs)
             wrapped_messages = []
             for peeked in messages:
                 wrapped_messages.append(QueueMessage._from_generated(peeked))  # pylint: disable=protected-access
             return wrapped_messages
         except HttpResponseError as error:
-            return process_storage_error(error)
+            process_storage_error(error)
 
     @distributed_trace
     def clear_messages(self, **kwargs: Any) -> None:

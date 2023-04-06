@@ -11,7 +11,6 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Un
 from azure.core.configuration import Configuration
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
-from ._message_encoding import MessageDecodePolicy, MessageEncodePolicy, NoDecodePolicy, NoEncodePolicy
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -552,33 +551,3 @@ def service_properties_deserialize(generated: Any) -> Dict[str, Any]:
         'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         'cors': [CorsRule._from_generated(cors) for cors in generated.cors],  # pylint: disable=protected-access
     }
-
-class StorageConfiguration(Configuration):
-    """The home for all configurable policies in the pipeline,
-    including Storage specific policies.
-
-    :param polling_interval: Polling interval while doing LRO operations, if Retry-After is not set.
-    """
-
-    headers_policy: str
-    """Provides parameters for custom or additional headers to be sent with the request."""
-    proxy_policy: str
-    """Provides configuration parameters for proxy."""
-    redirect_policy: str
-    """Provides configuration parameters for redirects."""
-    retry_policy: str
-    """Provides configuration parameters for retries in the pipeline."""
-    custom_hook_policy: str
-    """Provides configuration parameters for a custom hook."""
-    logging_policy: str
-    """Provides configuration parameters for logging."""
-    http_logging_policy: str
-    """Provides configuration parameters for HTTP specific logging."""
-    user_agent_policy: str
-    """Provides configuration parameters to append custom values to the User-Agent header."""
-    authentication_policy: str
-    """Provides configuration parameters for adding a bearer token Authorization header to requests."""
-    message_encode_policy: Union[MessageEncodePolicy, str, NoEncodePolicy]
-    """Provides configuration parameters for encoding Storage requests."""
-    message_decode_policy: Union[MessageDecodePolicy, str, NoDecodePolicy]
-    """Provides configuration parameters for decoding Storage requests."""
