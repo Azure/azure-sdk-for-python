@@ -10,4 +10,4 @@ repos:
   hooks:
   - id: interrogate
     args: [--fail-under=35, --ignore-module, -vv]
-    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/setup.py|.*\.(yml|yaml|json|md|toml|txt|in))
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py|.*\.(yml|yaml|json|md|toml|txt|in))
