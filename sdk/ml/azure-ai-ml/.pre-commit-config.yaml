@@ -1,20 +1,24 @@
 files: sdk/ml/
 repos:
--   repo: https://github.com/psf/black
-    rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
-    hooks:
-    -   id: black
-        args: [--config=../../eng/black-pyproject.toml]
+- repo: https://github.com/psf/black
+  rev: 22.3.0 # Needs to be updated whenever azure sdk team bumps
+  hooks:
+  - id: black
+    args: [--config=eng/black-pyproject.toml]
 - repo: https://github.com/econchick/interrogate
   rev: 1.5.0 
   hooks:
   - id: interrogate
-    args: [--config=pyproject.toml]
+    # exclude is not being respected in pyproject.toml, so defining interrogate args here
+    args: [--fail-under=95, --ignore-module, -vv]
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
 - repo: https://github.com/PyCQA/pydocstyle
   rev: 6.1.1
   hooks:
-    - id: pydocstyle
+  - id: pydocstyle
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
+    additional_dependencies: ["toml"]
 - repo: https://github.com/pre-commit/mirrors-mypy
   rev: v0.902
   hooks:
-    - id: mypy
+  - id: mypy

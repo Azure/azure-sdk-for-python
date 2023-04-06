@@ -7,7 +7,7 @@ import jwt
 import pytest
 import vcr
 import yaml
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _convert_resource_to_scopes
 from azure.ai.ml.exceptions import ValidationException
 from azure.core.credentials import AccessToken
 from msrest import Deserializer
@@ -211,7 +211,7 @@ class TestJobOperations:
         job = load_job(source="./tests/test_configs/command_job/command_job_test_user_identity.yml")
 
         aml_resource_id = _get_aml_resource_id_from_metadata()
-        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
+        azure_ml_scopes = _convert_resource_to_scopes(aml_resource_id)
 
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(

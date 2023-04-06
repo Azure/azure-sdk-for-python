@@ -18,7 +18,7 @@ from azure.core.polling import LROPoller
 from azure.ai.ml._azure_environments import (
     CloudArgumentKeys,
     _get_base_url_from_metadata,
-    _get_cloud_information_from_metadata,
+    _get_cloud_environment_info_from_metadata,
     _get_default_cloud_name,
     _set_cloud,
     _add_cloud_to_environments,
@@ -245,7 +245,7 @@ class MLClient:
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
-        kwargs.update(_get_cloud_information_from_metadata(cloud_name))
+        kwargs.update(_get_cloud_environment_info_from_metadata(cloud_name))
         self._kwargs = kwargs
 
         self._operation_container = OperationsContainer()

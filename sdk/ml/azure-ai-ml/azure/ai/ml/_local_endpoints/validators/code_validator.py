@@ -46,7 +46,7 @@ def get_code_configuration_artifacts(
         )
 
     if _code_configuration_contains_cloud_artifacts(deployment=deployment):
-        return _get_cloud_code_configuration_artifacts(
+        return _get_cloud_environment_info_code_configuration_artifacts(
             deployment.code_configuration.code, code_operations, download_path
         )
 
@@ -94,7 +94,9 @@ def _get_local_code_configuration_artifacts(
     return Path(deployment._base_path, deployment.code_configuration.code).resolve()
 
 
-def _get_cloud_code_configuration_artifacts(code: str, code_operations: CodeOperations, download_path: str) -> str:
+def _get_cloud_environment_info_code_configuration_artifacts(
+    code: str, code_operations: CodeOperations, download_path: str
+) -> str:
     name, version = parse_prefixed_name_version(code)
     code_asset = code_operations.get(name=name, version=version)
 

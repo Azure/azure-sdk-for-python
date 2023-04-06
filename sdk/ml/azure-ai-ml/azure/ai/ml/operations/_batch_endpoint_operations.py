@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Dict, Optional
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
-from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _convert_resource_to_scopes
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
@@ -301,7 +301,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         )
 
         headers = EndpointInvokeFields.DEFAULT_HEADER
-        ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
+        ml_audience_scopes = _convert_resource_to_scopes(_get_aml_resource_id_from_metadata())
         module_logger.debug("ml_audience_scopes used: `%s`\n", ml_audience_scopes)
         key = self._credentials.get_token(*ml_audience_scopes).token
         headers[EndpointInvokeFields.AUTHORIZATION] = f"Bearer {key}"

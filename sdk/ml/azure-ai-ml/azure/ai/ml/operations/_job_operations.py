@@ -20,7 +20,7 @@ from azure.ai.ml._artifacts._artifact_utilities import (
 from azure.ai.ml._azure_environments import (
     _get_aml_resource_id_from_metadata,
     _get_base_url_from_metadata,
-    _resource_to_scopes,
+    _convert_resource_to_scopes,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.dataset_dataplane import AzureMachineLearningWorkspaces as ServiceClientDatasetDataplane
@@ -1242,7 +1242,7 @@ class JobOperations(_ScopeDependentOperations):
         try:
             studio_endpoint = job.services.get("Studio", None)
             studio_url = studio_endpoint.endpoint
-            default_scopes = _resource_to_scopes(_get_base_url_from_metadata())
+            default_scopes = _convert_resource_to_scopes(_get_base_url_from_metadata())
             module_logger.debug("default_scopes used: `%s`\n", default_scopes)
             # Extract the tenant id from the credential using PyJWT
             decode = jwt.decode(
@@ -1257,7 +1257,7 @@ class JobOperations(_ScopeDependentOperations):
 
     def _set_headers_with_user_aml_token(self, kwargs) -> Dict[str, str]:
         aml_resource_id = _get_aml_resource_id_from_metadata()
-        azure_ml_scopes = _resource_to_scopes(aml_resource_id)
+        azure_ml_scopes = _convert_resource_to_scopes(aml_resource_id)
         module_logger.debug("azure_ml_scopes used: `%s`\n", azure_ml_scopes)
         aml_token = self._credential.get_token(*azure_ml_scopes).token
         # validate token has aml audience

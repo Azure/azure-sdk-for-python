@@ -24,7 +24,7 @@ from azure.ai.ml._utils._asset_utils import (
     upload_directory,
     upload_file,
 )
-from azure.ai.ml._azure_environments import _get_cloud_details
+from azure.ai.ml._azure_environments import _get_cloud_environment_info
 from azure.ai.ml.constants._common import STORAGE_AUTH_MISMATCH_ERROR
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.exceptions import ResourceExistsError
@@ -84,7 +84,7 @@ class Gen2StorageClient:
             file_size, _ = get_directory_size(source)
             file_size_in_mb = file_size / 10**6
 
-            cloud = _get_cloud_details()
+            cloud = _get_cloud_environment_info()
             cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
             full_storage_url = f"https://{self.account_name}.dfs.{cloud_endpoint}/{self.file_system}/{dest}"
             if file_size_in_mb > 100:
@@ -184,7 +184,7 @@ class Gen2StorageClient:
                 file_client = self.file_system_client.get_file_client(item.name)
 
                 # check if total size of download has exceeded 100 MB
-                cloud = _get_cloud_details()
+                cloud = _get_cloud_environment_info()
                 cloud_endpoint = cloud["storage_endpoint"]  # make sure proper cloud endpoint is used
                 full_storage_url = f"https://{self.account_name}.dfs.{cloud_endpoint}/{self.file_system}/{starts_with}"
                 download_size_in_mb += file_client.get_file_properties().size / 10**6

@@ -49,7 +49,7 @@ def get_environment_artifacts(
                 target=ErrorTarget.LOCAL_ENDPOINT,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        return _get_cloud_environment_artifacts(
+        return _get_cloud_environment_info_environment_artifacts(
             environment_operations=environment_operations,
             environment_asset=environment_asset,
             download_path=download_path,
@@ -64,7 +64,7 @@ def get_environment_artifacts(
     return _get_local_environment_artifacts(deployment.base_path, deployment.environment)
 
 
-def _get_cloud_environment_artifacts(
+def _get_cloud_environment_info_environment_artifacts(
     environment_operations: EnvironmentOperations,
     environment_asset: Environment,
     download_path: str,
