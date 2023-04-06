@@ -2007,7 +2007,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
     """Street-level address, excluding city, state, countryRegion, and
      postalCode."""
     unit: Optional[str]
-    """Apartment or office number"""
+    """Apartment or office number."""
     city_district: Optional[str]
     """Districts or boroughs within a city, such as Brooklyn in New York City or City
     of Westminster in London."""
@@ -2016,7 +2016,7 @@ class AddressValue:  # pylint: disable=too-many-instance-attributes
     suburb: Optional[str]
     """Unofficial neighborhood name, like Chinatown."""
     house: Optional[str]
-    """Build name, such as World Trade Center."""
+    """Building name, such as World Trade Center."""
     level: Optional[str]
     """Floor number, such as 3F."""
 
