@@ -19,136 +19,27 @@ spec:
       command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
 
-      # {{ if eq .Stress.testTarget "queuew" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method send_receive --duration 300000 --logging-enable --transport']
-      # {{- end -}}
-
       {{ if eq .Stress.testTarget "aqueuepullw" }}
       command: ['bash', '-c', 'python test_stress_queues_async.py --method send_pull_receive --duration 300000 --logging-enable --transport']
       {{- end -}}
-
-      # {{ if eq .Stress.testTarget "queuepullw" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable --transport']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "abatchw" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable --transport']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "batchw" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable --transport']
-      # {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueue" }}
       command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive --duration 300000 --logging-enable']
       {{- end -}}
 
-      # {{ if eq .Stress.testTarget "queue" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method send_receive --duration 300000 --logging-enable']
-      # {{- end -}}
-
       {{ if eq .Stress.testTarget "aqueuepull" }}
       command: ['bash', '-c', 'python test_stress_queues_async.py --method send_pull_receive --duration 30000 --logging-enable']
       {{- end -}}
-
-      # {{ if eq .Stress.testTarget "queuepull" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method send_pull_receive --duration 300000 --logging-enable']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "abatch" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive_batch --duration 300000 --logging-enable']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "batch" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method send_receive_batch --duration 300000 --logging-enable']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "queueuamqp" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method uamqp --duration 300000 --logging-enable --uamqp_mode']
-      # {{- end -}}
 
       {{ if eq .Stress.testTarget "aqueueuamqp" }}
       command: ['bash', '-c', 'python test_stress_queues_async.py --method uamqp --duration 300000 --logging-enable']
       {{- end -}}
 
-
-
-
-
-      # {{ if eq .Stress.testTarget "asend_receive_slow" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method send_receive_slow --duration 300000 --logging-enable']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "send_receive_slow" }}
-      # command: ['bash', '-c', 'python test_stress_queues.py --method send_receive_slow --duration 300000 --logging-enable']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "receive_delete" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method receive_delete --duration 300000 --logging-enable']
-      # {{- end -}}
-
-      # {{ if eq .Stress.testTarget "unsettled_message" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method unsettled_message --duration 300000 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "large_batch" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method large_batch --duration 300000 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "pull_receive_timeout" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method pull_receive_timeout --duration 300000 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "long_renew" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method long_renew --duration 300000 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "long_renew_session" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method long_renew_session --duration 300000 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "queue_peek" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method queue_peek --duration 300000 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "queue_close_reopen" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method queue_close_reopen --duration 300000 --logging-enable']
-      # {{- end -}}
-      # {{ if eq .Stress.testTarget "dropped_messages" }}
-      # command: ['bash', '-c', 'python test_stress_queues_async.py --method dropped_messages --duration 300000 --logging-enable']
-
+      {{ if eq .Stress.testTarget "memray" }}
+      command: ['bash', '-c', 'mkdir -p $DEBUG_SHARE && memray run --output $DEBUG_SHARE/sb_memray_output.bin test_stress_queues_async.py --method send_pull_receive --duration 30000 --logging-enable']
       {{- end -}}
 
       {{- include "stress-test-addons.container-env" . | nindent 6 }}
 {{- end -}}
 
-
-{{- include "stress-test-addons.chaos-wrapper.tpl" (list . "stress.network-chaos") -}}
-{{- define "stress.network-chaos" -}}
-# basically: every 15 minutes do 30s of network loss
-kind: Schedule
-apiVersion: chaos-mesh.org/v1alpha1
-spec:
-  selector:
-    namespaces:
-      - "{{ .Release.Namespace }}"
-    labelSelectors:
-      testInstance: "servicebus-{{ .Release.Name }}-{{ .Release.Revision }}"
-      chaos: "true"
-  schedule: "*/5 * * * *"
-  startingDeadlineSeconds: null
-  concurrencyPolicy: Allow
-  historyLimit: 1
-  type: NetworkChaos
-  networkChaos:
-    selector:
-      namespaces:
-        - "{{ .Release.Namespace }}"
-      labelSelectors:
-        testInstance: "servicebus-{{ .Release.Name }}-{{ .Release.Revision }}"
-        chaos: "true"
-    mode: all
-    action: loss
-    duration: 20s
-    loss:
-      loss: '100'
-      correlation: '100'
-    direction: to
-    externalTargets:
-      - {{ .Stress.BaseName }}.servicebus.windows.net
-{{- end -}}
 

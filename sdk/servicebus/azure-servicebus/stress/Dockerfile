@@ -7,6 +7,8 @@ RUN apt-get -y update && apt-get -y install git
 WORKDIR /app
 
 COPY ./scripts /app/stress/scripts
-
+COPY startup.sh /app/stress/scripts
 WORKDIR /app/stress/scripts
-RUN pip install -r dev_requirements.txt
+
+RUN chmod +x startup.sh
+RUN pip3 install -r dev_requirements.txt

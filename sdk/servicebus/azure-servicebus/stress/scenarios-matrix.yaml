@@ -4,33 +4,35 @@ matrix:
   scenarios:
     # queue:
     #   testTarget: queue
-    aqueue:
-      testTarget: aqueue
+    #aqueue:
+    #  testTarget: aqueue
     # queuepull:
     #   testTarget: queuepull
-    aqueuepull:
-      testTarget: aqueuepull
+    #aqueuepull:
+    #  testTarget: aqueuepull
+    memray:
+      testTarget: memray
+
     # batch:
     #   testTarget: batch
     # abatch:
     #   testTarget: abatch
     # queuew:
     #   testTarget: queuew
-    aqueuew:
-      testTarget: aqueuew
+    #aqueuew:
+    #  testTarget: aqueuew
     # queuepullw:
     #   testTarget: queuepullw
-    aqueuepullw:
-      testTarget: aqueuepullw
+    #aqueuepullw:
+    #  testTarget: aqueuepullw
     # batchw:
     #   testTarget: batchw
     # abatchw:
     #   testTarget: abatchw
     # queueuamqp:
     #   testTarget: queueuamqp
-    aqueueuamqp:
-      testTarget: aqueueuamqp
-
+    #aqueueuamqp:
+    #  testTarget: aqueueuamqp
     # sendreceiveslow:
     #   testTarget: send_receive_slow
     # receivedelete:
@@ -49,3 +51,5 @@ matrix:
     #   testTarget: queue_close_reopen
     # droppedmessages:
     #   testTarget: dropped_messages
+    #sbStress:
+    #  testTarget: servicebus

@@ -6,3 +6,4 @@ git+https://github.com/Azure/azure-sdk-for-python.git@feature/servicebus/pyproto
 python-dotenv
 websocket-client
 uamqp==1.6.3
+memray
