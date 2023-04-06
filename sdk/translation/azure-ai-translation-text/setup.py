@@ -68,7 +68,6 @@ setup(
     },
     install_requires=[
         "msrest>=0.7.1",
-        "azure-common~=1.1",
         "azure-core<2.0.0,>=1.24.0",
         "typing-extensions>=4.3.0",
     ],
