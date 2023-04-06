@@ -242,8 +242,6 @@ class StressTestRunner:
                         elif self.receive_type == ReceiveType.push:
                             receiver.max_wait_time = self.max_wait_time
                             batch = receiver
-                        else:
-                            batch = []
 
                         for message in batch:
                             self.on_receive(self._state, message, receiver)
