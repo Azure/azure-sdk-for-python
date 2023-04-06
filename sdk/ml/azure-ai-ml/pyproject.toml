@@ -3,3 +3,16 @@ mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[tool.interrogate]
+exclude = ["setup.py", "tests", "scripts", "azure/ai/ml/_restclient"]
+fail-under=95
+ignore-module=true
+verbose=2
+
+[tool.pydocstyle]
+convention = "pep257"
+
+[tool.mypy]
+exclude = ["setup.py", "tests", "scripts", "azure/ai/ml/_restclient"]
+
