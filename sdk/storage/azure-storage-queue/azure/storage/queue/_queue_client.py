@@ -9,7 +9,7 @@ import warnings
 from datetime import datetime
 from typing import (  # pylint: disable=unused-import
     Any, Dict, cast, List, Optional, Union,
-    TYPE_CHECKING)
+    TYPE_CHECKING, Tuple)
 from urllib.parse import urlparse, quote, unquote
 
 from typing_extensions import Self
@@ -374,7 +374,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """
         timeout = kwargs.pop('timeout', None)
         try:
-            _, identifiers = cast(List, self._client.queue.get_access_policy(
+            _, identifiers = cast(Tuple[Dict, List], self._client.queue.get_access_policy(
                 timeout=timeout,
                 cls=return_headers_and_deserialized,
                 **kwargs))
@@ -596,8 +596,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                 message[0]) if message != [] else None
             return wrapped_message
         except HttpResponseError as error:
-            process_storage_error(error)
-        return None
+            return process_storage_error(error)
 
     @distributed_trace
     def receive_messages(
@@ -710,7 +709,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
         :param message:
             The message object or id identifying the message to update.
-        :type message: str or Optional[~azure.storage.queue.QueueMessage]
+        :type message: str or ~azure.storage.queue.QueueMessage
         :param str pop_receipt:
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message` operation.
