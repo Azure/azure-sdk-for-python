@@ -22,3 +22,4 @@ repos:
   rev: v0.902
   hooks:
   - id: mypy
+    exclude: ^(sdk/ml/azure-ai-ml/tests/|sdk/ml/azure-ai-ml/azure/ai/ml/_restclient|sdk/ml/azure-ai-ml/setup.py)
