@@ -1783,6 +1783,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         request_params = _request_object.RequestObject("partitionkey", documents._OperationType.Delete)
         result, self.last_response_headers = self.__Post(path=path, request_params=request_params,
                                                          req_headers=headers, body=None, **kwargs)
+        return result
 
     def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
         """Replaces a trigger and returns it.
