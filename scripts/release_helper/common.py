@@ -337,19 +337,20 @@ class Common:
 
     def output(self):
         with open(self.file_out_name, 'w') as file_out:
-            file_out.write('| issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
-            file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
-            for item in self.result:
+            file_out.write('| id | issue | author | package | assignee | bot advice | created date of issue | target release date | date from target |\n')
+            file_out.write('| ------ | ------ | ------ | ------ | ------ | ------ | ------ | ------ | :-----: |\n')
+            for idx, item in enumerate(self.result):
                 try:
                     if item.is_open:
-                        item_status = Common.output_md(item)
+                        item_status = Common.output_md(idx + 1, item)
                         file_out.write(item_status)
                 except Exception as e:
                     self.log_error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
 
     @staticmethod
-    def output_md(item: IssueProcess):
-        return '| [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
+    def output_md(idx: int, item: IssueProcess):
+        return '| {} | [#{}]({}) | {} | {} | {} | {} | {} | {} | {} |\n'.format(
+            idx,
             item.issue_package.issue.html_url.split('/')[-1],
             item.issue_package.issue.html_url,
             item.issue_package.issue.user.login,
