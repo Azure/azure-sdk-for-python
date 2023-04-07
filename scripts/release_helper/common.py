@@ -342,7 +342,7 @@ class Common:
             for idx, item in enumerate(self.result):
                 try:
                     if item.is_open:
-                        item_status = Common.output_md(idx, item)
+                        item_status = Common.output_md(idx + 1, item)
                         file_out.write(item_status)
                 except Exception as e:
                     self.log_error(f'Error happened during output result of handled issue {item.issue_package.issue.number}: {e}')
