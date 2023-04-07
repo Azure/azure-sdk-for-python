@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -49,7 +49,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -59,7 +59,8 @@ class Resource(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -99,7 +100,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -197,8 +198,8 @@ class Appliance(TrackedResource):  # pylint: disable=too-many-instance-attribute
         infrastructure_config: Optional["_models.AppliancePropertiesInfrastructureConfig"] = None,
         public_key: Optional[str] = None,
         version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -249,7 +250,7 @@ class ApplianceCredentialKubeconfig(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -273,7 +274,7 @@ class ApplianceGetTelemetryConfigResult(_serialization.Model):
         "telemetry_instrumentation_key": {"key": "telemetryInstrumentationKey", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.telemetry_instrumentation_key = None
@@ -301,7 +302,7 @@ class ApplianceListCredentialResults(_serialization.Model):
         "kubeconfigs": {"key": "kubeconfigs", "type": "[ApplianceCredentialKubeconfig]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.hybrid_connection_config = None
@@ -334,7 +335,7 @@ class ApplianceListKeysResults(_serialization.Model):
         "ssh_keys": {"key": "sshKeys", "type": "{SSHKey}"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.artifact_profiles = None
@@ -363,7 +364,7 @@ class ApplianceListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Appliance]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.next_link = None
@@ -411,7 +412,7 @@ class ApplianceOperation(_serialization.Model):
         "resource": {"key": "display.resource", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.is_data_action = None
@@ -443,7 +444,9 @@ class ApplianceOperationsList(_serialization.Model):
         "value": {"key": "value", "type": "[ApplianceOperation]"},
     }
 
-    def __init__(self, *, value: List["_models.ApplianceOperation"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.ApplianceOperation"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: Next page of operations.
         :paramtype next_link: str
@@ -467,7 +470,7 @@ class AppliancePropertiesInfrastructureConfig(_serialization.Model):
         "provider": {"key": "provider", "type": "str"},
     }
 
-    def __init__(self, *, provider: Optional[Union[str, "_models.Provider"]] = None, **kwargs):
+    def __init__(self, *, provider: Optional[Union[str, "_models.Provider"]] = None, **kwargs: Any) -> None:
         """
         :keyword provider: Information about the connected appliance. Known values are: "VMWare",
          "HCI", "SCVMM", "KubeVirt", and "OpenStack".
@@ -494,7 +497,7 @@ class ArtifactProfile(_serialization.Model):
         "endpoint": {"key": "endpoint", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.endpoint = None
@@ -521,7 +524,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -561,7 +564,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -572,7 +575,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.resourceconnector.models.ErrorDetail
@@ -582,7 +586,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.resourceconnector.models.ErrorDetail
@@ -592,7 +596,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class HybridConnectionConfig(_serialization.Model):
-    """Contains the REP (rendezvous endpoint) and “Listener” access token from notification service (NS).
+    """Contains the REP (rendezvous endpoint) and “Listener” access token from notification service
+    (NS).
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -620,7 +625,7 @@ class HybridConnectionConfig(_serialization.Model):
         "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.expiration_time = None
@@ -653,7 +658,7 @@ class Identity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Union[str, "_models.ResourceIdentityType"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Union[str, "_models.ResourceIdentityType"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Known values are: "SystemAssigned" and "None".
         :paramtype type: str or ~azure.mgmt.resourceconnector.models.ResourceIdentityType
@@ -675,7 +680,7 @@ class PatchableAppliance(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -717,7 +722,7 @@ class SSHKey(_serialization.Model):
         "public_key": {"key": "publicKey", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.certificate = None
@@ -748,7 +753,7 @@ class SupportedVersion(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.metadata = None
@@ -780,7 +785,7 @@ class SupportedVersionCatalogVersion(_serialization.Model):
         "namespace": {"key": "namespace", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.data = None
@@ -817,7 +822,7 @@ class SupportedVersionCatalogVersionData(_serialization.Model):
         "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.audience = None
@@ -843,7 +848,7 @@ class SupportedVersionMetadata(_serialization.Model):
         "catalog_version": {"key": "catalogVersion", "type": "SupportedVersionCatalogVersion"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.catalog_version = None
@@ -886,8 +891,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -937,7 +942,7 @@ class UpgradeGraph(_serialization.Model):
         "properties": {"key": "properties", "type": "UpgradeGraphProperties"},
     }
 
-    def __init__(self, *, properties: Optional["_models.UpgradeGraphProperties"] = None, **kwargs):
+    def __init__(self, *, properties: Optional["_models.UpgradeGraphProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The properties of supported version.
         :paramtype properties: ~azure.mgmt.resourceconnector.models.UpgradeGraphProperties
@@ -969,7 +974,7 @@ class UpgradeGraphProperties(_serialization.Model):
         "supported_versions": {"key": "supportedVersions", "type": "[SupportedVersion]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.appliance_version = None

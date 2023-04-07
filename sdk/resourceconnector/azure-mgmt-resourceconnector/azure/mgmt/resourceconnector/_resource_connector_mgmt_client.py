@@ -13,7 +13,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models as _models
-from ._configuration import AppliancesConfiguration
+from ._configuration import ResourceConnectorMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import AppliancesOperations
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class Appliances:  # pylint: disable=client-accepts-api-version-keyword
+class ResourceConnectorMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     """The appliances Rest API spec.
 
     :ivar appliances: AppliancesOperations operations
@@ -47,8 +47,10 @@ class Appliances:  # pylint: disable=client-accepts-api-version-keyword
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AppliancesConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = ResourceConnectorMgmtClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
+        self._client: ARMPipelineClient = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -81,9 +83,9 @@ class Appliances:  # pylint: disable=client-accepts-api-version-keyword
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "Appliances":
+    def __enter__(self) -> "ResourceConnectorMgmtClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

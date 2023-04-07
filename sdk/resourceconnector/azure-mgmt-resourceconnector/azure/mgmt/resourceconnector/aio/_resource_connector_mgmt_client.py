@@ -14,7 +14,7 @@ from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models as _models
 from .._serialization import Deserializer, Serializer
-from ._configuration import AppliancesConfiguration
+from ._configuration import ResourceConnectorMgmtClientConfiguration
 from .operations import AppliancesOperations
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class Appliances:  # pylint: disable=client-accepts-api-version-keyword
+class ResourceConnectorMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     """The appliances Rest API spec.
 
     :ivar appliances: AppliancesOperations operations
@@ -47,8 +47,10 @@ class Appliances:  # pylint: disable=client-accepts-api-version-keyword
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AppliancesConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = ResourceConnectorMgmtClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -81,9 +83,9 @@ class Appliances:  # pylint: disable=client-accepts-api-version-keyword
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "Appliances":
+    async def __aenter__(self) -> "ResourceConnectorMgmtClient":
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)
