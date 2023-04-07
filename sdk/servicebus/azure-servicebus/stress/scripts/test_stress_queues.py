@@ -7,7 +7,6 @@
 from datetime import timedelta
 import time
 import os
-import pytest
 from dotenv import load_dotenv
 from argparse import ArgumentParser
 
