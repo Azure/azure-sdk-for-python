@@ -390,7 +390,7 @@ class ContainerProxy(object):
         """Get a sorted list of items that were changed, in the order in which they were modified.
 
         :keyword bool is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false). By default it's start from current (false).
+            beginning (true) or from current (false). By default, it's start from current (false).
         :keyword str partition_key_range_id: ChangeFeed requests can be executed against specific partition key
             ranges. This is used to process the change feed in parallel across multiple consumers.
         :keyword str continuation: e_tag value to be used as continuation for reading change feed.

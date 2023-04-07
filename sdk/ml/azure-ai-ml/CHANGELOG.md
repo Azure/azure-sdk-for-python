@@ -5,13 +5,14 @@
 ### Features Added
 - Added experimental scatter gather node to DSL package. This node has a unique mldesigner dependency.
 - Added support to make JobService and ServiceInstance objects serializable when printed
-- Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
 
 ### Bugs Fixed
 
 - Fixed issue where show_progress=False was not being respected for uploads when set via MLClient
 - Fixed issue of spark input/output mode validation doesn't take effect because of wrong type assertion
 - Fixed the bug when setting `node.limits.timeout` to a pipeline input.
+- Removed Experimental Tag from Idle Shutdown, Custom Applications, Setup Scripts, and Image Metadata on Compute Instances.
+- Removed Experimental Tag from JobService classes
 
 ### Breaking Changes
 

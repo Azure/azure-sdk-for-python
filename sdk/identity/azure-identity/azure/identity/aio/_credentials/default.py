@@ -48,6 +48,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+    :keyword bool exclude_workload_identity_credential: Whether to exclude the workload identity from the credential.
+        Defaults to **False**.
     :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI
         from the credential. Defaults to **False**.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
@@ -111,6 +113,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         developer_credential_timeout = kwargs.pop("developer_credential_timeout", 10)
 
+        exclude_workload_identity_credential = kwargs.pop("exclude_workload_identity_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
         exclude_azd_cli_credential = kwargs.pop("exclude_azd_cli_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
@@ -122,15 +125,22 @@ class DefaultAzureCredential(ChainedTokenCredential):
         credentials = []  # type: List[AsyncTokenCredential]
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
-        if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
-            client_id = workload_identity_client_id
-            credentials.append(WorkloadIdentityCredential(
-                client_id=cast(str, client_id),
-                tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
-                file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
-                **kwargs))
+        if not exclude_workload_identity_credential:
+            if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
+                client_id = workload_identity_client_id
+                credentials.append(WorkloadIdentityCredential(
+                    client_id=cast(str, client_id),
+                    tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
+                    file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
+                    **kwargs))
         if not exclude_managed_identity_credential:
-            credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
+            credentials.append(
+                ManagedIdentityCredential(
+                    client_id=managed_identity_client_id,
+                    _exclude_workload_identity_credential=exclude_workload_identity_credential,
+                    **kwargs
+                )
+            )
         if not exclude_azd_cli_credential:
             credentials.append(AzureDeveloperCliCredential(process_timeout=developer_credential_timeout))
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
